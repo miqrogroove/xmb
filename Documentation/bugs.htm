@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>Known Bugs</title>
+		<style type="text/css">
+			@import url('./xmb.css');
+		</style>
+	</head>
+	<body>
+		<H2>Known bugs in 1.9.5</H2>
+		<UL>
+			<LI>Voting in polls is impossible under certain conditions.
+			<li>Pruning threads via the admin panel does not update last posts.
+			<li>Templates are no longer (all) XHTML 1.0 Transitional Valid!
+			<li>Advanced BBcode mode in IE gives JavaScript errors.
+			</UL>
+		<P>These bugs will not be fixed until XMB 1.10.0</P>
+		<H3>Known problems which cannot be resolved</H3>
+		<ul>
+			<li>
+			If you upgraded from 1.8 to 1.9.1 betas through to 1.9.1 or later, u2u counts will be
+			wrong
+			<LI>
+				Double entries in tables. Eg. double whosonline entries, double member entries,
+				etc.<BR>
+				To properly fix this requires transaction logging, which is not supported with
+				the current code architecture
+			</LI>
+		</ul>
+		<p>There's nothing which can be done to fix this as the new code correctly handles
+			counting new U2U's, but the old data is incorrect and it's impossible to
+			determine which old u2u's belong to which users.</p>
+	</body>
+</html>
