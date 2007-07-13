@@ -10,6 +10,14 @@
  * Copyright (c) 2007, iEntry, Inc.
  * http://www.ientry.com
  *
+ * Changes to port UltimaBB 1.0's validation routines
+ *
+ * This code is from UltimaBB. The (C) notice is as follows:
+ *
+ * UltimaBB
+ * Copyright (c) 2004 - 2007 The UltimaBB Group
+ * http://www.ultimabb.com
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
