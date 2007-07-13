@@ -1,0 +1,43 @@
+body {
+	background-color: #e9edef;
+	background-image: url('bgg.gif')
+	color: #000000;
+	font-family: Verdana, Times New Roman, Arial, sans-serif;
+	font-size: 10px;
+}
+
+table {
+	color: #000000;
+	font-family: Verdana, Times New Roman, Arial, sans-serif;
+	font-size: 10px;
+}
+
+a {
+	color: #000000;
+}
+
+.progressErr {
+	color: #B00000;
+}
+
+.progressWarn {
+	color: #A08000;
+}
+
+.progressOk {
+	color: #00A000;
+}
+
+.progressSkip {
+	color: #A0A000;
+}
+
+.progress {
+	font-family: Courier New, monospace;
+	font-size: 12px;
+}
+
+.subTitle {
+	color: #1C8BCB;
+	font-weight: bold;
+}
