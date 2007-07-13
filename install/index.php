@@ -943,7 +943,7 @@ Public License instead of this License.
             'include/global.inc.php',
             'include/spelling.inc.php',
             'include/smtp.inc.php',
-            'topicadmin.inc.php',
+            'include/topicadmin.inc.php',
             'include/u2u.inc.php',
             'stats.php',
             'templates.xmb',
