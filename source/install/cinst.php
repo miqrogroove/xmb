@@ -522,7 +522,6 @@ show_act("Creating ".$tablepre."threads");
           `author` varchar(32) NOT NULL default '',
           `closed` varchar(15) NOT NULL default '',
           `topped` tinyint(1) NOT NULL default 0,
-          `pollopts` text NOT NULL,
           PRIMARY KEY  (`tid`),
           KEY `fid` (`fid`),
           KEY `tid` (`tid`),
