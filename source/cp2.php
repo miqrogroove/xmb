@@ -658,16 +658,16 @@ if ($action == 'themes') {
         $cattextnew = formVar('cattextnew');
         $tabletextnew = formVar('tabletextnew');
         $textnew = formVar('textnew');
-        $borderwidthnew = formInt('borderwidthnew');
+        $borderwidthnew = formVar('borderwidthnew');
         $tablewidthnew = formVar('tablewidthnew');
-        $tablespacenew = formInt('tablespacenew');
+        $tablespacenew = formVar('tablespacenew');
         $fnew = formVar('fnew');
         $fsizenew = formVar('fsizenew');
         $boardlogonew = formVar('boardlogonew');
         $imgdirnew = formVar('imgdirnew');
         $smdirnew = formVar('smdirnew');
 
-        $db->query("UPDATE $table_themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth=$borderwidthnew, tablewidth='$tablewidthnew', tablespace=$tablespacenew, fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
+        $db->query("UPDATE $table_themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } elseif ($single && $single == "submit" && $newtheme) {
         $namenew = formVar('namenew');
@@ -683,16 +683,16 @@ if ($action == 'themes') {
         $cattextnew = formVar('cattextnew');
         $tabletextnew = formVar('tabletextnew');
         $textnew = formVar('textnew');
-        $borderwidthnew = formInt('borderwidthnew');
+        $borderwidthnew = formVar('borderwidthnew');
         $tablewidthnew = formVar('tablewidthnew');
-        $tablespacenew = formInt('tablespacenew');
+        $tablespacenew = formVar('tablespacenew');
         $fnew = formVar('fnew');
         $fsizenew = formVar('fsizenew');
         $boardlogonew = formVar('boardlogonew');
         $imgdirnew = formVar('imgdirnew');
         $smdirnew = formVar('smdirnew');
 
-        $db->query("INSERT INTO $table_themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', $borderwidthnew, '$tablewidthnew', $tablespacenew, '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
+        $db->query("INSERT INTO $table_themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
 }
