@@ -92,7 +92,7 @@ while(ob_get_level() > 0) {
 }
 ob_implicit_flush(1);
 
-require ROOT."xmb.php";
+require ROOT."./include/global.inc.php";
 
 require_once ROOT."config.php";
 require_once ROOT."db/$database.php";

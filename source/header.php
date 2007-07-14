@@ -54,6 +54,7 @@ switch ($server) {
 
 // Required Files - XMB (Version/Patch File) Configuration File, Database Settings File
 require ROOT.'include/global.inc.php';
+require ROOT.'include/validate.inc.php';
 
 // Initialising certain key variables. These are default values, please don't change them!
 $cookiepath     = '';
