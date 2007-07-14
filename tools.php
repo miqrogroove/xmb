@@ -53,6 +53,8 @@ audit($xmbuser, $auditaction, 0, 0);
 
 displayAdminPanel();
 
+$action = getVar('action');
+
 switch ($action) {
     case 'fixftotals':
         $fquery = $db->query("SELECT fid FROM $table_forums WHERE type='forum'");
@@ -231,7 +233,7 @@ switch ($action) {
         break;
 
     case 'u2udump':
-        if (!isset($_POST['yessubmit'])) {
+        if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['u2udump_confirm']."<br /><form action=\"tools.php?action=u2udump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
             $db->query("DELETE FROM $table_u2u");
@@ -246,7 +248,7 @@ switch ($action) {
         break;
 
     case 'whosonlinedump':
-        if (!isset($_POST['yessubmit'])) {
+        if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['whoodump_confirm']."<br /><form action=\"tools.php?action=whosonlinedump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
             $db->query("DELETE FROM $table_whosonline");
@@ -261,14 +263,15 @@ switch ($action) {
         break;
 
     case 'fixorphanedthreads':
-        if (!isset($_POST['orphsubmit'])) {
+        if (noSubmit('orphsubmit')) {
             echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td>';
             echo '<form action="tools.php?action=fixorphanedthreads" method="post">';
             echo '<input type="text" name="export_fid" size="4"/> '.$lang['export_fid_expl'];
             echo '<br /><input type="submit" name="orphsubmit" />';
             echo '</form>';
         } else {
-            if (!isset($export_fid)) {
+            $export_fid = formInt('export_fid');
+            if (!$export_fid) {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
 
@@ -339,7 +342,7 @@ switch ($action) {
         break;
 
     case 'fixorphanedattachments':
-        if (!isset($_POST['orphattachsubmit'])) {
+        if (noSubmit('orphattachsubmit')) {
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo '<form action="tools.php?action=fixorphanedattachments" method="post">';
             echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" />';
