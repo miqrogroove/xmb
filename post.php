@@ -526,7 +526,6 @@ if ($action == "newthread") {
                 $db->query("INSERT INTO $table_vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ('$vote_id', '$i', '$p', '0')");
                 $i++;
             }
-            $db->query("UPDATE $table_threads SET pollopts='1' WHERE tid='$tid'");
         }
         // end poll code
 

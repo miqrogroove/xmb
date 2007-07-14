@@ -285,10 +285,6 @@ while($thread = $db->fetch_array($querytop)) {
 
     eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
-    if ($thread['pollopts'] != '') {
-        $prefix = "$lang[pollprefix] ";
-    }
-
     if ($thread['topped'] == 1) {
         $prefix = "$lang[toppedprefix] ";
     }
