@@ -54,8 +54,10 @@ audit($xmbuser, $auditaction, 0, 0);
 
 displayAdminPanel();
 
+$action = getVar('action');
+
 if ($action == "settings") {
-    if (!isset($_POST['settingsubmit'])) {
+    if (noSubmit('settingsubmit')) {
         $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
         $themelist = array();
@@ -502,20 +504,16 @@ if ($action == "settings") {
         </tr>
         <?php
     } else {
-        $bbrulestxtnew = addslashes($bbrulestxtnew);
-        $bboffreasonnew = addslashes($bboffreasonnew);
-        $tickercontentsnew = addslashes($tickercontentsnew);
-
-        $max_avatar_size_w_new = (int) $max_avatar_size_w_new;
-        $max_avatar_size_h_new = (int) $max_avatar_size_h_new;
-        $pruneusersnew = (int) $pruneusersnew;
-        $maxDayReg = (int) $maxDayReg;
-
-        if (!empty($new_footer_options)) {
-            $footer_options = implode('-', $new_footer_options);
-        } else {
-            $footer_options = '';
-        }
+        $sitenamenew = formVar('sitenamenew');
+        $bbnamenew = formVar('bbnamenew');
+        $siteurlnew = formVar('siteurlnew');
+        $boardurlnew = formVar('boardurlnew');
+        $adminemailnew = formVar('adminemailnew');
+        $bbrulesnew = formOnOff('bbrulesnew');
+        $bbrulestxtnew = addslashes(formVar('bbrulestxtnew'));
+        $bbstatusnew = formOnOff('bbstatusnew');
+        $bboffreasonnew = addslashes(formVar('bboffreasonnew'));
+        $gzipcompressnew = formOnOff('gzipcompressnew');
 
         $langfilenew = getLangFileNameFromHash($langfilenew);
         if (!$langfilenew) {
@@ -523,20 +521,68 @@ if ($action == "settings") {
         } else {
             $langfilenew = basename($langfilenew);
         }
+        $themenew = formInt('themenew');
+        $postperpagenew = formInt('postperpagenew');
+        $topicperpagenew = formInt('topicperpagenew');
+        $memberperpagenew = formInt('memberperpagenew');
+        $timeformatnew = formInt('timeformatnew');
+        $dateformatnew = formVar('dateformatnew');
 
-        $space_catsnew = ($space_catsnew == 'on') ? 'on' : 'off';
-        $allowrankeditnew = ($allowrankeditnew == 'on') ? 'on' : 'off';
-        $notifyonregnew = ($notifyonregnew == 'off') ? 'off' : ($notifyonregnew == 'u2u' ? 'u2u' : 'email');
-        $spellchecknew = ($spellchecknew == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
-        $indexShowBarNew = (($indexShowBarNew > 3 || $indexShowBarNew < 1) ? 2 : (int) $indexShowBarNew);
-        $subjectInTitleNew = ($subjectInTitleNew == 'on') ? 'on' : 'off';
-        $resetSigNew = ($resetSigNew == 'on') ? 'on' : 'off';
+        $searchstatusnew = formOnOff('searchstatusnew');
+        $faqstatusnew = formOnOff('faqstatusnew');
+        $todaystatusnew = formOnOff('todaystatusnew');
+        $statsstatusnew = formOnOff('statsstatusnew');
+        $memliststatusnew = formOnOff('memliststatusnew');
+        $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
+        $coppanew = formOnOff('coppanew');
+        $reportpostnew = formOnOff('reportpostnew');
 
-        //TO DO- need to add all the on offs and isset() them
-        // do integer checks for injection points
-        // sanitize minimaly to safeguard admin panel anyways.
+        $space_catsnew = formOnOff('space_catsnew');
+        $indexShowBarNew = formInt('indexShowBarNew');
+        $allowrankeditnew = formOnOff('allowrankeditnew');
+        $subjectInTitleNew = formOnOff('subjectInTitleNew');
+        $catsonlynew = formOnOff('catsonlynew');
+        $whos_on = formOnOff('whos_on');
+        $smtotalnew = formInt('smtotalnew');
+        $smcolsnew = formInt('smcolsnew');
+        $dotfoldersnew = formOnOff('dotfoldersnew');
+        $editedbynew = formOnOff('editedbynew');
+        $attachimgpostnew = formOnOff('attachimgpostnew');
 
-        $max_avatar_size = $_POST['max_avatar_size_w_new'].'x'.$_POST['max_avatar_size_h_new'];
+        $reg_on = formOnOff('reg_on');
+        $ipReg = formYesNo('ipReg');
+        $maxDayReg = formInt('maxDayReg');
+        $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
+        $regviewnew = formOnOff('regviewnew');
+        $hidepriv = formOnOff('hidepriv');
+        $emailchecknew = formOnOff('emailchecknew');
+        $floodctrlnew = formInt('floodctrlnew');
+        $u2uquotanew = formInt('u2uquotanew');
+        $avastatusnew = formOnOff('avastatusnew');
+        $resetSigNew = formOnOff('resetSigNew');
+        $doubleenew = formOnOff('doubleenew');
+        $pruneusersnew = formInt('pruneusersnew');
+
+        $hottopicnew = formInt('hottopicnew');
+        $bbinsertnew = formOnOff('bbinsertnew');
+        $smileyinsertnew = formOnOff('smileyinsertnew');
+        $new_footer_options = formArray('new_footer_options');
+        if (!empty($new_footer_options)) {
+            $footer_options = implode('-', $new_footer_options);
+        } else {
+            $footer_options = '';
+        }
+        $maxAttachSize = formInt('maxAttachSize');
+        $def_tz_new = formInt('def_tz_new');
+        $addtimenew = formInt('addtimenew');
+        $sigbbcodenew = formOnOff('sigbbcodenew');
+        $sightmlnew = formOnOff('sightmlnew');
+        $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
+        $max_avatar_size_h_new = formInt('$max_avatar_size_h_new');
+        $tickerdelaynew = formInt('tickerdelaynew');
+        $maxDayReg = formInt('maxDayReg');
+
+        $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
 
         $db->query("UPDATE $table_settings SET
             langfile='$langfilenew',
@@ -612,9 +658,9 @@ if ($action == "rename") {
         error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
     }
 
-    if (isset($_POST['renamesubmit']) && isset($frmUserFrom) && isset($frmUserTo)) {
-        $vUserFrom = trim($frmUserFrom);
-        $vUserTo = trim($frmUserTo);
+    if (onSubmit('renamesubmit')) {
+        $vUserFrom = formVar('frmUserFrom');
+        $vUserTo = formVar('frmUserTo');
 
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
@@ -654,7 +700,8 @@ if ($action == "rename") {
 }
 
 if ($action == 'forum') {
-    if (!isset($_POST['forumsubmit']) && !isset($fdetails)) {
+    $fdetails = getInt('fdetails');
+    if (noSubmit('forumsubmit') && !$fdetails) {
         $groups = array();
         $forums = array();
         $forums['0'] = array();
@@ -888,8 +935,7 @@ if ($action == 'forum') {
         </td>
         </tr>
         <?php
-    } elseif (isset($fdetails) && !isset($_POST['forumsubmit'])) {
-        $fdetails = intval($fdetails);
+    } elseif ($fdetails && noSubmit('forumsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1076,107 +1122,120 @@ if ($action == 'forum') {
         </td>
         </tr>
         <?php
-    } elseif (isset($_POST['forumsubmit'])) {
-        if (!isset($fdetails)) {
-            $queryforum = $db->query("SELECT fid, type FROM $table_forums WHERE type='forum' OR type='sub'");
-            $db->query("DELETE FROM $table_forums WHERE name=''");
-            while ($forum = $db->fetch_array($queryforum)) {
-                $displayorder = "displayorder".$forum['fid'];
-                $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
-                $name = "name".$forum['fid'];
-                $name =  isset($_POST[$name]) ? $_POST[$name] : '';
-                $self['status'] = "status".$forum['fid'];
-                $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
-                $delete = "delete".$forum['fid'];
-                $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
-                $moveto = "moveto" . $forum['fid'];
-                $moveto = isset($_POST[$moveto]) ? $_POST[$moveto] : '';
+    } elseif (onSubmit('forumsubmit') && !$fdetails) {
+        $queryforum = $db->query("SELECT fid, type FROM $table_forums WHERE type='forum' OR type='sub'");
+        $db->query("DELETE FROM $table_forums WHERE name=''");
+        while ($forum = $db->fetch_array($queryforum)) {
+            $displayorder = "displayorder".$forum['fid'];
+            $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
+            $name = "name".$forum['fid'];
+            $name =  isset($_POST[$name]) ? $_POST[$name] : '';
+            $self['status'] = "status".$forum['fid'];
+            $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
+            $delete = "delete".$forum['fid'];
+            $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
+            $moveto = "moveto" . $forum['fid'];
+            $moveto = isset($_POST[$moveto]) ? $_POST[$moveto] : '';
 
-                if (isset($delete) && $delete != '') {
-                    $db->query("DELETE FROM $table_forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
-                    $querythread = $db->query("SELECT tid, author FROM $table_threads WHERE fid='$delete'");
-                    while ($thread = $db->fetch_array($querythread)) {
-                        $db->query("DELETE FROM $table_threads WHERE tid='$thread[tid]'");
-                        $db->query("DELETE FROM $table_favorites WHERE tid='$thread[tid]'");
-                        $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$thread[author]'");
-                        $querypost = $db->query("SELECT pid, author FROM $table_posts WHERE tid='$thread[tid]'");
-                        while ($post = $db->fetch_array($querypost)) {
-                            $db->query("DELETE FROM $table_posts WHERE pid='$post[pid]'");
-                            $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$post[author]'");
-                        }
-                        $db->free_result($querypost);
+            if ($delete) {
+                $db->query("DELETE FROM $table_forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
+                $querythread = $db->query("SELECT tid, author FROM $table_threads WHERE fid='$delete'");
+                while ($thread = $db->fetch_array($querythread)) {
+                    $db->query("DELETE FROM $table_threads WHERE tid='$thread[tid]'");
+                    $db->query("DELETE FROM $table_favorites WHERE tid='$thread[tid]'");
+                    $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$thread[author]'");
+                    $querypost = $db->query("SELECT pid, author FROM $table_posts WHERE tid='$thread[tid]'");
+                    while ($post = $db->fetch_array($querypost)) {
+                        $db->query("DELETE FROM $table_posts WHERE pid='$post[pid]'");
+                        $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$post[author]'");
                     }
-                    $db->free_result($querythread);
+                    $db->free_result($querypost);
                 }
-                $name = addslashes($name);
-                $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum[fid]'");
+                $db->free_result($querythread);
             }
-
-            $querygroup = $db->query("SELECT fid FROM $table_forums WHERE type='group'");
-            while ($group = $db->fetch_array($querygroup)) {
-                $name = "name" . $group['fid'];
-                $name = isset($_POST[$name]) ? $_POST[$name] : '';
-                $displayorder = "displayorder".$group['fid'];
-                $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
-                $self['status'] = "status".$group['fid'];
-                $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
-                $delete = "delete".$group[fid];
-                $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
-
-                if (isset($delete) && $delete != '') {
-                    $query = $db->query("SELECT fid FROM $table_forums WHERE type='forum' AND fup='$delete'");
-                    while ($forum = $db->fetch_array($query)) {
-                        $db->query("UPDATE $table_forums SET fup=0 WHERE type='forum' AND fup='$delete'");
-                    }
-                    $db->query("DELETE FROM $table_forums WHERE type='group' AND fid='$delete'");
-                }
-                $name = addslashes($name);
-                $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group[fid]'");
-            }
-
-            if ($newfname != $lang['textnewforum']) {
-                $newfname = addslashes($newfname);
-                $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
-            }
-
-            if ($newgname != $lang['textnewgroup']) {
-                $newgname = addslashes($newgname);
-                $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
-            }
-
-            if ($newsubname != $lang['textnewsubf']) {
-                $newsubname = addslashes($newsubname);
-                $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
-            }
-
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
-        } else {
-            $fdetails = intval($fdetails);
-            $allowhtmlnew    = (isset($allowhtmlnew) && $allowhtmlnew == 'yes') ? 'yes' : 'no';
-            $allowsmiliesnew = (isset($allowsmiliesnew) && $allowsmiliesnew == 'yes') ? 'yes' : 'no';
-            $allowbbcodenew  = (isset($allowbbcodenew) && $allowbbcodenew == 'yes') ? 'yes' : 'no';
-            $allowimgcodenew = (isset($allowimgcodenew) && $allowimgcodenew == 'yes') ? 'yes' : 'no';
-            $attachstatusnew = (isset($attachstatusnew) && $attachstatusnew == 'on') ? 'on' : 'off';
-            $pollstatusnew   = (isset($pollstatusnew) && $pollstatusnew == 'on') ? 'on' : 'off';
-            $guestpostingnew = (isset($guestpostingnew) && $guestpostingnew == 'on') ? 'on' : 'off';
-
-            $namenew = addslashes($namenew);
-            $descnew = addslashes($descnew);
-            $userlistnew = addslashes($userlistnew);
-
-            $db->query("UPDATE $table_forums SET name='$namenew', description='$descnew', allowhtml='$allowhtmlnew', allowsmilies='$allowsmiliesnew', allowbbcode='$allowbbcodenew', theme='$themeforumnew', userlist='$userlistnew', private='$privatenew', postperm='$postperm1|$postperm2', allowimgcode='$allowimgcodenew', attachstatus='$attachstatusnew', pollstatus='$pollstatusnew', password='$passwordnew', guestposting='$guestpostingnew' WHERE fid='$fdetails'");
-            if (isset($delete) && $delete != '') {
-                $db->query("DELETE FROM $table_forums WHERE fid='$delete'");
-            }
-            echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td align="center">'.$lang['textforumupdate'].'</td></tr>';
+            $name = addslashes($name);
+            $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum[fid]'");
         }
+
+        $querygroup = $db->query("SELECT fid FROM $table_forums WHERE type='group'");
+        while ($group = $db->fetch_array($querygroup)) {
+            $name = "name" . $group['fid'];
+            $name = isset($_POST[$name]) ? $_POST[$name] : '';
+            $displayorder = "displayorder".$group['fid'];
+            $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
+            $self['status'] = "status".$group['fid'];
+            $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
+            $delete = "delete".$group[fid];
+            $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
+
+            $delete = formInt('delete');
+            if (isset($delete) && $delete != '') {
+                $query = $db->query("SELECT fid FROM $table_forums WHERE type='forum' AND fup='$delete'");
+                while ($forum = $db->fetch_array($query)) {
+                    $db->query("UPDATE $table_forums SET fup=0 WHERE type='forum' AND fup='$delete'");
+                }
+                $db->query("DELETE FROM $table_forums WHERE type='group' AND fid='$delete'");
+            }
+            $name = addslashes($name);
+            $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group[fid]'");
+        }
+        $newgname = formVar('newgname');
+        $newfname = formVar('newfname');
+        $newsubname = formVar('newsubname');
+        $newgorder = formVar('newgorder');
+        $newforder = formVar('newforder');
+        $newsuborder = formVar('newsuborder');
+        $newgstatus = formOnOff('newgorder');
+        $newfstatus = formOnOff('newfstatus');
+        $newsubstatus = formOnOff('newsubstatus');
+        $newffup = formInt('newffup');
+        $newsubfup = formInt('newsubfup');
+
+        if ($newfname != $lang['textnewforum']) {
+            $newfname = addslashes($newfname);
+            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+        }
+
+        if ($newgname != $lang['textnewgroup']) {
+            $newgname = addslashes($newgname);
+            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+        }
+
+        if ($newsubname != $lang['textnewsubf']) {
+            $newsubname = addslashes($newsubname);
+            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+        }
+
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
+    } else {
+        $namenew = addslashes(formVar('namenew'));
+        $descnew = addslashes(formVar('descnew'));
+        $allowhtmlnew    = formYesNo('allowhtmlnew');
+        $allowsmiliesnew = formYesNo('allowsmiliesnew');
+        $allowbbcodenew  = formYesNo('allowbbcodenew');
+        $allowimgcodenew = formYesNo('allowimgcodenew');
+        $attachstatusnew = formOnOff('attachstatusnew');
+        $pollstatusnew   = formOnOff('pollstatusnew');
+        $guestpostingnew = formOnOff('guestpostingnew');
+        $themeforumnew = formInt('themeforumnew');
+        $postperm1 = formInt('postperm1');
+        $postperm2 = formInt('postperm2');
+        $privatenew = formOnOff('privatenew');
+        $userlistnew = addslashes(formVar('userlistnew'));
+        $passwordnew = formVar('passwordnew');
+        $delete = formInt('delete');
+
+        $db->query("UPDATE $table_forums SET name='$namenew', description='$descnew', allowhtml='$allowhtmlnew', allowsmilies='$allowsmiliesnew', allowbbcode='$allowbbcodenew', theme='$themeforumnew', userlist='$userlistnew', private='$privatenew', postperm='$postperm1|$postperm2', allowimgcode='$allowimgcodenew', attachstatus='$attachstatusnew', pollstatus='$pollstatusnew', password='$passwordnew', guestposting='$guestpostingnew' WHERE fid='$fdetails'");
+        if ($delete) {
+            $db->query("DELETE FROM $table_forums WHERE fid='$delete'");
+        }
+        echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td align="center">'.$lang['textforumupdate'].'</td></tr>';
     }
-}
+ }
 
 if ($action == "mods") {
-    if (!isset($_POST['modsubmit'])) {
+    if (noSubmit('modsubmit')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=mods">
@@ -1236,6 +1295,7 @@ if ($action == "mods") {
 
         <?php
     } else {
+        $mod = formArray('mod');
         if (is_array($mod)) {
             foreach ($mod as $fid=>$mods) {
                 $db->query("UPDATE $table_forums SET moderator='$mods' WHERE fid='$fid'");
@@ -1246,9 +1306,11 @@ if ($action == "mods") {
     }
 }
 
-if ( $action == "members") {
-    if (!isset($_POST['membersubmit'])) {
-        if (!isset($members)) {
+if ($action == "members") {
+    $members = getVar('members');
+
+    if (noSubmit('membersubmit')) {
+        if (!$members) {
             ?>
 
             <tr bgcolor="<?php echo $altbg2?>">
@@ -1312,8 +1374,9 @@ if ( $action == "members") {
             </tr>
 
             <?php
-
-            if ($srchstatus == "0") {
+            $srchmem = formVar('srchmem');
+            $srchstatus = formVar('srchstatus');
+            if ($srchstatus == '0') {
                 $query = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' ORDER BY username");
             } else {
                 $query = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
@@ -1431,7 +1494,7 @@ if ( $action == "members") {
 
             <?php
         }
-    } elseif ($_POST['membersubmit']) {
+    } elseif (onSubmit('membersubmit')) {
         /*
         Get the uid first Super Administrator (the first to register and thus most likely to be the 'top level' admin) to compare against the delete uid. This member should *never* be deleted this way.
         */
@@ -1439,7 +1502,7 @@ if ( $action == "members") {
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
-        if ($srchstatus == "0") {
+        if ($srchstatus == '0') {
             $query = $db->query("SELECT uid, username, password, status FROM $table_members WHERE username LIKE '%$srchmem%'");
         } else {
             $query = $db->query("SELECT uid, username, password, status FROM $table_members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
@@ -1506,7 +1569,7 @@ if ( $action == "members") {
 }
 
 if ($action == "ipban") {
-    if (!isset($_POST['ipbansubmit'])) {
+    if (noSubmit('ipbansubmit')) {
         ?>
 
         <tr bgcolor="<?php echo $altbg2?>">
@@ -1572,31 +1635,36 @@ if ($action == "ipban") {
 
         <?php
     } else {
-        if ( isset($delete) ) {
+        $newip = array();
+        $newip[] = trim(formInt('newip1'));
+        $newip[] = trim(formInt('newip2'));
+        $newip[] = trim(formInt('newip3'));
+        $newip[] = trim(formInt('newip4'));
+        $delete = formArray('delete');
+
+        if ($delete) {
             $dels = array();
-            foreach($delete as $id=>$del) {
+            foreach($delete as $id => $del) {
                 if($del == 1) {
                     $dels[] = $id;
                 }
             }
             if(count($dels) > 0) {
                 $dels = implode(',', $dels);
-                $db->query("DELETE FROM $table_banned WHERE id IN($dels)");
+                $db->query("DELETE FROM $table_banned WHERE id IN ($dels)");
             }
         }
         $self['status'] = $lang['textipupdate'];
 
-        if ($newip1 != "" || $newip2 != "" || $newip3 != "" || $newip4 != "") {
+        if ($newip[1] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
             $invalid = 0;
 
-            for ($i=1;$i<=4 && !$invalid;++$i) {
-                $newip = "newip".$i;
-                $newip = isset($_POST[$newip]) ? trim($_POST[$newip]) : '';
+            for ($i=0; $i<=3 && !$invalid; ++$i) {
 
-                if ($newip == "*") {
-                    $ip[$i] = -1;
-                } elseif (preg_match("#^[0-9]+$#", $newip)) {
-                    $ip[$i] = $newip;
+                if ($newip[$i] == "*") {
+                    $ip[$i+1] = -1;
+                } elseif (preg_match("#^[0-9]+$#", $newip[$i])) {
+                    $ip[$i+1] = $newip[$i];
                 } else {
                     $invalid = 1;
                 }
@@ -1624,6 +1692,7 @@ if ($action == "ipban") {
 }
 
 if ($action == "deleteposts") {
+    $member = getVar('member');
     $queryd = $db->query("DELETE FROM $table_posts WHERE author='$member'");
     $queryt = $db->query("SELECT * FROM $table_threads");
     while($threads = $db->fetch_array($queryt)) {
@@ -1640,7 +1709,8 @@ if ($action == "upgrade") {
         error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
     }
 
-    if (isset($_POST['upgradesubmit'])) {
+    if (onSubmit('upgradesubmit')) {
+        $upgrade = formVar('upgrade');
         if (isset($_FILES['sql_file'])) {
             $add = get_attached_file($_FILES['sql_file'], 'on');
             if ($add !== false) {
@@ -1763,10 +1833,15 @@ if ($action == "upgrade") {
 }
 
 if ($action == "search") {
-    if (isset($_POST['searchsubmit'])) {
+    if (onSubmit('searchsubmit')) {
+        $userip = formVar('userip');
+        $postip = formVar('postip');
+        $profileword = formVar('profileword');
+        $postword = formVar('postword');
+
         $found = 0;
         $list = array();
-        if ($userip && !empty($userip)) {
+        if ($userip) {
             $query = $db->query("SELECT * FROM $table_members WHERE regip = '$userip'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
@@ -1775,7 +1850,7 @@ if ($action == "search") {
             }
         }
 
-        if ($postip && !empty($postip)) {
+        if ($postip) {
             $query = $db->query("SELECT * FROM $table_posts WHERE useip = '$postip'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
@@ -1788,7 +1863,7 @@ if ($action == "search") {
             }
         }
 
-        if ($profileword && !empty($profileword)) {
+        if ($profileword) {
             $query = $db->query("SELECT * FROM $table_members WHERE bio = '%$profileword%'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
@@ -1797,7 +1872,7 @@ if ($action == "search") {
             }
         }
 
-        if ($postword && !empty($postword)) {
+        if ($postword) {
             $query = $db->query("SELECT * FROM $table_posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";

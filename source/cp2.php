@@ -46,9 +46,12 @@ function readFileAsINI($filename) {
 loadtemplates('error_nologinsession');
 eval('$css = "'.template('css').'";');
 
+$action = getVar('action');
+
 // Start Download Templates and Theme Code
 if (X_ADMIN) {
-    if ($action == "templates" && isset($download)) {
+    $download = formVar('download');
+    if ($action == "templates" && $download) {
         $code = '';
         $templates  = $db->query("SELECT * FROM $table_templates");
         while ($template = $db->fetch_array($templates)) {
@@ -68,7 +71,10 @@ if (X_ADMIN) {
         header("Expires: 0");
         echo $code;
         exit();
-    } else if ($action == "themes" && isset($download)) {
+    }
+
+    $download = getVar('download');
+    if ($action == "themes" && $download) {
         $contents = array();
         $query = $db->query("SELECT * FROM $table_themes WHERE themeid='$download'");
         $themebits = $db->fetch_array($query);
@@ -109,7 +115,7 @@ audit($xmbuser, $auditaction, 0, 0);
 displayAdminPanel();
 
 if ($action == 'restrictions') {
-    if (!isset($_POST['restrictedsubmit'])) {
+    if (noSubmit('restrictedsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -140,10 +146,10 @@ if ($action == 'restrictions') {
             }
             ?>
             <tr class="tablerow">
-            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="delete<?php echo $restricted['id']?>" value="<?php echo $restricted[id]?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="delete<?php echo $restricted['id']?>" value="<?php echo $restricted['id']?>" /></td>
             <td bgcolor="<?php echo $altbg2?>"><input type="text" size="30" name="name<?php echo $restricted['id']?>" value="<?php echo $restricted['name']?>" /></td>
-            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="case<?php echo $restricted['id']?>" value="<?php echo $restricted[id]?>" <?php echo $case_check?> /></td>
-            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="partial<?php echo $restricted['id']?>" value="<?php echo $restricted[id]?>" <?php echo $partial_check?> /></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="case<?php echo $restricted['id']?>" value="<?php echo $restricted['id']?>" <?php echo $case_check?> /></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="partial<?php echo $restricted['id']?>" value="<?php echo $restricted['id']?>" <?php echo $partial_check?> /></td>
             </tr>
             <?php
         }
@@ -193,27 +199,31 @@ if ($action == 'restrictions') {
     } else {
         $queryrestricted = $db->query("SELECT id FROM $table_restricted");
         while ($restricted = $db->fetch_array($queryrestricted)) {
-            $name = isset($_POST['name'.$restricted['id']]) ? $_POST['name'.$restricted['id']] : '';
-            $delete = isset($_POST['delete'.$restricted['id']]) ? $_POST['delete'.$restricted['id']] : '';
-            $case = isset($_POST['case'.$restricted['id']]) ? intval($_POST['case'.$restricted['id']]) : 0;
-            $partial = isset($_POST['partial'.$restricted['id']]) ? intval($_POST['partial'.$restricted['id']]) : 0;
+            $name = formVar('name'.$restricted['id']);
+            $delete = formInt('delete'.$restricted['id']);
+            $case = formInt('case'.$restricted['id']);
+            $partial = formInt('partial'.$restricted['id']);
 
-            if ($partial > 0) {
+            $newname = formInt('newname');
+            $newcase = formInt('newcase');
+            $newpartial = formInt('newpartial');
+
+            if ($partial) {
                 $partial = 1;
             }
 
-            if ($case > 0) {
+            if ($case) {
                 $case = 1;
             }
 
-            if ($delete > 0) {
+            if ($delete) {
                 $db->query("DELETE FROM $table_restricted WHERE id='$delete'");
                 continue;
             }
             $db->query("UPDATE `$table_restricted` SET `name`='$name', `case_sensitivity`='$case', `partial`='$partial' WHERE `id`='$restricted[id]'");
         }
 
-        if ($newname != "") {
+        if ($newname) {
             if (!$newpartial || $newpartial != 1) {
                 $newpartial = 0;
             } else {
@@ -231,8 +241,13 @@ if ($action == 'restrictions') {
 
         redirect('cp2.php?action=restrictions', 2);
     }
-} elseif ($action == 'themes') {
-    if (!isset($_POST['themesubmit']) && !isset($single) && !isset($importsubmit)) {
+}
+
+if ($action == 'themes') {
+    $single = getVar('single');
+	$newtheme = formVar('newtheme');
+
+    if (noSubmit('themesubmit') && !$single && noSubmit('importsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -341,7 +356,9 @@ if ($action == 'restrictions') {
         </td>
         </tr>
         <?php
-    } elseif (isset($importsubmit) && isset($themefile['tmp_name'])) {
+    }
+
+    if (onSubmit('importsubmit') && isset($themefile['tmp_name'])) {
         $themebits = readFileAsINI($themefile['tmp_name']);
         $start = "INSERT INTO $table_themes";
 
@@ -376,14 +393,17 @@ if ($action == 'restrictions') {
             echo $lang['textthemeimportsuccess'];
         }
         echo '</td></tr>';
-    } elseif (isset($_POST['themesubmit'])) {
+    } elseif (onSubmit('themesubmit')) {
+        $theme_delete = formArray('theme_delete');
+        $theme_name = formArray('theme_name');
+
         $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM $table_themes"), 0);
 
-        if (isset($theme_delete) && count($theme_delete) >= $number_of_themes) {
+        if ($theme_delete && count($theme_delete) >= $number_of_themes) {
             error($lang['delete_all_themes'], false, '</td></tr></table></td></tr></table>');
         }
 
-        if (isset($theme_delete)) {
+        if ($theme_delete) {
             foreach ($theme_delete as $themeid) {
                 $otherid = $db->result($db->query("SELECT themeid FROM $table_themes WHERE themeid != '$themeid' ORDER BY rand() LIMIT 1"), 0);
                 $db->query("UPDATE $table_members SET theme='$otherid' WHERE theme='$themeid'");
@@ -400,7 +420,9 @@ if ($action == 'restrictions') {
             $db->query("UPDATE $table_themes SET name='$name' WHERE themeid='$themeid'");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
-    } elseif (isset($single) && $single != "submit" && $single != "anewtheme1") {
+    }
+
+    if ($single && $single != "submit" && $single != "anewtheme1") {
         $query = $db->query("SELECT * FROM $table_themes WHERE themeid='$single'");
         $themestuff = $db->fetch_array($query);
         ?>
@@ -518,7 +540,7 @@ if ($action == 'restrictions') {
         </td>
         </tr>
         <?php
-    } elseif (isset($single) && $single == "anewtheme1") {
+    } elseif ($single && $single == "anewtheme1") {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -622,15 +644,61 @@ if ($action == 'restrictions') {
         </td>
         </tr>
         <?php
-    } elseif (isset($single) && $single == "submit" && !$newtheme) {
-        $db->query("UPDATE $table_themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
+    } elseif ($single && $single == "submit" && !$newtheme) {
+        $namenew = formVar('namenew');
+        $bgcolornew = formVar('bgcolornew');
+        $altbg1new = formVar('altbg1new');
+        $altbg2new = formVar('altbg2new');
+        $linknew = formVar('linknew');
+        $bordercolornew = formVar('bordercolornew');
+        $headernew = formVar('headernew');
+        $headertextnew = formVar('headertextnew');
+        $topnew = formVar('topnew');
+        $catcolornew = formVar('catcolornew');
+        $cattextnew = formVar('cattextnew');
+        $tabletextnew = formVar('tabletextnew');
+        $textnew = formVar('textnew');
+        $borderwidthnew = formInt('borderwidthnew');
+        $tablewidthnew = formVar('tablewidthnew');
+        $tablespacenew = formInt('tablespacenew');
+        $fnew = formVar('fnew');
+        $fsizenew = formVar('fsizenew');
+        $boardlogonew = formVar('boardlogonew');
+        $imgdirnew = formVar('imgdirnew');
+        $smdirnew = formVar('smdirnew');
+
+        $db->query("UPDATE $table_themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth=$borderwidthnew, tablewidth='$tablewidthnew', tablespace=$tablespacenew, fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
-    } elseif (isset($single) && $single == "submit" && $newtheme) {
-        $db->query("INSERT INTO $table_themes (themeid, name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('', '$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
+    } elseif ($single && $single == "submit" && $newtheme) {
+        $namenew = formVar('namenew');
+        $bgcolornew = formVar('bgcolornew');
+        $altbg1new = formVar('altbg1new');
+        $altbg2new = formVar('altbg2new');
+        $linknew = formVar('linknew');
+        $bordercolornew = formVar('bordercolornew');
+        $headernew = formVar('headernew');
+        $headertextnew = formVar('headertextnew');
+        $topnew = formVar('topnew');
+        $catcolornew = formVar('catcolornew');
+        $cattextnew = formVar('cattextnew');
+        $tabletextnew = formVar('tabletextnew');
+        $textnew = formVar('textnew');
+        $borderwidthnew = formInt('borderwidthnew');
+        $tablewidthnew = formVar('tablewidthnew');
+        $tablespacenew = formInt('tablespacenew');
+        $fnew = formVar('fnew');
+        $fsizenew = formVar('fsizenew');
+        $boardlogonew = formVar('boardlogonew');
+        $imgdirnew = formVar('imgdirnew');
+        $smdirnew = formVar('smdirnew');
+
+        $db->query("INSERT INTO $table_themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', $borderwidthnew, '$tablewidthnew', $tablespacenew, '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
-} elseif ($action == "smilies") {
-    if (!isset($smiliesubmit)) {
+}
+
+if ($action == "smilies") {
+    if (noSubmit('smiliesubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -724,7 +792,21 @@ if ($action == 'restrictions') {
         </tr>
         <?php
     } else {
-        if (is_array($smcode)) {
+        $smdelete = formArray('smdelete');
+        $smcode = formArray('smcode');
+        $smurl = formArray('smurl');
+
+        $newcode = formVar('newcode');
+        $newurl1 = formVar('newurl1');
+        $autoinsertsmilies = formInt('autoinsertsmilies');
+
+        $pidelete = formArray('pidelete');
+        $piurl = formArray('piurl');
+
+        $newurl2 = formVar('newurl2');
+        $autoinsertposticons = formInt('autoinsertposticons');
+
+        if ($smcode) {
             foreach ($smcode as $key=>$val) {
                 if (count(array_keys($smcode, $val)) > 1) {
                     error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
@@ -742,9 +824,11 @@ if ($action == 'restrictions') {
             $query = $db->query("UPDATE $table_smilies SET code='$smcode[$id]', url='$smurl[$id]' WHERE id='$smilie[id]' AND type='smiley'");
         }
 
-        if (is_array($piurl)) foreach ($piurl as $key=>$val) {
-            if (count(array_keys($piurl, $val)) > 1) {
-                error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
+        if ($piurl) {
+            foreach ($piurl as $key=>$val) {
+                if (count(array_keys($piurl, $val)) > 1) {
+                    error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
+                }
             }
         }
 
@@ -758,7 +842,7 @@ if ($action == 'restrictions') {
             $query = $db->query("UPDATE $table_smilies SET url='$piurl[$id]' WHERE id='$picon[id]' AND type='picon'");
         }
 
-        if (isset($newcode) && $newcode != "") {
+        if ($newcode) {
             // make sure we don't already have one like that
             if ($db->result($db->query("SELECT count(id) FROM $table_smilies WHERE code='$newcode'"), 0) > 0) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
@@ -767,7 +851,7 @@ if ($action == 'restrictions') {
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
-        if (isset($autoinsertsmilies) && $autoinsertsmilies == 1) {
+        if ($autoinsertsmilies) {
             $smilies_count = $newsmilies_count = 0;
             // Load all existing smilies to ensure we don't insert a duplicate.
             $smiley_url = array();
@@ -798,7 +882,7 @@ if ($action == 'restrictions') {
         }
         // End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
 
-        if (isset($newurl2) && $newurl2 != "") {
+        if ($newurl2) {
             if ($db->result($db->query("SELECT count(id) FROM $table_smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
                 error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
             }
@@ -806,7 +890,7 @@ if ($action == 'restrictions') {
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
-        if (isset($autoinsertposticons) && $autoinsertposticons == 1) {
+        if ($autoinsertposticons) {
             $posticons_count = $newposticons_count = 0;
             // Load all existing post icons to ensure we don't insert a duplicate.
             $posticon_url = array();
@@ -837,8 +921,8 @@ if ($action == 'restrictions') {
     }
 }
 
-elseif ($action == "censor") {
-    if (!isset($censorsubmit)) {
+if ($action == "censor") {
+    if (noSubmit('censorsubmit')) {
         ?>
 
         <tr bgcolor="<?php echo $altbg2?>">
@@ -891,37 +975,36 @@ elseif ($action == "censor") {
     <?php
 }
 
-if (isset($censorsubmit)) {
+if (onSubmit('censorsubmit')) {
         $querycensor = $db->query("SELECT id FROM $table_words");
 
         while ($censor = $db->fetch_array($querycensor)) {
-            $find = "find" . $censor['id'];
-            $find = isset($_POST[$find]) ? $_POST[$find] : '';
-            $replace = "replace" . $censor['id'];
-            $replace = isset($_POST[$replace]) ? $_POST[$replace] : '';
-            $delete = "delete" .$censor['id'];
-            $delete = isset($_POST[$delete]) ? intval($_POST[$delete]) : 0;
+            $find = formArray('find'.$censor['id']);
+            $replace = formArray('replace'.$censor['id']);
+            $delete = formArray('delete'.$censor['id']);
 
-            if ($delete > 0) {
+            if ($delete) {
                 $db->query("DELETE FROM $table_words WHERE id='$delete'");
             }
 
-            if (!empty($find)) {
+            if ($find) {
                 $db->query("UPDATE $table_words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
             }
         }
 
         $db->free_result($querycensor);
 
-        if (isset($newfind) && $newfind != "") {
+        if ($newfind) {
             $db->query("INSERT INTO $table_words ( find, replace1 ) VALUES ('$newfind', '$newreplace')");
         }
 
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[censorupdate]</td></tr>";
     }
 
-} elseif ($action == "ranks") {
-    if (!isset($rankssubmit)) {
+}
+
+if ($action == "ranks") {
+    if (noSubmit('rankssubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -955,7 +1038,7 @@ if (isset($censorsubmit)) {
             }
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td class="tablerow" align="center"><input type="checkbox" name="delete[<?php echo $rank['id']?>]" value="1" <?php echo $staff_disable?> /></td>
+            <td class="tablerow" align="center"><input type="checkbox" name="delete[<?php echo $rank['id']?>]" value="<?php echo $rank['id']?>" <?php echo $staff_disable?> /></td>
             <td class="tablerow" align="left"><input type="text" name="title[<?php echo $rank['id']?>]" value="<?php echo $rank['title']?>" <?php echo $staff_disable?>/></td>
             <td class="tablerow"><input type="text" name="posts[<?php echo $rank['id']?>]" value="<?php echo $rank['posts']?>" <?php echo $staff_disable?> size="5" /></td>
             <td class="tablerow"><input type="text" name="stars[<?php echo $rank['id']?>]" value="<?php echo $rank['stars']?>" size="4" /></td>
@@ -990,6 +1073,18 @@ if (isset($censorsubmit)) {
         </tr>
         <?php
     } else {
+        $id = formArray('id');
+        $delete = formArray('delete');
+        $title = formArray('title');
+        $stars = formArray('stars');
+        $allowavatars = formArray('allowavatars');
+        $avaurl = formArray('avaurl');
+        $newtitle = formVar('newtitle');
+        $newposts = formInt('newposts');
+        $newstars = formInt('newstars');
+        $newallowavatars = formOnOff('newallowavatars');
+        $newavaurl = formVar('newavaurl');
+
         $query = $db->query("SELECT * FROM $table_ranks");
         $staffranks = array();
         while ($ranks = $db->fetch_array($query)) {
@@ -1003,27 +1098,28 @@ if (isset($censorsubmit)) {
         }
 
         $i=0;
-        foreach ($id as $key=>$val) {
-            $delete[$key] = isset($delete[$key]) ? $delete[$key] : '';
-            if ($delete[$key] == 1) {
-                $db->query("DELETE FROM $table_ranks WHERE id='$key'");
-                continue;
-            }
 
+        if ($delete) {
+            $del = implode(', ', $delete);
+            $db->query("DELETE FROM $table_ranks WHERE id IN ($del)");
+        }
+
+        foreach ($id as $key=>$val) {
             $posts[$key] = (in_array($title[$key], $staffranks)) ? (int) -1 : $posts[$key];
             $db->query("UPDATE $table_ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
         }
 
-        if (isset($newtitle) && $newtitle != '') {
-            $db->query("INSERT INTO $table_ranks (title, posts, id, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '', '$newstars', '$newallowavatars', '$newavaurl')");
+        if ($newtitle) {
+            $db->query("INSERT INTO $table_ranks (title, posts, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '$newstars', '$newallowavatars', '$newavaurl')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['rankingsupdate'].'</td></tr>';
     }
-} elseif ($action == "newsletter") {
-    if (!isset($newslettersubmit)) {
-        ?>
+}
 
+if ($action == "newsletter") {
+    if (noSubmit('newslettersubmit')) {
+        ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp2.php?action=newsletter">
@@ -1086,8 +1182,12 @@ if (isset($censorsubmit)) {
     } else {
         @set_time_limit(0);
 
-        $newssubject = addslashes($newssubject);
-        $newsmessage = addslashes($newsmessage);
+        $newssubject = addslashes(formVar('newssubject'));
+        $newsmessage = addslashes(formVar('newsmessage'));
+        $sendvia = formVar('sendvia');
+        $to = formVar('to');
+        $newscopy = formYesNo('newscopy');
+        $wait = formInt('wait');
 
         if ($newscopy != 'yes') {
             $tome = 'AND NOT username=\''.$xmbuser.'\'';
@@ -1111,7 +1211,7 @@ if (isset($censorsubmit)) {
 
         if ($sendvia == "u2u") {
             while ($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO $table_u2u ( u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('', '".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO $table_u2u ( msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $newssubject = stripslashes(stripslashes($newssubject));
@@ -1146,11 +1246,10 @@ if (isset($censorsubmit)) {
     }
 }
 
-elseif ($action == "prune") {
-    if (!isset($_POST['pruneSubmit'])) {
+if ($action == "prune") {
+    if (noSubmit('pruneSubmit')) {
         $forumselect = forumList('pruneFromList[]', true, false);
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=prune">
@@ -1258,6 +1357,12 @@ elseif ($action == "prune") {
 
         <?php
     } else {
+        $pruneBy = formArray('pruneBy');
+        $pruneFrom = formVar('pruneFrom');
+        $pruneFromList = formArray('pruneFromList');
+        $pruneFromFid = formVar('pruneFromFid');
+        $pruneType = formArray('pruneType');
+
         $queryWhere = array();
         // let's check what to prune first
         switch($pruneFrom) {
@@ -1373,8 +1478,8 @@ elseif ($action == "prune") {
     }
 }
 
-elseif ($action == "templates") {
-    if (!isset($edit) && !isset($editsubmit) && !isset($delete) && !isset($deletesubmit) && !isset($new) && !isset($restore) && !isset($restoresubmit)) {
+if ($action == "templates") {
+    if (noSubmit('edit') && noSubmit('editsubmit') && noSubmit('delete') && noSubmit('deletesubmit') && noSubmit('new') && noSubmit('restore') && noSubmit('restoresubmit')) {
         ?>
 
         <tr bgcolor="<?php echo $altbg2?>">
@@ -1428,7 +1533,7 @@ elseif ($action == "templates") {
         <?php
     }
 
-    if (isset($restore)) {
+    if (onSubmit('restore')) {
         ?>
 
         <tr bgcolor="<?php echo $altbg2?>">
@@ -1458,7 +1563,7 @@ elseif ($action == "templates") {
         <?php
     }
 
-    if (isset($restoresubmit)) {
+    if (onSubmit('restoresubmit')) {
         if (!file_exists('./templates.xmb')) {
             error($lang['no_templates'], false, '</td></tr></table></td></tr></table><br />');
         }
@@ -1480,8 +1585,9 @@ elseif ($action == "templates") {
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesrestoredone]</td></tr>";
     }
 
-    if (isset($edit) && !isset($editsubmit)) {
-        if ($tid == "default") {
+    if (onSubmit('edit') && noSubmit('editsubmit')) {
+        $tid = formVar('tid');
+        if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
 
@@ -1526,14 +1632,17 @@ elseif ($action == "templates") {
         <?php
     }
 
-    if (isset($editsubmit)) {
-        $templatenew = addslashes($templatenew);
+    if (onSubmit('editsubmit')) {
+        $tid = formVar('tid');
+        $namenew = formVar('namenew');
+        $templatenew = addslashes(formVar('templatenew'));
+
         if ($tid == "new") {
-            if (empty($namenew)) {
+            if (!$namenew) {
                 error($lang['templateempty'], false, '</td></tr></table></td></tr></table><br />');
             } else {
                 $check = $db->query("SELECT name FROM $table_templates WHERE name = '$namenew'");
-                if ($check && $db->num_rows($check) != 0) {
+                if ($db->num_rows($check) != 0) {
                     error($lang['templateexists'], false, '</td></tr></table></td></tr></table><br />');
                 } else {
                     $db->query("INSERT INTO $table_templates (id, name, template) VALUES ('', '$namenew', '$templatenew')");
@@ -1545,7 +1654,7 @@ elseif ($action == "templates") {
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesupdate]</td></tr>";
     }
 
-    if (isset($delete)) {
+    if (onSubmit('delete')) {
         if ($tid == "default") {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
@@ -1578,12 +1687,12 @@ elseif ($action == "templates") {
         <?php
     }
 
-    if (isset($deletesubmit)) {
+    if (onSubmit('deletesubmit')) {
         $db->query("DELETE FROM $table_templates WHERE id='$tid'");
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesdelete]</td></tr>";
     }
 
-    if (isset($new)) {
+    if (onSubmit('new')) {
         ?>
 
         <tr bgcolor="<?php echo $altbg2?>">
@@ -1612,13 +1721,12 @@ elseif ($action == "templates") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 }
 
-elseif ($action == "attachments") {
-    if (!isset($attachsubmit) && !isset($searchsubmit)) {
+if ($action == "attachments") {
+    if (noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
         $forumselect = forumList('forumprune', false, true);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
@@ -1675,7 +1783,16 @@ elseif ($action == "attachments") {
         <?php
     }
 
-    if (isset($searchsubmit)) {
+    if (onSubmit('searchsubmit')) {
+        $filename = formVar('filename');
+        $author = formVar('author');
+        $forumprune = formVar('forumprune');
+        $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
+        $sizeless = formInt('sizeless');
+        $sizemore = formInt('sizemore');
+        $dlcountless = formInt('dlcountless');
+        $dlcountmore = formInt('dlcountmore');
+        $daysold = formInt('daysold');
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1700,55 +1817,45 @@ elseif ($action == "attachments") {
         $restriction = '';
         $orderby = '';
 
-        if (isset($forumprune) && is_numeric($forumprune)) {
-            $forumprune = (int) $forumprune;
+        if ($forumprune) {
             $restriction .= "AND p.fid=$forumprune ";
         }
 
-        if (isset($daysold) && is_numeric($daysold)) {
+        if ($daysold) {
             $datethen = time() - (86400 * $daysold);
             $restriction .= "AND p.dateline <= $datethen ";
             $orderby = ' ORDER BY p.dateline ASC';
         }
 
-        if (isset($author)) {
-            $author = trim($author);
-            if ( $author != '' ) {
-                $restriction .= "AND p.author = '$author' ";
-                $orderby = ' ORDER BY p.author ASC';
-            }
+        if ($author) {
+            $restriction .= "AND p.author = '$author' ";
+            $orderby = ' ORDER BY p.author ASC';
         }
 
-        if (isset($filename)) {
-            $filename = trim($filename);
-            if ( $filename != "" ) {
-                $restriction .= "AND a.filename LIKE '%$filename%' ";
-            }
+        if ($filename) {
+            $restriction .= "AND a.filename LIKE '%$filename%' ";
         }
 
-        if (isset($sizeless) && is_numeric($sizeless)) {
-            $sizeless = (int) $sizeless;
+        if ($sizeless) {
             $restriction .= "AND a.filesize < $sizeless ";
             $orderby = ' ORDER BY a.filesize DESC';
         }
 
-        if (isset($sizemore) && is_numeric($sizemore)) {
-            $sizemore = (int) $sizemore;
+        if ($sizemore) {
             $restriction .= "AND a.filesize > $sizemore ";
             $orderby = ' ORDER BY a.filesize DESC';
         }
 
-        if (isset($dlcountless) && is_numeric($dlcountless)) {
-            $dlcountless = (int) $dlcountless;
+        if ($dlcountless) {
             $restriction .= "AND a.downloads < $dlcountless ";
             $orderby = ' ORDER BY a.downloads DESC';
         }
 
-        if (isset($dlcountmore) && is_numeric($dlcountmore)) {
-            $dlcountmore = (int) $dlcountmore;
+        if ($dlcountmore) {
             $restriction .= "AND a.downloads > $dlcountmore ";
             $orderby = ' ORDER BY a.downloads DESC ';
         }
+
         $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM $table_attachments a, $table_posts p, $table_threads t, $table_forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
             while ($attachment = $db->fetch_array($query)) {
             $attachsize = strlen($attachment['attachment']);
@@ -1798,37 +1905,47 @@ elseif ($action == "attachments") {
         <?php
     }
 
-    if (isset($deletesubmit)) {
-        if ($forumprune != "" && $forumprune != $lang['textall']) {
+    if (onSubmit('deletesubmit')) {
+        $filename1 = formVar('filename1');
+        $filename = formVar('filename');
+        $author = formVar('author');
+        $forumprune = formInt('forumprune');
+        $sizeless = formInt('sizeless');
+        $sizemore = formInt('sizemore');
+        $dlcountless = formInt('dlcountless');
+        $dlcountmore = formInt('dlcountmore');
+        $daysold = formInt('daysold');
+
+        if ($forumprune) {
             $queryforum = "AND p.fid='$forumprune' ";
         }
 
-        if ($daysold != "") {
-            $datethen = time() - (86400*$daysold);
+        if ($daysold) {
+            $datethen = time() - (86400 * $daysold);
             $querydate = "AND p.dateline <= '$datethen' ";
         }
 
-        if ($author != "") {
+        if ($author) {
             $queryauthor = "AND p.author = '$author' ";
         }
 
-        if ($filename != "") {
+        if ($filename) {
             $queryname = "AND a.filename LIKE '%$filename%' ";
         }
 
-        if ($sizeless != "") {
+        if ($sizeless) {
             $querysizeless = "AND a.filesize < '$sizeless' ";
         }
 
-        if ($sizemore != "") {
+        if ($sizemore) {
             $querysizemore = "AND a.filesize > '$sizemore' ";
         }
 
-        if ($dlcountless != "") {
+        if ($dlcountless) {
             $querydlcountless = "AND a.downloads < '$dlcountless' ";
         }
 
-        if ($dlcountmore != "") {
+        if ($dlcountmore) {
             $querydlcountmore = "AND a.downloads > '$dlcountmore' ";
         }
 
@@ -1845,8 +1962,9 @@ elseif ($action == "attachments") {
     }
 }
 
-elseif ($action == "modlog") {
+if ($action == "modlog") {
     nav($lang['textmodlogs']);
+	$page = getInt('page');
     ?>
     <tr bgcolor="<?php echo $altbg2?>">
     <td align="center">
@@ -1864,7 +1982,7 @@ elseif ($action == "modlog") {
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM $table_logs WHERE NOT (fid='0' AND tid='0')"), 0);
 
-    if (!isset($page) || $page < 1) {
+    if (!$page) {
         $page = 1;
     }
 
@@ -1970,8 +2088,9 @@ elseif ($action == "modlog") {
     <?php
 }
 
-elseif ($action == "cplog") {
+if ($action == "cplog") {
     nav($lang['textcplogs']);
+    $page = getInt('page');
     ?>
     <tr bgcolor="<?php echo $altbg2?>">
     <td align="center">
@@ -1990,7 +2109,7 @@ elseif ($action == "cplog") {
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM $table_logs WHERE (fid='0' AND tid='0')"), 0);
 
-    if (!isset($page) || $page < 1) {
+    if (!$page) {
         $page = 1;
     }
 
@@ -2095,7 +2214,8 @@ elseif ($action == "cplog") {
     <?php
 }
 
-elseif ($action == "delete_attachment") {
+if ($action == "delete_attachment") {
+    $aid = formInt('aid');
     $db->query("DELETE FROM $table_attachments WHERE aid='$aid'");
     echo "<p align=\"center\">Deleted ...</br>";
 }
