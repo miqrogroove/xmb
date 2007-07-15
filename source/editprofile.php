@@ -41,12 +41,14 @@ if (!X_SADMIN) {
     error($lang['superadminonly'], false);
 }
 
+$user = getVar('user');
+
 $userid = $db->fetch_array($db->query("SELECT uid FROM $table_members WHERE username='$user'"));
 if (empty($userid['uid'])) {
     error($lang['nomember'], false);
 }
 
-if (!isset($_POST['editsubmit'])) {
+if (noSubmit('editsubmit')) {
     $query = $db->query("SELECT * FROM $table_members WHERE username='".rawurldecode($user)."'");
     $member = $db->fetch_array($query);
 
@@ -176,6 +178,7 @@ if (!isset($_POST['editsubmit'])) {
         error($lang['badname'], false);
     }
 
+    $langfilenew = getLangFileNameFromHash(formVar('langfilenew'));
     $fileNameHash = getLangFileNameFromHash($langfilenew);
     if ($fileNameHash === false) {
         $langfilenew = $SETTINGS['langfile'];
@@ -183,41 +186,56 @@ if (!isset($_POST['editsubmit'])) {
         $langfilenew = basename($fileNameHash);
     }
 
-    $timeoffset1    = isset($timeoffset1) ? (float) $timeoffset1 : 0;
-    $thememem       = isset($thememem) ? (int) $thememem : 0;
-    $tppnew         = isset($tppnew) ? (int) $tppnew : $topicperpage;
-    $pppnew         = isset($pppnew) ? (int) $pppnew : $postperpage;
+    $timeoffset1    = formInt('timeoffset1');
+    $thememem       = formInt('thememem');
+    $tppnew         = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
+    $pppnew         = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
 
-    if (strlen(trim($dateformatnew)) == 0) {
+    $dateformatnew  = formVar('dateformatnew');
+    if (strlen($dateformatnew) == 0) {
         $dateformatnew = $SETTINGS['dateformat'];
     } else {
-        $dateformatnew  = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
+        $dateformatnew = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
     }
+    $timeformatnew  = formInt('timeformatnew');
+    $timeformatnew  = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
 
-    $timeformatnew  = isset($timeformatnew) ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+    $saveogu2u      = formYesNo('saveogu2u');
+    $emailonu2u     = formYesNo('emailonu2u');
+    $useoldu2u      = formYesNo('useoldu2u');
+    $invisible      = formInt('newinv');
+    $showemail      = formYesNo('showemail');
+    $newsletter     = formYesNo('newsletter');
 
-    $saveogu2u      = (isset($saveogu2u) && $saveogu2u == 'yes') ? 'yes' : 'no';
-    $emailonu2u     = (isset($emailonu2u) && $emailonu2u == 'yes') ? 'yes' : 'no';
-    $useoldu2u      = (isset($useoldu2u) && $useoldu2u == 'yes') ? 'yes' : 'no';
-    $invisible      = (isset($newinv) && $newinv == 1) ? 1 : 0;
-    $showemail      = (isset($newshowemail) && $newshowemail == 'yes') ? 'yes' : 'no';
-    $newsletter     = (isset($newnewsletter) && $newnewsletter == 'yes') ? 'yes' : 'no';
-
+    $year           = formInt('year');
+    $month          = formInt('month');
+    $day            = formInt('day');
     $bday           = iso8601_date($year, $month, $day);
 
-    $newavatar      = isset($newavatar) ? ereg_replace(' ', '%20', $newavatar) : '';
+    $newavatar      = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
     $avatar         = checkInput($newavatar, 'no', 'no', 'javascript', false);
-    $location       = isset($newlocation) ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
-    $icq            = (isset($newicq) && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
-    $yahoo          = isset($newyahoo) ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
-    $aim            = isset($newaim) ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
-    $msn            = isset($newmsn) ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
-    $email          = isset($newemail) ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
-    $site           = isset($newsite) ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
-    $webcam         = isset($newwebcam) ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
-    $bio            = isset($newbio) ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
-    $mood           = isset($newmood) ? checkInput($newmood, 'no', 'no', 'javascript', false) : '';
-    $sig            = isset($newsig) ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
+    $newlocation    = formVar('newlocation');
+    $location       = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+    $newicq         = formVar('newicq');
+    $icq            = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
+    $newyahoo       = formVar('newyahoo');
+    $yahoo          = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+    $newaim         = formVar('newaim');
+    $aim            = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+    $newmsn         = formVar('newmsn');
+    $msn            = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+    $newemail       = formVar('newemail');
+    $email          = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+    $newsite        = formVar('newsite');
+    $site           = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+    $newwebcam      = formVar('newwebcam');
+    $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+    $newbio         = formVar('newbio');
+    $bio            = $newbio ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
+    $newmood        = formVar('newmood');
+    $mood           = $newmood ? checkInput($newmood, 'no', 'no', 'javascript', false) : '';
+    $newsig         = formVar('newsig');
+    $sig            = $newsig ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
 
     $avatar         = addslashes($avatar);
     $location       = addslashes($location);
@@ -242,8 +260,8 @@ if (!isset($_POST['editsubmit'])) {
 
     $db->query("UPDATE $table_members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$user'");
 
-    $newpassword = trim($newpassword);
-    if ($newpassword != '') {
+    $newpassword = formVar('newpassword');
+    if ($newpassword) {
         $newpassword = md5($newpassword);
         $db->query("UPDATE $table_members SET password='$newpassword' WHERE username='$user'");
     }
