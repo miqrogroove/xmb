@@ -28,7 +28,9 @@
 
 require_once('header.php');
 
-if ($faqstatus != "on" && $page != 'forumrules') {
+$page = getVar('page');
+
+if ($SETTINGS['faqstatus'] != "on" && $page != 'forumrules') {
     loadtemplates('misc_feature_notavailable');
     eval('$css = "'.template('css').'";');
     nav('<a href="faq.php">'.$lang['textfaq']. '</a>');
@@ -40,7 +42,6 @@ if ($faqstatus != "on" && $page != 'forumrules') {
     exit();
 }
 
-$page = (isset($page)) ? $page : null;
 nav('<a href="faq.php">'.$lang['textfaq'].'</a>');
 
 switch ($page) {
