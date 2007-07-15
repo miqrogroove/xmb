@@ -678,7 +678,7 @@ if ($action == 'profile') {
     } else {
         if (false !== ($pos = strpos($member['avatar'], ',')) && substr($member['avatar'], $pos-4, 4) == '.swf') {
             $flashavatar = explode(',',$member['avatar']);
-            $member['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" AllowScriptAccess="never" /></object>';
+            $member['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
         } else {
             $member['avatar'] = '<img src="'.$member['avatar'].'" border="0" alt="'.$lang['altavatar'].'" />';
         }

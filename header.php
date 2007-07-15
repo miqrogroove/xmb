@@ -579,7 +579,7 @@ if (false !== strpos($boardimg, ',')) {
     if (!isset($l['scheme']) || !isset($l['host'])) {
         $flashlogo[0] = $imgdir.'/'.$flashlogo[0];
     }
-    $logo = '<object type="application/x-shockwave-flash" data="'.$flashlogo[0].'" width="'.$flashlogo[1].'" height="'.$flashlogo[2].'"><param name="movie" value="'.$flashlogo[0].'" AllowScriptAccess="never" /></object>';
+    $logo = '<object type="application/x-shockwave-flash" data="'.$flashlogo[0].'" width="'.$flashlogo[1].'" height="'.$flashlogo[2].'"><param name="movie" value="'.$flashlogo[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
 } else {
     $l = array();
     $l = parse_url($boardimg);
