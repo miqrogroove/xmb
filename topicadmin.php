@@ -267,6 +267,17 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_move').'");');
         } else {
             if ($moveto != '') {
+                $query = $db->query("SELECT type FROM $table_forums WHERE fid='$moveto'");
+                $forumtype = $db->result($query, 0);
+                $db->free_result($query);
+
+                if($forumtype == 'group') {
+                    echo '<center><span class="mediumtxt">'.$lang['errormovingthreads'].'</span></center>';
+                    end_time();
+                    eval('echo "'.template('footer').'";');
+                    exit();
+                }
+
                 $tids = $mod->create_tid_array($tid);
                 foreach($tids AS $tid) {
                     if ($type == "normal") {
