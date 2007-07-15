@@ -525,7 +525,7 @@ if (!$action) {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
                     if (false !== ($pos = strpos($post['avatar'], ',')) && substr($post['avatar'], $pos-4, 4) == '.swf') {
                         $flashavatar = explode(',',$post['avatar']);
-                        $avatar = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" AllowScriptAccess="never" /></object>';
+                        $avatar = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
                     } else {
                         $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                     }
