@@ -1165,7 +1165,7 @@ if ($action == 'forum') {
             $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
             $self['status'] = "status".$group['fid'];
             $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
-            $delete = "delete".$group[fid];
+            $delete = "delete".$group['fid'];
             $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
 
             $delete = formInt('delete');
