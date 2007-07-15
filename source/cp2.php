@@ -979,9 +979,9 @@ if (onSubmit('censorsubmit')) {
         $querycensor = $db->query("SELECT id FROM $table_words");
 
         while ($censor = $db->fetch_array($querycensor)) {
-            $find = formArray('find'.$censor['id']);
-            $replace = formArray('replace'.$censor['id']);
-            $delete = formArray('delete'.$censor['id']);
+            $find = formVar('find'.$censor['id']);
+            $replace = formVar('replace'.$censor['id']);
+            $delete = formVar('delete'.$censor['id']);
 
             if ($delete) {
                 $db->query("DELETE FROM $table_words WHERE id='$delete'");
