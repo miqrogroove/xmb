@@ -45,6 +45,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
+$action = getVar('action');
 switch ($action) {
     case 'reg':
         nav($lang['textregister']);
@@ -73,7 +74,7 @@ if ($action == 'coppa') {
         redirect('member.php?action=reg', 0);
     }
 
-    if (isset($coppasubmit)) {
+    if (onSubmit('coppasubmit')) {
         redirect('member.php?action=reg', 0);
     } else {
         eval('echo "'.template('header').'";');
@@ -110,10 +111,10 @@ if ($action == 'coppa') {
         exit();
     }
 
-    if (!isset($regsubmit)) {
+    if (noSubmit('regsubmit')) {
         eval('echo "'.template('header').'";');
-        if ($bbrules == "on" && !isset($rulesubmit)) {
-            $bbrulestxt = nl2br(stripslashes(stripslashes($bbrulestxt)));
+        if ($SETTINGS['bbrules'] == "on" && noSubmit('rulesubmit')) {
+            $bbrulestxt = nl2br(stripslashes(stripslashes($SETTINGS['bbrulestext'])));
             eval('echo stripslashes("'.template('member_reg_rules').'");');
         } else {
             $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
@@ -301,6 +302,7 @@ if ($action == 'coppa') {
         }
     } else {
         $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'', ' ');
+        $username = formVar('username');
         foreach ($find as $needle) {
             if (false !== strpos($username, $needle)) {
                 error($lang['restricted']);
@@ -319,8 +321,7 @@ if ($action == 'coppa') {
             }
         }
 
-        $email = addslashes(trim($email));
-
+        $email = addslashes(formVar('email'));
         if ($doublee == "off" && false !== strpos($email, "@")) {
             $email1 = ", email";
             $email2 = "OR email='$email'";
@@ -329,14 +330,13 @@ if ($action == 'coppa') {
             $email2 = '';
         }
 
-        $username = trim($username);
         $query = $db->query("SELECT username$email1 FROM $table_members WHERE username='$username' $email2");
-
         if ($member = $db->fetch_array($query)) {
             error($lang['alreadyreg']);
         }
 
-        if ($emailcheck == "on") {
+        $password = formVar('password');
+        if ($SETTINGS['emailcheck'] == 'on') {
             $password = '';
             $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
             mt_srand((double)microtime() * 1000000);
@@ -345,8 +345,6 @@ if ($action == 'coppa') {
             }
             $password2 = $password;
         }
-
-        $password = trim($password);
         $password2 = trim($password2);
 
         if ($password != $password2) {
@@ -412,11 +410,11 @@ if ($action == 'coppa') {
             error($lang['textpw1']);
         }
 
-        if (trim($username) == '') {
+        if ($username == '') {
             error($lang['textnousername']);
         }
 
-        $langfilenew = getLangFileNameFromHash($langfilenew);
+        $langfilenew = getLangFileNameFromHash(formVar('langfilenew'));
         if (!$langfilenew) {
             $langfilenew = $SETTINGS['langfile'];
         } else {
@@ -428,38 +426,55 @@ if ($action == 'coppa') {
 
         $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
-        $timeoffset1   = isset($timeoffset1) ? (float) $timeoffset1 : 0;
-        $thememem      = isset($thememem) ? (int) $thememem : 0;
-        $tpp           = isset($tpp) ? (int) $tpp : $topicperpage;
-        $ppp           = isset($ppp) ? (int) $ppp : $postperpage;
+        $timeoffset1   = formInt('timeoffset1');
+        $thememem      = formInt('thememem');
+        $tpp           = formInt('tpp');
+        $ppp           = formInt('ppp');
 
-        $showemail     = (isset($showemail) && $showemail == 'yes') ? 'yes' : 'no';
-        $newsletter    = (isset($newsletter) && $newsletter == 'yes') ? 'yes' : 'no';
-        $saveogu2u     = (isset($saveogu2u) && $saveogu2u == 'yes') ? 'yes' : 'no';
-        $emailonu2u    = (isset($emailonu2u) && $emailonu2u == 'yes') ? 'yes' : 'no';
-        $useoldu2u     = (isset($useoldu2u) && $useoldu2u == 'yes') ? 'yes' : 'no';
+        $showemail     = formYesNo('showemail');
+        $newsletter    = formYesNo('newsletter');
+        $saveogu2u     = formYesNo('saveogu2u');
+        $emailonu2u    = formYesNo('emailonu2u');
+        $useoldu2u     = formYesNo('useoldu2u');
 
+        $year          = formInt('year');
+        $month         = formInt('month');
+        $day           = formInt('day');
         $bday          = iso8601_date($year, $month, $day);
 
-        if (strlen(trim($dateformatnew)) == 0) {
+        $dateformatnew = formVar('dateformatnew');
+        if (strlen($dateformatnew) == 0) {
             $dateformatnew = $SETTINGS['dateformat'];
         } else {
             $dateformatnew = (intval($dateformatnew) > 0 ? $SETTINGS['dateformat'] : checkInput($dateformatnew, '', '', 'javascript', true)); // Temporary validation of dateformat - if it contains numbers we assume the date is incorrect (blacklist approach) and therefore use the default dateformat otherwise we proceed to validation of input.
         }
-        $timeformatnew = isset($timeformatnew) ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+        $timeformatnew = formInt('timeformatnew');
+        $timeformatnew = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
 
-        $avatar        = isset($avatar) ? checkInput($avatar, '', '', 'javascript', false) : '';
-        $location      = isset($location) ? checkInput($location, '', '', "javascript", false) : '';
-        $icq           = (isset($icq) && is_numeric($icq) && $icq > 0) ? $icq : 0;
-        $yahoo         = isset($yahoo) ? checkInput($yahoo, '', '', 'javascript', false) : '';
-        $aim           = isset($aim) ? checkInput($aim, '', '', 'javascript', false) : '';
-        $msn           = isset($msn) ? checkInput($msn, '', '', 'javascript', false) : '';
-        $email         = isset($email) ? checkInput($email, '', '', 'javascript', false) : '';
-        $site          = isset($site) ? checkInput($site, '', '', 'javascript', false) : '';
-        $webcam        = isset($webcam) ? checkInput($webcam, '', '', 'javascript', false) : '';
-        $bio           = isset($bio) ? checkInput($bio, '', '', 'javascript', false) : '';
-        $mood          = isset($mood) ? checkInput($mood, '', '', 'javascript', false) : '';
-        $sig           = isset($sig) ? checkInput($sig, '', $SETTINGS['sightml'], '', false) : '';
+        $avatar        = formVar('avatar');
+        $avatar        = $avatar ? checkInput($avatar, '', '', 'javascript', false) : '';
+        $location      = formVar('location');
+        $location      = $location ? checkInput($location, '', '', "javascript", false) : '';
+        $icq           = formVar('icq');
+        $icq           = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
+        $yahoo         = formVar('yahoo');
+        $yahoo         = $yahoo ? checkInput($yahoo, '', '', 'javascript', false) : '';
+        $aim           = formVar('aim');
+        $aim           = $aim ? checkInput($aim, '', '', 'javascript', false) : '';
+        $msn           = formVar('msn');
+        $msn           = $msn ? checkInput($msn, '', '', 'javascript', false) : '';
+        $email         = formVar('email');
+        $email         = $email ? checkInput($email, '', '', 'javascript', false) : '';
+        $site          = formVar('site');
+        $site          = $site ? checkInput($site, '', '', 'javascript', false) : '';
+        $webcam        = formVar('webcam');
+        $webcam        = $webcam ? checkInput($webcam, '', '', 'javascript', false) : '';
+        $bio           = formVar('bio');
+        $bio           = $bio ? checkInput($bio, '', '', 'javascript', false) : '';
+        $mood          = formVar('mood');
+        $mood          = $mood ? checkInput($mood, '', '', 'javascript', false) : '';
+        $sig           = formVar('sig');
+        $sig           = $sig ? checkInput($sig, '', $SETTINGS['sightml'], '', false) : '';
 
         $avatar        = addslashes($avatar);
         $location      = addslashes($location);
@@ -485,7 +500,7 @@ if ($action == 'coppa') {
             }
         }
 
-        $db->query("INSERT INTO $table_members (uid, username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('', '$username', '$password', ".$db->time($onlinetime).", '0', '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', '$thememem', '$bday', '$newlangfile', '$tpp', '$ppp',  '$newsletter', '$onlineip', '$timeformatnew', '$msn', '', '$dateformatnew', '', '', '$mood', '', '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '$webcam')");
+        $db->query("INSERT INTO $table_members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp,  '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '$webcam')");
 
         if ($SETTINGS['notifyonreg'] != "off") {
             if ($SETTINGS['notifyonreg'] == 'u2u') {
@@ -511,7 +526,7 @@ if ($action == 'coppa') {
             }
         }
 
-        if ($emailcheck == "on") {
+        if ($SETTINGS['emailcheck'] == "on") {
             altMail($email, $lang['textyourpw'], $lang['textyourpwis']." \n\n$username\n$password2", "From: $bbname <$adminemail>");
         } else {
             $currtime = $onlinetime + (86400*30);
@@ -524,6 +539,7 @@ if ($action == 'coppa') {
         redirect('index.php', 2, X_REDIRECT_JS);
     }
 } elseif ($action == "viewpro") {
+    $member = getVar('member');
     if (!$member) {
         error($lang['nomember']);
     } else {
