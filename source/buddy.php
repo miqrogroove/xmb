@@ -48,15 +48,18 @@ if (X_GUEST) {
     error($lang['u2unotloggedin']);
 }
 
+$action = getVar('action');
 switch ($action) {
     case 'add':
+        $buddys = getVar('buddys');
         buddy_add($buddys);
         break;
     case 'edit':
         buddy_edit();
         break;
     case 'delete':
-        if (isset($delete) && is_array($delete) && count($delete) > 0) {
+        $delete = formArray('delete');
+        if ($delete) {
             buddy_delete($delete);
         } else {
             blistmsg($lang['nomember']);
