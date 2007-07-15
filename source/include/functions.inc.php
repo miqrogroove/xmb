@@ -313,7 +313,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
 
                 $patterns[] = "#\[flash=([0-9]*?){1}x([0-9]*?)\]([^\"'<>]*?)\[/flash\]#Ssi";
-                $replacements[] = '<object type="application/x-shockwave-flash" data="$3" width="$1" height="$2"><param name="movie" value="$3" AllowScriptAccess="never" /></object>';
+                $replacements[] = '<object type="application/x-shockwave-flash" data="$3" width="$1" height="$2"><param name="movie" value="$3" /><param name="AllowScriptAccess" value="never" /></object>';
             }
         }
 
