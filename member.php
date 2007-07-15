@@ -588,7 +588,7 @@ if ($action == 'coppa') {
             if ($memberinfo['avatar'] != '') {
                 if (false !== ($pos = strpos($memberinfo['avatar'], ',')) && substr($memberinfo['avatar'], $pos-4, 4) == '.swf') {
                     $flashavatar = explode(",",$memberinfo['avatar']);
-                    $memberinfo['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" AllowScriptAccess="never" /></object>';
+                    $memberinfo['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
                 } else {
                     $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
