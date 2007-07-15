@@ -1347,7 +1347,7 @@ function getLangFileNameFromHash($ordinal) {
     return false;
 }
 
-function forumList($selectname='srchfid', $multiple=false, $allowall=true) {
+function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
     global $db, $table_forums, $self, $lang;
 
     $restrict = array();
@@ -1430,10 +1430,10 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true) {
     reset($forums);
 
     foreach ($standAloneForums as $forum) {
-        $forumselect[] = '<option value="'.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+        $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
         if (isset($subforums[$forum['fid']])) {
             foreach ($subforums[$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.intval($sub['fid']).'">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
             }
         }
     }
@@ -1443,10 +1443,10 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true) {
         if (isset($forums[$group['fid']]) && count($forums[$group['fid']]) > 0) {
             $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.stripslashes($group['name']).'</option>';
             foreach ($forums[$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+                $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
                 if (isset($subforums[$forum['fid']])) {
                     foreach ($subforums[$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.intval($sub['fid']).'">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                        $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
                     }
                 }
             }

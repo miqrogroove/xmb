@@ -263,7 +263,7 @@ switch ($action) {
         $mod->statuscheck($fid);
         if (!isset($_POST['movesubmit'])) {
             $tid = $mod->create_tid_string($tid);
-            $forumselect = forumList('moveto', false, false);
+            $forumselect = forumList('moveto', false, false, $fid);
             eval('echo stripslashes("'.template('topicadmin_move').'");');
         } else {
             if ($moveto != '') {
