@@ -1220,7 +1220,7 @@ if ($action == 'forum') {
         $themeforumnew = formInt('themeforumnew');
         $postperm1 = formInt('postperm1');
         $postperm2 = formInt('postperm2');
-        $privatenew = formOnOff('privatenew');
+        $privatenew = formInt('privatenew');
         $userlistnew = addslashes(formVar('userlistnew'));
         $passwordnew = formVar('passwordnew');
         $delete = formInt('delete');
