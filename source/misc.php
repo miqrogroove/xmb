@@ -596,7 +596,7 @@ switch ($action) {
             $srchemail = '';
         }
 
-        if ($srchip') {
+        if ($srchip) {
             $where[] = " regip LIKE '%".$srchip."%'";
             $ext[] = 'srchip='.$srchip;
             $srchip = htmlspecialchars($srchip);
