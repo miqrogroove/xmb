@@ -64,6 +64,7 @@ loadtemplates(
 smcwcache();
 eval('$css = "'.template('css').'";');
 
+$action = getVar('action');
 switch ($action) {
     case 'login':
         nav($lang['textlogin']);
@@ -95,12 +96,12 @@ $misc = $multipage = $nextlink = '';
 
 switch ($action) {
     case 'login':
-        if (!isset($loginsubmit)) {
+        if (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
             $misc = stripslashes($misc);
         } else {
-            $password = md5(trim($password));
-            $username = addslashes($username);
+            $password = md5(formVar('password'));
+            $username = addslashes(formVar('username'));
             $query = $db->query("SELECT username FROM $table_members WHERE username='$username' AND password='$password'");
             if ($query && $db->num_rows($query) == 1) {
                 $member = $db->fetch_array($query);
@@ -108,7 +109,7 @@ switch ($action) {
                 $currtime = $onlinetime + (86400*30);
                 $username = $member['username'];
 
-                if (isset($hide)) {
+                if (formInt('hide')) {
                     $db->query("UPDATE $table_members SET invisible='1' WHERE username='$username'");
                 } else {
                     $db->query("UPDATE $table_members SET invisible='0' WHERE username='$username'");
@@ -134,7 +135,8 @@ switch ($action) {
                         window.location="index.php";
                     </script>';
                 } else {
-                    if (isset($secure) && $secure == 'yes') {
+                    $secure = formYesNo('secure');
+                    if ($secure == 'yes') {
                         put_cookie("xmbuser", $username);
                         put_cookie("xmbpw", $password);
                     } else {
@@ -189,38 +191,48 @@ switch ($action) {
         }
 
         $searchresults = '';
+        $page = getInt('page');
 
-        if (!isset($searchsubmit) && !isset($page)) {
+        if (noSubmit('searchsubmit') && !$page) {
             $forumselect = forumList('srchfid', true, true);
             eval('$search = "'.template('misc_search').'";');
             $misc = stripslashes($search);
         } else {
-            if (empty($srchuname) && empty($srchtxt) || (strlen($srchuname) < 3 && strlen($srchtxt) < 3)) {
+            $srchuname = formVar('srchuname');
+            $srchtxt = formVar('srchtxt');
+            $srchfid = formInt('srchfid');
+            if (!$srchfid) {
+                $srchfid = 'all';
+            }
+            $srchfrom = formInt('srchfrom');
+            $filter_distinct = formYesNo('filter_distinct');
+
+            if (!$srchuname && !$srchtxt || (strlen($srchuname) < 3 && strlen($srchtxt) < 3)) {
                 error($lang['nosearchq']);
             }
 
-            if (empty($srchuname) || strlen($srchuname) < 3) {
+            if (!$srchuname || strlen($srchuname) < 3) {
                 $srchuname = '';
             }
 
-            if (empty($srchtxt) || strlen($srchtxt) < 3) {
+            if (!$srchtxt || strlen($srchtxt) < 3) {
                 $srchtxt = '';
             }
 
-            if ($searchsubmit || $page) {
-                if (!isset($page)) {
+            if (onSubmit('searchsubmit') || $page) {
+                if (!$page) {
                     $page = 1;
                     $offset = 0;
                     $start = 0;
-                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($postperpage) && $postperpage > 0 ? $postperpage : 20));
+                    $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 } else {
                     if ($page < 1) {
                         $page = 1;
                     }
 
-                    $offset = ($page-1) * ((isset($ppp) && $ppp > 0) ? $ppp : (isset($postperpage) && $postperpage > 0 ? $postperpage : 20));
+                    $offset = ($page-1) * ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                     $start = $offset;
-                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($postperpage) && $postperpage > 0 ? $postperpage : 20));
+                    $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
 
                 $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM $table_posts p, $table_threads t LEFT JOIN $table_forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
@@ -247,17 +259,17 @@ switch ($action) {
                 }
 
                 if ($srchfid != "all" && $srchfid != "") {
-                    $sql .= " AND p.fid='".(int)$srchfid."'";
-                    $ext[] = 'srchfid='.((int) $srchfid);
+                    $sql .= " AND p.fid='$srchfid'";
+                    $ext[] = 'srchfid='.$srchfid;
                 }
 
                 if ($srchfrom) {
                     $sql .= " AND p.dateline >= '$srchfrom'";
-                    $ext[] = 'srchfrom'.((int) $srchfromold);
+                    $ext[] = 'srchfrom'.$srchfromold;
                 }
 
                 $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start,$end";
-                if (!isset($page) || $page < 1) {
+                if (!$page || $page < 1) {
                     $pagenum = 2;
                 } else {
                     $pagenum = $page+1;
@@ -267,11 +279,11 @@ switch ($action) {
                 $results = 0;
                 $results = $db->num_rows($querysrch);
 
-                if ($srchuname != '') {
+                if ($srchuname) {
                     $srchtxt = '\0';
                 }
 
-                if (isset($filter_distinct) && $filter_distinct == 'yes') {
+                if ($filter_distinct == 'yes') {
                     $temparray = array();
                     $searchresults = '';
                     while ($post = $db->fetch_array($querysrch)) {
@@ -396,12 +408,12 @@ switch ($action) {
         break;
 
     case 'lostpw':
-        if (!$lostpwsubmit) {
+        if (noSubmit('lostpwsubmit')) {
             eval('$misc = "'.template('misc_lostpw').'";');
             $misc = stripslashes($misc);
         } else {
-            $username = addslashes($username);
-            $email = addslashes($email);
+            $username = addslashes(formVar('username'));
+            $email = addslashes(formVar('email'));
             $query = $db->query("SELECT username, email, pwdate FROM $table_members WHERE username='$username' AND email='$email'");
             $member = $db->fetch_array($query);
 
@@ -523,6 +535,14 @@ switch ($action) {
         break;
 
     case 'list':
+        $order = getVar('order');
+        $desc = getVar('desc');
+        $page = getInt('page');
+
+        $srchmem = formVar('srchmem');
+        $srchemail = formVar('srchemail');
+        $srchip = formVar('srchip');
+
         if ($SETTINGS['memliststatus'] == 'off') {
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');
@@ -531,20 +551,18 @@ switch ($action) {
             exit();
         }
 
-        if (!isset($desc) || strtolower($desc) != 'desc') {
+        if (!$desc || strtolower($desc) != 'desc') {
             $desc = 'asc';
         }
 
-        if (isset($page) && $page > 0) {
-            $start_limit = ($page-1) * $memberperpage;
+        if ($page && $page > 0) {
+            $start_limit = ($page-1) * $SETTINGS['memberperpage'];
         } else {
             $start_limit = 0;
             $page = 1;
         }
 
-        $order = isset($_REQUEST['order']) ? $_REQUEST['order'] : '';
-
-        if (!isset($order) || ($order != "username" && $order != "postnum" && $order != 'status')) {
+        if (!$order || ($order != "username" && $order != "postnum" && $order != 'status')) {
             $orderby = "uid";
             $order = 'uid';
         } elseif ($order == 'status') {
@@ -565,7 +583,7 @@ switch ($action) {
 
         $ext = array('&order='.$order);
 
-        if (isset($srchemail) && $srchemail != '') {
+        if ($srchemail) {
             if (!X_SADMIN) {
                 $where[] = " email LIKE '%".$srchemail."%'";
                 $where[] = " showemail = 'yes'";
@@ -578,7 +596,7 @@ switch ($action) {
             $srchemail = '';
         }
 
-        if (isset($srchip) && $srchip != '') {
+        if ($srchip') {
             $where[] = " regip LIKE '%".$srchip."%'";
             $ext[] = 'srchip='.$srchip;
             $srchip = htmlspecialchars($srchip);
@@ -586,7 +604,7 @@ switch ($action) {
             $srchip = '';
         }
 
-        if (isset($srchmem) && $srchmem != '') {
+        if ($srchmem) {
             $where[] = " username LIKE '%".addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchmem))."%'";
             $ext[] = 'srchmem='.$srchmem;
             $srchmem = htmlspecialchars($srchmem);
@@ -649,11 +667,11 @@ switch ($action) {
             }
         }
 
-        if (!isset($memberperpage)) {
+        if (!isset($SETTINGS['memberperpage'])) {
             $memberperpage = $postperpage;
         }
 
-        if (($multipage = multi($num, $memberperpage, $page, 'misc.php?action=list&amp;desc='.$desc.$ext)) === false) {
+        if (($multipage = multi($num, $SETTINGS['memberperpage'], $page, 'misc.php?action=list&amp;desc='.$desc.$ext)) === false) {
             $multipage = '';
         } else {
             eval('$multipage = "'.template('misc_mlist_multipage').'";');

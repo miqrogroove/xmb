@@ -59,7 +59,8 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     eval('$ticker  = "'.template('index_ticker').'";');
 }
 
-if (isset($gid) && is_numeric($gid)) {
+$gid = getInt('gid');
+if ($gid) {
     $gid = (int) $gid;
     $whosonlinestatus = 'off';
     $query = $db->query("SELECT name FROM $table_forums WHERE fid='$gid' AND type='group' LIMIT 1");

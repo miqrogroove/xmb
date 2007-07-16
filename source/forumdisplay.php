@@ -54,8 +54,9 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$tid = (isset($tid) && is_numeric($tid)) ? (int) $tid : 0;
-$fid = (isset($fid) && is_numeric($fid)) ? (int) $fid : 0;
+$tid = getInt('tid');
+$fid = getInt('fid');
+$page = getInt('page');
 
 $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
@@ -148,21 +149,22 @@ switch($p_extension) {
 validateTpp();
 validatePpp();
 
-if (isset($page)) {
+if ($page) {
     $start_limit = ($page-1) *$tpp;
 } else {
     $start_limit = 0;
     $page = 1;
 }
 
-if (isset($cusdate) && $cusdate != 0) {
+$cusdate = formInt('cusdate');
+if ($cusdate) {
     $cusdate = time() - $cusdate;
     $cusdate = "AND (substring_index(lastpost, '|',1)+1) >= '$cusdate'";
 } else {
     $cusdate = '';
 }
 
-$ascdesc = isset($ascdesc) ? $ascdesc : '';
+$ascdesc = formVar('ascdesc');
 if (strtolower($ascdesc) != 'asc') {
     $ascdesc = "desc";
 }

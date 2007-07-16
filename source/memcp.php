@@ -56,6 +56,7 @@ eval('$css = "'.template('css').'";');
 $favs = NULL;
 $buddys = NULL;
 
+$action = getVar('action');
 switch ($action) {
     case "profile":
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
@@ -128,7 +129,7 @@ if ($action == 'profile') {
     eval('echo "'.template('header').'";');
     makenav($action);
 
-    if (!isset($editsubmit)) {
+    if (noSubmit('editsubmit')) {
         $member = $self;
 
         $checked = '';
@@ -355,7 +356,7 @@ if ($action == 'profile') {
         eval('echo stripslashes("'.template('memcp_profile').'");');
     }
 
-    if (isset($editsubmit)) {
+    if (onSubmit('editsubmit')) {
         reset($self);
         $member = $self;
 
@@ -367,7 +368,8 @@ if ($action == 'profile') {
             error($lang['textpwincorrect'], false);
         }
 
-        if (isset($newemail) && (!isset($_POST['newemail']) || isset($_GET['newemail']))) {
+        $newemail = formVar('newemail');
+        if ($newemail && (!$newemail || isset($_GET['newemail']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
             $aapos = strpos($auditaction, "?");
             if ($aapos !== false) {
@@ -378,7 +380,9 @@ if ($action == 'profile') {
             die("Hack atttempt recorded in audit logs.");
         }
 
-        if (isset($newpassword) && (!isset($_POST['newpassword']) || isset($_GET['newpassword']))) {
+        $newpassword   = formVar('newpassword');
+        $newpasswordcf = formVar('newpasswordcf');
+        if ($newpassword && (!$newpassword || isset($_GET['newpassword']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
             $aapos = strpos($auditaction, "?");
             if ($aapos !== false) {
@@ -389,6 +393,7 @@ if ($action == 'profile') {
             die("Hack atttempt recorded in audit logs.");
         }
 
+        $langfilenew = formVar('langfilenew');
         $fileNameHash = getLangFileNameFromHash($langfilenew);
         if ($fileNameHash === false) {
             $langfilenew = $SETTINGS['langfile'];
@@ -396,41 +401,57 @@ if ($action == 'profile') {
             $langfilenew = basename($fileNameHash);
         }
 
-        $timeoffset1    = isset($timeoffset1) ? (float) $timeoffset1 : 0;
-        $thememem       = isset($thememem) ? (int) $thememem : 0;
-        $tppnew         = isset($tppnew) ? (int) $tppnew : $SETTINGS['topicperpage'];
-        $pppnew         = isset($pppnew) ? (int) $pppnew : $SETTINGS['postperpage'];
+        $timeoffset1    = formInt('timeoffset1');
+        $thememem       = formInt('thememem');
+        $tppnew         = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
+        $pppnew         = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
 
-        if (strlen(trim($dateformatnew)) == 0) {
+        $dateformatnew = formVar('dateformatnew');
+        if (strlen($dateformatnew) == 0) {
             $dateformatnew = $SETTINGS['dateformat'];
         } else {
-            $dateformatnew  = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
+            $dateformatnew = $dateformatnew ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
         }
 
+        $timeformatnew  = formInt('timeformatnew');
         $timeformatnew  = isset($timeformatnew) ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
 
-        $saveogu2u      = (isset($saveogu2u) && $saveogu2u == 'yes') ? 'yes' : 'no';
-        $emailonu2u     = (isset($emailonu2u) && $emailonu2u == 'yes') ? 'yes' : 'no';
-        $useoldu2u      = (isset($useoldu2u) && $useoldu2u == 'yes') ? 'yes' : 'no';
-        $invisible      = (isset($newinv) && $newinv == 1) ? 1 : 0;
-        $showemail      = (isset($newshowemail) && $newshowemail == 'yes') ? 'yes' : 'no';
-        $newsletter     = (isset($newnewsletter) && $newnewsletter == 'yes') ? 'yes' : 'no';
+        $saveogu2u      = formYesNo('saveogu2u');
+        $emailonu2u     = formYesNo('emailonu2u');
+        $useoldu2u      = formYesNo('useoldu2u');
+        $invisible      = formInt('newinv');
+        $showemail      = formYesNo('newshowemail');
+        $newsletter     = formYesNo('newnewsletter');
 
+        $year           = formInt('year');
+        $month          = formInt('month');
+        $day            = formInt('day');
         $bday           = iso8601_date($year, $month, $day);
 
-        $newavatar      = isset($newavatar) ? ereg_replace(' ', '%20', $newavatar) : '';
+        $newavatar      = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
         $avatar         = checkInput($newavatar, 'no', 'no', 'javascript', false);
-        $location       = isset($newlocation) ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
-        $icq            = (isset($newicq) && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
-        $yahoo          = isset($newyahoo) ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
-        $aim            = isset($newaim) ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
-        $msn            = isset($newmsn) ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
-        $email          = isset($newemail) ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
-        $site           = isset($newsite) ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
-        $webcam         = isset($newwebcam) ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
-        $bio            = isset($newbio) ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
-        $mood           = isset($newmood) ? checkInput($newmood, 'no', 'no', 'javascript', false) : '';
-        $sig            = isset($newsig) ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
+        $newlocation    = formVar('newlocation');
+        $location       = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+        $newicq         = formVar('newicq');
+        $icq            = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
+        $newyahoo       = formVar('newyahoo');
+        $yahoo          = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+        $newaim         = formVar('newaim');
+        $aim            = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+        $newmsn         = formVar('newmsn');
+        $msn            = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+        $newemail       = formVar('newemail');
+        $email          = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+        $newsite        = formVar('newsite');
+        $site           = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+        $newwebcam      = formVar('newwebcam');
+        $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+        $newbio         = formVar('newbio');
+        $bio            = $newbio ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
+        $newmood        = formVar('newmood');
+        $mood           = $newmood ? checkInput($newmood, 'no', 'no', 'javascript', false) : '';
+        $newsig         = formVar('newsig');
+        $sig            = $newsig ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
 
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
@@ -465,9 +486,6 @@ if ($action == 'profile') {
             }
         }
 
-        $newpassword = trim($newpassword);
-        $newpasswordcf = trim($newpasswordcf);
-
         if ($newpassword != '' || $newpasswordcf != '' ) {
             if ($newpassword != $newpasswordcf ) {
                 error($lang['pwnomatch'], false);
@@ -494,15 +512,14 @@ if ($action == 'profile') {
 
     makenav($action);
 
-    if (!isset($favsubmit) && isset($favadd) && is_numeric($favadd)) {
-        $favadd = (int) $favadd;
+    $favadd = getInt('favadd');
+    if (noSubmit('favsubmit') && $favadd) {
         if ($favadd == 0) {
             error($lang['fnasorry'], false);
         }
 
         $query = $db->query("SELECT tid FROM $table_favorites WHERE tid='$favadd' AND username='$xmbuser' AND type='favorite'");
         $favthread = $db->fetch_array($query);
-
 
         if ($favthread) {
             error($lang['favonlistmsg'], false);
@@ -513,7 +530,7 @@ if ($action == 'profile') {
         redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
 
-    if (!isset($favadd) && !isset($favsubmit)) {
+    if (!$favadd && noSubmit('favsubmit')) {
         $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM $table_favorites f, $table_threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC");
         $favnum = 0;
         $favs = '';
@@ -549,16 +566,13 @@ if ($action == 'profile') {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
 
-
-
         eval('echo stripslashes("'.template('memcp_favs').'");');
     }
 
-    if (!isset($favadd) && isset($favsubmit)) {
+    if (!$favadd && onSubmit('favsubmit')) {
         $query = $db->query("SELECT tid FROM $table_favorites WHERE username='$xmbuser' AND type='favorite'");
         while ($fav = $db->fetch_array($query)) {
-            $delete = "delete" .$fav['tid']. "";
-            $delete = isset($_POST[$delete]) ? intval($_POST[$delete]) : 0;
+            $delete = formInt('delete'.$fav['tid']);
             $db->query("DELETE FROM $table_favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
         }
 
@@ -570,7 +584,8 @@ if ($action == 'profile') {
 
     makenav($action);
 
-    if (!isset($subadd) && !isset($subsubmit)) {
+    $subadd = getInt('subadd');
+    if (!$subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM $table_favorites f, $table_threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC");
         $subnum = 0;
         $subscriptions = '';
@@ -605,23 +620,20 @@ if ($action == 'profile') {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
 
-
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
-    } elseif (isset($subadd) && !isset($subsubmit)) {
+    } elseif ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT count(tid) FROM $table_favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
-
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO $table_favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
             echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
             redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
         }
-    } elseif (!isset($subadd) && isset($subsubmit)) {
+    } elseif (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM $table_favorites WHERE username='$xmbuser' AND type='subscription'");
         while ($sub = $db->fetch_array($query)) {
-            $delete = "delete" .$sub['tid']. "";
-            $delete = isset($_POST[$delete]) ? intval($_POST[$delete]) : 0;
+            $delete = formInt('delete'.$sub['tid']);
             $db->query("DELETE FROM $table_favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
 
@@ -671,7 +683,6 @@ if ($action == 'profile') {
 
     $query = $db->query("SELECT * FROM $table_members WHERE username='$xmbuser'");
     $member = $db->fetch_array($query);
-
 
     if ($member['avatar'] == '') {
         $member['avatar'] = '';
