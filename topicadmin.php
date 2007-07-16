@@ -34,6 +34,7 @@ $_fid = (isset($_POST['fid']) ? $_POST['fid'] : (isset($_GET['fid']) ? $_GET['fi
 $pid = (isset($pid) ? (int) $pid : 0);
 $fid = (isset($_fid) ? (int) $_fid : 0);
 $othertid = (isset($othertid) ? (int) $othertid : 0);
+$action = (isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : ''));
 
 if (is_array($_tid)) {
     $tids = array_unique(array_map('intval', $_tid));
@@ -160,7 +161,7 @@ $mod = new mod();
 switch ($action) {
     case 'delete':
         $mod->statuscheck($fid);
-        if (!isset($_POST['deletesubmit'])) {
+        if (noSubmit('deletesubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_delete').'");');
         } else {
@@ -198,7 +199,7 @@ switch ($action) {
         $closed = $db->result($query, 0);
         $db->free_result($query);
 
-        if (!isset($_POST['closesubmit'])) {
+        if (noSubmit('closesubmit')) {
             if ($closed == 'yes') {
                 $lang['textclosethread'] = $lang['textopenthread'];
             } elseif ($closed == '') {
@@ -223,12 +224,10 @@ switch ($action) {
 
     case 'f_close':
         $mod->statuscheck($fid);
-        if (!isset($_POST['closesubmit'])) {
+        if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
-        }
-
-        if (isset($_POST['closesubmit'])) {
+        } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
                 $db->query("UPDATE $table_threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
@@ -242,13 +241,11 @@ switch ($action) {
 
     case 'f_open':
         $mod->statuscheck($fid);
-        if (!isset($_POST['closesubmit'])) {
+        if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $lang['textclosethread'] = $lang['textopenthread'];
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
-        }
-
-        if (isset($_POST['closesubmit'])) {
+        } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $db->query("UPDATE $table_threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
@@ -261,7 +258,7 @@ switch ($action) {
 
     case 'move':
         $mod->statuscheck($fid);
-        if (!isset($_POST['movesubmit'])) {
+        if (noSubmit('movesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('moveto', false, false, $fid);
             eval('echo stripslashes("'.template('topicadmin_move').'");');
@@ -287,16 +284,16 @@ switch ($action) {
                         $query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
                         $info = $db->fetch_array($query);
 
-                        $db->query("INSERT INTO $table_threads (tid, fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('', '$info[fid]', '$info[subject]', '', '$info[lastpost]', '-', '-', '$info[author]', 'moved|$info[tid]', '$info[topped]')");
+                        $db->query("INSERT INTO $table_threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$info[fid]', '$info[subject]', '', '$info[lastpost]', 0, 0, '$info[author]', 'moved|$info[tid]', '$info[topped]')");
                         $ntid = $db->insert_id();
 
-                        $db->query("INSERT INTO $table_posts (fid, tid, pid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ('$info[fid]', '$ntid', '', '$info[author]', '$info[tid]', '$info[subject]', '', '', '', '', '', '')");
+                        $db->query("INSERT INTO $table_posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ('$info[fid]', '$ntid', '$info[author]', '$info[tid]', '$info[subject]', 0, '', '', '', '', '')");
                         $db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
                         $db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
                     }
                     updatethreadcount($tid);
                     $f = "$fid -> $moveto";
-                    $mod->log($xmbuser, $action, $f, $tid);
+                    $mod->log($xmbuser, $action, $moveto, $tid);
                 }
             } else {
                 echo '<center><span class="mediumtxt">'.$lang['errormovingthreads'].'</span></center>';
@@ -318,7 +315,7 @@ switch ($action) {
 
     case 'top':
         $mod->statuscheck($fid);
-        if (!isset($_POST['topsubmit'])) {
+        if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
                 $query = $db->query("SELECT topped FROM $table_threads WHERE fid='$fid' AND tid='$tid'");
                 $topped = $db->result($query, 0);
@@ -413,7 +410,7 @@ switch ($action) {
 
     case 'bump':
         $mod->statuscheck($fid);
-        if (!isset($_POST['bumpsubmit'])) {
+        if (noSubmit('bumpsubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_bump').'");');
         } else {
@@ -432,7 +429,7 @@ switch ($action) {
 
     case 'empty':
         $mod->statuscheck($fid);
-        if (!isset($_POST['emptysubmit'])) {
+        if (noSubmit('emptysubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_empty').'");');
         } else {
@@ -463,7 +460,7 @@ switch ($action) {
 
     case 'split':
         $mod->statuscheck($fid);
-        if (!isset($splitsubmit)) {
+        if (noSubmit('splitsubmit')) {
             $query = $db->query("SELECT replies FROM $table_threads WHERE tid='$tid'");
             $replies = $db->result($query, 0);
 
@@ -482,11 +479,18 @@ switch ($action) {
             }
             eval('echo stripslashes("'.template('topicadmin_split').'");');
         } else {
-            $subject = trim($subject);
+            $subject = formVar('subject');
             if ($subject == '') {
                 error($lang['textnosubject'], false);
             }
             $subject = addslashes($subject);
+
+            $chkInputHTML = 'no';
+            $chkInputTags = 'no';
+            if (isset($forums['allowhtml']) && $forums['allowhtml'] == 'yes') {
+                $chkInputHTML = 'yes';
+                $chkInputTags = 'no';
+            }
             $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
 
             $firstsubject = false;
@@ -496,7 +500,7 @@ switch ($action) {
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
                 $thatime = $onlinetime;
                 if (!$firstsubject) {
-                    $db->query("INSERT INTO $table_threads (tid, fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('', '$fid', '$subject', '', '$thatime|$xmbuser', '0', '0', '$xmbuser', '', '')");
+                    $db->query("INSERT INTO $table_threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
                     $newtid = $db->insert_id();
                     $firstsubject = 1;
                 }
@@ -521,7 +525,7 @@ switch ($action) {
             $lastpost = $db->fetch_array($query);
             $db->query("UPDATE $table_threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
 
-            $mod->log($xmbuser, $action, $fid, "$tid, $newtid");
+            $mod->log($xmbuser, $action, $fid, $tid);
 
             echo '<center><span class="mediumtxt">'.$lang['splitthreadmsg'].'</span></center>';
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
@@ -530,7 +534,7 @@ switch ($action) {
 
     case 'merge':
         $mod->statuscheck($fid);
-        if (!isset($mergesubmit)) {
+        if (noSubmit('mergesubmit')) {
             eval('echo stripslashes("'.template('topicadmin_merge').'");');
         } else {
             if ($tid == $othertid) {
@@ -574,7 +578,7 @@ switch ($action) {
 
     case 'threadprune':
         $mod->statuscheck($fid);
-        if (!isset($threadprunesubmit)) {
+        if (noSubmit('threadprunesubmit')) {
             $query = $db->query("SELECT replies FROM $table_threads WHERE tid='$tid'");
             $replies = $db->result($query, 0);
             $db->free_result($query);
@@ -677,12 +681,12 @@ switch ($action) {
 
     case 'copy':
         $mod->statuscheck($fid);
-        if (!isset($_POST['copysubmit'])) {
+        if (noSubmit('copysubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('newfid', false, false);
             eval('echo stripslashes("'.template('topicadmin_copy').'");');
         } else {
-            if (!isset($newfid) || (int)$newfid < 1) {
+            if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);
             }
 
@@ -754,7 +758,7 @@ switch ($action) {
                     $db->query("INSERT INTO $table_attachments (`tid`,`pid`,`filename`,`filetype`,`filesize`,`attachment`,`downloads`) SELECT '$newtid','$newpid',`filename`,`filetype`,`filesize`,`attachment`,`downloads` FROM $table_attachments WHERE pid='$oldPid'");
                 }
 
-                $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
+                $mod->log($xmbuser, $action, $fid, $tid);
             }
             echo '<center><span class="mediumtxt">'.$lang['copythreadmsg'].'</span></center>';
 
@@ -770,7 +774,7 @@ switch ($action) {
             exit;
         }
 
-        if (!isset($reportsubmit)) {
+        if (noSubmit('reportsubmit')) {
             eval('echo stripslashes("'.template('topicadmin_report').'");');
         } else {
             $postcount = $db->result($db->query("SELECT count(pid) FROM $table_posts WHERE tid='$tid'"), 0);
@@ -791,10 +795,10 @@ switch ($action) {
                 $page = quickpage($postcount, $db->result($q, 0));
 
                 $posturl = $SETTINGS['boardurl']."viewthread.php?tid=$tid&page=$page#pid$pid";
-                $reason = checkInput($reason);
+                $reason = formVar('reason');
                 $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
 
-                $db->query("INSERT INTO $table_u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$mod', '$self[username]', 'incoming', '$mod', 'Inbox', '$lang[reportsubject]', '$message', $db->time($time), 'no', 'yes')");
+                $db->query("INSERT INTO $table_u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$self[username]', 'incoming', '$mod', 'Inbox', '$lang[reportsubject]', '$message', ".$db->time($time).", 'no', 'yes')");
                 $sent++;
             }
             echo "<center><span class=\"mediumtxt\">$lang[reportmsg]</span></center>";
@@ -811,7 +815,7 @@ switch ($action) {
         }
 
         // User voted in poll related to thread $tid. The vote option is contained in $postopnum
-        $postopnum = (isset($postopnum) && is_numeric($postopnum)) ? (int)$postopnum : 0;
+        $postopnum = formInt('postopnum');
         if ($postopnum === 0) {
             error($lang['pollvotenotselected'], false);
         }
