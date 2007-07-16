@@ -4064,7 +4064,7 @@ $posts
 
 |#*XMB TEMPLATE FILE*#|post_edit|#*XMB TEMPLATE*#|
 $preview
-<form method="post" name="input" action="post.php?action=edit" enctype="multipart/form-data">
+<form method="post" name="input" action="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$pid" enctype="multipart/form-data">
 <input type="hidden" name="username" value="$xmbuser" />
 <input type="hidden" name="password" value="$xmbpw" />
 
