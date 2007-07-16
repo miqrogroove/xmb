@@ -679,7 +679,7 @@ if (!$action) {
 
     header("Content-type: $type");
     header("Content-length: $size");
-    header("Content-Disposition: inline; filename=$name");
+    header("Content-Disposition: attachment; filename=$name");
     header("Content-Description: XMB Attachment");
     header("Cache-Control: public; max-age=604800");
     header("Expires: 604800");
