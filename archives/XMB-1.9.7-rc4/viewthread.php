@@ -674,7 +674,7 @@ if (!$action) {
     // Put out headers for mime-type, filesize, forced-download, description and no-cache.
     header("Content-type: $type");
     header("Content-length: $size");
-    header("Content-Disposition: inline; filename=$name");
+    header("Content-Disposition: attachment; filename=$name");
     header("Content-Description: XMB Attachment");
     header("Cache-Control: public; max-age=604800"); // http 1.1
     header("Expires: 604800"); // http 1.0
