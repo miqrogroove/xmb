@@ -30,12 +30,13 @@ require_once('header.php');
 
 validatePpp();
 
-$pid = (isset($pid) && is_numeric($pid)) ? (int) $pid : 0;
-$tid = (isset($tid) && is_numeric($tid)) ? (int) $tid : 0;
-$fid = (isset($fid) && is_numeric($fid)) ? (int) $fid : 0;
-$page = (isset($page) && is_numeric($page)) ? (int) $page : 1;
+$pid = getInt('pid');
+$tid = getInt('tid');
+$page = getInt('page');
+$goto = getVar('goto');
+$action = getVar('action');
 
-if (isset($goto) && $goto == 'lastpost') {
+if ($goto == 'lastpost') {
     if ($pid > 0) {
         if($tid == 0) {
             $tid = $db->result($db->query("SELECT tid FROM $table_posts WHERE pid=$pid"), 0);
@@ -294,7 +295,7 @@ if (!$action) {
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
-    if (isset($page)) {
+    if ($page) {
         if ($page < 1) {
             $page = 1;
         }
