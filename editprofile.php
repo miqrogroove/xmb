@@ -204,8 +204,8 @@ if (noSubmit('editsubmit')) {
     $emailonu2u     = formYesNo('emailonu2u');
     $useoldu2u      = formYesNo('useoldu2u');
     $invisible      = formInt('newinv');
-    $showemail      = formYesNo('showemail');
-    $newsletter     = formYesNo('newsletter');
+    $showemail      = formYesNo('newshowemail');
+    $newsletter     = formYesNo('newnewsletter');
 
     $year           = formInt('year');
     $month          = formInt('month');
