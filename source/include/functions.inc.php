@@ -305,13 +305,12 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $replacements[] = '<div style="text-align: $1;">$2</div>';
 
         if ($allowimgcode != 'no' && $allowimgcode != 'off') {
-            //if (false == strpos($message, 'javascript:')) {
-            if ((stristr($message, 'javascript:') || stristr($message, 'jpg[/img]') || stristr($message, 'jpeg[/img]') || stristr($message, 'gif[/img]') || stristr($message, 'png[/img]') || stristr($message, 'bmp[/img]') || stristr($message, 'php[/img]'))) {
+            if (false == strpos($message, 'javascript:')) {
                 $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}(\?[a-z=_\-0-9&;~]*)?\[/img\]#Smi';
-                $replacements[] = '<img src="\1://\2\3" alt="\1://\2\3" title="\1://\2\3" border="0" />';
+                $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
 
                 $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
-                $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" title="\3://\4\5" border="0" />';
+                $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
 
                 $patterns[] = "#\[flash=([0-9]*?){1}x([0-9]*?)\]([^\"'<>]*?)\[/flash\]#Ssi";
                 $replacements[] = '<object type="application/x-shockwave-flash" data="$3" width="$1" height="$2"><param name="movie" value="$3" /><param name="AllowScriptAccess" value="never" /></object>';
