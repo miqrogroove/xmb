@@ -52,8 +52,7 @@ if (!defined('IN_CODE')) {
 * @package UltimaBB
 * @license  GPL
 */
-class page_token
-{
+class page_token {
     /**
     * @access private
     * @var mixed
@@ -77,8 +76,7 @@ class page_token
     *
     * Sets all the class variables to their needed values
     */
-    function init()
-    {
+    function init() {
         $this->pageToken = $this->get_page_token();
         $this->sessionToken = $this->get_session_token();
         $this->newToken = md5(sha1(uniqid(rand(), true)));
@@ -91,8 +89,7 @@ class page_token
     * @param   string   $token   the token to set the 'token' variable as
     * @return   string   the token that was retrieved
     */
-    function set_session_token($token)
-    {
+    function set_session_token($token) {
         $_SESSION['token'] = $token;
         return $token;
     }
@@ -102,8 +99,7 @@ class page_token
     *
     * @return   string   the token that was retrieved
     */
-    function get_page_token()
-    {
+    function get_page_token() {
         return getRequestVar('token');
     }
 
@@ -112,8 +108,7 @@ class page_token
     *
     * @return   mixed   the token that was retrieved if it's set, false otherwise
     */
-    function get_session_token()
-    {
+    function get_session_token() {
         return (isset($_SESSION['token'])) ? $_SESSION['token'] : false;
     }
 
@@ -122,8 +117,7 @@ class page_token
     *
     * @return   string   the new token
     */
-    function get_new_token()
-    {
+    function get_new_token() {
         return $this->newToken;
     }
 
@@ -132,12 +126,10 @@ class page_token
     *
     * @return   boolean   true no matter what
     */
-    function assert_token()
-    {
+    function assert_token() {
         global $lang;
 
-        if ($this->sessionToken === false || $this->pageToken === false || $this->sessionToken !== $this->pageToken)
-        {
+        if ($this->sessionToken === false || $this->pageToken === false || $this->sessionToken !== $this->pageToken) {
             error($lang['textnoaction'], false);
         }
         // This old token has been used - prevent reuse
@@ -152,16 +144,13 @@ class page_token
 *
 * @return   boolean   true if the e-mail address is valid, false otherwise
 */
-function isValidEmail($addr)
-{
+function isValidEmail($addr) {
     $emailPattern = "^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$";
     $emailValid = false;
 
-    if (eregi($emailPattern, $addr))
-    {
+    if (eregi($emailPattern, $addr)) {
         // Under Windows, PHP does not possess getmxrr(), so we skip it
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
-        {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $emailValid = true;
             break;
         }
@@ -172,8 +161,7 @@ function isValidEmail($addr)
 
         // Check if the site has an MX record. We can't send unless there is.
         $mxrecords = '';
-        if (getmxrr($domain, $mxrecords))
-        {
+        if (getmxrr($domain, $mxrecords)) {
             $emailValid = true;
         }
     }
@@ -187,12 +175,10 @@ function isValidEmail($addr)
 *
 * @return   boolean   true if the submit is present, false otherwise
 */
-function onSubmit($submitname)
-{
+function onSubmit($submitname) {
     $retval = (isset($_POST[$submitname]) && !empty($_POST[$submitname]));
 
-    if (!$retval)
-    {
+    if (!$retval) {
         $retval = (isset($_GET[$submitname]) && !empty($_GET[$submitname]));
     }
 
@@ -206,8 +192,7 @@ function onSubmit($submitname)
 *
 * @return   boolean   true if the no submit is present, false otherwise
 */
-function noSubmit($submitname)
-{
+function noSubmit($submitname) {
     return (!onSubmit($submitname));
 }
 
@@ -219,23 +204,17 @@ function noSubmit($submitname)
 * @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
 * @return   string   the "safe" string if the variable is available, empty otherwise
 */
-function formVar($varname, $striptags = true, $quotes = false)
-{
+function formVar($varname, $striptags = true, $quotes = false) {
     $retval = '';
-    if (isset($_POST[$varname]) && $_POST[$varname] !== '')
-    {
+    if (isset($_POST[$varname]) && $_POST[$varname] !== '') {
         $retval = trim($_POST[$varname]);
-        if ($striptags)
-        {
+        if ($striptags) {
             $retval = strip_tags($retval);
         }
 
-        if ($quotes)
-        {
+        if ($quotes) {
             $retval = htmlspecialchars($retval, ENT_QUOTES);
-        }
-        else
-        {
+        } else {
             $retval = htmlspecialchars($retval, ENT_NOQUOTES);
         }
     }
@@ -258,45 +237,33 @@ function formVar($varname, $striptags = true, $quotes = false)
 * @param   string   $type   'string' or 'int' to specify what needs to be done to the values
 * @return   array   the array found for $varname, empty otherwise
 */
-function formArray($varname, $striptags = true, $quotes = false, $type = 'string')
-{
+function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
     $arrayItems = array();
     // Convert a single or comma delimited list to an array
-    if (isset($_POST[$varname]) && !is_array($_POST[$varname]))
-    {
-        if (strpos($_POST[$varname], ',') !== false)
-        {
+    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
+        if (strpos($_POST[$varname], ',') !== false) {
             $_POST[$varname] = explode(',', $_POST[$varname]);
-        }
-        else
-        {
+        } else {
             $_POST[$varname] = array($_POST[$varname]);
         }
     }
 
-    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0)
-    {
+    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
         $arrayItems = $_POST[$varname];
-        foreach ($arrayItems as $item => $theObject)
-        {
+        foreach ($arrayItems as $item => $theObject) {
             $theObject = & $arrayItems[$item];
-            switch ($type)
-            {
+            switch ($type) {
                 case 'int':
                     $theObject = intval($theObject);
                     break;
                 case 'string':
                 default:
-                    if ($striptags)
-                    {
+                    if ($striptags) {
                         $theObject = strip_tags($theObject);
                     }
-                    if ($quotes)
-                    {
+                    if ($quotes) {
                         $theObject = htmlspecialchars($theObject, ENT_QUOTES);
-                    }
-                    else
-                    {
+                    } else {
                         $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
                     }
                     break;
@@ -315,19 +282,15 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
 * @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
 * @return   string   the "safe" string if the variable is available, empty otherwise
 */
-function getVar($varname, $striptags = true, $quotes = true)
-{
+function getVar($varname, $striptags = true, $quotes = true) {
     $retval = '';
-    if (isset($_GET[$varname]) && $_GET[$varname] !== '')
-    {
+    if (isset($_GET[$varname]) && $_GET[$varname] !== '') {
         $retval = urldecode(trim($_GET[$varname]));
-        if ($striptags)
-        {
+        if ($striptags) {
             $retval = strip_tags($retval);
         }
 
-        if ($quotes)
-        {
+        if ($quotes) {
             $retval = htmlspecialchars($retval, ENT_QUOTES);
         }
     }
@@ -340,11 +303,9 @@ function getVar($varname, $striptags = true, $quotes = true)
 * @param   string   $varname   name of the variable in $_GET
 * @return   integer   the "safe" integer if the variable is available, zero otherwise
 */
-function getInt($varname)
-{
+function getInt($varname) {
     $retval = 0;
-    if (isset($_GET[$varname]) && is_numeric($_GET[$varname]))
-    {
+    if (isset($_GET[$varname]) && is_numeric($_GET[$varname])) {
         $retval = (int) $_GET[$varname];
     }
     return $retval;
@@ -356,11 +317,9 @@ function getInt($varname)
 * @param   string   $varname   name of the variable in $_REQUEST
 * @return   integer   the "safe" integer if the variable is available, zero otherwise
 */
-function getRequestInt($varname)
-{
+function getRequestInt($varname) {
     $retval = 0;
-    if (isset($_REQUEST[$varname]) && is_numeric($_REQUEST[$varname]))
-    {
+    if (isset($_REQUEST[$varname]) && is_numeric($_REQUEST[$varname])) {
         $retval = intval($_REQUEST[$varname]);
     }
     return $retval;
@@ -372,8 +331,7 @@ function getRequestInt($varname)
 * @param   string   $varname   name of the variable in $_REQUEST
 * @return   mixed   the value of $varname, false otherwise
 */
-function getRequestVar($varname)
-{
+function getRequestVar($varname) {
     return (isset($_REQUEST[$varname])) ? $_REQUEST[$varname] : false;
 }
 
@@ -384,19 +342,14 @@ function getRequestVar($varname)
 * @param   boolean   $setZero   should the return be set to zero if the variable doesnt exist?
 * @return   mixed   the "safe" integer or zero, empty string otherwise
 */
-function formInt($varname, $setZero = true)
-{
-    if ($setZero)
-    {
+function formInt($varname, $setZero = true) {
+    if ($setZero) {
         $retval = 0;
-    }
-    else
-    {
+    } else {
         $retval = '';
     }
 
-    if (isset($_POST[$varname]) && is_numeric($_POST[$varname]))
-    {
+    if (isset($_POST[$varname]) && is_numeric($_POST[$varname])) {
         $retval = (int) $_POST[$varname];
     }
     return $retval;
@@ -413,24 +366,19 @@ function formInt($varname, $setZero = true)
 * @param   string   $varname   the form field to find and sanitize
 * @return   mixed   false if not set or no elements, an array() of integers otherwise
 */
-function getFormArrayInt($varname, $doCount = true)
-{
-    if (!isset($_POST[$varname]) || empty($_POST[$varname]))
-    {
+function getFormArrayInt($varname, $doCount = true) {
+    if (!isset($_POST[$varname]) || empty($_POST[$varname])) {
         return false;
     }
     $retval = $_POST[$varname];
 
-    if ($doCount)
-    {
-        if (count($retval) == 1)
-        {
+    if ($doCount) {
+        if (count($retval) == 1) {
             $retval = array($retval);
         }
     }
 
-    foreach ($retval as $bits => $value)
-    {
+    foreach ($retval as $bits => $value) {
         $value = intval($value);
     }
     return $retval;
@@ -442,11 +390,9 @@ function getFormArrayInt($varname, $doCount = true)
 * @param   string   $varname   name of the variable
 * @return   integer   the "safe" integer if available, zero otherwise
 */
-function valInt($varname)
-{
+function valInt($varname) {
     $retval = 0;
-    if (isset($varname) && is_numeric($varname))
-    {
+    if (isset($varname) && is_numeric($varname)) {
         $retval = (int) $varname;
     }
     return $retval;
@@ -458,10 +404,8 @@ function valInt($varname)
 * @param   string   $varname   name of the variable in $_POST
 * @return   string   on if set to on, off otherwise
 */
-function formOnOff($varname)
-{
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'on')
-    {
+function formOnOff($varname) {
+    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'on') {
         return 'on';
     }
     return 'off';
@@ -473,10 +417,8 @@ function formOnOff($varname)
 * @param   string   $varname   name of the variable in $_POST
 * @return   string   yes if set to yes, no otherwise
 */
-function formYesNo($varname)
-{
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'yes')
-    {
+function formYesNo($varname) {
+    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'yes') {
         return 'yes';
     }
     return 'no';
@@ -489,15 +431,12 @@ function formYesNo($varname)
 * @param   boolean   $glob   is this variable also a global?
 * @return   string   yes if set to yes, no otherwise
 */
-function valYesNo($varname, $glob = true)
-{
-    if ($glob)
-    {
+function valYesNo($varname, $glob = true) {
+    if ($glob) {
         global $varname;
     }
 
-    if (isset($varname) && strtolower($varname) == 'yes')
-    {
+    if (isset($varname) && strtolower($varname) == 'yes') {
         return 'yes';
     }
     return 'no';
@@ -509,8 +448,7 @@ function valYesNo($varname, $glob = true)
 * @param   string   $varname   name of the variable in $_POST
 * @return   integer   1 if set to 1, 0 otherwise
 */
-function form10($varname)
-{
+function form10($varname) {
     return(formInt($varname) == 1) ? 1 : 0;
 }
 
@@ -520,10 +458,8 @@ function form10($varname)
 * @param   string   $varname   name of the variable in $_POST
 * @return   boolean   true if set to true, false otherwise
 */
-function formBool($varname)
-{
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == "true")
-    {
+function formBool($varname) {
+    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == "true") {
         return 'true';
     }
     return 'false';
@@ -536,8 +472,7 @@ function formBool($varname)
 * @param   string   $compare   is $compare equal to $varname?
 * @return   string   checked html if $compare is equal to $varname, empty otherwise
 */
-function isChecked($varname, $compare = 'yes')
-{
+function isChecked($varname, $compare = 'yes') {
     return(($varname == $compare) ? 'checked="checked"' : '');
 }
 
@@ -547,9 +482,50 @@ function isChecked($varname, $compare = 'yes')
 * @param   array   $matches   matches from preg_replace_callback in checkInput()
 * @return   string   the "safe" string
 */
-function cleanHtml($matches)
-{
+function cleanHtml($matches) {
     $string = htmlentities($matches[0], ENT_QUOTES);
     return $string;
+}
+
+
+function encode_ip($dotquad_ip) {
+    $ip_sep = explode('.', $dotquad_ip);
+    return sprintf('%02x%02x%02x%02x', $ip_sep[0], $ip_sep[1], $ip_sep[2], $ip_sep[3]);
+}
+
+function createLangFileSelect($currentLangFile) {
+    $lfs = array();
+    $dir = opendir(ROOT.'lang/');
+    while ($file = readdir($dir)) {
+        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
+            $file = str_replace('.lang.php', '', $file);
+            if ($file == $currentLangFile) {
+                $lfs[] = '<option value="'.md5($file).'" selected="selected">'.$file.'</option>';
+            } else {
+                $lfs[] = '<option value="'.md5($file).'">'.$file.'</option>';
+            }
+        }
+    }
+    natcasesort($lfs);
+    return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
+}
+
+function getLangFileNameFromHash($ordinal) {
+    global $member;
+
+    $dir = opendir(ROOT.'lang/');
+    while ($file = readdir($dir)) {
+        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
+            $file = str_replace('.lang.php', '', $file);
+            if (md5($file) == $ordinal) {
+                return $file;
+            }
+        }
+    }
+    return false;
+}
+
+function isValidFilename($filename) {
+    return preg_match('#^[^:\\/?*<>|]+$#', trim($filename));
 }
 ?>
