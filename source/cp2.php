@@ -1578,7 +1578,7 @@ if ($action == "templates") {
         while (list($key,$val) = each($templates)) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
-            $db->query("INSERT INTO $table_templates (id, name, template) VALUES ('', '".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $db->query("INSERT INTO $table_templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
 
         $db->query("DELETE FROM $table_templates WHERE name=''");
