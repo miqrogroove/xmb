@@ -289,6 +289,8 @@ while($thread = $db->fetch_array($querytop)) {
 
     if ($thread['pollopts'] == 1) {
         $prefix = "$lang[pollprefix] ";
+    } else {
+        $prefix = '';
     }
 
     if ($thread['topped'] == 1) {
