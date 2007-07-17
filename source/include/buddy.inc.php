@@ -44,7 +44,7 @@ function blistmsg($message, $redirect='', $exit=false) {
 }
 
 function buddy_add($buddys) {
-    global $db, $table_buddys, $table_members, $lang, $xmbuser;
+    global $db, $table_buddys, $table_members, $lang, $xmbuser, $oToken;
 
     if (!is_array($buddys)) {
         $buddys = array($buddys);
@@ -81,7 +81,7 @@ function buddy_add($buddys) {
 }
 
 function buddy_edit() {
-    global $db, $table_buddys, $lang, $xmbuser;
+    global $db, $table_buddys, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
@@ -101,7 +101,7 @@ function buddy_edit() {
 }
 
 function buddy_delete($delete) {
-    global $db, $table_buddys, $lang, $xmbuser;
+    global $db, $table_buddys, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     foreach ($delete as $key=>$buddy) {
@@ -113,7 +113,7 @@ function buddy_delete($delete) {
 }
 
 function buddy_addu2u() {
-    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser;
+    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $users = array();
@@ -144,7 +144,7 @@ function buddy_addu2u() {
 }
 
 function buddy_display() {
-    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser;
+    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM $table_buddys b LEFT JOIN $table_whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");

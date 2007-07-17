@@ -32,7 +32,7 @@ if (!defined('IN_CODE')) {
 
 class mod {
     function mod() {
-        global $self, $xmbuser, $xmbpw, $lang, $action;
+        global $self, $xmbuser, $xmbpw, $lang, $action, $oToken;
 
         if (!X_STAFF && $action != 'votepoll' && $action != 'report') {
             extract($GLOBALS);
@@ -41,7 +41,7 @@ class mod {
     }
 
     function statuscheck($fid) {
-        global $self, $xmbuser, $lang, $table_forums, $db;
+        global $self, $xmbuser, $lang, $table_forums, $db, $oToken;
 
         $query = $db->query("SELECT moderator FROM $table_forums WHERE fid='$fid'");
         $mods = $db->result($query, 0);
@@ -58,7 +58,7 @@ class mod {
     }
 
     function log($user='', $action, $fid, $tid, $reason='') {
-        global $xmbuser, $db, $table_logs;
+        global $xmbuser, $db, $table_logs, $oToken;
 
         if ($user == '') {
             $user = $xmbuser;
