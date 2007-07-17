@@ -235,7 +235,7 @@ class admin {
 
         $nameokay = true;
 
-        $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'', ' ');
+        $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'');
         foreach ($find as $needle) {
             if (false !== strpos($userto, $needle)) {
                 return false;
