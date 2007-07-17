@@ -41,7 +41,7 @@ function u2u_msg($msg, $redirect) {
 }
 
 function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent) {
-    global $db, $table_u2u, $onlinetime;
+    global $db, $table_u2u, $onlinetime, $oToken;
 
     $subject = checkInput(censor(addslashes($subject)));
     $message = checkInput(censor(addslashes($message)));
@@ -61,7 +61,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
 }
 
 function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
-    global $db, $table_members, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $table_u2u, $del;
+    global $db, $table_members, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $table_u2u, $del, $oToken;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
@@ -100,7 +100,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
 
 function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $db, $self, $lang, $username, $SETTINGS, $table_u2u, $del;
-    global $u2uheader, $u2ufooter, $u2ucount, $u2uquota;
+    global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
@@ -191,7 +191,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
 function u2u_view($u2uid, $folders) {
     global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang;
-    global $table_u2u, $self;
+    global $table_u2u, $self, $oToken;
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
     global $sendoptions, $u2uheader, $u2ufooter;
 
@@ -251,7 +251,7 @@ function u2u_view($u2uid, $folders) {
 }
 
 function u2u_print($u2uid, $eMail = false) {
-    global $SETTINGS, $css, $db, $self, $table_u2u, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo;
+    global $SETTINGS, $css, $db, $self, $table_u2u, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken;
     $mailHeader = $mailFooter = '';
 
     $u2uid = (int) $u2uid;
@@ -293,7 +293,7 @@ function u2u_print($u2uid, $eMail = false) {
 
 function u2u_delete($u2uid, $folder) {
     global $db, $self, $table_u2u, $lang;
-    global $u2uheader, $u2ufooter;
+    global $u2uheader, $u2ufooter, $oToken;
 
     $u2uid = (int) $u2uid;
 
@@ -311,7 +311,7 @@ function u2u_delete($u2uid, $folder) {
 }
 
 function u2u_mod_delete($folder, $u2u_select) {
-    global $db, $self, $table_u2u, $lang;
+    global $db, $self, $table_u2u, $lang, $oToken;
 
     $in = '';
     foreach ($u2u_select as $value) {
@@ -328,7 +328,7 @@ function u2u_mod_delete($folder, $u2u_select) {
 }
 
 function u2u_move($u2uid, $tofolder) {
-    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder;
+    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder, $oToken;
 
     $u2uid = (int) $u2uid;
 
@@ -349,7 +349,7 @@ function u2u_move($u2uid, $tofolder) {
 }
 
 function u2u_mod_move($tofolder, $u2u_select) {
-    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders;
+    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders, $oToken;
 
     $in = '';
     foreach ($u2u_select as $value) {
@@ -372,7 +372,7 @@ function u2u_mod_move($tofolder, $u2u_select) {
 }
 
 function u2u_markUnread($u2uid, $folder, $type) {
-    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter;
+    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $oToken;
 
     $u2uid = (int) $u2uid;
 
@@ -395,7 +395,7 @@ function u2u_markUnread($u2uid, $folder, $type) {
 }
 
 function u2u_mod_markUnread($folder, $u2u_select) {
-    global $db, $table_u2u, $lang, $u2uheader, $u2ufooter, $self;
+    global $db, $table_u2u, $lang, $u2uheader, $u2ufooter, $self, $oToken;
 
     if (empty($folder)) {
         error($lang['textnofolder'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
@@ -427,7 +427,7 @@ function u2u_mod_markUnread($folder, $u2u_select) {
 }
 
 function u2u_folderSubmit($u2ufolders, $folders) {
-    global $db, $lang, $self, $table_members, $farray;
+    global $db, $lang, $self, $table_members, $farray, $oToken;
 
     $error = '';
 
@@ -452,7 +452,7 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 }
 
 function u2u_ignore() {
-    global $ignorelist, $ignoresubmit, $self, $lang, $db, $table_members;
+    global $ignorelist, $ignoresubmit, $self, $lang, $db, $table_members, $oToken;
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
 
     $leftpane = '';
@@ -470,7 +470,7 @@ function u2u_ignore() {
 function u2u_display($folder, $folders) {
     global $db, $self, $table_u2u, $table_whosonline, $lang;
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
-    global $addtime, $timeoffset, $dateformat, $timecode;
+    global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
     $u2usin = $u2usout = $u2usdraft = $leftpane = '';
 
@@ -590,7 +590,7 @@ function u2u_display($folder, $folders) {
 }
 
 function u2u_folderList() {
-    global $db, $self, $lang, $table_u2u, $altbg1;
+    global $db, $self, $lang, $table_u2u, $altbg1, $oToken;
     global $folder, $folderlist, $folders, $farray; // <--- these are modified in here
 
     $u2ucount = 0;
