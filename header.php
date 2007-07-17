@@ -158,6 +158,8 @@ if (!file_exists(ROOT.'db/'.$database.'.php')) {
     die('Error: XMB is not installed, or is configured incorrectly. <a href="install/index.php">Click Here to install XMB</a>');
 }
 require_once(ROOT.'db/'.$database.'.php');
+$oToken = new page_token();
+$oToken->init();
 require_once(ROOT.'include/functions.inc.php');
 
 // initialize navigation
