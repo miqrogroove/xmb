@@ -417,8 +417,8 @@ function privfcheck($private, $userlist) {
 }
 
 function forum($forum, $template) {
-    global $timecode, $dateformat, $lang, $xmbuser, $self, $timeoffset, $THEME, $SETTINGS;
-    global $altbg1, $altbg2, $imgdir, $lastvisit, $lastvisit2, $oldtopics;
+    global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
+    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
 
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
