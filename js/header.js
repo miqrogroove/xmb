@@ -1,43 +1,43 @@
 // <![CDATA[
 
 function setCheckboxes(the_form, the_elements, do_check) {
-	if (document.forms[the_form].elements[the_elements]) {
-		var elts      = document.forms[the_form].elements[the_elements];
-		var elts_cnt  = elts.length;
+    if (document.forms[the_form].elements[the_elements]) {
+        var elts      = document.forms[the_form].elements[the_elements];
+        var elts_cnt  = elts.length;
 
-		if (elts_cnt) {
-			for (var i = 0; i < elts_cnt; i++) {
-				elts[i].checked = do_check;
-			}
-		} else {
-			elts.checked = do_check;
-		}
-	}
+        if (elts_cnt) {
+            for (var i = 0; i < elts_cnt; i++) {
+                elts[i].checked = do_check;
+            }
+        } else {
+            elts.checked = do_check;
+        }
+    }
 
     return true;
 }
 
 function invertSelection(the_form, element_name) {
-	if (document.forms[the_form].elements[element_name]) {
-		var elements    = document.forms[the_form].elements[element_name];
-		var count    = elements.length;
+    if (document.forms[the_form].elements[element_name]) {
+        var elements    = document.forms[the_form].elements[element_name];
+        var count    = elements.length;
 
-		if (count) {
-			for (var i = 0; i < count; i++) {
-				if(elements[i].checked == true) {
-					elements[i].checked = false;
-				} else {
-					elements[i].checked = true;
-				}
-			}
-		} else {
-			if(elements.checked == true) {
-				elements.checked = false;
-			} else {
-				elements.checked = true;
-			}
-		}
-	}
+        if (count) {
+            for (var i = 0; i < count; i++) {
+                if(elements[i].checked == true) {
+                    elements[i].checked = false;
+                } else {
+                    elements[i].checked = true;
+                }
+            }
+        } else {
+            if(elements.checked == true) {
+                elements.checked = false;
+            } else {
+                elements.checked = true;
+            }
+        }
+    }
 
     return true;
 }
