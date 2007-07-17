@@ -915,10 +915,6 @@ function get_extension($filename) {
     }
 }
 
-function isValidFilename($filename) {
-    return preg_match('#^[^:\\/?*<>|]+$#', trim($filename));
-}
-
 function get_attached_file($file, $attachstatus, $max_size=1000000) {
     global $lang, $filename, $filetype, $filesize;
 
@@ -1315,38 +1311,6 @@ function month2text($num) {
     return $months[$num-1];
 }
 
-function createLangFileSelect($currentLangFile) {
-    $lfs = array();
-    $dir = opendir(ROOT.'lang/');
-    while ($file = readdir($dir)) {
-        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
-            $file = str_replace('.lang.php', '', $file);
-            if ($file == $currentLangFile) {
-                $lfs[] = '<option value="'.md5($file).'" selected="selected">'.$file.'</option>';
-            } else {
-                $lfs[] = '<option value="'.md5($file).'">'.$file.'</option>';
-            }
-        }
-    }
-    natcasesort($lfs);
-    return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
-}
-
-function getLangFileNameFromHash($ordinal) {
-    global $member;
-
-    $dir = opendir(ROOT.'lang/');
-    while ($file = readdir($dir)) {
-        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
-            $file = str_replace('.lang.php', '', $file);
-            if (md5($file) == $ordinal) {
-                return $file;
-            }
-        }
-    }
-    return false;
-}
-
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
     global $db, $table_forums, $self, $lang;
 
@@ -1455,10 +1419,5 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     }
     $forumselect[] = '</select>';
     return implode("\n", $forumselect);
-}
-
-function encode_ip($dotquad_ip) {
-    $ip_sep = explode('.', $dotquad_ip);
-    return sprintf('%02x%02x%02x%02x', $ip_sep[0], $ip_sep[1], $ip_sep[2], $ip_sep[3]);
 }
 ?>
