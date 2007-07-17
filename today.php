@@ -45,7 +45,7 @@ if ($todaysposts == 'off') {
     error($lang['fnasorry3'], false);
 }
 
-$daysold = formInt('daysold');
+$daysold = (isset($daysold) && is_numeric($daysold) ? (int) $daysold : 1);
 $srchfrom = $onlinetime - (86400 * $daysold);
 
 $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
