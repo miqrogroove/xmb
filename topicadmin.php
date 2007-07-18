@@ -83,7 +83,9 @@ $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forums = $db->fetch_array($query);
 $forums['name'] = stripslashes($forums['name']);
 
-if ($forums['type'] == 'forum') {
+if($fid == 0) {
+    $kill = true;
+} elseif ($forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
