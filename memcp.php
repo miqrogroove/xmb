@@ -497,7 +497,7 @@ if ($action == 'profile') {
 
             $currtime = time() - (86400*30);
             put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-            put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
+            put_cookie("xmbpw", $newpassword, $currtime, $cookiepath, $cookiedomain);
         } else {
             $pwtxt = '';
         }
