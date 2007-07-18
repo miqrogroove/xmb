@@ -96,8 +96,7 @@ window.onload = tickerstart;
 <td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" class="mediumtxt">
-<div align="center" id="tickerdiv"></div></td>
+<td bgcolor="$altbg2" class="mediumtxt"><div align="center" id="tickerdiv"></div></td>
 </tr>
 </table>
 </td>
@@ -268,53 +267,54 @@ $lang[bestmember]
 <td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
 <td bgcolor="$altbg2"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%"class="tablerow">$lang[textaim]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
+<td bgcolor="$altbg2"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[texticq]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texticq]</td>
+<td bgcolor="$altbg2"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textyahoo]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textyahoo]</td>
+<td bgcolor="$altbg2"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textmsn]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textmsn]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textlocation]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlocation]</td>
+<td bgcolor="$altbg2"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[userprofilemood]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[userprofilemood]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
 </tr>
 $avatar
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textbio]</td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttheme]</td>
-<td bgcolor="$altbg2" class="tablerow">$themelist</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttheme]</td>
+<td bgcolor="$altbg2">$themelist</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textlanguage]</td>
-<td bgcolor="$altbg2" class="tablerow">$langfileselect</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlanguage]</td>
+<td bgcolor="$altbg2">$langfileselect</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textbday]</td>
-<td bgcolor="$altbg2" class="tablerow"><select name="month">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbday]</td>
+<td bgcolor="$altbg2">
+<select name="month">
 <option value="0" $sel0>&nbsp;</option>
 <option value="1" $sel1>$lang[textjan]</option>
 <option value="2" $sel2>$lang[textfeb]</option>
@@ -333,17 +333,17 @@ $dayselect
 <input type="text" name="year" size="4" value="$year" />
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttpp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="tppnew" size="4" value="$member[tpp]" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttpp]</td>
+<td bgcolor="$altbg2"><input type="text" name="tppnew" size="4" value="$member[tpp]" /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textppp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="pppnew" size="4" value="$member[ppp]" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textppp]</td>
+<td bgcolor="$altbg2"><input type="text" name="pppnew" size="4" value="$member[ppp]" /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textoptions]</td>
-<td bgcolor="$altbg2" class="tablerow">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textoptions]</td>
+<td bgcolor="$altbg2">
 <input type="checkbox" name="newshowemail" value="yes" $checked /> $lang[textshowemail]<br />
 <input type="checkbox" name="newnewsletter" value="yes" $newschecked /> $lang[textgetnews]<br />
 <input type="checkbox" name="newinv" value="1" $invchecked /> $lang[textinvisible]<br />
@@ -353,24 +353,24 @@ $dayselect
 <input type="text" name="timeoffset1" size="3" value="$member[timeoffset]" /> $lang[textoffset]
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttimeformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="radio" value="24" name="timeformatnew" $check24 />&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $check12 />&nbsp;$lang[text12hour]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttimeformat]</td>
+<td bgcolor="$altbg2"><input type="radio" value="24" name="timeformatnew" $check24 />&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $check12 />&nbsp;$lang[text12hour]</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[dateformat]</td>
+<td bgcolor="$altbg2"><input type="text" name="dateformatnew" size="25" value="$member[dateformat]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[editprofile_minfo]</td>
+<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://www.samspade.org/t/ipwhois?a=$member[regip]" target="_blank">$member[regip]</a></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[editprosearch]</td>
+<td bgcolor="$altbg2">$lang[searchusermsg]</td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[dateformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="dateformatnew" size="25" value="$member[dateformat]" /></td>
-</tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="$altbg2" class="tablerow"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://www.samspade.org/t/ipwhois?a=$member[regip]" target="_blank">$member[regip]</a></td>
-</tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[editprosearch]</td>
-<td bgcolor="$altbg2" class="tablerow">$lang[searchusermsg]</td>
-</tr>
-<tr>
-<td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpro]"/></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpro]"/></td>
 </tr>
 </table>
 </td>
