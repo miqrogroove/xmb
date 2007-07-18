@@ -88,7 +88,7 @@ if ($forums['type'] == 'forum') {
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
-} elseif ($forums['type'] == 'sub') {
+} else if ($forums['type'] == 'sub') {
     $query = $db->query("SELECT name, fid FROM $table_forums WHERE fid='$forums[fup]'");
     $fup = $db->fetch_array($query);
     $fup['name'] = stripslashes($fup['name']);
@@ -202,7 +202,7 @@ switch ($action) {
         if (noSubmit('closesubmit')) {
             if ($closed == 'yes') {
                 $lang['textclosethread'] = $lang['textopenthread'];
-            } elseif ($closed == '') {
+            } else if ($closed == '') {
                 $lang['textclosethread'] = $lang['textclosethread'];
             }
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
@@ -247,7 +247,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach($tids AS $tid) {
+            foreach ($tids AS $tid) {
                 $db->query("UPDATE $table_threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
                 $mod->log($xmbuser, 'open', $fid, $tid);
             }
@@ -329,13 +329,13 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_topuntop').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach($tids AS $tid) {
+            foreach ($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM $table_threads WHERE fid='$fid' AND tid='$tid'");
                 $topped = $db->result($query, 0);
 
                 if ($topped == 1) {
                     $db->query("UPDATE $table_threads SET topped='0' WHERE tid='$tid' AND fid='$fid'");
-                } elseif ($topped == 0)    {
+                } else if ($topped == 0)    {
                     $db->query("UPDATE $table_threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
                 }
 
@@ -415,7 +415,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_bump').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach($tids AS $tid) {
+            foreach ($tids AS $tid) {
                 $pid = $db->result($db->query("SELECT pid FROM $table_posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 1"), 0);
                 $db->query("UPDATE $table_threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
                 $db->query("UPDATE $table_forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid=$fid");
@@ -434,7 +434,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_empty').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach($tids AS $tid) {
+            foreach ($tids AS $tid) {
                 $pid = $db->result($db->query("SELECT pid FROM $table_posts WHERE tid='$tid' ORDER BY pid ASC LIMIT 1"), 0);
                 $query = $db->query("SELECT author FROM $table_posts WHERE tid='$tid' AND pid!='$pid'");
                 while ($result = $db->fetch_array($query)) {
