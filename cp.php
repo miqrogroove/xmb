@@ -1126,16 +1126,11 @@ if ($action == 'forum') {
         $queryforum = $db->query("SELECT fid, type FROM $table_forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM $table_forums WHERE name=''");
         while ($forum = $db->fetch_array($queryforum)) {
-            $displayorder = "displayorder".$forum['fid'];
-            $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
-            $name = "name".$forum['fid'];
-            $name =  isset($_POST[$name]) ? $_POST[$name] : '';
-            $self['status'] = "status".$forum['fid'];
-            $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
-            $delete = "delete".$forum['fid'];
-            $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
-            $moveto = "moveto" . $forum['fid'];
-            $moveto = isset($_POST[$moveto]) ? $_POST[$moveto] : '';
+            $displayorder = formVar('displayorder'.$forum['fid']);
+            $name = formVar('name'.$forum['fid']);
+            $self['status'] = formOnOff('status'.$forum['fid']);
+            $delete = formVar('delete'.$forum['fid']);
+            $moveto = formVar('moveto'.$forum['fid']);
 
             if ($delete) {
                 $db->query("DELETE FROM $table_forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
@@ -1159,17 +1154,12 @@ if ($action == 'forum') {
 
         $querygroup = $db->query("SELECT fid FROM $table_forums WHERE type='group'");
         while ($group = $db->fetch_array($querygroup)) {
-            $name = "name" . $group['fid'];
-            $name = isset($_POST[$name]) ? $_POST[$name] : '';
-            $displayorder = "displayorder".$group['fid'];
-            $displayorder = isset($_POST[$displayorder]) ? $_POST[$displayorder] : '';
-            $self['status'] = "status".$group['fid'];
-            $self['status'] = isset($_POST[$self['status']]) ? $_POST[$self['status']] : '';
-            $delete = "delete".$group['fid'];
-            $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
+            $name = formVar('name'.$group['fid']);
+            $displayorder = formVar('displayorder'.$group['fid']);
+            $self['status'] = formOnOff('status'.$group['fid']);
+            $delete = formVar('delete'.$group['fid']);
 
-            $delete = formInt('delete');
-            if (isset($delete) && $delete != '') {
+            if ($delete) {
                 $query = $db->query("SELECT fid FROM $table_forums WHERE type='forum' AND fup='$delete'");
                 while ($forum = $db->fetch_array($query)) {
                     $db->query("UPDATE $table_forums SET fup=0 WHERE type='forum' AND fup='$delete'");
@@ -1185,7 +1175,7 @@ if ($action == 'forum') {
         $newgorder = formVar('newgorder');
         $newforder = formVar('newforder');
         $newsuborder = formVar('newsuborder');
-        $newgstatus = formOnOff('newgorder');
+        $newgstatus = formOnOff('newgstatus');
         $newfstatus = formOnOff('newfstatus');
         $newsubstatus = formOnOff('newsubstatus');
         $newffup = formInt('newffup');
