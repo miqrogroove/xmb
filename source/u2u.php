@@ -152,6 +152,9 @@ switch ($action) {
                 u2u_mod_move($tofolder, $u2u_select);
                 break;
             case 'markunread':
+                if (!isset($u2u_select) || empty($u2u_select)) {
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
+                }
                 u2u_mod_markUnread($folder, $u2u_select);
                 break;
             default:
