@@ -132,6 +132,7 @@ switch ($action) {
         }
         break;
     case 'mod':
+        $modaction = (isset($modaction)) ? $modaction : '';
         switch ($modaction) {
             case 'delete':
                 if (!isset($u2u_select) || empty($u2u_select)) {

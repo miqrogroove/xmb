@@ -349,7 +349,7 @@ function u2u_move($u2uid, $tofolder) {
 }
 
 function u2u_mod_move($tofolder, $u2u_select) {
-    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders, $oToken;
+    global $db, $self, $table_u2u, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder;
 
     $in = '';
     foreach ($u2u_select as $value) {
