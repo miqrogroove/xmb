@@ -1,0 +1,13 @@
+First. Upload the images by ftp , into   *forum / images/ onepoint9
+
+Then, you will go into your admin panel go to "themes" and scroll down a bit till you see "Import Theme:" then you will select cp2.php which is located on your hard drive.
+
+after that, you will have this new theme on your website!
+
+----------------------------------------------------other notes-------------------------------------
+i included 2 banners, to your liking.
+
+agfx aka illusion , brought you this theme ;)
+gfxpad.com
+
+* your forum directory name.
