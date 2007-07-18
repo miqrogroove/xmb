@@ -1633,9 +1633,9 @@ if ($action == "templates") {
     }
 
     if (onSubmit('editsubmit')) {
-        $tid = formVar('tid');
+        $tid = getVar('tid');
         $namenew = formVar('namenew');
-        $templatenew = addslashes(formVar('templatenew'));
+        $templatenew = addslashes(getRequestVar('templatenew'));
 
         if ($tid == "new") {
             if (!$namenew) {
