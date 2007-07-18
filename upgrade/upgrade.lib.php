@@ -1,40 +1,35 @@
 <?php
-/**
- * XMB 1.9.8 Engage Final
- *
- * Developed By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- **/
+/* $Id: upgrade.lib.php,v 1.3 2006/01/22 23:28:52 Tularis Exp $ */
+/*
+    XMB 1.x Upgrade Utility
+    © 2001 - 2005 Aventure Media & The XMB Developement Team
+    http://www.aventure-media.co.uk
+    http://www.xmbforum.com
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 class Upgrade {
     var $db;
     var $tablepre;
-    var $tables;
+	var $tables;
     var $tc;
 
     var $xmb_tables = array('attachments', 'banned', 'buddys', 'favorites', 'forums',
-                         'logs', 'members', 'posts', 'ranks', 'restricted', 'settings',
-                         'smilies', 'templates', 'themes', 'threads', 'u2u', 'whosonline','words');
+						 'logs', 'members', 'posts', 'ranks', 'restricted', 'settings',
+						 'smilies', 'templates', 'themes', 'threads', 'u2u', 'whosonline','words');
 
     function Upgrade(&$db, $file='', $tablepre) {
         if($file == '') {
@@ -65,7 +60,7 @@ class Upgrade {
 
     function getTablesByTablepre($tablepre=null) {
 
-        if($tablepre === null) {
+		if($tablepre === null) {
             $tablepre = $this->tablepre;
         }
 
@@ -75,8 +70,8 @@ class Upgrade {
         while($t = $this->db->fetch_array($q)) {
             $t = array_values($t);
             if ( in_array(str_replace($tablepre, '', $t[0]), $this->xmb_tables) ) {
-                $tbl[] = $t[0];
-            }
+				$tbl[] = $t[0];
+			}
         }
         return $tbl;
     }
@@ -92,16 +87,16 @@ class Upgrade {
     function decode_keylen(& $keydata ) {
     // we take a piece of data that looks like this: (`foo` (num))
 
-        // find the second (. Return if there isn't one
+		// find the second (. Return if there isn't one
 
-        $sp = strpos($keydata, "(", 1);
-        if ( $sp === false ) {
-            return '';
-        }
+		$sp = strpos($keydata, "(", 1);
+		if ( $sp === false ) {
+			return '';
+		}
 
-        $keylen = str_replace(array('(', ')', ' ', ','), '', substr($keydata, $sp));
-        $keydata = str_replace(array('(', ')', ' ', '`', ','), '', substr($keydata, 0, $sp));
-        return $keylen;
+		$keylen = str_replace(array('(', ')', ' ', ','), '', substr($keydata, $sp));
+		$keydata = str_replace(array('(', ')', ' ', '`', ','), '', substr($keydata, 0, $sp));
+		return $keylen;
     }
 
     function loadTable($table) {
@@ -154,34 +149,34 @@ class Upgrade {
                     $cols[] = $col;
                 }
             } else {
-                unset($index);      unset($d);
-                $index = array();   $d = array();
+				unset($index);		unset($d);
+				$index = array();	$d = array();
 
                 if(strpos(trim($data), 'PRIMARY KEY') === 0) {
                     // primary key :)
 
-                    $d = explode(' ', trim($data));
+					$d = explode(' ', trim($data));
 
-                    if ( strpos($d[3], "))") ) {
-                        $index['keylen'] = $this->decode_keylen($d[3]);
-                    } else {
-                        $index['keylen'] = '';
-                        $d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
-                    }
+					if ( strpos($d[3], "))") ) {
+						$index['keylen'] = $this->decode_keylen($d[3]);
+					} else {
+						$index['keylen'] = '';
+						$d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
+					}
 
-                    $index['type'] = 'PRIMARY KEY';
+					$index['type'] = 'PRIMARY KEY';
                     $index['field'] = $d[3];
                     $index['name'] = '';
-                    $indices[] = $index;
+					$indices[] = $index;
                 } elseif (strpos($data, 'KEY') !== false) {  // not primary
-                    // detect if index has a length ie KEY name ( field ( len ) )
-                    $d = explode(' ', trim($data));
-                    if ( strpos($d[2], "))") ) {
-                        $index['keylen'] = $this->decode_keylen($d[2]);
-                    } else {
-                        $index['keylen'] = '';
-                        $d[2] = str_replace(array('(', ')', ' ', '`', ','), '', $d[2]);
-                    }
+					// detect if index has a length ie KEY name ( field ( len ) )
+					$d = explode(' ', trim($data));
+					if ( strpos($d[2], "))") ) {
+						$index['keylen'] = $this->decode_keylen($d[2]);
+					} else {
+						$index['keylen'] = '';
+						$d[2] = str_replace(array('(', ')', ' ', '`', ','), '', $d[2]);
+					}
 
                     $index['type'] = 'KEY';
                     $index['name'] = str_replace(array('(', ')', ' ', '`', ','), '', $d[1]);
@@ -237,19 +232,19 @@ class Upgrade {
         }
         foreach($table['indices'] as $index) {
              if($index['type'] == 'KEY') {
-                $keylen = $index['keylen'];
-                if ( is_numeric($keylen) && $keylen > 0 ) {
-                    $parts[] = 'KEY `'.$index['name'].'` (`'.$index['field'].'` ('.$keylen.') )';
-                } else {
-                    $parts[] = 'KEY `'.$index['name'].'` (`'.$index['field'].'`)';
-                }
+				$keylen = $index['keylen'];
+				if ( is_numeric($keylen) && $keylen > 0 ) {
+					$parts[] = 'KEY `'.$index['name'].'` (`'.$index['field'].'` ('.$keylen.') )';
+				} else {
+					$parts[] = 'KEY `'.$index['name'].'` (`'.$index['field'].'`)';
+				}
              } elseif($index['type'] == 'PRIMARY KEY') {
-                $keylen = $index['keylen'];
-                if ( is_numeric($keylen) && $keylen > 0 ) {
-                    $parts[] =  'PRIMARY KEY (`'.$index['field'].'` ('.$keylen.') )';
-                } else {
-                    $parts[] =  'PRIMARY KEY (`'.$index['field'].'`)';
-                }
+             	$keylen = $index['keylen'];
+				if ( is_numeric($keylen) && $keylen > 0 ) {
+					$parts[] =  'PRIMARY KEY (`'.$index['field'].'` ('.$keylen.') )';
+				} else {
+					$parts[] =  'PRIMARY KEY (`'.$index['field'].'`)';
+				}
              }
         }
         $part = 'CREATE TABLE `'.$this->tablepre.$tbl.'` ('."\n";
@@ -346,8 +341,8 @@ class Upgrade {
     }
 
     function createLocationChangeQuery($table, $temptbl, $def) {
-        $defs = '`' . implode('`, `', $def) . '`';
-        return "INSERT INTO `$table` ( $defs ) SELECT $defs FROM `$temptbl`";
+		$defs = '`' . implode('`, `', $def) . '`';
+		return "INSERT INTO `$table` ( $defs ) SELECT $defs FROM `$temptbl`";
     }
 
     function makeIntelligentDiff($d) {
@@ -441,43 +436,17 @@ class Upgrade {
     }
 
     function getExistingIndexInfoByName($table, $index) {
-        foreach($this->tc[$table]['indices'] as $c) {
+		foreach($this->tc[$table]['indices'] as $c) {
             if($c['name'] == $index) {
-                return $c;
+		        return $c;
             }
          }
          return false;
     }
 
-    function columnExists($table, $col) {
-        if(isset($this->tc[$table])) {
-            foreach($this->tc[$table]['cols'] as $c) {
-                if($c['name'] == $col) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    function indexExistsOnColumn($table, $column, $specific=null) {
-        if(isset($this->tc[$table])) {
-            foreach($this->tc[$table]['indices'] as $i) {
-                if($i['field'] == $column) {
-                    if($specific === null) {
-                        return true;
-                    } elseif($i['name'] == $specific) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
 
     function createQueryFromDiff($diff, $table) {
-        $queries = array();
+		$queries = array();
         $preface = "ALTER TABLE `" . $this->tablepre . $table . "` ";
         $ps = '';
 
@@ -486,7 +455,7 @@ class Upgrade {
             $diff['cols'] = array();
         }
         if(!isset($diff['indices'])) {
-            $diff['indices'] = array();
+			$diff['indices'] = array();
         }
 
         $query = '';
@@ -501,22 +470,20 @@ class Upgrade {
                     }
                 }
                 if($info['type'] == 'PRIMARY KEY' ) {
-                    // dropping primary key gives HUGE problems
-                    // we should instead drop the entire column and possibly recreate it later.
                     $query .= 'DROP PRIMARY KEY, ';
                 } else {
                     $query .= "DROP INDEX `".$name."`, ";
                 }
-            }
+			}
         }
 
         if ( $query != '' ) {
-            if ( substr($query, -2) == ", " ) {
-                $query = substr($query, 0, -2);
-            }
-            $queries[] = $preface . $query;
-            $query = '';
-        }
+			if ( substr($query, -2) == ", " ) {
+				$query = substr($query, 0, -2);
+			}
+			$queries[] = $preface . $query;
+			$query = '';
+		}
 
         if (isset($diff['cols']['add'])) {
             foreach($diff['cols']['add'] as $name) {
@@ -564,13 +531,13 @@ class Upgrade {
             }
         }
 
-        if ( $query != '' ) {
-            if ( substr($query, -2) == ", " ) {
-                $query = substr($query, 0, -2);
-            }
-            $queries[] = $preface . $query;
-            $query = '';
-        }
+		if ( $query != '' ) {
+			if ( substr($query, -2) == ", " ) {
+				$query = substr($query, 0, -2);
+			}
+			$queries[] = $preface . $query;
+			$query = '';
+		}
 
         if(isset($diff['cols']['alter'])) {
             foreach($diff['cols']['alter'] as $name) {
@@ -597,27 +564,27 @@ class Upgrade {
             }
          }
 
-        if ( $query != '' ) {
-            if ( substr($query, -2) == ", " ) {
-                $query = substr($query, 0, -2);
-            }
-            $queries[] = $preface . $query;
-            $query = '';
-        }
+		if ( $query != '' ) {
+			if ( substr($query, -2) == ", " ) {
+				$query = substr($query, 0, -2);
+			}
+			$queries[] = $preface . $query;
+			$query = '';
+		}
 
          if(isset($diff['cols']['drop'])) {
             foreach($diff['cols']['drop'] as $name) {
                 $query .= "DROP COLUMN `".$name."`, ";
             }
-         }
+		 }
 
-        if ( $query != '' ) {
-            if ( substr($query, -2) == ", " ) {
-                $query = substr($query, 0, -2);
-            }
-            $queries[] = $preface . $query;
-            $query = '';
-        }
+		if ( $query != '' ) {
+			if ( substr($query, -2) == ", " ) {
+				$query = substr($query, 0, -2);
+			}
+			$queries[] = $preface . $query;
+			$query = '';
+		}
 
         if(isset($diff['indices']['add'])) {
              foreach($diff['indices']['add'] as $name) {
@@ -625,31 +592,31 @@ class Upgrade {
                      $info = $this->getIndexInfoByField($table, $name);
                  }
                  if($info['type'] == 'PRIMARY KEY') {
-                    $keylen = $info['keylen'];
-                    if ( is_numeric($keylen) && $keylen > 0 ) {
-                        $query .= "ADD PRIMARY KEY (`".$info['field'].'` ('.$keylen.') ), ';
-                    } else {
-                        $query .= "ADD PRIMARY KEY (`".$info['field'].'`), ';
-                    }
+					$keylen = $info['keylen'];
+					if ( is_numeric($keylen) && $keylen > 0 ) {
+						$query .= "ADD PRIMARY KEY (`".$info['field'].'` ('.$keylen.') ), ';
+					} else {
+						$query .= "ADD PRIMARY KEY (`".$info['field'].'`), ';
+					}
                  } else {
-                    $keylen = $info['keylen'];
-                    if ( is_numeric($keylen) && $keylen > 0 ) {
-                        $query .= "ADD INDEX `".$info['field'].'` (`'.$info['name'].'` ('.$keylen.') ), ';
-                    } else {
-                        $query .= "ADD INDEX `".$info['field'].'` (`'.$info['name'].'`), ';
-                    }
+					$keylen = $info['keylen'];
+					if ( is_numeric($keylen) && $keylen > 0 ) {
+						$query .= "ADD INDEX `".$info['field'].'` (`'.$info['name'].'` ('.$keylen.') ), ';
+					} else {
+						$query .= "ADD INDEX `".$info['field'].'` (`'.$info['name'].'`), ';
+					}
                  }
              }
         }
 
-        if ( $query != '' ) {
-            if ( substr($query, -2) == ", " ) {
-                $query = substr($query, 0, -2);
-            }
-            $queries[] = $preface . $query;
-        }
-        return $queries;
-    }
+		if ( $query != '' ) {
+			if ( substr($query, -2) == ", " ) {
+				$query = substr($query, 0, -2);
+			}
+			$queries[] = $preface . $query;
+		}
+		return $queries;
+	}
 
     function createUpgradeFile($tablepre=null) {
         if($tablepre === null) {
@@ -666,365 +633,184 @@ class Upgrade {
     }
 
     function findColumn(& $columns, $column) {
-        foreach ( $columns as $col ) {
-            if ( $col['name'] == $column )
-                return $col;
-        }
-        return false;
-    }
-
-    function dropTableFromCache($tbl, $dropInDb=false) {
-        if(!isset($this->tc[$tbl])) {
-            return false;
-        } else {
-            if($dropInDb) {
-                $this->db->query("DROP TABLE `".$this->tablepre.$tbl."`");
-            }
-            unset($this->tc[$tbl]);
-        }
+		foreach ( $columns as $col ) {
+			if ( $col['name'] == $column )
+				return $col;
+		}
+		return false;
     }
 
     function upgradeU2U() {
-        $this->db->query("DROP TABLE IF EXISTS `".$this->tablepre."u2u_new`");
-        $this->db->query("CREATE TABLE `".$this->tablepre."u2u_new` (
-                    `u2uid` bigint(10) NOT NULL auto_increment,
-                    `msgto` varchar(32) NOT NULL default '',
-                    `msgfrom` varchar(32) NOT NULL default '',
-                    `type` set('incoming','outgoing','draft') NOT NULL default '',
-                    `owner` varchar(32) NOT NULL default '',
-                    `folder` varchar(32) NOT NULL default '',
-                    `subject` varchar(64) NOT NULL default '',
-                    `message` text NOT NULL,
-                    `dateline` int(10) NOT NULL default '0',
-                    `readstatus` set('yes','no') NOT NULL default '',
-                    `sentstatus` set('yes','no') NOT NULL default '',
-                    PRIMARY KEY  (`u2uid`),
-                    KEY `msgto` (`msgto`),
-                    KEY `msgfrom` (`msgfrom`),
-                    KEY `folder` (`folder`),
-                    KEY `readstatus` (`readstatus`),
-                    KEY `owner` (`owner`)
-                    ) TYPE=MyISAM");
+    	$this->db->query("DROP TABLE IF EXISTS `".$this->tablepre."u2u_new`");
+		$this->db->query("CREATE TABLE `".$this->tablepre."u2u_new` (
+					`u2uid` bigint(10) NOT NULL auto_increment,
+					`msgto` varchar(32) NOT NULL default '',
+					`msgfrom` varchar(32) NOT NULL default '',
+					`type` set('incoming','outgoing','draft') NOT NULL default '',
+					`owner` varchar(32) NOT NULL default '',
+					`folder` varchar(32) NOT NULL default '',
+					`subject` varchar(64) NOT NULL default '',
+					`message` text NOT NULL,
+					`dateline` int(10) NOT NULL default '0',
+					`readstatus` set('yes','no') NOT NULL default '',
+					`sentstatus` set('yes','no') NOT NULL default '',
+					PRIMARY KEY  (`u2uid`),
+					KEY `msgto` (`msgto`),
+					KEY `msgfrom` (`msgfrom`),
+					KEY `folder` (`folder`),
+					KEY `readstatus` (`readstatus`),
+					KEY `owner` (`owner`)
+					) TYPE=MyISAM");
 
-        $query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
-        while ($u2u = $this->db->fetch_array($query)) {
-            if ($u2u['folder'] == 'inbox') {
-                $type = 'incoming';
-                $owner = $u2u['msgto'];
-            } elseif ($u2u['folder'] == 'outbox') {
-                $type = 'outgoing';
-                $owner = $u2u['msgfrom'];
-            } else {
-                $type = 'incoming';
-                $owner = $u2u['msgfrom'];
-            }
+		$query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
+		while ($u2u = $this->db->fetch_array($query)) {
+			if ($u2u['folder'] == 'inbox') {
+				$type = 'incoming';
+				$owner = $u2u['msgto'];
+			} elseif ($u2u['folder'] == 'outbox') {
+				$type = 'outgoing';
+				$owner = $u2u['msgfrom'];
+			} else {
+				$type = 'incoming';
+				$owner = $u2u['msgfrom'];
+			}
 
-            if ( ! isset($u2u['readstatus']) || $u2u['readstatus'] == '') {
-                $u2u['readstatus'] = 'no';
-            }
+			if ( ! isset($u2u['readstatus']) || $u2u['readstatus'] == '') {
+				$u2u['readstatus'] = 'no';
+			}
 
-            if ( ! isset($u2u['new']) || $u2u['new'] == '' ) {
-                $u2u['new'] = 'yes';
-            }
+			if ( ! isset($u2u['new']) || $u2u['new'] == '' ) {
+				$u2u['new'] = 'yes';
+			}
 
-            $this->db->query("INSERT INTO `".$this->tablepre."u2u_new` VALUES('', '".$u2u['msgto']."', '".$u2u['msgfrom']."', '".$type."', '".$owner."', '".$u2u['folder']."', '".addslashes($u2u['subject'])."', '".addslashes($u2u['message'])."', '".$u2u['dateline']."', '".$u2u['readstatus']."', '".$u2u['new']."')");
-        }
+			$this->db->query("INSERT INTO `".$this->tablepre."u2u_new` VALUES('', '".$u2u['msgto']."', '".$u2u['msgfrom']."', '".$type."', '".$owner."', '".$u2u['folder']."', '".addslashes($u2u['subject'])."', '".addslashes($u2u['message'])."', '".$u2u['dateline']."', '".$u2u['readstatus']."', '".$u2u['new']."')");
+		}
 
-        $this->db->free_result($query);
-        $this->db->query("DROP TABLE `".$this->tablepre."u2u`");
-        $this->db->query("ALTER TABLE `".$this->tablepre."u2u_new` RENAME `".$this->tablepre."u2u`");
-    }
+		$this->db->free_result($query);
+		$this->db->query("DROP TABLE `".$this->tablepre."u2u`");
+		$this->db->query("ALTER TABLE `".$this->tablepre."u2u_new` RENAME `".$this->tablepre."u2u`");
+	}
 
     // this function gets rid of a corner case which the upgrade process has difficulty handling.
     function removeSid() {
-        $tbl = 'settings';
-        $cols = $this->getColsByTable($tbl);
-        $sid = $this->findColumn($cols, 'sid');
+		$tbl = 'settings';
+		$cols = $this->getColsByTable($tbl);
+		$sid = $this->findColumn($cols, 'sid');
 
-        if ( $sid !== false ) {
-            $this->db->query("ALTER TABLE `". $this->tablepre . $tbl ."` DROP COLUMN `sid`");
-        }
-    }
+		if ( $sid !== false ) {
+			$this->db->query("ALTER TABLE `". $this->tablepre . $tbl ."` DROP COLUMN `sid`");
+		}
+	}
 
     function doU2U() {
-        $tbl = 'u2u';
-        $cols = $this->getColsByTable($tbl);
-        $readStatus = $this->findColumn($cols, 'readstatus');
-        $ownerCol = $this->findColumn($cols, 'owner');
+		$tbl = 'u2u';
+		$cols = $this->getColsByTable($tbl);
+		$readStatus = $this->findColumn($cols, 'readstatus');
+		$ownerCol = $this->findColumn($cols, 'owner');
 
-        if ( $readStatus === false || $ownerCol === false || $readStatus['type'] == 'char(3)' ) {
-            // 1.11 through 1.8 SP3
-            $this->upgradeU2U();
-            return true;
-        } else {
-            // 1.9.1 schema already.
-            // let's do a quick check to see if the u2u table is okay and fix it if not
-            $query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `".$this->tablepre."u2u` where owner=''");
+		if ( $readStatus === false || $ownerCol === false || $readStatus['type'] == 'char(3)' ) {
+			// 1.11 through 1.8 SP3
+			$this->upgradeU2U();
+			return true;
+		} else {
+			// 1.9.1 schema already.
+			// let's do a quick check to see if the u2u table is okay and fix it if not
+			$query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `".$this->tablepre."u2u` where owner=''");
 
-            if ( $this->db->num_rows($query) != 0 ) {
-                while ($u2u = $this->db->fetch_array($query)) {
-                    if ($u2u['folder'] == 'inbox') {
-                        $type = 'incoming';
-                        $owner = $u2u['msgto'];
-                    } elseif ($u2u['folder'] == 'outbox') {
-                        $type = 'outgoing';
-                        $owner = $u2u['msgfrom'];
-                    } else {
-                        $type = 'incoming';
-                        $owner = $u2u['msgfrom'];
-                    }
-                    $this->db->query("UPDATE ".$this->tablepre."u2u SET type='".$type."', owner='".$owner."' WHERE u2uid = '".$u2u['u2uid']."'");
-                }
-            }
-            $this->db->free_result($query);
-        }
+			if ( $this->db->num_rows($query) != 0 ) {
+				while ($u2u = $this->db->fetch_array($query)) {
+					if ($u2u['folder'] == 'inbox') {
+						$type = 'incoming';
+						$owner = $u2u['msgto'];
+					} elseif ($u2u['folder'] == 'outbox') {
+						$type = 'outgoing';
+						$owner = $u2u['msgfrom'];
+					} else {
+						$type = 'incoming';
+						$owner = $u2u['msgfrom'];
+					}
+					$this->db->query("UPDATE ".$this->tablepre."u2u SET type='".$type."', owner='".$owner."' WHERE u2uid = '".$u2u['u2uid']."'");
+				}
+			}
+			$this->db->free_result($query);
+		}
 
-        return true;
+		return true;
     }
 
     function findThemeIDByName($themename) {
-        $r = $this->db->query("SELECT themeid FROM " . $this->tablepre . "themes WHERE name='" . $themename . "'");
-        if ( $this->db->num_rows($r) > 0 ) {
-            $retval = $this->db->result($r, 0);
-            $this->db->free_result($r);
-            return $retval;
-        } else {
-            return false;
-        }
+		$r = $this->db->query("SELECT themeid FROM " . $this->tablepre . "themes WHERE name='" . $themename . "'");
+		if ( $this->db->num_rows($r) > 0 ) {
+			$retval = $this->db->result($r, 0);
+			$this->db->free_result($r);
+			return $retval;
+		} else {
+			return false;
+		}
     }
 
     function deleteThemeByName($themename) {
-        $r = $this->db->query("SELECT themeid FROM " . $this->tablepre . "themes WHERE name='" . $themename . "'");
-        if ( $this->db->num_rows($r) > 0 ) {
-            $this->db->free_result($r);
-            $this->db->query("DELETE FROM `". $this->tablepre ."themes` WHERE name='" . $themename . "'");
-        }
+		$r = $this->db->query("SELECT themeid FROM " . $this->tablepre . "themes WHERE name='" . $themename . "'");
+		if ( $this->db->num_rows($r) > 0 ) {
+			$this->db->free_result($r);
+			$this->db->query("DELETE FROM `". $this->tablepre ."themes` WHERE name='" . $themename . "'");
+		}
     }
 
     function fixIndex() {
-        $this->loadTable($this->tablepre . 'banned');
+		$this->loadTable($this->tablepre . 'banned');
 
-        $changes = false;
+		if ( $this->getExistingIndexInfoByName('banned', 'ip1') !== false ) {
+			$this->db->query("ALTER TABLE `" . $this->tablepre . "banned` DROP INDEX `ip1`");
+		}
+		if ( $this->getExistingIndexInfoByName('banned', 'ip4') !== false ) {
+			$this->db->query("ALTER TABLE `" . $this->tablepre . "banned` DROP INDEX `ip4`");
+		}
 
-        if(($col1 = $this->getExistingIndexInfoByName('banned', 'ip1')) !== false && ($col1['field'] != 'ip1')) {
-            $this->db->query("ALTER TABLE `" . $this->tablepre . "banned` DROP INDEX `ip1`");
-            $this->db->query("CREATE INDEX `ip1` ON `" . $this->tablepre . "banned` ( `ip1` ) ");
+		$this->db->query("CREATE INDEX `ip1` ON `" . $this->tablepre . "banned` ( `ip1` ) ");
+		$this->db->query("CREATE INDEX `ip4` ON `" . $this->tablepre . "banned` ( `ip4` ) ");
 
-            $changes = true;
-        }
-        if(($col4 = $this->getExistingIndexInfoByName('banned', 'ip4')) !== false && ($col4['field'] != 'ip4')) {
-            $this->db->query("ALTER TABLE `" . $this->tablepre . "banned` DROP INDEX `ip4`");
-            $this->db->query("CREATE INDEX `ip4` ON `" . $this->tablepre . "banned` ( `ip4` ) ");
-            $changes = true;
-        }
-
-        // no need to do any heavy operations if there were no actual changes performed on the table
-        if($changes) {
-            $this->loadTable($this->tablepre . 'banned');
-        }
+		$this->loadTable($this->tablepre . 'banned');
     }
 
     function fixPPP($mysqlver) {
-        $tblmem = $this->tablepre.'members';
-        $tblset = $this->tablepre.'settings';
 
-        if ( ($mysqlver[0] == 4 && $mysqlver[1] > 3) || ($mysqlver[0] > 4) ) {
-            $this->db->query("UPDATE `". $tblset. "`, `". $tblmem ."` SET `". $tblmem ."`.ppp=". $tblset. ".postperpage WHERE `". $tblmem ."`.ppp=0");
-            $this->db->query("UPDATE `". $tblset. "`, `". $tblmem ."` SET `". $tblmem ."`.tpp=". $tblset. ".topicperpage WHERE `". $tblmem ."`.tpp=0");
-        } else {
-            $this->db->query("UPDATE `". $tblmem ."` SET ppp=30 WHERE ppp=0");
-            $this->db->query("UPDATE `". $tblmem ."` SET tpp=30 WHERE tpp=0");
-        }
+		$tblmem = $this->tablepre . "members";
+		$tblset = $this->tablepre . "settings";
+
+		if ( ($mysqlver[0] == 4 && $mysqlver[1] > 3) || ($mysqlver[0] > 4) ) {
+			$this->db->query("UPDATE `". $tblset. "`, `". $tblmem ."` SET `". $tblmem ."`.ppp=`". $tblset. "`.postperpage WHERE `". $tblmem ."`.ppp='0'");
+			$this->db->query("UPDATE `". $tblset. "`, `". $tblmem ."` SET `". $tblmem ."`.tpp=`". $tblset. "`.topicperpage WHERE `". $tblmem ."`.tpp='0'");
+		} else {
+			$this->db->query("UPDATE `". $tblmem ."` SET ppp='30' WHERE ppp='0'");
+			$this->db->query("UPDATE `". $tblmem ."` SET tpp='30' WHERE tpp='0'");
+		}
     }
 
-    function fixForumPerms($v) {
-        static $cache;
-        /***
-            OLD FORMAT:
-            "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
-            - 1 normal (all ranks),
-            - 2 admin only,
-            - 3 admin/mod only,
-            - 4 no posting/viewing.
-        ***/
-
-        /***
-            NEW FORMAT:
-            NewPolls,NewThreads,NewReplies,View. Each field contains a number between 0-63 (a sum of the following:)
-            - 1  Super Administrator
-            - 2  Administrator
-            - 4  Super Moderator
-            - 8  Moderator
-            - 16 Member
-            - 32 Guest
-        ***/
-        switch($v) {
-            case 0:
-                // store
-                if(!$this->columnExists('forums', 'private') || !$this->columnExists('forums', 'guestposting') || !$this->columnExists('forums', 'pollstatus')) {
-                    // permissions are already upgraded. No need to redo this again (can't even!)
-                    break;
-                }
-
-                $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
-                while($forum = $this->db->fetch_array($q)) {
-                    // check if we need to change it first
-                    $parts = explode('|', $forum['postperm']);
-                    if(count($parts) == 1) {
-                        // no need to upgrade these; new format in use [we hope]
-                        continue;
-                    }
-                    $newFormat = array(0,0,0,0);
-
-                    $fid            = $forum['fid'];
-                    $private        = $forum['private'];
-                    $permField      = $forum['postperm'];
-                    $guestposting   = $forum['guestposting'];
-                    $polls          = $forum['pollstatus'];
-
-                    $translationFields = array(0=>1, 1=>2);
-                    foreach($parts as $key=>$val) {
-                        switch($val) {
-                            case 1:
-                                $newFormat[$translationFields[$key]] = 31;
-                                break;
-                            case 2:
-                                $newFormat[$translationFields[$key]] = 3;
-                                break;
-                            case 3:
-                                $newFormat[$translationFields[$key]] = 15;
-                                break;
-                            case 4:
-                                $newFormat[$translationFields[$key]] = 1;
-                                break;
-                            default:
-                                // allow only superadmin
-                                $newFormat[$translationFields[$key]] = 1;
-                                break;
-                        }
-                    }
-                    switch($private) {
-                        case 1:
-                            $newFormat[3] = 63;
-                            break;
-                        case 2:
-                            $newFormat[3] = 3;
-                            break;
-                        case 3:
-                            $newFormat[3] = 15;
-                            break;
-                        case 4:
-                            $newFormat[3] = 1;
-                            break;
-                        default:
-                            // allow only superadmin
-                            $newFormat[3] = 1;
-                            break;
-                    }
-                    if($guestposting == 'yes' || $guestposting == 'on') {
-                        $newFormat[0] |= 32;
-                        $newFormat[1] |= 32;
-                        $newFormat[2] |= 32;
-                    }
-
-                    if($polls == 'yes' || $polls == 'on') {
-                        $newFormat[0] = $newFormat[1];
-                    } else {
-                        $newFormat[0] = 0;
-                    }
-
-                    $cache[$fid] = $newFormat;
-                }
-                break;
-
-            case 1:
-                // restore
-                if(isset($cache) && count($cache) > 0) {
-                    foreach($cache as $fid=>$format) {
-                        $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
-                    }
-                }
-                break;
-        }
+    function fixPostPerm() {
+		$query = $this->db->query("SELECT fid, private, postperm, guestposting FROM `". $this->tablepre . "forums` WHERE NOT (type = 'group')");
+		while ( $forum = $this->db->fetch_array($query) ) {
+			$update = false;
+			$pp = trim($forum['postperm']);
+			if ( strlen($pp) > 0 && strpos($pp, '|') === false ) {
+				$update = true;
+				$forum['postperm'] = $pp . '|' . $pp;	// make the postperm the same for thread and reply
+			}
+			if ( $forum['guestposting'] != 'on' ) {
+				$forum['guestposting'] = 'off';
+				$update = true;
+			}
+			if ( $forum['private'] == '' ) {
+				$forum['private'] = '1';	// by default, forums are not private.
+				$update = true;
+			}
+			if ( $update ) {
+				$this->db->query("UPDATE `". $this->tablepre . "forums` SET postperm='".$forum['postperm']."', guestposting='".$forum['guestposting']."', private='".$forum['private']."' WHERE fid='".$forum['fid']."'");
+			}
+		}
+		$this->db->free_result($query);
     }
 
-    function fixBirthdays($v) {
-        static $cache;
-
-        switch($v) {
-            case 0:
-                // store
-                $cache = array();
-                $cachedLaguages = array();
-
-                $q = $this->db->query("SELECT uid,bday,langfile FROM ".$this->tablepre."members");
-                while($m = $this->db->fetch_array($q)) {
-                    if(strlen($m['bday']) == 0) {
-                        continue;
-                    }
-
-                    // check if the birthday isn't in proper format anyway
-                    $parts = explode('-', $m['bday']);
-                    if(count($parts) == 3 && (is_numeric($parts[0]) && is_numeric($parts[1]) && is_numeric($parts[2]))) {
-                        continue;
-                    }
-
-                    $lang = array();
-                    if(!isset($cachedLanguages[$m['langfile']])) {
-                        require_once ROOT.'lang/'.$m['langfile'].'.lang.php';
-                        $cachedLanguages[$m['langfile']] = $lang;
-                    } else {
-                        $lang = $cachedLanguages[$m['langfile']];
-                    }
-
-                    $day = 0;
-                    $month = 0;
-                    $year = 0;
-                    $monthList = array($lang['textjan'] => 1,$lang['textfeb'] => 2,$lang['textmar'] => 3,$lang['textapr'] =>4,$lang['textmay'] => 5,$lang['textjun'] => 6,$lang['textjul'] => 7,$lang['textaug'] => 8,$lang['textsep'] => 9,$lang['textoct'] => 10,$lang['textnov'] => 11,$lang['textdec'] => 12);
-
-                    if(isset($monthList[$parts[0]])) {
-                        $month = $monthList[$parts[0]];
-                        $day = substr($parts[1], 0, -1); // cut off trailing comma
-                        $year = $parts[3];
-                        $cache[$m['uid']] = $this->iso8601_date($year, $month, $day);
-                    }
-                }
-                break;
-
-            case 1:
-                // restore
-                if(count($cache) > 0) {
-                    $this->db->query("UPDATE ".$this->tablepre."members SET bday='0000-00-00'");
-                    foreach($cache as $uid=>$bd) {
-                        $this->db->query("UPDATE ".$this->tablepre."members SET bday='$bd' WHERE uid=$uid");
-                    }
-                }
-                break;
-        }
-    }
-
-    function iso8601_date($year=0, $month=0, $day=0) {
-        $year    = (int) $year;
-        $month   = (int) $month;
-        $day     = (int) $day;
-
-        if($year < 1 || $month < 1 || $day < 1) {
-            return '0000-00-00';
-        }
-
-        if($year < 100) {
-            // assume 19xx is meant
-            $year += 1900;
-        }
-        if($month > 12 || $month < 1) {
-            $month = 1;
-        }
-        if($day > 31 || $day < 1) {
-            $day = 1;
-        }
-
-        return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
-    }
 }
 
 define('X_ALTER', 1);

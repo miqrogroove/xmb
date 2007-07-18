@@ -1,33 +1,28 @@
 <?php
-/**
- * XMB 1.9.8 Engage Final
- *
- * Developed By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- **/
+/* $Id: upgrade.php,v 1.8 2006/03/07 22:24:15 Jamie Exp $ */
+/*
+    XMB 1.x Upgrade Utility
+    © 2001 - 2005 Aventure Media & The XMB Developement Team
+    http://www.aventure-media.co.uk
+    http://www.xmbforum.com
 
-define('XMB_V', '1.9.8 Final');
-define('XMB_UPGRADE_FILE', 'XMB_1_9_8.xmb');
+	This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+define('XMB_V', '1.9.5');
+define('XMB_UPGRADE_FILE', 'XMB_1_9_5.xmb');
 
 function print_header() {
 ?>
@@ -37,8 +32,8 @@ function print_header() {
         <style type="text/css">
         @import url("./install.css");.style1 {color: #2E3E55}
 .style7 {
-    font-size: 16px;
-    color: #333333;
+	font-size: 16px;
+	color: #333333;
 }
         </style>
     </head>
@@ -127,7 +122,7 @@ switch($step) {
         </td>
         <td style="width:70%;">
             <br>
-            <b><i><?php echo XMB_V;?> Final</i></b>
+			<b><i><?php echo XMB_V;?> Final</i></b>
         </td>
         </tr>
         <td style="width: 30%;">
@@ -165,15 +160,15 @@ switch($step) {
         www.aventure-media.co.uk   www.xmbforum.com
         ----------------------------------------------
 
-            GNU GENERAL PUBLIC LICENSE
-               Version 2, June 1991
+			GNU GENERAL PUBLIC LICENSE
+		       Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.
                        59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
-                Preamble
+			    Preamble
 
   The licenses for most software are designed to take away your
 freedom to share and change it.  By contrast, the GNU General Public
@@ -223,7 +218,7 @@ patent must be licensed for everyone's free use or not licensed at all.
   The precise terms and conditions for copying, distribution and
 modification follow.
 
-            GNU GENERAL PUBLIC LICENSE
+		    GNU GENERAL PUBLIC LICENSE
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
   0. This License applies to any program or other work which contains
@@ -422,7 +417,7 @@ make exceptions for this.  Our decision will be guided by the two goals
 of preserving the free status of all derivatives of our free software and
 of promoting the sharing and reuse of software generally.
 
-                NO WARRANTY
+			    NO WARRANTY
 
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
 FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
@@ -444,9 +439,9 @@ YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
 PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGES.
 
-             END OF TERMS AND CONDITIONS
+		     END OF TERMS AND CONDITIONS
 
-        How to Apply These Terms to Your New Programs
+	    How to Apply These Terms to Your New Programs
 
   If you develop a new program, and you want it to be of the greatest
 possible use to the public, the best way to achieve this is to make it
@@ -547,11 +542,11 @@ Public License instead of this License.
         print_header();
         show_act('Extending script timeout to 300 seconds.');
         if(!ini_get('safe_mode')){
-            set_time_limit(300);
-            show_result(X_INST_OK);
+        	set_time_limit(300);
+        	show_result(X_INST_OK);
         } else {
-            show_result(X_INST_WARN);
-            error('Safe-mode detected', 'XMB has detected that PHP is running in safe-mode. This could lead to errors during the upgrade process. It is advised that you turn safe-mode off in php.ini.', false);
+        	show_result(X_INST_WARN);
+        	error('Safe-mode detected', 'XMB has detected that PHP is running in safe-mode. This could lead to errors during the upgrade process. It is advised that you turn safe-mode off in php.ini.', false);
         }
 
         show_act('Checking PHP version');
@@ -566,12 +561,12 @@ Public License instead of this License.
         // let's check if all files we need actually exist.
         $req['dirs'] = array('db', 'images', 'include');
         $req['files'] = array('buddy.php', 'config.php', 'cp.php', 'cp2.php', 'dump_attachments.php',
-                                'editprofile.php', 'lang/English.lang.php', 'faq.php', 'forumdisplay.php',
-                                'functions.php', 'header.php', 'index.php', 'member.php', 'memcp.php',
-                                'misc.php', 'phpinfo.php', 'post.php',
-                                'include/admin.user.inc.php', 'include/spelling.inc.php', 'include/u2u.inc.php',
-                                'stats.php', 'templates.xmb', 'today.php', 'tools.php', 'topicadmin.php',
-                                'u2u.php', 'u2uadmin.php', 'viewthread.php', 'xmb.php');
+								'editprofile.php', 'lang/English.lang.php', 'faq.php', 'forumdisplay.php',
+								'functions.php', 'header.php', 'index.php', 'member.php', 'memcp.php',
+								'misc.php', 'phpinfo.php', 'post.php',
+								'include/admin.user.inc.php', 'include/spelling.inc.php', 'include/u2u.inc.php',
+								'stats.php', 'templates.xmb', 'today.php', 'tools.php', 'topicadmin.php',
+								'u2u.php', 'u2uadmin.php', 'viewthread.php', 'xmb.php');
 
         show_act('Checking Directory Structure');
         foreach($req['dirs'] as $dir) {
@@ -651,7 +646,7 @@ Public License instead of this License.
             error('Incorrect Configuration', 'Most likely, config.php has not been correctly configured for database name, user or password. Please check these details.', false);
         }
 
-        if ( $tablepre == 'TABLEPRE' ) {
+		if ( $tablepre == 'TABLEPRE' ) {
             show_result(X_INST_ERR);
             error('Incorrect Configuration', 'config.php has not been correctly configured for $tablepre. Please change $tablepre to your preferred table prefix (usually \'xmb_\')', true);
         }
@@ -691,7 +686,7 @@ Public License instead of this License.
                 }
                 $i = $link->server_info;
                 $link->close();
-                $mysqlver = explode('.', $i);
+				$mysqlver = explode('.', $i);
 
                 // min = 4.1
                 show_act('Checking Database Version');
@@ -736,15 +731,10 @@ Public License instead of this License.
 
             $u = new Upgrade($db, XMB_UPGRADE_FILE, $tablepre);
             if ( $u ) {
-                $tbl = $u->getTablesByTablepre($u->tablepre);
+                $tbl = $u->getTablesByTablepre($tablepre);
                 if(count($tbl) == 0) {
                     show_result(X_INST_ERR);
                     error('Could not locate a valid installation of XMB. Please check if config.php is correctly configured', true);
-                } else {
-                    // load them now into the cache so we can work on (and check against) them
-                    foreach($tbl as $t) {
-                        $u->loadTable($t);
-                    }
                 }
             } else {
                 show_result(X_INST_ERR);
@@ -752,20 +742,13 @@ Public License instead of this License.
             }
         show_result(X_INST_OK);
 
-        // clear logs so we don't have discrepencies between various formats.
-        // When upgrading they shouldn't be necessery anymore anyway, thus saving space
-        // and making the board more efficient
-        show_act('Clearing logs');
-        $u->dropTableFromCache('logs', true);   // also drops the actual mysql table
+		show_act('Fixing necessary indexes');
+		$u->fixIndex();
         show_result(X_INST_OK);
 
-        show_act('Fixing necessary indices');
-        $u->fixIndex();
-        show_result(X_INST_OK);
-
-        $r = $db->query("SELECT u2uid FROM `".$u->tablepre. "u2u`");
-        $nr = $db->num_rows($r);
-        $db->free_result($r);
+        $r = $db->query("SELECT u2uid FROM `".$tablepre. "u2u`");
+		$nr = $db->num_rows($r);
+		$db->free_result($r);
 
         show_act("Upgrading $nr U2Us");
         $t = $u->doU2U();
@@ -777,40 +760,29 @@ Public License instead of this License.
         }
 
         show_act("Check and remove sid");
-        $u->removeSid();
+		$u->removeSid();
         show_result(X_INST_OK);
-
-        show_act('Collecting data for data-restructuring');
-        $u->fixBirthdays(0);
-        $u->fixForumPerms(0);
-        show_result(X_INST_OK);
-
-        $tablesCreated = array();
 
         show_act('Creating missing tables');
-            $tbl = $u->getTablesByTablepre($u->tablepre);
+			$tbl = $u->getTablesByTablepre($tablepre);
+            $u->loadTables($tbl);
             $t = $u->getMissingTables();
 
             foreach($t['-'] as $k=>$table) {
                 $query = $u->createTableQueryByTablename($table);
                 $db->query($query);
-                $tablesCreated[] = $table;
             }
 
             // XXX ajv - should not drop any extra tables as the user may need them for a CMS or similar
             // foreach($t['+'] as $k=>$table) {
-            //  $query = "DROP TABLE `".$u->tablepre.$table . "`";
+            //  $query = "DROP TABLE `".$tablepre.$table . "`";
             //  $db->query($query);
             // }
         show_result(X_INST_OK);
 
         show_act('Changing table schemas to '.XMB_V);
             foreach($tbl as $t) {
-                if(in_array($t, $tablesCreated)) {
-                    // no need to change a freshly (re-)made table
-                    continue;
-                }
-                $t = substr($t, strlen($u->tablepre));
+                $t = substr($t, strlen($tablepre));
                 $d[$t] = $u->makeDiff($t);
             }
 
@@ -826,7 +798,7 @@ Public License instead of this License.
 
         show_act('Restructure data (may take a long time)');
         foreach($tbl as $t) {
-            $t = substr($t, strlen($u->tablepre));
+            $t = substr($t, strlen($tablepre));
             $d[$t] = $u->makeLocationDiff($t);
         }
 
@@ -835,8 +807,8 @@ Public License instead of this License.
                 continue;
             }
 
-            $fromTable = $u->tablepre . $tbl;
-            $tmpTable = $u->tablepre . $tbl . '_tmp';
+            $fromTable = $tablepre . $tbl;
+            $tmpTable = $tablepre . $tbl . '_tmp';
 
             $db->query("RENAME TABLE `$fromTable` TO `$tmpTable`");
             $db->query("DROP TABLE IF EXISTS `$fromTable`");
@@ -847,41 +819,37 @@ Public License instead of this License.
         }
         show_result(X_INST_OK);
 
-        show_act('Fixing birthday values');
-        $u->fixBirthdays(1);
-        show_result(X_INST_OK);
-
         show_act('Fixing missing posts per page values');
-        $u->fixPPP($mysqlver);
-        show_result(X_INST_OK);
+		$u->fixPPP($mysqlver);
+		show_result(X_INST_OK);
 
         show_act('Updating outgoing U2U status');
-        $db->query("UPDATE `".$u->tablepre."members` SET saveogu2u='yes'");
-        show_result(X_INST_OK);
+		$db->query("UPDATE `".$tablepre."members` SET saveogu2u='yes'");
+		show_result(X_INST_OK);
 
-        show_act('Fixing forum post permissions');
-        $u->fixForumPerms(1);
-        show_result(X_INST_OK);
+		show_act('Fixing forum post permissions');
+		$u->fixPostPerm();
+		show_result(X_INST_OK);
 
-        show_act("Updating themes to ".XMB_V." themes");
+		show_act("Updating themes to ".XMB_V." themes");
 
-        $u->deleteThemeByName('');                  // delete blank themes
+		$u->deleteThemeByName('');					// delete blank themes
 
-        // first, rename any old themes, so we don't remove them by accident.
-        $db->query("UPDATE ".$u->tablepre."themes SET name=CONCAT(name, '-old')");
+		// first, rename any old themes, so we don't remove them by accident.
+		$db->query("UPDATE ".$tablepre."themes SET name=CONCAT(name, '-old')");
 
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'XMB Corporate',     'rep_1.jpg', '#D1E5EF', '#EFEFEF', '#000000', '#FFFFFF', '#737373', '#FFFFFF', 'main.jpg', '#246197', '#2E3E55', '#000000', '2px', '696', '4', 'Verdana, Arial, Helvetica', '10px', 'space.gif', 'images/corporate', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'Iconic',           '#050C16', '#0A1C31', '#081627', '#FFFFFF', '#2E3E55', '#050C16', '#FFFFFF', '#050C16', 'catbg.gif', '#FFFFFF', '#FFFFFF', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'iconicheader.gif', 'images/iconic', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'one.point9',       'bgg.gif', '#D5E0EC', '#D5E0EC', '#000000', '#315275', '#1C8BCB', '#FFFFFF', 'bg2.gif', 'bar.gif', '#2E3E55', '#000000', '1', '85%', '4', 'Verdana, Arial, Helvetica', '10px', 'banner.gif', 'images/onepoint9', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");
+		$db->query("INSERT INTO ".$tablepre."themes VALUES ('', 'XMB Corporate',	 'rep_1.jpg', '#D1E5EF', '#EFEFEF', '#000000', '#FFFFFF', '#737373', '#FFFFFF', 'main.jpg', '#246197', '#2E3E55', '#000000', '2px', '696', '4', 'Verdana, Arial, Helvetica', '10px', 'space.gif', 'images/corporate', 'images/smilies', '#FFFFFF');");
+		$db->query("INSERT INTO ".$tablepre."themes VALUES ('', 'Iconic',           '#050C16', '#0A1C31', '#081627', '#FFFFFF', '#2E3E55', '#050C16', '#FFFFFF', '#050C16', 'catbg.gif', '#FFFFFF', '#FFFFFF', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'iconicheader.gif', 'images/iconic', 'images/smilies', '#FFFFFF');");
+		$db->query("INSERT INTO ".$tablepre."themes VALUES ('', 'one.point9',       'bgg.gif', '#D5E0EC', '#D5E0EC', '#000000', '#315275', '#1C8BCB', '#FFFFFF', 'bg2.gif', 'bar.gif', '#2E3E55', '#000000', '1', '85%', '4', 'Verdana, Arial, Helvetica', '10px', 'banner.gif', 'images/onepoint9', 'images/smilies', '#FFFFFF');");
+		$db->query("INSERT INTO ".$tablepre."themes VALUES ('', 'Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");
 
-        // Force everyone back to default theme as we know it exists.
-        $defaultTheme = $u->findThemeIDByName('XMB Corporate');
-        $db->query("UPDATE `".$u->tablepre."members` SET theme=0");
-        $db->query("UPDATE `".$u->tablepre."forums` SET theme=0");
-        $db->query("UPDATE `".$u->tablepre."settings` SET theme=" . $defaultTheme);
+	    // Force everyone back to default 1.9.2 theme as we know it exists.
+		$defaultTheme = $u->findThemeIDByName('XMB Corporate');
+	    $db->query("UPDATE `".$tablepre."members` SET theme='0'");
+	    $db->query("UPDATE `".$tablepre."forums` SET theme='0'");
+        $db->query("UPDATE `".$tablepre."settings` SET theme='" . $defaultTheme. "'");
 
-        show_result(X_INST_OK);
+		show_result(X_INST_OK);
 
 
         show_act('Inserting '.XMB_V.' templates');
@@ -890,26 +858,32 @@ Public License instead of this License.
         $file   = fread($stream, filesize(ROOT.'templates.xmb'));
                   fclose($stream);
 
-        $db->query("TRUNCATE TABLE `".$u->tablepre."templates`");
+        $db->query("TRUNCATE TABLE `".$tablepre."templates`");
 
         $templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
         foreach($templates as $key=>$val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = addslashes($template[1]);
-            $db->query("INSERT INTO `".$u->tablepre."templates` VALUES ('', '".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $db->query("INSERT INTO `".$tablepre."templates` VALUES ('', '".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
-        $db->query("DELETE FROM `".$u->tablepre."templates` WHERE name=''");
+        $db->query("DELETE FROM `".$tablepre."templates` WHERE name=''");
 
         show_result(X_INST_OK);
 
         show_act('Fixing special ranks');
 
-        $db->query("DELETE FROM `".$u->tablepre."ranks` WHERE title in ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
+        $db->query("DELETE FROM `".$tablepre."ranks` WHERE title in ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
 
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Moderator', -1, '', 6, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Super Moderator', -1, '', 7, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Administrator', -1, '', 8, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Super Administrator', -1, '', 9, 'yes', '');");
+        $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Moderator', -1, '', 6, 'yes', '');");
+        $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Moderator', -1, '', 7, 'yes', '');");
+        $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Administrator', -1, '', 8, 'yes', '');");
+        $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Administrator', -1, '', 9, 'yes', '');");
+
+        show_result(X_INST_OK);
+
+        show_act('Resetting birthdays');
+
+        $db->query("UPDATE ".$tablepre."members SET bday='0000-00-00'");
 
         show_result(X_INST_OK);
 
@@ -924,31 +898,30 @@ Public License instead of this License.
             clearstatcache();
             if (file_exists(ROOT.$dir)) {
                 if(!$problem) {
-                    $problem = true;
+                	$problem = true;
                 } else {
-                    show_act('   Removing directory `'.$dir.'`');
+                	show_act('   Removing directory `'.$dir.'`');
                 }
-                show_result(X_INST_WARN);
+               	show_result(X_INST_WARN);
                 error('Remove Directory Error', 'XMB could not remove the <i>'.$dir.'</i> directory. Please delete this directory before using your board.', false);
             }
         }
 
         foreach($req['files'] as $file) {
             @unlink(ROOT.$file);
-            clearstatcache();
             if (file_exists(ROOT.$file)) {
-                if(!$problem) {
-                    $problem = true;
-                } else {
-                    show_act('   Removing file `'.$file.'`');
-                }
+            	if(!$problem) {
+            		$problem = true;
+            	} else {
+            		show_act('   Removing file `'.$file.'`');
+            	}
                 show_result(X_INST_WARN);
                 error('Remove File Error', 'XMB could not remove <i>'.$file.'</i> file. Please delete this file before using your board.', false);
             }
         }
 
         if(!$problem) {
-            show_result(X_INST_OK);
+        	show_result(X_INST_OK);
         }
 
         echo '<br />Installation complete. Thank you for upgrading.';
