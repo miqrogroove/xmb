@@ -1,4 +1,4 @@
-XMB 1.9.3 Upgrade Utility
+XMB 1.9 Upgrade Utility
 
 For full details, please read the instructions in the Documentation folder.
 
