@@ -329,7 +329,7 @@ function displayAdminPanel() {
     <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['logs']?></font></strong></td>
     <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['tools']?></font></strong></td>
     <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['mysql_tools']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['backup_tools']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textfaqextra']?></font></strong></td>
     </tr>
     <tr>
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
