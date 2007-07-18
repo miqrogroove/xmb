@@ -9,9 +9,8 @@ misc_online_today|#*XMB TEMPLATE*#|
 <tr>
 <td colspan="6" class="category"><strong><font color="$cattext">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
 </tr>
-
 <tr>
-<td bgcolor="$altbg1" align="center" class="tablerow" width="4%"><img src="$imgdir/online.gif" alt="$lang[whosonline]" /></td>
+<td bgcolor="$altbg1" class="ctrtablerow" width="4%"><img src="$imgdir/online.gif" alt="$lang[whosonline]" /></td>
 <td bgcolor="$altbg2" colspan="5" class="mediumtxt">$todaymembers</td>
 </tr>
 </table>
@@ -39,16 +38,16 @@ misc_online_today|#*XMB TEMPLATE*#|
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[copythread]:</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[copythreadto]:</td>
+<td bgcolor="$altbg2">$forumselect</td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[copythreadto]:</td>
-<td class="tablerow" bgcolor="$altbg2">$forumselect</td>
-</tr>
-<tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="copysubmit" value="$lang[copythread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="copysubmit" value="$lang[copythread]" /></td>
 </tr>
 </table>
 </td>
@@ -66,8 +65,7 @@ misc_online_today|#*XMB TEMPLATE*#|
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="8%"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
-<td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />
-$lang[plogtuf]<br /></td>
+<td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[plogtuf]<br /></td>
 </tr>
 </table>
 </td>
@@ -79,17 +77,14 @@ $lang[plogtuf]<br /></td>
 <script type="text/javascript" language="JavaScript">
 var stopticker = "$lang[stopticker]";
 var startticker = "$lang[startticker]";
-
 var delay = $tickerdelay;;
 var node = '';
 var current = 0;
 var running = false;
 var contents = new Array();
 $contents
-
 window.onload = tickerstart;
 </script>
-
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -132,16 +127,17 @@ window.onload = tickerstart;
 |#*XMB TEMPLATE FILE*#|misc_feature_notavailable|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
-
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="8%"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[fnasorry3]<br/></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
@@ -172,7 +168,7 @@ window.onload = tickerstart;
 </td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2" align="center" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
 </tr>
 </table>
 </td>
@@ -187,38 +183,56 @@ window.onload = tickerstart;
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textstats]</strong></font></td>
 </tr>
-
 <tr bgcolor="$altbg1" class="tablerow">
-<td> <strong>$lang[stats1]</strong><br />
-$lang[stats2]<br />
-$lang[stats3]<br />
-$lang[stats4]<br />
-$lang[stats5]<br />
+<td>
+<strong>$lang[stats1]</strong>
 <br />
-$lang[stats6]<br />
+$lang[stats2]
 <br />
-$lang[stats7]<br />
+$lang[stats3]
 <br />
-$lang[stats14]<br />
+$lang[stats4]
 <br />
-$lang[stats8]<br />
+$lang[stats5]
+<br />
+<br />
+$lang[stats6]
+<br />
+<br />
+$lang[stats7]
+<br />
+<br />
+$lang[stats14]
+<br />
+<br />
+$lang[stats8]
+<br />
 <br />
 </td>
 </tr>
-
 <tr bgcolor="$altbg1" class="tablerow">
-<td><strong>$lang[textaverages]</strong><br />
-$lang[stats9]<br />
-$lang[stats10]<br />
-$lang[stats11]<br />
-$lang[stats12]<br />
-$lang[stats13]<br />
-$lang[stats15]<br />
+<td>
+<strong>$lang[textaverages]</strong>
+<br />
+$lang[stats9]
+<br />
+$lang[stats10]
+<br />
+$lang[stats11]
+<br />
+$lang[stats12]
+<br />
+$lang[stats13]
+<br />
+$lang[stats15]
 <br />
 <br />
-$lang[bestmember]</td>
+<br />
+$lang[bestmember]
+</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
@@ -235,24 +249,24 @@ $lang[bestmember]</td>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textpassword]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://www.network-tools.com/default.asp?prog=validate&amp;Netnic=whois.arin.net&amp;host=$member[email]" target="_blank">$lang[adminverifyemail]</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://www.network-tools.com/default.asp?prog=validate&amp;Netnic=whois.arin.net&amp;host=$member[email]" target="_blank">$lang[adminverifyemail]</a></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textsite]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
+<td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textwebcam]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
+<td bgcolor="$altbg2"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
 </tr>
 <tr>
 <td bgcolor="$altbg1" width="22%"class="tablerow">$lang[textaim]</td>
