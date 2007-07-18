@@ -3950,10 +3950,10 @@ $posts
 <td bgcolor="$altbg1" class="tablerow">$lang[rulesoninfo]</td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" class="tablerow">$bbrulestxt</td>
+<td bgcolor="$altbg2" class="tablerow">$SETTINGS[bbrulestxt]</td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" class="tablerow" align="center"><input type="submit" class="submit" name="rulesubmit" value="$lang[textagree]" /></td>
+<td bgcolor="$altbg2" class="ctrtablerow"><input type="submit" class="submit" name="rulesubmit" value="$lang[textagree]" /></td>
 </tr>
 </table>
 </td>
