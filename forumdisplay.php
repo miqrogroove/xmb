@@ -62,7 +62,7 @@ $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
 $notexist = false;
-if ($forum['type'] != "forum" && $forum['type'] != "sub" || $fid == 0) {
+if ($forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
     $notexist = $lang['textnoforum'];
 }
 
@@ -74,7 +74,7 @@ if ($forum['type'] == 'sub') {
     if (!privfcheck($fup['private'], $fup['userlist'])) {
         error($lang['privforummsg']);
     }
-} elseif ($forum['type'] != 'forum') {
+} else if ($forum['type'] != 'forum') {
     error($notexist);
 }
 
@@ -84,9 +84,9 @@ if (!$authorization) {
 }
 pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
-if ($forum['type'] == "forum") {
+if ($forum['type'] == 'forum') {
     nav(stripslashes($forum['name']));
-} elseif ( $forum['type'] == 'sub') {
+} else if ($forum['type'] == 'sub') {
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.stripslashes($fup['name']).'</a>');
     nav(stripslashes($forum['name']));
 }
@@ -113,7 +113,7 @@ if (!$notexist) {
     if (!postperm($forum, 'thread')) {
         $newtopiclink = $newpolllink = '';
     } else {
-        if(X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
+        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
             $newtopiclink = $newpolllink = '';
         } else {
             eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
@@ -158,7 +158,7 @@ if ($page) {
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
-    $cusdate = time() - $cusdate;
+    $cusdate = $onlinetime - $cusdate;
     $cusdate = "AND (substring_index(lastpost, '|',1)+1) >= '$cusdate'";
 } else {
     $cusdate = '';
@@ -172,22 +172,20 @@ if (strtolower($ascdesc) != 'asc') {
 $forumdisplay_thread = 'forumdisplay_thread';
 
 if (X_STAFF && $self['status'] != 'Moderator') {
-    $status1 = "Moderator";
+    $status1 = 'Moderator';
 } elseif ($self['status'] == 'Moderator') {
     $status1 = modcheck($self['status'], $xmbuser, $forum['moderator']);
 } else {
     $status1 = '';
 }
 
-if ($status1 == "Moderator") {
+if ($status1 == 'Moderator') {
     $forumdisplay_thread = 'forumdisplay_thread_admin';
 }
 
 $topicsnum = 0;
 $threadlist = '';
-
 $threadsInFid = array();
-
 if ($dotfolders == "on" && X_MEMBER) {
     $query = $db->query("SELECT tid FROM $table_posts WHERE author='$xmbuser' AND fid='$fid'");
     while ($row = $db->fetch_array($query)) {
@@ -197,11 +195,11 @@ if ($dotfolders == "on" && X_MEMBER) {
 }
 
 $querytop = $db->query("SELECT t.* FROM $table_threads t WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc,lastpost $ascdesc LIMIT $start_limit, $tpp");
-while($thread = $db->fetch_array($querytop)) {
+while ($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != "") {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
     } else {
-        $thread['icon'] = " ";
+        $thread['icon'] = '';
     }
 
     if ($thread['topped'] == 1) {
@@ -220,7 +218,7 @@ while($thread = $db->fetch_array($querytop)) {
 
     $prefix = '';
 
-    $lastpost = explode("|", $thread['lastpost']);
+    $lastpost = explode('|', $thread['lastpost']);
     $dalast = trim($lastpost[0]);
 
     if ($lastpost[1] != $lang['textanonymous']) {
@@ -229,57 +227,45 @@ while($thread = $db->fetch_array($querytop)) {
         $lastpost[1] = $lang['textanonymous'];
     }
 
-    $prefix = '';
-
-    $lastpost = explode("|", $thread['lastpost']);
-    $dalast = trim($lastpost[0]);
-
-    if ($lastpost[1] != 'Anonymous') {
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-    } else {
-        $lastpost[1] = $lang['textanonymous'];
-    }
-
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
     if ($thread['replies'] >= $hottopic) {
-        $folder = "hot_folder.gif";
+        $folder = 'hot_folder.gif';
     } else {
-        $folder = "folder.gif";
+        $folder = 'folder.gif';
     }
 
     $oldtopics = isset($oldtopics) ? $oldtopics : '';
 
     if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $hottopic && $lastvisit < $dalast) {
         $folder = "hot_red_folder.gif";
-    } elseif ($lastvisit < $dalast && $oT === false) {
+    } else if ($lastvisit < $dalast && $oT === false) {
         $folder = "red_folder.gif";
     }
 
-    if ($dotfolders == "on" && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
-        $folder = "dot_".$folder;
+    if ($dotfolders == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
+        $folder = 'dot_'.$folder;
     }
 
     $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
 
-    if ($thread['closed'] == "yes") {
+    if ($thread['closed'] == 'yes') {
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
     }
 
     $lastreplydate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($addtime * 3600));
     $lastreplytime = gmdate($timecode, $lastpost[0] + ($timeoffset * 3600) + ($addtime * 3600));
 
-    $lastpost = "$lastreplydate $lang[textat] $lastreplytime<br />$lang[textby] $lastpost[1]";
+    $lastpost = $lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
 
     $moved = explode('|', $thread['closed']);
-
-    if ( $moved[0] == "moved") {
-        $prefix = "$lang[moved] ";
+    if ($moved[0] == 'moved') {
+        $prefix = $lang['moved'].' ';
         $thread['realtid'] = $thread['tid'];
         $thread['tid'] = $moved[1];
         $thread['replies'] = "-";
         $thread['views'] = "-";
-        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" />';
+        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
         $postnum = $db->result($db->query("SELECT count(pid) FROM $table_posts WHERE tid='$thread[tid]'"), 0);
     }else{
         $thread['realtid'] = $thread['tid'];
@@ -288,24 +274,21 @@ while($thread = $db->fetch_array($querytop)) {
     eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
     if ($thread['pollopts'] == 1) {
-        $prefix = "$lang[pollprefix] ";
-    } else {
-        $prefix = '';
+        $prefix = $lang['pollprefix'].' ';
     }
 
     if ($thread['topped'] == 1) {
-        $prefix = "$lang[toppedprefix] ";
+        $prefix = $lang['toppedprefix'].' ';
     }
 
     $thread['subject'] = checkOutput(censor($thread['subject']), 'no', '', true);
 
     $postnum = $thread['replies']+1;
     if ($postnum > $ppp) {
-        $pagelinks = multi($postnum, $ppp, 0, 'viewthread.php?tid='.$thread['tid']);
+        $pagelinks = multi($postnum, $ppp, 0, 'viewthread.php?tid='.intval($thread['tid']));
         $multipage2 = '(<small>'.$pagelinks.'</small>)';
     } else {
-        $pagelinks = '';
-        $multipage2 = '';
+        $pagelinks = $multipage2 = '';
     }
 
     eval('$threadlist .= "'.template($forumdisplay_thread).'";');
@@ -353,18 +336,18 @@ switch ($cusdate) {
 
 $query = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$fid'");
 $topicsnum = $db->result($query, 0);
-$mpurl = "forumdisplay.php?fid=$fid";
+$mpurl = 'forumdisplay.php?fid='.$fid;
 if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
     $multipage = '';
 } else {
-    if (X_ADMIN || $status1 == "Moderator") {
+    if (X_ADMIN || $status1 == 'Moderator') {
         eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
     } else {
         eval('$multipage = "'.template('forumdisplay_multipage').'";');
     }
 }
 
-if (X_ADMIN || $status1 == "Moderator") {
+if (X_ADMIN || $status1 == 'Moderator') {
     eval('echo stripslashes("'.template('forumdisplay_admin').'");');
 } else {
     eval('echo stripslashes("'.template('forumdisplay').'");');
