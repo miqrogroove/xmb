@@ -430,6 +430,7 @@ if ($action == 'profile') {
 
         $newavatar      = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
         $avatar         = checkInput($newavatar, 'no', 'no', 'javascript', false);
+        $avatar         = checkInput($newavatar, 'no', 'no', 'php', false);
         $newlocation    = formVar('newlocation');
         $location       = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
         $newicq         = formVar('newicq');
