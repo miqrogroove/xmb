@@ -164,9 +164,9 @@ if ($action == "settings") {
         settingHTML('resetsigs', $resetSigOn, $resetSigOff);
 
         $avataron = $avataroff = $avatarlist = '';
-        if ($SETTINGS['avastatus'] == "on") {
+        if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
-        } elseif ($avastatus == "list") {
+        } elseif ($avastatus == 'list') {
             $avatarlist = $selHTML;
         } else {
             $avataroff = $selHTML;
@@ -199,9 +199,9 @@ if ($action == "settings") {
         }
 
         $notifycheck[0] = $notifycheck[1] = $notifycheck[2] = false;
-        if ($SETTINGS['notifyonreg'] == "off") {
+        if ($SETTINGS['notifyonreg'] == 'off') {
             $notifycheck[0] = true;
-        } elseif ($SETTINGS['notifyonreg'] == "u2u") {
+        } elseif ($SETTINGS['notifyonreg'] == 'u2u') {
             $notifycheck[1] = true;
         } else {
             $notifycheck[2] = true;
