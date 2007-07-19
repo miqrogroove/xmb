@@ -631,7 +631,6 @@ $lang['textcusstatus'] = "Custom Status";
 $lang['textdec'] = "December";
 $lang['textdelete'] = "! Delete this message !";
 $lang['textdeleteposts'] = "Delete Posts";
-$lang['textdeleteposts'] = "Posts";
 $lang['textdeleteques'] = "Delete";
 $lang['textdeleteselectedfavs'] = "Delete Selected Favourites";
 $lang['textdeleteselectedsubs'] = "Delete Selected Subscriptions";
