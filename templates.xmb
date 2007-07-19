@@ -3528,18 +3528,18 @@ $subsbtn
 <tr>
 <td class="tablerow" bgcolor="$altbg1"><table width="98%">
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="2" align="center"><strong>$lang[textonline]</strong></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textonline]</strong></td>
 </tr>
 $buddys[online]
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="2" align="center"><strong>$lang[textoffline]</strong></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textoffline]</strong></td>
 </tr>
 $buddys[offline]
 </table>
 </td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2" align="center"><strong><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);">$lang[launchbuddylist]</a></strong></td>
+<td class="ctrtablerow" bgcolor="$altbg2"><strong><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);">$lang[launchbuddylist]</a></strong></td>
 </tr>
 </table>
 </td>
@@ -3549,21 +3549,23 @@ $buddys[offline]
 <td valign="top">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="4"><font color="$cattext"><strong>$lang[textlatestu2us]</strong></font></td>
 </tr>
-<tr>
-<td class="header">$lang[textsubject]</td>
-<td class="header">$lang[textfrom]</td>
-<td class="header">$lang[textsent]</td>
-<td class="header">$lang[mcpread]</td>
+<tr class="header">
+<td>$lang[textsubject]</td>
+<td>$lang[textfrom]</td>
+<td>$lang[textsent]</td>
+<td>$lang[mcpread]</td>
 </tr>
 $messages
 <tr>
 <td colspan="4" class="header" valign="top"><a href="#" onclick ="Popup('u2u.php','Window', 700, 450);">[$lang[viewcompleteinbox]]</a></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 <br />
@@ -3573,12 +3575,12 @@ $messages
 <tr class="category">
 <td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
-<tr>
-<td class="header" align="center" width="4%">$lang[texticon]</td>
-<td class="header" width="43%">$lang[textsubject]</td>
-<td class="header" width="24%">$lang[textforum]</td>
-<td class="header" align="center" width="6%">$lang[textreplies]</td>
-<td class="header" width="19%">$lang[textlastpost]</td>
+<tr class="header">
+<td align="center" width="4%">$lang[texticon]</td>
+<td width="43%">$lang[textsubject]</td>
+<td width="24%">$lang[textforum]</td>
+<td align="center" width="6%">$lang[textreplies]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 $favs
 </table>
