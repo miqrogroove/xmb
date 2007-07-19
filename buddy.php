@@ -52,6 +52,10 @@ $action = getVar('action');
 switch ($action) {
     case 'add':
         $buddys = getVar('buddys');
+		if (empty($buddys))
+		{
+			$buddys = formArray('buddys');
+		}
         buddy_add($buddys);
         break;
     case 'edit':
