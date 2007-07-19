@@ -664,7 +664,7 @@ if ($action == "rename") {
 
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$myErr</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
     } else {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
@@ -677,16 +677,16 @@ if ($action == "rename") {
         <tr>
         <td class="category" colspan="2"><strong><font color="<?php echo $cattext?>"><?php echo $lang['admin_rename_txt']?></font></strong></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg1?>" class="tablerow" width="22%"><?php echo $lang['admin_rename_userfrom']?></td>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="text" name="frmUserFrom" size="25" /></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['admin_rename_userfrom']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="frmUserFrom" size="25" /></td>
+        </tr>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['admin_rename_userto']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="frmUserTo" size="25" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg1?>" class="tablerow" width="22%"><?php echo $lang['admin_rename_userto']?></td>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="text" name="frmUserTo" size="25" /></td>
-        </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" colspan="2" align="center"><input type="submit" class="submit" name="renamesubmit" value="<?php echo $lang['admin_rename_txt']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" name="renamesubmit" value="<?php echo $lang['admin_rename_txt']?>" /></td>
         </tr>
         </table>
         </td>
@@ -704,7 +704,7 @@ if ($action == 'forum') {
     if (noSubmit('forumsubmit') && !$fdetails) {
         $groups = array();
         $forums = array();
-        $forums['0'] = array();
+        $forums[0] = array();
         $forumlist = array();
         $subs = array();
         $i = 0;
@@ -716,7 +716,7 @@ if ($action == 'forum') {
                 $groups[$i]['displayorder'] = $selForums['displayorder'];
                 $groups[$i]['status'] = $selForums['status'];
                 $groups[$i]['fup'] = $selForums['fup'];
-            } elseif ($selForums['type'] == 'forum') {
+            } else if ($selForums['type'] == 'forum') {
                 $id = (empty($selForums['fup'])) ? 0 : $selForums['fup'];
                 $forums[$id][$i]['fid'] = $selForums['fid'];
                 $forums[$id][$i]['name'] = htmlspecialchars($selForums['name']);
@@ -725,12 +725,12 @@ if ($action == 'forum') {
                 $forums[$id][$i]['fup'] = $selForums['fup'];
                 $forumlist[$i]['fid'] = $selForums['fid'];
                 $forumlist[$i]['name'] = $selForums['name'];
-            } elseif ($selForums['type'] == 'sub') {
-                $subs["$selForums[fup]"][$i]['fid'] = $selForums['fid'];
-                $subs["$selForums[fup]"][$i]['name'] = htmlspecialchars($selForums['name']);
-                $subs["$selForums[fup]"][$i]['displayorder'] = $selForums['displayorder'];
-                $subs["$selForums[fup]"][$i]['status'] = $selForums['status'];
-                $subs["$selForums[fup]"][$i]['fup'] = $selForums['fup'];
+            } else if ($selForums['type'] == 'sub') {
+                $subs[$selForums['fup']][$i]['fid'] = $selForums['fid'];
+                $subs[$selForums['fup']][$i]['name'] = htmlspecialchars($selForums['name']);
+                $subs[$selForums['fup']][$i]['displayorder'] = $selForums['displayorder'];
+                $subs[$selForums['fup']][$i]['status'] = $selForums['status'];
+                $subs[$selForums['fup']][$i]['fup'] = $selForums['fup'];
             }
             $i++;
         }
@@ -748,7 +748,7 @@ if ($action == 'forum') {
         <?php
         foreach ($forums[0] as $forum) {
             $on = $off = '';
-            if ($forum['status'] == "on") {
+            if ($forum['status'] == 'on') {
                 $on = $selHTML;
             } else {
                 $off = $selHTML;
@@ -773,7 +773,7 @@ if ($action == 'forum') {
             if (array_key_exists("$forum[fid]", $subs)) {
                 foreach ($subs["$forum[fid]"] as $subforum) {
                     $on = $off = '';
-                    if ($subforum['status'] == "on") {
+                    if ($subforum['status'] == 'on') {
                         $on = $selHTML;
                     } else {
                         $off = $selHTML;
@@ -805,7 +805,7 @@ if ($action == 'forum') {
 
         foreach ($groups as $group) {
             $on = $off = '';
-            if ($group['status'] == "on") {
+            if ($group['status'] == 'on') {
                 $on = $selHTML;
             } else {
                 $off = $selHTML;
@@ -844,7 +844,7 @@ if ($action == 'forum') {
                         if ($moveforum['fid'] == $forum['fup']) {
                             $curgroup = $selHTML;
                         } else {
-                            $curgroup = "";
+                            $curgroup = '';
                         }
                         echo "<option value=\"$moveforum[fid]\" $curgroup>".stripslashes($moveforum['name'])."</option>";
                     }
@@ -856,7 +856,7 @@ if ($action == 'forum') {
                     if (array_key_exists($forum['fid'], $subs)) {
                         foreach ($subs[$forum['fid']] as $forum) {
                             $on = $off = '';
-                            if ($forum['status'] == "on") {
+                            if ($forum['status'] == 'on') {
                                 $on = $selHTML;
                             } else {
                                 $off = $selHTML;
@@ -925,7 +925,7 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
         </table>
         </td>
@@ -1112,7 +1112,7 @@ if ($action == 'forum') {
         <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="delete" value="<?php echo $forum['fid']?>" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
         </table>
         </td>
@@ -1183,17 +1183,17 @@ if ($action == 'forum') {
 
         if ($newfname != $lang['textnewforum']) {
             $newfname = addslashes($newfname);
-            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {
             $newsubname = addslashes($newsubname);
-            $db->query("INSERT INTO $table_forums ( type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting ) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
@@ -1219,7 +1219,7 @@ if ($action == 'forum') {
         if ($delete) {
             $db->query("DELETE FROM $table_forums WHERE fid='$delete'");
         }
-        echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td align="center">'.$lang['textforumupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     }
  }
 
@@ -1273,7 +1273,7 @@ if ($action == "mods") {
         <td colspan="2" class="tablerow" bgcolor="<?php echo $altbg1?>"><span class="smalltxt"><?php echo $lang['multmodnote']?></span></td>
         </tr>
         <tr>
-        <td align="center" colspan="2" class="tablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="modsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td colspan="2" class="ctrtablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="modsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1292,17 +1292,15 @@ if ($action == "mods") {
             }
         }
 
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textmodupdate]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';
     }
 }
 
 if ($action == "members") {
     $members = getVar('members');
-
     if (noSubmit('membersubmit')) {
         if (!$members) {
             ?>
-
             <tr bgcolor="<?php echo $altbg2?>">
             <td>
             <form method="post" action="cp.php?action=members&amp;members=search">
@@ -1313,13 +1311,13 @@ if ($action == "members") {
             <tr>
             <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textmembers']?></strong></font></td>
             </tr>
-            <tr>
-            <td class="tablerow" bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textsrchusr']?></td>
-            <td class="tablerow" bgcolor="<?php echo $altbg2?>"><input type="text" name="srchmem" /></td>
+            <tr class="tablerow">
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textsrchusr']?></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="text" name="srchmem" /></td>
             </tr>
-            <tr>
-            <td class="tablerow" bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textwithstatus']?></td>
-            <td class="tablerow" bgcolor="<?php echo $altbg2?>">
+            <tr class="tablerow">
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textwithstatus']?></td>
+            <td bgcolor="<?php echo $altbg2?>">
             <select name="srchstatus">
             <option value="0"><?php echo $lang['anystatus']?></option>
             <option value="Super Administrator"><?php echo $lang['superadmin']?></option>
@@ -1332,7 +1330,7 @@ if ($action == "members") {
             </td>
             </tr>
             <tr>
-            <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" value="<?php echo $lang['textgo']?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" value="<?php echo $lang['textgo']?>" /></td>
             </tr>
             </table>
             </td>
@@ -1341,11 +1339,9 @@ if ($action == "members") {
             </form>
             </td>
             </tr>
-
             <?php
         } elseif ($members == "search") {
             ?>
-
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
@@ -1362,7 +1358,6 @@ if ($action == "members") {
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textcusstatus']?></font></strong></td>
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textbanfrom']?></font></strong></td>
             </tr>
-
             <?php
             $srchmem = formVar('srchmem');
             $srchstatus = formVar('srchstatus');
@@ -1372,43 +1367,30 @@ if ($action == "members") {
                 $query = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
             }
 
-            $sadminselect = "";
-            $adminselect = "";
-            $smodselect = "";
-            $modselect = "";
-            $memselect = "";
-            $banselect = "";
-            $noban = "";
-            $u2uban = "";
-            $postban = "";
-            $bothban = "";
+            $sadminselect = $adminselect = $smodselect = "";
+            $modselect = $memselect = $banselect = "";
+            $noban = $u2uban = $postban = $bothban = "";
 
             while ($member = $db->fetch_array($query)) {
                 switch ($member['status']) {
                     case 'Super Administrator':
                         $sadminselect = $selHTML;
                         break;
-
                     case 'Administrator':
                         $adminselect = $selHTML;
                         break;
-
                     case 'Super Moderator':
                         $smodselect = $selHTML;
                         break;
-
                     case 'Moderator':
                         $modselect = $selHTML;
                         break;
-
                     case 'Member':
                         $memselect = $selHTML;
                         break;
-
                     case 'Banned':
                         $banselect = $selHTML;
                         break;
-
                     default:
                         $memselect = $selHTML;
                         break;
@@ -1418,21 +1400,17 @@ if ($action == "members") {
                     case 'u2u':
                         $u2uban = $selHTML;
                         break;
-
                     case 'posts':
                         $postban = $selHTML;
                         break;
-
                     case 'both':
                         $bothban = $selHTML;
                         break;
-
                     default:
                         $noban = $selHTML;
                         break;
                 }
                 ?>
-
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="confirmActionCheckbox('<?php echo $lang['confirmDeleteUser']?>', this, true, false);" value="<?php echo $member['uid']?>" /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo $member['username']?>"><?php echo $member['username']?></a>
@@ -1456,23 +1434,14 @@ if ($action == "members") {
                 <option value="both" <?php echo $bothban?>><?php echo $lang['banboth']?></option>
                 </select></td>
                 </tr>
-
                 <?php
-                $sadminselect = "";
-                $adminselect = "";
-                $smodselect = "";
-                $modselect = "";
-                $memselect = "";
-                $banselect = "";
-                $noban = "";
-                $u2uban = "";
-                $postban = "";
-                $bothban = "";
+                $sadminselect = $adminselect = $smodselect = "";
+                $modselect = $memselect = $banselect = "";
+                $noban = $u2uban = $postban = $bothban = "";
             }
             ?>
-
             <tr>
-            <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
             </tr>
             </table>
             </td>
@@ -1481,10 +1450,9 @@ if ($action == "members") {
             </form>
             </td>
             </tr>
-
             <?php
         }
-    } elseif (onSubmit('membersubmit')) {
+    } else if (onSubmit('membersubmit')) {
         /*
         Get the uid first Super Administrator (the first to register and thus most likely to be the 'top level' admin) to compare against the delete uid. This member should *never* be deleted this way.
         */
@@ -1503,7 +1471,7 @@ if ($action == "members") {
             $to['status'] = isset($_POST[$to['status']]) ? $_POST[$to['status']] : '';
 
             // Fix a race condition noted by wrdyjoey
-            if ( trim($to['status']) == '' ) {
+            if (trim($to['status']) == '') {
                 $to['status'] = 'Member';
             }
 
@@ -1535,8 +1503,8 @@ if ($action == "members") {
                 continue;
             }
 
-            if($origstatus == 'Super Administrator' && $to['status'] != 'Super Administrator') {
-                if($db->result($db->query("SELECT count(uid) FROM $table_members WHERE status='Super Administrator'"), 0) == 1) {
+            if ($origstatus == 'Super Administrator' && $to['status'] != 'Super Administrator') {
+                if ($db->result($db->query("SELECT count(uid) FROM $table_members WHERE status='Super Administrator'"), 0) == 1) {
                     error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
                 }
             }
@@ -1554,14 +1522,13 @@ if ($action == "members") {
             }
         }
 
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textmembersupdate]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';
     }
 }
 
 if ($action == "ipban") {
     if (noSubmit('ipbansubmit')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=ipban">
@@ -1574,29 +1541,24 @@ if ($action == "ipban") {
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
         </tr>
-
         <?php
         $query = $db->query("SELECT * FROM $table_banned ORDER BY dateline");
         while ($ipaddress = $db->fetch_array($query)) {
-
             for ($i=1; $i<=4; ++$i) {
                 $j = "ip" . $i;
-                if ( $ipaddress[$j] == -1) {
+                if ($ipaddress[$j] == -1) {
                     $ipaddress[$j] = "*";
                 }
             }
-
             $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
             $theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
             ?>
-
-            <tr bgcolor="<?php echo $altbg1?>">
-            <td class="tablerow"><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
-            <td class="tablerow"><?php echo $theip?></td>
-            <td class="tablerow"><?php echo @gethostbyaddr($theip)?></td>
-            <td class="tablerow"><?php echo $ipdate?></td>
+            <tr class="tablerow" bgcolor="<?php echo $altbg1?>">
+            <td><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
+            <td><?php echo $theip?></td>
+            <td><?php echo @gethostbyaddr($theip)?></td>
+            <td><?php echo $ipdate?></td>
             </tr>
-
             <?php
         }
 
@@ -1622,7 +1584,6 @@ if ($action == "ipban") {
         </form>
         </td>
         </tr>
-
         <?php
     } else {
         $newip = array();
@@ -1634,12 +1595,13 @@ if ($action == "ipban") {
 
         if ($delete) {
             $dels = array();
-            foreach($delete as $id => $del) {
-                if($del == 1) {
+            foreach ($delete as $id => $del) {
+                if ($del == 1) {
                     $dels[] = $id;
                 }
             }
-            if(count($dels) > 0) {
+
+            if (count($dels) > 0) {
                 $dels = implode(',', $dels);
                 $db->query("DELETE FROM $table_banned WHERE id IN ($dels)");
             }
@@ -1648,12 +1610,10 @@ if ($action == "ipban") {
 
         if ($newip[1] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
             $invalid = 0;
-
             for ($i=0; $i<=3 && !$invalid; ++$i) {
-
                 if ($newip[$i] == "*") {
                     $ip[$i+1] = -1;
-                } elseif (preg_match("#^[0-9]+$#", $newip[$i])) {
+                } else if (preg_match("#^[0-9]+$#", $newip[$i])) {
                     $ip[$i+1] = $newip[$i];
                 } else {
                     $invalid = 1;
@@ -1676,8 +1636,7 @@ if ($action == "ipban") {
                 }
             }
         }
-
-        echo "<tr bgcolor=\"$altbg2\"><td align=\"center\" class=\"tablerow\">$self[status]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$self['status'].'</td></tr>';
     }
 }
 
@@ -1718,7 +1677,7 @@ if ($action == "upgrade") {
             $count--;
         }
 
-        echo "</table></td></tr></table>";
+        echo '</table></td></tr></table>';
 
         for ($num=0;$num<$count;$num++) {
             $explode[$num] = stripslashes($explode[$num]);
@@ -1729,20 +1688,18 @@ if ($action == "upgrade") {
                 }
             }
 
-            if ($explode[$num] != "") {
+            if ($explode[$num] != '') {
                 $query = $db->query($explode[$num], true);
             }
 
             echo '<br />';
             ?>
-
             <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
             <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
-
             <?php
             $xn = strtoupper($explode[$num]);
             if (strpos($xn, 'SELECT') !== false || strpos($xn, 'SHOW') !== false || strpos($xn, 'EXPLAIN') !== false || strpos($xn, 'DESCRIBE') !== false) {
@@ -1751,7 +1708,6 @@ if ($action == "upgrade") {
                 $selq=false;
             }
             ?>
-
             </td>
             </tr>
             </td>
@@ -1760,11 +1716,9 @@ if ($action == "upgrade") {
             </td>
             </tr>
             </table>
-
             <?php
         }
         ?>
-
         <br />
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
@@ -1777,14 +1731,12 @@ if ($action == "upgrade") {
         </td>
         </tr>
         </table>
-
         <?php
         end_time();
-        eval("echo \"".template("footer")."\";");
+        eval('echo "'.template('footer').'";');
         exit();
     } else {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=upgrade" enctype="multipart/form-data">
@@ -1875,18 +1827,15 @@ if ($action == "search") {
             }
         }
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td align="left" colspan="2">
         <strong><?php echo $found?></strong> <?php echo $lang['beenfound']?>
         <br />
         </td>
         </tr>
-
         <?php
         foreach ($list as $num=>$val) {
             ?>
-
             <tr class="tablerow" width="5%">
             <td align="left" bgcolor="<?php echo $altbg2?>">
             <strong><?php echo ($num+1)?>.</strong>
@@ -1895,12 +1844,10 @@ if ($action == "search") {
             <?php echo $val?>
             </td>
             </tr>
-
             <?php
          }
     } else {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=search">
@@ -1917,7 +1864,6 @@ if ($action == "search") {
         <?php echo $lang['postip']?><br /><input type="text" name="postip" /></input><br /><br />
         <?php echo $lang['profileword']?><br /><input type="text" name="profileword" /></input><br /><br />
         <?php echo $lang['postword']?><br />
-
         <?php
         $query = $db->query("SELECT find FROM $table_words");
         $select = "<select name=\"postword\"><option value=\"\"></option>";
@@ -1927,7 +1873,6 @@ if ($action == "search") {
         $select .= "</select>";
         echo $select;
         ?>
-
         <br /><br />
         <div align="center"><br /><input type="submit" class="submit" name="searchsubmit" value="Search now" /><br /><br /></div>
         </td>
@@ -1942,7 +1887,7 @@ if ($action == "search") {
     }
 }
 
-echo "</table></td></tr></table>";
+echo '</table></td></tr></table>';
 
 end_time();
 
