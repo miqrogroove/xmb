@@ -457,7 +457,7 @@ if ($action == "settings") {
         </tr>
         <?php
         printsetting1($lang['reg_on'], 'reg_on', $regon, $regoff);
-        printsetting3($lang['ipreg'], 'ipReg', array($lang['textyes'], $lang['textno']), array('on', 'off'), $allowipreg, false);
+        printsetting3($lang['ipreg'], 'ipReg', array($lang['texton'], $lang['textoff']), array('on', 'off'), $allowipreg, false);
         printsetting2($lang['max_daily_regs'], 'maxDayReg', ((int)$SETTINGS['maxdayreg']), 3);
         printsetting3($lang['notifyonreg'], 'notifyonregnew', array($lang['textoff'], $lang['viau2u'], $lang['viaemail']), array('off', 'u2u', 'email'), $notifycheck, false);
         printsetting1($lang['textreggedonly'], 'regviewnew', $regonlyon, $regonlyoff);
@@ -550,7 +550,7 @@ if ($action == "settings") {
         $attachimgpostnew = formOnOff('attachimgpostnew');
 
         $reg_on = formOnOff('reg_on');
-        $ipReg = formYesNo('ipReg');
+        $ipReg = formOnOff('ipReg');
         $maxDayReg = formInt('maxDayReg');
         $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
         $regviewnew = formOnOff('regviewnew');
