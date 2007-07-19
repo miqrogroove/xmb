@@ -94,53 +94,53 @@ function email() {
 		if(hasSelection(messageElement)) {
 			// check if it's an email, or not
 			if(fetchSelection(messageElement).match(/(.+)@(.+)/) != null) {
-				email = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
-				desc	= prompt(bbcode_prompt_email_desc, '');
+				text = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
+				desc	= prompt(bbcode_prompt_link_desc, '');
 
-				while(email.length == 0 || email.match(/(.+)@(.+)/) == null) {
-					email = prompt(bbcode_prompt_email_error, fetchSelection(messageElement));
+				while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+					text = prompt(bbcode_prompt_email_error, fetchSelection(messageElement));
 				}
 
 				if(desc.length == 0) {
-					if(email == fetchSelection(messageElement)) {
+					if(text == fetchSelection(messageElement)) {
 						wrapText('[email]', '[/email]', messageElement);
 					} else {
-						AddText('[email]', '[/email]', email, messageElement);
+						AddText('[email]', '[/email]', text, messageElement);
 					}
 				} else {
-					if(email == fetchSelection(messageElement)) {
+					if(text == fetchSelection(messageElement)) {
 						wrapText('[email=', ']'+desc+'[/email]', messageElement);
 					} else {
-						AddText('[email='+email+']', '[/email]', desc, messageElement);
+						AddText('[email='+text+']', '[/email]', desc, messageElement);
 					}
 				}
 			} else {
 				// prompt for email, checking for validity
-				email = prompt(bbcode_prompt_email_email, 'user@example.com');
-				while(email.length == 0 || email.match(/(.+)@(.+)/) == null) {
-					email = prompt(bbcode_prompt_email_error, email);
+				text = prompt(bbcode_prompt_email_email, 'user@example.com');
+				while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+					text = prompt(bbcode_prompt_email_error, text);
 				}
 
 				desc = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
 				// prompt for desc, give selection as default
 				if(desc == fetchSelection(messageElement)) {
-					wrapText('[email='+email+']', '[/email]', messageElement);
+					wrapText('[email='+text+']', '[/email]', messageElement);
 				} else {
-					AddText('[email='+email+']', '[/email]', desc, messageElement);
+					AddText('[email='+text+']', '[/email]', desc, messageElement);
 				}
 			}
 		} else {
 			// no selection
-				email = prompt(bbcode_prompt_email_email, 'user@example.com');
-				while(email.length == 0 || email.match(/(.+)@(.+)/) == null) {
-					email = prompt(bbcode_prompt_email_error, email);
+				text = prompt(bbcode_prompt_email_email, 'user@example.com');
+				while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+					text = prompt(bbcode_prompt_email_error, text);
 				}
 
-				desc = prompt(bbcode_prompt_email_email, '');
+				desc = prompt(bbcode_prompt_link_desc, '');
 				if(desc.length == 0) {
-					AddText('[email]', '[/email]', email, messageElement);
+					AddText('[email]', '[/email]', text, messageElement);
 				} else {
-					AddText('[email='+email+']', '[/email]', desc, messageElement);
+					AddText('[email='+text+']', '[/email]', desc, messageElement);
 				}
 		}
 	}
