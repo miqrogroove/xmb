@@ -41,7 +41,7 @@ if (!isset($_SERVER)) {
     $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
 }
 
-$global = @array(0 => $_GET, 1 => $_POST, 2 => $_ENV, 3=> $_COOKIE, 4=> $_SESSION, 5 => $_SERVER, 6 => $_FILES);
+$global = @array(0 => &$_GET, 1 => &$_POST, 2 => &$_ENV, 3=> &$_COOKIE, 4=> &$_SESSION, 5 => &$_SERVER, 6 => &$_FILES, 7 => &$_REQUEST);
 
 // make sure magic_quotes_runtime doesn't kill XMB
 @set_magic_quotes_runtime(0);
