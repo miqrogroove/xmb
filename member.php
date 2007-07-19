@@ -455,6 +455,7 @@ switch ($action) {
 
             $avatar        = formVar('avatar');
             $avatar        = $avatar ? checkInput($avatar, '', '', 'javascript', false) : '';
+            $avatar        = $avatar ? checkInput($avatar, '', '', 'php', false) : '';
             $location      = formVar('location');
             $location      = $location ? checkInput($location, '', '', "javascript", false) : '';
             $icq           = formVar('icq');
