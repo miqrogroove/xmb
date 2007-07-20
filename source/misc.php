@@ -431,7 +431,7 @@ switch ($action) {
             mt_srand((double)microtime() * 1000000);
             $max = mt_rand(8, 12);
             for ($get=strlen($chars), $i=0; $i < $max; $i++) {
-                $newpass = $chars[mt_rand(0, $get)];
+                $newpass .= $chars[mt_rand(0, $get)];
             }
             $newmd5pass = md5($newpass);
 
