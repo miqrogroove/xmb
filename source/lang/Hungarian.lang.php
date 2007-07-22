@@ -1,41 +1,30 @@
 <?php
-/* $Id: Hungarian.lang.php,v 1.1.2.9 2007/03/19 21:43:53 ajv Exp $ */
-/*
-    © 2001 - 2007 Aventure Media & The XMB Development Team
-    http://www.aventure-media.co.uk
-    http://www.xmbforum.com
-
-    Ez a program ingyenes. A program terjesztése illetve módositása a
-    "GNU Általános Közreadási Feltételek" 1991 Júniusában kibocsátott
-    2-es (vagy késõbbi) verziója alapján és betartásával engedélyezett,
-    melyet a "Free Software Foundation" tart karban és publikál.
-    
-    A GPL Licensz 2-es verziójának Magyar nyelvû fordítása az alábbi
-    címen található. FONTOS! Ez a fordítás csak tájékoztató jellegû
-    és jogi szempontból csakis az angol eredeti a mérvadó.
-    
-    Magyar forditás: http://www.ham.hu/licencek/GNU-GPL-hu.html
-    
-    Angol eredeti: http://www.gnu.org/copyleft/gpl.html 
-
-
-    Ezt a programot hasznosságának reményéban terjesztjük, de mindenféle
-    GARANCIA NÉLKÜL!  A programmal kapcsolatban nincs sem származtatott,
-    sem egyéb garanciavállalás, beleértve de nem kizárólagosan a forgalomba
-    hozhatóságra vagy alkalmazhatóságra vonatkozó garanciákat. Bõvebb
-    információ a GNU Általános Közreadási Feltételek dokumentumában található.
-
-    Ez a program tartalmazza "GNU Általános Közreadási Feltételek"
-    egy másolatát. Amennyiben nem, úgy kérjük irj a Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307  USA részére.
-
-    ----------------------------------------
-
-    Made by:    XMB Development
-    Last mod:   21st of July, 2007
-    Status:     Translated to Hungarian by Attila Jantsek (HG5BMW/VE3AJA) (ve3aja@rac.ca)
-                GNU License Translated by Zsolt Krüpl, (HG2ECZ) (hg2ecz@ha5kfu.hu)   
-*/
+/**
+ * XMB 1.9.8 Engage Final
+ *
+ * Developed By The XMB Group
+ * Copyright (c) 2001-2007, The XMB Group
+ * http://www.xmbforum.com
+ *
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ **/
 
 if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");

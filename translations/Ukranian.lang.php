@@ -24,9 +24,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  Made by:    Amira
- *  Last mod:   19th July 2007
- *  Status:     Complete, Sync'd & Spelling-check'd
  **/
 
 if (!defined('IN_CODE')) {
@@ -1028,7 +1025,7 @@ $lang['bbcode_prompt_link_url'] = "Прохання ввести URL гіперпосилання.";
 $lang['bbcode_prompt_link_url_error'] = "Схоже на те, що URL неправильний. Прохання ввести правлільний URL.";
 $lang['bbcode_prompt_list_item'] = "Виділений вами текст був проаналізований, ви хочете включити цю фразу в список?\\nВи також можете ввести новий елемент, який розташується після попереднього і перед наступним (з виділеного вами)\\n\\n";
 $lang['buddywarnaddself'] = "Додавання самого себе у власну адресну книгу може не підтримуватися в майбутніх версіях.";
-$lang['byte'] = "байт"; 
+$lang['byte'] = "байт";
 $lang['cannotmergesamethread'] = "На жаль, об'єднати тему саму з собою не можна.";
 $lang['cb_insert_list'] = "Вставить список";
 $lang['checkspelling'] = "Провірити правопис";
@@ -1050,8 +1047,8 @@ $lang['ipreg'] = "Дозволити реєстрацію тільки 1-го користувача на 1 IP в день?";
 $lang['lastsadmin'] = "Ви тільки що спробували видалити останнього отавшегося Супер-адміністратора. Це небезпечно. Після видалення адміна не можна буде повернути кому-небудь статус Супер-адміністратора";
 $lang['max_attachment_size'] = "Максимальный Размер Вложения (в байтах):";
 $lang['max_daily_regs'] = "Максимальне число реєстрацій в день.<br />Поставте на 0 для безмежних реєстрацій в день.";
-$lang['moresmilies'] = "Більше смайліків"; 
-$lang['nomoodtext'] = "Настрій не вказан"; 
+$lang['moresmilies'] = "Більше смайліків";
+$lang['nomoodtext'] = "Настрій не вказан";
 $lang['nopruneforums'] = "Не були вибрані форуми для очищення";
 $lang['nosearchq'] = "Нічого шукати...";
 $lang['nothingfound'] = "Слів з орфографічними помилками не знайдено";
@@ -1080,7 +1077,7 @@ $lang['templateempty'] = "Назва шаблону не може бути порожньою!";
 $lang['templateexists'] = "Ім'я шаблону вже існує!";
 $lang['textallforumsandsubs'] = "Усі форуми і підфоруми";
 $lang['textcode'] = "Код:";
-$lang['textcplogs'] = "Логі Контрольной Панелі"; 
+$lang['textcplogs'] = "Логі Контрольной Панелі";
 $lang['textemptyquery'] = "Порожні оновлення не дозволені. Прохання повернутися назад і повторити ще раз.";
 $lang['textlostpwnote'] = "Прохання ввести свої <strong>Ім'я користувача</strong> і <strong> e-mail</strong>.";
 $lang['textmodlogs'] = "Записи модератора";
