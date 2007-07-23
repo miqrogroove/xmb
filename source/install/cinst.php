@@ -441,7 +441,24 @@ show_act("Creating ".$tablepre."settings");
           `pruneusers` smallint(3) NOT NULL default 0,
           `ipreg` char(3) NOT NULL default 'on',
           `maxdayreg` smallint(5) UNSIGNED NOT NULL default 25,
-          `maxattachsize` int(10) UNSIGNED NOT NULL default 256000
+          `maxattachsize` int(10) UNSIGNED NOT NULL default 256000,
+          `captcha_status` SET( 'on', 'off' ) NOT NULL DEFAULT 'on',
+          `captcha_reg_status` SET( 'on', 'off' ) NOT NULL DEFAULT 'on',
+          `captcha_post_status` SET( 'on', 'off' ) NOT NULL DEFAULT 'on',
+          `captcha_code_charset` VARCHAR( 128 ) NOT NULL DEFAULT 'A-Z',
+          `captcha_code_length` INT( 2 ) NOT NULL DEFAULT '8',
+          `captcha_code_casesensitive` SET( 'on', 'off' ) NOT NULL DEFAULT 'off',
+          `captcha_code_shadow` SET( 'on', 'off' ) NOT NULL DEFAULT 'off',
+          `captcha_image_type` VARCHAR( 4 ) NOT NULL DEFAULT 'png',
+          `captcha_image_width` INT( 3 ) NOT NULL DEFAULT '250',
+          `captcha_image_height` INT( 3 ) NOT NULL DEFAULT '50',
+          `captcha_image_bg` VARCHAR( 128 ) NOT NULL,
+          `captcha_image_dots` INT( 3 ) NOT NULL DEFAULT '0',
+          `captcha_image_lines` INT( 2 ) NOT NULL DEFAULT '70',
+          `captcha_image_fonts` VARCHAR( 128 ) NOT NULL DEFAULT '',
+          `captcha_image_minfont` INT( 2 ) NOT NULL DEFAULT '16',
+          `captcha_image_maxfont` INT( 2 ) NOT NULL DEFAULT '25',
+          `captcha_image_color` SET( 'on', 'off' ) NOT NULL DEFAULT 'off'
         ) TYPE=MyISAM
     ");
 // --------------------------------------------------------
