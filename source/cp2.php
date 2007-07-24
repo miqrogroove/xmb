@@ -53,7 +53,7 @@ if (X_ADMIN) {
     $download = formVar('download');
     if ($action == "templates" && $download) {
         $code = '';
-        $templates  = $db->query("SELECT * FROM $table_templates");
+        $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates");
         while ($template = $db->fetch_array($templates)) {
             $template['template']   = trim($template['template']);
             $template['name']       = trim($template['name']);
@@ -76,7 +76,7 @@ if (X_ADMIN) {
     $download = getVar('download');
     if ($action == "themes" && $download) {
         $contents = array();
-        $query = $db->query("SELECT * FROM $table_themes WHERE themeid='$download'");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$download'");
         $themebits = $db->fetch_array($query);
         foreach ($themebits as $key=>$val) {
             if (!is_integer($key) && $key != 'themeid' && $key != 'dummy') {
@@ -131,7 +131,7 @@ if ($action == 'restrictions') {
         <td><span class="smalltxt"><strong><font color="<?php echo $cattext?>">partial-match</font></strong></span></td>
         </tr>
         <?php
-        $query = $db->query("SELECT * FROM $table_restricted ORDER BY id");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."restricted ORDER BY id");
         while ($restricted = $db->fetch_array($query)) {
             if ($restricted['case_sensitivity'] == 1) {
                 $case_check = 'checked="checked"';
@@ -197,7 +197,7 @@ if ($action == 'restrictions') {
         </tr>
         <?php
     } else {
-        $queryrestricted = $db->query("SELECT id FROM $table_restricted");
+        $queryrestricted = $db->query("SELECT id FROM ".X_PREFIX."restricted");
         while ($restricted = $db->fetch_array($queryrestricted)) {
             $name = formVar('name'.$restricted['id']);
             $delete = formInt('delete'.$restricted['id']);
@@ -217,10 +217,10 @@ if ($action == 'restrictions') {
             }
 
             if ($delete) {
-                $db->query("DELETE FROM $table_restricted WHERE id='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."restricted WHERE id='$delete'");
                 continue;
             }
-            $db->query("UPDATE `$table_restricted` SET `name`='$name', `case_sensitivity`='$case', `partial`='$partial' WHERE `id`='$restricted[id]'");
+            $db->query("UPDATE `".X_PREFIX."restricted` SET `name`='$name', `case_sensitivity`='$case', `partial`='$partial' WHERE `id`='$restricted[id]'");
         }
 
         if ($newname) {
@@ -234,7 +234,7 @@ if ($action == 'restrictions') {
             } else {
                 $newcase = 1;
             }
-            $db->query("INSERT INTO $table_restricted (`name`, `id`, `case_sensitivity`, `partial`) VALUES ('$newname', '', '$newcase', '$newpartial')");
+            $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `id`, `case_sensitivity`, `partial`) VALUES ('$newname', '', '$newcase', '$newpartial')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['restrictedupdate'].'</td></tr>';
@@ -245,7 +245,7 @@ if ($action == 'restrictions') {
 
 if ($action == 'themes') {
     $single = getVar('single');
-	$newtheme = formVar('newtheme');
+    $newtheme = formVar('newtheme');
 
     if (noSubmit('themesubmit') && !$single && noSubmit('importsubmit')) {
         ?>
@@ -263,11 +263,11 @@ if ($action == 'themes') {
         </tr>
         <?php
         $themeMem = array(0=>0);
-        $tq = $db->query("SELECT theme, count(theme) as cnt FROM $table_members GROUP BY theme");
+        $tq = $db->query("SELECT theme, count(theme) as cnt FROM ".X_PREFIX."members GROUP BY theme");
         while($t = $db->fetch_array($tq)) {
             $themeMem[((int)$t['theme'])] = $t['cnt'];
         }
-        $query = $db->query("SELECT name, themeid FROM $table_themes ORDER BY name ASC");
+        $query = $db->query("SELECT name, themeid FROM ".X_PREFIX."themes ORDER BY name ASC");
         while ($themeinfo = $db->fetch_array($query)) {
             $themeid = $themeinfo['themeid'];
             if (!isset($themeMem[$themeid])) {
@@ -360,7 +360,7 @@ if ($action == 'themes') {
 
     if (onSubmit('importsubmit') && isset($themefile['tmp_name'])) {
         $themebits = readFileAsINI($themefile['tmp_name']);
-        $start = "INSERT INTO $table_themes";
+        $start = "INSERT INTO ".X_PREFIX."themes";
 
         $keysql = array();
         $valsql = array();
@@ -378,12 +378,12 @@ if ($action == 'themes') {
         $keysql = implode(', ', $keysql);
         $valsql = implode(', ', $valsql);
 
-        $query = $db->query("SELECT count(themeid) FROM $table_themes WHERE name='".addslashes($name)."'");
+        $query = $db->query("SELECT count(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
         if ($db->result($query, 0) > 0) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table>');
         }
 
-        $sql = "INSERT INTO $table_themes ($keysql) VALUES ($valsql);";
+        $sql = "INSERT INTO ".X_PREFIX."themes ($keysql) VALUES ($valsql);";
         $query = $db->query($sql);
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
@@ -397,7 +397,7 @@ if ($action == 'themes') {
         $theme_delete = formArray('theme_delete');
         $theme_name = formArray('theme_name');
 
-        $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM $table_themes"), 0);
+        $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM ".X_PREFIX."themes"), 0);
 
         if ($theme_delete && count($theme_delete) >= $number_of_themes) {
             error($lang['delete_all_themes'], false, '</td></tr></table></td></tr></table>');
@@ -405,25 +405,25 @@ if ($action == 'themes') {
 
         if ($theme_delete) {
             foreach ($theme_delete as $themeid) {
-                $otherid = $db->result($db->query("SELECT themeid FROM $table_themes WHERE themeid != '$themeid' ORDER BY rand() LIMIT 1"), 0);
-                $db->query("UPDATE $table_members SET theme='$otherid' WHERE theme='$themeid'");
-                $db->query("UPDATE $table_forums SET theme=0 WHERE theme='$themeid'");
+                $otherid = $db->result($db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE themeid != '$themeid' ORDER BY rand() LIMIT 1"), 0);
+                $db->query("UPDATE ".X_PREFIX."members SET theme='$otherid' WHERE theme='$themeid'");
+                $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE theme='$themeid'");
 
                 if ($SETTINGS['theme'] == $themeid) {
-                    $db->query("UPDATE $table_settings SET theme='$otherid'");
+                    $db->query("UPDATE ".X_PREFIX."settings SET theme='$otherid'");
                 }
 
-                $db->query("DELETE FROM $table_themes WHERE themeid='$themeid'");
+                $db->query("DELETE FROM ".X_PREFIX."themes WHERE themeid='$themeid'");
             }
         }
         foreach ($theme_name as $themeid=>$name) {
-            $db->query("UPDATE $table_themes SET name='$name' WHERE themeid='$themeid'");
+            $db->query("UPDATE ".X_PREFIX."themes SET name='$name' WHERE themeid='$themeid'");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
 
     if ($single && $single != "submit" && $single != "anewtheme1") {
-        $query = $db->query("SELECT * FROM $table_themes WHERE themeid='$single'");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single'");
         $themestuff = $db->fetch_array($query);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
@@ -667,7 +667,7 @@ if ($action == 'themes') {
         $imgdirnew = formVar('imgdirnew');
         $smdirnew = formVar('smdirnew');
 
-        $db->query("UPDATE $table_themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
+        $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } elseif ($single && $single == "submit" && $newtheme) {
         $namenew = formVar('namenew');
@@ -692,7 +692,7 @@ if ($action == 'themes') {
         $imgdirnew = formVar('imgdirnew');
         $smdirnew = formVar('smdirnew');
 
-        $db->query("INSERT INTO $table_themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
+        $db->query("INSERT INTO ".X_PREFIX."themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
 }
@@ -717,7 +717,7 @@ if ($action == "smilies") {
         <td align="center"><?php echo $lang['smilies']?></td>
         </tr>
         <?php
-        $query = $db->query("SELECT code, id, url FROM $table_smilies WHERE type='smiley'");
+        $query = $db->query("SELECT code, id, url FROM ".X_PREFIX."smilies WHERE type='smiley'");
         while ($smilie = $db->fetch_array($query)) {
             ?>
             <tr>
@@ -756,7 +756,7 @@ if ($action == "smilies") {
         <td align="center"><?php echo $lang['picons']?></td>
         </tr>
         <?php
-        $query = $db->query("SELECT * FROM $table_smilies WHERE type='picon' ORDER BY id");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon' ORDER BY id");
         while ($smilie = $db->fetch_array($query)) {
             ?>
             <tr>
@@ -814,14 +814,14 @@ if ($action == "smilies") {
             }
         }
 
-        $querysmilie = $db->query("SELECT id FROM $table_smilies WHERE type='smiley'");
+        $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='smiley'");
         while ($smilie = $db->fetch_array($querysmilie)) {
             $id = $smilie['id'];
             if (isset($smdelete[$id]) && $smdelete[$id] == 1) {
-                $query = $db->query("DELETE FROM $table_smilies WHERE id='$id'");
+                $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$id'");
                 continue;
             }
-            $query = $db->query("UPDATE $table_smilies SET code='$smcode[$id]', url='$smurl[$id]' WHERE id='$smilie[id]' AND type='smiley'");
+            $query = $db->query("UPDATE ".X_PREFIX."smilies SET code='$smcode[$id]', url='$smurl[$id]' WHERE id='$smilie[id]' AND type='smiley'");
         }
 
         if ($piurl) {
@@ -832,22 +832,22 @@ if ($action == "smilies") {
             }
         }
 
-        $querysmilie = $db->query("SELECT id FROM $table_smilies WHERE type='picon'");
+        $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon'");
         while ($picon = $db->fetch_array($querysmilie)) {
             $id = $picon['id'];
             if (isset($pidelete[$id]) && $pidelete[$id] == 1) {
-                $query = $db->query("DELETE FROM $table_smilies WHERE id='$picon[id]'");
+                $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$picon[id]'");
                 continue;
             }
-            $query = $db->query("UPDATE $table_smilies SET url='$piurl[$id]' WHERE id='$picon[id]' AND type='picon'");
+            $query = $db->query("UPDATE ".X_PREFIX."smilies SET url='$piurl[$id]' WHERE id='$picon[id]' AND type='picon'");
         }
 
         if ($newcode) {
             // make sure we don't already have one like that
-            if ($db->result($db->query("SELECT count(id) FROM $table_smilies WHERE code='$newcode'"), 0) > 0) {
+            if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
             }
-            $query = $db->query("INSERT INTO $table_smilies ( type, code, url, id ) VALUES ('smiley', '$newcode', '$newurl1', '')");
+            $query = $db->query("INSERT INTO ".X_PREFIX."smilies ( type, code, url, id ) VALUES ('smiley', '$newcode', '$newurl1', '')");
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
@@ -856,7 +856,7 @@ if ($action == "smilies") {
             // Load all existing smilies to ensure we don't insert a duplicate.
             $smiley_url = array();
             $smiley_code = array();
-            $query = $db->query("SELECT * FROM $table_smilies WHERE type = 'smiley'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type = 'smiley'");
             while ($smiley = $db->fetch_array($query)) {
                 $smiley_url[] = $smiley['url'];
                 $smiley_code[] = $smiley['code'];
@@ -871,7 +871,7 @@ if ($action == "smilies") {
                     $newsmiley_code = str_replace(array('.gif','.jpg','.jpeg','.bmp','.png','_'), array('','','','','',' '), $newsmiley_code);
                     $newsmiley_code = ':' . $newsmiley_code . ':';
                     if (!in_array($newsmiley_url, $smiley_url) && !in_array($newsmiley_code, $smiley_code)) {
-                        $query = $db->query("INSERT INTO $table_smilies (type, code, url, id) VALUES ('smiley', '$newsmiley_code', '$newsmiley_url', '')");
+                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url, id) VALUES ('smiley', '$newsmiley_code', '$newsmiley_url', '')");
                         $newsmilies_count++;
                     }
                     $smilies_count++;
@@ -883,10 +883,10 @@ if ($action == "smilies") {
         // End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
 
         if ($newurl2) {
-            if ($db->result($db->query("SELECT count(id) FROM $table_smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
+            if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
                 error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
             }
-            $query = $db->query("INSERT INTO $table_smilies ( type, code, url, id ) VALUES ('picon', '', '$newurl2', '')");
+            $query = $db->query("INSERT INTO ".X_PREFIX."smilies ( type, code, url, id ) VALUES ('picon', '', '$newurl2', '')");
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
@@ -894,7 +894,7 @@ if ($action == "smilies") {
             $posticons_count = $newposticons_count = 0;
             // Load all existing post icons to ensure we don't insert a duplicate.
             $posticon_url = array();
-            $query = $db->query("SELECT * FROM $table_smilies WHERE type='picon'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
             while ($picon = $db->fetch_array($query)) {
                 $posticon_url[] = $picon['url'];
             }
@@ -906,7 +906,7 @@ if ($action == "smilies") {
                     $newposticon_url = $picon;
                     $newposticon_url = str_replace(' ', '%20', $newposticon_url);
                     if (!in_array($newposticon_url, $posticon_url)) {
-                        $query = $db->query("INSERT INTO $table_smilies (type, code, url, id) VALUES ('picon', '', '$newposticon_url', '')");
+                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url, id) VALUES ('picon', '', '$newposticon_url', '')");
                         $newposticons_count++;
                     }
                     $posticons_count++;
@@ -939,7 +939,7 @@ if ($action == "censor") {
         </tr>
 
         <?php
-        $query = $db->query("SELECT * FROM $table_words ORDER BY id");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."words ORDER BY id");
         while ($censor = $db->fetch_array($query)) {
         ?>
 
@@ -976,7 +976,7 @@ if ($action == "censor") {
 }
 
 if (onSubmit('censorsubmit')) {
-        $querycensor = $db->query("SELECT id FROM $table_words");
+        $querycensor = $db->query("SELECT id FROM ".X_PREFIX."words");
 
         while ($censor = $db->fetch_array($querycensor)) {
             $find = formVar('find'.$censor['id']);
@@ -984,18 +984,18 @@ if (onSubmit('censorsubmit')) {
             $delete = formVar('delete'.$censor['id']);
 
             if ($delete) {
-                $db->query("DELETE FROM $table_words WHERE id='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."words WHERE id='$delete'");
             }
 
             if ($find) {
-                $db->query("UPDATE $table_words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
+                $db->query("UPDATE ".X_PREFIX."words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
             }
         }
 
         $db->free_result($querycensor);
 
         if ($newfind) {
-            $db->query("INSERT INTO $table_words ( find, replace1 ) VALUES ('$newfind', '$newreplace')");
+            $db->query("INSERT INTO ".X_PREFIX."words ( find, replace1 ) VALUES ('$newfind', '$newreplace')");
         }
 
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[censorupdate]</td></tr>";
@@ -1023,7 +1023,7 @@ if ($action == "ranks") {
         </tr>
         <?php
         $avatarno = $avataryes = '';
-        $query = $db->query("SELECT * FROM $table_ranks ORDER BY stars");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
         while ($rank = $db->fetch_array($query)) {
             if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
                 $staff_disable = 'disabled';
@@ -1085,7 +1085,7 @@ if ($action == "ranks") {
         $newallowavatars = formOnOff('newallowavatars');
         $newavaurl = formVar('newavaurl');
 
-        $query = $db->query("SELECT * FROM $table_ranks");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");
         $staffranks = array();
         while ($ranks = $db->fetch_array($query)) {
             if ($ranks['title'] == 'Super Administrator' || $ranks['title'] == 'Administrator' || $ranks['title'] == 'Super Moderator' || $ranks['title'] == 'Moderator') {
@@ -1101,16 +1101,16 @@ if ($action == "ranks") {
 
         if ($delete) {
             $del = implode(', ', $delete);
-            $db->query("DELETE FROM $table_ranks WHERE id IN ($del)");
+            $db->query("DELETE FROM ".X_PREFIX."ranks WHERE id IN ($del)");
         }
 
         foreach ($id as $key=>$val) {
             $posts[$key] = (in_array($title[$key], $staffranks)) ? (int) -1 : $posts[$key];
-            $db->query("UPDATE $table_ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
+            $db->query("UPDATE ".X_PREFIX."ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
         }
 
         if ($newtitle) {
-            $db->query("INSERT INTO $table_ranks (title, posts, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '$newstars', '$newallowavatars', '$newavaurl')");
+            $db->query("INSERT INTO ".X_PREFIX."ranks (title, posts, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '$newstars', '$newallowavatars', '$newavaurl')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['rankingsupdate'].'</td></tr>';
@@ -1196,22 +1196,22 @@ if ($action == "newsletter") {
         }
 
         if ($to == "all") {
-            $query = $db->query("SELECT username, email FROM $table_members WHERE newsletter='yes' $tome ORDER BY uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE newsletter='yes' $tome ORDER BY uid");
         } elseif ($to == "staff") {
-            $query = $db->query("SELECT username, email FROM $table_members WHERE (status='Super Administrator' OR status='Administrator' OR status='Super Moderator' OR status='Moderator') $tome ORDER BY uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE (status='Super Administrator' OR status='Administrator' OR status='Super Moderator' OR status='Moderator') $tome ORDER BY uid");
         } elseif ($to == "admin") {
-            $query = $db->query("SELECT username, email FROM $table_members WHERE (status='Administrator' OR status = 'Super Administrator') $tome ORDER BY uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE (status='Administrator' OR status = 'Super Administrator') $tome ORDER BY uid");
         } elseif ($to == "supermod") {
-            $query = $db->query("SELECT username, email FROM $table_members WHERE status='Super moderator' $tome ORDER by uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Super moderator' $tome ORDER by uid");
         } elseif ($to == "mod") {
-            $query = $db->query("SELECT username, email FROM $table_members WHERE status='Moderator' ORDER BY uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Moderator' ORDER BY uid");
         }
 
         $_xmbuser = addslashes($xmbuser);
 
         if ($sendvia == "u2u") {
             while ($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO $table_u2u ( msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO ".X_PREFIX."u2u ( msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $newssubject = stripslashes(stripslashes($newssubject));
@@ -1457,21 +1457,21 @@ if ($action == "prune") {
             $tids = array();
 
             $queryWhere = implode(' AND ', $queryWhere);
-            $q = $db->query("SELECT tid FROM $table_threads WHERE ".$queryWhere);
+            $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE ".$queryWhere);
             if ( $db->num_rows($q) > 0) {
                 while($t = $db->fetch_array($q)) {
                     $tids[] = $t['tid'];
                 }
                 $tids = implode(',', $tids);
-                $db->query("DELETE FROM $table_threads WHERE tid IN($tids)");
-                $db->query("DELETE FROM $table_posts WHERE tid IN($tids)");
-                $db->query("DELETE FROM $table_attachments WHERE tid IN($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid IN($tids)");
             }
         } else {
-            $db->query("TRUNCATE TABLE $table_threads");
-            $db->query("TRUNCATE TABLE $table_attachments");
-            $db->query("TRUNCATE TABLE $table_posts");
-            $db->query("UPDATE $table_members SET postnum=0");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."threads");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."attachments");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."posts");
+            $db->query("UPDATE ".X_PREFIX."members SET postnum=0");
         }
 
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[forumpruned]</td></tr>";
@@ -1502,7 +1502,7 @@ if ($action == "templates") {
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
 
         <?php
-        $query = $db->query("SELECT * FROM $table_templates ORDER BY name");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name");
         echo "<select name=\"tid\"><option value=\"default\">$lang[selecttemplate]</option>";
         while ($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
@@ -1567,7 +1567,7 @@ if ($action == "templates") {
         if (!file_exists('./templates.xmb')) {
             error($lang['no_templates'], false, '</td></tr></table></td></tr></table><br />');
         }
-        $db->query("TRUNCATE $table_templates");
+        $db->query("TRUNCATE ".X_PREFIX."templates");
 
         $filesize=filesize('templates.xmb');
         $fp=fopen('templates.xmb','r');
@@ -1578,10 +1578,10 @@ if ($action == "templates") {
         while (list($key,$val) = each($templates)) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
-            $db->query("INSERT INTO $table_templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
 
-        $db->query("DELETE FROM $table_templates WHERE name=''");
+        $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesrestoredone]</td></tr>";
     }
 
@@ -1605,7 +1605,7 @@ if ($action == "templates") {
         </tr>
 
         <?php
-        $query = $db->query("SELECT * FROM $table_templates WHERE id='$tid' ORDER BY name");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id='$tid' ORDER BY name");
         $template = $db->fetch_array($query);
         $template['template'] = stripslashes($template['template']);
         $template['template'] = htmlspecialchars($template['template']);
@@ -1641,15 +1641,15 @@ if ($action == "templates") {
             if (!$namenew) {
                 error($lang['templateempty'], false, '</td></tr></table></td></tr></table><br />');
             } else {
-                $check = $db->query("SELECT name FROM $table_templates WHERE name = '$namenew'");
+                $check = $db->query("SELECT name FROM ".X_PREFIX."templates WHERE name = '$namenew'");
                 if ($db->num_rows($check) != 0) {
                     error($lang['templateexists'], false, '</td></tr></table></td></tr></table><br />');
                 } else {
-                    $db->query("INSERT INTO $table_templates (id, name, template) VALUES ('', '$namenew', '$templatenew')");
+                    $db->query("INSERT INTO ".X_PREFIX."templates (id, name, template) VALUES ('', '$namenew', '$templatenew')");
                 }
             }
         } else {
-            $db->query("UPDATE $table_templates SET template='$templatenew' WHERE id='$tid'");
+            $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id='$tid'");
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesupdate]</td></tr>";
     }
@@ -1688,7 +1688,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('deletesubmit')) {
-        $db->query("DELETE FROM $table_templates WHERE id='$tid'");
+        $db->query("DELETE FROM ".X_PREFIX."templates WHERE id='$tid'");
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesdelete]</td></tr>";
     }
 
@@ -1856,7 +1856,7 @@ if ($action == "attachments") {
             $orderby = ' ORDER BY a.downloads DESC ';
         }
 
-        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM $table_attachments a, $table_posts p, $table_threads t, $table_forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
+        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
             while ($attachment = $db->fetch_array($query)) {
             $attachsize = strlen($attachment['attachment']);
             if ($attachsize >= 1073741824) {
@@ -1949,13 +1949,13 @@ if ($action == "attachments") {
             $querydlcountmore = "AND a.downloads > '$dlcountmore' ";
         }
 
-        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM $table_attachments a, $table_posts p, $table_threads t, $table_forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $queryforum $querydate $queryauthor $queryname $querysizeless $querysizemore");
+        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $queryforum $querydate $queryauthor $queryname $querysizeless $querysizemore");
         while ($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
             $afilename = isset($_POST[$afilename]) ? $_POST[$afilename] : '';
 
             if ($attachment['filename'] != $afilename) {
-                $db->query("UPDATE $table_attachments SET filename='$afilename' WHERE aid='$attachment[aid]'");
+                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$afilename' WHERE aid='$attachment[aid]'");
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -1964,7 +1964,7 @@ if ($action == "attachments") {
 
 if ($action == "modlog") {
     nav($lang['textmodlogs']);
-	$page = getInt('page');
+    $page = getInt('page');
     ?>
     <tr bgcolor="<?php echo $altbg2?>">
     <td align="center">
@@ -1980,7 +1980,7 @@ if ($action == "modlog") {
     </tr>
 
     <?php
-    $count = $db->result($db->query("SELECT count(fid) FROM $table_logs WHERE NOT (fid='0' AND tid='0')"), 0);
+    $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE NOT (fid='0' AND tid='0')"), 0);
 
     if (!$page) {
         $page = 1;
@@ -1993,7 +1993,7 @@ if ($action == "modlog") {
     $nextpage = '';
     $random_var = '';
 
-    $query = $db->query("SELECT l.*, t.subject FROM $table_logs l LEFT JOIN $table_threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
+    $query = $db->query("SELECT l.*, t.subject FROM ".X_PREFIX."logs l LEFT JOIN ".X_PREFIX."threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 
     $url = '';
 
@@ -2107,7 +2107,7 @@ if ($action == "cplog") {
     </tr>
 
     <?php
-    $count = $db->result($db->query("SELECT count(fid) FROM $table_logs WHERE (fid='0' AND tid='0')"), 0);
+    $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
 
     if (!$page) {
         $page = 1;
@@ -2120,7 +2120,7 @@ if ($action == "cplog") {
     $nextpage = '';
     $random_var = '';
 
-    $query = $db->query("SELECT l.*, t.subject FROM $table_logs l LEFT JOIN $table_threads t ON l.tid=t.tid WHERE (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
+    $query = $db->query("SELECT l.*, t.subject FROM ".X_PREFIX."logs l LEFT JOIN ".X_PREFIX."threads t ON l.tid=t.tid WHERE (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 
     $url = '';
 
@@ -2216,7 +2216,7 @@ if ($action == "cplog") {
 
 if ($action == "delete_attachment") {
     $aid = formInt('aid');
-    $db->query("DELETE FROM $table_attachments WHERE aid='$aid'");
+    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$aid'");
     echo "<p align=\"center\">Deleted ...</br>";
 }
 

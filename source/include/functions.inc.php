@@ -37,10 +37,10 @@ function nav($add=false, $raquo=true) {
 }
 
 function template($name) {
-    global $table_templates, $db, $comment_output;
+    global $db, $comment_output;
 
     if (($template = templatecache(X_CACHE_GET, $name)) === false) {
-        $query = $db->query("SELECT template FROM $table_templates WHERE name='$name'");
+        $query = $db->query("SELECT template FROM ".X_PREFIX."templates WHERE name='$name'");
         if ($db->num_rows($query) == 1) {
             if (X_SADMIN && DEBUG) {
                 trigger_error('Efficiency Notice: The template `'.$name.'` was not preloaded.', E_USER_NOTICE);
@@ -84,7 +84,7 @@ function templatecache($type=X_CACHE_GET, $name, $data='') {
 }
 
 function loadtemplates() {
-    global $db, $table_templates;
+    global $db;
 
     $num = func_num_args();
     if ($num < 1) {
@@ -93,7 +93,7 @@ function loadtemplates() {
     } else {
         $namesarray = array_unique(array_merge(func_get_args(), array('header', 'css', 'error', 'footer', 'footer_querynum', 'footer_phpsql', 'footer_totaltime', 'footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
-        $query = $db->query("SELECT name, template FROM $table_templates WHERE name IN ($sql)");
+        $query = $db->query("SELECT name, template FROM ".X_PREFIX."templates WHERE name IN ($sql)");
         while ($template = $db->fetch_array($query)) {
             templatecache(X_CACHE_PUT, $template['name'], $template['template']);
         }
@@ -170,7 +170,7 @@ function fixUrl($matches) {
 }
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
-    global $imgdir, $bordercolor, $table_words, $table_forums, $table_smilies, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
+    global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
 
     $message = checkOutput($message, $allowhtml, '', true);
 
@@ -537,7 +537,7 @@ function quickpage($things, $thingsperpage) {
 }
 
 function smilieinsert() {
-    global $imgdir, $smdir, $table_smilies, $db, $smileyinsert, $smcols, $smtotal;
+    global $imgdir, $smdir, $db, $smileyinsert, $smcols, $smtotal;
 
     $sms = array();
     $smilienum = 0;
@@ -545,9 +545,9 @@ function smilieinsert() {
 
     if ($smileyinsert == 'on' && $smcols != '') {
         if ($smtotal == 0) {
-            $querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='smiley' ORDER BY code DESC");
+            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='smiley' ORDER BY code DESC");
         } else {
-            $querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='smiley' ORDER BY code DESC LIMIT 0, ".$smtotal);
+            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='smiley' ORDER BY code DESC LIMIT 0, ".$smtotal);
         }
 
         if (($smilienum = $db->num_rows($querysmilie)) > 0){
@@ -582,60 +582,60 @@ function smilieinsert() {
 }
 
 function updateforumcount($fid) {
-    global $db, $table_posts, $table_forums, $table_threads;
+    global $db;
 
     $postcount = 0;
     $threadcount = 0;
 
-    $query = $db->query("SELECT count(pid) FROM $table_posts WHERE fid='$fid'");
+    $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT count(tid) FROM $table_threads WHERE (fid='$fid' AND closed != 'moved')");
+    $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE (fid='$fid' AND closed != 'moved')");
     $threadcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT fid FROM $table_forums WHERE fup='$fid'");
+    $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$fid'");
     while ($children = $db->fetch_array($query)) {
-        $chquery1 = $db->query("SELECT count(pid) FROM $table_posts WHERE fid='$children[fid]'");
+        $chquery1 = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
         $postcount += $db->result($chquery1, 0);
         $db->free_result($chquery1);
 
-        $chquery2 = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$children[fid]' AND closed != 'moved'");
+        $chquery2 = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE fid='$children[fid]' AND closed != 'moved'");
         $threadcount += $db->result($chquery2, 0);
         $db->free_result($chquery2);
     }
     $db->free_result($query);
 
-    $query = $db->query("SELECT t.lastpost FROM $table_threads t, $table_forums f WHERE (t.fid=f.fid AND f.fid='$fid') OR (t.fid=f.fid AND f.fup='$fid') ORDER BY t.lastpost DESC LIMIT 0,1");
+    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE (t.fid=f.fid AND f.fid='$fid') OR (t.fid=f.fid AND f.fup='$fid') ORDER BY t.lastpost DESC LIMIT 0,1");
     $lp = $db->fetch_array($query);
-    $db->query("UPDATE $table_forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid='$fid'");
+    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid='$fid'");
     $db->free_result($query);
 }
 
 function updatethreadcount($tid) {
-    global $db, $table_threads, $table_posts;
+    global $db;
 
-    $query = $db->query("SELECT tid FROM $table_posts WHERE tid='$tid'");
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid='$tid'");
     $replycount = $db->num_rows($query);
     $db->free_result($query);
     $replycount--;
-    $query = $db->query("SELECT dateline, author, pid FROM $table_posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 1");
+    $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 1");
     $lp = $db->fetch_array($query);
     $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
-    $db->query("UPDATE $table_threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
+    $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
 
 function smcwcache() {
-    global $db, $table_smilies, $table_words, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
+    global $db, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
     static $cached;
 
     if (!$cached) {
         $smiliecache = array();
         $censorcache = array();
 
-        $query = $db->query("SELECT code, url FROM $table_smilies WHERE type='smiley'");
+        $query = $db->query("SELECT code, url FROM ".X_PREFIX."smilies WHERE type='smiley'");
         $smiliesnum = $db->num_rows($query);
 
         if ($smiliesnum > 0) {
@@ -646,7 +646,7 @@ function smcwcache() {
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT find, replace1 FROM $table_words");
+        $query = $db->query("SELECT find, replace1 FROM ".X_PREFIX."words");
         $wordsnum = $db->num_rows($query);
         if ($wordsnum > 0) {
             while($word = $db->fetch_array($query)) {
@@ -1152,7 +1152,7 @@ function put_cookie($name, $value=null, $expire=null, $path=null, $domain=null, 
 }
 
 function audit($user='', $action, $fid, $tid, $reason='') {
-    global $xmbuser, $db, $table_logs;
+    global $xmbuser, $db;
 
     if ($user == '') {
         $user = $xmbuser;
@@ -1164,7 +1164,7 @@ function audit($user='', $action, $fid, $tid, $reason='') {
     $user = checkInput($user);
     $reason = checkInput($reason);
 
-    $db->query("INSERT $table_logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', " . $db->time() . ")");
+    $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', " . $db->time() . ")");
 
     return true;
 }
@@ -1312,7 +1312,7 @@ function month2text($num) {
 }
 
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
-    global $db, $table_forums, $self, $lang;
+    global $db, $self, $lang;
 
     $restrict = array();
     switch ($self['status']) {
@@ -1335,9 +1335,9 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     $restrict = implode(' AND ', $restrict);
 
     if ($restrict != '') {
-        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM $table_forums WHERE $restrict AND status = 'on' ORDER BY displayorder");
+        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM ".X_PREFIX."forums WHERE $restrict AND status = 'on' ORDER BY displayorder");
     } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM $table_forums ORDER BY displayorder");
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums ORDER BY displayorder");
     }
 
     $standAloneForums = array();

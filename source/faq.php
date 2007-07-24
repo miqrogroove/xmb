@@ -59,7 +59,7 @@ switch ($page) {
         loadtemplates('faq_messages_smilierow', 'faq_messages');
         $smilierows = NULL;
         nav($lang['textpostread']);
-        $querysmilie = $db->query("SELECT * FROM " .$table_smilies. " WHERE type = 'smiley'") or die($db->error());
+        $querysmilie = $db->query("SELECT * FROM " .".X_PREFIX."smilies. " WHERE type = 'smiley'") or die($db->error());
         while ($smilie = $db->fetch_array($querysmilie)) {
             eval('$smilierows .= "'.template('faq_messages_smilierow').'";');
         }
@@ -71,7 +71,7 @@ switch ($page) {
         $stars      = '';
         $rankrows   = '';
         nav($lang['textmiscfaq']);
-        $query = $db->query("SELECT * FROM $table_ranks WHERE title!='Moderator' AND title!='Super Moderator' AND title!='Super Administrator' AND title!='Administrator' ORDER BY posts ASC");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title!='Moderator' AND title!='Super Moderator' AND title!='Super Administrator' AND title!='Administrator' ORDER BY posts ASC");
         while ($ranks = $db->fetch_array($query)) {
             $stars = str_repeat("<img src=\"" .$imgdir. "/star.gif\" alt=\"*\" />", $ranks['stars']);
             eval('$rankrows .= "'.template('faq_misc_rankrow').'";');
