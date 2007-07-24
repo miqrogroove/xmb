@@ -667,15 +667,15 @@ $links = implode(' &nbsp; ', $links);
 // Show all plugins
 $pluglinks = array();
 foreach ($plugname as $plugnum => $item) {
-    if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum])) {
-        if (trim($plugimg[$plugnum]) != '') {
-            $img = '<img src="'.$plugimg[$plugnum].'" border="0" /> ';
+    if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum]) ) {
+        if (trim($plugimg[$plugnum]) != '' ) {
+            $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" />&nbsp;';
         } else {
             $img = '';
         }
 
-        if ($plugadmin[$plugnum] != true || X_ADMIN) {
-            $pluglinks[] = " &nbsp; $img<a href=\"$plugurl[$plugnum]\"><font class=\"navtd\">$plugname[$plugnum]</font></a>";
+        if ($plugadmin[$plugnum] != true || X_ADMIN ) {
+            $pluglinks[] = $img.'<a href="'.$plugurl[$plugnum].'"><font class="navtd">'.$plugname[$plugnum].'</font></a>&nbsp;';
         }
     }
 }
@@ -683,7 +683,7 @@ foreach ($plugname as $plugnum => $item) {
 if (count($pluglinks) == 0) {
     $pluglink = '';
 } else {
-    $pluglink = implode(' &nbsp; ', $pluglinks);
+    $pluglink = implode('&nbsp;', $pluglinks);
 }
 
 // If the board is offline, display an appropriate message
