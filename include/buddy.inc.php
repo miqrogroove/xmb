@@ -44,7 +44,7 @@ function blistmsg($message, $redirect='', $exit=false) {
 }
 
 function buddy_add($buddys) {
-    global $db, $table_buddys, $table_members, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken;
 
     if (!is_array($buddys)) {
         $buddys = array($buddys);
@@ -64,15 +64,15 @@ function buddy_add($buddys) {
                 blistmsg($lang['buddywarnaddself']);
             }
 
-            $q = $db->query("SELECT count(username) FROM $table_buddys WHERE username='$xmbuser' AND buddyname='$buddy'");
+            $q = $db->query("SELECT count(username) FROM ".X_PREFIX."buddys WHERE username='$xmbuser' AND buddyname='$buddy'");
             if ($db->result($q, 0) > 0) {
                 blistmsg($buddy.' '.$lang['buddyalreadyonlist']);
             } else {
-                $q = $db->query("SELECT count(username) FROM $table_members WHERE username='$buddy'");
+                $q = $db->query("SELECT count(username) FROM ".X_PREFIX."members WHERE username='$buddy'");
                 if ($db->result($q, 0) < 1) {
                     blistmsg($lang['nomember']);
                 } else {
-                    $db->query("INSERT INTO $table_buddys (buddyname, username) VALUES ('$buddy', '$xmbuser')");
+                    $db->query("INSERT INTO ".X_PREFIX."buddys (buddyname, username) VALUES ('$buddy', '$xmbuser')");
                     blistmsg($buddy.' '.$lang['buddyaddedmsg'], 'buddy.php');
                 }
             }
@@ -81,12 +81,12 @@ function buddy_add($buddys) {
 }
 
 function buddy_edit() {
-    global $db, $table_buddys, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
 
-    $q = $db->query("SELECT buddyname FROM $table_buddys WHERE username='$xmbuser'") or die($db->error());
+    $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'") or die($db->error());
     while ($buddy = $db->fetch_array($q)) {
         eval('$buddys[] = "'.template('buddylist_edit_buddy').'";');
     }
@@ -101,19 +101,19 @@ function buddy_edit() {
 }
 
 function buddy_delete($delete) {
-    global $db, $table_buddys, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     foreach ($delete as $key=>$buddy) {
         $buddy = addslashes(checkInput($buddy));
-        $db->query("DELETE FROM $table_buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
+        $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
     }
 
     blistmsg($lang['buddylistupdated'], 'buddy.php');
 }
 
 function buddy_addu2u() {
-    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $users = array();
@@ -121,7 +121,7 @@ function buddy_addu2u() {
     $buddys['offline'] = '';
     $buddys['online'] = '';
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM $table_buddys b LEFT JOIN $table_whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
     while ($buddy = $db->fetch_array($q)) {
         if ($buddy['invisible'] == 1) {
             if (!X_ADMIN) {
@@ -144,10 +144,10 @@ function buddy_addu2u() {
 }
 
 function buddy_display() {
-    global $db, $table_buddys, $table_whosonline, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM $table_buddys b LEFT JOIN $table_whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';

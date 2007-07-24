@@ -33,18 +33,16 @@ if (!defined('IN_CODE')) {
 class admin {
     function rename_user($userfrom, $userto) {
         global $db, $lang, $self;
-        global $table_whosonline, $table_members, $table_posts, $table_threads;
-        global $table_forums, $table_favorites, $table_buddys, $table_u2u, $table_logs;
 
         if ($userfrom == '' || $userto == '') {
             return $lang['admin_rename_fail'];
         }
 
-        $query = $db->query("SELECT username FROM $table_members WHERE username='$userfrom'");
+        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$userfrom'");
         $cUsrFrm = $db->num_rows($query);
         $db->free_result($query);
 
-        $query = $db->query("SELECT username FROM $table_members WHERE username='$userto'");
+        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$userto'");
         $cUsrTo = $db->num_rows($query);
         $db->free_result($query);
 
@@ -61,65 +59,65 @@ class admin {
         }
 
         @set_time_limit(180);
-        $db->query("UPDATE $table_members SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE $table_buddys SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE $table_buddys SET buddyname='$userto' WHERE buddyname='$userfrom'");
-        $db->query("UPDATE $table_favorites SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE $table_forums SET moderator='$userto' WHERE moderator='$userfrom'");
-        $db->query("UPDATE $table_logs SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE $table_posts SET author='$userto' WHERE author='$userfrom'");
-        $db->query("UPDATE $table_threads SET author='$userto' WHERE author='$userfrom'");
-        $db->query("UPDATE $table_u2u SET msgto='$userto' WHERE msgto='$userfrom'");
-        $db->query("UPDATE $table_u2u SET msgfrom='$userto' WHERE msgfrom='$userfrom'");
-        $db->query("UPDATE $table_u2u SET owner='$userto' WHERE owner='$userfrom'");
-        $db->query("UPDATE $table_whosonline SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."members SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."buddys SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."buddys SET buddyname='$userto' WHERE buddyname='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."favorites SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."forums SET moderator='$userto' WHERE moderator='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."logs SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."posts SET author='$userto' WHERE author='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."threads SET author='$userto' WHERE author='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET msgto='$userto' WHERE msgto='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET msgfrom='$userto' WHERE msgfrom='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET owner='$userto' WHERE owner='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."whosonline SET username='$userto' WHERE username='$userfrom'");
 
-        $query = $db->query("SELECT tid, lastpost from $table_threads WHERE lastpost like '%$userfrom'");
+        $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%$userfrom'");
         while ($result = $db->fetch_array($query)) {
             list($posttime, $lastauthor) = explode("|", $result['lastpost']);
             if ($lastauthor == $userfrom) {
                 $newlastpost = $posttime . '|' . $userto;
-                $db->query("UPDATE $table_threads SET lastpost='$newlastpost' WHERE tid='".$result['tid']."'");
+                $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid='".$result['tid']."'");
             }
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT ignoreu2u, uid FROM $table_members WHERE (ignoreu2u REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
         while ($usr = $db->fetch_array($query)) {
             $parts = explode(',', $usr['ignoreu2u']);
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
             $parts = implode(',', $parts);
-            $db->query("UPDATE $table_members SET ignoreu2u='".$parts."' WHERE uid='".$usr['uid']."'");
+            $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='".$parts."' WHERE uid='".$usr['uid']."'");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT moderator, fid FROM $table_forums WHERE (moderator REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
         while ($list = $db->fetch_array($query)) {
             $parts = explode(',', $list['moderator']);
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE $table_forums SET moderator='".$parts."' WHERE fid='".$list['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET moderator='".$parts."' WHERE fid='".$list['fid']."'");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT userlist, fid FROM $table_forums WHERE (userlist REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
         while ($list = $db->fetch_array($query)) {
             $parts = array_unique(array_map('trim', explode(',', $list['userlist'])));
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE $table_forums SET userlist='".$parts."' WHERE fid='".$list['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET userlist='".$parts."' WHERE fid='".$list['fid']."'");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT fid, lastpost FROM $table_forums WHERE lastpost LIKE '%$userfrom'");
+        $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%$userfrom'");
         while ($result = $db->fetch_array($query)) {
             list($posttime, $lastauthor, $lastpid) = explode("|", $result['lastpost']);
             if ($lastauthor == $userfrom) {
                 $newlastpost = $posttime . '|' . $userto.'|'.$lastpid;
-                $db->query("UPDATE $table_forums SET lastpost='$newlastpost' WHERE fid='".$result['fid']."'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$newlastpost' WHERE fid='".$result['fid']."'");
             }
         }
         $db->free_result($query);
@@ -130,14 +128,14 @@ class admin {
     }
 
     function fix_last_posts() {
-        global $db, $table_forums, $table_threads, $table_posts;
+        global $db;
 
-        $q = $db->query("SELECT fid FROM $table_forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
         while ($loner = $db->fetch_array($q)) {
             $lastpost = array();
-            $subq = $db->query("SELECT fid FROM $table_forums WHERE fup = '$loner[fid]'");
+            $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
             while ($sub = $db->fetch_array($subq)) {
-                $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
                     $lastpost[] = $curr;
@@ -145,11 +143,11 @@ class admin {
                 } else {
                     $lp = '';
                 }
-                $db->query("UPDATE $table_forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
                 $db->free_result($pq);
             }
             $db->free_result($subq);
-            $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $lastpost[] = $db->fetch_array($pq);
             }
@@ -167,17 +165,17 @@ class admin {
                 }
                 $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
             }
-            $db->query("UPDATE $table_forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
         }
         $db->free_result($q);
-        $q = $db->query("SELECT fid FROM $table_forums WHERE type = 'group'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
         while ($cat = $db->fetch_array($q)) {
-            $fq = $db->query("SELECT fid FROM $table_forums WHERE type = 'forum' AND fup = '$cat[fid]'");
+            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
             while ($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
-                $subq = $db->query("SELECT fid FROM $table_forums WHERE fup = '$forum[fid]'");
+                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
                 while ($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
                         $lastpost[] = $curr;
@@ -186,10 +184,10 @@ class admin {
                         $lp = '';
                     }
                     $db->free_result($pq);
-                    $db->query("UPDATE $table_forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
                 }
                 $db->free_result($subq);
-                $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $lastpost[] = $db->fetch_array($pq);
                 }
@@ -207,15 +205,15 @@ class admin {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $db->query("UPDATE $table_forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
             }
             $db->free_result($fq);
         }
         $db->free_result($q);
-        $q = $db->query("SELECT tid FROM $table_threads");
+        $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
         while ($thread = $db->fetch_array($q)) {
             $lastpost = array();
-            $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $curr = $db->fetch_array($pq);
                 $lastpost[] = $curr;
@@ -224,14 +222,14 @@ class admin {
                 $lp = '';
             }
             $db->free_result($pq);
-            $db->query("UPDATE $table_threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
         }
         $db->free_result($q);
         return true;
     }
 
     function check_restricted($userto) {
-        global $db, $table_restricted;
+        global $db;
 
         $nameokay = true;
 
@@ -242,7 +240,7 @@ class admin {
             }
         }
 
-        $query = $db->query("SELECT * FROM $table_restricted");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
         while ($restriction = $db->fetch_array($query)) {
             if ($restriction['case_sensitivity'] == 1) {
                 if ($restriction['partial'] == 1) {

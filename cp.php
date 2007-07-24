@@ -62,7 +62,7 @@ if ($action == "settings") {
 
         $themelist = array();
         $themelist[] = '<select name="themenew">';
-        $query = $db->query("SELECT themeid, name FROM $table_themes ORDER BY name ASC");
+        $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while ($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $SETTINGS['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
@@ -584,7 +584,7 @@ if ($action == "settings") {
 
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
 
-        $db->query("UPDATE $table_settings SET
+        $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
             bbname='$bbnamenew',
             postperpage='$postperpagenew',
@@ -708,7 +708,7 @@ if ($action == 'forum') {
         $forumlist = array();
         $subs = array();
         $i = 0;
-        $query = $db->query("SELECT fid, type, name, displayorder, status, fup FROM $table_forums ORDER BY fup ASC, displayorder ASC");
+        $query = $db->query("SELECT fid, type, name, displayorder, status, fup FROM ".X_PREFIX."forums ORDER BY fup ASC, displayorder ASC");
         while ($selForums = $db->fetch_array($query)) {
             if ($selForums['type'] == 'group') {
                 $groups[$i]['fid'] = $selForums['fid'];
@@ -948,13 +948,13 @@ if ($action == 'forum') {
         <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
         <?php
-        $queryg = $db->query("SELECT * FROM $table_forums WHERE fid='$fdetails'");
+        $queryg = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fdetails'");
         $forum = $db->fetch_array($queryg);
 
         $themelist = array();
         $themelist[] = '<select name="themeforumnew">';
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-        $query = $db->query("SELECT themeid, name FROM $table_themes ORDER BY name ASC");
+        $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while ($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $forum['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
@@ -1123,8 +1123,8 @@ if ($action == 'forum') {
         </tr>
         <?php
     } elseif (onSubmit('forumsubmit') && !$fdetails) {
-        $queryforum = $db->query("SELECT fid, type FROM $table_forums WHERE type='forum' OR type='sub'");
-        $db->query("DELETE FROM $table_forums WHERE name=''");
+        $queryforum = $db->query("SELECT fid, type FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
+        $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while ($forum = $db->fetch_array($queryforum)) {
             $displayorder = formVar('displayorder'.$forum['fid']);
             $name = formVar('name'.$forum['fid']);
@@ -1133,26 +1133,26 @@ if ($action == 'forum') {
             $moveto = formVar('moveto'.$forum['fid']);
 
             if ($delete) {
-                $db->query("DELETE FROM $table_forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
-                $querythread = $db->query("SELECT tid, author FROM $table_threads WHERE fid='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
+                $querythread = $db->query("SELECT tid, author FROM ".X_PREFIX."threads WHERE fid='$delete'");
                 while ($thread = $db->fetch_array($querythread)) {
-                    $db->query("DELETE FROM $table_threads WHERE tid='$thread[tid]'");
-                    $db->query("DELETE FROM $table_favorites WHERE tid='$thread[tid]'");
-                    $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$thread[author]'");
-                    $querypost = $db->query("SELECT pid, author FROM $table_posts WHERE tid='$thread[tid]'");
+                    $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$thread[tid]'");
+                    $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$thread[tid]'");
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$thread[author]'");
+                    $querypost = $db->query("SELECT pid, author FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
                     while ($post = $db->fetch_array($querypost)) {
-                        $db->query("DELETE FROM $table_posts WHERE pid='$post[pid]'");
-                        $db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$post[author]'");
+                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$post[pid]'");
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$post[author]'");
                     }
                     $db->free_result($querypost);
                 }
                 $db->free_result($querythread);
             }
             $name = addslashes($name);
-            $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum[fid]'");
         }
 
-        $querygroup = $db->query("SELECT fid FROM $table_forums WHERE type='group'");
+        $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while ($group = $db->fetch_array($querygroup)) {
             $name = formVar('name'.$group['fid']);
             $displayorder = formVar('displayorder'.$group['fid']);
@@ -1160,14 +1160,14 @@ if ($action == 'forum') {
             $delete = formVar('delete'.$group['fid']);
 
             if ($delete) {
-                $query = $db->query("SELECT fid FROM $table_forums WHERE type='forum' AND fup='$delete'");
+                $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup='$delete'");
                 while ($forum = $db->fetch_array($query)) {
-                    $db->query("UPDATE $table_forums SET fup=0 WHERE type='forum' AND fup='$delete'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET fup=0 WHERE type='forum' AND fup='$delete'");
                 }
-                $db->query("DELETE FROM $table_forums WHERE type='group' AND fid='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid='$delete'");
             }
             $name = addslashes($name);
-            $db->query("UPDATE $table_forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group[fid]'");
         }
         $newgname = formVar('newgname');
         $newfname = formVar('newfname');
@@ -1183,17 +1183,17 @@ if ($action == 'forum') {
 
         if ($newfname != $lang['textnewforum']) {
             $newfname = addslashes($newfname);
-            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {
             $newsubname = addslashes($newsubname);
-            $db->query("INSERT INTO $table_forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
@@ -1215,9 +1215,9 @@ if ($action == 'forum') {
         $passwordnew = formVar('passwordnew');
         $delete = formInt('delete');
 
-        $db->query("UPDATE $table_forums SET name='$namenew', description='$descnew', allowhtml='$allowhtmlnew', allowsmilies='$allowsmiliesnew', allowbbcode='$allowbbcodenew', theme='$themeforumnew', userlist='$userlistnew', private='$privatenew', postperm='$postperm1|$postperm2', allowimgcode='$allowimgcodenew', attachstatus='$attachstatusnew', pollstatus='$pollstatusnew', password='$passwordnew', guestposting='$guestpostingnew' WHERE fid='$fdetails'");
+        $db->query("UPDATE ".X_PREFIX."forums SET name='$namenew', description='$descnew', allowhtml='$allowhtmlnew', allowsmilies='$allowsmiliesnew', allowbbcode='$allowbbcodenew', theme='$themeforumnew', userlist='$userlistnew', private='$privatenew', postperm='$postperm1|$postperm2', allowimgcode='$allowimgcodenew', attachstatus='$attachstatusnew', pollstatus='$pollstatusnew', password='$passwordnew', guestposting='$guestpostingnew' WHERE fid='$fdetails'");
         if ($delete) {
-            $db->query("DELETE FROM $table_forums WHERE fid='$delete'");
+            $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid='$delete'");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     }
@@ -1240,7 +1240,7 @@ if ($action == "mods") {
 
         <?php
         $oldfid = 0;
-        $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM $table_forums f LEFT JOIN $table_forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
+        $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
         while ($forum = $db->fetch_array($query)) {
             if ($oldfid != $forum['cat_fid']) {
                 $oldfid = $forum['cat_fid']
@@ -1258,7 +1258,7 @@ if ($action == "mods") {
             </tr>
 
             <?php
-            $querys = $db->query("SELECT name, fid, moderator FROM $table_forums WHERE fup='$forum[fid]' AND type='sub'");
+            $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='$forum[fid]' AND type='sub'");
             while ($sub = $db->fetch_array($querys)) {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
@@ -1288,7 +1288,7 @@ if ($action == "mods") {
         $mod = formArray('mod');
         if (is_array($mod)) {
             foreach ($mod as $fid=>$mods) {
-                $db->query("UPDATE $table_forums SET moderator='$mods' WHERE fid='$fid'");
+                $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");
             }
         }
 
@@ -1362,9 +1362,9 @@ if ($action == "members") {
             $srchmem = formVar('srchmem');
             $srchstatus = formVar('srchstatus');
             if ($srchstatus == '0') {
-                $query = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' ORDER BY username");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' ORDER BY username");
             } else {
-                $query = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
             }
 
             $sadminselect = $adminselect = $smodselect = "";
@@ -1456,14 +1456,14 @@ if ($action == "members") {
         /*
         Get the uid first Super Administrator (the first to register and thus most likely to be the 'top level' admin) to compare against the delete uid. This member should *never* be deleted this way.
         */
-        $query = $db->query("SELECT MIN(`uid`) FROM `" . $table_members . "` WHERE `status`='Super Administrator'");
+        $query = $db->query("SELECT MIN(`uid`) FROM `" . ".X_PREFIX."members . "` WHERE `status`='Super Administrator'");
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
         if ($srchstatus == '0') {
-            $query = $db->query("SELECT uid, username, password, status FROM $table_members WHERE username LIKE '%$srchmem%'");
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%'");
         } else {
-            $query = $db->query("SELECT uid, username, password, status FROM $table_members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
         }
 
         while ($mem = $db->fetch_array($query)) {
@@ -1504,19 +1504,19 @@ if ($action == "members") {
             }
 
             if ($origstatus == 'Super Administrator' && $to['status'] != 'Super Administrator') {
-                if ($db->result($db->query("SELECT count(uid) FROM $table_members WHERE status='Super Administrator'"), 0) == 1) {
+                if ($db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'"), 0) == 1) {
                     error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
                 }
             }
 
             if ($delete != "" && $delete != $self['uid'] && $delete != $sa_uid) {
-                $db->query("DELETE FROM $table_members WHERE uid='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."members WHERE uid='$delete'");
             } else {
                 if (strpos($pw, '"') !== false || strpos($pw, "'") !== false) {
                     $lang['textmembersupdate'] = $mem['username'].': '.$lang['textpwincorrect'];
                 } else {
                     $newcustom = addslashes($cusstatus);
-                    $db->query("UPDATE $table_members SET ban='$banstatus', status='$to[status]', postnum='$postnum', customstatus='$newcustom'$queryadd WHERE uid='$mem[uid]'");
+                    $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$to[status]', postnum='$postnum', customstatus='$newcustom'$queryadd WHERE uid='$mem[uid]'");
                     $newpw="";
                 }
             }
@@ -1542,7 +1542,7 @@ if ($action == "ipban") {
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
         </tr>
         <?php
-        $query = $db->query("SELECT * FROM $table_banned ORDER BY dateline");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."banned ORDER BY dateline");
         while ($ipaddress = $db->fetch_array($query)) {
             for ($i=1; $i<=4; ++$i) {
                 $j = "ip" . $i;
@@ -1562,7 +1562,7 @@ if ($action == "ipban") {
             <?php
         }
 
-        $query = $db->query("SELECT id FROM $table_banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
+        $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
         $result = $db->fetch_array($query);
         if ($result) {
             $warning = $lang['ipwarning'];
@@ -1603,7 +1603,7 @@ if ($action == "ipban") {
 
             if (count($dels) > 0) {
                 $dels = implode(',', $dels);
-                $db->query("DELETE FROM $table_banned WHERE id IN ($dels)");
+                $db->query("DELETE FROM ".X_PREFIX."banned WHERE id IN ($dels)");
             }
         }
         $self['status'] = $lang['textipupdate'];
@@ -1626,12 +1626,12 @@ if ($action == "ipban") {
                 if ($ip[1] == '-1' && $ip[2] == '-1' && $ip[3] == '-1' && $ip[4] == '-1') {
                     $self['status'] = $lang['impossiblebanall'];
                 } else {
-                    $query = $db->query("SELECT id FROM $table_banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
+                    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
                     $result = $db->fetch_array($query);
                     if ($result) {
                         $self['status'] = $lang['existingip'];
                     } else {
-                        $query = $db->query("INSERT INTO $table_banned (ip1, ip2, ip3, ip4, dateline) VALUES ('$ip[1]', '$ip[2]', '$ip[3]', '$ip[4]', $onlinetime)");
+                        $query = $db->query("INSERT INTO ".X_PREFIX."banned (ip1, ip2, ip3, ip4, dateline) VALUES ('$ip[1]', '$ip[2]', '$ip[3]', '$ip[4]', $onlinetime)");
                     }
                 }
             }
@@ -1642,14 +1642,14 @@ if ($action == "ipban") {
 
 if ($action == "deleteposts") {
     $member = getVar('member');
-    $queryd = $db->query("DELETE FROM $table_posts WHERE author='$member'");
-    $queryt = $db->query("SELECT * FROM $table_threads");
+    $queryd = $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
+    $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
     while($threads = $db->fetch_array($queryt)) {
-        $query = $db->query("SELECT COUNT(tid) FROM $table_posts WHERE tid='$threads[tid]'");
+        $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
         $replynum = $db->result($query, 0);
         $replynum--;
-        $db->query("UPDATE $table_threads SET replies=replies-1 WHERE tid='$threads[tid]'");
-        $db->query("DELETE FROM $table_threads WHERE author='$member'");
+        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$threads[tid]'");
+        $db->query("DELETE FROM ".X_PREFIX."threads WHERE author='$member'");
     }
 }
 
@@ -1784,7 +1784,7 @@ if ($action == "search") {
         $found = 0;
         $list = array();
         if ($userip) {
-            $query = $db->query("SELECT * FROM $table_members WHERE regip = '$userip'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE regip = '$userip'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
                 $list[] = "<a href = \"$link\">$users[username]<br />";
@@ -1793,7 +1793,7 @@ if ($action == "search") {
         }
 
         if ($postip) {
-            $query = $db->query("SELECT * FROM $table_posts WHERE useip = '$postip'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE useip = '$postip'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users[subject])) {
@@ -1806,7 +1806,7 @@ if ($action == "search") {
         }
 
         if ($profileword) {
-            $query = $db->query("SELECT * FROM $table_members WHERE bio = '%$profileword%'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE bio = '%$profileword%'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
                 $list[] = "<a href = \"$link\">$users[username]<br />";
@@ -1815,7 +1815,7 @@ if ($action == "search") {
         }
 
         if ($postword) {
-            $query = $db->query("SELECT * FROM $table_posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users[subject])) {
@@ -1865,7 +1865,7 @@ if ($action == "search") {
         <?php echo $lang['profileword']?><br /><input type="text" name="profileword" /></input><br /><br />
         <?php echo $lang['postword']?><br />
         <?php
-        $query = $db->query("SELECT find FROM $table_words");
+        $query = $db->query("SELECT find FROM ".X_PREFIX."words");
         $select = "<select name=\"postword\"><option value=\"\"></option>";
         while ($temp = $db->fetch_array($query)) {
             $select .= "<option value=\"$temp[find]\">$temp[find]</option>";

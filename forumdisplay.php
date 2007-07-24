@@ -58,7 +58,7 @@ $tid = getInt('tid');
 $fid = getInt('fid');
 $page = getInt('page');
 
-$query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
 $notexist = false;
@@ -68,7 +68,7 @@ if ($forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT private, userlist, name, fid FROM $table_forums WHERE fid='$forum[fup]'");
+    $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
 
     if (!privfcheck($fup['private'], $fup['userlist'])) {
@@ -95,7 +95,7 @@ eval('echo "'.template('header').'";');
 
 $subforums = '';
 if (count($fup) == 0) {
-    $query = $db->query("SELECT * FROM $table_forums WHERE type='sub' AND fup='$fid' AND status='on' ORDER BY displayorder");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup='$fid' AND status='on' ORDER BY displayorder");
     if ($db->num_rows($query) != 0) {
         $forumlist = '';
         $fulist = $forum['userlist'];
@@ -187,14 +187,14 @@ $topicsnum = 0;
 $threadlist = '';
 $threadsInFid = array();
 if ($dotfolders == "on" && X_MEMBER) {
-    $query = $db->query("SELECT tid FROM $table_posts WHERE author='$xmbuser' AND fid='$fid'");
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$xmbuser' AND fid='$fid'");
     while ($row = $db->fetch_array($query)) {
         array_push($threadsInFid, $row['tid']);
     }
     $db->free_result($query);
 }
 
-$querytop = $db->query("SELECT t.* FROM $table_threads t WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc,lastpost $ascdesc LIMIT $start_limit, $tpp");
+$querytop = $db->query("SELECT t.* FROM ".X_PREFIX."threads t WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc,lastpost $ascdesc LIMIT $start_limit, $tpp");
 while ($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != "") {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
@@ -266,7 +266,7 @@ while ($thread = $db->fetch_array($querytop)) {
         $thread['replies'] = "-";
         $thread['views'] = "-";
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $postnum = $db->result($db->query("SELECT count(pid) FROM $table_posts WHERE tid='$thread[tid]'"), 0);
+        $postnum = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'"), 0);
     }else{
         $thread['realtid'] = $thread['tid'];
     }
@@ -334,7 +334,7 @@ switch ($cusdate) {
         break;
 }
 
-$query = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$fid'");
+$query = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE fid='$fid'");
 $topicsnum = $db->result($query, 0);
 $mpurl = 'forumdisplay.php?fid='.$fid;
 if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {

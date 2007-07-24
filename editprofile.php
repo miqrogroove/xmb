@@ -43,13 +43,13 @@ if (!X_SADMIN) {
 
 $user = getVar('user');
 
-$userid = $db->fetch_array($db->query("SELECT uid FROM $table_members WHERE username='$user'"));
+$userid = $db->fetch_array($db->query("SELECT uid FROM ".X_PREFIX."members WHERE username='$user'"));
 if (empty($userid['uid'])) {
     error($lang['nomember'], false);
 }
 
 if (noSubmit('editsubmit')) {
-    $query = $db->query("SELECT * FROM $table_members WHERE username='".rawurldecode($user)."'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='".rawurldecode($user)."'");
     $member = $db->fetch_array($query);
 
     $checked = '';
@@ -91,7 +91,7 @@ if (noSubmit('editsubmit')) {
     $themelist = array();
     $themelist[] = '<select name="thememem">';
     $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-    $query = $db->query("SELECT themeid, name FROM $table_themes ORDER BY name ASC");
+    $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
     while ($themeinfo = $db->fetch_array($query)) {
         if ($themeinfo['themeid'] == $member['theme']) {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
@@ -171,7 +171,7 @@ if (noSubmit('editsubmit')) {
 
     eval('echo stripslashes("'.template('admintool_editprofile').'");');
 } else {
-    $query  = $db->query("SELECT * FROM $table_members WHERE username='$user'");
+    $query  = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
     $member = $db->fetch_array($query);
 
     if (!$member['username']) {
@@ -259,12 +259,12 @@ if (noSubmit('editsubmit')) {
         }
     }
 
-    $db->query("UPDATE $table_members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$user'");
+    $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$user'");
 
     $newpassword = formVar('newpassword');
     if ($newpassword) {
         $newpassword = md5($newpassword);
-        $db->query("UPDATE $table_members SET password='$newpassword' WHERE username='$user'");
+        $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");
     }
 
     echo '<div align="center"><span class="mediumtxt">'.$lang['adminprofilechange'].'</span></div>';

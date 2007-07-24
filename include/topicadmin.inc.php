@@ -41,9 +41,9 @@ class mod {
     }
 
     function statuscheck($fid) {
-        global $self, $xmbuser, $lang, $table_forums, $db, $oToken;
+        global $self, $xmbuser, $lang, $db, $oToken;
 
-        $query = $db->query("SELECT moderator FROM $table_forums WHERE fid='$fid'");
+        $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
         $mods = $db->result($query, 0);
         $status1 = modcheck($self['status'], $xmbuser, $mods);
 
@@ -58,13 +58,13 @@ class mod {
     }
 
     function log($user='', $action, $fid, $tid, $reason='') {
-        global $xmbuser, $db, $table_logs, $oToken;
+        global $xmbuser, $db, $oToken;
 
         if ($user == '') {
             $user = $xmbuser;
         }
 
-        $db->query("REPLACE $table_logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', ".$db->time().")");
+        $db->query("REPLACE ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', ".$db->time().")");
         return true;
     }
 

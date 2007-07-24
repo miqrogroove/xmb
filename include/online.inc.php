@@ -31,7 +31,7 @@ if (!defined('IN_CODE')) {
 }
 
 function url_to_text($url) {
-    global $db, $table_forums, $table_threads, $lang, $self, $xmbuser, $location;
+    global $db, $lang, $self, $xmbuser, $location;
     static $restrict, $rset, $fname, $tsub;
 
     if (!$rset) {
@@ -74,7 +74,7 @@ function url_to_text($url) {
         if (isset($tsub[$tid])) {
             $location = $lang['onlineviewthread'].' '.$tsub[$tid];
         } else {
-            $query = $db->query("SELECT t.fid, t.subject FROM $table_forums f, $table_threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
+            $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
             while ($locate = $db->fetch_array($query)) {
                 $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
                 $tsub[$tid] = $locate['subject'];
@@ -98,7 +98,7 @@ function url_to_text($url) {
         if (isset($fname[$fid])) {
             $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
         } else {
-            $query = $db->query("SELECT name FROM $table_forums f WHERE $restrict AND f.fid='$fid'");
+            $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
             while ($locate = $db->fetch_array($query)) {
                 $location = $lang['onlineforumdisplay'].' '.$locate['name'];
                 $fname[$fid] = $locate['name'];
