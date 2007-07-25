@@ -86,12 +86,12 @@ switch ($action) {
     case 'reg':
         if ($SETTINGS['pruneusers'] > 0) {
             $prunebefore = $onlinetime-(60 * 60 * 24 * $SETTINGS['pruneusers']);
-            $db->query("DELETE FROM $table_members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
+            $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
         }
 
         if ($SETTINGS['maxdayreg'] > 0) {
             $time = $onlinetime-86400; // take the date and distract 24 hours from it
-            $query = $db->query("SELECT count(uid) FROM $table_members WHERE regdate > $time");
+            $query = $db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
             if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
                 error($lang['max_regs']);
             }
@@ -125,7 +125,7 @@ switch ($action) {
                 $themelist = array();
                 $themelist[] = '<select name="thememem">';
                 $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-                $query = $db->query("SELECT themeid, name FROM $table_themes ORDER BY name ASC");
+                $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
                 while ($themeinfo = $db->fetch_array($query)) {
                     $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
                 }
@@ -317,7 +317,7 @@ switch ($action) {
 
             if ($SETTINGS['ipreg'] != 'off') {
                 $time = $onlinetime-86400;
-                $query = $db->query("SELECT uid FROM $table_members WHERE regip = '$onlineip' AND regdate >= '$time'");
+                $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip = '$onlineip' AND regdate >= '$time'");
                 if ($db->num_rows($query) >= 1) {
                     error($lang['reg_today']);
                 }
@@ -332,7 +332,7 @@ switch ($action) {
                 $email2 = '';
             }
 
-            $query = $db->query("SELECT username$email1 FROM $table_members WHERE username='$username' $email2");
+            $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$username' $email2");
             if ($member = $db->fetch_array($query)) {
                 error($lang['alreadyreg']);
             }
@@ -355,7 +355,7 @@ switch ($action) {
 
             $fail = false;
             $efail = false;
-            $query = $db->query("SELECT * FROM $table_restricted");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while ($restriction = $db->fetch_array($query)) {
                 if ($restriction['case_sensitivity'] == 1) {
                     if ($restriction['partial'] == 1) {
@@ -423,7 +423,7 @@ switch ($action) {
                 $langfilenew = basename($langfilenew);
             }
 
-            $query = $db->query("SELECT COUNT(uid) FROM $table_members");
+            $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members");
             $count1 = $db->result($query,0);
 
             $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
@@ -503,13 +503,13 @@ switch ($action) {
                 }
             }
 
-            $db->query("INSERT INTO $table_members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp,  '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '$webcam')");
+            $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp,  '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '$webcam')");
 
             if ($SETTINGS['notifyonreg'] != 'off') {
                 if ($SETTINGS['notifyonreg'] == 'u2u') {
-                    $mailquery = $db->query("SELECT username FROM $table_members WHERE status='Super Administrator'");
+                    $mailquery = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator'");
                     while ($admin = $db->fetch_array($mailquery)) {
-                        $db->query("INSERT INTO $table_u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".addslashes($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$lang[textnewmember]', '$lang[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
+                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".addslashes($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$lang[textnewmember]', '$lang[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                     }
                     $db->free_result($mailquery);
                 } else {
@@ -523,7 +523,7 @@ switch ($action) {
                     $headers[] = 'Content-Type: text/plain; charset=ASCII';
                     $headers = implode("\r\n", $headers);
 
-                    $mailquery = $db->query("SELECT email FROM $table_members WHERE status = 'Super Administrator'");
+                    $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
                     while ($notify = $db->fetch_array($mailquery)) {
                         altMail($notify['email'], $lang['textnewmember'], $lang['textnewmember2'], $headers);
                     }
@@ -550,14 +550,14 @@ switch ($action) {
         if (!$member) {
             error($lang['nomember']);
         } else {
-            $memberinfo = $db->fetch_array($db->query("SELECT * FROM $table_members WHERE username='$member'"));
+            $memberinfo = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'"));
             if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
                 $limit = "title = '$memberinfo[status]'";
             } else {
                 $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Super Moderator' AND title != 'Moderator'";
             }
 
-            $rank = $db->fetch_array($db->query("SELECT * FROM $table_ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+            $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
 
             if ($memberinfo['uid'] == '') {
                 error($lang['nomember']);
@@ -645,7 +645,7 @@ switch ($action) {
                     $lastmembervisittext = "$lastvisitdate $lang[textat] $lastvisittime";
                 }
 
-                $query = $db->query("SELECT COUNT(pid) FROM $table_posts");
+                $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
                 $posts = $db->result($query, 0);
 
                 $posttot = $posts;
@@ -716,7 +716,7 @@ switch ($action) {
                 }
                 $restrict = implode(' AND ', $restrict);
 
-                $query = $db->query("SELECT f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM $table_posts p LEFT JOIN $table_forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' GROUP BY p.fid ORDER BY posts DESC LIMIT 1");
+                $query = $db->query("SELECT f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' GROUP BY p.fid ORDER BY posts DESC LIMIT 1");
                 $forum = $db->fetch_array($query);
 
                 if (!($forum['posts'] > 0)) {
@@ -728,9 +728,9 @@ switch ($action) {
                     $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[textdeleteposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
                 }
 
-                $query = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid FROM ($table_posts p, $table_threads t) LEFT JOIN $table_forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' AND p.tid=t.tid ORDER BY p.dateline DESC LIMIT 1");
+                $query = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid FROM (".X_PREFIX."posts p, ".X_PREFIX."threads t) LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' AND p.tid=t.tid ORDER BY p.dateline DESC LIMIT 1");
                 if ($post = $db->fetch_array($query)) {
-                    $posts = $db->result($db->query("SELECT COUNT(pid) FROM $table_posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1;
+                    $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1;
                     validatePpp();
                     $page = quickpage($posts, $ppp);
                     $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));

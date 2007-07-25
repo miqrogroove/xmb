@@ -187,7 +187,7 @@ switch ($action) {
         $leftpane = u2u_ignore();
         break;
     case 'emptytrash':
-        $db->query("DELETE FROM $table_u2u WHERE folder='Trash' AND owner='$self[username]'");
+        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE folder='Trash' AND owner='$self[username]'");
         u2u_msg($lang['texttrashemptied'], 'u2u.php');
         break;
     default:

@@ -68,7 +68,7 @@ switch($self['status']) {
 
 $fids = array();
 if (!X_SADMIN) {
-    $q = $db->query("SELECT fid FROM $table_forums f WHERE f.status = 'on' AND ".implode(' AND ', $restrict));
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums f WHERE f.status = 'on' AND ".implode(' AND ', $restrict));
     while ($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
@@ -84,7 +84,7 @@ if (!X_SADMIN) {
 
         if (count($r2) > 0) {
             $r = implode(' OR ', $r2);
-            $q = $db->query("SELECT fid FROM $table_forums WHERE $r");
+            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
             while ($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
@@ -99,7 +99,7 @@ if (X_SADMIN) {
     $restrict = 'fid IN('.$fids.')';
 }
 
-$query = $db->query("SELECT COUNT(uid) FROM $table_members UNION ALL SELECT COUNT(tid) FROM $table_threads UNION ALL SELECT COUNT(pid) FROM $table_posts");
+$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
 if ($members == false) {
     $members = 0;
@@ -116,7 +116,7 @@ if ($posts == false) {
 }
 $db->free_result($query);
 
-$query = $db->query("SELECT regdate FROM $table_members ORDER BY regdate LIMIT 0, 1");
+$query = $db->query("SELECT regdate FROM ".X_PREFIX."members ORDER BY regdate LIMIT 0, 1");
 $days = (time() - @$db->result($query, 0)) / 86400;
 if ($days > 0) {
     $membersday = number_format(($members / $days), 2);
@@ -126,17 +126,17 @@ if ($days > 0) {
 $db->free_result($query);
 
 // Get total amount of forums
-$query = $db->query("SELECT COUNT(fid) FROM $table_forums WHERE type='forum'");
+$query = $db->query("SELECT COUNT(fid) FROM ".X_PREFIX."forums WHERE type='forum'");
 $forums = $db->result($query, 0);
 $db->free_result($query);
 
 // Get total amount of forums that are ON
-$query = $db->query("SELECT COUNT(fid) FROM $table_forums WHERE type='forum' AND status='on'");
+$query = $db->query("SELECT COUNT(fid) FROM ".X_PREFIX."forums WHERE type='forum' AND status='on'");
 $forumsa = $db->result($query, 0);
 $db->free_result($query);
 
 // Get total amount of members that actually posted...
-$query = $db->query("SELECT COUNT(postnum) FROM $table_members WHERE postnum > '0'");
+$query = $db->query("SELECT COUNT(postnum) FROM ".X_PREFIX."members WHERE postnum > '0'");
 $membersact = $db->result($query, 0);
 $db->free_result($query);
 
@@ -147,19 +147,19 @@ if ($posts == 0 || $members == 0 || $threads == 0 || $forums == 0 || $days < 1) 
 
 // Get amount of posts per user
 $mempost = 0;
-$query = $db->query("SELECT SUM(postnum) FROM $table_members");
+$query = $db->query("SELECT SUM(postnum) FROM ".X_PREFIX."members");
 $mempost = number_format(($db->result($query, 0) / $members), 2);
 $db->free_result($query);
 
 // Get amount of posts per forum
 $forumpost = 0;
-$query = $db->query("SELECT SUM(posts) FROM $table_forums");
+$query = $db->query("SELECT SUM(posts) FROM ".X_PREFIX."forums");
 $forumpost = number_format(($db->result($query, 0) / $forums), 2);
 $db->free_result($query);
 
 // Get amount of posts per thread
 $threadreply = 0;
-$query = $db->query("SELECT SUM(replies) FROM $table_threads");
+$query = $db->query("SELECT SUM(replies) FROM ".X_PREFIX."threads");
 $threadreply = number_format(($db->result($query, 0) / $threads), 2);
 $db->free_result($query);
 
@@ -168,7 +168,7 @@ $mapercent  = number_format(($membersact*100/$members), 2).'%';
 
 // Get top 5 most viewed threads
 $viewmost = '';
-$query = $db->query("SELECT views, tid, subject FROM $table_threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
+$query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
 while ($views = $db->fetch_array($query)) {
     $views_subject = stripslashes(censor($views['subject']));
     $viewmost .= "<a href=\"viewthread.php?tid=$views[tid]\">$views_subject</a> ($views[views])<br />";
@@ -176,7 +176,7 @@ while ($views = $db->fetch_array($query)) {
 
 // Get top 5 most replied to threads
 $replymost = '';
-$query = $db->query("SELECT replies, tid, subject FROM $table_threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
+$query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
 while ($reply = $db->fetch_array($query)) {
     $reply_subject = stripslashes(censor($reply['subject']));
     $replymost .= "<a href=\"viewthread.php?tid=$reply[tid]\">$reply_subject</a> ($reply[replies])<br />";
@@ -184,7 +184,7 @@ while ($reply = $db->fetch_array($query)) {
 
 // Get last 5 posts
 $latest = '';
-$query = $db->query("SELECT lastpost, tid, subject FROM $table_threads WHERE $restrict GROUP BY tid ORDER BY lastpost DESC LIMIT 5");
+$query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 while ($last = $db->fetch_array($query)) {
     $lpdate = gmdate("$dateformat", $last['lastpost'] + $adjTime);
@@ -195,7 +195,7 @@ while ($last = $db->fetch_array($query)) {
 }
 
 // Get most popular forum
-$query = $db->query("SELECT posts, threads, fid, name FROM $table_forums WHERE $restrict AND type='sub' OR type='forum' ORDER BY posts DESC LIMIT 0, 1");
+$query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND type='sub' OR type='forum' ORDER BY posts DESC LIMIT 0, 1");
 $pop = $db->fetch_array($query);
 $popforum = "<a href=\"forumdisplay.php?fid=$pop[fid]\"><b>$pop[name]</b></a>";
 
@@ -206,7 +206,7 @@ $postsday = number_format($posts / $days, 2);
 $timesearch = time() - 86400;
 $eval = $lang['evalnobestmember'];
 
-$query = $db->query("SELECT author, Count(author) AS Total FROM $table_posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
+$query = $db->query("SELECT author, Count(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 $info = $db->fetch_array($query);
 
 $bestmember = $info['author'];

@@ -277,7 +277,7 @@ if ($action == 'profile') {
         $themelist = array();
         $themelist[] = '<select name="thememem">';
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-        $query = $db->query("SELECT themeid, name FROM $table_themes ORDER BY name ASC");
+        $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while ($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $member['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
@@ -457,11 +457,11 @@ if ($action == 'profile') {
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
                 if (strlen($sig) > 0) {
-                    $db->query("UPDATE $table_posts SET usesig='yes' WHERE author='".$self['username']."'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='yes' WHERE author='".$self['username']."'");
                 }
             } else {
                 if (strlen(trim($sig)) == 0) {
-                    $db->query("UPDATE $table_posts SET usesig='no' WHERE author='".$self['username']."'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='no' WHERE author='".$self['username']."'");
                 }
             }
         }
@@ -503,7 +503,7 @@ if ($action == 'profile') {
             $pwtxt = '';
         }
 
-        $db->query("UPDATE $table_members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$xmbuser'");
+        $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$xmbuser'");
 
         echo '<center><span class="mediumtxt">'.$lang['usercpeditpromsg'].'</span></center>';
         redirect('memcp.php', 2.5, X_REDIRECT_JS);
@@ -519,25 +519,25 @@ if ($action == 'profile') {
             error($lang['fnasorry'], false);
         }
 
-        $query = $db->query("SELECT tid FROM $table_favorites WHERE tid='$favadd' AND username='$xmbuser' AND type='favorite'");
+        $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$favadd' AND username='$xmbuser' AND type='favorite'");
         $favthread = $db->fetch_array($query);
 
         if ($favthread) {
             error($lang['favonlistmsg'], false);
         }
 
-        $db->query("INSERT INTO $table_favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
+        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
         echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
         redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM $table_favorites f, $table_threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC");
+        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC");
         $favnum = 0;
         $favs = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
         while ($fav = $db->fetch_array($query)) {
-            $query2 = $db->query("SELECT name, fup, fid FROM $table_forums WHERE fid='$fav[fid]'");
+            $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -571,10 +571,10 @@ if ($action == 'profile') {
     }
 
     if (!$favadd && onSubmit('favsubmit')) {
-        $query = $db->query("SELECT tid FROM $table_favorites WHERE username='$xmbuser' AND type='favorite'");
+        $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='favorite'");
         while ($fav = $db->fetch_array($query)) {
             $delete = formInt('delete'.$fav['tid']);
-            $db->query("DELETE FROM $table_favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
         }
 
         echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
@@ -587,12 +587,12 @@ if ($action == 'profile') {
 
     $subadd = getInt('subadd');
     if (!$subadd && noSubmit('subsubmit')) {
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM $table_favorites f, $table_threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC");
+        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC");
         $subnum = 0;
         $subscriptions = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
         while ($fav = $db->fetch_array($query)) {
-            $query2 = $db->query("SELECT name, fup, fid FROM $table_forums WHERE fid='$fav[fid]'");
+            $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -623,19 +623,19 @@ if ($action == 'profile') {
 
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } elseif ($subadd && noSubmit('subsubmit')) {
-        $query = $db->query("SELECT count(tid) FROM $table_favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
+        $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             error($lang['subonlistmsg'], false);
         } else {
-            $db->query("INSERT INTO $table_favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
+            $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
             echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
             redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
         }
     } elseif (!$subadd && onSubmit('subsubmit')) {
-        $query = $db->query("SELECT tid FROM $table_favorites WHERE username='$xmbuser' AND type='subscription'");
+        $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
         while ($sub = $db->fetch_array($query)) {
             $delete = formInt('delete'.$sub['tid']);
-            $db->query("DELETE FROM $table_favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
 
         echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
@@ -647,7 +647,7 @@ if ($action == 'profile') {
 
     makenav($action);
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM $table_buddys b LEFT JOIN $table_whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
@@ -682,7 +682,7 @@ if ($action == 'profile') {
         $db->free_result($q);
     }
 
-    $query = $db->query("SELECT * FROM $table_members WHERE username='$xmbuser'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
     $member = $db->fetch_array($query);
 
     if ($member['avatar'] == '') {
@@ -703,7 +703,7 @@ if ($action == 'profile') {
         $member['mood'] = '';
     }
 
-    $u2uquery = $db->query("SELECT * FROM $table_u2u WHERE owner='$xmbuser' AND type='incoming' ORDER BY dateline DESC LIMIT 0, 15");
+    $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND type='incoming' ORDER BY dateline DESC LIMIT 0, 15");
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
@@ -732,13 +732,13 @@ if ($action == 'profile') {
 
     $db->free_result($u2uquery);
 
-    $query2 = $db->query("SELECT * FROM $table_favorites f, $table_threads t, $table_posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC LIMIT 0,5");
+    $query2 = $db->query("SELECT * FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t, ".X_PREFIX."posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC LIMIT 0,5");
     $favnum = $db->num_rows($query2);
 
     $favs = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
     while ($fav = $db->fetch_array($query2)) {
-        $query = $db->query("SELECT name, fup, fid FROM $table_forums WHERE fid='$fav[fid]'");
+        $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
 
         $lastpost = explode('|', $fav['lastpost']);

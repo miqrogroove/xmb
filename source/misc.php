@@ -102,17 +102,17 @@ switch ($action) {
         } else {
             $password = md5(formVar('password'));
             $username = addslashes(formVar('username'));
-            $query = $db->query("SELECT username FROM $table_members WHERE username='$username' AND password='$password'");
+            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$username' AND password='$password'");
             if ($query && $db->num_rows($query) == 1) {
                 $member = $db->fetch_array($query);
-                $db->query("DELETE FROM $table_whosonline WHERE ip='$onlineip' && username='xguest123'");
+                $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
                 $currtime = $onlinetime + (86400*30);
                 $username = $member['username'];
 
                 if (formInt('hide')) {
-                    $db->query("UPDATE $table_members SET invisible='1' WHERE username='$username'");
+                    $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$username'");
                 } else {
-                    $db->query("UPDATE $table_members SET invisible='0' WHERE username='$username'");
+                    $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$username'");
                 }
 
                 if ($server == 'Mic') {
@@ -164,7 +164,7 @@ switch ($action) {
         }
 
         $currtime = $onlinetime - (86400*30);
-        $query = $db->query("DELETE FROM $table_whosonline WHERE username='$xmbuser'");
+        $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
 
         put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
         put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
@@ -235,7 +235,7 @@ switch ($action) {
                     $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
 
-                $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM $table_posts p, $table_threads t LEFT JOIN $table_forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
                     $srchfrom = $onlinetime;
@@ -414,7 +414,7 @@ switch ($action) {
         } else {
             $username = addslashes(formVar('username'));
             $email = addslashes(formVar('email'));
-            $query = $db->query("SELECT username, email, pwdate FROM $table_members WHERE username='$username' AND email='$email'");
+            $query = $db->query("SELECT username, email, pwdate FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             $member = $db->fetch_array($query);
 
             $time = $onlintime-86400;
@@ -435,7 +435,7 @@ switch ($action) {
             }
             $newmd5pass = md5($newpass);
 
-            $db->query("UPDATE $table_members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
+            $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
 
             altMail($member['email'], '['.$bbname.'] '.$lang['textyourpw'], $lang['textyourpwis']."\n\n".$member['username']."\n".$newpass, "From: ".$bbname." <".$adminemail.">");
 
@@ -454,9 +454,9 @@ switch ($action) {
         }
 
         if (X_ADMIN) {
-            $query = $db->query("SELECT * FROM $table_whosonline ORDER BY username ASC");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT * FROM $table_whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC");
         }
 
         $onlineusers = '';
@@ -510,9 +510,9 @@ switch ($action) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username FROM $table_members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT username FROM $table_members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
+            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
         }
 
         $todaymembersnum = 0;
@@ -614,11 +614,11 @@ switch ($action) {
 
         if (isset($where) && isset($where[0]) && $where[0] != '') {
             $q = implode(' AND', $where);
-            $querymem = $db->query("SELECT * FROM $table_members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT count(uid) FROM $table_members WHERE $q"), 0);
+            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
+            $num = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
         } else {
-            $querymem = $db->query("SELECT * FROM $table_members ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT count(uid) FROM $table_members"), 0);
+            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
+            $num = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members"), 0);
         }
 
         $ext = htmlspecialchars(implode('&amp;', $ext));

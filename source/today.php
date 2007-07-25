@@ -76,13 +76,13 @@ $restrict = implode(' AND ', $restrict);
 $fids = array();
 $tids = array();
 if (X_SADMIN) {
-    $q = $db->query("SELECT fid FROM $table_forums WHERE status = 'on'");
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
     while ($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
     $db->free_result($q);
 } else {
-    $q = $db->query("SELECT fid FROM $table_forums WHERE status = 'on' AND $restrict");
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on' AND $restrict");
     while ($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
@@ -99,7 +99,7 @@ if (X_SADMIN) {
 
         if (count($r2) > 0) {
             $r = implode(' OR ', $r2);
-            $q = $db->query("SELECT fid FROM $table_forums WHERE $r");
+            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
             while($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
@@ -114,7 +114,7 @@ if (count($fids) == 0) {
 
 $fids = implode(', ', $fids);
 
-$query = $db->query("SELECT tid FROM $table_threads WHERE lastpost >= '$srchfrom' AND fid IN($fids)");
+$query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN($fids)");
 $results = $db->num_rows($query);
 while ($t = $db->fetch_array($query)) {
     $tids[] = $t['tid'];
@@ -138,7 +138,7 @@ if (($multipage = multi($results, $tpp, $page, $mpurl)) !== false) {
     eval('$multipage = "'.template('today_multipage').'";');
 }
 
-$query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, f.fid, f.name FROM $table_threads t LEFT JOIN $table_forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
+$query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
 $today2 = array();
 $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 while ($thread = $db->fetch_array($query)) {
