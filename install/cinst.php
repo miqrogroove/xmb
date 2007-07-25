@@ -289,8 +289,8 @@ show_act("Creating ".$tablepre."members");
           `aim` varchar(40) NOT NULL default '',
           `status` varchar(35) NOT NULL default '',
           `location` varchar(50) NOT NULL default '',
-          `bio` text NOT NULL default '',
-          `sig` text NOT NULL default '',
+          `bio` text NOT NULL,
+          `sig` text NOT NULL,
           `showemail` varchar(15) NOT NULL default '',
           `timeoffset` DECIMAL(4,2) NOT NULL default 0,
           `icq` varchar(30) NOT NULL default '',
@@ -308,12 +308,12 @@ show_act("Creating ".$tablepre."members");
           `msn` varchar(40) NOT NULL default '',
           `ban` varchar(15) NOT NULL default '0',
           `dateformat` varchar(10) NOT NULL default '',
-          `ignoreu2u` text NOT NULL default '',
+          `ignoreu2u` text NOT NULL,
           `lastvisit` bigint(15) NOT NULL default 0,
           `mood` varchar(128) NOT NULL default 'Not Set',
           `pwdate` int(10) NOT NULL default 0,
           `invisible` SET('1','0') default 0,
-          `u2ufolders` text NOT NULL default '',
+          `u2ufolders` text NOT NULL,
           `saveogu2u` char(3) NOT NULL default '',
           `emailonu2u` char(3) NOT NULL default '',
           `useoldu2u` char(3) NOT NULL default '',
@@ -695,7 +695,7 @@ show_act("Inserting data into ".$tablepre."ranks");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."settings");
-    $db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'off', 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<b>Welcome to your new boards!!</b>\nModify your board to your own taste, we recommend starting with changing the settings...!', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'no', 'off', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70, '', '16', '25', 'off');");
+    $db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'off', 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<b>Welcome to your new boards!!</b>\nModify your board to your own taste, we recommend starting with changing the settings...!', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'no', 'off', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."smilies");
@@ -791,7 +791,7 @@ show_act("Inserting data into ".$tablepre."words");
 show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
-    $db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', 'no', '0', 'English', 24, 'dd-mm-yyyy', '', $myDate, 30, 30, 'yes', 'no', 'no');");
+    $db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', 'no', 0, 'English', 24, 'dd-mm-yyyy', '', $myDate, 30, 30, 'yes', 'no', 'no');");
 show_result(X_INST_OK);
 
 // Try to remove all files now
