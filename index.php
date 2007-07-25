@@ -63,7 +63,7 @@ $gid = getInt('gid');
 if ($gid) {
     $gid = (int) $gid;
     $whosonlinestatus = 'off';
-    $query = $db->query("SELECT name FROM $table_forums WHERE fid='$gid' AND type='group' LIMIT 1");
+    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' LIMIT 1");
     $cat = $db->fetch_array($query);
     $db->free_result($query);
     nav(stripslashes($cat['name']));
@@ -73,11 +73,11 @@ if ($gid) {
 
 eval('echo "'.template('header').'";');
 
-$query = $db->query("SELECT username FROM $table_members ORDER BY regdate DESC LIMIT 1");
+$query = $db->query("SELECT username FROM ".X_PREFIX."members ORDER BY regdate DESC LIMIT 1");
 $lastmember = $db->fetch_array($query);
 $db->free_result($query);
 
-$query = $db->query("SELECT COUNT(uid) FROM $table_members UNION ALL SELECT COUNT(tid) FROM $table_threads UNION ALL SELECT COUNT(pid) FROM $table_posts");
+$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
 if ($members == false) {
     $members = 0;
@@ -107,7 +107,7 @@ if ($gid == 0) {
     if ($whosonlinestatus == 'on') {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
-        $query  = $db->query("SELECT m.status, m.username, m.invisible, w.* FROM $table_whosonline w LEFT JOIN $table_members m ON m.username=w.username ORDER BY w.username");
+        $query  = $db->query("SELECT m.status, m.username, m.invisible, w.* FROM ".X_PREFIX."whosonline w LEFT JOIN ".X_PREFIX."members m ON m.username=w.username ORDER BY w.username");
         while ($online = $db->fetch_array($query)) {
             switch ($online['username']) {
                 case 'xguest123':
@@ -196,9 +196,9 @@ if ($gid == 0) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username FROM $table_members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, 50");
+            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, 50");
         } else {
-            $query = $db->query("SELECT username FROM $table_members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY lastvisit DESC LIMIT 0, 50");
+            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY lastvisit DESC LIMIT 0, 50");
         }
 
         $todaymembersnum = 0;
@@ -222,13 +222,13 @@ if ($gid == 0) {
     }
 
     if ($SETTINGS['catsonly'] == 'on') {
-        $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM $table_forums WHERE type='group' ORDER BY displayorder ASC");
+        $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder ASC");
     } else {
-        $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM $table_forums f LEFT JOIN $table_forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
+        $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
     $welcome = $whosonline = '';
-    $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM $table_forums f LEFT JOIN $table_forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
+    $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
 $indexBarTop = $indexBar = $forumlist = $spacer = '';

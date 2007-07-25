@@ -38,10 +38,20 @@ $action = getVar('action');
 
 if ($goto == 'lastpost') {
     if ($pid > 0) {
-        if($tid == 0) {
-            $tid = $db->result($db->query("SELECT tid FROM $table_posts WHERE pid=$pid"), 0);
+        if ($tid == 0) {
+            $tid = $db->result($db->query("SELECT tid FROM ".X_PREFIX."posts WHERE pid=$pid"), 0);
         }
-        $query = $db->query("SELECT count(pid) as num FROM $table_posts WHERE tid=$tid AND pid <= $pid");
+
+        $query = $db->query("SELECT count(pid) as num FROM ".X_PREFIX."posts WHERE tid=$tid AND pid <= $pid");
+        $posts = $db->result($query, 0);
+        $db->free_result($query);
+
+        if ($posts == 0) {
+            eval('$css = "'.template('css').'";');
+            error($lang['textnothread']);
+        }
+    } else if ($tid > 0) {
+        $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
         $posts = $db->result($query, 0);
         $db->free_result($query);
 
@@ -50,29 +60,18 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-    } elseif ($tid > 0) {
-        $query = $db->query("SELECT count(pid) FROM $table_posts WHERE tid='$tid'");
-        $posts = $db->result($query, 0);
-        $db->free_result($query);
-
-        if ($posts == 0) {
-            eval('$css = "'.template('css').'";');
-            error($lang['textnothread']);
-        }
-
-        $query = $db->query("SELECT pid FROM $table_posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 0,1");
+        $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 0,1");
         $pid = $db->result($query, 0);
         $db->free_result($query);
-
-    } elseif ($fid > 0) {
-        $query = $db->query("SELECT pid, tid FROM $table_posts WHERE fid='$fid' ORDER BY pid DESC LIMIT 0,1");
+    } else if ($fid > 0) {
+        $query = $db->query("SELECT pid, tid FROM ".X_PREFIX."posts WHERE fid='$fid' ORDER BY pid DESC LIMIT 0,1");
         $posts = $db->fetch_array($query);
         $db->free_result($query);
 
         $pid = $posts['pid'];
         $tid = $posts['tid'];
 
-        $query = $db->query("SELECT p.pid, p.tid FROM $table_posts p, $table_forums f WHERE p.fid = f.fid and (f.fup='$fid') ORDER BY p.pid DESC LIMIT 0,1");
+        $query = $db->query("SELECT p.pid, p.tid FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.fid = f.fid and (f.fup='$fid') ORDER BY p.pid DESC LIMIT 0,1");
         $fupPosts = $db->fetch_array($query);
         $db->free_result($query);
 
@@ -81,7 +80,7 @@ if ($goto == 'lastpost') {
             $tid = $fupPosts['tid'];
         }
 
-        $query = $db->query("SELECT count(pid) FROM $table_posts WHERE tid='$tid'");
+        $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
         $posts = $db->result($query, 0);
         $db->free_result($query);
     }
@@ -134,7 +133,7 @@ eval('$css = "'.template('css').'";');
 $notexist = false;
 $notexist_txt = $posts = '';
 
-$query = $db->query("SELECT fid, subject, closed, topped, lastpost FROM $table_threads WHERE tid='$tid'");
+$query = $db->query("SELECT fid, subject, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
 if ($tid == 0 || $db->num_rows($query) != 1) {
     $db->free_result($query);
     error($lang['textnoforum']);
@@ -166,7 +165,7 @@ if (!isset($oldtopics)) {
 $thread['subject'] = censor($thread['subject']);
 $fid = (int) $thread['fid'];
 
-$query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
 if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $db->num_rows($query) != 1) {
@@ -178,7 +177,7 @@ $db->free_result($query);
 
 $authorization = true;
 if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid, private, userlist FROM $table_forums WHERE fid='$forum[fup]'");
+    $query = $db->query("SELECT name, fid, private, userlist FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
     $authorization = privfcheck($fup['private'], $fup['userlist']);
@@ -309,7 +308,7 @@ if (!$action) {
     $specialrank = array();
     $rankposts = array();
 
-    $queryranks = $db->query("SELECT id,title,posts,stars,allowavatars,avatarrank FROM $table_ranks");
+    $queryranks = $db->query("SELECT id,title,posts,stars,allowavatars,avatarrank FROM ".X_PREFIX."ranks");
     while ($query = $db->fetch_row($queryranks)) {
         $title = $query[1];
         $rposts= $query[2];
@@ -323,8 +322,8 @@ if (!$action) {
     $db->free_result($queryranks);
     // End user rank query.
 
-    $db->query("UPDATE $table_threads SET views=views+1 WHERE tid='$tid'");
-    $query = $db->query("SELECT count(pid) FROM $table_posts WHERE tid='$tid'");
+    $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid='$tid'");
+    $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
     $num = $db->result($query, 0);
     $db->free_result($query);
 
@@ -338,7 +337,7 @@ if (!$action) {
     $pollhtml = $poll = '';
     $vote_id = $voted = 0;
 
-    $query = $db->query("SELECT vote_id FROM $table_vote_desc WHERE topic_id='$tid'");
+    $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
     if ($query) {
         $vote_id = $db->fetch_array($query);
         $vote_id = (int) $vote_id['vote_id'];
@@ -349,7 +348,7 @@ if (!$action) {
     if ($vote_id > 0 && isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
         if (X_MEMBER) {
             // Has the user already voted?
-            $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM $table_vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'");
+            $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'");
             if ($query) {
                 $voted = $db->fetch_array($query);
                 $voted = (int) $voted['cVotes'];
@@ -366,7 +365,7 @@ if (!$action) {
             }
             // Render the poll results
             $num_votes = 0;
-            $query = $db->query("SELECT vote_result, vote_option_text FROM $table_vote_results WHERE vote_id='$vote_id'");
+            $query = $db->query("SELECT vote_result, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
             while ($result = $db->fetch_array($query)) {
                 $num_votes += $result['vote_result'];
                 $pollentry = array();
@@ -398,7 +397,7 @@ if (!$action) {
         } else {
             // Render the poll itself
             $results = '- [<a href="viewthread.php?tid='.$tid.'&amp;viewresults=yes"><font color="'.$cattext.'">'.$lang['viewresults'].'</font></a>]';
-            $query = $db->query("SELECT vote_option_id, vote_option_text FROM $table_vote_results WHERE vote_id='$vote_id'");
+            $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
             while ($result = $db->fetch_array($query)) {
                 $poll['id'] = (int) $result['vote_option_id'];
                 $poll['name'] = $result['vote_option_text'];
@@ -412,7 +411,7 @@ if (!$action) {
     // End Polls
 
     $thisbg = $altbg2;
-    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM $table_posts p LEFT JOIN $table_members m ON m.username=p.author LEFT JOIN $table_attachments a ON a.pid=p.pid LEFT JOIN $table_whosonline w ON w.username=p.author WHERE p.fid='$fid' AND p.tid='$tid' GROUP BY p.pid ORDER BY p.pid ASC LIMIT $start_limit, $ppp");
+    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid='$fid' AND p.tid='$tid' GROUP BY p.pid ORDER BY p.pid ASC LIMIT $start_limit, $ppp");
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while ($post = $db->fetch_array($querypost)) {
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
@@ -661,11 +660,11 @@ if (!$action) {
 } elseif ($action == "attachment" && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
     pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
 
-    $query = $db->query("SELECT * FROM $table_attachments WHERE pid='$pid' and tid='$tid'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."attachments WHERE pid='$pid' and tid='$tid'");
     $file = $db->fetch_array($query);
     $db->free_result($query);
 
-    $db->query("UPDATE $table_attachments SET downloads=downloads+1 WHERE pid='$pid'");
+    $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE pid='$pid'");
 
     if ($file['filesize'] != strlen($file['attachment'])) {
         error($lang['filecorrupt']);
@@ -690,7 +689,7 @@ if (!$action) {
 } elseif ($action == "printable") {
     pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
 
-    $querypost = $db->query("SELECT * FROM $table_posts WHERE fid='$fid' AND tid='$tid' ORDER BY pid");
+    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY pid");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while ($post = $db->fetch_array($querypost)) {

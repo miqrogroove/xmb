@@ -57,32 +57,32 @@ $action = getVar('action');
 
 switch ($action) {
     case 'fixftotals':
-        $fquery = $db->query("SELECT fid FROM $table_forums WHERE type='forum'");
+        $fquery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum'");
         while ($forum = $db->fetch_array($fquery)) {
             $threadnum = $postnum = $sub_threadnum = $sub_postnum = 0;
             $squery = $stquery = $spquery = $ftquery = $fpquery = '';
 
-            $squery = $db->query("SELECT fid FROM $table_forums WHERE fup='$forum[fid]' AND type='sub'");
+            $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$forum[fid]' AND type='sub'");
             while ($sub = $db->fetch_array($squery)) {
-                $stquery = $db->query("SELECT COUNT(tid) FROM $table_threads WHERE fid='$sub[fid]'");
+                $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$sub[fid]'");
                 $sub_threadnum = $db->result($stquery, 0);
 
-                $spquery = $db->query("SELECT COUNT(pid) FROM $table_posts WHERE fid='$sub[fid]'");
+                $spquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$sub[fid]'");
                 $sub_postnum = $db->result($spquery, 0);
 
-                $db->query("UPDATE $table_forums SET threads='$sub_threadnum', posts='$sub_postnum' WHERE fid='$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET threads='$sub_threadnum', posts='$sub_postnum' WHERE fid='$sub[fid]'");
                 $threadnum += $sub_threadnum;
                 $postnum += $sub_postnum;
             }
             $db->free_result($squery);
 
-            $ftquery = $db->query("SELECT COUNT(tid) FROM $table_threads WHERE fid='$forum[fid]'");
+            $ftquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$forum[fid]'");
             $threadnum += $db->result($ftquery, 0);
 
-            $fpquery = $db->query("SELECT COUNT(pid) FROM $table_posts WHERE fid='$forum[fid]'");
+            $fpquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$forum[fid]'");
             $postnum += $db->result($fpquery, 0);
 
-            $db->query("UPDATE $table_forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
         }
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_forumtotal]</td></tr></table></table>";
@@ -92,11 +92,11 @@ switch ($action) {
         break;
 
     case 'fixttotals':
-        $queryt = $db->query("SELECT * FROM $table_threads");
+        $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
         while ($threads = $db->fetch_array($queryt)) {
-            $query = $db->query("SELECT COUNT(pid) FROM $table_posts WHERE tid='$threads[tid]'");
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
             $replynum = $db->result($query, 0) -1;
-            $db->query("UPDATE $table_threads SET replies='$replynum' WHERE tid='$threads[tid]'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid='$threads[tid]'");
         }
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_threadtotal]</td></tr></table></table>";
@@ -106,12 +106,12 @@ switch ($action) {
         break;
 
     case 'fixmposts':
-        $queryt = $db->query("SELECT username FROM $table_members");
+        $queryt = $db->query("SELECT username FROM ".X_PREFIX."members");
         while ($mem = $db->fetch_array($queryt)) {
             $mem['username'] = addslashes(stripslashes($mem['username']));
-            $query = $db->query("SELECT COUNT(pid) FROM $table_posts WHERE author='$mem[username]'");
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$mem[username]'");
             $postsnum = $db->result($query, 0);
-            $db->query("UPDATE $table_members SET postnum='$postsnum' WHERE username='$mem[username]'");
+            $db->query("UPDATE ".X_PREFIX."members SET postnum='$postsnum' WHERE username='$mem[username]'");
         }
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_mempost]</td></tr></table></table>";
@@ -121,12 +121,12 @@ switch ($action) {
         break;
 
     case 'fixlastposts':
-        $q = $db->query("SELECT fid FROM $table_forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
         while ($loner = $db->fetch_array($q)) {
             $lastpost = array();
-            $subq = $db->query("SELECT fid FROM $table_forums WHERE fup = '$loner[fid]'");
+            $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
             while ($sub = $db->fetch_array($subq)) {
-                $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
                     $lastpost[] = $curr;
@@ -134,11 +134,11 @@ switch ($action) {
                 } else {
                     $lp = '';
                 }
-                $db->query("UPDATE $table_forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
                 $db->free_result($pq);
             }
             $db->free_result($subq);
-            $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $lastpost[] = $db->fetch_array($pq);
             }
@@ -156,17 +156,17 @@ switch ($action) {
                 }
                 $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
             }
-            $db->query("UPDATE $table_forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
         }
         $db->free_result($q);
-        $q = $db->query("SELECT fid FROM $table_forums WHERE type = 'group'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
         while ($cat = $db->fetch_array($q)) {
-            $fq = $db->query("SELECT fid FROM $table_forums WHERE type = 'forum' AND fup = '$cat[fid]'");
+            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
             while ($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
-                $subq = $db->query("SELECT fid FROM $table_forums WHERE fup = '$forum[fid]'");
+                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
                 while ($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
                         $lastpost[] = $curr;
@@ -175,10 +175,10 @@ switch ($action) {
                         $lp = '';
                     }
                     $db->free_result($pq);
-                    $db->query("UPDATE $table_forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
                 }
                 $db->free_result($subq);
-                $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $lastpost[] = $db->fetch_array($pq);
                 }
@@ -196,15 +196,15 @@ switch ($action) {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $db->query("UPDATE $table_forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
             }
             $db->free_result($fq);
         }
         $db->free_result($q);
-        $q = $db->query("SELECT tid FROM $table_threads");
+        $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
         while ($thread = $db->fetch_array($q)) {
             $lastpost = array();
-            $pq = $db->query("SELECT author, dateline, pid FROM $table_posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $curr = $db->fetch_array($pq);
                 $lastpost[] = $curr;
@@ -213,7 +213,7 @@ switch ($action) {
                 $lp = '';
             }
             $db->free_result($pq);
-            $db->query("UPDATE $table_threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
         }
         $db->free_result($q);
         nav($lang['tools']);
@@ -224,7 +224,7 @@ switch ($action) {
         break;
 
     case 'updatemoods':
-        $db->query("UPDATE $table_members SET mood='$lang[nomoodtext]' WHERE mood=''");
+        $db->query("UPDATE ".X_PREFIX."members SET mood='$lang[nomoodtext]' WHERE mood=''");
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_mood]</td></tr></table></table>";
         end_time();
@@ -236,7 +236,7 @@ switch ($action) {
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['u2udump_confirm']."<br /><form action=\"tools.php?action=u2udump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
-            $db->query("DELETE FROM $table_u2u");
+            $db->query("DELETE FROM ".X_PREFIX."u2u");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_u2u]</td></tr></table></table>";
             end_time();
@@ -251,7 +251,7 @@ switch ($action) {
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['whoodump_confirm']."<br /><form action=\"tools.php?action=whosonlinedump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
-            $db->query("DELETE FROM $table_whosonline");
+            $db->query("DELETE FROM ".X_PREFIX."whosonline");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_whosonline]</td></tr></table></table>";
             end_time();
@@ -275,7 +275,7 @@ switch ($action) {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
 
-            $q = $db->query("SELECT fid FROM $table_forums WHERE type = 'forum' OR type='sub'");
+            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' OR type='sub'");
             while ($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
@@ -284,11 +284,11 @@ switch ($action) {
             $fq .= $fids;
             $fq .= "'";
 
-            $q = $db->query("SELECT tid FROM $table_threads WHERE $fq");
+            $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE $fq");
             $i = 0;
             while ($t = $db->fetch_array($q)) {
-                $db->query("UPDATE $table_threads SET fid='$export_fid' WHERE tid='$t[tid]'");
-                $db->query("UPDATE $table_posts SET fid='$export_fid' WHERE tid='$t[tid]'");
+                $db->query("UPDATE ".X_PREFIX."threads SET fid='$export_fid' WHERE tid='$t[tid]'");
+                $db->query("UPDATE ".X_PREFIX."posts SET fid='$export_fid' WHERE tid='$t[tid]'");
                 $i++;
             }
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
@@ -349,11 +349,11 @@ switch ($action) {
             echo '</form>';
         } else {
             $i = 0;
-            $q = $db->query("SELECT aid, pid FROM $table_attachments");
+            $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
             while ($a = $db->fetch_array($q)) {
-                $result = $db->query("SELECT pid FROM $table_posts WHERE pid='$a[pid]'");
+                $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid='$a[pid]'");
                 if ($db->num_rows($result) == 0) {
-                    $db->query("DELETE FROM $table_attachments WHERE aid='$a[aid]'");
+                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$a[aid]'");
                     $i++;
                 }
             }

@@ -302,7 +302,7 @@ if (isset($oldtopics)) {
 }
 
 // Make all settings global, and put them in the $SETTINGS[] array
-$squery = $db->query("SELECT * FROM $table_settings");
+$squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
 foreach ($db->fetch_array($squery) as $key => $val) {
     $$key = $val;
     $SETTINGS[$key] = $val;
@@ -325,7 +325,7 @@ if (!isset($xmbuser)) {
 
 $q = false;
 if ($xmbuser != '') {
-    $query = $db->query("SELECT * FROM $table_members WHERE username='$xmbuser'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
     $userrec = $db->fetch_array($query);
     if ($db->num_rows($query) == 1 && $userrec['password'] == $xmbpw) {
         $q = true;
@@ -356,7 +356,7 @@ if ($q) {
     if (!empty($theme)) {
         $themeuser = $self['theme'];
     }
-    $db->query("UPDATE $table_members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
+    $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
 }else{
     define('X_MEMBER', false);
     define('X_GUEST', true);
@@ -487,7 +487,7 @@ $dateformat = str_replace(array('mm','dd','yyyy','yy'), array('n','j','Y','y'), 
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM $table_forums f, $table_threads t WHERE f.fid=t.fid AND t.tid='$tid'");
+    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
     $locate = $db->fetch_array($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
@@ -497,7 +497,7 @@ if (isset($tid) && $action != 'templates') {
         $threadSubject = '';
     }
 } elseif (isset($fid)) {
-    $q = $db->query("SELECT theme FROM $table_forums WHERE fid='$fid'");
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
     } else {
@@ -509,17 +509,17 @@ $wollocation = addslashes($url);
 $newtime = $onlinetime - 600;
 
 // clear out old entries and guests
-$db->query("DELETE FROM $table_whosonline WHERE ((ip = '$onlineip' && username = 'xguest123') OR (username = '$xmbuser') OR (time < '$newtime'))");
-$db->query("INSERT INTO $table_whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
+$db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip = '$onlineip' && username = 'xguest123') OR (username = '$xmbuser') OR (time < '$newtime'))");
+$db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
 
 // Find duplicate entries for users only
 $username = isset($username) ? $username : '';
 if (X_MEMBER) {
-    $result = $db->query("SELECT count(username) FROM $table_whosonline WHERE (username = '$xmbuser')");
+    $result = $db->query("SELECT count(username) FROM ".X_PREFIX."whosonline WHERE (username = '$xmbuser')");
     $usercount = $db->result($result, 0);
     if ($usercount > 1) {
-        $db->query("DELETE FROM $table_whosonline WHERE (username = '$xmbuser')");
-        $db->query("INSERT INTO $table_whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
+        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username = '$xmbuser')");
+        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }
 }
 
@@ -533,7 +533,7 @@ if ((int) $themeuser > 0) {
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM $table_themes WHERE themeid='$theme'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
 foreach ($db->fetch_array($query) as $key => $val) {
     if ($key != "name") {
         $$key = $val;
@@ -708,7 +708,7 @@ if ($regviewonly == "on") {
 // Check if the user is ip-banned
 $ips = explode(".", $onlineip);
 // also disable 'ban all'-possibility
-$query = $db->query("SELECT id FROM $table_banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
+$query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
 $result = $db->fetch_array($query);
 
 // don't *ever* ban a (super-)admin!
@@ -720,7 +720,7 @@ if (!X_ADMIN && ($self['status'] == 'Banned' || $result)) {
 // if the user is registered, check for new u2u's
 $newu2umsg = '';
 if (X_MEMBER) {
-    $query = $db->query("SELECT COUNT(readstatus) FROM $table_u2u WHERE owner='$self[username]' AND folder='Inbox' AND readstatus='no'");
+    $query = $db->query("SELECT COUNT(readstatus) FROM ".X_PREFIX."u2u WHERE owner='$self[username]' AND folder='Inbox' AND readstatus='no'");
     $newu2unum = $db->result($query, 0);
     if ($newu2unum > 0) {
         $newu2umsg = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[newu2u1] $newu2unum $lang[newu2u2]</a>";
