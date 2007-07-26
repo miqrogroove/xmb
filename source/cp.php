@@ -1456,7 +1456,7 @@ if ($action == "members") {
         /*
         Get the uid first Super Administrator (the first to register and thus most likely to be the 'top level' admin) to compare against the delete uid. This member should *never* be deleted this way.
         */
-        $query = $db->query("SELECT MIN(`uid`) FROM `" . ".X_PREFIX."members . "` WHERE `status`='Super Administrator'");
+        $query = $db->query("SELECT MIN(`uid`) FROM `" . X_PREFIX. "members` WHERE `status`='Super Administrator'");
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
