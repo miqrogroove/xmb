@@ -763,15 +763,15 @@ if ($action == 'forum') {
             &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
             <?php
             foreach ($groups as $moveforum) {
-                echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
+                echo "<option value=\"$moveforum['fid']\">".stripslashes($moveforum['name'])."</option>";
             }
             ?>
             </select>
             <a href="cp.php?action=forum&amp;fdetails=<?php echo $forum['fid']?>"><?php echo $lang['textmoreopts']?></a></td>
             </tr>
             <?php
-            if (array_key_exists("$forum[fid]", $subs)) {
-                foreach ($subs["$forum[fid]"] as $subforum) {
+            if (array_key_exists("$forum['fid']", $subs)) {
+                foreach ($subs["$forum['fid']"] as $subforum) {
                     $on = $off = '';
                     if ($subforum['status'] == 'on') {
                         $on = $selHTML;
@@ -782,8 +782,8 @@ if ($action == 'forum') {
                     <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                     <td class="smalltxt"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="delete<?php echo $subforum['fid']?>" value="<?php echo $subforum['fid']?>" />
                     &nbsp;<input type="text" name="name<?php echo $subforum['fid']?>" value="<?php echo stripslashes($subforum['name'])?>" />
-                    &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $subforum[fid]?>" size="2" value="<?php echo $subforum['displayorder']?>" />
-                    &nbsp; <select name="status<?php echo $subforum[fid]?>">
+                    &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $subforum['fid']?>" size="2" value="<?php echo $subforum['displayorder']?>" />
+                    &nbsp; <select name="status<?php echo $subforum['fid']?>">
                     <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
                     &nbsp; <select name="moveto<?php echo $subforum['fid']?>">
                     <?php
@@ -846,7 +846,7 @@ if ($action == 'forum') {
                         } else {
                             $curgroup = '';
                         }
-                        echo "<option value=\"$moveforum[fid]\" $curgroup>".stripslashes($moveforum['name'])."</option>";
+                        echo "<option value=\"$moveforum['fid']\" $curgroup>".stripslashes($moveforum['name'])."</option>";
                     }
                     ?>
                     </select>
@@ -1149,7 +1149,7 @@ if ($action == 'forum') {
                 $db->free_result($querythread);
             }
             $name = addslashes($name);
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='$forum['fid']'");
         }
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
@@ -1167,7 +1167,7 @@ if ($action == 'forum') {
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid='$delete'");
             }
             $name = addslashes($name);
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='$group['fid']'");
         }
         $newgname = formVar('newgname');
         $newfname = formVar('newfname');
@@ -1258,7 +1258,7 @@ if ($action == "mods") {
             </tr>
 
             <?php
-            $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='$forum[fid]' AND type='sub'");
+            $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='$forum['fid']' AND type='sub'");
             while ($sub = $db->fetch_array($querys)) {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
@@ -1796,8 +1796,8 @@ if ($action == "search") {
             $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE useip = '$postip'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
-                if (!empty($users[subject])) {
-                    $list[] = "<a href = \"$link\">$users[subject]<br />";
+                if (!empty($users['subject'])) {
+                    $list[] = "<a href = \"$link\">$users['subject']<br />";
                 } else {
                     $list[] = "<a href = \"$link\">- - No subject - -<br />";
                 }
@@ -1818,8 +1818,8 @@ if ($action == "search") {
             $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
             while ($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
-                if (!empty($users[subject])) {
-                    $list[] = "<a href = \"$link\">$users[subject]<br />";
+                if (!empty($users['subject'])) {
+                    $list[] = "<a href = \"$link\">$users['subject']<br />";
                 } else {
                     $list[] = "<a href = \"$link\">- - No subject - -<br />";
                 }

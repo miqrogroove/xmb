@@ -440,22 +440,22 @@ if ($action == 'themes') {
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textbgcolor']?></td>
         <td><input type="text" name="bgcolornew" value="<?php echo $themestuff['bgcolor']?>" /></td>
-        <td bgcolor="<?php echo $themestuff[bgcolor]?>">&nbsp;</td>
+        <td bgcolor="<?php echo $themestuff['bgcolor']?>">&nbsp;</td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textaltbg1']?></td>
         <td><input type="text" name="altbg1new" value="<?php echo $themestuff['altbg1']?>" /></td>
-        <td bgcolor="<?php echo $themestuff[altbg1]?>">&nbsp;</td>
+        <td bgcolor="<?php echo $themestuff['altbg1']?>">&nbsp;</td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textaltbg2']?></td>
         <td><input type="text" name="altbg2new" value="<?php echo $themestuff['altbg2']?>" /></td>
-        <td bgcolor="<?php echo $themestuff[altbg2]?>">&nbsp;</td>
+        <td bgcolor="<?php echo $themestuff['altbg2']?>">&nbsp;</td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textlink']?></td>
         <td><input type="text" name="linknew" value="<?php echo $themestuff['link']?>" /></td>
-        <td bgcolor="<?php echo $themestuff[link]?>">&nbsp;</td>
+        <td bgcolor="<?php echo $themestuff['link']?>">&nbsp;</td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textborder']?></td>
@@ -1876,7 +1876,7 @@ if ($action == "attachments") {
             <td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center" valign="middle"><a href="cp2.php?action=delete_attachment&amp;aid=<?php echo $attachment['aid']?>">Delete</a>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>"><br /><span class="smalltxt"><a href="viewthread.php?action=attachment&amp;tid=<?php echo $attachment['tid']?>&amp;pid=<?php echo $attachment['pid']?>" target="_blank"><?php echo $lang['textdownload']?></a></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment['author']?></td>
-            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment[tid]?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
+            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment['tid']?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachsize?></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachment['downloads']?></td>
             </tr>
