@@ -896,42 +896,42 @@ class Upgrade {
                     $polls          = $forum['pollstatus'];
                     $perms          = explode(',', $postperm);
 
-                    if ($perms[1] = 63) { // Means everyone can make threads
+                    if ($perms[1] == 63) { // Means everyone can make threads
                         $postperm1 = 1;
                         $guestposting = 'on';
-                    } elseif ($perms[1] = 31) { // All but guests  can make threads
+                    } elseif ($perms[1] == 31) { // All but guests  can make threads
                         $postperm1 = 1;
-                    } elseif ($perms[1] = 15) { // Mods & Admins can make threads
+                    } elseif ($perms[1] == 15) { // Mods & Admins can make threads
                         $postperm1 = 3;
-                    } elseif ($perms[1] = 3) { // Means admins only can make threads
+                    } elseif ($perms[1] == 3) { // Means admins only can make threads
                         $postperm1 = 2;
-                    } elseif ($perms[1] = 0) { // Means  no one only can make reply to threads
-                        $postperm2 = 0;
+                    } elseif ($perms[1] == 0) { // Means  no one only can make reply to threads
+                        $postperm2 = 4;
                     }
 
-                    if ($perms[2] = 63) { // Means everyone can make reply to threads
+                    if ($perms[2] == 63) { // Means everyone can make reply to threads
                         $postperm2 = 1;
                         $guestposting = 'on';
-                    } elseif ($perms[2] = 31) { // All but guests  can make reply to threads
+                    } elseif ($perms[2] == 31) { // All but guests  can make reply to threads
                         $postperm2 = 1;
-                    } elseif ($perms[2] = 15) { // Mods & Admins can make reply to threads
+                    } elseif ($perms[2] == 15) { // Mods & Admins can make reply to threads
                         $postperm2 = 3;
-                    } elseif ($perms[2] = 3) { // Means admins only can make reply to threads
+                    } elseif ($perms[2] == 3) { // Means admins only can make reply to threads
                         $postperm2 = 2;
-                    } elseif ($perms[2] = 0) { // Means  no one only can make reply to threads
-                        $postperm2 = 0;
+                    } elseif ($perms[2] == 0) { // Means  no one only can make reply to threads
+                        $postperm2 = 4;
                     }
 
-                    if ($perms[3] = 63) { // Means everyone can view
+                    if ($perms[3] == 63) { // Means everyone can view
                         $private = 1;
-                    } elseif ($perms[3] = 31) { // All but guests  can view
+                    } elseif ($perms[3] == 31) { // All but guests  can view
                         $private = 1;
-                    } elseif ($perms[3] = 15) { // Mods & Admins can view
+                    } elseif ($perms[3] == 15) { // Mods & Admins can view
                         $private = 3;
-                    } elseif ($perms[3] = 3) { // Means admins only can view
+                    } elseif ($perms[3] == 3) { // Means admins only can view
                         $private = 2;
-                    } elseif ($perms[3] = 0) { // Means no one only can view
-                        $private = 0;
+                    } elseif ($perms[3] == 0) { // Means no one only can view
+                        $private = 4;
                     }
 
                     /*$translationFields = array(0=>1, 1=>2);
