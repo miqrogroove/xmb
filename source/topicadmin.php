@@ -476,7 +476,7 @@ switch ($action) {
                 $bbcodeoff = $post['bbcodeoff'];
                 $smileyoff = $post['smileyoff'];
                 $post['message'] = stripslashes($post['message']);
-                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", ".X_PREFIX."words, ".X_PREFIX."forums, ".X_PREFIX."smilies);
+                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             eval('echo stripslashes("'.template('topicadmin_split').'");');
@@ -597,7 +597,7 @@ switch ($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", ".X_PREFIX."words, ".X_PREFIX."forums, ".X_PREFIX."smilies);
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);
@@ -614,7 +614,7 @@ switch ($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", ".X_PREFIX."words, ".X_PREFIX."forums, ".X_PREFIX."smilies);
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);
