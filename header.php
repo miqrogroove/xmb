@@ -227,6 +227,7 @@ $tables = array(
     'attachments',
     'banned',
     'buddys',
+    'captchaimages'
     'favorites',
     'forums',
     'logs',
