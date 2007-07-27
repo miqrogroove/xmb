@@ -908,6 +908,10 @@ Public License instead of this License.
         $u->fixForumPerms(1);
         show_result(X_INST_OK);
 
+        show_act('Upgrading polls to new system (could take a while)');
+        $u->fixPolls();
+        show_result(X_INST_OK);
+
         show_act("Updating themes to ".XMB_V." themes");
 
         $u->deleteThemeByName('');                  // delete blank themes
