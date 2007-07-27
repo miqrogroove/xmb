@@ -1048,6 +1048,36 @@ class Upgrade {
 
         return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
     }
+
+    function fixPolls() {
+        $q = $this->db->query("SELECT * FROM ".$this->tablepre."threads WHERE pollopts != ''");
+        while ($thread = $this->db->fetch_array($q)) {
+            $this->db->query("INSERT INTO ".$this->tablepre."vote_desc (`topic_id`, `vote_text`, `vote_start`, `vote_end`) VALUES ('".$thread['tid']."', '".$thread['subject']."', 0, 0)");
+            $poll_id = $this->db->insert_id();
+
+            $options = explode("#|#", $thread['pollopts']);
+            $num_options = count($options);
+
+            $voters = trim($options[$num_options-1]);
+            $voters = explode('  ', $voters);
+            foreach ($voters as $v) {
+                $voter = trim($v);
+                $query = $this->db->query("SELECT uid,  FROM ".$this->tablepre."members WHERE username='$voter'");
+                $u = $this->db->fetch_array($query);
+                $voter = $u['uid'];
+
+                $this->db->query("INSERT INTO ".$this->tablepre."vote_user_id (`vote_id`, `vote_user_id`) VALUES ('".$poll_id."', '".$voter."')");
+            }
+
+            for ($i=0; $i<$num_options-1; $i++) {
+                $bit = explode('||~|~||', $options[$i]);
+                $option_name = trim($bit[0]);
+                $num_votes = (int) trim($bit[1]);
+                $this->db->query("INSERT INTO ".$this->tablepre."vote_results (`vote_id`, `vote_option_id`, `vote_text`, `vote_result`) VALUES ('".$poll_id."', '".($i+1)."', '".$option_name."', '".$num_votes."')");
+            }
+        }
+        $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts='1' WHERE pollopts != ''");
+    }
 }
 
 define('X_ALTER', 1);
