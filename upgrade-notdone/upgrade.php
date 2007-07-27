@@ -827,7 +827,7 @@ Public License instead of this License.
 
         show_act('Collecting data for data-restructuring');
         $u->fixBirthdays(0);
-        $u->fixForumPerms(0);
+        //$u->fixForumPerms(0);
         show_result(X_INST_OK);
 
         $tablesCreated = array();
@@ -847,6 +847,10 @@ Public License instead of this License.
             //  $query = "DROP TABLE `".$u->tablepre.$table . "`";
             //  $db->query($query);
             // }
+        show_result(X_INST_OK);
+
+        show_act('Creating temporary fields...');
+        $u->createTempFields();
         show_result(X_INST_OK);
 
         show_act('Changing table schemas to '.XMB_V);
@@ -905,11 +909,15 @@ Public License instead of this License.
         show_result(X_INST_OK);
 
         show_act('Fixing forum post permissions');
-        $u->fixForumPerms(1);
+        $u->fixForumPerms(0);
         show_result(X_INST_OK);
 
-        show_act('Upgrading polls to new system (could take a while)');
+        show_act('Upgrading polls to new system (may take a long time)');
         $u->fixPolls();
+        show_result(X_INST_OK);
+
+        show_act('Dropping temporary fields...');
+        $u->dropTempFields();
         show_result(X_INST_OK);
 
         show_act("Updating themes to ".XMB_V." themes");
@@ -919,16 +927,18 @@ Public License instead of this License.
         // first, rename any old themes, so we don't remove them by accident.
         $db->query("UPDATE ".$u->tablepre."themes SET name=CONCAT(name, '-old')");
 
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'XMB Corporate',     'rep_1.jpg', '#D1E5EF', '#EFEFEF', '#000000', '#FFFFFF', '#737373', '#FFFFFF', 'main.jpg', '#246197', '#2E3E55', '#000000', '2px', '696', '4', 'Verdana, Arial, Helvetica', '10px', 'space.gif', 'images/corporate', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'Iconic',           '#050C16', '#0A1C31', '#081627', '#FFFFFF', '#2E3E55', '#050C16', '#FFFFFF', '#050C16', 'catbg.gif', '#FFFFFF', '#FFFFFF', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'iconicheader.gif', 'images/iconic', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'one.point9',       'bgg.gif', '#D5E0EC', '#D5E0EC', '#000000', '#315275', '#1C8BCB', '#FFFFFF', 'bg2.gif', 'bar.gif', '#2E3E55', '#000000', '1', '85%', '4', 'Verdana, Arial, Helvetica', '10px', 'banner.gif', 'images/onepoint9', 'images/smilies', '#FFFFFF');");
-        $db->query("INSERT INTO ".$u->tablepre."themes VALUES ('', 'Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");
+        $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#CDCECF', '#AEBBCF', '#91A9CF', '#000000', '#2E3E55', '#5472A4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF')");
+
+        /*$db->query("INSERT INTO ".$u->tablepre."themes VALUES (1, 'XMB Corporate',     'rep_1.jpg', '#D1E5EF', '#EFEFEF', '#000000', '#FFFFFF', '#737373', '#FFFFFF', 'main.jpg', '#246197', '#2E3E55', '#000000', '2px', '696', '4', 'Verdana, Arial, Helvetica', '10px', 'space.gif', 'images/corporate', 'images/smilies', '#FFFFFF');");
+        $db->query("INSERT INTO ".$u->tablepre."themes VALUES (2, 'Iconic',           '#050C16', '#0A1C31', '#081627', '#FFFFFF', '#2E3E55', '#050C16', '#FFFFFF', '#050C16', 'catbg.gif', '#FFFFFF', '#FFFFFF', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'iconicheader.gif', 'images/iconic', 'images/smilies', '#FFFFFF');");
+        $db->query("INSERT INTO ".$u->tablepre."themes VALUES (3, 'one.point9',       'bgg.gif', '#D5E0EC', '#D5E0EC', '#000000', '#315275', '#1C8BCB', '#FFFFFF', 'bg2.gif', 'bar.gif', '#2E3E55', '#000000', '1', '85%', '4', 'Verdana, Arial, Helvetica', '10px', 'banner.gif', 'images/onepoint9', 'images/smilies', '#FFFFFF');");
+        $db->query("INSERT INTO ".$u->tablepre."themes VALUES (4, 'Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");*/
 
         // Force everyone back to default theme as we know it exists.
         $defaultTheme = $u->findThemeIDByName('XMB Corporate');
         $db->query("UPDATE `".$u->tablepre."members` SET theme=0");
         $db->query("UPDATE `".$u->tablepre."forums` SET theme=0");
-        $db->query("UPDATE `".$u->tablepre."settings` SET theme=" . $defaultTheme);
+        $db->query("UPDATE `".$u->tablepre."settings` SET theme=1");
 
         show_result(X_INST_OK);
 
@@ -945,7 +955,7 @@ Public License instead of this License.
         foreach($templates as $key=>$val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = addslashes($template[1]);
-            $db->query("INSERT INTO `".$u->tablepre."templates` VALUES ('', '".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $db->query("INSERT INTO `".$u->tablepre."templates` (`name`, `template`) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
         $db->query("DELETE FROM `".$u->tablepre."templates` WHERE name=''");
 
@@ -955,10 +965,10 @@ Public License instead of this License.
 
         $db->query("DELETE FROM `".$u->tablepre."ranks` WHERE title in ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
 
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Moderator', -1, '', 6, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Super Moderator', -1, '', 7, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Administrator', -1, '', 8, 'yes', '');");
-        $db->query("INSERT INTO ".$u->tablepre."ranks VALUES ('Super Administrator', -1, '', 9, 'yes', '');");
+        $db->query("INSERT INTO ".$u->tablepre."ranks (`title`, `posts`, `stars`, `allowavatars`, `avatarrank`) VALUES ('Moderator', -1, 6, 'yes', '');");
+        $db->query("INSERT INTO ".$u->tablepre."ranks (`title`, `posts`, `stars`, `allowavatars`, `avatarrank`) VALUES ('Super Moderator', -1, 7, 'yes', '');");
+        $db->query("INSERT INTO ".$u->tablepre."ranks (`title`, `posts`, `stars`, `allowavatars`, `avatarrank`) VALUES ('Administrator', -1, 8, 'yes', '');");
+        $db->query("INSERT INTO ".$u->tablepre."ranks (`title`, `posts`, `stars`, `allowavatars`, `avatarrank`) VALUES ('Super Administrator', -1, 9, 'yes', '');");
 
         show_result(X_INST_OK);
 
