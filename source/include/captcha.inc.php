@@ -2,12 +2,13 @@
 /**
  * XMB 1.9.8 Engage Final
  *
- * Captcha Image Mod V1.0
- * © 2007 Adam Clarke
+ * Captcha Image Mod
+ * Developed By Adam Clarke
+ * Copyright (c) 2007 Adam Clarke
  * http://www.xmbservices.com
  *
  * Based On: PhpCaptcha - A visual and audio CAPTCHA generation library
- * © 2005 - 2006 Edward Eliot
+ * Copyright (c) 2005-2006 Edward Eliot
  * http://www.ejeliot.com/pages/2
  *
  * Developed By The XMB Group
