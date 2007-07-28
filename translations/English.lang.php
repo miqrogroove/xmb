@@ -1098,4 +1098,27 @@ $lang['whosonline_on'] = "Who's online in index:";
 $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmbgroup'] = "The XMB Group";
+// captcha images lang vars begin
+$lang['admin_main_settings7'] = 'Captcha Image Settings';
+$lang['captchastatus'] = 'Main Status:';
+$lang['captcharegstatus'] = 'Registration Status:';
+$lang['captchapoststatus'] = 'Anonymous Posting Status:';
+$lang['captchacharset'] = 'Code Characters:';
+$lang['captchacodelength'] = 'Code Length:';
+$lang['captchacodecase'] = 'Case Sensitive Code:';
+$lang['captchacodeshadow'] = 'Code Shadow:';
+$lang['captchaimagetype'] = 'Image Type:';
+$lang['captchaimagewidth'] = 'Image Width:';
+$lang['captchaimageheight'] = 'Image Height:';
+$lang['captchaimagebg'] = 'Image Background(s):';
+$lang['captchaimagedots'] = 'Number of Random Dots:';
+$lang['captchaimagelines'] = 'Number of Random Lines:';
+$lang['captchaimagefonts'] = 'Image Font(s):';
+$lang['captchaimageminfont'] = 'Min Font Size:';
+$lang['captchaimagemaxfont'] = 'Max Font Size:';
+$lang['captchaimagecolor'] = 'Use Full Color:';
+$lang['captchaimageinvalid'] = "The image verification code that you entered was incorrect. Please enter the code exactly how it appears in the image.";
+$lang['captchaverification'] = "Captcha Image Verification";
+$lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
+// captcha images lang vars end
 ?>
