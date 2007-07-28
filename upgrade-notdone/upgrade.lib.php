@@ -850,157 +850,6 @@ class Upgrade {
         }
     }
 
-    function fixForumPerms($v) {
-        static $cache;
-        /***
-            OLD FORMAT:
-            "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
-            - 1 normal (all ranks),
-            - 2 admin only,
-            - 3 admin/mod only,
-            - 4 no posting/viewing.
-        ***/
-
-        /***
-            NEW FORMAT:
-            NewPolls,NewThreads,NewReplies,View. Each field contains a number between 0-63 (a sum of the following:)
-            - 1  Super Administrator
-            - 2  Administrator
-            - 4  Super Moderator
-            - 8  Moderator
-            - 16 Member
-            - 32 Guest
-        ***/
-        switch($v) {
-            case 0:
-                // store
-                /*if(!$this->columnExists('forums', 'private') || !$this->columnExists('forums', 'guestposting') || !$this->columnExists('forums', 'pollstatus')) {
-                    // permissions are already upgraded. No need to redo this again (can't even!)
-                    break;
-                }*/
-
-                $q = $this->db->query("SELECT fid, private, userlist, postperm_temp, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
-                while($forum = $this->db->fetch_array($q)) {
-                    // check if we need to change it first
-                    $parts = explode('|', $forum['postperm']);
-                    if(count($parts) == 1) {
-                        // no need to upgrade these; new format in use [we hope]
-                        continue;
-                    }
-                    $newFormat = array(0,0,0,0);
-
-                    $fid            = $forum['fid'];
-                    $private        = $forum['private'];
-                    $postperm       = $forum['postperm_temp'];
-                    $guestposting   = 'off';
-                    $polls          = $forum['pollstatus'];
-                    $perms          = explode(',', $postperm);
-
-                    if ($perms[1] == 63) { // Means everyone can make threads
-                        $postperm1 = 1;
-                        $guestposting = 'on';
-                    } elseif ($perms[1] == 31) { // All but guests  can make threads
-                        $postperm1 = 1;
-                    } elseif ($perms[1] == 15) { // Mods & Admins can make threads
-                        $postperm1 = 3;
-                    } elseif ($perms[1] == 3) { // Means admins only can make threads
-                        $postperm1 = 2;
-                    } elseif ($perms[1] == 0) { // Means  no one only can make reply to threads
-                        $postperm2 = 4;
-                    }
-
-                    if ($perms[2] == 63) { // Means everyone can make reply to threads
-                        $postperm2 = 1;
-                        $guestposting = 'on';
-                    } elseif ($perms[2] == 31) { // All but guests  can make reply to threads
-                        $postperm2 = 1;
-                    } elseif ($perms[2] == 15) { // Mods & Admins can make reply to threads
-                        $postperm2 = 3;
-                    } elseif ($perms[2] == 3) { // Means admins only can make reply to threads
-                        $postperm2 = 2;
-                    } elseif ($perms[2] == 0) { // Means  no one only can make reply to threads
-                        $postperm2 = 4;
-                    }
-
-                    if ($perms[3] == 63) { // Means everyone can view
-                        $private = 1;
-                    } elseif ($perms[3] == 31) { // All but guests  can view
-                        $private = 1;
-                    } elseif ($perms[3] == 15) { // Mods & Admins can view
-                        $private = 3;
-                    } elseif ($perms[3] == 3) { // Means admins only can view
-                        $private = 2;
-                    } elseif ($perms[3] == 0) { // Means no one only can view
-                        $private = 4;
-                    }
-
-                    /*$translationFields = array(0=>1, 1=>2);
-                    foreach($parts as $key=>$val) {
-                        switch($val) {
-                            case 1:
-                                $newFormat[$translationFields[$key]] = 31;
-                                break;
-                            case 2:
-                                $newFormat[$translationFields[$key]] = 3;
-                                break;
-                            case 3:
-                                $newFormat[$translationFields[$key]] = 15;
-                                break;
-                            case 4:
-                                $newFormat[$translationFields[$key]] = 1;
-                                break;
-                            default:
-                                // allow only superadmin
-                                $newFormat[$translationFields[$key]] = 1;
-                                break;
-                        }
-                    }
-                    switch($private) {
-                        case 1:
-                            $newFormat[3] = 63;
-                            break;
-                        case 2:
-                            $newFormat[3] = 3;
-                            break;
-                        case 3:
-                            $newFormat[3] = 15;
-                            break;
-                        case 4:
-                            $newFormat[3] = 1;
-                            break;
-                        default:
-                            // allow only superadmin
-                            $newFormat[3] = 1;
-                            break;
-                    }
-                    if($guestposting == 'yes' || $guestposting == 'on') {
-                        $newFormat[0] |= 32;
-                        $newFormat[1] |= 32;
-                        $newFormat[2] |= 32;
-                    }
-
-                    if($polls == 'yes' || $polls == 'on') {
-                        $newFormat[0] = $newFormat[1];
-                    } else {
-                        $newFormat[0] = 0;
-                    }
-
-                    $cache[$fid] = $newFormat;*/
-                    $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='$postperm1|$postperm2', private='$private', guestposting='$guestposting' WHERE fid=$fid");
-                }
-                break;
-
-            case 1:
-                // restore
-                if(isset($cache) && count($cache) > 0) {
-                    foreach($cache as $fid=>$format) {
-                        $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
-                    }
-                }
-                break;
-        }
-    }
-
     function fixBirthdays($v) {
         static $cache, $cachedLanguages;
 
@@ -1089,6 +938,36 @@ class Upgrade {
         return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
     }
 
+    function fixForumPerms() {
+        $q = $this->db->query("SELECT fid, private, userlist, postperm_temp, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
+        while ($forum = $this->db->fetch_array($q)) {
+            if (empty($forum['postperm_temp'])) {
+                break;
+            }
+
+            $postperm     = explode(',', $forum['postperm_temp']);
+            $guestposting = 'off';
+            $perms        = array(0, 0, 0, 0);
+
+            for ($i=1; $i<4; $i++) {
+                if ($postperm[$i] >= 32) { // Means everyone inc guests
+                    $perms[$i] = 1;
+                    $guestposting = 'on';
+                } elseif ($postperm[$i] >= 16 && $postperm[$i] <= 31) { // All but guests. if guests can post assume everyone can
+                    $perms[$i] = 1;
+                } elseif ($postperm[$i] >= 4 && $postperm[$i] <= 15) { // Mods & Admins only
+                    $perms[$i] = 3;
+                } elseif ($postperm[$i] >= 1 && $postperm[$i] <= 3) { // Means admins only
+                    $perms[$i] = 2;
+                } elseif ($postperm[$i] == 0) { // Means  no one
+                    $perms[$i] = 4;
+                }
+            }
+
+            $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".$perms[1]."|".$perms[2]."', private='".$perms[3]."', guestposting='$guestposting', pollstatus='on' WHERE fid=".$forum['fid']);
+        }
+    }
+
     function fixPolls() {
         $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM ".$this->tablepre."threads WHERE pollopts_temp != ''");
         while ($thread = $this->db->fetch_array($q)) {
@@ -1118,21 +997,23 @@ class Upgrade {
     }
 
     function createTempFields() {
-        $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default '0,0,0,0'");
+        $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default ''");
         $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
         while ($f = $this->db->fetch_array($q)) {
-            $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='' WHERE fid='".$f['fid']."'");
+            if (strpos($f['postperm'], ',') !== false) {
+                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='' WHERE fid=".$f['fid']);
+            }
+            
         }
 
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
         $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");
         while ($t = $this->db->fetch_array($q)) {
-            $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".$t['pollopts']."', pollopts='1' WHERE tid='".$t['tid']."'");
+            $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".$t['pollopts']."', pollopts='1' WHERE tid=".$t['tid']);
         }
     }
 
     function dropTempFields() {
-        $this->db->query("ALTER TABLE ".$this->tablepre."forums DROP `postperm_temp`");
         $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
     }
 }
