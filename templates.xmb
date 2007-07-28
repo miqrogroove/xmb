@@ -2846,6 +2846,7 @@ $dayselect
 </select>
 </td>
 </tr>
+$captcharegcheck
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="regsubmit" value="$lang[textregister]" /></td>
 </tr>
@@ -3734,6 +3735,7 @@ type="checkbox" name="emailnotify" value="yes" $emailnotifycheck /> $lang[textem
 $topoption $closeoption</td>
 </tr>
 $attachfile
+$captchapostcheck
 <tr>
 <td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
@@ -4027,6 +4029,7 @@ type="checkbox" name="emailnotify" value="yes" /> $lang[textemailnotify] $topopt
 <td class="tablerow" bgcolor="$altbg2"><textarea rows="5" cols="40" name="pollanswers">$pollanswers</textarea></td>
 </tr>
 $attachfile
+$captchapostcheck
 <tr>
 <td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
@@ -4082,6 +4085,7 @@ $smilieinsert
 <input type="checkbox" name="emailnotify" value="yes" $emailnotifycheck/> $lang[textemailnotify] $closeoption</td>
 </tr>
 $attachfile
+$captchapostcheck
 <tr>
 <td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="replysubmit" value="$lang[textpostreply]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
@@ -4669,7 +4673,7 @@ $lang[textdownloads] <em>$postinfo[downloads]</em><br /><br />
 <tr bgcolor="$altbg1">
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$xmbuser</strong>]</font></div></td>
 </tr>
-
+$captchapostcheck
 <tr bgcolor="$altbg1" class="quickreply">
 <td colspan="3" class="tablerow"><div align="left"><strong>&nbsp;&raquo;</strong>&nbsp;$whopost2</div></td>
 </tr>
@@ -4951,5 +4955,29 @@ $css
 |#*XMB TEMPLATE FILE*#|email_html_footer|#*XMB TEMPLATE*#|
 </body>
 </html>
+
+|#*XMB TEMPLATE FILE*#|member_reg_captcha|#*XMB TEMPLATE*#|
+<tr>
+<td colspan="2" class="category"><font color="$THEME[cattext]"><strong>$lang[captchaverification] - $lang[required]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[verificationnote]</td>
+<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|post_captcha|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[verificationnote]</td>
+<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|viewthread_quickreply_captcha|#*XMB TEMPLATE*#|
+<tr>
+<td colspan="3" class="ctrtablerow" bgcolor="$altbg1">
+$lang[verificationnote]<br /><br />
+<img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br />
+<input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" />
+</td>
+</tr>
 
 |#*XMB TEMPLATE FILE*#|

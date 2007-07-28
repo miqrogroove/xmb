@@ -35,6 +35,7 @@ loadtemplates(
 'member_reg_avatarurl',
 'member_reg_avatarlist',
 'member_reg',
+'member_reg_captcha',
 'member_profile_email',
 'member_profile',
 'misc_feature_not_while_loggedin',
@@ -300,6 +301,16 @@ switch ($action) {
                 if (empty($dformatorig)) {
                     $dformatorig = $SETTINGS['dateformat'];
                 }
+
+                $captcharegcheck = '';
+                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
+                    require(ROOT.'include/captcha.inc.php');
+                    $Captcha = new Captcha(250, 50);
+                    if ($Captcha->bCompatible !== false) {
+                        $imghash = $Captcha->GenerateCode();
+                        eval('$captcharegcheck = "'.template('member_reg_captcha').'";');
+                    }
+                }
                 eval('echo stripslashes("'.template('member_reg').'");');
             }
         } else {
@@ -414,6 +425,18 @@ switch ($action) {
 
             if ($username == '') {
                 error($lang['textnousername']);
+            }
+
+            if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
+                require(ROOT.'include/captcha.inc.php');
+                $Captcha = new Captcha(250, 50);
+                if ($Captcha->bCompatible !== false) {
+                    $imghash = addslashes($imghash);
+                    $imgcode = addslashes($imgcode);
+                    if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                        error($lang['captchaimageinvalid']);
+                    }
+                }
             }
 
             $langfilenew = getLangFileNameFromHash(formVar('langfilenew'));

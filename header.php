@@ -695,7 +695,7 @@ if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && fa
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
 if ($regviewonly == "on") {
-    if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa') {
+    if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
         if ($coppa == 'on') {
             $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
         } else {
