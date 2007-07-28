@@ -87,6 +87,9 @@ switch ($action) {
     case 'onlinetoday':
         nav($lang['whosonlinetoday']);
         break;
+    case 'captchaimage':
+        nav($lang['textregister']);
+        break;
     default:
         nav($lang['error']);
         break;
