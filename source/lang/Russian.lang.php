@@ -1098,5 +1098,28 @@ $lang['whosonline'] = "Кто На Форуме";
 $lang['whosonline_on'] = "\"Кто На Форуме\" на главной странице:";
 $lang['whosonlinetoday'] = "Кто сегодня в сети";
 $lang['whoview'] = "Кто может просматривать этот форум?";
-$lang['xmbgroup'] = "Группа XMB";
+$lang['xmbgroup'] = "The XMB Group";
+// captcha images lang vars begin
+$lang['admin_main_settings7'] = 'Настройки Картинки Captcha';
+$lang['captchastatus'] = 'Главный Статус:';
+$lang['captcharegstatus'] = 'Статус Регистрации:';
+$lang['captchapoststatus'] = 'Статус Анонимных Сообщений:';
+$lang['captchacharset'] = 'Буквы Кода:';
+$lang['captchacodelength'] = 'Длина Кода:';
+$lang['captchacodecase'] = 'Зависимость Кода от Регистра:';
+$lang['captchacodeshadow'] = 'Тень Кода:';
+$lang['captchaimagetype'] = 'Тип Картинки:';
+$lang['captchaimagewidth'] = 'Ширина Картинки:';
+$lang['captchaimageheight'] = 'Высота Картинки:';
+$lang['captchaimagebg'] = 'Фон(ы) Картинки:';
+$lang['captchaimagedots'] = 'Количество Случайных Точек:';
+$lang['captchaimagelines'] = 'Количество Случайных Линий:';
+$lang['captchaimagefonts'] = 'Шрифт(ы) Картинки:';
+$lang['captchaimageminfont'] = 'Минимальный Размер Шрифта:';
+$lang['captchaimagemaxfont'] = 'Максимальный Размер Шрифта:';
+$lang['captchaimagecolor'] = 'Использовать Полный Цвет:';
+$lang['captchaimageinvalid'] = "Вы ввели неправильный код проверики рисунком. Пожалуйта, введите код, так как он показан на рисунке.";
+$lang['captchaverification'] = "Проверка Рисунком Captcha";
+$lang['verificationnote'] = "Пожалуйста введите код показанный на картинке в поле ниже. Это нужно для предотвращения регистрации автоматических ботов.";
+// captcha images lang vars end
 ?>
