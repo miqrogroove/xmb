@@ -94,6 +94,7 @@ loadtemplates(
 'functions_smilieinsert_smilie',
 'viewthread_reply',
 'viewthread_quickreply',
+'viewthread_quickreply_captcha',
 'viewthread',
 'viewthread_invalid',
 'viewthread_modoptions',
@@ -256,6 +257,16 @@ if (!$action) {
     $codeoffcheck = (isset($bbcodeoff) && $bbcodeoff == 'yes') ? 'checked="checked"' : '';
     $smileoffcheck = (isset($smileyoff) && $smileyoff == 'yes') ? 'checked="checked"' : '';
 
+    // captcha code
+    $captchapostcheck = '';
+    if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && $PERMISSIONS[X_PERMS_REPLY] && !DEBUG) {
+        require(ROOT.'include/captcha.inc.php');
+        $Captcha = new Captcha(250, 50);
+        if ($Captcha->bCompatible !== false) {
+            $imghash = $Captcha->GenerateCode();
+            eval('$captchapostcheck = "'.template('viewthread_quickreply_captcha').'";');
+        }
+    }
     // fixed the way xmb had it before.
     // much cleaner now and refined to check all controls.
     if ($thread['closed'] == 'yes') {

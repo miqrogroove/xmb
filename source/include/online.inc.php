@@ -151,6 +151,8 @@ function url_to_text($url) {
             $location = $lang['onlineonlinetoday'];
         } else if (false !== strpos($url, 'list')) {
             $location = $lang['onlinememlist'];
+        } else if (false !== strpos($url, 'captchaimage')) {
+            $location = $lang['onlinereg'];
         }
     } else if (false !== strpos($url, "/post.php")) {
         if (false !== strpos($url, 'action=edit')) {

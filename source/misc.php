@@ -27,7 +27,7 @@
  **/
 
 require_once('header.php');
-require_once('./include/online.inc.php');
+require_once(ROOT.'include/online.inc.php');
 
 loadtemplates(
 'functions_smilieinsert',
@@ -702,6 +702,14 @@ switch ($action) {
         echo $footer;
         exit();
         break;
+
+    case 'captchaimage':
+        require(ROOT.'include/captcha.inc.php');
+        $oPhpCaptcha = new Captcha(250, 50);
+        $oPhpCaptcha->Create($imagehash);
+        exit();
+        break;
+
     default:
         error($lang['textnoaction']);
         break;

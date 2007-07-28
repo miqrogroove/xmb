@@ -39,6 +39,7 @@ function bbcodeinsert() {
 }
 
 loadtemplates(
+'post_captcha',
 'post_notloggedin',
 'post_loggedin',
 'post_preview',
@@ -126,6 +127,12 @@ if ($self['status'] == "Banned") {
 $listed_icons = 0;
 $icons = '<input type="radio" name="posticon" value="" /> <img src="'.$imgdir.'/default_icon.gif" alt="[*]" />';
 if ($action != 'edit') {
+    $captchapostcheck = '';
+    if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+        require(ROOT.'include/captcha.inc.php');
+        $Captcha = new Captcha(250, 50);
+    }
+
     if (!X_STAFF) {
         $querysmilie = $db->query("SELECT url, code FROM ".X_PREFIX."smilies WHERE type='picon' AND (url NOT LIKE '%rsvd%')");
     } else {
@@ -367,7 +374,15 @@ if ($action == "newthread") {
     } else {
         nav($lang['textpostnew']);
     }
+
     if (!isset($topicsubmit) || !$topicsubmit) {
+        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+            if ($Captcha->bCompatible !== false) {
+                $imghash = $Captcha->GenerateCode();
+                eval('$captchapostcheck = "'.template('post_captcha').'";');
+            }
+        }
+
         eval('echo "'.template('header').'";');
         $status1 = modcheck($self['status'], $xmbuser, $forums['moderator']);
         if ($self['status'] == "Super Moderator") {
@@ -428,6 +443,17 @@ if ($action == "newthread") {
                 $username = "Anonymous";
             } else {
                 $username = $xmbuser;
+            }
+        }
+
+        if ($username == 'Anonymous' && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+            if ($Captcha->bCompatible !== false) {
+                $imghash = addslashes($imghash);
+                $imgcode = addslashes($imgcode);
+
+                if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                    error($lang['captchaimageinvalid']);
+                }
             }
         }
 
@@ -569,8 +595,15 @@ if ($action == "newthread") {
 
     $priv = privfcheck($forums['private'], $forums['userlist']);
     if (!isset($replysubmit) || !$replysubmit) {
+        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+            if ($Captcha->bCompatible !== false) {
+                $imghash = $Captcha->GenerateCode();
+                eval('$captchapostcheck = "'.template('post_captcha').'";');
+            }
+        }
+
         $posts = '';
-        eval("echo (\"".template('header')."\");");
+        eval('echo "'.template('header').'";');
 
         if (X_STAFF) {
             $closeoption = "<br /><input type=\"checkbox\" name=\"closetopic\" value=\"yes\" $closecheck/> $lang[closemsgques]<br />";
@@ -675,6 +708,17 @@ if ($action == "newthread") {
                 $username = "Anonymous";
             } else {
                 $username = $xmbuser;
+            }
+        }
+
+        if ($username == 'Anonymous' && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+            if ($Captcha->bCompatible !== false) {
+                $imghash = addslashes($imghash);
+                $imgcode = addslashes($imgcode);
+
+                if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                    error($lang['captchaimageinvalid']);
+                }
             }
         }
 
