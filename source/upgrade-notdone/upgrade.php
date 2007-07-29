@@ -582,7 +582,7 @@ Public License instead of this License.
         show_result(X_INST_OK);
 
         // let's check if all files we need actually exist.
-        $req['dirs'] = array('db', 'images', 'include', 'js', 'lang');
+        $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
         $req['files'] = array(
             'buddy.php',
             'config.php',
@@ -600,6 +600,7 @@ Public License instead of this License.
             'post.php',
             'include/admin.user.inc.php',
             'include/buddy.inc.php',
+            'include/captcha.inc.php',
             'include/functions.inc.php',
             'include/global.inc.php',
             'include/spelling.inc.php',
