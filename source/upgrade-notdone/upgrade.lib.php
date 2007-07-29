@@ -1013,7 +1013,14 @@ class Upgrade {
 
             $voters = explode(' ', trim($options[$num_options-1]));
 
+            $voter = array();
             foreach ($voters as $v) {
+                if (!empty($v)) {
+                    $voter[] = trim($v);
+                }
+            }
+
+            foreach ($voter as $v) {
                 if (empty($v)) { // Can't do anything with a blank field
                     continue;
                 }
