@@ -1012,13 +1012,18 @@ class Upgrade {
             $num_options = count($options);
 
             $voters = explode(' ', trim($options[$num_options-1]));
+
             foreach ($voters as $v) {
+                if (empty($v)) { // Can't do anything with a blank field
+                    continue;
+                }
+
                 $v = trim($v);
+
                 $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username='$v'");
                 $u = $this->db->fetch_array($query);
-                $voter = $u['uid'];
 
-                $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$voter.")");
+                $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
             }
 
             for ($i=0; $i<$num_options-1; $i++) {
