@@ -425,7 +425,7 @@ switch ($action) {
             $query = $db->query("SELECT username, email, pwdate FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             $member = $db->fetch_array($query);
 
-            $time = $onlintime-86400;
+            $time = $onlinetime-86400;
             if ($member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
             }
