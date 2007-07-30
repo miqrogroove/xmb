@@ -201,14 +201,19 @@ switch ($action) {
             eval('$search = "'.template('misc_search').'";');
             $misc = stripslashes($search);
         } else {
-            $srchuname = formVar('srchuname');
+            $srchuname = getVar('srchuname');
             $srchtxt = formVar('srchtxt');
-            $srchfid = formInt('srchfid');
+            $srchfid = getInt('srchfid');
+            $srchfrom = getInt('srchfrom');
+            $filter_distinct = formYesNo('filter_distinct');
+
+			if (!$srchuname) $srchuname = formVar('srchuname');
+			if (!$srchfid) $srchfid = formInt('srchfid');
+			if (!$srchfrom) $srchfid = formInt('srchfrom');
+
             if (!$srchfid) {
                 $srchfid = 'all';
             }
-            $srchfrom = formInt('srchfrom');
-            $filter_distinct = formYesNo('filter_distinct');
 
             if (!$srchuname && !$srchtxt || (strlen($srchuname) < 3 && strlen($srchtxt) < 3)) {
                 error($lang['nosearchq']);
