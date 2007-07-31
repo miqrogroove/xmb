@@ -621,7 +621,7 @@ if ($action == "settings") {
         $sigbbcodenew = formOnOff('sigbbcodenew');
         $sightmlnew = formOnOff('sightmlnew');
         $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
-        $max_avatar_size_h_new = formInt('$max_avatar_size_h_new');
+        $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
         $tickerdelaynew = formInt('tickerdelaynew');
         $maxDayReg = formInt('maxDayReg');
 
