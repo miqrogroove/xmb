@@ -748,7 +748,7 @@ switch ($action) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
                     $forum['fid'] = intval($forum['fid']);
-                    $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[textdeleteposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
+                    $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
                 }
 
                 $query = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid FROM (".X_PREFIX."posts p, ".X_PREFIX."threads t) LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' AND p.tid=t.tid ORDER BY p.dateline DESC LIMIT 1");
