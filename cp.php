@@ -1299,7 +1299,7 @@ if ($action == 'forum') {
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     }
- }
+}
 
 if ($action == "mods") {
     if (noSubmit('modsubmit')) {
