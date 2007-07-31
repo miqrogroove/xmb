@@ -886,7 +886,7 @@ class Upgrade {
 
         $lang = array();
 
-        require_once ROOT.'lang/English.lang.php';
+        require_once ROOT.'lang/Base.lang.php';
 
         $baselang = $lang;
 
@@ -1011,25 +1011,15 @@ class Upgrade {
             $options = explode("#|#", $thread['pollopts_temp']);
             $num_options = count($options);
 
-            $voters = explode(' ', trim($options[$num_options-1]));
+            $voters = explode('    ', trim($options[$num_options-1]));
 
-            $voter = array();
+            $name = array();
             foreach ($voters as $v) {
-                if (!empty($v)) {
-                    $voter[] = trim($v);
-                }
+                $name[] = trim($v);
             }
-
-            foreach ($voter as $v) {
-                if (empty($v)) { // Can't do anything with a blank field
-                    continue;
-                }
-
-                $v = trim($v);
-
-                $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username='$v'");
-                $u = $this->db->fetch_array($query);
-
+            $name = "'".implode("', '", $name)."'";
+            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN ($name)");
+            while ($u = $this->db->fetch_array($query)) {
                 $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
             }
 
@@ -1047,7 +1037,7 @@ class Upgrade {
         $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
         while ($f = $this->db->fetch_array($q)) {
             if (strpos($f['postperm'], ',') !== false) {
-                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='' WHERE fid=".$f['fid']);
+                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
             }
 
         }
@@ -1061,6 +1051,7 @@ class Upgrade {
 
     function dropTempFields() {
         $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
+        $this->db->query("DROP TABLE IF EXISTS ".$this->tablepre."u2u_old");
     }
 }
 
