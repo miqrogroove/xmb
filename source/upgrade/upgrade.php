@@ -860,23 +860,22 @@ Public License instead of this License.
         show_result(X_INST_OK);
 
         show_act('Changing table schemas to '.XMB_V);
-            foreach($tbl as $t) {
-                if(in_array($t, $tablesCreated)) {
-                    // no need to change a freshly (re-)made table
-                    continue;
-                }
-                $t = substr($t, strlen($u->tablepre));
-                $d[$t] = $u->makeDiff($t);
+        foreach($tbl as $t) {
+            if(in_array($t, $tablesCreated)) {
+                // no need to change a freshly (re-)made table
+                continue;
             }
+            $t = substr($t, strlen($u->tablepre));
+            $d[$t] = $u->makeDiff($t);
+        }
 
-            $diff = $u->makeIntelligentDiff($d);
-            foreach($diff as $table=>$type) {
-                $qs = $u->createQueryFromDiff($diff[$table], $table);
-
-                foreach($qs as $k=>$q) {
-                    $db->query($q.';');
-                }
+        $diff = $u->makeIntelligentDiff($d);
+        foreach($diff as $table=>$type) {
+            $qs = $u->createQueryFromDiff($diff[$table], $table);
+            foreach($qs as $k=>$q) {
+                $db->query($q.';');
             }
+        }
         show_result(X_INST_OK);
 
         show_act('Fixing forum post permissions');
