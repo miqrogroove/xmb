@@ -924,7 +924,7 @@ if ($action == 'forum') {
                         } else {
                             $curgroup = '';
                         }
-                        echo '<option value="'.$moveforum['fid'].' $curgroup">'.stripslashes($moveforum['name']).'</option>';
+                        echo '<option value="'.$moveforum['fid'].'" '.$curgroup.'>'.stripslashes($moveforum['name']).'</option>';
                     }
                     ?>
                     </select>
@@ -1204,11 +1204,11 @@ if ($action == 'forum') {
         $queryforum = $db->query("SELECT fid, type FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while ($forum = $db->fetch_array($queryforum)) {
-            $displayorder = formVar('displayorder'.$forum['fid']);
-            $name = formVar('name'.$forum['fid']);
+            $displayorder = formInt('displayorder'.$forum['fid']);
             $self['status'] = formOnOff('status'.$forum['fid']);
+            $name = formVar('name'.$forum['fid']);
             $delete = formVar('delete'.$forum['fid']);
-            $moveto = formVar('moveto'.$forum['fid']);
+            $moveto = formInt('moveto'.$forum['fid']);
 
             if ($delete) {
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
@@ -1227,13 +1227,13 @@ if ($action == 'forum') {
                 $db->free_result($querythread);
             }
             $name = addslashes($name);
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]', fup=".(int)$moveto." WHERE fid='".$forum['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='$self[status]', fup=".$moveto." WHERE fid='".$forum['fid']."'");
         }
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while ($group = $db->fetch_array($querygroup)) {
             $name = formVar('name'.$group['fid']);
-            $displayorder = formVar('displayorder'.$group['fid']);
+            $displayorder = formInt('displayorder'.$group['fid']);
             $self['status'] = formOnOff('status'.$group['fid']);
             $delete = formVar('delete'.$group['fid']);
 
@@ -1245,7 +1245,7 @@ if ($action == 'forum') {
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid='$delete'");
             }
             $name = addslashes($name);
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".(int)$displayorder.", status='$self[status]' WHERE fid='".$group['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
         $newgname = formVar('newgname');
         $newfname = formVar('newfname');
