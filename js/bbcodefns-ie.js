@@ -5,41 +5,41 @@ var bbcode_prompt_link2 = bbcode_prompt_list_item;
 var defmode = 'normal'; // default mode: either normal, advanced, or help
 
 if(defmode == 'advanced') {
-	helpmode		= false;
-	normalmode	= false;
-	advmode		= true;
+    helpmode        = false;
+    normalmode  = false;
+    advmode     = true;
 } else if(defmode == 'help') {
-	helpmode		= true;
-	normalmode	= false;
-	advmode		= false;
+    helpmode        = true;
+    normalmode  = false;
+    advmode     = false;
 } else {
-	helpmode		= false;
-	normalmode	= true;
-	advmode		= false;
+    helpmode        = false;
+    normalmode  = true;
+    advmode     = false;
 }
 
 function chmode(switchMode) {
-	if(switchMode == 1) {
-		advmode		= false;
-		normalmode	= false;
-		helpmode		= true;
-		alert(bbcode_helpmode);
+    if(switchMode == 1) {
+        advmode     = false;
+        normalmode  = false;
+        helpmode        = true;
+        alert(bbcode_helpmode);
 
-	} else if(switchMode == 0) {
-		helpmode		= false;
-		normalmode	= false;
-		advmode		= true;
-		alert(bbcode_advmode);
+    } else if(switchMode == 0) {
+        helpmode        = false;
+        normalmode  = false;
+        advmode     = true;
+        alert(bbcode_advmode);
 
-	} else if(switchMode == 2) {
-		helpmode		= false;
-		advmode		= false;
-		normalmode	= true;
-		alert(bbcode_normode);
-	}
+    } else if(switchMode == 2) {
+        helpmode        = false;
+        advmode     = false;
+        normalmode  = true;
+        alert(bbcode_normode);
+    }
 }
 
-function AddText(bbFirst, bbLast, text, el)	{
+function AddText(bbFirst, bbLast, text, el) {
     if (el.createTextRange && el.caretPos) {
         var caretPos = el.caretPos
         el.caretPos.text = el.caretPos.text.charAt(el.caretPos.text.length - 1) == ' ' ? text + ' ' : text;
@@ -95,16 +95,16 @@ function chfont(font) {
 }
 
 function bold() {
-	if (helpmode) {
-		alert(bbcode_help_bold);
-	}else if (advmode) {
-		AddText('', '', "[b] [/b]", messageElement);
-	}else {
-		txt=prompt(bbcode_prompt_bold,"Text");
-		if (txt!=null) {
-			AddText('', '', "[b]"+txt+"[/b]", messageElement);
-		}
-	}
+    if (helpmode) {
+        alert(bbcode_help_bold);
+    }else if (advmode) {
+        AddText('', '', "[b] [/b]", messageElement);
+    }else {
+        txt=prompt(bbcode_prompt_bold,"Text");
+        if (txt!=null) {
+            AddText('', '', "[b]"+txt+"[/b]", messageElement);
+        }
+    }
 }
 
 function italicize() {
@@ -269,5 +269,5 @@ function setfocus() {
 }
 
 function loadEls() {
-	messageElement = document.getElementById("message");
+    messageElement = document.getElementById("message");
 }
