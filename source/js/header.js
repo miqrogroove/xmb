@@ -1,5 +1,4 @@
 // <![CDATA[
-
 function setCheckboxes(the_form, the_elements, do_check) {
     if (document.forms[the_form].elements[the_elements]) {
         var elts      = document.forms[the_form].elements[the_elements];
