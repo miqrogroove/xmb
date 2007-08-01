@@ -1098,4 +1098,27 @@ $lang['whosonline_on'] = 'Külastajate nimekiri indeksis:';
 $lang['whosonlinetoday'] = 'Kes külastas foorumit viimase 24h jooksul';
 $lang['whoview'] = 'Kes näevad seda foorumit?';
 $lang['xmbgroup'] = 'XMB Meeskond';
+// captcha images lang vars begin
+$lang['admin_main_settings7'] = 'Captcha Pildi Seaded:';
+$lang['captchastatus'] = 'Peamine Staatus:';
+$lang['captcharegstatus'] = 'Registreerimis Staatus:';
+$lang['captchapoststatus'] = 'Anonüümse Postitamiste Staatus:';
+$lang['captchacharset'] = 'Koodi Märgid:';
+$lang['captchacodelength'] = 'Koodi Pikkus:';
+$lang['captchacodecase'] = 'Tundlikum Kood:';
+$lang['captchacodeshadow'] = 'Koodi Vari:';
+$lang['captchaimagetype'] = 'Pildi Sort:';
+$lang['captchaimagewidth'] = 'Pildi Pikkus:';
+$lang['captchaimageheight'] = 'Pildi Kõrgus:';
+$lang['captchaimagebg'] = 'Pildi Taust(ad):';
+$lang['captchaimagedots'] = 'Suvaliste Punktide Arv:';
+$lang['captchaimagelines'] = 'Suvaliste Joonte Arv:';
+$lang['captchaimagefonts'] = 'Pildi Tähestiil(id):';
+$lang['captchaimageminfont'] = 'Väikseim Tähe Suurus:';
+$lang['captchaimagemaxfont'] = 'Suurim Tähe Suurus:';
+$lang['captchaimagecolor'] = 'Kasuta Täis Värvi:';
+$lang['captchaimageinvalid'] = "Kontoll kood, mille te sisestasite ei olnud korrektne. Palun sisestage täpselt selline kood, mis ilmus pildile.";
+$lang['captchaverification'] = "Captcha Pilt Kontroll";
+$lang['verificationnote'] = "Palun sisestage pildil olev tekst alljärgnevasse tekstialasse. Antud protsess on tehtud selle pärast, et takistada botidel registreerumast.";
+// captcha images lang vars end
 ?>
