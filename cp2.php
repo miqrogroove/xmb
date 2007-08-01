@@ -2215,7 +2215,7 @@ if ($action == "cplog") {
 }
 
 if ($action == "delete_attachment") {
-    $aid = formInt('aid');
+    $aid = intval($aid);
     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$aid'");
     echo "<p align=\"center\">Deleted ...</br>";
 }
