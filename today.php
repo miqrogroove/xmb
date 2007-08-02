@@ -129,7 +129,8 @@ if ($results == 0) {
 validateTpp();
 validatePpp();
 
-$page = (isset($page) && is_numeric($page)) ? ($page < 1 ? 1 : ((int) $page)) : 1;
+$max_page = (int) ($results / $tpp) + 1;
+$page = (isset($page) && is_numeric($page) && $page <= $max_page) ? ($page < 1 ? 1 : ((int) $page)) : 1;
 $start_limit = ($page > 1) ? (($page-1) * $tpp) : 0;
 
 $mpurl = 'today.php?daysold='.$daysold;
@@ -139,7 +140,7 @@ if (($multipage = multi($results, $tpp, $page, $mpurl)) !== false) {
 }
 
 $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
-$today2 = array();
+$today_row = array();
 $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 while ($thread = $db->fetch_array($query)) {
     $thread['subject'] = shortenString(stripslashes($thread['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
