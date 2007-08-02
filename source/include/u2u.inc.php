@@ -504,8 +504,8 @@ function u2u_display($folder, $folders) {
             } else {
                 $online = $lang['textoffline'];
             }
-
-            $u2usent = '<a href="member.php?action=viewpro&amp;member="'.rawurlencode($u2u['msgfrom']).'" target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
+                       
+            $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
         } elseif ($u2u['type'] == 'outgoing') {
             if ($u2u['msgto'] == $u2u['username'] || $u2u['msgto'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {
