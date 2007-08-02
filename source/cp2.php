@@ -1645,7 +1645,7 @@ if ($action == "templates") {
                 if ($db->num_rows($check) != 0) {
                     error($lang['templateexists'], false, '</td></tr></table></td></tr></table><br />');
                 } else {
-                    $db->query("INSERT INTO ".X_PREFIX."templates (id, name, template) VALUES ('', '$namenew', '$templatenew')");
+                    $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('$namenew', '$templatenew')");
                 }
             }
         } else {
