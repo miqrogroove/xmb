@@ -134,7 +134,7 @@ eval('$css = "'.template('css').'";');
 $notexist = false;
 $notexist_txt = $posts = '';
 
-$query = $db->query("SELECT fid, subject, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
+$query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
 if ($tid == 0 || $db->num_rows($query) != 1) {
     $db->free_result($query);
     error($lang['textnoforum']);
@@ -305,7 +305,8 @@ if (!$action) {
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
-    if ($page) {
+    $max_page = (int) ($thread['replies'] / $ppp) + 1;
+    if ($page && $page <= $max_page) {
         if ($page < 1) {
             $page = 1;
         }

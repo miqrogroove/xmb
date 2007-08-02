@@ -149,7 +149,8 @@ switch($p_extension) {
 validateTpp();
 validatePpp();
 
-if ($page) {
+$max_page = (int) ($forum['posts'] / $tpp) +1;
+if ($page && $page <= $max_page) {
     $start_limit = ($page-1) *$tpp;
 } else {
     $start_limit = 0;
