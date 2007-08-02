@@ -273,68 +273,67 @@ class admin {
 }
 
 function displayAdminPanel() {
-    global $tablewidth, $bordercolor, $borderwidth, $tablespace, $altbg1, $altbg2;
-    global $lang, $cattext;
+    global $lang, $THEME;
 
     ?>
-    <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
+    <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']?>" align="center">
     <tr>
-    <td bgcolor="<?php echo $bordercolor?>">
-    <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+    <td bgcolor="<?php echo $THEME['bordercolor']?>">
+    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
     <tr class="category">
-    <td colspan="30" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textcp']?></font></strong></td>
+    <td colspan="30" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcp']?></font></strong></td>
     </tr>
-    <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+    <tr bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow">
     <td colspan="30" align="center">
     <br />
     <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
     <tr>
-    <td bgcolor="<?php echo $bordercolor?>">
-    <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+    <td bgcolor="<?php echo $THEME['bordercolor']?>">
+    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
     <tr class="category">
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['general']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textforums']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textmembers']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['look_feel']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['general']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textforums']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textmembers']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['look_feel']?></font></strong></td>
     </tr>
     <tr>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp2.php?action=attachments"><?php echo $lang['textattachman']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=censor"><?php echo $lang['textcensors']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=newsletter"><?php echo $lang['textnewsletter']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=search"><?php echo $lang['cpsearch']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=settings"><?php echo $lang['textsettings']?></a><br />
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp.php?action=forum"><?php echo $lang['textforums']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=mods"><?php echo $lang['textmods']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=prune"><?php echo $lang['textprune']?></a><br />
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp.php?action=ipban"><?php echo $lang['textipban']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=members"><?php echo $lang['textmembers']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=ranks"><?php echo $lang['textuserranks']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=restrictions"><?php echo $lang['cprestricted']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=rename"><?php echo $lang['admin_rename_txt']?></a><br />
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp2.php?action=smilies"><?php echo $lang['smilies']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=templates"><?php echo $lang['templates']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=themes"><?php echo $lang['themes']?></a><br />
     </td>
     </tr>
     <tr class="category">
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['logs']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['tools']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['mysql_tools']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textfaqextra']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['logs']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['tools']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['mysql_tools']?></font></strong></td>
+    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textfaqextra']?></font></strong></td>
     </tr>
     <tr>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp2.php?action=modlog"><?php echo $lang['textmodlogs']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=cplog"><?php echo $lang['textcplogs']?></a>
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="tools.php?action=fixftotals"><?php echo $lang['textfixposts']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=fixlastposts"><?php echo $lang['textfixlastposts']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=fixmposts"><?php echo $lang['textfixmemposts']?></a><br />
@@ -343,7 +342,7 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="tools.php?action=fixorphanedthreads"><?php echo $lang['textfixothreads']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=fixorphanedattachments"><?php echo $lang['textfixoattachments']?></a><br />
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="tools.php?action=analyzetables"><?php echo $lang['analyze']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=whosonlinedump"><?php echo $lang['cpwodump']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=upgrade"><?php echo $lang['raw_mysql']?></a><br />
@@ -351,7 +350,7 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="tools.php?action=repairtables"><?php echo $lang['repair']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=u2udump"><?php echo $lang['u2udump']?></a><br />
     </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $altbg2?>">
+    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     </td>
     </tr>
     </table>
@@ -377,53 +376,58 @@ function settingHTML($setting, &$on, &$off) {
 }
 
 function printsetting1($setname, $varname, $check1, $check2) {
-    global $lang, $altbg1, $altbg2;
+    global $lang, $THEME;
 
     ?>
-    <tr><td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $setname?></td>
-    <td class="tablerow" bgcolor="<?php echo $altbg2?>"><select name="<?php echo $varname?>">
-    <option value="on" <?php echo $check1?>><?php echo $lang['texton']?></option><option value="off" <?php echo $check2?>><?php echo $lang['textoff']?></option>
-    </select></td></tr>
+    <tr class="tablerow">
+    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>">
+    <select name="<?php echo $varname?>">
+    <option value="on" <?php echo $check1?>><?php echo $lang['texton']?></option>
+    <option value="off" <?php echo $check2?>><?php echo $lang['textoff']?></option>
+    </select>
+    </td>
+    </tr>
     <?php
 }
 
 function printsetting2($setname, $varname, $value, $size) {
-    global $altbg1, $altbg2;
+    global $THEME;
 
     ?>
-    <tr>
-    <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $setname?></td>
-    <td class="tablerow" bgcolor="<?php echo $altbg2?>"><input type="text"  size="<?php echo $size?>" value="<?php echo $value?>" name="<?php echo $varname?>" /></td>
+    <tr class="tablerow">
+    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" size="<?php echo $size?>" value="<?php echo $value?>" name="<?php echo $varname?>" /></td>
     </tr>
     <?php
 }
 
 function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=true) {
-    global $altbg1, $altbg2;
+    global $THEME, $selHTML;
 
     foreach ($varnames as $key=>$val) {
         if (isset($checked[$key]) && $checked[$key] !== true) {
             $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
         }else{
-            $optionlist[] = '<option value="'.$values[$key].'" selected="selected">'.$varnames[$key].'</option>';
+            $optionlist[] = '<option value="'.$values[$key].'" '.$selHTML.'>'.$varnames[$key].'</option>';
         }
     }
-
     $optionlist = implode("\n", $optionlist);
     ?>
-    <tr>
-    <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $setname?></td>
-    <td class="tablerow" bgcolor="<?php echo $altbg2?>"><select <?php echo ($multi ? 'multiple="multiple"' : '')?> name="<?php echo $boxname?><?php echo ($multi ? '[]' : '')?>"><?php echo $optionlist?></select></td>
+    <tr class="tablerow">
+    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>"><select <?php echo ($multi ? 'multiple="multiple"' : '')?> name="<?php echo $boxname?><?php echo ($multi ? '[]' : '')?>"><?php echo $optionlist?></select></td>
     </tr>
     <?php
 }
 
 function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
-    global $altbg1, $altbg2;
+    global $THEME;
+
     ?>
-    <tr>
-    <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $settingDesc?></td>
-    <td class="tablerow" bgcolor="<?php echo $altbg2?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>"><?php echo $value?></textarea></td>
+    <tr class="tablerow">
+    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc?></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>"><?php echo $value?></textarea></td>
     </tr>
     <?php
 }
