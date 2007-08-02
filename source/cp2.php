@@ -27,7 +27,7 @@
  **/
 
 require_once('header.php');
-require_once('./include/admin.user.inc.php');
+require_once(ROOT.'include/admin.inc.php');
 
 function readFileAsINI($filename) {
     $lines = file($filename);

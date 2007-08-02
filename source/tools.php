@@ -27,10 +27,10 @@
  **/
 
 require_once('header.php');
-require_once('./include/admin.user.inc.php');
+require_once(ROOT.'include/admin.inc.php');
 
 loadtemplates('error_nologinsession');
-eval("\$css = \"".template("css")."\";");
+eval('$css = "'.template('css').'";');
 
 nav('<a href="cp.php">'.$lang['textcp'].'</a>');
 eval("echo (\"".template('header')."\");");

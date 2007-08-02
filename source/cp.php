@@ -27,7 +27,7 @@
  **/
 
 require_once('header.php');
-require_once('./include/admin.user.inc.php');
+require_once(ROOT.'include/admin.inc.php');
 
 loadtemplates('error_nologinsession');
 
@@ -564,6 +564,7 @@ if ($action == "settings") {
         } else {
             $langfilenew = basename($langfilenew);
         }
+
         $themenew = formInt('themenew');
         $postperpagenew = formInt('postperpagenew');
         $topicperpagenew = formInt('topicperpagenew');
@@ -609,12 +610,14 @@ if ($action == "settings") {
         $hottopicnew = formInt('hottopicnew');
         $bbinsertnew = formOnOff('bbinsertnew');
         $smileyinsertnew = formOnOff('smileyinsertnew');
+
         $new_footer_options = formArray('new_footer_options');
         if (!empty($new_footer_options)) {
             $footer_options = implode('-', $new_footer_options);
         } else {
             $footer_options = '';
         }
+
         $maxAttachSize = formInt('maxAttachSize');
         $def_tz_new = formInt('def_tz_new');
         $addtimenew = formInt('addtimenew');
@@ -624,7 +627,6 @@ if ($action == "settings") {
         $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
         $tickerdelaynew = formInt('tickerdelaynew');
         $maxDayReg = formInt('maxDayReg');
-
         $captchanew = formOnOff('captchanew');
         $captcharegnew = formOnOff('captcharegnew');
         $captchapostnew = formOnOff('captchapostnew');
