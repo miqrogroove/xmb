@@ -598,7 +598,7 @@ Public License instead of this License.
             'memcp.php',
             'misc.php',
             'post.php',
-            'include/admin.user.inc.php',
+            'include/admin.inc.php',
             'include/buddy.inc.php',
             'include/captcha.inc.php',
             'include/functions.inc.php',
