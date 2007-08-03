@@ -488,7 +488,7 @@ $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'Y
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
+    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid=$tid");
     $locate = $db->fetch_array($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
@@ -498,7 +498,7 @@ if (isset($tid) && $action != 'templates') {
         $threadSubject = '';
     }
 } elseif (isset($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
     } else {
@@ -510,16 +510,16 @@ $wollocation = addslashes($url);
 $newtime = $onlinetime - 600;
 
 // clear out old entries and guests
-$db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip = '$onlineip' && username = 'xguest123') OR (username = '$xmbuser') OR (time < '$newtime'))");
+$db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
 $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
 
 // Find duplicate entries for users only
 $username = isset($username) ? $username : '';
 if (X_MEMBER) {
-    $result = $db->query("SELECT count(username) FROM ".X_PREFIX."whosonline WHERE (username = '$xmbuser')");
+    $result = $db->query("SELECT count(username) FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
     $usercount = $db->result($result, 0);
     if ($usercount > 1) {
-        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username = '$xmbuser')");
+        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }
 }
@@ -534,7 +534,7 @@ if ((int) $themeuser > 0) {
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
 foreach ($db->fetch_array($query) as $key => $val) {
     if ($key != "name") {
         $$key = $val;

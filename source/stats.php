@@ -68,7 +68,7 @@ switch($self['status']) {
 
 $fids = array();
 if (!X_SADMIN) {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums f WHERE f.status = 'on' AND ".implode(' AND ', $restrict));
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums f WHERE f.status='on' AND ".implode(' AND ', $restrict));
     while ($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
@@ -221,7 +221,6 @@ if ($bestmember == '') {
     }
 }
 
-
 eval($eval);
 eval($lang['evalstats1']);
 eval($lang['evalstats2']);
@@ -242,5 +241,5 @@ eval($lang['evalstats15']);
 eval('echo stripslashes("'.template('feature_statistics').'");');
 
 end_time();
-eval("echo (\"".template('footer')."\");");
+eval('echo "'.template('footer').'";');
 ?>
