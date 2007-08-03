@@ -62,27 +62,27 @@ switch ($action) {
             $threadnum = $postnum = $sub_threadnum = $sub_postnum = 0;
             $squery = $stquery = $spquery = $ftquery = $fpquery = '';
 
-            $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$forum[fid]' AND type='sub'");
+            $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$forum[fid] AND type='sub'");
             while ($sub = $db->fetch_array($squery)) {
-                $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$sub[fid]'");
+                $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$sub[fid]");
                 $sub_threadnum = $db->result($stquery, 0);
 
-                $spquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$sub[fid]'");
+                $spquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid=$sub[fid]");
                 $sub_postnum = $db->result($spquery, 0);
 
-                $db->query("UPDATE ".X_PREFIX."forums SET threads='$sub_threadnum', posts='$sub_postnum' WHERE fid='$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET threads='$sub_threadnum', posts='$sub_postnum' WHERE fid=$sub[fid]");
                 $threadnum += $sub_threadnum;
                 $postnum += $sub_postnum;
             }
             $db->free_result($squery);
 
-            $ftquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$forum[fid]'");
+            $ftquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$forum[fid]");
             $threadnum += $db->result($ftquery, 0);
 
-            $fpquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$forum[fid]'");
+            $fpquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid=$forum[fid]");
             $postnum += $db->result($fpquery, 0);
 
-            $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid=$forum[fid]");
         }
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_forumtotal]</td></tr></table></table>";
@@ -94,9 +94,9 @@ switch ($action) {
     case 'fixttotals':
         $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
         while ($threads = $db->fetch_array($queryt)) {
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$threads[tid]");
             $replynum = $db->result($query, 0) -1;
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid='$threads[tid]'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid=$threads[tid]");
         }
         nav($lang['tools']);
         echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_threadtotal]</td></tr></table></table>";
@@ -121,12 +121,12 @@ switch ($action) {
         break;
 
     case 'fixlastposts':
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup='0' OR fup='') AND type = 'forum'");
         while ($loner = $db->fetch_array($q)) {
             $lastpost = array();
-            $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
+            $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$loner[fid]");
             while ($sub = $db->fetch_array($subq)) {
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$sub[fid] ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
                     $lastpost[] = $curr;
@@ -134,11 +134,11 @@ switch ($action) {
                 } else {
                     $lp = '';
                 }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid=$sub[fid]");
                 $db->free_result($pq);
             }
             $db->free_result($subq);
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$loner[fid] ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $lastpost[] = $db->fetch_array($pq);
             }
@@ -156,7 +156,7 @@ switch ($action) {
                 }
                 $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid=$loner[fid]");
         }
         $db->free_result($q);
         $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
