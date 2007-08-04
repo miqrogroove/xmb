@@ -488,7 +488,7 @@ $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'Y
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid=$tid");
+    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
     $locate = $db->fetch_array($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
