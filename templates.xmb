@@ -1656,7 +1656,7 @@ $multipage
 <input type="hidden" name="fid" value="$fid" />
 <input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
 &nbsp;&nbsp;
-<select name="action">selected
+<select name="action">
 <option value="" selected="selected"></option>
 <option value="bump">$lang[textbumpthread]</option>
 <option value="f_close">$lang[textclosethread]</option>
@@ -3598,7 +3598,7 @@ $favs
 <input type="hidden" name="token" value="$oToken->newToken" />
 <span class="mediumtxt"><strong>$lang[textadminoptions]</strong><br />
 <select name="action" id="action" onchange="if(this.options[this.selectedIndex].value != '') { window.location=('topicadmin.php?tid=$tid&amp;fid=$fid&amp;action='+this.options[this.selectedIndex].value) }">
-<option value="" selected></option>
+<option value="" selected="selected"></option>
 <option value="delete">$lang[textdeletethread]</option>
 <option value="close">$closeopen</option>
 <option value="copy">$lang[copythread]</option>
