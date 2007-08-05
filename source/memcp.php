@@ -707,7 +707,7 @@ if ($action == 'profile') {
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while ($message = $db->fetch_array($query)) {
+    while ($message = $db->fetch_array($u2uquery)) {
         $postdate = gmdate($dateformat, $message['dateline'] + $tmOffset);
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
