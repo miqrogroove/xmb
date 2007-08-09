@@ -1121,4 +1121,5 @@ $lang['captchaverification'] = "Captcha Image Verification";
 $lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
 $lang['textsubforums'] = "Sub-Forums:";
 $lang['showsubforums'] = "Sub-forums on index status:<br /><span class=\"smalltxt\">This will enable or disable sub-forums display on index.</span>";
+$lang['message'] = "Message";
 ?>
