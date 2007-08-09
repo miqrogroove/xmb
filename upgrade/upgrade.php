@@ -945,15 +945,19 @@ Public License instead of this License.
         show_act('Inserting '.XMB_V.' templates');
 
         $stream = fopen(ROOT.'templates.xmb','r');
-        $file   = fread($stream, filesize(ROOT.'templates.xmb'));
-                  fclose($stream);
+        $file = fread($stream, filesize(ROOT.'templates.xmb'));
+        fclose($stream);
 
         $db->query("TRUNCATE TABLE `".$u->tablepre."templates`");
 
         $templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
         foreach($templates as $key=>$val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
-            $template[1] = addslashes($template[1]);
+            if (isset($template[1])) {
+                $template[1] = addslashes($template[1]);
+            } else {
+                $template[1] = '';
+            }
             $db->query("INSERT INTO `".$u->tablepre."templates` (`name`, `template`) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
         $db->query("DELETE FROM `".$u->tablepre."templates` WHERE name=''");
