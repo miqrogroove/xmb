@@ -1098,7 +1098,6 @@ $lang['whosonline_on'] = "Who's online in index:";
 $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmbgroup'] = "The XMB Group";
-// captcha images lang vars begin
 $lang['admin_main_settings7'] = 'Captcha Image Settings';
 $lang['captchastatus'] = 'Main Status:';
 $lang['captcharegstatus'] = 'Registration Status:';
@@ -1120,5 +1119,7 @@ $lang['captchaimagecolor'] = 'Use Full Color:';
 $lang['captchaimageinvalid'] = "The image verification code that you entered was incorrect. Please enter the code exactly how it appears in the image.";
 $lang['captchaverification'] = "Captcha Image Verification";
 $lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
-// captcha images lang vars end
+$lang['textsubforums'] = "Sub-Forums:";
+$lang['showsubforums'] = "Sub-forums on index status:<br /><span class=\"smalltxt\">This will enable or disable sub-forums display on index.</span>";
+$lang['message'] = "Message";
 ?>
