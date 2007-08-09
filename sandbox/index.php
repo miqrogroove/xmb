@@ -251,6 +251,18 @@ if ($SETTINGS['catsonly'] != 'on') {
     eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
+// create sub-forums on index
+if ($SETTINGS['showsubforums'] == 'on') {
+    $index_subforums = array();
+    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+        $query = $db->query("SELECT fid, fup, name, private, userlist FROM $table_forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
+        while ($queryrow = $db->fetch_array($query)) {
+            $index_subforums[] = $queryrow;
+        }
+        $db->free_result($query);
+    }
+}
+
 while ($thing = $db->fetch_array($fquery)) {
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = forum($thing, "index_forum");

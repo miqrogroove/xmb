@@ -418,7 +418,7 @@ function privfcheck($private, $userlist) {
 
 function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
-    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
+    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
@@ -461,6 +461,26 @@ function forum($forum, $template) {
             }
             $forum['moderator'] = implode(', ', $forum['moderator']);
             $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
+        }
+
+        // create sub-forums on index
+        $subforums = array();
+        if (count($index_subforums) > 0) {
+            for ($i=0; $i < count($index_subforums); $i++) {
+                $sub = $index_subforums[$i];
+                if ($sub['fup'] == $forum['fid']) {
+                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($sub['private'], $sub['userlist'])) {
+                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.stripslashes($sub['name']).'</a>';
+                    }
+                }
+            }
+        }
+
+        if (!empty($subforums)) {
+            $subforums = implode(', ', $subforums);
+            $subforums = '<br /><strong>'.$lang['textsubforums'].'</strong> '.$subforums;
+        } else {
+            $subforums = '';
         }
         eval('$foruminfo = stripslashes("'.template($template).'");');
     }

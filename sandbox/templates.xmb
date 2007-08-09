@@ -1501,17 +1501,11 @@ color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
 |#*XMB TEMPLATE FILE*#|index_forum|#*XMB TEMPLATE*#|
 <tr>
 <td bgcolor="$altbg1" align="center" class="ctrtablerow" width="4%">$folder</td>
-<td bgcolor="$altbg2" class="tablerow" width="54%">
-<font class="mediumtxt"><a href="./forumdisplay.php?fid=$forum[fid]"><strong>$forum[name]</strong></a></font>&nbsp;<font class="smalltxt">$forum[moderator]&nbsp;</font><br /><font
-class="smalltxt">$forum[description]</font></td>
-
-<td bgcolor="$altbg1" align="center" class="ctrtablerow" width="6%"><font
-class="mediumtxt">$forum[threads]</font></td>
-<td bgcolor="$altbg2" align="center" class="ctrtablerow" width="6%"><font
-class="mediumtxt">$forum[posts]</font></td>
+<td bgcolor="$altbg2" class="tablerow" width="54%"><font class="mediumtxt"><a href="./forumdisplay.php?fid=$forum[fid]"><strong>$forum[name]</strong></a></font>&nbsp;<font class="smalltxt">$forum[moderator]&nbsp;</font><br /><font class="smalltxt">$forum[description]$subforums</font></td>
+<td bgcolor="$altbg1" align="center" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[threads]</font></td>
+<td bgcolor="$altbg2" align="center" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[posts]</font></td>
 <td bgcolor="$altbg1" class="rghttablerow" width="19%">$lastpostrow</td>
-<td bgcolor="$altbg2" class="ctrtablerow" width="2%"><a
-href="./post.php?action=newthread&amp;fid=$forum[fid]"><img src="$imgdir/ipost.gif" border="0" alt="$lang[altpostnewthread]" /></a></td>
+<td bgcolor="$altbg2" class="ctrtablerow" width="2%"><a href="./post.php?action=newthread&amp;fid=$forum[fid]"><img src="$imgdir/ipost.gif" border="0" alt="$lang[altpostnewthread]" /></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage|#*XMB TEMPLATE*#|
