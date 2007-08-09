@@ -732,7 +732,7 @@ if ($action == "settings") {
             captcha_image_minfont='$captchaimageminfontnew',
             captcha_image_maxfont='$captchaimagemaxfontnew',
             captcha_image_color='$captchaimagecolornew',
-            showsubforums='showsubforumsnew'
+            showsubforums='$showsubforumsnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
