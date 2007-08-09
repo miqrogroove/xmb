@@ -690,7 +690,7 @@ if (count($pluglinks) == 0) {
 // If the board is offline, display an appropriate message
 if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
     eval('$css = "'.template('css').'";');
-    error(stripslashes($bboffreason));
+    message(nl2br(stripslashes($bboffreason)));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
@@ -702,7 +702,7 @@ if ($regviewonly == "on") {
             $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
         }
         eval('$css = "'.template('css').'";');
-        error($message);
+        message($message);
     }
 }
 
