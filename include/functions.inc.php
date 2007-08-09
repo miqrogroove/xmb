@@ -984,8 +984,11 @@ function ServerLoad() {
 }
 
 function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang;
-    extract($GLOBALS);
+    global $footerstuff, $lang, $navigation;
+
+    if (isset($GLOBALS)) {
+        extract($GLOBALS);
+    }
     $args = func_get_args();
 
     $message = (isset($args[0]) ? $args[0] : '');
@@ -1004,7 +1007,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     end_time();
 
     if ($redirect !== false) {
-        redirect($redirect, 1);
+        redirect($redirect, 3.0, X_REDIRECT_JS);
     }
 
     if ($showheader === false) {
@@ -1038,8 +1041,11 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 }
 
 function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang;
-    extract($GLOBALS);
+    global $footerstuff, $lang, $navigation;
+
+    if (isset($GLOBALS)) {
+        extract($GLOBALS);
+    }
     $args = func_get_args();
 
     $messagedisplay = (isset($args[0]) ? $args[0] : '');
@@ -1058,7 +1064,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     end_time();
 
     if ($redirect !== false) {
-        redirect($redirect, 1);
+        redirect($redirect, 3.0, X_REDIRECT_JS);
     }
 
     if ($showheader === false) {
