@@ -886,7 +886,7 @@ class Upgrade {
 
         $lang = array();
 
-        require_once ROOT.'lang/Base.lang.php';
+        require_once ROOT.'lang/English.lang.php';
 
         $baselang = $lang;
 
