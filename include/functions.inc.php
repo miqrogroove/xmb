@@ -283,11 +283,34 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 25  => ' <br />'
         );
 
-        $message = str_replace($find, $replace, $message);
+        //$message = str_replace($find, $replace, $message);
 
+        //if ($smiliesallow) {
+        //    $message = smile($message);
+        //}
+        // contributed by JDaniels
         if ($smiliesallow) {
-            $message = smile($message);
+            $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
+            for ($i = 0; $i < sizeof($messagearray); $i++) {
+                if (sizeof($messagearray) != 1) {
+                    if ($i == 0) {
+                        $messagearray[$i] = $messagearray[$i]."[code]";
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    } else if ($i == sizeof($messagearray) - 1) {
+                        $messagearray[$i] = "[/code]".$messagearray[$i];
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    } else if ($i % 2 == 0) {
+                        $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    }
+                } else {
+                    $messagearray[0] = smile($messagearray[0]);
+                }
+            }
+            $message = implode("", $messagearray);
         }
+
+        $message = str_replace($find, $replace, $message);
 
         $patterns = array();
         $replacements = array();
@@ -341,8 +364,28 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $message = addslashes($message);
     } else {
+        //if ($smiliesallow) {
+        //    $message = smile($message);
+        //}
         if ($smiliesallow) {
-            $message = smile($message);
+            $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
+            for ($i = 0; $i < sizeof($messagearray); $i++) {
+                if (sizeof($messagearray) != 1) {
+                    if ($i == 0) {
+                        $messagearray[$i] = $messagearray[$i]."[code]";
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    } else if ($i == sizeof($messagearray) - 1) {
+                        $messagearray[$i] = "[/code]".$messagearray[$i];
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    } else if ($i % 2 == 0) {
+                        $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
+                        $messagearray[$i] = smile($messagearray[$i]);
+                    }
+                } else {
+                    $messagearray[0] = smile($messagearray[0]);
+                }
+            }
+            $message = implode("", $messagearray);
         }
     }
 
