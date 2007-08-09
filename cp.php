@@ -181,6 +181,9 @@ if ($action == "settings") {
         $captchaimagecolorOn = $captchaimagecolorOff = '';
         settingHTML('captcha_image_color', $captchaimagecolorOn, $captchaimagecolorOff);
 
+        $showsubson = $showsubsoff = '';
+        settingHTML('showsubforums', $showsubson, $showsubsoff);
+
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
@@ -455,6 +458,7 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
         </tr>
         <?php
+        printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
         printsetting1($lang['space_cats'], 'space_catsnew',$spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
@@ -644,6 +648,7 @@ if ($action == "settings") {
         $captchaimageminfontnew = formInt('captchaimageminfontnew');
         $captchaimagemaxfontnew = formInt('captchaimagemaxfontnew');
         $captchaimagecolornew = formOnOff('captchaimagecolornew');
+        $showsubforumsnew = formOnOff('showsubforumsnew');
 
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
 
@@ -726,7 +731,8 @@ if ($action == "settings") {
             captcha_image_fonts='$captchaimagefontsnew',
             captcha_image_minfont='$captchaimageminfontnew',
             captcha_image_maxfont='$captchaimagemaxfontnew',
-            captcha_image_color='$captchaimagecolornew'
+            captcha_image_color='$captchaimagecolornew',
+            showsubforums='showsubforumsnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
