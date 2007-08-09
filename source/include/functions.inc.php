@@ -91,7 +91,7 @@ function loadtemplates() {
         echo 'Not enough arguments given to loadtemplates() on line: '.__LINE__;
         return false;
     } else {
-        $namesarray = array_unique(array_merge(func_get_args(), array('header', 'css', 'error', 'footer', 'footer_querynum', 'footer_phpsql', 'footer_totaltime', 'footer_load')));
+        $namesarray = array_unique(array_merge(func_get_args(), array('header', 'css', 'error', 'message', 'footer', 'footer_querynum', 'footer_phpsql', 'footer_totaltime', 'footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
         $query = $db->query("SELECT name, template FROM ".X_PREFIX."templates WHERE name IN ($sql)");
         while ($template = $db->fetch_array($query)) {
@@ -1028,6 +1028,60 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
         $return = $prepend . $error . $footer . $append;
     } else {
         echo $prepend . $error . $append . $footer;
+        $return = '';
+    }
+
+    if ($die) {
+        exit();
+    }
+    return $return;
+}
+
+function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
+    global $footerstuff, $lang;
+    extract($GLOBALS);
+    $args = func_get_args();
+
+    $messagedisplay = (isset($args[0]) ? $args[0] : '');
+    $showheader = (isset($args[1]) ? $args[1] : true);
+    $prepend = (isset($args[2]) ? $args[2] : '');
+    $append = (isset($args[3]) ? $args[3] : '');
+    $redirect = (isset($args[4]) ? $args[4] : false);
+    $die = (isset($args[5]) ? $args[5] : true);
+    $return_str = (isset($args[6]) ? $args[6] : false);
+    $showfooter = (isset($args[7]) ? $args[7] : true);
+
+    $navigation = '';
+    nav();
+    nav($lang['message']);
+
+    end_time();
+
+    if ($redirect !== false) {
+        redirect($redirect, 1);
+    }
+
+    if ($showheader === false) {
+        $header = '';
+    } else {
+        if (!isset($css) || strlen($css) ==0) {
+            eval('$css = "'.template('css').'";');
+        }
+        eval('$header = "'.template('header').'";');
+    }
+
+    $message = '';
+    eval('$message = "'.template('message').'";');
+    if ($showfooter === true) {
+        eval('$footer = "'.template('footer').'";');
+    } else {
+        $footer = '';
+    }
+
+    if ($return_str !== false) {
+        $return = $prepend . $message . $footer . $append;
+    } else {
+        echo $prepend . $message . $append . $footer;
         $return = '';
     }
 

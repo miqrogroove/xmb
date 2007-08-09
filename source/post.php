@@ -580,14 +580,15 @@ if ($action == "newthread") {
             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
         }
 
-        echo "<center><span class=\"mediumtxt \">$lang[postmsg]</span></center>";
+        //message($lang['postmsg']);
+        //echo "<center><span class=\"mediumtxt \">$lang[postmsg]</span></center>";
 
         $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
 
         $topicpages = quickpage($posts, $ppp);
-
-        redirect("viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, 2, X_REDIRECT_JS);
+        message($lang['postmsg'], false, '', '', "viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, true, false, true);
+        //redirect("viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, 2, X_REDIRECT_JS);
     }
 } elseif ($action == "reply") {
     nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
@@ -801,7 +802,7 @@ if ($action == "newthread") {
                 $topicpages = 1;
             }
 
-            redirect("viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", 2, X_REDIRECT_JS);
+            //redirect("viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", 2, X_REDIRECT_JS);
 
             // let's get the time for the previous post.
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid=$tid AND pid < $pid ORDER BY pid ASC LIMIT 1"), 0);
@@ -844,8 +845,9 @@ if ($action == "newthread") {
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
         }
 
-
-        echo "<center><span class=\"mediumtxt \">$lang[replymsg]</span></center>";
+        //message($lang['replymsg']);
+        message($lang['replymsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid, true, false, true);
+        //echo "<center><span class=\"mediumtxt \">$lang[replymsg]</span></center>";
     }
 
 }elseif ($action == "edit") {
@@ -862,17 +864,6 @@ if ($action == "newthread") {
             $header = '';
             error($lang['privforummsg']);
         }
-        /*
-        if (!X_SADMIN && $forums['password'] != '') {
-            if (!isset($_COOKIE['fidpw'.$fid]) || isset($_COOKIE['fidpw'.$fid]) && $forums['password'] != $_COOKIE['fidpw'.$fid]) {
-                $url = "viewthread.php?tid=$tid&action=pwverify";
-                eval('$pwverify = "'.template('forumdisplay_password').'";');
-
-                error($lang['forumpwinfo'], false, '', $pwverify, false, true, false, true);
-            }
-        }
-        */
-        // pwverify($forums['password'], 'post.php?action=edit&amp;tid='.$tid, $fid);
 
         if (isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
             $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$message, "subject"=>$subject, 'icon'=>$posticon);
@@ -1139,16 +1130,20 @@ if ($action == "newthread") {
         } else {
             error($lang['noedit']);
         }
-        echo "<center><span class=\"mediumtxt \">$lang[editpostmsg]</span></center>";
+
+        //message($lang['editpostmsg']);
+        //echo "<center><span class=\"mediumtxt \">$lang[editpostmsg]</span></center>";
 
         if ($threaddelete != 'yes') {
             $query =$db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid AND fid=$fid");
             $posts = $db->result($query,0);
             $topicpages = quickpage($posts, $ppp);
 
-            redirect("viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", 2, X_REDIRECT_JS);
+            //redirect("viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", 2, X_REDIRECT_JS);
+            message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         } else {
-            redirect("forumdisplay.php?fid=$fid", 2, X_REDIRECT_JS);
+            message($lang['editpostmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            //redirect("forumdisplay.php?fid=$fid", 2, X_REDIRECT_JS);
         }
     }
 } else {

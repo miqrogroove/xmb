@@ -2563,6 +2563,23 @@ $css
 </body>
 </html>
 
+|#*XMB TEMPLATE FILE*#|message|#*XMB TEMPLATE*#|
+$header
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
+<tr>
+<td>
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong>$lang[message]</strong></font></td>
+</tr>
+<tr>
+<td class="tablerow" bgcolor="$altbg1">$messagedisplay</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
 |#*XMB TEMPLATE FILE*#|member_coppa|#*XMB TEMPLATE*#|
 <form method="post" action="member.php?action=reg">
 <input type="hidden" name="token" value="$oToken->newToken" />
