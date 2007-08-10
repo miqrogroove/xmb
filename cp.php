@@ -1286,12 +1286,12 @@ if ($action == 'forum') {
     } else {
         $namenew = addslashes(formVar('namenew'));
         $descnew = addslashes(formVar('descnew'));
-        $allowhtmlnew    = formYesNo('allowhtmlnew');
+        $allowhtmlnew = formYesNo('allowhtmlnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
-        $allowbbcodenew  = formYesNo('allowbbcodenew');
+        $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
         $attachstatusnew = formOnOff('attachstatusnew');
-        $pollstatusnew   = formOnOff('pollstatusnew');
+        $pollstatusnew = formOnOff('pollstatusnew');
         $guestpostingnew = formOnOff('guestpostingnew');
         $themeforumnew = formInt('themeforumnew');
         $postperm1 = formInt('postperm1');
@@ -1301,7 +1301,24 @@ if ($action == 'forum') {
         $passwordnew = formVar('passwordnew');
         $delete = formInt('delete');
 
-        $db->query("UPDATE ".X_PREFIX."forums SET name='$namenew', description='$descnew', allowhtml='$allowhtmlnew', allowsmilies='$allowsmiliesnew', allowbbcode='$allowbbcodenew', theme='$themeforumnew', userlist='$userlistnew', private='$privatenew', postperm='$postperm1|$postperm2', allowimgcode='$allowimgcodenew', attachstatus='$attachstatusnew', pollstatus='$pollstatusnew', password='$passwordnew', guestposting='$guestpostingnew' WHERE fid='$fdetails'");
+        $db->query("UPDATE ".X_PREFIX."forums SET
+            name='$namenew',
+            description='$descnew',
+            allowhtml='$allowhtmlnew',
+            allowsmilies='$allowsmiliesnew',
+            allowbbcode='$allowbbcodenew',
+            theme='$themeforumnew',
+            userlist='$userlistnew',
+            private='$privatenew',
+            postperm='$postperm1|$postperm2',
+            allowimgcode='$allowimgcodenew',
+            attachstatus='$attachstatusnew',
+            pollstatus='$pollstatusnew',
+            password='$passwordnew',
+            guestposting='$guestpostingnew'
+            WHERE fid='$fdetails'"
+        );
+
         if ($delete) {
             $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid='$delete'");
         }
