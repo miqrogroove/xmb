@@ -1122,4 +1122,7 @@ $lang['captchaimageinvalid'] = "Вы ввели неправильный код проверики рисунком. По
 $lang['captchaverification'] = "Проверка Рисунком Captcha";
 $lang['verificationnote'] = "Пожалуйста введите код показанный на картинке в поле ниже. Это нужно для предотвращения регистрации автоматических ботов.";
 // captcha images lang vars end
+$lang['textsubforums'] = "Под-Форумы:";
+$lang['showsubforums'] = "Статус \"Под-Форумы на Главной Странице\":<br /><span class=\"smalltxt\">Включает и выключает показ под-форумов на главной странице.</span>";
+$lang['message'] = "Сообщение";
 ?>
