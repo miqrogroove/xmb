@@ -29,7 +29,7 @@
 
     Made by:    _DoE_ and LuCk3R
     Language:   German (formal)
-    Last mod:   6th August 2007
+    Last mod:   11th August 2007
     Status:     beta
 */
 
@@ -390,6 +390,7 @@ $lang['memcpmood'] = "Ihr Motto:";
 $lang['memposts'] = "Beitr&auml;ge";
 $lang['mergethreadmsg'] = "Danke, die Themen wurden zusammengef&uuml;gt. Sie werden nun zur Themenliste weitergeleitet.";
 $lang['mergewithmsg'] = "TID des Themas mit der dieses zusammengef&uuml;gt werden soll:<br /><span class=\"smalltxt\">(viewthread.php?tid=48 - Die TID lautet dann 48)</span>";
+$lang['message'] = "Nachricht";
 $lang['misconlinetoday'] = "Die folgenden ";
 $lang['misconlinetoday2'] = " Mitglieder haben heute das $SETTINGS[bbname] besucht ...";
 $lang['month1'] = "des letzten Monats";
@@ -546,6 +547,7 @@ $lang['searchusermsg'] = 'Nach allen Beitr&auml;gen dieses Benutzers <a href="mi
 $lang['secure_login'] = "Sichere Anmeldung:<br /><span class=\"smalltxt\">erh&ouml;hte Sicherheit auf &ouml;ffentlichen Computern</span>";
 $lang['selecttemplate'] = "Bitte w&auml;hlen Sie ein Vorlage ...";
 $lang['seperatebycomma'] = "Mehrere Eintr&auml;ge mit Kommas unterteilen.";
+$lang['showsubforums'] = "Unterforen im Index Status:<br /><span class=\"smalltxt\">Dies aktiviert oder deaktiviert die Anzeige von Unterforen im Index.</span>";
 $lang['showtopics'] = "Themen anzeigen";
 $lang['sigbbcode'] = "BB-Code in Signaturen:";
 $lang['sightml'] = "HTML in Signaturen:";
@@ -952,6 +954,7 @@ $lang['textstats'] = "Statistik";
 $lang['textstatsstatus'] = "Statistik einschalten";
 $lang['textstatus'] = "Avatar & Mitglieder Status:";
 $lang['textsubbody'] = " hat eine neue Antwort in einem Beitrag geschrieben, den Sie in $SETTINGS[bbname] abonniert haben.\n\nSie k&ouml;nnen diese unter folgender Adresse nachlesen:\n\n";
+$lang['textsubforums'] = "Unterforen:";
 $lang['textsubject'] = "Betreff:";
 $lang['textsubmit'] = "Absenden";
 $lang['textsubmitchanges'] = "Eingaben &uuml;bernehmen";
