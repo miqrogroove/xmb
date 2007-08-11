@@ -26,7 +26,7 @@
  *
  **/
 
-if (!defined('IN_CODE') && (defined('DEBUG') && DEBUG == false)) {
+if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
@@ -362,6 +362,7 @@ $lang['memcpmood'] = "Vas trenutni nacin rada:";
 $lang['memposts'] = "Postovi";
 $lang['mergethreadmsg'] = "Hvala vam, teme su spojene. Sada cete biti proslijedeni natrag na listu dretvi.";
 $lang['mergewithmsg'] = "TID teme koja ce biti spojena sa:<br /><span class=\"smalltxt\">viewthread.php?tid=48, tid bi bio 48</span>";
+$lang['message'] = "poruka";
 $lang['misconlinetoday'] = "Slijedeci ";
 $lang['misconlinetoday2'] = " clanovi su posjetili $SETTINGS[bbname] danas...";
 $lang['month1'] = "mjesec";
@@ -519,6 +520,7 @@ $lang['secure_login'] = "Sigurnosna prijava - povecana sigurnost na javnim racun
 $lang['selecttemplate'] = "Molim odaberite predlozak...";
 $lang['seperatebycomma'] = "Odvojite visestruke zapise sa zarezima";
 $lang['showtopics'] = "Prikazi teme od";
+$lang['showsubforums'] = 'Pod forumi na pocetnom statusu:<br /><span class="smalltxt">TOvo ce ukljuciti ili iskljuciti prikaz pod foruma na pocetku.</span>';
 $lang['sigbbcode'] = "BB Code u znakovima:";
 $lang['sightml'] = "HTML u znakovima:";
 $lang['smcols'] = "Broj rubrika sa smjescima";
@@ -924,6 +926,7 @@ $lang['textstats'] = "Status";
 $lang['textstatsstatus'] = "Omoguci status ?";
 $lang['textstatus'] = "Avatar &amp; status clana:";
 $lang['textsubbody'] = "je odgovorio na dretvu na koju ste se pretplatili $SETTINGS[bbname].\nDa biste prestali primati ovu obavijest, prijavite se na svoju korisnicku upravljacku plocu.\n\nMozete vidjeti dretvu odlaskom na\n\n";
+$lang['textsubforums'] = "Pod forumi";
 $lang['textsubject'] = "Predmet:";
 $lang['textsubmit'] = "Zaprimiti";
 $lang['textsubmitchanges'] = "Zaprimi promijene";
