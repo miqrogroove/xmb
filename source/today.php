@@ -41,7 +41,7 @@ nav($lang['alttodayposts']);
 eval('$css = "'.template('css').'";');
 eval('echo "'.template('header').'";');
 
-if ($todaysposts == 'off') {
+if ($SETTINGS['todaysposts'] == 'off') {
     error($lang['fnasorry3'], false);
 }
 
@@ -50,7 +50,7 @@ $srchfrom = $onlinetime - (86400 * $daysold);
 
 $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
 $restrict = array("(password='')");
-switch($self['status']) {
+switch ($self['status']) {
     case 'Member':
         $restrict[] = 'private = 1';
         $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))( )*$modXmbuser( )*((,)|$)')";
@@ -100,7 +100,7 @@ if (X_SADMIN) {
         if (count($r2) > 0) {
             $r = implode(' OR ', $r2);
             $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
-            while($f = $db->fetch_array($q)) {
+            while ($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
             $db->free_result($q);
@@ -123,7 +123,7 @@ $db->free_result($query);
 $tids = implode(', ', $tids);
 
 if ($results == 0) {
-    error($lang['nopoststoday'], false);
+    message($lang['nopoststoday'], false);
 }
 
 validateTpp();

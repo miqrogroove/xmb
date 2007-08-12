@@ -34,17 +34,17 @@ loadtemplates('feature_statistics');
 
 smcwcache();
 
-eval("\$css = \"".template("css")."\";");
+eval('$css = "'.template('css').'";');
 
-eval("echo (\"".template('header')."\");");
+eval('echo "'.template('header').'";');
 
-if ($stats == 'off') {
+if ($SETTINGS['stats'] == 'off') {
     error($lang['fnasorry3'], false);
 }
 
 $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
 $restrict = array("(f.password='')");
-switch($self['status']) {
+switch ($self['status']) {
     case 'Member':
         $restrict[] = 'f.private = 1';
         $restrict[] = "(f.userlist = '' OR f.userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
@@ -72,9 +72,9 @@ if (!X_SADMIN) {
     while ($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
+    $db->free_result($q);
 
     if (X_MEMBER) {
-
         $r2 = array();
         foreach ($_COOKIE as $key=>$val) {
             if (preg_match('#^fidpw([0-9]+)$#', $key, $fetch)) {
@@ -88,6 +88,7 @@ if (!X_SADMIN) {
             while ($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
+            $db->free_result($q);
         }
     }
 }
@@ -117,7 +118,7 @@ if ($posts == false) {
 $db->free_result($query);
 
 $query = $db->query("SELECT regdate FROM ".X_PREFIX."members ORDER BY regdate LIMIT 0, 1");
-$days = (time() - @$db->result($query, 0)) / 86400;
+$days = ($onlinetime - @$db->result($query, 0)) / 86400;
 if ($days > 0) {
     $membersday = number_format(($members / $days), 2);
 } else {
@@ -142,7 +143,7 @@ $db->free_result($query);
 
 // In case any of these is 0, the stats will show wrong info, take care of that
 if ($posts == 0 || $members == 0 || $threads == 0 || $forums == 0 || $days < 1) {
-    error($lang['stats_incomplete'], false);
+    message($lang['stats_incomplete'], false);
 }
 
 // Get amount of posts per user
@@ -167,46 +168,50 @@ $db->free_result($query);
 $mapercent  = number_format(($membersact*100/$members), 2).'%';
 
 // Get top 5 most viewed threads
-$viewmost = '';
+$viewmost = array();
 $query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
 while ($views = $db->fetch_array($query)) {
-    $views_subject = stripslashes(censor($views['subject']));
-    $viewmost .= "<a href=\"viewthread.php?tid=$views[tid]\">$views_subject</a> ($views[views])<br />";
+    $view_subject = stripslashes(censor($views['subject']));
+    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.$view_subject.'</a> ('.$views['views'].')<br />';
 }
+$db->free_result($query);
 
 // Get top 5 most replied to threads
-$replymost = '';
+$replymost = array();
 $query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
 while ($reply = $db->fetch_array($query)) {
     $reply_subject = stripslashes(censor($reply['subject']));
-    $replymost .= "<a href=\"viewthread.php?tid=$reply[tid]\">$reply_subject</a> ($reply[replies])<br />";
+    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.$reply_subject.'</a> ('.$reply['replies'].')<br />';
 }
+$db->free_result($query);
 
 // Get last 5 posts
-$latest = '';
+$latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 while ($last = $db->fetch_array($query)) {
-    $lpdate = gmdate("$dateformat", $last['lastpost'] + $adjTime);
-    $lptime = gmdate("$timecode", $last['lastpost'] + $adjTime);
+    $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
+    $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
     $thislast = "$lang[lpoststats] $lang[lastreply1] $lpdate $lang[textat] $lptime";
     $last_subject = stripslashes(censor($last['subject']));
-    $latest .= "<a href=\"viewthread.php?tid=$last[tid]\">$last_subject</a> ($thislast)<br/>";
+    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last_subject.'</a> ('.$thislast.')<br/>';
 }
+$db->free_result($query);
 
 // Get most popular forum
 $query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND type='sub' OR type='forum' ORDER BY posts DESC LIMIT 0, 1");
 $pop = $db->fetch_array($query);
-$popforum = "<a href=\"forumdisplay.php?fid=$pop[fid]\"><b>$pop[name]</b></a>";
+$popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.stripslashes($pop['name']).'</strong></a>';
+$db->free_result($query);
 
 // Get amount of posts per day
 $postsday = number_format($posts / $days, 2);
 
 // Get best member
-$timesearch = time() - 86400;
+$timesearch = $onlinetime - 86400;
 $eval = $lang['evalnobestmember'];
 
-$query = $db->query("SELECT author, Count(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
+$query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 $info = $db->fetch_array($query);
 
 $bestmember = $info['author'];
@@ -215,11 +220,12 @@ if ($bestmember == '') {
     $bestmemberpost = 'No';
 } else {
     if ($info['Total'] != 0) {
-        $membesthtml = "<a href=\"member.php?action=viewpro&amp;member=".rawurlencode($bestmember)."\"><b>$bestmember</b></a>";
+        $membesthtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($bestmember).'"><strong>'.$bestmember.'</strong></a>';
         $bestmemberpost = $info['Total'];
         $eval = $lang['evalbestmember'];
     }
 }
+$db->free_result($query);
 
 eval($eval);
 eval($lang['evalstats1']);
