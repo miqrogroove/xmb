@@ -704,7 +704,7 @@ switch ($action) {
 
                 $memberinfo['location'] = censor($memberinfo['location']);
                 $memberinfo['aim'] = censor($memberinfo['aim']);
-                $memberinfo['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+                $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
                 $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
                 $memberinfo['msn'] = censor($memberinfo['msn']);
 
