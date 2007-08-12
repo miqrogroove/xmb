@@ -798,14 +798,14 @@ if ($action == 'forum') {
         while ($selForums = $db->fetch_array($query)) {
             if ($selForums['type'] == 'group') {
                 $groups[$i]['fid'] = $selForums['fid'];
-                $groups[$i]['name'] = htmlspecialchars($selForums['name']);
+                $groups[$i]['name'] = htmlspecialchars_decode($selForums['name']);
                 $groups[$i]['displayorder'] = $selForums['displayorder'];
                 $groups[$i]['status'] = $selForums['status'];
                 $groups[$i]['fup'] = $selForums['fup'];
             } else if ($selForums['type'] == 'forum') {
                 $id = (empty($selForums['fup'])) ? 0 : $selForums['fup'];
                 $forums[$id][$i]['fid'] = $selForums['fid'];
-                $forums[$id][$i]['name'] = htmlspecialchars($selForums['name']);
+                $forums[$id][$i]['name'] = htmlspecialchars_decode($selForums['name']);
                 $forums[$id][$i]['displayorder'] = $selForums['displayorder'];
                 $forums[$id][$i]['status'] = $selForums['status'];
                 $forums[$id][$i]['fup'] = $selForums['fup'];
@@ -813,7 +813,7 @@ if ($action == 'forum') {
                 $forumlist[$i]['name'] = $selForums['name'];
             } else if ($selForums['type'] == 'sub') {
                 $subs[$selForums['fup']][$i]['fid'] = $selForums['fid'];
-                $subs[$selForums['fup']][$i]['name'] = htmlspecialchars($selForums['name']);
+                $subs[$selForums['fup']][$i]['name'] = htmlspecialchars_decode($selForums['name']);
                 $subs[$selForums['fup']][$i]['displayorder'] = $selForums['displayorder'];
                 $subs[$selForums['fup']][$i]['status'] = $selForums['status'];
                 $subs[$selForums['fup']][$i]['fup'] = $selForums['fup'];
@@ -1133,11 +1133,11 @@ if ($action == 'forum') {
         ?>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textforumname']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="namenew" value="<?php echo htmlspecialchars($forum['name'])?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="namenew" value="<?php echo htmlspecialchars_decode($forum['name'])?>" /></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdesc']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars($forum['description'])?></textarea></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars_decode($forum['description'])?></textarea></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>" valign="top"><?php echo $lang['textallow']?></td>
@@ -1255,6 +1255,7 @@ if ($action == 'forum') {
             $name = addslashes($name);
             $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
+		
         $newgname = formVar('newgname');
         $newfname = formVar('newfname');
         $newsubname = formVar('newsubname');
@@ -1284,8 +1285,8 @@ if ($action == 'forum') {
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
-        $namenew = addslashes(formVar('namenew'));
-        $descnew = addslashes(formVar('descnew'));
+        $namenew = addslashes(formVar('namenew', false));
+        $descnew = addslashes(formVar('descnew', false));
         $allowhtmlnew = formYesNo('allowhtmlnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');
