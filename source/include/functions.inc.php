@@ -463,6 +463,8 @@ function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
+	$forum['description'] = htmlspecialchars_decode($forum['description']);		// Fix for HTML characters in forum descriptions
+	
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
