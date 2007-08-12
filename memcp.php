@@ -447,12 +447,14 @@ if ($action == 'profile') {
         $site           = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
         $newwebcam      = formVar('newwebcam');
         $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
-        $newbio         = formVar('newbio');
-        $bio            = $newbio ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
+        //$newbio         = formVar('newbio');
+        //$bio            = $newbio ? checkInput($newbio, 'no', 'no', 'javascript', false) : '';
+        $bio            = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
         $newmood        = formVar('newmood');
         $mood           = $newmood ? checkInput($newmood, 'no', 'no', 'javascript', false) : '';
-        $newsig         = formVar('newsig');
-        $sig            = $newsig ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
+        //$newsig         = formVar('newsig');
+        //$sig            = $newsig ? checkInput($newsig, '', $SETTINGS['sightml'], '', false) : '';
+        $sig            = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
