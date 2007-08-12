@@ -4173,7 +4173,7 @@ $smilieinsert
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $offcheck2 /> $lang[textdissmileys]<br />
 <input type="checkbox" name="usesig" value="yes" $offcheck3 /> $lang[textusesig]<br />
-<input type="checkbox" name="bbcodeoff" value="yes" $offcheck1 />$lang[bbcodeoff]<br />
+<input type="checkbox" name="bbcodeoff" value="yes" $offcheck1 /> $lang[bbcodeoff]<br />
 <input type="checkbox" name="delete" value="yes" /> <strong>$lang[textdelete]</strong></td>
 </tr>
 $attachment
