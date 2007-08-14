@@ -399,7 +399,7 @@ if (!$action) {
                     if ($poll_length > 97) {
                         $poll_length = 97;
                     }
-                    $pollbar = '<img src="'.$imgdir.'/pollbar.gif" height="10" width="'.$poll_length.'%" alt="'.$lang['altpollpercentage'].'" title="'.$lang['altpollpercentage'].'" border="0" />';
+                    $pollbar = '<img src="'.$THEME['imgdir'].'/pollbar.gif" height="10" width="'.$poll_length.'%" alt="'.$lang['altpollpercentage'].'" title="'.$lang['altpollpercentage'].'" border="0" />';
                 } else {
                     $percentage = '0%';
                 }
@@ -422,7 +422,7 @@ if (!$action) {
     }
     // End Polls
 
-    $thisbg = $altbg2;
+    $thisbg = $THEME['altbg2'];
     $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid=$fid AND p.tid=$tid GROUP BY p.pid ORDER BY p.pid ASC LIMIT $start_limit, $ppp");
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while ($post = $db->fetch_array($querypost)) {
@@ -442,10 +442,10 @@ if (!$action) {
 
         $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
-        if ($post['icon'] != '' && file_exists($smdir.'/'.$post['icon'])) {
-            $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
+        if ($post['icon'] != '' && file_exists($THEME['smdir'].'/'.$post['icon'])) {
+            $post['icon'] = '<img src="'.$THEME['smdir'].'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
         } else {
-            $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
+            $post['icon'] = '<img src="'.$THEME['imgdir'].'/default_icon.gif" alt="[*]" border="0" />';
         }
 
         if ($post['author'] != 'Anonymous') {
@@ -519,7 +519,7 @@ if (!$action) {
             }
 
             $allowavatars = $rank['allowavatars'];
-            $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
+            $stars = str_repeat('<img src="'.$THEME['imgdir'].'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
             $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
 
             if ($allowavatars == 'no') {
@@ -651,10 +651,10 @@ if (!$action) {
             eval('$posts .= "'.template('viewthread_invalid').'";');
         }
 
-        if ($thisbg == $altbg2) {
-            $thisbg = $altbg1;
+        if ($thisbg == $THEME['altbg2']) {
+            $thisbg = $THEME['altbg1'];
         } else {
-            $thisbg = $altbg2;
+            $thisbg = $THEME['altbg2'];
         }
     }
     $db->free_result($querypost);

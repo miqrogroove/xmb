@@ -119,23 +119,23 @@ function censor($txt, $ignorespaces=false) {
 }
 
 function smile($txt) {
-    global $smiliesnum, $smiliecache, $smdir;
+    global $smiliesnum, $smiliecache, $smdir, $THEME;
 
     if ($smiliesnum > 0) {
         reset($smiliecache);
         foreach ($smiliecache as $code=>$url) {
-            $txt = str_replace($code, '<img src="./'.$smdir.'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
+            $txt = str_replace($code, '<img src="./'.$THEME['smdir'].'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
         }
     }
     return $txt;
 }
 
 function createAbsFSizeFromRel($rel) {
-    global $fontsize;
+    global $fontsize, $THEME;
     static $cachedFs;
 
     if (!is_array($cachedFs) || count($cachedFs) != 2) {
-        preg_match('#([0-9]+)([a-z]+)?#i', $fontsize, $res);
+        preg_match('#([0-9]+)([a-z]+)?#i', $THEME['fontsize'], $res);
         $cachedFs[0] = $res[1];
         $cachedFs[1] = $res[2];
 
@@ -170,7 +170,7 @@ function fixUrl($matches) {
 }
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
-    global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
+    global $THEME, $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
 
     $message = checkOutput($message, $allowhtml, '', true);
 
@@ -463,12 +463,12 @@ function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
-	$forum['description'] = htmlspecialchars_decode($forum['description']);		// Fix for HTML characters in forum descriptions
-	
+    $forum['description'] = htmlspecialchars_decode($forum['description']);     // Fix for HTML characters in forum descriptions
+
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
-        if ($lastpost[1] != 'Anonymous' && $lastpost[1] != '') {
+        if ($lastpost[1] != $lang['textanonymous'] && $lastpost[1] != '') {
             $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
         } else {
             $lastpost[1] = $lang['textanonymous'];
@@ -602,7 +602,7 @@ function quickpage($things, $thingsperpage) {
 }
 
 function smilieinsert() {
-    global $imgdir, $smdir, $db, $smileyinsert, $smcols, $smtotal;
+    global $imgdir, $smdir, $db, $smileyinsert, $smcols, $smtotal, $THEME;
 
     $sms = array();
     $smilienum = 0;
@@ -777,7 +777,7 @@ if (!function_exists('htmlentities_decode')) {
 }
 
 function end_time() {
-    global $footerstuff, $starttime, $SETTINGS;
+    global $footerstuff, $starttime, $SETTINGS, $THEME;
     extract($GLOBALS);
 
     $mtime2 = explode(' ', microtime());
@@ -837,7 +837,7 @@ function end_time() {
 }
 
 function pwverify($pass='', $url, $fid, $showHeader=false) {
-    global $self, $cookiepath, $cookiedomain, $lang;
+    global $self, $cookiepath, $cookiedomain, $lang, $THEME;
 
     if (X_SADMIN) {
         return true;
@@ -1029,7 +1029,7 @@ function ServerLoad() {
 }
 
 function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation;
+    global $footerstuff, $lang, $navigation, $THEME;
 
     if (isset($GLOBALS)) {
         extract($GLOBALS);
@@ -1086,7 +1086,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 }
 
 function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation;
+    global $footerstuff, $lang, $navigation, $THEME;
 
     if (isset($GLOBALS)) {
         extract($GLOBALS);
@@ -1202,16 +1202,16 @@ function mysql_syn_highlight($query) {
 }
 
 function dump_query($resource, $header=true) {
-    global $altbg2, $altbg1, $db, $cattext;
+    global $altbg2, $altbg1, $db, $cattext, $THEME;
     if (!$db->error()) {
         $count = $db->num_fields($resource);
         if ($header) {
             ?>
-            <tr class="category" bgcolor="<?php echo $altbg2?>" align="center">
+            <tr class="category" bgcolor="<?php echo $THEME['altbg2']?>" align="center">
             <?php
             for($i=0;$i<$count;$i++) {
                 echo '<td align="left">';
-                echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
+                echo '<strong><font color='.$THEME['cattext'].'>'.$db->field_name($resource, $i).'</font></strong>';
                 echo '</td>';
             }
             echo '</tr>';
@@ -1219,7 +1219,7 @@ function dump_query($resource, $header=true) {
 
         while ($a = $db->fetch_array($resource, SQL_NUM)) {
             ?>
-            <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
+            <tr bgcolor="<?php echo $THEME['altbg1']?>" class="ctrtablerow">
             <?php
             for ($i=0;$i<$count;$i++) {
                 echo '<td align="left">';
@@ -1295,12 +1295,12 @@ function audit($user='', $action, $fid, $tid, $reason='') {
 }
 
 function validatePpp() {
-    global $ppp, $postperpage;
+    global $ppp, $postperpage, $self, $SETTINGS;
 
     if (!isset($ppp) || $ppp == '') {
-        $ppp = $postperpage;
+        $ppp = $SETTINGS['postperpage'];
     } else {
-        $ppp = is_numeric($ppp) ? (int) $ppp : $postperpage;
+        $ppp = is_numeric($ppp) ? (int) $ppp : $SETTINGS['postperpage'];
     }
 
     if ($ppp < 5) {
@@ -1309,12 +1309,12 @@ function validatePpp() {
 }
 
 function validateTpp() {
-    global $tpp, $topicperpage;
+    global $tpp, $topicperpage, $self, $SETTINGS;
 
     if (!isset($tpp) || $tpp == '') {
-        $tpp = $topicperpage;
+        $tpp = $SETTINGS['topicperpage'];
     } else {
-        $tpp = is_numeric($tpp) ? (int) $tpp : $topicperpage;
+        $tpp = is_numeric($tpp) ? (int) $tpp : $SETTINGS['topicperpage'];
     }
 
     if ($tpp < 5) {

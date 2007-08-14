@@ -192,7 +192,7 @@ class Captcha {
         foreach ($aFonts as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
                         $this->aFonts[] = $sCurrentItem . '/' . $file;
                     }
@@ -235,7 +235,7 @@ class Captcha {
         foreach ($aBackgroundImages as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
                         $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {

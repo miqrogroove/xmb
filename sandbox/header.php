@@ -468,7 +468,7 @@ if (X_MEMBER) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
 
-    $notify = '.$lang[loggedin].' '<a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.'$cplink.']';
+    $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 } else {
     $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
     $onlineuser = 'xguest123';
@@ -562,7 +562,7 @@ if (false === strpos($THEME['catcolor'], '.')) {
     $catcss = 'background-color: '.$THEME['catcolor'].';';
 } else {
     $catbgcode = "style=\"background-image: url($THEME[imgdir]/$THEME[catcolor])\"";
-    $catcss = 'background-image: url('.$THEME['imgdir'].'/'.$THEME[catcolor'].');';
+    $catcss = 'background-image: url('.$THEME['imgdir'].'/'.$THEME['catcolor'].');';
 }
 
 if (false === strpos($THEME['top'], '.')) {
@@ -584,7 +584,7 @@ if (false !== strpos($THEME['boardimg'], ',')) {
     $l = array();
     $l = parse_url($THEME['boardimg']);
     if (!isset($l['scheme']) || !isset($l['host'])) {
-        $boardimg = $THEME[imgdir'].'/'.$THEME['boardimg'];
+        $boardimg = $THEME['imgdir'].'/'.$THEME['boardimg'];
     }
     $logo = '<a href="index.php"><img src="'.$THEME['boardimg'].'" alt="'.$SETTINGS['bbname'].'" border="0" /></a>';
 }
