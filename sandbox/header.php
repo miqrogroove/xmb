@@ -309,12 +309,12 @@ foreach ($db->fetch_array($squery) as $key => $val) {
     $SETTINGS[$key] = $val;
 }
 
-if ($postperpage < 5) {
-    $postperpage = 30;
+if ($SETTINGS['postperpage'] < 5) {
+    $SETTINGS['postperpage'] = 30;
 }
 
-if ($topicperpage < 5) {
-    $topicperpage = 30;
+if ($SETTINGS['topicperpage'] < 5) {
+    $SETTINGS['topicperpage'] = 30;
 }
 
 // Get the user-vars, and make them semi-global
@@ -450,8 +450,8 @@ if (!file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
 require_once(ROOT.'lang/'.$langfile.'.lang.php');
 
 // Checks for the possibility to register
-if ($regstatus == "on" && X_GUEST) {
-    $reglink = "- <a href=\"member.php?action=coppa\">$lang[textregister]</a>";
+if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
+    $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
 } else {
     $reglink = '';
 }
@@ -465,15 +465,15 @@ if (X_MEMBER) {
     $u2ulink = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[banu2u]</a> - ";
 
     if (X_ADMIN) {
-        $cplink = " - <a href=\"cp.php\">$lang[textcp]</a>";
+        $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
 
-    $notify = "$lang[loggedin] <a href=\"member.php?action=viewpro&amp;member=".rawurlencode($onlineuser)."\">$xmbuser</a><br />[$loginout - $u2ulink$memcp$cplink]";
+    $notify = '.$lang[loggedin].' '<a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.'$cplink.']';
 } else {
-    $loginout = "<a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+    $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
     $onlineuser = 'xguest123';
-    $self['status'] = "";
-    $notify = "$lang[notloggedin] [$loginout $reglink]";
+    $self['status'] = '';
+    $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
 }
 
 // Checks if the timeformat has been set, if not, use default
@@ -497,7 +497,7 @@ if (isset($tid) && $action != 'templates') {
     } else {
         $threadSubject = '';
     }
-} elseif (isset($fid)) {
+} else if (isset($fid)) {
     $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
@@ -534,79 +534,76 @@ if ((int) $themeuser > 0) {
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
+$query = $db->query("SELECT * FROM $table_themes WHERE themeid=$theme");
 foreach ($db->fetch_array($query) as $key => $val) {
-    if ($key != "name") {
-        $$key = $val;
-    } else {
-        // make themes with apostrophes safe to display
+    if ($key == 'name') {
         $val = stripslashes($val);
     }
     $THEME[$key] = $val;
 }
-$imgdir = './'.$imgdir;
+$THEME['imgdir'] = ROOT.$THEME['imgdir'];
 
 // additional CSS to load?
-if (file_exists($imgdir.'/theme.css')) {
-    $cssInclude = '<style type="text/css">'."\n"."@import url('".$imgdir."/theme.css');"."\n".'</style>';
+if (file_exists($THEME['imgdir'].'/theme.css')) {
+    $cssInclude = '<style type="text/css">'."\n"."@import url('".$THEME['imgdir']."/theme.css');"."\n".'</style>';
 } else {
     $cssInclude = '';
 }
 
 // Alters certain visibility-variables
-if (false === strpos($bgcolor, '.')) {
-    $bgcode = "background-color: $bgcolor;";
+if (false === strpos($THEME['bgcolor'], '.')) {
+    $bgcode = "background-color: $THEME[bgcolor];";
 } else {
-    $bgcode = "background-image: url('$imgdir/$bgcolor');";
+    $bgcode = "background-image: url('$THEME[imgdir]/$THEME[bgcolor]');";
 }
 
-if (false === strpos($catcolor, '.')) {
-    $catbgcode = "bgcolor=\"$catcolor\"";
-    $catcss = 'background-color: '.$catcolor.';';
+if (false === strpos($THEME['catcolor'], '.')) {
+    $catbgcode = "bgcolor=\"$THEME[catcolor]\"";
+    $catcss = 'background-color: '.$THEME['catcolor'].';';
 } else {
-    $catbgcode = "style=\"background-image: url($imgdir/$catcolor)\"";
-    $catcss = 'background-image: url('.$imgdir.'/'.$catcolor.');';
+    $catbgcode = "style=\"background-image: url($THEME[imgdir]/$THEME[catcolor])\"";
+    $catcss = 'background-image: url('.$THEME['imgdir'].'/'.$THEME[catcolor'].');';
 }
 
-if (false === strpos($top, '.')) {
-    $topbgcode = "bgcolor=\"$top\"";
+if (false === strpos($THEME['top'], '.')) {
+    $topbgcode = "bgcolor=\"$THEME[top]\"";
 } else {
-    $topbgcode = "style=\"background-image: url($imgdir/$top)\"";
+    $topbgcode = "style=\"background-image: url($THEME[imgdir]/$THEME[top])\"";
 }
 
-if (false !== strpos($boardimg, ',')) {
-    $flashlogo = explode(",",$boardimg);
+if (false !== strpos($THEME['boardimg'], ',')) {
+    $flashlogo = explode(",",$THEME['boardimg']);
     //check if it's an URL or just a filename
     $l = array();
     $l = parse_url($flashlogo[0]);
     if (!isset($l['scheme']) || !isset($l['host'])) {
-        $flashlogo[0] = $imgdir.'/'.$flashlogo[0];
+        $flashlogo[0] = $THEME['imgdir'].'/'.$flashlogo[0];
     }
     $logo = '<object type="application/x-shockwave-flash" data="'.$flashlogo[0].'" width="'.$flashlogo[1].'" height="'.$flashlogo[2].'"><param name="movie" value="'.$flashlogo[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
 } else {
     $l = array();
-    $l = parse_url($boardimg);
+    $l = parse_url($THEME['boardimg']);
     if (!isset($l['scheme']) || !isset($l['host'])) {
-        $boardimg = $imgdir.'/'.$boardimg;
+        $boardimg = $THEME[imgdir'].'/'.$THEME['boardimg'];
     }
-    $logo = '<a href="index.php"><img src="'.$boardimg.'" alt="'.$bbname.'" border="0" /></a>';
+    $logo = '<a href="index.php"><img src="'.$THEME['boardimg'].'" alt="'.$SETTINGS['bbname'].'" border="0" /></a>';
 }
 
 // Font stuff...
-$fontedit = preg_replace('#(\D)#', '', $fontsize);
-$fontsuf = preg_replace('#(\d)#', '', $fontsize);
+$fontedit = preg_replace('#(\D)#', '', $$THEME['fontsize']);
+$fontsuf = preg_replace('#(\d)#', '', $THEME['fontsize']);
 
-$font1 = $fontedit-1 . $fontsuf;
-$font3 = $fontedit+2 . $fontsuf;
+$THEME['font1'] = $fontedit-1 . $fontsuf;
+$THEME['font3'] = $fontedit+2 . $fontsuf;
 
 // Update lastvisit in the header shown
 if (isset($lastvisit) && X_MEMBER) {
     $theTime = $xmblva + ($timeoffset * 3600) + ($addtime * 3600);
     $lastdate = gmdate($dateformat, $theTime);
     $lasttime = gmdate($timecode, $theTime);
-    $lastvisittext = "$lang[lastactive] $lastdate $lang[textat] $lasttime";
+    $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = "$lang[lastactive] $lang[textnever]";
+    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
 }
 
 // Checks for various settings
@@ -615,7 +612,7 @@ if (empty($action)) {
 }
 
 // Gzip-compression
-if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
+if ($SETTINGS['gzipcompress'] == 'on' && $action != 'attachment') {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
     } elseif ($res === false) {
@@ -634,33 +631,33 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 }
 
 // Search-link
-if ($SETTINGS['searchstatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
+if ($SETTINGS['searchstatus'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
 }
 
 // Faq-link
-if ($SETTINGS['faqstatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
+if ($SETTINGS['faqstatus'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
 }
 
 // Memberlist-link
-if ($SETTINGS['memliststatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/members_list.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
+if ($SETTINGS['memliststatus'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/members_list.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
 }
 
 // Today's posts-link
-if ($SETTINGS['todaysposts'] == "on") {
-    $links[] = "<img src=\"$imgdir/todays_posts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
+if ($SETTINGS['todaysposts'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/todays_posts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
 }
 
 // Stats-link
-if ($SETTINGS['stats'] == "on") {
-    $links[] = "<img src=\"$imgdir/stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
+if ($SETTINGS['stats'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
 }
 
 // 'Forum Rules'-link
-if ($SETTINGS['bbrules'] == "on") {
-    $links[] = "<img src=\"$imgdir/bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
+if ($SETTINGS['bbrules'] == 'on') {
+    $links[] = '<img src="'.$THEME['imgdir'].'/bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
 }
 
 $links = implode(' &nbsp; ', $links);
@@ -688,18 +685,18 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
     eval('$css = "'.template('css').'";');
-    message(nl2br(stripslashes($bboffreason)));
+    message(nl2br(stripslashes($SETTINGS['bboffreason'])));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($regviewonly == "on") {
+if ($SETTINGS['regviewonly'] == 'on') {
     if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($coppa == 'on') {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+        if ($SETTINGS['coppa'] == 'on') {
+            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         } else {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         }
         eval('$css = "'.template('css').'";');
         message($message);

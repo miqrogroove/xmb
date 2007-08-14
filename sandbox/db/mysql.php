@@ -103,7 +103,7 @@ class dbstuff {
     }
 
     function find_database($tablepre) {
-    	$found = false;
+        $found = false;
         $dbs = mysql_list_dbs($this->link);
         while ($db = mysql_fetch_array($dbs)) {
             $q = $this->query("SHOW TABLES FROM `$db[Database]`");
@@ -232,6 +232,7 @@ class dbstuff {
         return $taken;
     }
 }
+
 define('SQL_NUM', MYSQL_NUM);
 define('SQL_BOTH', MYSQL_BOTH);
 define('SQL_ASSOC', MYSQL_ASSOC);
