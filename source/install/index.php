@@ -50,40 +50,39 @@ define('IN_CODE', true);
 
 function error($head, $msg, $die=true) {
     echo "\n";
-    echo '<blockquote>';
-    echo '<font class="progressErr">'.$head.'</font><br />';
-    echo '<font class="progressWarn">'.$msg.'</font>';
-    echo '</blockquote>';
+    echo '<h1 class="progressErr">'.$head.'</h1>';
+    echo '<span class="progressWarn">'.$msg.'</span><br />';
     echo "\n";
     if ( $die) {
+	    echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
         exit();
     }
 }
 
 function show_act($act) {
     $act .= str_repeat('.', (75-strlen($act)));
-    echo '<font class="progress">'.$act;
+    echo '<span class="progress">'.$act;
 }
 
 function show_result($type) {
     switch($type) {
         case 0:
-            echo '<font class="progressErr">ERROR</font><br />';
+            echo '<span class="progressErr">ERROR</span><br />';
             break;
 
         case 1:
-            echo '<font class="progressWarn">WARNING</font><br />';
+            echo '<span class="progressWarn">WARNING</span><br />';
             break;
 
          case 2:
-            echo '<font class="progressOk">OK</font><br />';
+            echo '<span class="progressOk">OK</span><br />';
             break;
 
          case 3:
-            echo '<font class="progressSkip">SKIPPED</font><br />';
+            echo '<span class="progressSkip">SKIPPED</span><br />';
             break;
     }
-    echo "</font>\n";
+    echo "</span>\n";
 }
 
 if (!function_exists('file_get_contents')) {
@@ -105,16 +104,18 @@ error_reporting(E_ALL&~E_NOTICE);
 
 if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4) {
 ?>
-    <html>
-        <head>
-            <title>
-                XMB Installer
-            </title>
-            <style type="text/css">
-                @import url("./install.css");
-            </style>
-        </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>XMB Installer</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="install.css" rel="stylesheet" type="text/css" media="screen, projection" />
+</head>
         <body>
+        <div id="header">
+         <img src="images/logo.gif" alt="XMB" title="XMB" />
+        </div>
 <?php
 }
 $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 0;
@@ -124,61 +125,101 @@ $vStep = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 0;
 switch($vStep) {
     case 1: // welcome
         ?>
-        <p style="text-align:center;"><a href="index.php?step=2"><img src="./splash.gif" border="0" /></a></p>
-        <p style="text-align:center;">Thank you for choosing XMB as your message board.</p>
-        <p style="text-align:center;">The next steps will guide you through the installation of your board.</p>
-        <form action="./index.php?step=2" method="post">
-        <p style="text-align:center;">
-        <INPUT TYPE="submit" VALUE="Start installation &gt;" />
-        </p>
-        </form>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li class="current">Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li>Configuration</li>
+           <li>Create Super Administrator Account</li>
+           <li>Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>Welcome to the XMB Installer</h1>
+          <p>Welcome to the installer for XMB, the popular open-source lightweight message board software. Thank you for chosing XMB to foster your new community. The next steps will guide you through the installation of your XMB Powered Message Board.</p>
+           <form action="./index.php?step=2" method="post">
+           <p><input type="submit" value="Start installation &gt;" /></p>
+           </form>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
         <?php
         break;
 
     case 2: // versioncheck
         ?>
-        <p class="subTitle">
-            Version Check Information
-        </p>
-
-        <br />
-        This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.
-        <br /><br />
-        <table style="width: 75%;">
-        <tr>
-        <td style="width: 30%;">
-        Your Version:
-        </td>
-        <td style="width:70%;">
-            <b>XMB <?php echo X_VERSION_EXT;?></b>
-        </td>
-        </tr>
-        <td style="width: 30%;">
-        Current Version:</td>
-        <td style="width:70%;">
-        <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=e9edef&fg=000000" border="0">
-        </td>
-        </tr>
-        </table>
-        <br />
-        <form action="./index.php?step=3" method="post">
-        <INPUT TYPE="submit" VALUE="Install XMB <?php echo X_VERSION;?> &gt;" />
-        </form>
-        <br />&nbsp;
-        </p>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li class="current">Version Check</li>
+           <li>License Agreement</li>
+           <li>Configuration</li>
+           <li>Create Super Administrator Account</li>
+           <li>Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>Version Check Information</h1>
+          <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
+          <ul>
+           <li>Your Version: XMB <?php echo X_VERSION_EXT;?></li>
+           <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=aebbcf&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+          </ul>
+          <form action="./index.php?step=3" method="post">
+           <p><input type="submit" value="Install XMB <?php echo X_VERSION;?> &gt;" /></p>
+          </form>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
         <?php
         break;
 
     case 3: // agreement
         ?>
-        <p style="text-align:center;">
-        <table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="80%" >
-        <tr>
-        <td ALIGN=CENTER VALIGN=CENTER>
-        <p class="subTitle">XMB <?php echo X_VERSION;?> License Agreement</p>
-        <p>Please read over the agreement below, and if you agree to it select the button</p>
-        <p>at the very bottom. By selecting the button, you agree to the terms below.</p><br /><br />
-        <textarea cols="100" rows="30"  wrap='soft' name="agreement" style= "font-family: Verdana; font-size: 8pt" readonly>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li class="current">License Agreement</li>
+           <li>Configuration</li>
+           <li>Create Super Administrator Account</li>
+           <li>Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>XMB <?php echo X_VERSION;?> License Agreement</h1>
+          <p>Please read over the agreement below, and if you agree to it select the button at the very bottom. By selecting the button, you agree to the terms below.</p>
+          <textarea cols="100" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
         XMB <?php echo X_VERSION;?>  License (Updated August 2005)
         www.xmbforum.com
         ----------------------------------------------
@@ -475,8 +516,8 @@ to attach them to the start of each source file to most effectively
 convey the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    &lt;one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) &lt;year>  &lt;name of author>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -515,7 +556,7 @@ necessary.  Here is a sample; alter the names:
   Yoyodyne, Inc., hereby disclaims all copyright interest in the program
   `Gnomovision' (which makes passes at compilers) written by James Hacker.
 
-  <signature of Ty Coon>, 1 April 1989
+  &lt;signature of Ty Coon>, 1 April 1989
   Ty Coon, President of Vice
 
 This General Public License does not permit incorporating your program into
@@ -526,15 +567,14 @@ Public License instead of this License.
 
 
 
-        </textarea><br /><br /><br />
+        </textarea>
         <form action="index.php?step=4" method="post">
-        <INPUT TYPE="submit" VALUE="I Agree To These Terms &gt;" />
+         <p><input type="submit" value="I Agree To These Terms &gt;" /></p>
         </form>
-        <br />&nbsp;
-        <br />&nbsp;</td>
-        </tr>
-        </table>
-        </p>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
         <?php
         break;
 
@@ -588,53 +628,58 @@ Public License instead of this License.
             switch($_REQUEST['method']) {
                 case 1: // Show configuration on screen
                     ?>
-
-                        <html>
-                            <head>
-                                <title>
-                                    XMB Installer
-                                </title>
-                                <style type="text/css">
-                                    @import url("./install.css");
-                                </style>
-                            </head>
-                            <body>
-                                <img src="./splash.gif" border="0" />
-                                <table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" height="20">
-                            <tr>
-                                <td ALIGN=CENTER VALIGN=MIDDLE height="20">
-                                    <p class="subTitle">XMB Configuration</p>
-                                    <p>Copy the following into a new file, and call it &quot;config.php&quot;.&nbsp; Upload it to your webspace</p>
-                                    <p>Then, click to continue to the final step!<br /></p>
-<form action="index.php?step=5" method="post">
-    <INPUT TYPE="submit" VALUE="Close Window" onClick="window.close()">
-</form>
-                                    </td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#FFFFFF">
-                                        <p><?php highlight_string($configuration); ?></p>
-                                    </td>
-                            </tr>
-                        </table>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>XMB Installer</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="install.css" rel="stylesheet" type="text/css" media="screen, projection" />
+</head>
+<body>
+<div id="header">
+ <img src="images/logo.gif" alt="XMB" title="XMB" />
+</div>
+<div class="block w100">
+  <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+  <div class="dark">
+   <h1>XMB Configuration</h1>
+   <p>Copy the following into to a new file, and call it &quot;config.php&quot;.&nbsp; Upload it to the root of your XMB directory. Then, click to continue to the next steps.</p>
+  </div>
+  <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+ </div>
+ <div class="block w100">
+  <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+  <div class="light arrow">
+   <p><?php highlight_string($configuration); ?></p>
+   <form action="index.php?step=5" method="post">
+    <p><input type="submit" value="Close Window" onclick="window.close()"></p>
+  </form>
+  </div>
+  <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+ </div>
                     <?php
                     break;
 
                 case 2:
                     ?>
-                    <html>
-                        <head>
-                            <title>
-                                XMB Installer
-                            </title>
-                            <style type="text/css">
-                                @import url("./install.css");
-                                </style>
-                        </head>
-                        <body>
-                            <img src="./splash.gif" border="0" />
-                    <?php
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>XMB Installer</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="install.css" rel="stylesheet" type="text/css" media="screen, projection" />
+</head>
+<body>
+<div id="header">
+ <img src="images/logo.gif" alt="XMB" title="XMB" />
+</div>
+ <div class="block w100">
+  <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+  <div class="light arrow">
+   <h1>XMB Configuration</h1>
+   <p><?php
 
                     // Open a new file
                     $handle = @fopen(ROOT.'config.php', "w");
@@ -649,10 +694,13 @@ Public License instead of this License.
                     // Continue to next step
                     echo 'Your XMB configuration has been created correctly on the server.';
 
-                    ?>
-                    <form action="index.php?step=5" method="post">
-                        <INPUT TYPE="submit" VALUE="Close Window" onClick="window.close()">
-                    </form>
+                    ?></p>
+   <form action="index.php?step=5" method="post">
+    <p><input type="submit" value="Close Window" onclick="window.close()"></p>
+  </form>
+  </div>
+  <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+ </div>
                     <?php
 
                     break;
@@ -700,165 +748,163 @@ Public License instead of this License.
                     continue;
                 }
                 if ($db == 'mysql') {
-                    $types[] = "<option SELECTED name=\"$db\">$db</option>";
+                    $types[] = "<option selected=\"selected\" name=\"$db\">$db</option>";
                 } else {
                     $types[] = "<option name=\"$db\">$db</option>";
                 }
             }
             $types = '<select name="db_type">'.implode("\n", $types).'</select>';
             ?>
-
-                        <html>
-                        <head>
-                            <title>
-                            XMB Installer
-                            </title>
-                            <style type="text/css">
-                            @import url("./install.css");
-                            </style>
-                        </head>
-                        <body>
-                        <img src="./splash.gif" border="0" />
-
-                        <table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="769" >
-
-                            <tr>
-                                <td ALIGN=CENTER VALIGN=MIDDLE width="767">
-                                    <p class="subTitle">XMB <?php echo X_VERSION;?>  Configuration</p><br />
-                                    <p>Please complete the form below and choose "Configure XMB" to finish the installation with the values on this page, or choose 'Next Step' if you have already configured config.php correctly.</p>
-                                    <p>If you choose "Configure XMB", a new window will pop-up.  When you return, choose 'Next Step' to continue the installation process.
-                                    <p>Below, you can configure your config.php file if you haven't already done so. Please read the following before attempting to fill in the details.</p><br />
-                                    <br />
-                                    <br />
-                                        <form action="index.php?step=4&substep=create" method="post" target="_blank">
-                                            <div align="center">
-                                                <center>
-                                                    <table border="0" cellspacing="0" width="80%" cellpadding="0">
-                                                        <tr>
-                                                            <td width="101%" colspan="2"><p class="subTitle">Configuration Method</p></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="101%" colspan="2"><p>Please choose the configuration method you would like to use below<br />
-                                                            1: This option will show the config.php information on screen, and you will need to copy it into your own configuration file<br /> <br />
-                                                            2: This option will attempt to create config.php directly onto the server.&nbsp; For this to work, the current config.php must have a CHMOD Value of '<i>666</i>'.<br /> <br />
-                                                            3: This option will let you download a complete config.php onto your computer based on the values below<br /> <br />
-                                                            <select size="1" name="method">
-                                                                <option value="1">1)&nbsp;  Show the  configuration on  screen</option>
-                                                                <option value="2">2)&nbsp;  Attempt to create  config.php for me.</option>
-                                                                <option value="3">3)&nbsp;  Download config.php  onto my computer</option>
-                                                            </select><br />&nbsp;</font>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="101%" colspan="2"><p class="subTitle">Database Connection Settings</p></td>
-                                                        </tr>
-                                                        <tr>                <td width="48%">    <b>Database Name</b><br />Name of your database<br />&nbsp;</font></td>
-
-                                                            <td width="53%"><input type="text" name="db_name" size="40"><br /> &nbsp;</td>
-                                                            </font>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td width="48%"><b>    Database Username</font></b>    <br />User used to access database<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="db_user" size="40"><br />&nbsp;</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td width="48%"><b>    Database Password</font></b>    <br /> Password used to access it<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="password" name="db_pw" size="40"><br />&nbsp;</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                              <td width="48%"><b>    Database Host</font></b>    <br />Database Host, usually &quot;<i>localhost</i>&quot;<br />&nbsp;</font></td>
-                                                              <td width="53%"><input type="text" name="db_host" size="40" value="localhost"><br />&nbsp;</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td width="48%"><b>    Database Type</font></b>    <br />The type of server software run</font></td>
-                                                            <td width="53%"><?php echo $types?><br />&nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%">    <b>Table Prefix Setting</b><br />This setting is for the table prefix, for every board you have installed, this should be different<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="table_pre" size="40" value="xmb_"><br />  &nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"></td>
-                                                            <td width="53%"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"></td>
-                                                            <td width="53%"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="101%" colspan="2"><p subTitle>Forum Settings</p></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>Full URL</font></b><br />
-                                                                    In this field put the full URL you see when you go to your boards, without the filename though.<br />Please remember to put in the trailing slash at  the end.&nbsp;See example.</font><br />&nbsp;&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="fullurl" size="40" value="<?php
-                                                            echo 'http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')-7);
-                                                            ?>"><br />&nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Maximum Attachment Size</font></b>
-                                                                <br />    Maximum Attachment size permitted.&nbsp; (250*1024) would be 250 KB</font>
-                                                                                                    </td>
-                                                            <td width="53%"><input name="maxattachsize" size="40" value="(250*1024)"><br /></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Comment Output</font></b>
-                                                                    <br />This setting will turn off comments indicating templates. Tick the box to turn these on.&nbsp; Default: Off<br />&nbsp;</font>
-                                                            </td>
-                                                            <td width="53%"><input type="checkbox" name="c_output" value="TRUE"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    IP Reg</font></b>    <br />Will only allow one registration per IP in 24 hours.&nbsp; Default: On<b><br />&nbsp;</b></font></td>
-                                                            <td width="53%"><input type="checkbox" name="ip_reg" value="on" checked></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    IP Check</b><br /> Will check if your IP is a valid IPv4 or IPv6 type, if none of these. &nbsp;Default: Off<br /> &nbsp;</font></td>
-                                                            <td width="53%"><input type="checkbox" name="ip_check" value="off" ></td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td width="48%"><b>    Allow Special Queries</b><br />This specifies if Special queries (eg. USE database and SHOW DATABASES) are allowed. &nbsp;Default: Off<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="checkbox" name="allowspecialq" value="off"></td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td width="48%"><b>    Show Full Info</b><br />Will turn on/off the&quot;Alpha, Beta, Release, SP&quot; markings.&nbsp;Default: Off<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="checkbox" name="showfullinfo" value="off" ></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Mail-handler</b><br />some hosts prevent the direct use of sendmail, which php uses to send out emails by default. To get around this, we have included code which will contact a separate SMTP server of your choice, and will send the mail trough that...&nbsp;Default: 'default'<br />&nbsp;</font></td>
-                                                            <td width="53%"><select name="MAILER_TYPE"><option value="default">Default</option><option value="socket_SMTP">socket SMTP</option></select></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Mail-handler Username</b><br />Only required when the mail-handler is not set to 'default'<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="MAILER_USER" value="username" /></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Mail-handler Password</b><br />Only required when the mail-handler is not set to 'default'<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="password" name="MAILER_PASS" value="password" /></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Mail-handler Host</b><br />Only required when the mail-handler is not set to 'default'<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="MAILER_HOST" value="mail.example.com" /></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="48%"><b>    Mail-handler Port</b><br />Only required when the mail-handler is not set to 'default'<br />&nbsp;</font></td>
-                                                            <td width="53%"><input type="text" name="MAILER_PORT" value="25" /></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="101%" colspan="2"><p align="center"><INPUT TYPE="submit" VALUE="Configure" name="submit"></form>&nbsp; <form action="index.php?step=5" method="POST"><input type="submit" value="Next Step"></form></td>
-                                                        </tr>
-                                                    </table>
-                                                </center>
-                                            </div>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </table>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>XMB Installer</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="install.css" rel="stylesheet" type="text/css" media="screen, projection" />
+</head>
+<body>
+<div id="header">
+ <img src="images/logo.gif" alt="XMB" title="XMB" />
+</div>
+<div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li class="current">Configuration</li>
+           <li>Create Super Administrator Account</li>
+           <li>Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>XMB Configuration</h1>
+          <p>If you have not configured your config.php file, complete the form below and select "Configure XMB". If you have already configured config.php correctly, you may skip this process and select "Next Step" below. If you select "Configure XMB", a new window will pop up. When you return, select "Next Step" to continue the installation process.</p>
+          <form action="index.php?step=4&amp;substep=create" method="post" target="_blank">
+          <table cellspacing="1px">
+           <tr>
+            <td colspan="2">
+             <h1>Configuration Method</h1>
+             <p>Please choose the Configuration Method you would like to use below.</p>
+             <ol>
+              <li>Show the configuration on screen: This option will show the config.php information on screen so that you can copy it into your own config.php file</li>
+              <li>Attempt to create config.php: This option will attempt to create config.php directly onto the server. For this to work, the current config.php must have a CHMOD Value of 666</li>
+              <li>Download config.php: This option will create config.php and allow you to download the complete file onto your computer. Once downloaded you will need to upload the file to the root of your XMB directory</li>
+             </ol>
+             <p>
+              <select size="1" name="method">
+               <option value="1">1)&nbsp;  Show the  configuration on  screen</option>
+               <option value="2">2)&nbsp;  Attempt to create  config.php for me.</option>
+               <option value="3">3)&nbsp;  Download config.php  onto my computer</option>
+              </select>
+             </p>
+            </td>
+           </tr>
+           <tr class="category">
+            <td colspan="2">Database Connection Settings</td>
+           </tr>
+           <tr>
+            <td>Database Name<br /><span>Name of your database</span></td>
+            <td><input type="text" name="db_name" size="40" /></td>
+           </tr>
+           <tr>
+            <td>Database Username<br /><span>User used to access database</span></td>
+            <td><input type="text" name="db_user" size="40" /></td>
+           </tr>
+           <tr>
+            <td>Database Password<br /><span>Password for the Database User</span></td>
+            <td><input type="password" name="db_pw" size="40" /></td>
+           </tr>
+           <tr>
+            <td>Database Host<br /><span>Database host location, usually "localhost"</span></td>
+            <td><input type="text" name="db_host" size="40" value="localhost" /></td>
+           </tr>
+           <tr>
+            <td>Database Type<br /><span>The type of database server run. At this time, only mysql is supported</span></td>
+            <td><?php echo $types?></td>
+           </tr>
+           <tr>
+            <td>Database Table Prefix<br /><span>Specify a prefix for this board's database tables.</span></td>
+            <td><input type="text" name="table_pre" size="40" value="xmb_" /></td>
+           </tr>
+           <tr class="category">
+            <td colspan="2">Forum Settings</td>
+           </tr>
+           <tr>
+            <td>Full URL<br /><span>Put the full URL of your boards here, without any file names. Be sure to include a slash at the end.</span></td>
+            <td><input type="text" name="fullurl" size="40" value="<?php echo 'http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')-7);?>" /></td>
+           </tr>
+           <tr>
+            <td>Maximum Attachment Size<br /><span>Enter the maximum allowed attachment size for your board here. (250*1024) for example, would be 250KB</span></td>
+            <td><input name="maxattachsize" size="40" value="(250*1024)" /></td>
+           </tr>
+           <tr>
+            <td>Comment Output<br /><span>This setting will allow you to chose whether you want comments indicating templates. Default: Off</span></td>
+            <td><input type="checkbox" name="c_output" value="TRUE" /></td>
+           </tr>
+           <tr>
+            <td>Restrict User Registration Per IP<br /><span>This will restrict registration of users to one per IP address every 24 hours. Default: On</span></td>
+            <td><input type="checkbox" name="ip_reg" value="on" checked="checked" /></td>
+           </tr>
+           <tr>
+            <td>IP Validation Check<br /><span>This will check users' IP addresses are valid IPv4 or IPv6 type, if none of these. Default: Off</span></td>
+            <td><input type="checkbox" name="ip_check" value="off" /></td>
+           </tr>
+           <tr>
+            <td>Allow Special Queries<br /><span>This specifies whether special database queries such as USE database and SHOW database are allowed. Default: off</span></td>
+            <td><input type="checkbox" name="allowspecialq" value="off" /></td>
+           </tr>
+           <tr>
+            <td>Show Full XMB Version Info<br /><span>This will show the full version information of your XMB Board. Default: Off</span></td>
+            <td><input type="checkbox" name="showfullinfo" value="off" /></td>
+           </tr>
+           <tr class="category">
+            <td colspan="2">XMB E-Mail Settings</td>
+           </tr>
+           <tr>
+            <td colspan="2"><p>XMB by default uses sendmail to send email from the board. As some hosts don't allow direct use of sendmail, you may chose to configure XMB to use SMTP to send E-mail instead. Please choose your configuration below.</p></td>
+           </tr>
+           <tr>
+            <td>Mail Handler<br /><span>Chose your mail handler. If you wish to use the default sendmail, select "Default" and disregard the configuration options below. If you chose SMTP, please complete the options below. Default: "Default"</span></td>
+            <td><select name="MAILER_TYPE"><option value="default">Default</option><option value="socket_SMTP">socket SMTP</option></select></td>
+           </tr>
+           <tr>
+            <td>SMTP Username:</td>
+            <td><input type="text" name="MAILER_USER" value="username" /></td>
+           </tr>
+           <tr>
+            <td>SMTP Password:</td>
+            <td><input type="password" name="MAILER_PASS" value="password" /></td>
+           </tr>
+           <tr>
+            <td>SMTP Host:</td>
+            <td><input type="text" name="MAILER_HOST" value="mail.example.com" /></td>
+           </tr>
+           <tr>
+            <td>SMTP Port:</td>
+            <td><input type="text" name="MAILER_PORT" value="25" /></td>
+           </tr>
+           <tr>
+            <td colspan="2" class="configure"><input type="submit" value="Configure" name="submit" /></td>
+           </tr>
+          </table>
+          </form>
+          <form action="index.php?step=5" method="post">
+           <p><input type="submit" value="Next Step" /></p>
+          </form>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
 
             <?php
          break;
@@ -869,47 +915,83 @@ Public License instead of this License.
 
     case 5: // Make the administrator set a username and password for the super admin user
         ?>
-        <p style="text-align:center;">
-        <table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="80%" >
-        <tr>
-        <td ALIGN=CENTER VALIGN=CENTER>
-        <br /><p class="subTitle">Create Super Administrator</p>
-        <p>Please enter the username, password, and e-mail address for the Super Administrator.</p>
-        <p><br /><br /><br /></font>
-
-        <form action="index.php?step=6" method="post">
-        <table>
-            <tr>
-                <td>Username:</td>
-                <td><INPUT TYPE="Text" NAME="frmUsername" size="32"></td>
-            </tr>
-            <tr>
-                <td>Password:</td>
-                <td><INPUT TYPE="password" NAME="frmPassword" size="32"></td>
-            </tr>
-            <tr>
-                <td>Confirm Password:</td>
-                <td><INPUT TYPE="password" NAME="frmPasswordCfm" size="32"></td>
-            </tr>
-            <tr>
-                <td>E-mail:</td>
-                <td><INPUT TYPE="Text" NAME="frmEmail" size="32"></td>
-            </tr>
-            <tr>
-                <td><input type="hidden" name="conf" value="<?php echo $conf?>"></td>
-                <td><INPUT TYPE="submit" value="Next ... &gt;"></td>
-            </tr>
-        </table>
-        </form>
-        <br />&nbsp;
-        <br />&nbsp;</td>
-        </tr>
-        </table>
-        </p>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li>Configuration</li>
+           <li class="current">Create Super Administrator Account</li>
+           <li>Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>Create Super Administrator Account</h1>
+          <p>Please fill out the Username, Password, and E-Mail account for the first Super Administrator account for your message board. This will be the account you use to first login to your board</p>
+          <form action="index.php?step=6" method="post">
+          <table cellspacing="1px">
+           <tr>
+            <td>Username:</td>
+            <td><input type="text" name="frmUsername" size="32" /></td>
+           </tr>
+           <tr>
+            <td>Password:</td>
+            <td><input type="password" name="frmPassword" size="32" /></td>
+           </tr>
+           <tr>
+            <td>Confirm Password:</td>
+            <td><input type="password" name="frmPasswordCfm" size="32" /></td>
+           </tr>
+           <tr>
+            <td>E-Mail Address:</td>
+            <td><input type="text" name="frmEmail" size="32" /></td>
+           </tr>
+           <tr>
+            <td colspan="2" class="configure"><input type="hidden" name="conf" value="<?php echo $conf?>" /><input type="submit" value="Begin Installation &gt;" /></td>
+           </tr>
+          </table>   
+          </form>       
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
         <?php
         break;
 
     case 6: // remaining parts
+    ?>
+    <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li>Configuration</li>
+           <li>Create Super Administrator Account</li>
+           <li class="current">Install</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>Installing XMB</h1>
+          <div class="install">
+    <?php
         // first, let's check if we have right version of PHP
         show_act('Checking PHP version');
         $v = phpversion();
@@ -964,7 +1046,7 @@ Public License instead of this License.
                     show_act('Checking (remaining) Directory Structure');
                 } else {
                     show_result(X_INST_ERR);
-                    error('Missing Directory', 'XMB could not locate the <i>'.$dir.'</i> directory. Please upload this directory for XMB to proceed with the installation..', true);
+                    error('Missing Directory', 'XMB could not locate the <i>'.$dir.'</i> directory. Please upload this directory for XMB to proceed with the installation.', true);
                 }
             } else {
                 continue;
@@ -1127,11 +1209,19 @@ Public License instead of this License.
         // throw in all stuff then :)
         require './cinst.php';
         ?>
-            <br />
-            <br />
-            <h3>Installation Complete</h3>
-            <br />
-            Please click <a href="../index.php">here</a> to go to your forum.
+         </div>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>Installation Complete</h1>
+          <p>The installation process completed successfully, and your new XMB Powered Forum is now ready for you to use. Please click <a href="../index.php">here</a> to go to your forum.</p>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+       </div>
             <?php
         break;
 
@@ -1140,5 +1230,9 @@ Public License instead of this License.
         exit;
 }
 ?>
-    </body>
+<div id="footer">
+ <img src="images/footer-arrow2.gif" alt="" />
+ <span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span>
+</div>
+</body>
 </html>
