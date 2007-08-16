@@ -30,6 +30,7 @@ require_once('header.php');
 
 loadtemplates(
 'today',
+'today_noposts',
 'today_row',
 'today_multipage'
 );
@@ -123,92 +124,95 @@ $db->free_result($query);
 $tids = implode(', ', $tids);
 
 if ($results == 0) {
-    message($lang['nopoststoday'], false);
+	$noPostsMessage = ($daysold == 1) ? $lang["nopoststoday"] : $lang["noPostsTimePeriod"];
+
+	eval('$rows = "'.template('today_no_posts').'";');
+} else {
+	validateTpp();
+	validatePpp();
+
+	$max_page = (int) ($results / $tpp) + 1;
+	$page = (isset($page) && is_numeric($page) && $page <= $max_page) ? ($page < 1 ? 1 : ((int) $page)) : 1;
+	$start_limit = ($page > 1) ? (($page-1) * $tpp) : 0;
+
+	$mpurl = 'today.php?daysold='.$daysold;
+	$multipage = '';
+	if (($multipage = multi($results, $tpp, $page, $mpurl)) !== false) {
+	    eval('$multipage = "'.template('today_multipage').'";');
+	}
+
+	$query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
+	$today_row = array();
+	$tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
+	while ($thread = $db->fetch_array($query)) {
+	    $thread['subject'] = shortenString(stripslashes($thread['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+	    $thread['name'] = stripslashes($thread['name']);
+
+	    if ($thread['author'] == $lang['textanonymous']) {
+	        $authorlink = $thread['author'];
+	    } else {
+	        $authorlink = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($thread['author']).'">'.$thread['author'].'</a>';
+	    }
+
+	    $lastpost = explode('|', $thread['lastpost']);
+	    $dalast = $lastpost[0];
+	    $lastPid = $lastpost[2];
+
+	    if ($lastpost[1] != $lang['textanonymous']) {
+	        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+	    }
+
+	    $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
+	    $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+	    $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
+
+	    if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
+	        $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
+	    } else {
+	        $thread['icon'] = '';
+	    }
+
+	    if ($thread['replies'] >= $SETTINGS['hottopic']) {
+	        $folder = '<img src="'.$imgdir.'/hot_folder.gif" alt="'.$lang['althotfolder'].'" border="0" />';
+	    } else {
+	        $folder = '<img src="'.$imgdir.'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
+	    }
+
+	    $oldtopics = isset($oldtopics) ? $oldtopics : '';
+	    if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
+	        $folder = '<img src="'.$imgdir.'/hot_red_folder.gif" alt="'.$lang['althotredfolder'].'" border="0" />';
+	    } else if ( $lastvisit < $dalast && $oT === false) {
+	        $folder = '<img src="'.$imgdir.'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
+	    }
+
+	    if ($thread['closed'] == 'yes') {
+	        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+	        $prefix = '';
+	    } else {
+	        $moved = explode('|', $thread['closed']);
+	        if ($moved[0] == 'moved') {
+	            continue;
+	        }
+	    }
+
+	    if ($thread['posts']  > $ppp) {
+	        $pagelinks = multi($thread['posts'], $ppp, 0, 'viewthread.php?tid='.$thread['tid']);
+	        $multipage2 = '(<small>'.$pagelinks.'</small>)';
+	    } else {
+	        $pagelinks = $multipage2 = '';
+	    }
+
+	    $thread['subject'] = checkOutput($thread['subject'], 'no', '', true);
+	    $thread['subject'] = censor($thread['subject']);
+	    $thread['subject'] = addslashes($thread['subject']);
+
+	    eval('$today_row[] = "'.template('today_row').'";');
+	}
+
+	$rows = implode("\n", $today_row);
+	$db->free_result($query);
 }
 
-validateTpp();
-validatePpp();
-
-$max_page = (int) ($results / $tpp) + 1;
-$page = (isset($page) && is_numeric($page) && $page <= $max_page) ? ($page < 1 ? 1 : ((int) $page)) : 1;
-$start_limit = ($page > 1) ? (($page-1) * $tpp) : 0;
-
-$mpurl = 'today.php?daysold='.$daysold;
-$multipage = '';
-if (($multipage = multi($results, $tpp, $page, $mpurl)) !== false) {
-    eval('$multipage = "'.template('today_multipage').'";');
-}
-
-$query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
-$today_row = array();
-$tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-while ($thread = $db->fetch_array($query)) {
-    $thread['subject'] = shortenString(stripslashes($thread['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-    $thread['name'] = stripslashes($thread['name']);
-
-    if ($thread['author'] == $lang['textanonymous']) {
-        $authorlink = $thread['author'];
-    } else {
-        $authorlink = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($thread['author']).'">'.$thread['author'].'</a>';
-    }
-
-    $lastpost = explode('|', $thread['lastpost']);
-    $dalast = $lastpost[0];
-    $lastPid = $lastpost[2];
-
-    if ($lastpost[1] != $lang['textanonymous']) {
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
-    }
-
-    $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-    $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-    $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
-
-    if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
-        $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
-    } else {
-        $thread['icon'] = '';
-    }
-
-    if ($thread['replies'] >= $SETTINGS['hottopic']) {
-        $folder = '<img src="'.$imgdir.'/hot_folder.gif" alt="'.$lang['althotfolder'].'" border="0" />';
-    } else {
-        $folder = '<img src="'.$imgdir.'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
-    }
-
-    $oldtopics = isset($oldtopics) ? $oldtopics : '';
-    if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-        $folder = '<img src="'.$imgdir.'/hot_red_folder.gif" alt="'.$lang['althotredfolder'].'" border="0" />';
-    } else if ( $lastvisit < $dalast && $oT === false) {
-        $folder = '<img src="'.$imgdir.'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
-    }
-
-    if ($thread['closed'] == 'yes') {
-        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $prefix = '';
-    } else {
-        $moved = explode('|', $thread['closed']);
-        if ($moved[0] == 'moved') {
-            continue;
-        }
-    }
-
-    if ($thread['posts']  > $ppp) {
-        $pagelinks = multi($thread['posts'], $ppp, 0, 'viewthread.php?tid='.$thread['tid']);
-        $multipage2 = '(<small>'.$pagelinks.'</small>)';
-    } else {
-        $pagelinks = $multipage2 = '';
-    }
-
-    $thread['subject'] = checkOutput($thread['subject'], 'no', '', true);
-    $thread['subject'] = censor($thread['subject']);
-    $thread['subject'] = addslashes($thread['subject']);
-
-    eval('$today_row[] = "'.template('today_row').'";');
-}
-
-$rows = implode("\n", $today_row);
-$db->free_result($query);
 eval('echo stripslashes("'.template('today').'");');
 
 end_time();
