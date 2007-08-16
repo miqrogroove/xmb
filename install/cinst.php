@@ -44,7 +44,7 @@ if (!defined('X_INST_ERR')) {
 if (!function_exists('show_act')) {
     function show_act($act) {
         $act .= str_repeat('.', (75-strlen($act)));
-        echo '<font class="progress">'.$act;
+        echo '<span class="progress">'.$act;
     }
 }
 
@@ -52,22 +52,22 @@ if (!function_exists('show_result')) {
     function show_result($type) {
         switch($type) {
             case 0:
-                echo '<font class="progressErr">ERROR</font><br>';
+                echo '<span class="progressErr">ERROR</span><br />';
                 break;
 
             case 1:
-                echo '<font class="progressWarn">WARNING</font><br>';
+                echo '<span class="progressWarn">WARNING</span><br />';
                 break;
 
              case 2:
-                echo '<font class="progressOk">OK</font><br>';
+                echo '<span class="progressOk">OK</span><br />';
                 break;
 
              case 3:
-                echo '<font class="progressSkip">SKIPPED</font><br>';
+                echo '<span class="progressSkip">SKIPPED</span><br />';
                 break;
         }
-        echo "</font>\n";
+        echo "</span>\n";
     }
 }
 
@@ -468,9 +468,9 @@ show_act("Creating ".$tablepre."settings");
           `captcha_image_bg` varchar(128) NOT NULL default '',
           `captcha_image_dots` int(3) NOT NULL default '0',
           `captcha_image_lines` int(2) NOT NULL default '70',
-          `captcha_image_fonts` varchar(128) NOT NULL default '',
-          `captcha_image_minfont` int(2) NOT NULL default '16',
-          `captcha_image_maxfont` int(2) NOT NULL default '25',
+          `captcha_image_spans` varchar(128) NOT NULL default '',
+          `captcha_image_minspan` int(2) NOT NULL default '16',
+          `captcha_image_maxspan` int(2) NOT NULL default '25',
           `captcha_image_color` set('on','off') NOT NULL default 'off',
           `showsubforums` set('on','off') NOT NULL default 'off'
         ) TYPE=MyISAM
@@ -526,8 +526,8 @@ show_act("Creating ".$tablepre."themes");
           `borderwidth` varchar(15) NOT NULL default '',
           `tablewidth` varchar(15) NOT NULL default '',
           `tablespace` varchar(15) NOT NULL default '',
-          `font` varchar(40) NOT NULL default '',
-          `fontsize` varchar(40) NOT NULL default '',
+          `span` varchar(40) NOT NULL default '',
+          `spansize` varchar(40) NOT NULL default '',
           `boardimg` varchar(128) default NULL,
           `imgdir` varchar(120) NOT NULL default '',
           `smdir` varchar(120) NOT NULL default '',
@@ -760,8 +760,8 @@ show_act("Inserting data into ".$tablepre."templates");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."themes");
-        $db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#cdcecf', '#aebbcf', '#91a9cf', '#000000', '#2E3E55', '#5472a4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF');");
-        //$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");
+        $db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `span`, `spansize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#cdcecf', '#aebbcf', '#91a9cf', '#000000', '#2E3E55', '#5472a4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF');");
+        //$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `span`, `spansize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Windows XP Silver','#FFFFFF', '#EDF0F7', '#FFFFFF', '#000000', '#C4C8D4', '#FFFFFF', '#000000', '#FFFFFF', 'silverbar.gif', '#000000', '#000000', '1', '90%', '4', 'Verdana, Arial, Helvetica', '10px', 'xplogo.gif', 'images/xpsilver', 'images/smilies', '#000000');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."words");
