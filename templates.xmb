@@ -407,6 +407,11 @@ $multipage
 </table>
 </form>
 
+|#*XMB TEMPLATE FILE*#|today_noposts|#*XMB TEMPLATE*#|
+<tr>
+<td bgcolor="$altbg1" colspan="8" class="ctrtablerow">$noPostsMessage</td>
+</tr>
+
 |#*XMB TEMPLATE FILE*#|today_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td width="4%" bgcolor="$altbg1" align="center">$folder</td>
