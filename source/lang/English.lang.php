@@ -403,6 +403,7 @@ $lang['nomember'] = "No member selected";
 $lang['nomoodtext'] = "No Mood";
 $lang['nonewposts'] = "No new posts in this forum since last active";
 $lang['noposts'] = "There are no topics in this forum";
+$lang['noPostsTimePeriod'] = "No posts have been made in the specified time period";
 $lang['nopoststoday'] = "No posts have been made in the last 24 hours";
 $lang['nopruneforums'] = 'No forums have been selected to be pruned';
 $lang['noresults'] = "No matches were found";
