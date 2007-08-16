@@ -268,7 +268,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 10  => '<strike>',
                 11  => '</strike>',
                 12  => "</font><table align=\"center\" class=\"quote\" cellspacing=\"0\" cellpadding=\"0\"><tr><td class=\"quote\">$lang[textquote]</td></tr><tr><td class=\"quotemessage\">",
-                13  => "</td></tr></table><font class=\"mediumtxt\">",
+                13  => " </td></tr></table><font class=\"mediumtxt\">",
                 14  => "</font><table align=\"center\" class=\"code\" cellspacing=\"0\" cellpadding=\"0\"><tr><td class=\"code\">$lang[textcode]</td></tr><tr><td class=\"codemessage\">",
                 15  => "</td></tr></table><font class=\"mediumtxt\">",
                 16  => '<ul type="square">',
