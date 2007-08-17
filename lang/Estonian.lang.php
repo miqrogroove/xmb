@@ -1122,4 +1122,5 @@ $lang['verificationnote'] = "Palun sisestage pildil olev tekst alljärgnevasse te
 $lang['textsubforums'] = "Alafoorumid:";
 $lang['showsubforums'] = "Alafoorumid pealehel staatus:<br /><span class=\"smalltxt\">Antud seade kuvab või keelab alafoorumite kuvamise foorumi pealehel.</span>";
 $lang['message'] = "Teade";
+$lang['noPostsTimePeriod'] = "Antud ajaperioodil pole ühtegi postitust tehtud";
 ?>
