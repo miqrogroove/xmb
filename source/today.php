@@ -125,6 +125,7 @@ $tids = implode(', ', $tids);
 
 if ($results == 0) {
 	$noPostsMessage = ($daysold == 1) ? $lang["nopoststoday"] : $lang["noPostsTimePeriod"];
+    $multipage = '';
 
 	eval('$rows = "'.template('today_noposts').'";');
 } else {
