@@ -1089,8 +1089,8 @@ if ($action == "newthread") {
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
                 $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
-                updateforumcount($fid);
                 updatethreadcount($tid);
+                updateforumcount($fid);
 
             } elseif (isset($delete) && $delete == "yes" && $isfirstpost['pid'] == $pid) {
                 // find out if thread contains more than one post.
@@ -1124,8 +1124,8 @@ if ($action == "newthread") {
                 }
 
                 // update forum and thread count stats
-                updateforumcount($fid);
                 updatethreadcount($tid);
+                updateforumcount($fid);
             }
         } else {
             error($lang['noedit']);
