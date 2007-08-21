@@ -199,12 +199,12 @@ if ($action == 'restrictions') {
     } else {
         $queryrestricted = $db->query("SELECT id FROM ".X_PREFIX."restricted");
         while ($restricted = $db->fetch_array($queryrestricted)) {
-            $name = formVar('name'.$restricted['id']);
+            $name = isset(${'name'.$restricted['id']}) && !empty(${'name'.$restricted['id']}) ? ${'name'.$restricted['id']} : '';
             $delete = formInt('delete'.$restricted['id']);
             $case = formInt('case'.$restricted['id']);
             $partial = formInt('partial'.$restricted['id']);
 
-            $newname = formVar('newname');
+            $newname = isset($newname) && !empty($newname) ? $newname : '';
             $newcase = formInt('newcase');
             $newpartial = formInt('newpartial');
 
