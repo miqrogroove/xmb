@@ -451,7 +451,7 @@ $multipage
 <br />
 <br />
 $versionlong<br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright<br />$lang[ientry]&nbsp;&copy; $copyright
+$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright
 <br /><br />
 
 $footerstuff[totaltime]$footerstuff[querynum]<br />
@@ -1188,7 +1188,7 @@ color="$cattext">$lang[folderlist]</font></strong></td>
 <tr>
 <td align="center"><font style="font-size: 10px; font-family: Verdana">$versionlong
 <br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright<br />$lang[ientry]&nbsp;&copy; $copyright</font></td>
+$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright</font></td>
 </tr>
 </table>
 </body>

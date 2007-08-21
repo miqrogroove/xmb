@@ -117,7 +117,7 @@ switch ($action) {
         if (noSubmit('regsubmit')) {
             eval('echo "'.template('header').'";');
             if ($SETTINGS['bbrules'] == "on" && noSubmit('rulesubmit')) {
-                $SETTINGS['bbrulestext'] = nl2br(stripslashes(stripslashes($SETTINGS['bbrulestext'])));
+                $SETTINGS['bbrulestxt'] = nl2br(stripslashes(stripslashes($SETTINGS['bbrulestxt'])));
                 eval('echo stripslashes("'.template('member_reg_rules').'");');
             } else {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
