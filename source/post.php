@@ -338,7 +338,7 @@ if (isset($previewpost)) {
     $currtime = $onlinetime;
     $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-    $poston = $lang['textposton'].' '.$date,' '.$lang['textat'].' '.$time;
+    $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
     $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
     $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
@@ -638,7 +638,7 @@ if ($action == "newthread") {
             while($post = $db->fetch_array($query)) {
                 $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
                 $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                $poston = $lang['textposton'].' '.$date,' '.$lang['textat'].' '.$time;
+                $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
                 if ($post['icon'] != "") {
                     $post['icon'] = "<img src=\"$smdir/$post[icon]\" alt=\"$lang[altpostmood]\" />";
