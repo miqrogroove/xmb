@@ -204,7 +204,7 @@ if ($action == 'restrictions') {
             $case = formInt('case'.$restricted['id']);
             $partial = formInt('partial'.$restricted['id']);
 
-            $newname = formInt('newname');
+            $newname = formVar('newname');
             $newcase = formInt('newcase');
             $newpartial = formInt('newpartial');
 
@@ -216,11 +216,11 @@ if ($action == 'restrictions') {
                 $case = 1;
             }
 
-            if ($delete) {
-                $db->query("DELETE FROM ".X_PREFIX."restricted WHERE id='$delete'");
+            if (isset($delete)) {
+                $db->query("DELETE FROM ".X_PREFIX."restricted WHERE id=$delete");
                 continue;
             }
-            $db->query("UPDATE `".X_PREFIX."restricted` SET `name`='$name', `case_sensitivity`='$case', `partial`='$partial' WHERE `id`='$restricted[id]'");
+            $db->query("UPDATE ".X_PREFIX."restricted SET name='$name', case_sensitivity='$case', partial='$partial' WHERE id=".$restricted['id']);
         }
 
         if ($newname) {
@@ -234,7 +234,7 @@ if ($action == 'restrictions') {
             } else {
                 $newcase = 1;
             }
-            $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `id`, `case_sensitivity`, `partial`) VALUES ('$newname', '', '$newcase', '$newpartial')");
+            $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$newname', '$newcase', '$newpartial')");
         }
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['restrictedupdate'].'</td></tr>';
