@@ -223,7 +223,7 @@ if ($action == 'restrictions') {
             $db->query("UPDATE ".X_PREFIX."restricted SET name='$name', case_sensitivity='$case', partial='$partial' WHERE id=".$restricted['id']);
         }
 
-        if ($newname) {
+        if (!empty($newname)) {
             if (!$newpartial || $newpartial != 1) {
                 $newpartial = 0;
             } else {
@@ -2013,7 +2013,7 @@ if ($action == "modlog") {
 
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><a href="./member.php?action=viewpro&amp;member=<?php echo $recordinfo['username']?>"><?php echo $recordinfo['username']?></a></td>
         <td class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $date?> at <?php echo $time?></td>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $url?></td>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo stripslashes($url)?></td>
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $recordinfo['action']?></td>
         </tr>
         <?php
