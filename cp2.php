@@ -216,7 +216,7 @@ if ($action == 'restrictions') {
                 $case = 1;
             }
 
-            if (isset($delete)) {
+            if ($delete) {
                 $db->query("DELETE FROM ".X_PREFIX."restricted WHERE id=$delete");
                 continue;
             }
