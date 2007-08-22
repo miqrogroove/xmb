@@ -169,20 +169,20 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
+                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid");
                 while ($result = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
                 }
                 $db->free_result($query);
 
-                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid'");
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid='$tid'");
-                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$tid'");
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid");
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
+                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=$tid");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$tid");
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE closed='moved|$tid'");
 
-                if ($forums['type'] == 'sub') {
+                if (isset($forums['type']) && $forums['type'] == 'sub') {
                     updateforumcount($fup['fup']);
                 }
                 updateforumcount($fid);
@@ -197,7 +197,7 @@ switch ($action) {
 
     case 'close':
         $mod->statuscheck($fid);
-        $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+        $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=$tid");
         $closed = $db->result($query, 0);
         $db->free_result($query);
 
@@ -210,9 +210,9 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
         } else {
             if ($closed == 'yes') {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
+                $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid=$tid AND fid=$fid");
             } else {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
             }
 
             $act = ($closed != '') ? 'open' : 'close';
@@ -232,7 +232,7 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
                 $mod->log($xmbuser, 'close', $fid, $tid);
             }
             echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
@@ -250,7 +250,7 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
+                $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid=$tid AND fid=$fid");
                 $mod->log($xmbuser, 'open', $fid, $tid);
             }
             echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
@@ -266,7 +266,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_move').'");');
         } else {
             if ($moveto != '') {
-                $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid='$moveto'");
+                $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
                 $forumtype = $db->result($query, 0);
                 $db->free_result($query);
 
@@ -280,18 +280,18 @@ switch ($action) {
                 $tids = $mod->create_tid_array($tid);
                 foreach($tids AS $tid) {
                     if ($type == "normal") {
-                        $db->query("UPDATE ".X_PREFIX."threads SET fid='$moveto' WHERE tid='$tid'");
-                        $db->query("UPDATE ".X_PREFIX."posts SET fid='$moveto' WHERE tid='$tid'");
+                        $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid=$tid");
+                        $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid=$tid");
                     } else {
-                        $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
+                        $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
                         $info = $db->fetch_array($query);
 
                         $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$info[fid]', '$info[subject]', '', '$info[lastpost]', 0, 0, '$info[author]', 'moved|$info[tid]', '$info[topped]')");
                         $ntid = $db->insert_id();
 
                         $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ('$info[fid]', '$ntid', '$info[author]', '$info[tid]', '$info[subject]', 0, '', '', '', '', '')");
-                        $db->query("UPDATE ".X_PREFIX."threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
-                        $db->query("UPDATE ".X_PREFIX."posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+                        $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid=$tid AND fid=$fid");
+                        $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid=$tid AND fid=$fid");
                     }
                     updatethreadcount($tid);
                     $f = "$fid -> $moveto";
@@ -304,7 +304,7 @@ switch ($action) {
                 exit();
             }
 
-            if ($forums['type'] == "sub") {
+            if (isset($forums['type']) && $forums['type'] == "sub") {
                 updateforumcount($fup['fup']);
             }
             updateforumcount($fid);
@@ -319,7 +319,7 @@ switch ($action) {
         $mod->statuscheck($fid);
         if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
-                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=$tid");
                 $topped = $db->result($query, 0);
                 if ($topped == 1) {
                     $lang['texttopthread'] = $lang['textuntopthread'];
@@ -332,13 +332,13 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=$tid");
                 $topped = $db->result($query, 0);
 
                 if ($topped == 1) {
-                    $db->query("UPDATE ".X_PREFIX."threads SET topped='0' WHERE tid='$tid' AND fid='$fid'");
+                    $db->query("UPDATE ".X_PREFIX."threads SET topped='0' WHERE tid=$tid AND fid=$fid");
                 } else if ($topped == 0)    {
-                    $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
+                    $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid AND fid=$fid");
                 }
 
                 $act = ($topped ? 'untop' : 'top');
@@ -353,9 +353,9 @@ switch ($action) {
     case 'getip':
         $mod->statuscheck($fid);
         if ($pid) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE pid='$pid'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE pid=$pid");
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
         }
         $ipinfo = $db->fetch_array($query);
         ?>
@@ -367,7 +367,7 @@ switch ($action) {
         <td class="header" colspan="3"><?php echo $lang['textgetip']?></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>">
-        <td class="tablerow"><?php echo $lang['textyesip']?> <b><?php echo $ipinfo['useip']?></b> - <?php echo gethostbyaddr($ipinfo['useip'])?>
+        <td class="tablerow"><?php echo $lang['textyesip']?> <strong><?php echo $ipinfo['useip']?></strong> - <?php echo gethostbyaddr($ipinfo['useip'])?>
         <?php
         if (X_ADMIN) {
             $ip = explode('.', $ipinfo['useip']);
@@ -385,7 +385,7 @@ switch ($action) {
                 }
 
                 if ($foundmask) {
-                    $ipmask = "<b>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</b>";
+                    $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
                     eval($lang['evalipmask']);
                     $lang['bannedipmask'] = stripslashes($lang['bannedipmask']);
                     echo $lang['bannedipmask'];
@@ -418,7 +418,7 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 1"), 0);
+                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1"), 0);
                 $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
                 $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid=$fid");
 
@@ -437,15 +437,15 @@ switch ($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC LIMIT 1"), 0);
-                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid!='$pid'");
+                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1"), 0);
+                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
                 while ($result = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
                 }
                 $db->free_result($query);
 
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid!='$pid'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
+                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
 
                 updatethreadcount($tid);
                 $mod->log($xmbuser, $action, $fid, $tid);
@@ -463,14 +463,14 @@ switch ($action) {
     case 'split':
         $mod->statuscheck($fid);
         if (noSubmit('splitsubmit')) {
-            $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid=$tid");
             $replies = $db->result($query, 0);
 
             if ($replies == 0) {
                 error($lang['cantsplit'], false);
             }
 
-            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline");
             $posts = '';
             while($post = $db->fetch_array($query))    {
                 $bbcodeoff = $post['bbcodeoff'];
@@ -496,7 +496,7 @@ switch ($action) {
             $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
 
             $firstsubject = false;
-            $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid='$tid'");
+            $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid=$tid");
             while ($post = $db->fetch_array($query)) {
                 $move = "move".$post['pid'];
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
@@ -508,24 +508,24 @@ switch ($action) {
                 }
 
                 if (!empty($move)) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET tid='$newtid' WHERE pid='$move'");
-                    $db->query("UPDATE ".X_PREFIX."attachments SET tid='$newtid' WHERE pid='$move'");
-                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid='$newtid'");
-                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid WHERE pid='$move'");
+                    $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid='$move'");
+                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid=$newtid");
+                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                 }
             }
 
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$newtid' ORDER BY dateline ASC LIMIT 0,1");
+            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline ASC LIMIT 0,1");
             $firstauthor = $db->result($query, 0);
-            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$newtid' ORDER BY    dateline DESC LIMIT    0,1");
+            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]', replies=replies-1 WHERE tid='$newtid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]', replies=replies-1 WHERE tid=$newtid");
 
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
+            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 0,1");
             $firstauthor = $db->result($query, 0);
-            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid=$tid");
 
             $mod->log($xmbuser, $action, $fid, $tid);
 
@@ -543,32 +543,32 @@ switch ($action) {
                 error($lang['cannotmergesamethread']);
             }
 
-            $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid='$othertid'");
-            $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid=$othertid");
+            $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid=$tid");
             $replyadd = $db->result($queryadd1, 0, 'replies');
             $otherfid = $db->result($queryadd1, 0, 'fid');
             $replyadd2 = $db->result($queryadd2, 0);
             $replyadd++;
             $replyadd = $replyadd + $replyadd2;
 
-            $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
-            $db->query("UPDATE ".X_PREFIX."attachments SET tid='$tid' WHERE tid='$othertid'");
+            $db->query("UPDATE ".X_PREFIX."posts SET tid=$tid, fid=$fid WHERE tid=$othertid");
+            $db->query("UPDATE ".X_PREFIX."attachments SET tid=$tid WHERE tid=$othertid");
 
-            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$othertid'");
-            $db->query("UPDATE ".X_PREFIX."forums SET threads = threads-1 WHERE fid='$otherfid'");
+            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$othertid");
+            $db->query("UPDATE ".X_PREFIX."forums SET threads = threads-1 WHERE fid=$otherfid");
 
-            $query = $db->query("SELECT * FROM ".X_PREFIX."favorites WHERE tid='$othertid' OR tid='$tid'");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."favorites WHERE tid=$othertid OR tid=$tid");
             if ($db->num_rows($query) == 2) {
-                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$othertid'");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$othertid");
             } else {
-                $db->query("UPDATE ".X_PREFIX."favorites SET tid='$tid' WHERE tid='$othertid'");
+                $db->query("UPDATE ".X_PREFIX."favorites SET tid=$tid WHERE tid=$othertid");
             }
 
-            $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid='$tid' OR tid='$othertid' ORDER BY pid ASC LIMIT 1");
+            $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid=$tid OR tid=$othertid ORDER BY pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);
-            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='$thread[subject]', icon='$thread[icon]', author='$thread[author]', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='$thread[subject]', icon='$thread[icon]', author='$thread[author]', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid=$tid");
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
@@ -581,7 +581,7 @@ switch ($action) {
     case 'threadprune':
         $mod->statuscheck($fid);
         if (noSubmit('threadprunesubmit')) {
-            $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid=$tid");
             $replies = $db->result($query, 0);
             $db->free_result($query);
 
@@ -592,7 +592,7 @@ switch ($action) {
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $disablePost = '';
                 $posts = '';
-                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline");
                 while ($post = $db->fetch_array($query)) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
@@ -604,7 +604,7 @@ switch ($action) {
             } else {
                 $ranks = array('Super Administrator'=>5, 'Administrator'=>4, 'Super Moderator'=>3, 'Moderator'=>2, 'Member'=>1, ''=>0);
                 $posts = '';
-                $query = $db->query("SELECT p.*, m.status FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE tid='$tid' ORDER BY dateline");
+                $query = $db->query("SELECT p.*, m.status FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE tid=$tid ORDER BY dateline");
                 while ($post = $db->fetch_array($query)) {
                     if ($ranks[$post['status']] > $ranks[$self['status']]) {
                         $disablePost = 'disabled="disabled"';
@@ -622,7 +622,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_threadprune').'");');
         } else {
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
-                $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
+                $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid=$tid");
                 while ($post = $db->fetch_array($query))    {
                     $move = "move".$post['pid'];
                     $move = isset($_POST[$move]) ? $_POST[$move] : '';
@@ -630,13 +630,13 @@ switch ($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$move'");
                         $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$move'");
-                        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
+                        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
                 $db->free_result($query);
             } else {
                 $ranks = array('Super Administrator'=>5, 'Administrator'=>4, 'Super Moderator'=>3, 'Moderator'=>2, 'Member'=>1, ''=>0);
-                $query = $db->query("SELECT m.status, p.author, p.pid FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE p.tid='$tid'");
+                $query = $db->query("SELECT m.status, p.author, p.pid FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE p.tid=$tid");
                 while ($post = $db->fetch_array($query))    {
                     if ($ranks[$post['status']] > $ranks[$self['status']]) {
                         continue;
@@ -647,24 +647,24 @@ switch ($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$move'");
                         $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$move'");
-                        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
+                        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
                 $db->free_result($query);
             }
 
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
+            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 0,1");
             $firstauthor = $db->result($query, 0);
             $db->free_result($query);
 
-            $query = $db->query("SELECT pid, author, dateline FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+            $query = $db->query("SELECT pid, author, dateline FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
 
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid=$tid");
 
             if (isset($forums['type']) && $forums['type'] == 'sub') {
-                $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid='$fid' LIMIT 1");
+                $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid=$fid LIMIT 1");
                 $fup = $db->fetch_array($query);
                 $db->free_result($query);
                 updateforumcount($fid);
@@ -695,7 +695,7 @@ switch ($action) {
             $mod->statuscheck($newfid);
             $tids = $mod->create_tid_array($tid);
             foreach ($tids AS $tid) {
-                $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'"));
+                $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid"));
                 foreach ($thread as $key=>$val) {
                     switch ($key) {
                         case 'tid':
@@ -734,7 +734,7 @@ switch ($action) {
                 $cols = array();
                 $vals = array();
 
-                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC");
                 while ($post = $db->fetch_array($query)) {
                     $post['fid'] = $newfid;
                     $post['tid'] = $newtid;
@@ -779,8 +779,8 @@ switch ($action) {
         if (noSubmit('reportsubmit')) {
             eval('echo stripslashes("'.template('topicadmin_report').'");');
         } else {
-            $postcount = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'"), 0);
-            $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
+            $postcount = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
+            $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
             $query2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator'");
             $mods = explode(", ", $db->result($query, 0));
             while ($usr = $db->fetch_array($query2)) {
@@ -823,7 +823,7 @@ switch ($action) {
         }
 
         // Does a poll exist for this thread?
-        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
+        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
         if ($query === false) {
             error($lang['pollvotenotselected'], false);
         }
@@ -833,20 +833,20 @@ switch ($action) {
         $db->free_result($query);
 
         // does the poll option exist?
-        $vote_result = $db->result($db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id' AND vote_option_id='$postopnum'"), 0);
+        $vote_result = $db->result($db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id AND vote_option_id=$postopnum"), 0);
         if ($vote_result != 1) {
             error($lang['pollvotenotselected'], false);
         }
 
         // Has the user voted on this poll before?
-        $voted = $db->result($db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'"), 0);
+        $voted = $db->result($db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id AND vote_user_id=$self[uid]"), 0);
         if ($voted === 1) {
             error($lang['alreadyvoted'], false);
         }
 
         // Okay, the user is about to vote
         $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ('$vote_id', '$self[uid]', '".encode_ip($onlineip)."')");
-        $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id='$vote_id' AND vote_option_id='$postopnum'");
+        $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
 
         if ($tid > 0) {
             echo '<center><span class="mediumtxt">'.$lang['votemsg'].'</span></center>';
