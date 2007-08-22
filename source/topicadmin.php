@@ -77,6 +77,8 @@ if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
     $thread = $db->fetch_array($query);
     $threadname = stripslashes($thread['subject']);
     $fid = $thread['fid'];
+} else {
+    $threadSubject = ''; // we need to do this because we won't have a subject to display in the browser title bar
 }
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
