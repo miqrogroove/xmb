@@ -96,8 +96,9 @@ if ($fid == 0) {
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.$fup['name'].'</a>');
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
-    if (isset($threadname))
+    if (isset($threadname)) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
+    }
 } else {
     $kill = true;
 }
