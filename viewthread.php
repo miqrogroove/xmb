@@ -254,8 +254,6 @@ if (!$action) {
     $ppreply = postperm($forum, 'reply');
 
     $usesigcheck = $usesig ? 'checked="checked"' : '';
-    $codeoffcheck = (isset($bbcodeoff) && $bbcodeoff == 'yes') ? 'checked="checked"' : '';
-    $smileoffcheck = (isset($smileyoff) && $smileyoff == 'yes') ? 'checked="checked"' : '';
 
     // captcha code
     $captchapostcheck = '';

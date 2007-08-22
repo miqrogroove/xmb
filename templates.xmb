@@ -4703,7 +4703,7 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 <td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
 <tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /></div></td>
+<td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[textdissmileys]</div></td>
 </tr>
 
@@ -4713,7 +4713,7 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 </tr>
 
 <tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" $codeoffcheck /></div></td>
+<td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[bbcodeoff] </div></td>
 </tr>
 
