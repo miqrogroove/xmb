@@ -200,7 +200,6 @@ function url_to_text($url) {
     $return = array();
     $return['url'] = checkInput($url, 'yes');
     $return['text'] = $location;
-    return $return;
 
     return $return;
 }
