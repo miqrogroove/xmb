@@ -495,13 +495,8 @@ switch ($action) {
             $site          = $site ? checkInput($site, '', '', 'javascript', false) : '';
             $webcam        = formVar('webcam');
             $webcam        = $webcam ? checkInput($webcam, '', '', 'javascript', false) : '';
-            //$bio           = formVar('bio');
-            //$bio           = $bio ? checkInput($bio, '', '', 'javascript', false) : '';
             $bio           = isset($_POST['bio']) ? checkInput($_POST['bio'], '', '', 'javascript', false) : '';
-            $mood          = formVar('mood');
-            $mood          = $mood ? checkInput($mood, '', '', 'javascript', false) : '';
-            //$sig           = formVar('sig');
-            //$sig           = $sig ? checkInput($sig, '', $SETTINGS['sightml'], '', false) : '';
+            $mood          = isset($_POST['mood']) ? checkInput($_POST['mood'], 'no', 'no', 'javascript', false) : '';
             $sig           = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
 
             $avatar        = addslashes($avatar);
