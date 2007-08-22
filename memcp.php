@@ -700,7 +700,7 @@ if ($action == 'profile') {
         $member['mood'] = '';
     }
 
-    $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND type='incoming' ORDER BY dateline DESC LIMIT 0, 15");
+    $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' ORDER BY dateline DESC LIMIT 0,5");
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
