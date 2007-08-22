@@ -104,7 +104,7 @@ $copyright      = '2007';
 if ($show_full_info) {
     $alpha        = '';
     $beta         = '';
-    $gamma        = 'Final';
+    $gamma        = 'Pre-Final';
     $service_pack = '';
     $versionbuild = 200707062320;
     $versionlong  = 'Powered by '.$versiongeneral.' ('.$alpha.$beta.$gamma.$service_pack.')'.(DEBUG === true ? ' (Debug)' : '');
