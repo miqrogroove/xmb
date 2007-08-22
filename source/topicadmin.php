@@ -75,7 +75,7 @@ eval('$css = "'.template('css').'";');
 if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     $thread = $db->fetch_array($query);
-    $thread['subject'] = stripslashes($thread['subject']);
+    $threadname = stripslashes($thread['subject']);
     $fid = $thread['fid'];
 }
 
@@ -88,7 +88,7 @@ if ($fid == 0) {
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
     if (isset($thread['subject'])) {
-        nav('<a href="viewthread.php?tid='.$tid.'">'.$thread['subject'].'</a>');
+        nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
 } else if (isset($forums['type']) && $forums['type'] == 'sub') {
     $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid=$forums[fup]");
@@ -96,8 +96,8 @@ if ($fid == 0) {
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.$fup['name'].'</a>');
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
-    if (isset($thread['subject'])) {
-        nav('<a href="viewthread.php?tid='.$tid.'">'.$thread['subject'].'</a>');
+    if (isset($threadname)) {
+        nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
 } else {
     $kill = true;
