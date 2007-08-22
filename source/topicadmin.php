@@ -27,7 +27,7 @@
  **/
 
 require_once('header.php');
-require_once('./include/topicadmin.inc.php');
+require_once(ROOT.'include/topicadmin.inc.php');
 
 $_tid = (isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0));
 $_fid = (isset($_POST['fid']) ? $_POST['fid'] : (isset($_GET['fid']) ? $_GET['fid'] : 0));
@@ -73,25 +73,25 @@ loadtemplates(
 eval('$css = "'.template('css').'";');
 
 if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     $thread = $db->fetch_array($query);
     $threadname = stripslashes($thread['subject']);
     $fid = $thread['fid'];
 }
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
 $forums = $db->fetch_array($query);
 $forums['name'] = stripslashes($forums['name']);
 
 if ($fid == 0) {
     $kill = true;
-} else if ($forums['type'] == 'forum') {
+} else if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
-} else if ($forums['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
+} else if (isset($forums['type']) && $forums['type'] == 'sub') {
+    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid=$forums[fup]");
     $fup = $db->fetch_array($query);
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.$fup['name'].'</a>');
