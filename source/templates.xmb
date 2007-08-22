@@ -363,7 +363,7 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://www.samspade.org/t/ipwhois?a=$member[regip]" target="_blank">$member[regip]</a></td>
+<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://www.nwtools.com/default.asp?prog=network&host=$member[regip]" target="_blank">$member[regip]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprosearch]</td>
