@@ -179,7 +179,7 @@ function url_to_text($url) {
             $location = $lang['onlineu2uignore'];
         } else if (false !== strpos($url, 'action=view')) {
             $location = $lang['onlineu2uview'];
-        } else if (false !== strpos($url, 'action=folders')) {
+        } else if (false !== strpos($url, 'action=folders') || false !== strpos($url, 'folder=')) {
             $location = $lang['onlinemanagefolders'];
         }
 
