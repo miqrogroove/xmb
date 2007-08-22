@@ -787,10 +787,10 @@ $cssInclude
 <td width="18%">$online[username]</td>
 <td width="10%">$onlinetime</td>
 <td>$online[location]</td>
-<td><a href="http://www.samspade.org/t/ipwhois?a=$online[ip]" target="_blank" />W</a>
-<a href="http://www.samspade.org/t/trace?a=$online[ip]" target="_blank" />T</a>
-<a href="http://www.samspade.org/t/lookat?a=$online[ip]" target="_blank"/>A</a>
-<a href="http://www.network-tools.com/default.asp?prog=network&amp;Netnic=whois.arin.net&amp;host=$online[ip]" target="_blank">L</a>
+<td>
+<a href="http://www.nwtools.com/default.asp?prog=network&host=$online[ip]" target="_blank" />W</a>
+<a href="http://www.nwtools.com/default.asp?prog=trace&host=$online[ip]" target="_blank" />T</a>
+<a href="http://www.nwtools.com/default.asp?prog=lookup&host=$online[ip]" target="_blank">L</a>
 <a href="http://www.networldmap.com/TryIt.htm?GetLocation&amp;Template=demo.htm&amp;ipaddress=$online[ip]" target="_blank">M</a> $online[ip]</a></td>
 </tr>
 
