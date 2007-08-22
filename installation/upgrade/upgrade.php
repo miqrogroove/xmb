@@ -26,7 +26,7 @@
  *
  **/
 
-define('XMB_V', '1.9.8 Final');
+define('XMB_V', '1.9.8 Pre-Final');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_8.xmb');
 
 function print_header() {
