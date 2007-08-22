@@ -468,9 +468,9 @@ show_act("Creating ".$tablepre."settings");
           `captcha_image_bg` varchar(128) NOT NULL default '',
           `captcha_image_dots` int(3) NOT NULL default '0',
           `captcha_image_lines` int(2) NOT NULL default '70',
-          `captcha_image_spans` varchar(128) NOT NULL default '',
-          `captcha_image_minspan` int(2) NOT NULL default '16',
-          `captcha_image_maxspan` int(2) NOT NULL default '25',
+          `captcha_image_fonts` varchar(128) NOT NULL default '',
+          `captcha_image_minfont` int(2) NOT NULL default '16',
+          `captcha_image_maxfont` int(2) NOT NULL default '25',
           `captcha_image_color` set('on','off') NOT NULL default 'off',
           `showsubforums` set('on','off') NOT NULL default 'off'
         ) TYPE=MyISAM
