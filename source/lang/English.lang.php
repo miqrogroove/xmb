@@ -427,6 +427,7 @@ $lang['onlineindex'] = "Browsing the index";
 $lang['onlinelogin'] = "Logging in";
 $lang['onlinelogout'] = "Logging out";
 $lang['onlinelostpw'] = "Recovering Lost Password";
+$lang['onlinemanagefolders'] = "Managing PM folders";
 $lang['onlinememcp'] = "Updating personal Profile";
 $lang['onlinememlist'] = "Viewing memberlist";
 $lang['onlineonlinetoday'] = "Viewing members who have been online today";

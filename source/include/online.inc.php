@@ -179,26 +179,28 @@ function url_to_text($url) {
             $location = $lang['onlineu2uignore'];
         } else if (false !== strpos($url, 'action=view')) {
             $location = $lang['onlineu2uview'];
+        } else if (false !== strpos($url, 'action=folders')) {
+            $location = $lang['onlinemanagefolders'];
         }
 
         if (!X_SADMIN) {
             $url = './u2u.php';
         }
     } else {
-        $location = $url;
+        $location = $lang['onlineindex'];
     }
 
-    $location = trim($location);
-    if ($location == '') {
-        $url = 'about:none';
+    if (empty($location)) {
+        $url = 'index.php';
+        $location = $lang['onlineindex'];
     } else {
         $location = str_replace('%20', '&nbsp;', $location);
     }
-
-    $url = addslashes($url);
+    $url = addslashes(trim($url));
     $return = array();
     $return['url'] = checkInput($url, 'yes');
     $return['text'] = $location;
+    return $return;
 
     return $return;
 }
