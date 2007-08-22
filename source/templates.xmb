@@ -4282,15 +4282,13 @@ $smilies
 |#*XMB TEMPLATE FILE*#|post_notloggedin|#*XMB TEMPLATE*#|
 <tr>
 <td class="tablerow" bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" value="$username" /> &nbsp;
-<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
+<td class="tablerow" bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" value="" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
 </tr>
 
 
 <tr>
 <td class="tablerow" bgcolor="$altbg1">$lang[textpassword]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="password" name="password" size="25" value="$password" />&nbsp;
-<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span></td>
+<td class="tablerow" bgcolor="$altbg2"><input type="password" name="password" size="25" value="" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|post_loggedin|#*XMB TEMPLATE*#|
