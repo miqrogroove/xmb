@@ -199,7 +199,7 @@ if ($dotfolders == "on" && X_MEMBER) {
 
 $querytop = $db->query("SELECT t.* FROM ".X_PREFIX."threads t WHERE t.fid=$fid $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT $start_limit, $tpp");
 while ($thread = $db->fetch_array($querytop)) {
-    if ($thread['icon'] != "") {
+    if ($thread['icon'] != "" && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
     } else {
         $thread['icon'] = '';
