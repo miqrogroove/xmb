@@ -29,7 +29,7 @@
 define('ROOT', '../');
 
 define('X_VERSION', '1.9.8');
-define('X_VERSION_EXT', '1.9.8 Engage Final');
+define('X_VERSION_EXT', '1.9.8 Engage Pre-Final');
 
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
@@ -54,7 +54,7 @@ function error($head, $msg, $die=true) {
     echo '<span class="progressWarn">'.$msg.'</span><br />';
     echo "\n";
     if ( $die) {
-	    echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
+        echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
         exit();
     }
 }
@@ -958,8 +958,8 @@ Public License instead of this License.
            <tr>
             <td colspan="2" class="configure"><input type="hidden" name="conf" value="<?php echo $conf?>" /><input type="submit" value="Begin Installation &gt;" /></td>
            </tr>
-          </table>   
-          </form>       
+          </table>
+          </form>
          </div>
          <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
         </div>
