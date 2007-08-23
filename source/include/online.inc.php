@@ -129,7 +129,7 @@ function url_to_text($url) {
             $url = 'index.php';
         }
     } else if (false !== strpos($url, "/editprofile.php")) {
-        $temp = explode('?', $url); print_r($temp);
+        $temp = explode('?', $url);
         if (!X_SADMIN) {
             $url = 'index.php';
         }
@@ -216,8 +216,13 @@ function url_to_text($url) {
             $location = $lang['onlineu2uignore'];
         } else if (false !== strpos($url, 'action=view')) {
             $location = $lang['onlineu2uview'];
-        } else {
+        } else if (false !== strpos($url, 'action=folders')) {
             $location = $lang['onlinemanagefolders'];
+        } else {
+            // need new lang var apparently because this is not right - John
+            // what happen to using $_GET_['folders']??
+            //$location = $lang['onlinemanagefolders'];
+            $location = $lang['onlineu2uview'];
         }
 
         if (!X_SADMIN) {
