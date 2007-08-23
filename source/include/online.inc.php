@@ -31,7 +31,7 @@ if (!defined('IN_CODE')) {
 }
 
 function url_to_text($url) {
-    global $db, $lang, $self, $xmbuser, $location;
+    global $db, $lang, $self, $xmbuser;
     static $restrict, $rset, $fname, $tsub;
 
     if (!$rset) {
@@ -62,48 +62,64 @@ function url_to_text($url) {
         $rset = true;
     }
 
-    if (false !== strpos($url, 'tid') && false === strpos($url, "/post.php")) {
+    if (false !== strpos($url, "/viewthread.php")) {
         $temp = explode('?', $url);
-        $urls = explode('&', $temp[1]);
-        foreach ($urls as $key=>$val) {
-            if (strpos($val, 'tid') !== false) {
-                $tid = (int) substr($val, 4);
+        if (count($temp) > 1) {
+            $tid = 0;
+            if (!empty($temp[1])) {
+                $urls = explode('&', $temp[1]);
+                foreach ($urls as $key=>$val) {
+                    if (strpos($val, 'tid') !== false) {
+                        $tid = (int) substr($val, 4);
+                    }
+                }
             }
-        }
 
-        if (isset($tsub[$tid])) {
-            $location = $lang['onlineviewthread'].' '.$tsub[$tid];
+            $location = $lang['onlinenothread'];
+            if (isset($tsub[$tid])) {
+                $location = $lang['onlineviewthread'].' '.$tsub[$tid];
+            } else {
+                $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
+                while ($locate = $db->fetch_array($query)) {
+                    $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
+                    $tsub[$tid] = $locate['subject'];
+                }
+                $db->free_result($query);
+            }
+
+            if (false !== strpos($url, 'action=attachment')) {
+                $url = substr($url, 0, strpos($url, '?'));
+                $url .= '?tid='.$tid;
+            }
         } else {
-            $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
-            while ($locate = $db->fetch_array($query)) {
-                $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
-                $tsub[$tid] = $locate['subject'];
-            }
-            $db->free_result($query);
+            $location = $lang['onlinenothread'];
         }
-
-        if (false !== strpos($url, 'action=attachment')) {
-            $url = substr($url, 0, strpos($url, '?'));
-            $url .= '?tid='.$tid;
-        }
-    } else if (false !== strpos($url, 'fid')  && false === strpos($url, "/post.php")) {
+    } else if (false !== strpos($url, "/forumdisplay.php")) {
         $temp = explode('?', $url);
-        $urls = explode('&', $temp[1]);
-        foreach ($urls as $key=>$val) {
-            if (strpos($val, 'fid') !== false) {
-                $fid = (int) substr($val, 4);
+        if (count($temp) > 1) {
+            $fid = 0;
+            $urls = explode('&', $temp[1]);
+            if (!empty($temp[1])) {
+                foreach ($urls as $key=>$val) {
+                    if (strpos($val, 'fid') !== false) {
+                        $fid = (int) substr($val, 4);
+                    }
+                }
             }
-        }
 
-        if (isset($fname[$fid])) {
-            $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
-        } else {
-            $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
-            while ($locate = $db->fetch_array($query)) {
-                $location = $lang['onlineforumdisplay'].' '.$locate['name'];
-                $fname[$fid] = $locate['name'];
+            $location = $lang['onlinenoforum'];
+            if (isset($fname[$fid])) {
+                $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
+            } else {
+                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
+                while ($locate = $db->fetch_array($query)) {
+                    $location = $lang['onlineforumdisplay'].' '.$locate['name'];
+                    $fname[$fid] = $locate['name'];
+                }
+                $db->free_result($query);
             }
-            $db->free_result($query);
+        } else {
+            $location = $lang['onlinenoforum'];
         }
     } else if (false !== strpos($url, "/memcp.php")) {
         $location = $lang['onlinememcp'];
@@ -113,10 +129,21 @@ function url_to_text($url) {
             $url = 'index.php';
         }
     } else if (false !== strpos($url, "/editprofile.php")) {
+        $temp = explode('?', $url); print_r($temp);
         if (!X_SADMIN) {
             $url = 'index.php';
         }
-        $location = $lang['onlineeditprofile'];
+
+        if (false!== strpos($temp[1], "user=")) {
+            if (isset($temp[1]) && !empty($temp[1]) && $temp[1] != 'user=') {
+                $user = str_replace('user=', '', $temp[1]);
+                eval("\$location = \"$lang[onlineeditprofile]\";");
+            } else {
+                $location = $lang['onlineeditnoprofile'];
+            }
+        } else {
+            $location = $lang['onlineeditnoprofile'];
+        }
     } else if (false !== strpos($url, "/faq.php")) {
         $location = $lang['onlinefaq'];
     } else if (false !== strpos($url, "/index.php")) {
@@ -127,14 +154,20 @@ function url_to_text($url) {
         } else if (false !== strpos($url, 'action=viewpro')) {
             $temp = explode('?', $url);
             $urls = explode('&', $temp[1]);
-            foreach ($urls as $argument) {
-                if (strpos($argument, 'member') !== false) {
-                    $member = str_replace('member=', '', $argument);
+            if (isset($urls[1]) && !empty($urls[1]) && $urls[1] != 'member=') {
+                foreach ($urls as $argument) {
+                    if (strpos($argument, 'member') !== false) {
+                        $member = str_replace('member=', '', $argument);
+                    }
                 }
+                eval("\$location = \"$lang[onlineviewpro]\";");
+            } else {
+                $location = $lang['onlinenoprofile'];
             }
-            eval("\$location = \"$lang[onlineviewpro]\";");
         } else if (false !== strpos($url, 'action=coppa')) {
             $location = $lang['onlinecoppa'];
+        } else {
+            $location = $lang['onlinenoprofile'];
         }
     } else if (false !== strpos($url, "misc.php")) {
         if (false !== strpos($url, 'login')) {
@@ -153,6 +186,8 @@ function url_to_text($url) {
             $location = $lang['onlinememlist'];
         } else if (false !== strpos($url, 'captchaimage')) {
             $location = $lang['onlinereg'];
+        } else {
+            $location = $lang['onlineunknown'];
         }
     } else if (false !== strpos($url, "/post.php")) {
         if (false !== strpos($url, 'action=edit')) {
@@ -161,6 +196,8 @@ function url_to_text($url) {
             $location = $lang['onlinepostnewthread'];
         } else if (false !== strpos($url, 'action=reply')) {
             $location = $lang['onlinepostreply'];
+        } else {
+            $location = $lang['onlineunknown'];
         }
     } else if (false !== strpos($url, "/stats.php")) {
         $location = $lang['onlinestats'];
@@ -179,7 +216,7 @@ function url_to_text($url) {
             $location = $lang['onlineu2uignore'];
         } else if (false !== strpos($url, 'action=view')) {
             $location = $lang['onlineu2uview'];
-        } else if (false !== strpos($url, 'action=folders') || false !== strpos($url, 'folder=')) {
+        } else {
             $location = $lang['onlinemanagefolders'];
         }
 
@@ -190,13 +227,9 @@ function url_to_text($url) {
         $location = $lang['onlineindex'];
     }
 
-    if (empty($location)) {
-        $url = 'index.php';
-        $location = $lang['onlineindex'];
-    } else {
-        $location = str_replace('%20', '&nbsp;', $location);
-    }
+    $location = str_replace('%20', '&nbsp;', $location);
     $url = addslashes(trim($url));
+
     $return = array();
     $return['url'] = checkInput($url, 'yes');
     $return['text'] = $location;
