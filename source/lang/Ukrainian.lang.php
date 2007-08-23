@@ -381,6 +381,7 @@ $lang['onlineindex'] = "переглянути индекси";
 $lang['onlinelogin'] = "Ввійти";
 $lang['onlinelogout'] = "Вийти";
 $lang['onlinelostpw'] = "Встановити загублений пароль";
+$lang['onlinemanagefolders'] = "Управляє каталогами (теками) ОП";
 $lang['onlinememcp'] = "Обновить персональный профиль";
 $lang['onlinememlist'] = "дивитись список користувачів";
 $lang['onlineonlinetoday'] = "проглянути користувачів,які  були сьогодні в онлайні";
