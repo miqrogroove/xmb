@@ -207,10 +207,10 @@ switch ($action) {
             $srchfrom = getInt('srchfrom');
             $filter_distinct = formYesNo('filter_distinct');
 
-			if (!$srchuname) $srchuname = formVar('srchuname');
-			if (!$srchtxt) $srchtxt = formVar('srchtxt');
-			if (!$srchfid) $srchfid = formInt('srchfid');
-			if (!$srchfrom) $srchfid = formInt('srchfrom');
+            if (!$srchuname) $srchuname = formVar('srchuname');
+            if (!$srchtxt) $srchtxt = formVar('srchtxt');
+            if (!$srchfid) $srchfid = formInt('srchfid');
+            if (!$srchfrom) $srchfid = formInt('srchfrom');
 
             if (!$srchfid) {
                 $srchfid = 'all';
