@@ -420,7 +420,7 @@ $lang['o_attachments_found'] = " orphaned attachments found and deleted.";
 $lang['o_threads_found'] = " orphaned threads found and reallocated";
 $lang['onlinecoppa'] = "Reading coppa license";
 $lang['onlinecp'] = "Using the Administration Panel";
-$lang['onlineeditprofile'] = "Editing ${user}\'s profile";
+$lang['onlineeditprofile'] = 'Editing $user\'s profile';
 $lang['onlinefaq'] = "Reading the FAQ";
 $lang['onlineforumdisplay'] = "Viewing forum: ";
 $lang['onlineindex'] = "Browsing the index";
@@ -756,7 +756,7 @@ $lang['textjun'] = "June";
 $lang['textlanguage'] = "Language:";
 $lang['textlastpost'] = "Last Post:";
 $lang['textlatestfavs'] = "Latest Five Favourites With New Replies";
-$lang['textlatestu2us'] = "Latest Fifteen U2U Messages";
+$lang['textlatestu2us'] = "Latest Five U2U Messages";
 $lang['textlfrom'] = "from:";
 $lang['textlink'] = "Link Colour:";
 $lang['textlist'] = "List";
@@ -1124,4 +1124,9 @@ $lang['verificationnote'] = "Please enter the text contained within the image in
 $lang['textsubforums'] = "Sub-Forums:";
 $lang['showsubforums'] = "Sub-forums on index status:<br /><span class=\"smalltxt\">This will enable or disable sub-forums display on index.</span>";
 $lang['message'] = "Message";
+$lang['onlinenothread'] = 'Viewing an unknown thread';
+$lang['onlinenoforum'] = 'Viewing an unknown forum';
+$lang['onlineeditnoprofile'] = 'Editing an unknown profile';
+$lang['onlinenoprofile'] = 'Viewing an unknown profile';
+$lang['onlineunknown'] = 'Performing an unknown action';
 ?>
