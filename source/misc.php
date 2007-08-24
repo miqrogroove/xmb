@@ -202,12 +202,13 @@ switch ($action) {
             $misc = stripslashes($search);
         } else {
             $srchuname = getVar('srchuname');
-            $srchtxt = formVar('srchtxt');
+            $srchtxt = getVar('srchtxt');
             $srchfid = getInt('srchfid');
             $srchfrom = getInt('srchfrom');
             $filter_distinct = formYesNo('filter_distinct');
 
 			if (!$srchuname) $srchuname = formVar('srchuname');
+			if (!$srchtxt) $srchtxt = formVar('srchtxt');
 			if (!$srchfid) $srchfid = formInt('srchfid');
 			if (!$srchfrom) $srchfid = formInt('srchfrom');
 
