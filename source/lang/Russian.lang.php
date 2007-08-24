@@ -1127,4 +1127,9 @@ $lang['verificationnote'] = "Пожалуйста введите код показанный на картинке в пол
 $lang['textsubforums'] = "Под-Форумы:";
 $lang['showsubforums'] = "Статус \"Под-Форумы на Главной Странице\":<br /><span class=\"smalltxt\">Включает и выключает показ под-форумов на главной странице.</span>";
 $lang['message'] = "Сообщение";
+$lang['onlinenothread'] = 'Смотрит неизвестную тему';
+$lang['onlinenoforum'] = 'Смотрит неизвестный форум';
+$lang['onlineeditnoprofile'] = 'Изменяет неизвестный профиль';
+$lang['onlinenoprofile'] = 'Смотрит неизвестный профиль';
+$lang['onlineunknown'] = 'Совершает неизвестное действие';
 ?>
