@@ -1123,4 +1123,10 @@ $lang['textsubforums'] = "Alafoorumid:";
 $lang['showsubforums'] = "Alafoorumid pealehel staatus:<br /><span class=\"smalltxt\">Antud seade kuvab või keelab alafoorumite kuvamise foorumi pealehel.</span>";
 $lang['message'] = "Teade";
 $lang['noPostsTimePeriod'] = "Antud ajaperioodil pole ühtegi postitust tehtud";
+$lang['onlinenothread'] = 'Vaatab tundmatut teemat';
+$lang['onlinenoforum'] = 'Vaatab tundmatut foorumit';
+$lang['onlineeditnoprofile'] = 'Muudab tundmatut profiili';
+$lang['onlinenoprofile'] = 'Vaatab tundmatut profiili';
+$lang['onlineunknown'] = 'Teostab tundmatut aktsiooni';
+$lang['onlinemanagefolders'] = "Majandab privaat teadete kaustasid";
 ?>
