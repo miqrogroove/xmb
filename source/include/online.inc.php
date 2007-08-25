@@ -122,7 +122,15 @@ function url_to_text($url) {
             $location = $lang['onlinenoforum'];
         }
     } else if (false !== strpos($url, "/memcp.php")) {
-        $location = $lang['onlinememcp'];
+        if (false !== strpos($url, 'action=profile')) {
+            $location = $lang['onlinememcppro'];
+        } else if (false !== strpos($url, 'action=subscriptions')) {
+            $location = $lang['onlinememcpsub'];
+        } else if (false !== strpos($url, 'action=favorites')) {
+            $location = $lang['onlinememcpfav'];
+        } else {
+            $location = $lang['onlinememcp'];
+        }
     } else if (false !== strpos($url, "/cp.php") || false !== strpos($url, "/cp2.php")) {
         $location = $lang['onlinecp'];
         if (!X_ADMIN) {
@@ -236,6 +244,18 @@ function url_to_text($url) {
 
         if (!X_SADMIN) {
             $url = './u2u.php';
+        }
+    } else if (false !== strpos($url, "/buddy.php")) {
+        if (false !== strpos($url, 'action=add2u2u')) {
+            $location = $lang['onlinebuddyadd2u2u'];
+        } else if (false !== strpos($url, 'action=add')) {
+            $location = $lang['onlinebuddyadd'];
+        } else if (false !== strpos($url, 'action=edit')) {
+            $location = $lang['onlinebuddyedit'];
+        } else if (false !== strpos($url, 'action=delete')) {
+            $location = $lang['onlinebuddydelete'];
+        } else {
+            $location = $lang['onlinebuddy'];
         }
     } else {
         $location = $lang['onlineindex'];
