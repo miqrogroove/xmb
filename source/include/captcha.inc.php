@@ -51,7 +51,6 @@ define('CAPTCHA_MAX_FONT_SIZE', $SETTINGS['captcha_image_maxfont']);
 define('CAPTCHA_USE_COLOR', $SETTINGS['captcha_image_color'] == 'on' ? true : false);
 define('CAPTCHA_FILE_TYPE', $SETTINGS['captcha_image_type']);
 
-
 if (!defined('IN_CODE')) {
     exit ("Not allowed to run this file directly.");
 }
@@ -192,7 +191,7 @@ class Captcha {
         foreach ($aFonts as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
                         $this->aFonts[] = $sCurrentItem . '/' . $file;
                     }
@@ -235,7 +234,7 @@ class Captcha {
         foreach ($aBackgroundImages as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
                         $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {
@@ -403,10 +402,8 @@ class Captcha {
 
             if ($this->bCharShadow) {
                 $iOffsetAngle = rand(-30, 30);
-
                 $iRandOffsetX = rand(-5, 5);
                 $iRandOffsetY = rand(-5, 5);
-
                 imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i], array());
             }
         }
@@ -418,7 +415,7 @@ class Captcha {
 
         switch ($this->sFileType) {
             case 'gif':
-                imagegif($this->oImage);
+                imagegif ($this->oImage);
                 break;
             case 'png':
                 imagepng($this->oImage);
@@ -429,6 +426,7 @@ class Captcha {
     }
 
     function Create($imghash) {
+        global $THEME;
         // get background image if specified and copy to CAPTCHA
         if (!empty($this->aBackgroundImages)) {
             // create new image
@@ -461,8 +459,6 @@ class Captcha {
         }
 
         // allocate alternative background color 2 to match theme.
-
-        global $THEME;
         $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
         $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
         $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
@@ -488,7 +484,7 @@ class Captcha {
     function ValidateCode($sUserCode, $imghash) {
         global $db;
 
-        if($imghash == 'test') {
+        if ($imghash == 'test') {
             return false;
         }
 
