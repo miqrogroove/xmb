@@ -1127,4 +1127,10 @@ $lang['textsubforums'] = "Під-Форуми:";
 $lang['showsubforums'] = "Статус \"Під-Форуми на Головній сторінці\":<br /><span class=\"smalltxt\">Вмикає і вимикає показ під-форумів на головній сторінці.</span>";
 $lang['message'] = "Повідомлення";
 $lang['noPostsTimePeriod'] = "За вказаний час не було залишено жодного повідомлення";
+$lang['onlinenothread'] = "Дивиться невідому тему";
+$lang['onlinenoforum'] = "Дивиться невідомий форум";
+$lang['onlineeditnoprofile'] = "Змінює невідомий профіль";
+$lang['onlinenoprofile'] = "Дивиться невідомий профіль";
+$lang['onlineunknown'] = "Здійснює невідому дію";
+$lang['onlineu2uint'] = "Дивиться u2u інтерфейс"; 
 ?>
