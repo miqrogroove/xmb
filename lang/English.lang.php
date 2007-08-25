@@ -1129,4 +1129,5 @@ $lang['onlinenoforum'] = 'Viewing an unknown forum';
 $lang['onlineeditnoprofile'] = 'Editing an unknown profile';
 $lang['onlinenoprofile'] = 'Viewing an unknown profile';
 $lang['onlineunknown'] = 'Performing an unknown action';
+$lang['onlineu2uint'] = 'Viewing u2u interface';
 ?>
