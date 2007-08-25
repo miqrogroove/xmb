@@ -216,13 +216,10 @@ function url_to_text($url) {
             $location = $lang['onlineu2uignore'];
         } else if (false !== strpos($url, 'action=view')) {
             $location = $lang['onlineu2uview'];
-        } else if (false !== strpos($url, 'action=folders')) {
+        } else if (false !== strpos($url, 'action=folders') || false !== strpos($url, 'folder=')) {
             $location = $lang['onlinemanagefolders'];
         } else {
-            // need new lang var apparently because this is not right - John
-            // what happen to using $_GET_['folders']??
-            //$location = $lang['onlinemanagefolders'];
-            $location = $lang['onlineu2uview'];
+            $location = $lang['onlineu2uint'];
         }
 
         if (!X_SADMIN) {
