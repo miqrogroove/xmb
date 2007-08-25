@@ -1130,4 +1130,6 @@ $lang['onlineeditnoprofile'] = 'Editing an unknown profile';
 $lang['onlinenoprofile'] = 'Viewing an unknown profile';
 $lang['onlineunknown'] = 'Performing an unknown action';
 $lang['onlineu2uint'] = 'Viewing u2u interface';
+$lang['onlineviewcat'] = "Viewing category: ";
+$lang['onlinecatunknown'] = "Viewing an unknown category";
 ?>

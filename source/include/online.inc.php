@@ -147,7 +147,19 @@ function url_to_text($url) {
     } else if (false !== strpos($url, "/faq.php")) {
         $location = $lang['onlinefaq'];
     } else if (false !== strpos($url, "/index.php")) {
-        $location = $lang['onlineindex'];
+        if (false !== strpos($url, 'gid=')) {
+            $temp = explode('?', $url);
+            $gid = (int) str_replace('gid=', '', $temp[1]);
+            $q = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid=".$gid);
+            $cat = $db->fetch_array($q);
+            if (!$cat) {
+                $location = $lang['onlinecatunknown'];
+            } else {
+                $location = $lang['onlineviewcat'].$cat['name'];
+            }
+        } else {
+            $location = $lang['onlineindex'];
+        }
     } else if (false !== strpos($url, "/member.php")) {
         if (false !== strpos($url, 'action=reg')) {
             $location = $lang['onlinereg'];
