@@ -1132,4 +1132,15 @@ $lang['onlinenoforum'] = 'Смотрит неизвестный форум';
 $lang['onlineeditnoprofile'] = 'Изменяет неизвестный профиль';
 $lang['onlinenoprofile'] = 'Смотрит неизвестный профиль';
 $lang['onlineunknown'] = 'Совершает неизвестное действие';
+$lang['onlineu2uint'] = 'Смотрит интерфейс ПС';
+$lang['onlineviewcat'] = "Смотрит категорию: ";
+$lang['onlinecatunknown'] = "Смотрит неизвестную категорию";
+$lang['onlinememcppro'] = "Обновляет персональный профиль";
+$lang['onlinememcpsub'] = "Смотрит подписки";
+$lang['onlinememcpfav'] = "Смотрит избранные темы";
+$lang['onlinebuddy'] = "Смотрит адресную книгу";
+$lang['onlinebuddyadd'] = "Добавляет пользователя(ей) в адресную книгу";
+$lang['onlinebuddyedit'] = "Редактирует адресную книгу";
+$lang['onlinebuddydelete'] = "Удаляет пользователя(ей) из адресной книги";
+$lang['onlinebuddyadd2u2u'] = "Добавляет пользователя(ей) в ПС";
 ?>
