@@ -1133,4 +1133,14 @@ $lang['onlineeditnoprofile'] = "Змінює невідомий профіль";
 $lang['onlinenoprofile'] = "Дивиться невідомий профіль";
 $lang['onlineunknown'] = "Здійснює невідому дію";
 $lang['onlineu2uint'] = "Дивиться u2u інтерфейс"; 
+$lang['onlineviewcat'] = "Дивиться категорію: ";
+$lang['onlinecatunknown'] = "Дивиться невідому категорію";
+$lang['onlinememcppro'] = "Оновлює персональний профіль";
+$lang['onlinememcpsub'] = "Дивиться підписки";
+$lang['onlinememcpfav'] = "Дивиться вибрані теми";
+$lang['onlinebuddy'] = "Дивиться адресну книгу";
+$lang['onlinebuddyadd'] = "Додає користувача(ей) в адресну книгу";
+$lang['onlinebuddyedit'] = "Редагує адресну книгу";
+$lang['onlinebuddydelete'] = "Видаляє користувача(ей) з адресної книги";
+$lang['onlinebuddyadd2u2u'] = "Додає користувача(ей) в ПС";
 ?>
