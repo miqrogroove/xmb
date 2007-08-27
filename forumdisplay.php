@@ -270,7 +270,7 @@ while ($thread = $db->fetch_array($querytop)) {
         $thread['views'] = "-";
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
         $postnum = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$thread[tid]"), 0);
-    }else{
+    } else {
         $thread['realtid'] = $thread['tid'];
     }
 
