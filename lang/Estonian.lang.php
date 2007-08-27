@@ -1129,4 +1129,15 @@ $lang['onlineeditnoprofile'] = 'Muudab tundmatut profiili';
 $lang['onlinenoprofile'] = 'Vaatab tundmatut profiili';
 $lang['onlineunknown'] = 'Teostab tundmatut aktsiooni';
 $lang['onlinemanagefolders'] = "Majandab privaat teadete kaustasid";
+$lang['onlineu2uint'] = 'Vaatab u2u süsteemi';
+$lang['onlineviewcat'] = "Vaatab kategooriat: ";
+$lang['onlinecatunknown'] = "Vaatab tundmatut kategooriat";
+$lang['onlinememcppro'] = "Muudab oma profiili";
+$lang['onlinememcpsub'] = "Vaatab tellitud teemasid";
+$lang['onlinememcpfav'] = "Vaatab lemmikuid teemasid";
+$lang['onlinebuddy'] = "Vaatab aadressi raamatut";
+$lang['onlinebuddyadd'] = "Lisab kasutaja(id) aadressi raamatusse";
+$lang['onlinebuddyedit'] = "Muudab aadressi raamatut";
+$lang['onlinebuddydelete'] = "Kustutab kasutaja(id) aadressi raamatust";
+$lang['onlinebuddyadd2u2u'] = "Lisab kasutaja(id) u2u-sse";
 ?>
