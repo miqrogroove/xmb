@@ -31,68 +31,69 @@ define('XMB_UPGRADE_FILE', 'XMB_1_9_8.xmb');
 
 function print_header() {
 ?>
-<html>
-    <head>
-        <title>XMB Upgrader</title>
-        <style type="text/css">
-        @import url("./install.css");.style1 {color: #2E3E55}
-.style7 {
-    font-size: 16px;
-    color: #333333;
-}
-        </style>
-    </head>
-    <body>
-        <h3 align="left" class="style1"><span class="style7">XMB <?php echo XMB_V;?> Upgrader</span></h3>
-        <hr noshade>
-  <br>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>XMB Upgrade Utility</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="install.css" rel="stylesheet" type="text/css" media="screen, projection" />
+</head>
+        <body>
+        <div id="header">
+         <img src="images/logo.gif" alt="XMB" title="XMB" />
+        </div>
           <?php
 }
 
 function print_footer() {
 ?>
+<div id="footer">
+ <img src="images/footer-arrow2.gif" alt="" />
+ <span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span>
+</div>
 </body>
-</html><?php
+</html>
+<?php
 }
 
 function error($head, $msg, $die=true) {
     echo "\n";
-    echo '<blockquote>';
-    echo '<font class="progressErr">'.$head.'</font><br />';
-    echo '<font class="progressWarn">'.$msg.'</font>';
-    echo '</blockquote>';
+    echo '<h1 class="progressErr">'.$head.'</h1>';
+    echo '<span class="progressWarn">'.$msg.'</span><br />';
     echo "\n";
     ob_flush();
     if($die) {
+	    echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
         exit();
     }
 }
 
 function show_act($act) {
     $act .= str_repeat('.', (75-strlen($act)));
-    echo '<font class="progress">'.$act;
+    echo '<span class="progress">'.$act;
     ob_flush();
 }
 
 function show_result($type) {
     switch($type) {
         case 0:
-            echo '<font class="progressErr">ERROR</font><br />';
+            echo '<span class="progressErr">ERROR</span><br />';
             break;
 
         case 1:
-            echo '<font class="progressWarn">WARNING</font><br />';
+            echo '<span class="progressWarn">WARNING</span><br />';
             break;
 
          case 2:
-            echo '<font class="progressOk">OK</font><br />';
+            echo '<span class="progressOk">OK</span><br />';
             break;
 
          case 3:
-            echo '<font class="progressSkip">SKIPPED</font><br />';
+            echo '<span class="progressSkip">SKIPPED</span><br />';
             break;
     }
-    echo "</font>\n";
+    echo "</span>\n";
     ob_flush();
 }
 
@@ -109,59 +110,103 @@ $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : '0';
 switch($step) {
     case 1: // confirmation you WANT to upgrade
         print_header();
-        echo 'Upload all '.XMB_V.' files to your forum dir, and re-configure the config.php file. When you\'re ready, press next.<br />';
-        echo '<b>PLEASE NOTE:</b> <i>This upgrade may temporarily use up to two times your current database size (though only in extreme circumstances)</i>';
-        echo '<br /><br />';
-
-?><p class="subTitle">
-            Version Check Information
-        </p>
-
-        <br />
-        You are being connected to an information page which displays all the latest information in regards to this (and later) xmb versions.
-        <br />
-        <table style="width: 75%;">
-        <tr>
-        <td style="width: 30%;">
-        Your Version:
-        </td>
-        <td style="width:70%;">
-            <br>
-            <b><i><?php echo XMB_V;?> Final</i></b>
-        </td>
-        </tr>
-        <td style="width: 30%;">
-        Current Version:</td>
-        <td style="width:70%;">
-        <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=e9edef&fg=000000" border="0">
-        </td>
-        </tr>
-        </table>
-        <br />
-        <form action="./upgrade.php?step=2" method="post">
-        <INPUT TYPE="submit" VALUE="Upgrade to XMB <?php echo XMB_V;?>" onClick="location.href = 'upgrade.php?step=2'" />
-        </form>
-        <br />&nbsp;
-        </p>
+?>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li class="current">Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li>Upgrade</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+         <h1>XMB Upgrade Utility</h1>
+         <p>Welcome to the XMB Upgrade Utility. The next steps will guide you through the process to update your XMB board to the latest stable version. Please ensure you have made a backup of your current XMB Database and files. Once you have completed your backup, upload all the <? echo XMB_V; ?> files uploaded to your forum directory, and re-configure the config.php file. Once you have completed these steps, you may proceed with the upgrade process.</p>
+         <h1>Please Note</h1>
+         <p>This upgrade may temporarily use up to two times your current database size (though only in extreme circumstances)</p>
+         <form action="./upgrade.php?step=2" method="post">
+          <p><input type="submit" value="Begin Upgrade &gt;" /></p>
+         </form>
+        </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
 <?php
         print_footer();
         break;
+    
+    case 2: //version check
+    	print_header();
+    	?>
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li class="current">Version Check</li>
+           <li>License Agreement</li>
+           <li>Upgrade</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+         <h1>Version Check Information</h1>
+         <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
+         <ul>
+           <li>Your Version: XMB <?php echo XMB_V;?></li>
+           <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=aebbcf&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+         </ul>
+         <form action="./upgrade.php?step=3" method="post">
+          <p><input type="submit" value="Upgrade to XMB <?php echo XMB_V;?> &gt;" /></p>
+         </form>
+        </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
+    	<?
+    	print_footer();
+    	break;
 
-    case 2: // agreement
+    case 3: // agreement
         print_header();
         ?>
-        <p style="text-align:center;">
-        <table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="80%" >
-        <tr>
-        <td ALIGN=CENTER VALIGN=CENTER>
-        <br /><b><font face="Verdana"><font color="#1C8BCB"><font size=-2>XMB <?php echo XMB_V;?> Agreement</font></font></font></b>
-        <br /><font face="Verdana" size="-2">Please read
-        over the agreement below, and if you agree to it select the button</font>
-        <br /><font face="Verdana" size=-2>at the very
-        bottom. By selecting the button, you agree to the terms below.<br /><br /><br /></font>
-        <textarea cols="100" rows="30"  wrap='soft' name="agreement" style= "font-family: Verdana; font-size: 8pt" readonly>
-
-        XMB <?php echo XMB_V;?> License (Updated August 2004)
+        <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li class="current">License Agreement</li>
+           <li>Upgrade</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+          <h1>XMB <?php echo XMB_V;?> License Agreement</h1>
+          <p>Please read over the agreement below, and if you agree to it select the button at the very bottom. By selecting the button, you agree to the terms below.</p>
+          <textarea cols="100" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
+        XMB <?php echo XMB_V;?>  License (Updated August 2005)
         www.xmbforum.com
         ----------------------------------------------
 
@@ -222,7 +267,7 @@ patent must be licensed for everyone's free use or not licensed at all.
 
   The precise terms and conditions for copying, distribution and
 modification follow.
-
+.
             GNU GENERAL PUBLIC LICENSE
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
@@ -277,7 +322,7 @@ above, provided that you also meet all of these conditions:
     License.  (Exception: if the Program itself is interactive but
     does not normally print such an announcement, your work based on
     the Program is not required to print an announcement.)
-
+.
 These requirements apply to the modified work as a whole.  If
 identifiable sections of that work are not derived from the Program,
 and can be reasonably considered independent and separate works in
@@ -335,7 +380,7 @@ access to copy from a designated place, then offering equivalent
 access to copy the source code from the same place counts as
 distribution of the source code, even though third parties are not
 compelled to copy the source along with the object code.
-
+.
   4. You may not copy, modify, sublicense, or distribute the Program
 except as expressly provided under this License.  Any attempt
 otherwise to copy, modify, sublicense or distribute the Program is
@@ -392,7 +437,7 @@ impose that choice.
 
 This section is intended to make thoroughly clear what is believed to
 be a consequence of the rest of this License.
-
+.
   8. If the distribution and/or use of the Program is restricted in
 certain countries either by patents or by copyrighted interfaces, the
 original copyright holder who places the Program under this License
@@ -445,7 +490,7 @@ PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGES.
 
              END OF TERMS AND CONDITIONS
-
+.
         How to Apply These Terms to Your New Programs
 
   If you develop a new program, and you want it to be of the greatest
@@ -457,8 +502,8 @@ to attach them to the start of each source file to most effectively
 convey the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    &lt;one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) &lt;year>  &lt;name of author>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -497,7 +542,7 @@ necessary.  Here is a sample; alter the names:
   Yoyodyne, Inc., hereby disclaims all copyright interest in the program
   `Gnomovision' (which makes passes at compilers) written by James Hacker.
 
-  <signature of Ty Coon>, 1 April 1989
+  &lt;signature of Ty Coon>, 1 April 1989
   Ty Coon, President of Vice
 
 This General Public License does not permit incorporating your program into
@@ -508,19 +553,41 @@ Public License instead of this License.
 
 
 
-        </textarea><br /><br /><br />
-        <form action="./upgrade.php?step=3" method="post">
-        <INPUT TYPE="submit" VALUE="I Agree To These Terms" onClick="location.href='upgrade.php?step=3'">
+        </textarea>
+        <form action="./upgrade.php?step=4" method="post">
+         <p><input type="submit" value="I Agree To These Terms &gt;" /></p>
         </form>
-        <br />&nbsp;
-        <br />&nbsp;</td>
-        </tr>
-        </table>
-        </p>
+         </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
         <?php
         break;
 
-    case 3:
+    case 4:
+    print_header();
+    ?>
+    <div id="sidebar">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
+         <div class="dark">
+          <ul>
+           <li>Welcome</li>
+           <li>Version Check</li>
+           <li>License Agreement</li>
+           <li class="current">Upgrade</li>
+          </ul>
+         </div>
+         <span class="rounding"><span class="round4 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round1">&nbsp;</span></span>
+         </div>
+        </div>
+        <div id="content">
+         <div class="block">
+         <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
+         <div class="light arrow">
+         <h1>Performing Upgrade</h1>
+         <div class="install">
+    <?
         while(ob_get_level() > 0) {
             ob_end_flush();
         }
@@ -562,7 +629,6 @@ Public License instead of this License.
 
         // Increase the time limit for long running queries to five minutes. This should be enough, but if you need
         // more, make it more.
-        print_header();
         show_act('Extending script timeout to 300 seconds.');
         if(!ini_get('safe_mode')){
             set_time_limit(300);
@@ -1013,7 +1079,15 @@ Public License instead of this License.
             show_result(X_INST_OK);
         }
 
-        echo '<br />Installation complete. Thank you for upgrading.';
+        ?>
+        </div>
+        <h1>Upgrade Process Complete</h1>
+        <p>The upgrade process has completed successfully. Your upgraded XMB board is now ready for use. Please click <a href="../index.php">here</a> to go to your forum.</p>
+        </div>
+         <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
+        </div>
+        </div>
+        <?
         print_footer();
         break;
 
