@@ -205,12 +205,16 @@ switch ($action) {
             $srchtxt = getVar('srchtxt');
             $srchfid = getInt('srchfid');
             $srchfrom = getInt('srchfrom');
-            $filter_distinct = formYesNo('filter_distinct');
+            $filter_distinct = getVar('filter_distinct');
+            if ($filter_distinct != 'yes') {
+                $filter_distinct = formYesNo('filter_distinct');
+            }
+
 
             if (!$srchuname) $srchuname = formVar('srchuname');
             if (!$srchtxt) $srchtxt = formVar('srchtxt');
             if (!$srchfid) $srchfid = formInt('srchfid');
-            if (!$srchfrom) $srchfid = formInt('srchfrom');
+            if (!$srchfrom) $srchfrom = formInt('srchfrom');
 
             if (!$srchfid) {
                 $srchfid = 'all';
@@ -233,17 +237,16 @@ switch ($action) {
                     $page = 1;
                     $offset = 0;
                     $start = 0;
-                    $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $end = ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 } else {
-                    if ($page < 1) {
+                    if ($page < 1 ) {
                         $page = 1;
                     }
 
-                    $offset = ($page-1) * ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $offset = ($page-1) * ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                     $start = $offset;
                     $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
-
                 $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
@@ -368,7 +371,7 @@ switch ($action) {
                             $msg_leng = strlen($message);
 
                             if ($position <= $show_num) {
-                            $min = 0;
+                                $min = 0;
                                 $add_pre = '';
                             } else {
                                 $min = $position - $show_num;
@@ -406,7 +409,7 @@ switch ($action) {
 
             if ($results == 0) {
                 eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } elseif ($results == ((isset($ppp) && $ppp > 0) ? $ppp : (isset($postperpage) && $postperpage > 0 ? $postperpage : 20))) {
+            } elseif ($results == ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
                 $ext = htmlspecialchars(implode('&', $ext));
                 eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }
