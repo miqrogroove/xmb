@@ -210,11 +210,21 @@ switch ($action) {
                 $filter_distinct = formYesNo('filter_distinct');
             }
 
+            if (!$srchuname) {
+                $srchuname = formVar('srchuname');
+            }
 
-            if (!$srchuname) $srchuname = formVar('srchuname');
-            if (!$srchtxt) $srchtxt = formVar('srchtxt');
-            if (!$srchfid) $srchfid = formInt('srchfid');
-            if (!$srchfrom) $srchfrom = formInt('srchfrom');
+            if (!$srchtxt) {
+                $srchtxt = formVar('srchtxt');
+            }
+
+            if (!$srchfid) {
+                $srchfid = formInt('srchfid');
+            }
+
+            if (!$srchfrom) {
+                $srchfrom = formInt('srchfrom');
+            }
 
             if (!$srchfid) {
                 $srchfid = 'all';
@@ -409,7 +419,7 @@ switch ($action) {
 
             if ($results == 0) {
                 eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } elseif ($results == ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
+            } else if ($results == ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
                 $ext = htmlspecialchars(implode('&', $ext));
                 eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }
@@ -501,6 +511,7 @@ switch ($action) {
                 eval('$onlineusers .= "'.template('misc_online_row').'";');
             }
         }
+        $db->free_result($query);
 
         if (X_ADMIN) {
             eval('$misc = "'.template('misc_online_admin').'";');
@@ -577,7 +588,7 @@ switch ($action) {
         if (!$order || ($order != "username" && $order != "postnum" && $order != 'status')) {
             $orderby = "uid";
             $order = 'uid';
-        } elseif ($order == 'status') {
+        } else if ($order == 'status') {
             $orderby = "if (status='Super Administrator',1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='member', 5, if (status='banned',6,7))))))";
         } else {
             $orderby = $order;
