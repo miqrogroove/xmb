@@ -30,7 +30,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-$charset = 'ISO-8859-1';
+$charset = 'ISO 8859-1';
 
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Potrebno je dodati jos adresa";
@@ -641,7 +641,7 @@ $lang['textdesc'] = "Pretplata:";
 $lang['textdetails'] = "Detalji";
 $lang['textdissmileys'] = "Onemoguci smajlice?";
 $lang['textdownload'] = "Dohvacanje";
-$lang['textdownloadcount1'] = "Ova datoteka je dohvacenafile has been downloaded";
+$lang['textdownloadcount1'] = "Ova datoteka je dohvacena";
 $lang['textdownloadcount2'] = "puta";
 $lang['textdownloads'] = "Dohvacanja:";
 $lang['textdownloadtemps'] = "Napravi sigurnosnu kopiju svega";
@@ -652,7 +652,7 @@ $lang['texteditpro'] = "Promijeni profil";
 $lang['textemail'] = "E-mail";
 $lang['textemailnotify'] = "Primi e-mail kod odgovora?";
 $lang['textemailonu2u'] = "Primi e-mail obavijest sa novom U2U porukom<br/><font class='smalltxt'>(Salje se samo kada niste prijavljeni)</font>";
-$lang['textemptyquery'] = 'Prazni prijavci nadogradnje nisu dozvoljeni. MOlimo vratite se i pokusajte ponovo.';
+$lang['textemptyquery'] = 'Prazni prijavci nadogradnje nisu dozvoljeni. Molimo vratite se i pokusajte ponovo.';
 $lang['textemptythread'] = 'Prazna dretva';
 $lang['textemptytrash'] = "Prazno";
 $lang['textfaq'] = "CPP";
@@ -756,7 +756,7 @@ $lang['textjun'] = "lipanj";
 $lang['textlanguage'] = "Jezik:";
 $lang['textlastpost'] = "Zadnji post:";
 $lang['textlatestfavs'] = "Zadnjih pet favorita sa novim odgovorima";
-$lang['textlatestu2us'] = "Zadnjih pet U2U poruka";
+$lang['textlatestu2us'] = "Zadnjih petnaestU2U poruka";
 $lang['textlfrom'] = "od:";
 $lang['textlink'] = "boja linka:";
 $lang['textlist'] = "Lista";
@@ -1122,4 +1122,22 @@ $lang['captchaimagecolor'] = "Koristi punu boju:";
 $lang['captchaimageinvalid'] = "Verifikacijski kod koji ste unjeli je neispravan. Molimo unesite kod tocno onako kako je prikazan na slici.";
 $lang['captchaverification'] = "Captcha verifikacija slikom";
 $lang['verificationnote'] = "Molimo unesite tekst koji se nalazi na slici u prozorcici ispod. Ovaj proces se koristi da se sprijeci automatksi botovi.";
+$lang['noPostsTimePeriod'] = "U zadanom vremenskom periodu nisu stavljani postovi.";
+$lang['onlinemanagefolders'] = "Uredujem PM direktorije";
+$lang['onlinenothread'] = "Pregledavam nepoznatu dretvu";
+$lang['onlinenoforum'] = "Pregledavam nepoznati forum";
+$lang['onlineeditnoprofile'] = "Uredivam nepoznati profil";
+$lang['onlinenoprofile'] = "Pregledavam nepoznati profil";
+$lang['onlineunknown'] = "Izvrsavam nepoznatu akciju";
+$lang['onlineu2uint'] = "Pregledavam U2U sucelje";
+$lang['onlineviewcat'] = "Pregledavam kategoriju:";
+$lang['onlinecatunknown'] = "Pregledavam nepoznatu kategoriju:";
+$lang['onlinememcppro'] = "Azuriram osobni profil";
+$lang['onlinememcpsub'] = "Pregledavam pretplacene dretve";
+$lang['onlinememcpfav'] = "Pregledavam dretve favorite";
+$lang['onlinebuddy'] = "Pregledavam adresar";
+$lang['onlinebuddyadd'] = "Dodajem korisnika/e u adresar";
+$lang['onlinebuddyedit'] = "Uredujem adresar";
+$lang['onlinebuddydelete'] = "Brisem korisnika/e iz adresara";
+$lang['onlinebuddyadd2u2u'] = "Dodajem korisnika/e u U2U";
 ?>
