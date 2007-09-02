@@ -1124,4 +1124,20 @@ $lang['verificationnote'] = "Kérlek írd be a képen látható ellenõrzõ szöveget a 
 $lang['textsubforums'] = "Al-fórumok:";
 $lang['showsubforums'] = "Al-fórumok státusza a fõ lapon:<br /><span class=\"smalltxt\">Ez a beállítás engedélyezi illetve megtiltja az al-fórumok megjelenítését a fõ lapon.</span>";
 $lang['message'] = "Üzenet";
+$lang['onlinenothread'] = 'Egy ismeretlen topikot olvas';
+$lang['onlinenoforum'] = 'Egy ismeretlen fórumot olvas';
+$lang['onlineeditnoprofile'] = 'Egy ismeretlen profilt szerkeszt';
+$lang['onlinenoprofile'] = 'Egy ismeretlen profilt olvas';
+$lang['onlineunknown'] = 'Azonosíthatatlan tevékenységet végez';
+$lang['onlineu2uint'] = 'U2U üzeneteit olvassa';
+$lang['onlineviewcat'] = "A kategóriákat böngészi: ";
+$lang['onlinecatunknown'] = "Egy ismeretlen kategóriát böngészik";
+$lang['onlinememcppro'] = "Személyes profilját tartja karban";
+$lang['onlinememcpsub'] = "A értesítõ listáján szereplõ topikjait böngészi";
+$lang['onlinememcpfav'] = "A kedvenc topikjait böngészi";
+$lang['onlinebuddy'] = "A cím jegyzékét böngészi";
+$lang['onlinebuddyadd'] = "Új felhasználót ad a cím jegyzékéhez";
+$lang['onlinebuddyedit'] = "A cím jegyzékét módosítja";
+$lang['onlinebuddydelete'] = "Felhasználót töröl a cím jegyzékébõl";
+$lang['onlinebuddyadd2u2u'] = "Új felhasználót ad a privát üzenetinek cím jegyzékéhez";
 ?>
