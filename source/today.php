@@ -206,6 +206,7 @@ if ($results == 0) {
 	    $thread['subject'] = checkOutput($thread['subject'], 'no', '', true);
 	    $thread['subject'] = censor($thread['subject']);
 	    $thread['subject'] = addslashes($thread['subject']);
+        $thread['name'] = html_entity_decode($thread['name']);
 
 	    eval('$today_row[] = "'.template('today_row').'";');
 	}
