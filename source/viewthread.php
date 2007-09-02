@@ -189,12 +189,12 @@ if (!$authorization || !privfcheck($forum['private'], $forum['userlist'])) {
     error($lang['privforummsg']);
 }
 
-$ssForumName = stripslashes($forum['name']);
+$ssForumName = html_entity_decode(stripslashes($forum['name']));
 if ($forum['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'"> '.$ssForumName.'</a>');
     nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
 } else {
-    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.stripslashes($fup['name']).'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.$ssForumName.'</a>');
     nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
 }

@@ -1350,14 +1350,14 @@ if ($action == "mods") {
                 $oldfid = $forum['cat_fid']
                 ?>
                 <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
-                <td colspan="2"><strong><?php echo stripslashes($forum['cat_name'])?></strong></td>
+                <td colspan="2"><strong><?php echo html_entity_decode(stripslashes($forum['cat_name']))?></strong></td>
                 </tr>
                 <?php
             }
             ?>
 
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td><?php echo stripslashes($forum['name'])?></td>
+            <td><?php echo html_entity_decode(stripslashes($forum['name']))?></td>
             <td><input type="text" name="mod[<?php echo $forum['fid']?>]"" value="<?php echo $forum['moderator']?>" /></td>
             </tr>
 
@@ -1366,7 +1366,7 @@ if ($action == "mods") {
             while ($sub = $db->fetch_array($querys)) {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo stripslashes($sub['name'])?></em></td>
+                <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo html_entity_decode(stripslashes($sub['name']))?></em></td>
                 <td><input type="text" name="mod[<?php echo $sub['fid']?>]"" value="<?php echo $sub['moderator']?>" /></td>
                 </tr>
                 <?php
@@ -1945,7 +1945,7 @@ if ($action == "search") {
             <strong><?php echo ($num+1)?>.</strong>
             </td>
             <td align="left" width="95%" bgcolor="<?php echo $altbg1?>">
-            <?php echo $val?>
+            <?php echo html_entity_decode(stripslashes($val))?>
             </td>
             </tr>
             <?php

@@ -75,7 +75,7 @@ eval('$css = "'.template('css').'";');
 if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     $thread = $db->fetch_array($query);
-    $threadname = stripslashes($thread['subject']);
+    $threadname = html_entity_decode(stripslashes($thread['subject']));
     $fid = $thread['fid'];
 } else {
     $threadSubject = ''; // we need to do this because we won't have a subject to display in the browser title bar

@@ -172,7 +172,7 @@ $viewmost = array();
 $query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
 while ($views = $db->fetch_array($query)) {
     $view_subject = stripslashes(censor($views['subject']));
-    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.$view_subject.'</a> ('.$views['views'].')';
+    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.html_entity_decode($view_subject).'</a> ('.$views['views'].')';
 }
 $viewmost = implode('<br />', $viewmost);
 $db->free_result($query);
@@ -182,7 +182,7 @@ $replymost = array();
 $query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
 while ($reply = $db->fetch_array($query)) {
     $reply_subject = stripslashes(censor($reply['subject']));
-    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.$reply_subject.'</a> ('.$reply['replies'].')';
+    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.html_entity_decode($reply_subject).'</a> ('.$reply['replies'].')';
 }
 $replymost = implode('<br />', $replymost);
 $db->free_result($query);
@@ -196,7 +196,7 @@ while ($last = $db->fetch_array($query)) {
     $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
     $thislast = "$lang[lpoststats] $lang[lastreply1] $lpdate $lang[textat] $lptime";
     $last_subject = stripslashes(censor($last['subject']));
-    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last_subject.'</a> ('.$thislast.')';
+    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.html_entity_decode($last_subject).'</a> ('.$thislast.')';
 }
 $latest = implode('<br />', $latest);
 $db->free_result($query);

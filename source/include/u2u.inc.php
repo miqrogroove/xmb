@@ -176,12 +176,12 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (isset($previewsubmit)) {
-        $u2usubject = checkOutput(censor(checkInput(stripslashes($subject))));
-        $u2umessage = checkOutput(checkInput(stripslashes($message)));
+        $u2usubject = html_entity_decode(checkOutput(censor(checkInput(stripslashes($subject)))));
+        $u2umessage = html_entity_decode(checkOutput(checkInput(stripslashes($message))));
         $u2umessage = postify($u2umessage, "no", "", "yes", "no");
         $username = htmlspecialchars($msgto);
-        $subject = htmlspecialchars($subject);
-        $message = htmlspecialchars($message);
+        $subject = html_entity_decode(htmlspecialchars($subject));
+        $message = html_entity_decode(htmlspecialchars($message));
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
     }
 
@@ -216,7 +216,7 @@ function u2u_view($u2uid, $folders) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = checkOutput(censor($u2u['subject']));
+        $u2usubject = html_entity_decode(checkOutput(censor($u2u['subject'])));
         $u2umessage = checkOutput(postify($u2u['message'], 'no', '', 'yes', 'no'));
         $u2ufolder = $u2u['folder'];
         $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
@@ -487,6 +487,8 @@ function u2u_display($folder, $folders) {
 
         if (empty($u2u['subject'])) {
             $u2u['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
+        } else {
+            $u2u['subject'] = html_entity_decode($u2u['subject']);
         }
 
         $u2usubject = checkOutput(censor($u2u['subject']));

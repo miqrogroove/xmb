@@ -87,10 +87,10 @@ if (!$authorization) {
 pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
 if ($forum['type'] == 'forum') {
-    nav(stripslashes($forum['name']));
+    nav(html_entity_decode(stripslashes($forum['name'])));
 } else if ($forum['type'] == 'sub') {
-    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.stripslashes($fup['name']).'</a>');
-    nav(stripslashes($forum['name']));
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
+    nav(html_entity_decode(stripslashes($forum['name'])));
 }
 
 eval('echo "'.template('header').'";');

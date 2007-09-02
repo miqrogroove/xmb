@@ -76,8 +76,7 @@ if ($tid) {
     $query = $db->query("SELECT fid, subject FROM ".X_PREFIX."threads WHERE tid=$tid LIMIT 1");
     if ($db->num_rows($query) == 1) {
         $thread = $db->fetch_array($query);
-        $threadname = $thread['subject'];
-        $threadname = stripslashes($threadname);
+        $threadname = html_entity_decode(stripslashes($thread['subject']));
         $fid = (int) $thread['fid'];
     } else {
         error($lang['textnothread']);
@@ -340,8 +339,8 @@ if (isset($previewpost)) {
     $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
-    $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
-    $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
+    $subject = html_entity_decode(checkInput($subject, $chkInputTags, $chkInputHTML, '', false));
+    $message = html_entity_decode(checkInput($message, $chkInputTags, $chkInputHTML, '', true));
     $message1 = postify($message, $smileyoff, $bbcodeoff, $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
     $dissubject = censor($subject);
 
@@ -621,7 +620,7 @@ if ($action == "newthread") {
                 error($lang['privforummsg'], false);
             }
 
-            $message = "[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]";
+            $message = html_entity_decode("[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]");
         }
 
         // Start Topic/Thread Review
@@ -870,7 +869,8 @@ if ($action == "newthread") {
             $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
         }
 
-        $postinfo['message'] = stripslashes($postinfo['message']);
+        $postinfo['subject'] = html_entity_decode($postinfo['message']);
+        $postinfo['message'] = html_entity_decode(stripslashes($postinfo['message']));
 
         if ($postinfo['bbcodeoff'] == "yes") {
             $offcheck1 = $cheHTML;
@@ -934,7 +934,7 @@ if ($action == "newthread") {
             $message = censor($message);
         }
 
-        if ($postinfo['filename'] != '') {
+        if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
             eval('$attachment = "'.template('post_edit_attachment').'";');
         } else {
             $attachment = $attachfile;

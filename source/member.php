@@ -745,7 +745,7 @@ switch ($action) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
                     $forum['fid'] = intval($forum['fid']);
-                    $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
+                    $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">".html_entity_decode($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
                 }
 
                 $query = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid FROM (".X_PREFIX."posts p, ".X_PREFIX."threads t) LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' AND p.tid=t.tid ORDER BY p.dateline DESC LIMIT 1");
@@ -757,7 +757,7 @@ switch ($action) {
                     $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
                     $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
                     $post['subject'] = censor($post['subject']);
-                    $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.$post['subject'].'</a> ('.$lastposttext.')';
+                    $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.html_entity_decode($post['subject']).'</a> ('.$lastposttext.')';
                 } else {
                     $lastpost = $lang['textnopostsyet'];
                 }
