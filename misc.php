@@ -352,9 +352,11 @@ switch ($action) {
                                 $poston = "$date $lang[textat] $time";
                                 $postby = $post['author'];
 
-                                $post['tsubject'] = stripslashes(censor($post['tsubject']));
+                                $post['tsubject'] = html_entity_decode(stripslashes(censor($post['tsubject'])));
                                 if (trim($post['subject']) == '') {
                                     $post['subject'] = $post['tsubject'];
+                                } else {
+                                    $post['subject'] = html_entity_decode($post['subject']);
                                 }
 
                                 $post['subject'] = censor($post['subject']);
@@ -407,9 +409,9 @@ switch ($action) {
 
                             $post['tsubject'] = stripslashes(censor($post['tsubject']));
                             if (trim($post['subject']) == '') {
-                                $post['subject'] = $post['tsubject'];
+                                $post['subject'] = html_entity_decode($post['tsubject']);
                             } else {
-                                $post['tsubject'] = $post['subject'];
+                                $post['tsubject'] = html_entity_decode($post['subject']);
                             }
                             eval('$searchresults .= "'.template('misc_search_results_row').'";');
                         }

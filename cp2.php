@@ -1857,7 +1857,7 @@ if ($action == "attachments") {
         }
 
         $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
-            while ($attachment = $db->fetch_array($query)) {
+        while ($attachment = $db->fetch_array($query)) {
             $attachsize = strlen($attachment['attachment']);
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
@@ -1868,8 +1868,8 @@ if ($action == "attachments") {
             } else {
                 $attachsize = $attachsize . "b";
             }
-            $attachment['tsubject'] = stripslashes($attachment['tsubject']);
-            $attachment['fname'] = stripslashes($attachment['fname']);
+            $attachment['tsubject'] = html_entity_decode(stripslashes($attachment['tsubject']));
+            $attachment['fname'] = html_entity_decode(stripslashes($attachment['fname']));
             $attachment['filename'] = stripslashes($attachment['filename']);
             ?>
             <tr>

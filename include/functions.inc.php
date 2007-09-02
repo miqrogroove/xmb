@@ -463,7 +463,8 @@ function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
-	$forum['description'] = htmlspecialchars_decode($forum['description']);		// Fix for HTML characters in forum descriptions
+    $forum['name'] = html_entity_decode($forum['name']);
+	$forum['description'] = html_entity_decode($forum['description']);		// Fix for HTML characters in forum descriptions
 	
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
@@ -515,7 +516,7 @@ function forum($forum, $template) {
                 $sub = $index_subforums[$i];
                 if ($sub['fup'] == $forum['fid']) {
                     if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($sub['private'], $sub['userlist'])) {
-                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.stripslashes($sub['name']).'</a>';
+                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.html_entity_decode(stripslashes($sub['name'])).'</a>';
                     }
                 }
             }
@@ -1470,6 +1471,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     $categories = array();
     $subforums = array();
     while ($forum = $db->fetch_array($sql)) {
+        $forum['name'] = html_entity_decode($forum['name']);
         if (!X_SADMIN && $forum['password'] != '') {
             $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
             if ($forum['password'] !== $fidpw) {

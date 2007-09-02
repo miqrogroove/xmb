@@ -536,6 +536,7 @@ if ($action == 'profile') {
         while ($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
+            $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
@@ -591,6 +592,7 @@ if ($action == 'profile') {
         while ($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
+            $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
@@ -709,6 +711,7 @@ if ($action == 'profile') {
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
+        $message['subject'] = html_entity_decode($message['subject']);
         if ($message['subject'] == '') {
             $message['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
@@ -737,6 +740,7 @@ if ($action == 'profile') {
     while ($fav = $db->fetch_array($query2)) {
         $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
+        $forum['name'] = html_entity_decode($forum['name']);
 
         $lastpost = explode('|', $fav['lastpost']);
         $dalast = $lastpost[0];
