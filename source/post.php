@@ -869,7 +869,7 @@ if ($action == "newthread") {
             $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
         }
 
-        $postinfo['subject'] = html_entity_decode($postinfo['message']);
+        $postinfo['subject'] = html_entity_decode($postinfo['subject']);
         $postinfo['message'] = html_entity_decode(stripslashes($postinfo['message']));
 
         if ($postinfo['bbcodeoff'] == "yes") {
