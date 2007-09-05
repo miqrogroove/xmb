@@ -92,15 +92,15 @@ if (($fid == 0 && $tid == 0) || ($forums['type'] != 'forum' && $forums['type'] !
 }
 
 if (isset($forums['type']) && $forums['type'] == "forum") {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.stripslashes($forums['name']) .'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
 } else {
     if (!isset($forums['fup']) || !is_numeric($forums['fup'])) {
         $posterror = $lang['textnoforum'];
     } else {
         $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid=$forums[fup]");
         $fup = $db->fetch_array($query);
-        nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.stripslashes($fup['name']).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.stripslashes($forums['name']).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
     }
 }
 
