@@ -525,7 +525,7 @@ if (!$action) {
             }
 
             if ($rank['avatarrank'] != '') {
-                $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].' border="0""/><br />';
+                $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
             }
 
             $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
