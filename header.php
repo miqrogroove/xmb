@@ -494,7 +494,7 @@ if (isset($tid) && $action != 'templates') {
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
     if ($SETTINGS['subject_in_title'] == 'on') {
-        $threadSubject = '- '.html_entity_decode(stripslashes($locate['subject']));
+        $threadSubject = '- '.html_entity_decode(stripslashes(htmlspecialchars($locate['subject'])));
     } else {
         $threadSubject = '';
     }
