@@ -76,7 +76,7 @@ if ($tid) {
     $query = $db->query("SELECT fid, subject FROM ".X_PREFIX."threads WHERE tid=$tid LIMIT 1");
     if ($db->num_rows($query) == 1) {
         $thread = $db->fetch_array($query);
-        $threadname = html_entity_decode(stripslashes($thread['subject']));
+        $threadname = html_entity_decode(stripslashes(htmlspecialchars($thread['subject'])));
         $fid = (int) $thread['fid'];
     } else {
         error($lang['textnothread']);
@@ -840,7 +840,7 @@ if ($action == "newthread") {
         message($lang['replymsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid, true, false, true);
     }
 } else if ($action == "edit") {
-    nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
+    nav('<a href="viewthread.php?tid='.$tid.'">'.html_entity_decode($threadname).'</a>');
     nav($lang['texteditpost']);
 
     if (!isset($editsubmit)) {
