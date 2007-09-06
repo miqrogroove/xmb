@@ -295,7 +295,7 @@ $lang['evalstats6'] = '$lang["stats6"] = "<b>Los 5 temas m&aacute;s vistos:</b><
 $lang['evalstats7'] = '$lang["stats7"] = "<b>Los 5 m&aacute;s respondidos:</b><br /> $replymost";';
 $lang['evalstats8'] = '$lang["stats8"] = "El foro m&aacute;s popular es $popforum con $pop[posts] mensajes y $pop[threads] temas";';
 $lang['evalstats9'] = '$lang["stats9"] = "$mempost mensajes por usuario";';
-$lang['evaltrevlt'] = '$lang["trevltmsg"] = "Este tema es muy extenso, clickea <a href=../../../JapaneseForum/lang//%22$threadlink/%22>aqu&iacute;</a> para revisarlo.";';
+$lang['evaltrevlt'] = '$lang["trevltmsg"] = "Este tema es muy extenso, clickea <a href=\"$threadlink\">aqu&iacute;</a> para revisarlo.";';
 $lang['evalu2ustaffquota'] = "$lang[uqinfo] = 'Tienes $u2ucount U2U sin limitaciónes.';";
 $lang['evaluqinfo'] = '$lang["uqinfo"] = "Tiene $u2ucount U2Us. Esto es el $percent% del m&aacute;ximo, el m&aacute;ximo es $SETTINGS[u2uquota].";';
 $lang['evaluqinfo_over'] = '$lang["uqinfo"] = "<strong>&iexcl;Nota! No puede enviar ningun U2U antes de disminuir el numero de mensajes actuales.</strong><br />Tiene $u2ucount U2U. El m&aacute;ximo es $SETTINGS[u2uquota].";';
