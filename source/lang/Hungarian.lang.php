@@ -275,7 +275,7 @@ $lang['evalstats6'] = '$lang["stats6"] = "<strong>Az 5 leglátogatottabb topik:</
 $lang['evalstats7'] = '$lang["stats7"] = "<strong>Az 5 legtöbb hozzászólással rendelkezõ topik:</strong><br /> $replymost";';
 $lang['evalstats8'] = '$lang["stats8"] = "Legnépszerûbb fórum a(z) $popforum, $pop[threads] topikkal és $pop[posts] hozzászólással.";';
 $lang['evalstats9'] = '$lang["stats9"] = "$mempost hozzászólás felhasználóként";';
-$lang['evaltrevlt'] = '$lang["trevltmsg"] = "Ez egy nagyon hosszú topik, kattints <a href=\"$threadlink\"?Horde=123f5326d96afb841ee18f9814e2d94a>ide</a> az elõzmények megtekintéséhez.";';
+$lang['evaltrevlt'] = '$lang["trevltmsg"] = "Ez egy nagyon hosszú topik, kattints <a href=\"$threadlink\">ide</a> az elõzmények megtekintéséhez.";';
 $lang['evaluqinfo'] = '$lang["uqinfo"] = "Neked $u2ucount személyes üzeneted érkezett. Ez $percent%-a a maximálisan engedélyezett $SETTINGS[u2uquota] üzenetnek.";';
 $lang['evaluqinfo_over'] = '$lang["uqinfo"] = "<strong>Figyelem! Addig nem tudsz újabb Személyes üzenet küldeni amíg nem törölsz néhányat az eddig elmentett személyes üzenteid közül.</strong><br />Neked jelenleg $u2ucount Személyes üzented van a maxium $SETTINGS[u2uquota]-bõl.";';
 $lang['evalu2ustaffquota'] = '$lang["uqinfo"] = "Nekede $u2ucount privát üzeneted (U2U) van, meghatározott felsõ határ nélkül.";';
