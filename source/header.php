@@ -444,10 +444,11 @@ define('X_STAFF', $role['staff']);
 // Fix by John Briggs End
 
 // Get the required language file
-if (!file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
-    exit('You do not have a language file present. Please upload one to proceed with use of the bulletin board.');
+if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
+    require_once(ROOT.'lang/'.$langfile.'.lang.php');
+} else {
+    require_once(ROOT.'lang/English.lang.php');
 }
-require_once(ROOT.'lang/'.$langfile.'.lang.php');
 
 // Checks for the possibility to register
 if ($regstatus == "on" && X_GUEST) {
