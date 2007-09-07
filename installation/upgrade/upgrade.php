@@ -130,7 +130,7 @@ switch($step) {
          <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round4 light">&nbsp;</span></span>
          <div class="light arrow">
          <h1>XMB Upgrade Utility</h1>
-         <p>Welcome to the XMB Upgrade Utility. The next steps will guide you through the process to update your XMB board to the latest stable version. Please ensure you have made a backup of your current XMB Database and files. Once you have completed your backup, upload all the <? echo XMB_V; ?> files uploaded to your forum directory, and re-configure the config.php file. Once you have completed these steps, you may proceed with the upgrade process.</p>
+         <p>Welcome to the XMB Upgrade Utility. The next steps will guide you through the process to update your XMB board to the latest stable version. Please ensure you have made a backup of your current XMB Database and files. Once you have completed your backup, upload all the <?php echo XMB_V; ?> files uploaded to your forum directory, and re-configure the config.php file. Once you have completed these steps, you may proceed with the upgrade process.</p>
          <h1>Please Note</h1>
          <p>This upgrade may temporarily use up to two times your current database size (though only in extreme circumstances)</p>
          <form action="./upgrade.php?step=2" method="post">
@@ -178,7 +178,7 @@ switch($step) {
          <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
         </div>
         </div>
-    	<?
+    	<?php
     	print_footer();
     	break;
 
@@ -587,7 +587,7 @@ Public License instead of this License.
          <div class="light arrow">
          <h1>Performing Upgrade</h1>
          <div class="install">
-    <?
+    <?php
         while(ob_get_level() > 0) {
             ob_end_flush();
         }
@@ -1087,7 +1087,7 @@ Public License instead of this License.
          <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
         </div>
         </div>
-        <?
+        <?php
         print_footer();
         break;
 
