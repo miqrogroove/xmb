@@ -820,6 +820,7 @@ $lang['textnoaction'] = "Sorry, you are not authorized to perform this action";
 $lang['textnocat'] = "- No Category -";
 $lang['textnofolder'] = "No folder selected";
 $lang['textnoforum'] = "The forum you have chosen does not exist.";
+$lang['textnoforumsexist'] = "No forums exist.";
 $lang['textnoguestposting'] = "Anonymous posting is not enabled for this forum. You will have to <a href=\"member.php?action=coppa\">register</a> to post in this forum.";
 $lang['textnomur'] = 'You can not mark an outgoing U2U unread';
 $lang['textnone'] = "None";

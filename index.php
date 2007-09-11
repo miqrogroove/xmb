@@ -36,6 +36,7 @@ loadtemplates(
 'index_forum',
 'index_forum_lastpost',
 'index_forum_nolastpost',
+'index_noforum',
 'index_ticker',
 'index_welcome_guest',
 'index_welcome_member',
@@ -282,7 +283,14 @@ while ($thing = $db->fetch_array($fquery)) {
             $forumlist .= $indexBar;
         }
     }
-    $forumlist .= $cforum;
+
+    if (!empty($cforum)) {
+        $forumlist .= $cforum;
+    }
+}
+
+if (empty($forumlist)) {
+    eval('$forumlist = "'.template('index_noforum').'";');
 }
 $db->free_result($fquery);
 

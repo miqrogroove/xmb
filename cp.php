@@ -958,9 +958,9 @@ if ($action == 'forum') {
                             <?php
                             foreach ($forumlist as $moveforum) {
                                 if ($moveforum['fid'] == $forum['fup']) {
-                                    echo '<option value="'.$moveforum['fid'].'" selected="selected">'.stripslashes($moveforum['name']).'</option>';
+                                    echo '<option value="'.$moveforum['fid'].'" selected="selected">'.html_entity_decode(stripslashes($moveforum['name'])).'</option>';
                                 } else {
-                                    echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
+                                    echo '<option value="'.$moveforum['fid'].'">'.html_entity_decode(stripslashes($moveforum['name'])).'</option>';
                                 }
                             }
                             ?>
@@ -991,7 +991,7 @@ if ($action == 'forum') {
         &nbsp; <select name="newffup"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
         <?php
         foreach ($groups as $group) {
-            echo '<option value="'.$group['fid'].'">'.stripslashes($group['name']).'</option>';
+            echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
         }
         ?>
         </select>
@@ -1004,7 +1004,7 @@ if ($action == 'forum') {
         &nbsp; <select name="newsubfup">
         <?php
         foreach ($forumlist as $group) {
-            echo '<option value="'.$group['fid'].'">'.stripslashes($group['name']).'</option>';
+            echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
         }
         ?>
         </select>
