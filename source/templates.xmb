@@ -4994,4 +4994,9 @@ $lang[verificationnote]<br /><br />
 </td>
 </tr>
 
+|#*XMB TEMPLATE FILE*#|index_noforum|#*XMB TEMPLATE*#|
+<tr>
+<td bgcolor="$altbg1" align="center" class="ctrtablerow" colspan="6"><font class="mediumtxt">$lang[textnoforumsexist]</font></td>
+</tr>
+
 |#*XMB TEMPLATE FILE*#|
