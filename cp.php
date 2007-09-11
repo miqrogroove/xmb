@@ -1615,6 +1615,7 @@ if ($action == "members") {
 
             if ($delete != "" && $delete != $self['uid'] && $delete != $sa_uid) {
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid='$delete'");
+                $db->query("UPDATE ".X_PREFIX."whosonline SET username='Anonymous' WHERE username='".$mem['username']."'");
             } else {
                 if (strpos($pw, '"') !== false || strpos($pw, "'") !== false) {
                     $lang['textmembersupdate'] = $mem['username'].': '.$lang['textpwincorrect'];

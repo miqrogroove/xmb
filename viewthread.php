@@ -446,7 +446,7 @@ if (!$action) {
             $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
         }
 
-        if ($post['author'] != 'Anonymous') {
+        if ($post['author'] != 'Anonymous' && $post['username']) {
             if (X_MEMBER && $post['showemail'] == 'yes') {
                 eval('$email = "'.template('viewthread_post_email').'";');
             } else {
@@ -556,7 +556,7 @@ if (!$action) {
                 $location = '';
             }
         } else {
-            $post['author'] = $lang['textanonymous'];
+            $post['author'] = ($post['author'] == 'Anonymous') ? $lang['textanonymous'] : $post['author'];
             $showtitle = $lang['textunregistered'].'<br />';
             $stars = '';
             $avatar = '';
