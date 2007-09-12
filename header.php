@@ -688,10 +688,29 @@ if (count($pluglinks) == 0) {
     $pluglink = implode('&nbsp;', $pluglinks);
 }
 
+$offlineMessage = '';
 // If the board is offline, display an appropriate message
 if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+    $newu2umsg = '';
     eval('$css = "'.template('css').'";');
     message(nl2br(stripslashes($bboffreason)));
+} else if ($bbstatus == 'off' && X_ADMIN && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+    $offlineMessage = '
+        <table cellspacing="0" cellpadding="0" border="0" width="'.$THEME['tablewidth'].'" align="center">
+        <tr>
+        <td bgcolor="'.$THEME['bordercolor'].'">
+        <table border="0" cellspacing="'.$THEME['borderwidth'].'" cellpadding="'.$THEME['tablespace'].'" width="100%">
+        <tr>
+        <td class="category"><font color="'.$THEME['cattext'].'"><strong>'.$lang['textoffline'].'</strong></font></td>
+        </tr>
+        <tr bgcolor="'.$THEME['altbg2'].'" class="tablerow">
+        <td align="center"><font size="4">'.$lang['textboardoffline'].'</font></td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+        <br />';
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message

@@ -609,6 +609,7 @@ $lang['textbigsize'] = "Big Font:";
 $lang['textbio'] = "Bio:";
 $lang['textboardlogo'] = "Board Logo URL (Enter a hex code, a flash movie or an image name):<br /><span class=\"smalltxt\">To use a Flash movie as avatar, separate its URL, width, and height by commas.<br />\"http://www.wherever.com/avatar.swf,80,40\"</span>";
 $lang['textboardurl'] = "Full Board URL:";
+$lang['textboardoffline'] = "Attention: The forum is currently offlne!";
 $lang['textborder'] = "Border Colour:";
 $lang['textborderwidth'] = "Border Width:";
 $lang['textbriefsummary'] = "Brief Account Summary For";
