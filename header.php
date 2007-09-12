@@ -357,10 +357,12 @@ if ($q) {
     if (!empty($theme)) {
         $themeuser = $self['theme'];
     }
+
     $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
-}else{
+} else {
     define('X_MEMBER', false);
     define('X_GUEST', true);
+
     $timeoffset = $SETTINGS['def_tz'];
     $themeuser  = '';
     $status     = 'member';
