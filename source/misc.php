@@ -171,8 +171,8 @@ switch ($action) {
 
         put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
         put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
-        put_cookie("xmbuser", '');
-        put_cookie("xmbpw", '');
+        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
+        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
 
         foreach ($_COOKIE as $key=>$val) {
             $val = addslashes($val);
