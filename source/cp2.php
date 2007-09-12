@@ -1094,10 +1094,11 @@ if ($action == "ranks") {
                 if ((int) $stars[$ranks['id']] == 0) {
                     $stars[$ranks['id']] = 1;
                 }
+                $staffranks[] = $ranks['title'];
             }
         }
 
-        $i=0;
+        $i = 0;
 
         if ($delete) {
             $del = implode(', ', $delete);
