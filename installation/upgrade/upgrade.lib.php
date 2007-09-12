@@ -1000,6 +1000,7 @@ class Upgrade {
 
             $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".$perms[1]."|".$perms[2]."', private='".$perms[3]."', guestposting='$guestposting', pollstatus='on' WHERE fid=".$forum['fid']);
         }
+        $this->db->query("ALTER TABLE ".$this->tablepre."forums DROP `postperm_temp`");
     }
 
     function fixPolls() {
@@ -1025,7 +1026,7 @@ class Upgrade {
 
             for ($i=0; $i<$num_options-1; $i++) {
                 $bit = explode('||~|~||', $options[$i]);
-                $option_name = trim($bit[0]);
+                $option_name = addslashes(trim($bit[0]));
                 $num_votes = (int) trim($bit[1]);
                 $this->db->query("INSERT INTO ".$this->tablepre."vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES (".$poll_id.", ".($i+1).", '".$option_name."', ".$num_votes.")");
             }
@@ -1039,7 +1040,6 @@ class Upgrade {
             if (strpos($f['postperm'], ',') !== false) {
                 $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
             }
-
         }
 
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
