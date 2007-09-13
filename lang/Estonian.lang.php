@@ -1140,4 +1140,5 @@ $lang['onlinebuddyadd'] = "Lisab kasutaja(id) aadressi raamatusse";
 $lang['onlinebuddyedit'] = "Muudab aadressi raamatut";
 $lang['onlinebuddydelete'] = "Kustutab kasutaja(id) aadressi raamatust";
 $lang['onlinebuddyadd2u2u'] = "Lisab kasutaja(id) u2u-sse";
+$lang['textnoforumsexist'] = "Foorumeid ei eksisteeri.";
 ?>
