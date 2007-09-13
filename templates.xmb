@@ -1962,88 +1962,7 @@ $quickreply
 <td width="75%" class="tablerow" bgcolor="$altbg2" align="center"><img src="$smdir/$smilie[url]" alt="$smilie[code]" /></td>
 </tr>
 
-|#*XMB TEMPLATE FILE*#|faq_misc|#*XMB TEMPLATE*#|
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong>$lang[textmiscfaq]</strong></font></td>
-</tr>
-
-<tr>
-<td class="tablerow" bgcolor="$altbg1"><ul>
-<li>
-<a href="#1">$lang[textfaq19]</a></li>
-<li><a href="#2">$lang[textfaq20]</a></li>
-<li><a href="#3">$lang[textfaq21]</a></li></ul></td>
-</tr>
-</table></td>
-</tr>
-</table>
-
-<br />
-
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong><a name="1"></a> $lang[textfaq19]</strong></font></td>
-
-</tr>
-
-<tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[bbcodeinfo]</td>
-</tr>
-</table></td>
-</tr>
-</table>
-
-<br />
-
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong><a name="2"></a> $lang[textfaq20]</strong></font></td>
-</tr>
-
-<tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans19]</td>
-</tr>
-</table></td>
-</tr>
-</table>
-
-<br />
-
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong><a name="3"></a> $lang[textfaq21]</strong></font></td>
-</tr>
-
-<tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[rankinfo]</td>
-</tr>
-
-<tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1">
-<table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="2" width="100%">
-$rankrows
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-
-|#*XMB TEMPLATE FILE*#|faq_misc_rankrow|#*XMB TEMPLATE*#|
+|#*XMB TEMPLATE FILE*#|faq_using_rankrow|#*XMB TEMPLATE*#|
 <tr>
 <td bgcolor="$altbg2" class="tablerow">$ranks[title]</td>
 <td bgcolor="$altbg2" class="tablerow">$stars</td>
@@ -2094,6 +2013,8 @@ $rankrows
 <li><a href="faq.php?page=using#3">$lang[textfaq8]</a></li>
 <li><a href="faq.php?page=using#4">$lang[textfaq9]</a></li>
 <li><a href="faq.php?page=using#5">$lang[textfaq10]</a></li>
+<li><a href="faq.php?page=using#6">$lang[textfaq20]</a></li>
+<li><a href="faq.php?page=using#7">$lang[textfaq21]</a></li>
 </ul></td>
 </tr>
 </table></td>
@@ -2117,27 +2038,8 @@ $rankrows
 <li><a href="faq.php?page=messages#4">$lang[textfaq14]</a></li>
 <li><a href="faq.php?page=messages#5">$lang[textfaq15]</a></li>
 <li><a href="faq.php?page=messages#6">$lang[textfaq17]</a></li>
-<li><a href="faq.php?page=messages#7">$lang[textfaq18]</a></li>
-</ul></td>
-</tr>
-</table></td>
-</tr>
-</table>
-
-<br />
-
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><a href="./faq.php?page=misc"><font color="$cattext"><strong>$lang[textmiscfaq]</strong></font></a></td>
-</tr>
-
-<tr>
-<td class="tablerow" bgcolor="$altbg1"><ul>
-<li><a href="faq.php?page=misc#1">$lang[textfaq19]</a></li>
-<li><a href="faq.php?page=misc#2">$lang[textfaq20]</a></li>
-<li><a href="faq.php?page=misc#3">$lang[textfaq21]</a></li>
+<li><a href="faq.php?page=messages#7">$lang[textfaq19]</a></li>
+<li><a href="faq.php?page=messages#8">$lang[textfaq18]</a></li>
 </ul></td>
 </tr>
 </table></td>
@@ -2187,7 +2089,9 @@ $rankrows
 <li><a href="#2">$lang[textfaq16]</a></li>
 <li><a href="#3">$lang[textfaq8]</a></li>
 <li><a href="#4">$lang[textfaq9]</a></li>
-<li><a href="#5">$lang[textfaq10]</a></li></ul></td>
+<li><a href="#5">$lang[textfaq10]</a></li>
+<li><a href="#6">$lang[textfaq20]</a></li>
+<li><a href="#7">$lang[textfaq21]</a></li></ul></td>
 </tr>
 </table>
 </td>
@@ -2268,6 +2172,53 @@ $rankrows
 </tr>
 </table>
 
+<br />
+
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq20]</strong></font></td>
+</tr>
+
+<tr>
+<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans19]</td>
+</tr>
+</table></td>
+</tr>
+</table>
+
+<br />
+
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq21]</strong></font></td>
+</tr>
+
+<tr>
+<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[rankinfo]</td>
+</tr>
+
+<tr>
+<td width="100%" class="tablerow" bgcolor="$altbg1">
+<table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="2" width="100%">
+$rankrows
+</table></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
 |#*XMB TEMPLATE FILE*#|faq_messages|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -2284,7 +2235,8 @@ $rankrows
 <li><a href="#4">$lang[textfaq14]</a></li>
 <li><a href="#5">$lang[textfaq15]</a></li>
 <li><a href="#6">$lang[textfaq17]</a></li>
-<li><a href="#7">$lang[textfaq18]</a></li></ul></td>
+<li><a href="#7">$lang[textfaq19]</a></li>
+<li><a href="#8">$lang[textfaq18]</a></li></ul></td>
 </tr>
 </table></td>
 </tr>
@@ -2403,7 +2355,24 @@ $smilierows
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq18]</strong></font></td>
+<td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq19]</strong></font></td>
+
+</tr>
+
+<tr>
+<td width="100%" class="tablerow" bgcolor="$altbg1">$lang[bbcodeinfo]</td>
+</tr>
+</table></td>
+</tr>
+</table>
+
+<br />
+
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong><a name="8"></a> $lang[textfaq18]</strong></font></td>
 </tr>
 
 <tr>
@@ -2411,6 +2380,7 @@ $smilierows
 </tr>
 </table></td>
 </tr>
+</table>
 </table>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_offline|#*XMB TEMPLATE*#|

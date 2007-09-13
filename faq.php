@@ -51,8 +51,17 @@ switch ($page) {
         eval('$faq = "'.template('faq_usermaint').'";');
         break;
     case 'using':
-        loadtemplates('faq_using');
+        loadtemplates('faq_using_rankrow', 'faq_using');
         nav($lang['textuseboa']);
+		$stars      = '';
+		$rankrows   = '';
+		$query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title!='Moderator' AND title!='Super Moderator' AND title!='Super Administrator' AND title!='Administrator' ORDER BY posts ASC");
+        while ($ranks = $db->fetch_array($query)) {
+            $stars = str_repeat("<img src=\"" .$imgdir. "/star.gif\" alt=\"*\" />", $ranks['stars']);
+            eval('$rankrows .= "'.template('faq_using_rankrow').'";');
+            $stars = '';
+        }
+        $db->free_result($query);
         eval('$faq = "'.template('faq_using').'";');
         break;
     case 'messages':
@@ -65,20 +74,6 @@ switch ($page) {
         }
         $db->free_result($querysmilie);
         eval('$faq = "'.template('faq_messages').'";');
-        break;
-    case 'misc':
-        loadtemplates('faq_misc_rankrow', 'faq_misc');
-        $stars      = '';
-        $rankrows   = '';
-        nav($lang['textmiscfaq']);
-        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title!='Moderator' AND title!='Super Moderator' AND title!='Super Administrator' AND title!='Administrator' ORDER BY posts ASC");
-        while ($ranks = $db->fetch_array($query)) {
-            $stars = str_repeat("<img src=\"" .$imgdir. "/star.gif\" alt=\"*\" />", $ranks['stars']);
-            eval('$rankrows .= "'.template('faq_misc_rankrow').'";');
-            $stars = '';
-        }
-        $db->free_result($query);
-        eval('$faq = "'.template('faq_misc').'";');
         break;
     case 'forumrules':
         loadtemplates('faq_forumrules');
@@ -102,4 +97,5 @@ eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo stripslashes($header.$faq.$footer);
+
 ?>
