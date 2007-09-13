@@ -782,7 +782,6 @@ $lang['textmergethread'] = "Merge Thread";
 $lang['textmesperday'] = "messages per day";
 $lang['textmessage'] = "Message:";
 $lang['textminilogout'] = "<span class=\"smalltxt\">[<a href=\"misc.php?action=logout\">logout</a>]</span>";
-$lang['textmiscfaq'] = "Misc Questions";
 $lang['textmod'] = "Moderator";
 $lang['textmodby'] = "Forum Moderators:";
 $lang['textmoderator'] = "Moderator:";
