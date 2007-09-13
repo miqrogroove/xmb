@@ -88,7 +88,7 @@ $forums['name'] = stripslashes($forums['name']);
 if ($fid == 0) {
     $kill = true;
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name'].'</a>'));
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
@@ -96,8 +96,8 @@ if ($fid == 0) {
     $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid=$forums[fup]");
     $fup = $db->fetch_array($query);
     $fup['name'] = stripslashes($fup['name']);
-    nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.$fup['name'].'</a>');
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.$forums['name'].'</a>');
+    nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode($fup['name']).'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name']).'</a>');
     if (isset($threadname)) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
@@ -499,20 +499,26 @@ switch ($action) {
             }
             $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
 
-            $firstsubject = false;
+            $threadcreated = false;
+            $firstmove = false;
             $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid=$tid");
             while ($post = $db->fetch_array($query)) {
                 $move = "move".$post['pid'];
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
                 $thatime = $onlinetime;
-                if (!$firstsubject) {
+                if (!$threadcreated) {
                     $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
                     $newtid = $db->insert_id();
-                    $firstsubject = 1;
+                    $threadcreated = true;
                 }
 
                 if (!empty($move)) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid WHERE pid='$move'");
+                    $newsub = '';
+                    if (!$firstmove) {
+                        $newsub = ", subject='$subject'";
+                        $firstmove = true;
+                    }
+                    $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid='$move'");
                     $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid='$move'");
                     $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid=$newtid");
                     $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
