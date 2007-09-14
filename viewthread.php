@@ -137,7 +137,7 @@ $notexist_txt = $posts = '';
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
 if ($tid == 0 || $db->num_rows($query) != 1) {
     $db->free_result($query);
-    error($lang['textnoforum']);
+    error($lang['textnothread']);
 }
 
 $thread = $db->fetch_array($query);
