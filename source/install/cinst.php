@@ -792,8 +792,7 @@ show_act("Inserting data into ".$tablepre."words");
 show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
-    //$db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', 'no', 0, 'English', 24, 'dd-mm-yyyy', '', $myDate, 30, 30, 'yes', 'no', 'no');");
-    $db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 24, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no');");
+    $db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 12, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no');");
 show_result(X_INST_OK);
 
 // Try to remove all files now
