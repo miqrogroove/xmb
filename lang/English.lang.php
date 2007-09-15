@@ -133,7 +133,7 @@ $lang['bbcode_help_code'] = "Code Tag\\nBlockquotes the text you reference and p
 $lang['bbcode_help_color'] = "Color Tag\\nSets the text color. Any named color can be used.\\nUsage: [color=red]This is some \\\"red\\\" text[/color]";
 $lang['bbcode_help_email'] = "E-mail Tag\\nTurns an e-mail address into a mailto hyperlink.\\nUsage: [email]someone@anywhere.com[/email]\\nUsage: [email=someone@anywhere.com]link text[/email]";
 $lang['bbcode_help_font'] = "Font Tag\\nSets the font face for the enclosed text.\\nUsage: [font=Arial]The font of this text is Arial[/font]";
-$lang['bbcode_help_image'] = "Image Tag\\nInserts an image into the post.\\nUsage: [img]http:\www.anywhere.comimage.gif[/img]";
+$lang['bbcode_help_image'] = "Image Tag\\nInserts an image into the post.\\nUsage: [img]http://www.anywhere.com/image.gif[/img]";
 $lang['bbcode_help_italic'] = "Italicise Tag\\nMakes the enclosed text italicized.\\nUsage: [i]This is some italicized text[/i]";
 $lang['bbcode_help_link'] = "Hyperlink Tag\\nTurns an URL into a hyperlink.\\nUsage: [url]http://www.anywhere.com[/url]\\nUsage: [url=http://www.anywhere.com]link text[/url]";
 $lang['bbcode_help_list'] = "List Tag\\nBuilds a bulleted, numbered, or alphabetical list.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";

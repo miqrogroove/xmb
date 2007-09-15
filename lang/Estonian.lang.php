@@ -690,7 +690,7 @@ $lang['textfaqans21'] = "Sa saad välja logida klõpsates linki 'Logi välja' lehe 
 $lang['textfaqans3'] = "Allkirja oma postitustele saad lisada oma seadete alt, klõpsates 'Muuda profiili'.";
 $lang['textfaqans4'] = "Muutes oma profiili saad kirjutada soovitud pildi aadressi kasti 'Avatar'. Avatar ei tohiks olla rohkem kui 200x200 pikslit.";
 $lang['textfaqans5'] = 'Kui sa oled unustanud oma parooli, saad uue parooli tellida oma e-maili aadressile <a href=\"misc.php?action=lostpw\">siit</a>.';
-$lang['textfaqans6'] = "U2U tähendab User to User (kasutajalt kasutajale). See on lihtne sõnumiklient, mille abil saad saata foorumisiseselt teateid teistele kasutajatele. Sa saad lugeda saabunud teateid ja saata uusi <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 550, 450);\">klõpsates siia</a>.<br /><strong>NB!</strong> See võimalus pole mõeldud kasutajate spammimiseks soovimatu reklaamiga.";
+$lang['textfaqans6'] = "U2U tähendab User to User (kasutajalt kasutajale). See on lihtne sõnumiklient, mille abil saad saata foorumisiseselt teateid teistele kasutajatele. Sa saad lugeda saabunud teateid ja saata uusi <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">klõpsates siia</a>.";
 $lang['textfaqans7'] = "Sisse saad logida klõpsates linki 'Logi sisse' lehe ülaosas.";
 $lang['textfaqans8'] = "Otsingut saad kasutada klõpsates linki 'Otsi' ülal menüüs.";
 $lang['textfaqans9'] = "U2U'd saad kõige lihtsamalt saata klõpsates nuppu 'U2U' kasutaja postituse kõrval.";
