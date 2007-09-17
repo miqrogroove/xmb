@@ -96,7 +96,7 @@ window.onload = tickerstart;
 <td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" class="mediumtxt"><div align="center" id="tickerdiv"></div></td>
+<td bgcolor="$altbg2" class="mediumtxt" style="height: 30px;"><div align="center" id="tickerdiv"></div></td>
 </tr>
 </table>
 </td>
