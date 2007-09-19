@@ -731,6 +731,7 @@ switch ($action) {
     case 'captchaimage':
         require(ROOT.'include/captcha.inc.php');
         $oPhpCaptcha = new Captcha(250, 50);
+        $imagehash = getVar('imagehash');
         $oPhpCaptcha->Create($imagehash);
         exit();
         break;
