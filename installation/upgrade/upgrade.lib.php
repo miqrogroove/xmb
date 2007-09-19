@@ -1045,7 +1045,7 @@ class Upgrade {
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
         $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");
         while ($t = $this->db->fetch_array($q)) {
-            $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".$t['pollopts']."', pollopts='1' WHERE tid=".$t['tid']);
+            $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".addslashes($t['pollopts'])."', pollopts='1' WHERE tid=".$t['tid']);
         }
     }
 
