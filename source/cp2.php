@@ -847,7 +847,7 @@ if ($action == "smilies") {
             if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
             }
-            $query = $db->query("INSERT INTO ".X_PREFIX."smilies ( type, code, url, id ) VALUES ('smiley', '$newcode', '$newurl1', '')");
+            $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
@@ -871,7 +871,7 @@ if ($action == "smilies") {
                     $newsmiley_code = str_replace(array('.gif','.jpg','.jpeg','.bmp','.png','_'), array('','','','','',' '), $newsmiley_code);
                     $newsmiley_code = ':' . $newsmiley_code . ':';
                     if (!in_array($newsmiley_url, $smiley_url) && !in_array($newsmiley_code, $smiley_code)) {
-                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url, id) VALUES ('smiley', '$newsmiley_code', '$newsmiley_url', '')");
+                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('smiley', '$newsmiley_code', '$newsmiley_url')");
                         $newsmilies_count++;
                     }
                     $smilies_count++;
@@ -886,7 +886,7 @@ if ($action == "smilies") {
             if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
                 error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
             }
-            $query = $db->query("INSERT INTO ".X_PREFIX."smilies ( type, code, url, id ) VALUES ('picon', '', '$newurl2', '')");
+            $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('picon', '', '$newurl2')");
         }
 
         // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
@@ -906,7 +906,7 @@ if ($action == "smilies") {
                     $newposticon_url = $picon;
                     $newposticon_url = str_replace(' ', '%20', $newposticon_url);
                     if (!in_array($newposticon_url, $posticon_url)) {
-                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url, id) VALUES ('picon', '', '$newposticon_url', '')");
+                        $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('picon', '', '$newposticon_url')");
                         $newposticons_count++;
                     }
                     $posticons_count++;
