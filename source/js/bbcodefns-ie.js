@@ -54,7 +54,7 @@ function email() {
     if (helpmode) {
         alert(bbcode_help_email);
     }else if (advmode) {
-        AddText('', '', "[email] [/email]", messageElement);
+        AddText('', '', "[email]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/email]", messageElement);
     }else {
         txt2=prompt(bbcode_prompt_email_email,"");
         if (txt2!=null) {
@@ -72,7 +72,7 @@ function chsize(size) {
     if (helpmode) {
         alert(bbcode_help_size);
     }else if (advmode) {
-        AddText('', '', "[size="+size+"] [/size]", messageElement);
+        AddText('', '', "[size="+size+"]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/size]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_size+size,"Text");
         if (txt!=null) {
@@ -85,7 +85,7 @@ function chfont(font) {
     if (helpmode) {
         alert(bbcode_help_font);
     }else if (advmode) {
-        AddText('', '', "[font="+font+"] [/font]", messageElement);
+        AddText('', '', "[font="+font+"]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/font]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_font,"Text");
         if (txt!=null) {
@@ -98,7 +98,7 @@ function bold() {
     if (helpmode) {
         alert(bbcode_help_bold);
     }else if (advmode) {
-        AddText('', '', "[b] [/b]", messageElement);
+        AddText('', '', "[b]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/b]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_bold,"Text");
         if (txt!=null) {
@@ -111,7 +111,7 @@ function italicize() {
     if (helpmode) {
         alert(bbcode_help_italic);
     }else if (advmode) {
-        AddText('', '', "[i] [/i]", messageElement);
+        AddText('', '', "[i]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/i]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_italic,"Text");
         if (txt!=null) {
@@ -124,7 +124,7 @@ function quote() {
     if (helpmode) {
         alert(bbcode_help_quote);
     }else if (advmode) {
-        AddText('', '', "\r[quote]\r[/quote]", messageElement);
+        AddText('', '', "\r[quote]\r"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"\r[/quote]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_quote,"Text");
         if(txt!=null) {
@@ -137,7 +137,7 @@ function chcolor(color) {
     if (helpmode) {
         alert(bbcode_help_color);
     }else if (advmode) {
-        AddText('', '', "[color="+color+"] [/color]", messageElement);
+        AddText('', '', "[color="+color+"]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/color]", messageElement);
     }else {
         txt=prompt(bbcode_prompt_color+color,"Text");
         if(txt!=null) {
@@ -150,7 +150,7 @@ function center() {
     if (helpmode) {
         alert(bbcode_help_center);
     }else if (advmode) {
-        AddText('', '', "[align=center] [/align]", messageElement);
+        AddText('', '', "[align=center]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/align]", messageElement);
 
     }else {
         txt=prompt(bbcode_prompt_center,"Text");
@@ -164,7 +164,7 @@ function hyperlink() {
     if (helpmode) {
         alert(bbcode_help_link);
     }else if (advmode) {
-        AddText('', '', "[url] [/url]", messageElement);
+        AddText('', '', "[url]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/url]", messageElement);
 
     }else {
         txt2=prompt(bbcode_prompt_link1,"");
@@ -187,7 +187,7 @@ function image() {
     if (helpmode) {
         alert(bbcode_help_image);
     }else if (advmode) {
-        AddText('', '', "[img] [/img]", messageElement);
+        AddText('', '', "[img]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/img]", messageElement);
 
     }else {
         txt=prompt(bbcode_prompt_image,"http://");
@@ -250,7 +250,7 @@ function underline() {
       if (helpmode) {
         alert(bbcode_help_underline);
     }else if (advmode) {
-        AddText('', '', "[u] [/u]", messageElement);
+        AddText('', '', "[u]"+(input.message.value).substring(input.message.selectionStart, input.message.selectionEnd)+"[/u]", messageElement);
 
     }else {
         txt=prompt(bbcode_prompt_underline,"Text");
