@@ -43,12 +43,12 @@ if (!defined('ROOT')) {
 // Resolve Server specific issues
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
 switch ($server) {
-    case 'Aby':     // Abyss web server
+    case 'Aby': // Abyss web server
         $protocol = (getenv('HTTPS') == 'off') ? ('http://') : ('https://');
         $query = (getenv('QUERY_STRING')) ? ('?'.getenv('QUERY_STRING')) : ('');
         $url = $protocol.getenv('SERVER_NAME').getenv('SCRIPT_NAME').$query;
         break;
-    default:        // includes Apache and IIS using module and CGI forms
+    default: // includes Apache and IIS using module and CGI forms
         $url = $_SERVER['REQUEST_URI'];
 }
 
@@ -118,9 +118,9 @@ if ($show_full_info) {
 }
 
 // discover the most likely browser
-//  so we can use bbcode specifically made for it
-//  this allows the use of various nice new features in eg mozilla
-//  while others are available via IE and/or opera
+// so we can use bbcode specifically made for it
+// this allows the use of various nice new features in eg mozilla
+// while others are available via IE and/or opera
 $browser = 'mozilla'; // default to mozilla for now
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
     define('IS_MOZILLA',true);
@@ -287,7 +287,7 @@ put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $coo
 
 if (isset($xmblvb)) {
     $thetime = $xmblvb;
-} elseif (isset($xmblva)) {
+} else if (isset($xmblva)) {
     $thetime = $xmblva;
 } else {
     $thetime = $onlinetime;
@@ -392,7 +392,6 @@ if ($memtime == '') {
     }
 }
 
-// Fix by John Briggs Begin
 $role = array();
 $role['sadmin'] = false;
 $role['admin']  = false;
@@ -443,7 +442,6 @@ define('X_ADMIN', $role['admin']);
 define('X_SMOD', $role['smod']);
 define('X_MOD', $role['smod']);
 define('X_STAFF', $role['staff']);
-// Fix by John Briggs End
 
 // Get the required language file
 if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
@@ -500,7 +498,7 @@ if (isset($tid) && $action != 'templates') {
     } else {
         $threadSubject = '';
     }
-} elseif (isset($fid)) {
+} else if (isset($fid)) {
     $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
@@ -530,7 +528,7 @@ if (X_MEMBER) {
 // Check what theme to use
 if ((int) $themeuser > 0) {
     $theme = (int) $themeuser;
-} elseif (!empty($forumtheme) && (int) $forumtheme > 0) {
+} else if (!empty($forumtheme) && (int) $forumtheme > 0) {
     $theme = $forumtheme;
 } else {
     $theme = $SETTINGS['theme'];
@@ -621,7 +619,7 @@ if (empty($action)) {
 if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
-    } elseif ($res === false) {
+    } else if ($res === false) {
         // ini_get not supported. So let's just leave it
     } else {
         if (function_exists('gzopen')) {
