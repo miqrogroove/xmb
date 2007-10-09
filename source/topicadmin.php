@@ -791,7 +791,7 @@ switch ($action) {
         } else {
             $postcount = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
             $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
-            $query2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator'");
+            $query2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
             $mods = explode(", ", $db->result($query, 0));
             while ($usr = $db->fetch_array($query2)) {
                 $mods[] = $usr['username'];
