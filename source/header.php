@@ -485,7 +485,7 @@ if ($memdate == '') {
 }
 
 $dformatorig = $dateformat;
-$dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
+$dateformat = str_ireplace(array('mm', 'dd', 'yyyy', 'yy'), array('n', 'j', 'Y', 'y'), $dateformat);
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && $action != 'templates') {
