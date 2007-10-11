@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -283,12 +283,6 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 25  => ' <br />'
         );
 
-        //$message = str_replace($find, $replace, $message);
-
-        //if ($smiliesallow) {
-        //    $message = smile($message);
-        //}
-        // contributed by JDaniels
         if ($smiliesallow) {
             $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
             for ($i = 0; $i < sizeof($messagearray); $i++) {
@@ -364,9 +358,6 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $message = addslashes($message);
     } else {
-        //if ($smiliesallow) {
-        //    $message = smile($message);
-        //}
         if ($smiliesallow) {
             $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
             for ($i = 0; $i < sizeof($messagearray); $i++) {
@@ -464,8 +455,8 @@ function forum($forum, $template) {
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
     $forum['name'] = html_entity_decode($forum['name']);
-	$forum['description'] = html_entity_decode($forum['description']);		// Fix for HTML characters in forum descriptions
-	
+    $forum['description'] = html_entity_decode($forum['description']);      // Fix for HTML characters in forum descriptions
+
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
