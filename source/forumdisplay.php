@@ -281,7 +281,7 @@ while ($thread = $db->fetch_array($querytop)) {
     }
 
     if ($thread['topped'] == 1) {
-        $prefix = $lang['toppedprefix'].' ';
+        $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
     $thread['subject'] = checkOutput(censor($thread['subject']), 'no', '', true);
