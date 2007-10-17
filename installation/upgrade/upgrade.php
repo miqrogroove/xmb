@@ -804,7 +804,7 @@ Public License instead of this License.
 
                 // min = 4.1
                 show_act('Checking Database Version');
-                if($mysqlver[0] <= 4 && $mysqlver[1] < 10 ) {
+                if ($mysqlver[0] <= 4 && $mysqlver[1] < 10) {
                     show_result(X_INST_ERR);
                     error('Version mismatch', 'XMB requires MySQL version 4.1 or higher to work properly with this database API. We recommend using the "mysql" API instead.', true);
                 } else {
@@ -819,7 +819,7 @@ Public License instead of this License.
 
         show_act('Checking Full Url Compliance');
         // let's check the $full_url :)
-        if(@file($full_url.'xmb.php') === false) {
+        if (@file($full_url.'header.php') === false) {
             show_result(X_INST_WARN);
             error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured. If this is configured wrong, it will silently prevent logging in later on in the process.', false);
         } else {
