@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -514,7 +514,6 @@ switch ($action) {
 
             $max_size = explode('x', $SETTINGS['max_avatar_size']);
             if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {
-                // we ignore flash avatars here
                 $size = @getimagesize($avatar);
                 if ($size === false ) {
                     $avatar = '';

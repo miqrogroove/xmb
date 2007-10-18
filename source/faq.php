@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -53,11 +53,10 @@ switch ($page) {
     case 'using':
         loadtemplates('faq_using_rankrow', 'faq_using');
         nav($lang['textuseboa']);
-		$stars      = '';
-		$rankrows   = '';
-		$query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title!='Moderator' AND title!='Super Moderator' AND title!='Super Administrator' AND title!='Administrator' ORDER BY posts ASC");
+        $stars = $rankrows   = '';
+        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title !='Moderator' AND title !='Super Moderator' AND title !='Super Administrator' AND title !='Administrator' ORDER BY posts ASC");
         while ($ranks = $db->fetch_array($query)) {
-            $stars = str_repeat("<img src=\"" .$imgdir. "/star.gif\" alt=\"*\" />", $ranks['stars']);
+            $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $ranks['stars']);
             eval('$rankrows .= "'.template('faq_using_rankrow').'";');
             $stars = '';
         }
@@ -97,5 +96,4 @@ eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo stripslashes($header.$faq.$footer);
-
 ?>

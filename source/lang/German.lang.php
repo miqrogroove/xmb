@@ -1,7 +1,6 @@
 <?php
-/* $Id: German.lang.php,v 1.1.2.9 2007/03/19 21:43:52 ajv Exp $ */
-/*
- * XMB 1.9.8 Engage Final
+/**
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -24,14 +23,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-    ----------------------------------------
-
-    Made by:    _DoE_ and LuCk3R
-    Language:   German (formal)
-    Last mod:   12th September 2007
-    Status:     beta
-*/
+ *
+ **/
 
 if (!defined('IN_CODE')) {
     exit ("Not allowed to run this file directly.");

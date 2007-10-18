@@ -1,8 +1,6 @@
 <?php
 /**
- * File: forumdisplay.php
- *
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -86,9 +84,9 @@ if (!$authorization) {
 }
 pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
-if ($forum['type'] == 'forum') {
+if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav(html_entity_decode(stripslashes($forum['name'])));
-} else if ($forum['type'] == 'sub') {
+} else if (isset($forum['type']) && $forum['type'] == 'sub') {
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
     nav(html_entity_decode(stripslashes($forum['name'])));
 }
@@ -189,7 +187,7 @@ if ($status1 == 'Moderator') {
 $topicsnum = 0;
 $threadlist = '';
 $threadsInFid = array();
-if ($dotfolders == "on" && X_MEMBER) {
+if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER) {
     $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$xmbuser' AND fid=$fid");
     while ($row = $db->fetch_array($query)) {
         array_push($threadsInFid, $row['tid']);
@@ -232,7 +230,7 @@ while ($thread = $db->fetch_array($querytop)) {
 
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
-    if ($thread['replies'] >= $hottopic) {
+    if ($thread['replies'] >= $SETTINGS['hottopic']) {
         $folder = 'hot_folder.gif';
     } else {
         $folder = 'folder.gif';
@@ -240,13 +238,13 @@ while ($thread = $db->fetch_array($querytop)) {
 
     $oldtopics = isset($oldtopics) ? $oldtopics : '';
 
-    if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $hottopic && $lastvisit < $dalast) {
+    if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
         $folder = "hot_red_folder.gif";
     } else if ($lastvisit < $dalast && $oT === false) {
         $folder = "red_folder.gif";
     }
 
-    if ($dotfolders == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
+    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
         $folder = 'dot_'.$folder;
     }
 

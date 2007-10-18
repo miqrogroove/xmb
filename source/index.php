@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -252,7 +252,6 @@ if ($SETTINGS['catsonly'] != 'on') {
     eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
-// create sub-forums on index
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {

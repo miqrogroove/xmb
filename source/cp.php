@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -1255,7 +1255,7 @@ if ($action == 'forum') {
             $name = addslashes($name);
             $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
-		
+
         $newgname = formVar('newgname');
         $newfname = formVar('newfname');
         $newsubname = formVar('newsubname');

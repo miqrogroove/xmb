@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -33,9 +33,9 @@ loadtemplates('memcp_profile_avatarurl','memcp_profile_avatarlist','admintool_ed
 nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
 nav($lang['texteditpro']);
 
-eval("\$css = \"".template("css")."\";");
+eval('$css = "'.template('css').'";');
 
-eval("echo (\"".template('header')."\");");
+eval('echo "'.template('header').'";');
 
 if (!X_SADMIN) {
     error($lang['superadminonly'], false);
@@ -197,6 +197,7 @@ if (noSubmit('editsubmit')) {
     } else {
         $dateformatnew = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
     }
+
     $timeformatnew  = formInt('timeformatnew');
     $timeformatnew  = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
 
@@ -269,5 +270,5 @@ if (noSubmit('editsubmit')) {
 }
 
 end_time();
-eval("echo (\"".template('footer')."\");");
+eval('echo "'.template('footer').'";');
 ?>

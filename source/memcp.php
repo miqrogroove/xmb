@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -83,25 +83,25 @@ function makenav($current) {
     <table cellpadding="4" cellspacing="1" border="0" width="100%">
     <tr align="center" class="tablerow">
     <?php
-    if ($current == "") {
+    if ($current == '') {
         echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textmyhome']. "</td>";
     } else {
         echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php\">" .$lang['textmyhome']. "</a></td>";
     }
 
-    if ($current == "profile") {
+    if ($current == 'profile') {
         echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['texteditpro']. "</td>";
     } else {
         echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=profile\">" .$lang['texteditpro']. "</a></td>";
     }
 
-    if ($current == "subscriptions") {
+    if ($current == 'subscriptions') {
         echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textsubscriptions']. "</td>";
     } else {
         echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=subscriptions\">" .$lang['textsubscriptions']. "</a></td>";
     }
 
-    if ($current == "favorites") {
+    if ($current == 'favorites') {
         echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textfavorites']. "</td>";
     } else {
         echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
@@ -489,7 +489,7 @@ if ($action == 'profile') {
                 error($lang['pwnomatch'], false);
             }
 
-            $newpassword = md5($newpassword);
+            $newpassword = md5(trim($newpassword));
 
             $pwtxt = "password='$newpassword',";
 
@@ -505,7 +505,7 @@ if ($action == 'profile') {
         echo '<center><span class="mediumtxt">'.$lang['usercpeditpromsg'].'</span></center>';
         redirect('memcp.php', 2.5, X_REDIRECT_JS);
     }
-} elseif ($action == 'favorites') {
+} else if ($action == 'favorites') {
     eval('echo "'.template('header').'";');
 
     makenav($action);
@@ -578,7 +578,7 @@ if ($action == 'profile') {
         echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
-} elseif ($action == 'subscriptions') {
+} else if ($action == 'subscriptions') {
     eval('echo "'.template('header').'";');
 
     makenav($action);
@@ -621,7 +621,7 @@ if ($action == 'profile') {
         }
 
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
-    } elseif ($subadd && noSubmit('subsubmit')) {
+    } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             error($lang['subonlistmsg'], false);
@@ -630,7 +630,7 @@ if ($action == 'profile') {
             echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
             redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
         }
-    } elseif (!$subadd && onSubmit('subsubmit')) {
+    } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
         while ($sub = $db->fetch_array($query)) {
             $delete = formInt('delete'.$sub['tid']);
