@@ -6,7 +6,7 @@ var runid = '';
 var tnode = '';
 
 function nodechange(node, text) {
-    if(node.nodeType == 3) {
+    if (node.nodeType == 3) {
         node = text;
     } else {
         node.innerHTML = text;
@@ -15,7 +15,7 @@ function nodechange(node, text) {
 
 function tickerrun() {
     nodechange(node, contents[current]);
-    if(current == contents.length-1) {
+    if (current == contents.length-1) {
         current = 0;
     } else {
         current++;
@@ -23,7 +23,7 @@ function tickerrun() {
 }
 
 function tickertoggle() {
-    if(running === true) {
+    if (running === true) {
         running = false;
         window.clearInterval(runid);
         nodechange(tnode, startticker);
@@ -35,9 +35,7 @@ function tickertoggle() {
 function tickerstart() {
     node = document.getElementById("tickerdiv");
     tnode = document.getElementById("tickertoggle");
-
     nodechange(tnode, stopticker);
-
     tickerrun();
     runid = window.setInterval(tickerrun, delay, '');
     running = true;

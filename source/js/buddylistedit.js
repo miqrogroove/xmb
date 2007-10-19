@@ -10,11 +10,11 @@ function init() {
 }
 
 function add() {
-    if(!isInit) {
+    if (!isInit) {
         init();
     }
 
-    if(++clicked >= 10) {
+    if (++clicked >= 10) {
         window.alert(max_addresses_per_entry);
         return false;
     } else {

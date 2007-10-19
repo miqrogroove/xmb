@@ -1,8 +1,7 @@
-// <![CDATA[
 function setCheckboxes(the_form, the_elements, do_check) {
     if (document.forms[the_form].elements[the_elements]) {
-        var elts      = document.forms[the_form].elements[the_elements];
-        var elts_cnt  = elts.length;
+        var elts     = document.forms[the_form].elements[the_elements];
+        var elts_cnt = elts.length;
 
         if (elts_cnt) {
             for (var i = 0; i < elts_cnt; i++) {
@@ -18,7 +17,7 @@ function setCheckboxes(the_form, the_elements, do_check) {
 
 function invertSelection(the_form, element_name) {
     if (document.forms[the_form].elements[element_name]) {
-        var elements    = document.forms[the_form].elements[element_name];
+        var elements = document.forms[the_form].elements[element_name];
         var count    = elements.length;
 
         if (count) {
@@ -30,7 +29,7 @@ function invertSelection(the_form, element_name) {
                 }
             }
         } else {
-            if(elements.checked == true) {
+            if (elements.checked == true) {
                 elements.checked = false;
             } else {
                 elements.checked = true;
@@ -46,8 +45,6 @@ function Popup(url, window_name, window_width, window_height) {
     "toolbar=no,location=no,directories=no,"+
     "status=no,menubar=no,scrollbars=yes,"+
     "resizable=yes,width="+window_width+",height="+window_height;
-
-
     NewWindow=window.open(url,window_name,settings);
 }
 
@@ -57,4 +54,3 @@ function icon(theicon) {
 }
 
 self.name = 'mainwindow';
-// ]]>
