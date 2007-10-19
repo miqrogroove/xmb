@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -1132,7 +1132,7 @@ $lang['onlinenoforum'] = "Дивиться невідомий форум";
 $lang['onlineeditnoprofile'] = "Змінює невідомий профіль";
 $lang['onlinenoprofile'] = "Дивиться невідомий профіль";
 $lang['onlineunknown'] = "Здійснює невідому дію";
-$lang['onlineu2uint'] = "Дивиться u2u інтерфейс"; 
+$lang['onlineu2uint'] = "Дивиться u2u інтерфейс";
 $lang['onlineviewcat'] = "Дивиться категорію: ";
 $lang['onlinecatunknown'] = "Дивиться невідому категорію";
 $lang['onlinememcppro'] = "Оновлює персональний профіль";
