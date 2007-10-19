@@ -1,6 +1,6 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Pre-Final
  *
  * Developed By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
@@ -64,7 +64,7 @@ function error($head, $msg, $die=true) {
     echo "\n";
     ob_flush();
     if($die) {
-	    echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
+        echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
         exit();
     }
 }
@@ -143,10 +143,10 @@ switch($step) {
 <?php
         print_footer();
         break;
-    
+
     case 2: //version check
-    	print_header();
-    	?>
+        print_header();
+        ?>
         <div id="sidebar">
          <div class="block">
          <span class="rounding"><span class="round1">&nbsp;</span><span class="round2 dark">&nbsp;</span><span class="round3 dark">&nbsp;</span><span class="round4 dark">&nbsp;</span></span>
@@ -178,9 +178,9 @@ switch($step) {
          <span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span>
         </div>
         </div>
-    	<?php
-    	print_footer();
-    	break;
+        <?php
+        print_footer();
+        break;
 
     case 3: // agreement
         print_header();
