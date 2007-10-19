@@ -47,6 +47,8 @@ loadtemplates(
 'misc_mlist_separator',
 'misc_online',
 'misc_online_admin',
+'misc_online_multipage',
+'misc_online_multipage_admin',
 'misc_online_row',
 'misc_online_row_admin',
 'misc_online_today',
@@ -477,8 +479,26 @@ switch ($action) {
             exit();
         }
 
+        $page = getInt('page');
+        $count = $db->num_rows($db->query("SELECT * FROM ".X_PREFIX."whosonline"));
+        $max_page = (int) ($count / $tpp) + 1;
+        if ($page && $page <= $max_page) {
+            $start_limit = ($page-1) * $tpp;
+        } else {
+            $start_limit = 0;
+            $page = 1;
+        }
+
+        if (($multipage = multi($count, $tpp, $page, 'misc.php?action=online&amp;page='.$page)) !== false) {
+            if (X_ADMIN) {
+                eval('$multipage = "'.template('misc_online_multipage_admin').'";');
+            } else {
+                eval('$multipage = "'.template('misc_online_multipage').'";');
+            }
+        }
+
         if (X_ADMIN) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit,$tpp");
         } else {
             $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC");
         }
