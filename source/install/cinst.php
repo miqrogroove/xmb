@@ -556,7 +556,6 @@ show_act("Creating ".$tablepre."threads");
           `pollopts` tinyint(1) NOT NULL default 0,
           PRIMARY KEY  (`tid`),
           KEY `fid` (`fid`),
-          KEY `tid` (`tid`),
           KEY `lastpost` (`lastpost`),
           KEY `author` (author (8) ),
           KEY `closed` (`closed`)
