@@ -13,7 +13,7 @@ Did you backup everything? Including config.php? You'll need that.
 * Configure the new config.php appropriately, filling in values from the old.
 * Run 
 
-	http://www.example.com/forums/Upgrade/upgrade.php
+http://www.example.com/forums/Upgrade/upgrade.php
 
 Substituting "www.example.com/forums" for your forum's URL. 
 
