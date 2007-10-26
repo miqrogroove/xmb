@@ -178,7 +178,8 @@ window.onload = tickerstart;
 |#*XMB TEMPLATE FILE*#|feature_statistics|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textstats]</strong></font></td>
 </tr>
@@ -386,15 +387,15 @@ $dayselect
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td class="header" width="4%" align="center">&nbsp;</td>
-<td class="header" width="4%" align="center">$lang[texticon]</td>
-<td class="header" width="43%" align="center">$lang[textsubject]</td>
-<td class="header" width="14%" align="center">$lang[textauthor]</td>
-<td class="header" width="14%" align="center">$lang[textforum]</td>
-<td class="header" width="5%" align="center">$lang[textreplies]</td>
-<td class="header" width="5%" align="center">$lang[textviews]</td>
-<td class="header" width="23%" align="center">$lang[textlastpost]</td>
+<tr class="header">
+<td width="4%" align="center">&nbsp;</td>
+<td width="4%" align="center">$lang[texticon]</td>
+<td width="43%" align="center">$lang[textsubject]</td>
+<td width="14%" align="center">$lang[textauthor]</td>
+<td width="14%" align="center">$lang[textforum]</td>
+<td width="5%" align="center">$lang[textreplies]</td>
+<td width="5%" align="center">$lang[textviews]</td>
+<td width="23%" align="center">$lang[textlastpost]</td>
 </tr>
 $rows
 <tr class="header">
@@ -423,9 +424,9 @@ $multipage
 <td width="5%" bgcolor="$altbg1" align="center"><font class="11px">$thread[views]</font></td>
 <td width="23%" bgcolor="$altbg2">
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr align="right">
-<td bgcolor="$altbg2" class="tablerow" nowrap="nowrap"><font size="1" face="verdana">$lastpost</font></td>
-<td bgcolor="$altbg2" class="tablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<tr class="tablerow" align="right">
+<td bgcolor="$altbg2" nowrap="nowrap"><font size="1" face="verdana">$lastpost</font></td>
+<td bgcolor="$altbg2" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 </td>
@@ -435,16 +436,16 @@ $multipage
 <br />
 <table cellspacing="$borderwidth" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
-<td><table width="100%" cellspacing="0" cellpadding="0">
+<td>
+<table width="100%" cellspacing="0" cellpadding="0">
 <tr>
-<td class="nav"  style="padding-bottom: 1px" bgcolor="$altbg1">&nbsp;<a href="index.php">$bbname</a>&nbsp;$navigation</td>
+<td class="nav" style="padding-bottom: 1px" bgcolor="$altbg1">&nbsp;<a href="index.php">$bbname</a>&nbsp;$navigation</td>
 <td align="right" bgcolor="$altbg1" width="2%"><a href="#top"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
 </tr>
 </table>
 </td>
 </tr>
 </table>
-
 <table align="center">
 <tr>
 <td align="center" class="smalltxt">
@@ -452,13 +453,18 @@ $multipage
 <br />
 $versionlong<br />
 $lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright
-<br /><br />
-
-$footerstuff[totaltime]$footerstuff[querynum]<br />
-$footerstuff[phpsql]<br />
-$footerstuff[load]<br />
-$footerstuff[querydump]<br />
-<br /></td>
+<br />
+<br />
+$footerstuff[totaltime]$footerstuff[querynum]
+<br />
+$footerstuff[phpsql]
+<br />
+$footerstuff[load]
+<br />
+$footerstuff[querydump]
+<br />
+<br />
+</td>
 </tr>
 </table>
 <a id="bottom" name="bottom"></a>
@@ -482,34 +488,35 @@ $bbcodescript
 <a name="top"></a>
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="1" cellpadding="6" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="1" cellpadding="6" width="100%">
 <tr>
-<td width="74%" $topbgcode><table border="0" width="100%" cellpadding="0" cellspacing="0">
+<td width="74%" $topbgcode>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td valign="top" rowspan="2">$logo</td>
-<td align="right" valign="top"><font class="smalltxt">$lastvisittext<br />
-$newu2umsg</font></td>
+<td align="right" valign="top"><font class="smalltxt">$lastvisittext<br />$newu2umsg</font></td>
 </tr>
-
 <tr>
 <td align="right" valign="bottom"><font class="smalltxt">$notify</font></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
-
 <tr>
 <td class="navtd">
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
-<td class="navtd"><font class="navtd">$links   $pluglink</font></td>
+<td class="navtd"><font class="navtd">$links $pluglink</font></td>
 <td align="right"><a href="$siteurl"><font class="navtd">$lang[backto] <img src="$imgdir/home.gif" border="0" alt="$sitename" /></font></a></td>
 </tr>
-</table></td>
-</tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <table cellspacing="0" cellpadding="1" border="0" width="$tablewidth" align="center">
 <tr>
 <td><table width="100%" cellspacing="0" cellpadding="2" align="center">
@@ -517,10 +524,10 @@ $newu2umsg</font></td>
 <td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
 <td align="right"><a href="#bottom"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
 
 |#*XMB TEMPLATE FILE*#|css|#*XMB TEMPLATE*#|
@@ -796,15 +803,11 @@ $cssInclude
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll_options_view|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg2" width="30%">
-<font class="smalltxt">$array[name]</font>
-</td>
+<td bgcolor="$altbg2" width="30%"><font class="smalltxt">$array[name]</font></td>
 <td bgcolor="$altbg2" width="60%">
 <img src="$imgdir/pollbar-s.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />$pollbar<img src="$imgdir/pollbar-e.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />
 </td>
-<td bgcolor="$altbg2" width="10%">
-<font class="smalltxt">$array[votes] ($percentage)</font>
-</td>
+<td bgcolor="$altbg2" width="10%"><font class="smalltxt">$array[votes] ($percentage)</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_login|#*XMB TEMPLATE*#|
@@ -812,28 +815,29 @@ $cssInclude
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlogin]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="password" size="25" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span><br /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textinvisible]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="hide" value="1" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[secure_login]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="secure" value="yes" /></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textpassword]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="password" name="password" size="25" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span><br /></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textinvisible]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="checkbox" name="hide" value="1" /></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[secure_login]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="checkbox" name="secure" value="yes" /></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg2" align="center" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
 </tr>
 </table>
 </td>
@@ -846,23 +850,24 @@ $cssInclude
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlostpw]</strong></font></td>
 </tr>
 <tr>
-<td  bgcolor="$altbg1" class="tablerow" colspan="2">$lang[textlostpwnote]</td>
+<td bgcolor="$altbg1" class="tablerow" colspan="2">$lang[textlostpwnote]</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
+<td bgcolor="$altbg2"><input type="text" name="email" size="25" /><br /></td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="username" size="25" maxlength="25" /></td>
-</tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="email" size="25" /><br /></td>
-</tr>
-<tr>
-<td bgcolor="$altbg2" class="tablerow" colspan="2" align="center"><input type="submit" class="submit" name="lostpwsubmit" value="$lang[textsubmit]" /></td>
+<td bgcolor="$altbg2" class="ctrtablerow" colspan="2"><input type="submit" class="submit" name="lostpwsubmit" value="$lang[textsubmit]" /></td>
 </tr>
 </table>
 </td>
@@ -873,7 +878,8 @@ $cssInclude
 |#*XMB TEMPLATE FILE*#|misc_online|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header">
 <td>$lang[textusername]</td>
@@ -882,14 +888,16 @@ $multipage
 </tr>
 $onlineusers
 $multipage
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
 |#*XMB TEMPLATE FILE*#|misc_online_admin|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header">
 <td>$lang[textusername]</td>
@@ -908,9 +916,7 @@ $multipage
 </td>
 </tr>
 </table>
-
 <br />
-
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -919,34 +925,31 @@ $multipage
 <tr>
 <td colspan="2" class="category"><a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font></td>
 </tr>
-
 <tr>
 <td bgcolor="$altbg1" colspan="2" class="mediumtxt">$lang[key]<strong><u><i>$lang[superadmin]</i></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden</td>
 </tr>
-
 <tr>
 <td bgcolor="$altbg1" align="center" width="4%"><img src="$imgdir/online.gif" alt="$lang[whosonline]" /></td>
 <td bgcolor="$altbg2" class="mediumtxt">$memtally&nbsp;</td>
 </tr>
-
 <tr>
 <td colspan="2" class="category"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">[+] $lang[last50today]</font></strong></a></td>
 </tr>
-
 <tr>
 <td bgcolor="$altbg2" colspan="2" class="mediumtxt">$todaymembers&nbsp;</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|faq_usermaint|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textuserman]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">
 <ul>
@@ -955,61 +958,59 @@ $multipage
 <li><a href="#3">$lang[textfaq3]</a></li>
 <li><a href="#4">$lang[textfaq4]</a></li>
 <li><a href="#5">$lang[textfaq5]</a></li>
-<li><a href="#6">$lang[textfaq6]</a></li></ul></td>
-</tr>
-</table></td>
+<li><a href="#6">$lang[textfaq6]</a></li>
+</ul>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq1]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans1]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="2"></a>$lang[textfaq2]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans2]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="3"></a>$lang[textfaq3]</strong></font></td></tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans3]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -1017,54 +1018,52 @@ $multipage
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="4"></a>$lang[textfaq4]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans4]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="5"></a>$lang[textfaq5]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans5]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a>$lang[textfaq6]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans6]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
 |#*XMB TEMPLATE FILE*#|index_category_hr|#*XMB TEMPLATE*#|
-<tr>
-<td width="4%" class="header">&nbsp;</td>
-<td width="54%" class="header">$lang[textforum]</td>
-<td width="6%" class="header" align="center">$lang[texttopics]</td>
-<td width="6%" class="header" align="center">$lang[textposts]</td>
-<td width="19%" class="header">$lang[textlastpost]</td>
-<td width="2%" class="header">&nbsp;</td>
+<tr class="header">
+<td width="4%">&nbsp;</td>
+<td width="54%">$lang[textforum]</td>
+<td width="6%" align="center">$lang[texttopics]</td>
+<td width="6%" align="center">$lang[textposts]</td>
+<td width="19%">$lang[textlastpost]</td>
+<td width="2%">&nbsp;</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index|#*XMB TEMPLATE*#|
@@ -1072,7 +1071,8 @@ $ticker
 $welcome
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
 $indexBarTop
 $forumlist
 $whosonline
@@ -1101,21 +1101,23 @@ $whosonline
 $u2uheader
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
 <tr>
-<td width="19%" valign="top" align="center"><table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+<td width="19%" valign="top" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[textfolders]</font></strong></td>
 </tr>
-
 $folderlist
-
 <tr class="tablerow">
 <td bgcolor="$altbg2" colspan="2"><strong><a href="u2u.php?action=folders">$lang[textmanagefolders]</a></strong></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
-</table></td>
+</table>
+</td>
 <td width="1%">&nbsp;&nbsp;</td>
 <td width="79%" valign="top">$leftpane</td>
 </tr>
@@ -1130,7 +1132,6 @@ $u2ufooter
 <tr class="category">
 <td colspan="5"><strong><font color="$cattext">$lang[textu2uprevsaved]</font></strong></td>
 </tr>
-
 <tr class="header">
 <td width="5%">$lang[textselectu2u]</td>
 <td width="10%">$lang[u2ureadstatus]</td>
@@ -1139,7 +1140,8 @@ $u2ufooter
 <td width="25%">$lang[textu2usavedon]</td>
 </tr>
 $u2usdraft
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
@@ -1147,7 +1149,8 @@ $u2usdraft
 $u2uheader
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$msg</td>
 </tr>
@@ -1158,9 +1161,9 @@ $u2uheader
 $u2ufooter
 
 |#*XMB TEMPLATE FILE*#|u2u_folderlink|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1"><a href="u2u.php?folder=$link">$value</a>$emptytrash</td>
-<td class="tablerow" bgcolor="$altbg1">($count)</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1"><a href="u2u.php?folder=$link">$value</a>$emptytrash</td>
+<td bgcolor="$altbg1">($count)</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|u2u_folders|#*XMB TEMPLATE*#|
@@ -1168,23 +1171,24 @@ $u2ufooter
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="2" class="category"><strong><font
-color="$cattext">$lang[folderlist]</font></strong></td>
+<td colspan="2" class="category"><strong><font color="$cattext">$lang[folderlist]</font></strong></td>
 </tr>
 
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[foldermsg]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="u2ufolders">$self[u2ufolders]</textarea></td>
+</tr>
 <tr>
-<td bgcolor="$altbg1" class="tablerow" valign="top">$lang[foldermsg]</td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="30" name="u2ufolders">$self[u2ufolders]</textarea></td>
+<td class="ctrtablerow" colspan="2" bgcolor="$altbg2"><input type="submit" name="folderssubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
 </tr>
-
-<tr>
-<td colspan="2" bgcolor="$altbg2" align="center"><input type="submit" name="folderssubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
+</table>
+</td>
 </tr>
-</table></td>
-</tr>
-</table></form>
+</table>
+</form>
 
 |#*XMB TEMPLATE FILE*#|u2u_footer|#*XMB TEMPLATE*#|
 <br />
@@ -1199,8 +1203,7 @@ $lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[
 </html>
 
 |#*XMB TEMPLATE FILE*#|u2u_header|#*XMB TEMPLATE*#|
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
@@ -1211,19 +1214,23 @@ $css
 <body text="$text">
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="0" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="0" width="100%">
 <tr>
-<td><table border="0" cellspacing="0" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="mediumtxt" align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php"><img src="$imgdir/inbox.gif" alt="$lang[textu2uinbox]" border="0" /><br />$lang[textu2uinbox]</a></td>
-<td class="mediumtxt" align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?folder=Outbox"><img src="$imgdir/outbox.gif" alt="$lang[textu2uoutbox]" border="0" /><br />$lang[textu2uoutbox]</a></td>
-<td class="mediumtxt" align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=send"><img src="$imgdir/newu2u.gif"  alt="$lang[textsendu2u]" border="0" /><br />$lang[textsendu2u]</a></td>
-<td class="mediumtxt" align="center" bgcolor="$altbg1" width="20%"><a href="#" onclick="javascript:aBook();return false;"><img src="$imgdir/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
-<td class="mediumtxt" align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=ignore"><img src="$imgdir/locku2u.gif"  alt="$lang[ignorelist]" border="0" /><br />$lang[ignorelist]</a></td>
+<td>
+<table border="0" cellspacing="0" cellpadding="$tablespace" width="100%">
+<tr class="mediumtxt">
+<td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php"><img src="$imgdir/inbox.gif" alt="$lang[textu2uinbox]" border="0" /><br />$lang[textu2uinbox]</a></td>
+<td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?folder=Outbox"><img src="$imgdir/outbox.gif" alt="$lang[textu2uoutbox]" border="0" /><br />$lang[textu2uoutbox]</a></td>
+<td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=send"><img src="$imgdir/newu2u.gif"  alt="$lang[textsendu2u]" border="0" /><br />$lang[textsendu2u]</a></td>
+<td align="center" bgcolor="$altbg1" width="20%"><a href="#" onclick="javascript:aBook();return false;"><img src="$imgdir/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
+<td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=ignore"><img src="$imgdir/locku2u.gif"  alt="$lang[ignorelist]" border="0" /><br />$lang[ignorelist]</a></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 <br />
@@ -1233,33 +1240,32 @@ $css
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="2"><strong><font
-color="$cattext">$lang[ignorelist]</font></strong></td>
+<td class="category" colspan="2"><strong><font color="$cattext">$lang[ignorelist]</font></strong></td>
 </tr>
-
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[ignoremsg]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="ignorelist">$self[ignoreu2u]</textarea></td>
+</tr>
 <tr>
-<td bgcolor="$altbg1" class="tablerow" valign="top">$lang[ignoremsg]</td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="30" name="ignorelist">$self[ignoreu2u]</textarea></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" name="ignoresubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg2" colspan="2" align="center"><input type="submit" name="ignoresubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
+</table>
+</td>
 </tr>
-</table></td>
-</tr>
-</table></form>
+</table>
+</form>
 
 |#*XMB TEMPLATE FILE*#|u2u_inbox|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
-<td colspan="5" class="category"><font
-color="$cattext">$lang[textu2uincoming]</font></td>
+<td colspan="5" class="category"><font color="$cattext">$lang[textu2uincoming]</font></td>
 </tr>
-
 <tr class="header">
 <td width="5%" align="center">$lang[textselectu2u]</td>
 <td width="10%">$lang[u2ureadstatus]</td>
@@ -1267,10 +1273,9 @@ color="$cattext">$lang[textu2uincoming]</font></td>
 <td width="20%">$lang[textfrom]</td>
 <td width="25%">$lang[textsent]</td>
 </tr>
-
 $u2usin
-
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
@@ -1281,30 +1286,28 @@ $u2ulist
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor" align="left"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor" align="left">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="tablerow">
 <td bgcolor="$altbg2"><a href="u2u.php" onclick="setCheckboxes('u2u_main', true); return false;">$lang[checkall]</a> -
 <a href="u2u.php" onclick="setCheckboxes('u2u_main', false); return false;">$lang[uncheckall]</a> -
 <a href="u2u.php" onclick="invertSelection('u2u_main', 'u2u_select[]'); return false;">$lang[invertselection]</a></td>
 </tr>
-
 <tr class="tablerow">
 <td bgcolor="$altbg1"><input type="radio" name="modaction" value="delete" /> $lang[deletebutton]</td>
 </tr>
-
 <tr class="tablerow">
 <td bgcolor="$altbg1"><input type="radio" name="modaction" value="move" /> $lang[textu2umoveto] $mtofolder<br /></td>
 </tr>
-
 <tr class="tablerow">
 <td bgcolor="$altbg1"><input type="radio" name="modaction" value="markunread" /> $lang[textu2umarkunread]
 <input type="hidden" name="folder" value="$folder" /></td>
 </tr>
-
-<tr class="tablerow">
-<td bgcolor="$altbg2" align="center"><input class="submit" type="submit" name="u2umodsubmit" value="$lang[textsubmitchanges]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2"><input class="submit" type="submit" name="u2umodsubmit" value="$lang[textsubmitchanges]" /></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </form>
@@ -1312,12 +1315,11 @@ $u2ulist
 |#*XMB TEMPLATE FILE*#|u2u_outbox|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
-<td colspan="5" class="category"><strong><font
-color="$cattext">$lang[textu2uoutgoing]</font></strong></td>
+<td colspan="5" class="category"><strong><font color="$cattext">$lang[textu2uoutgoing]</font></strong></td>
 </tr>
-
 <tr class="header">
 <td width="5%">$lang[textselectu2u]</td>
 <td width="10%">$lang[u2ureadstatus]</td>
@@ -1326,7 +1328,8 @@ color="$cattext">$lang[textu2uoutgoing]</font></strong></td>
 <td width="25%">$lang[textsent]</td>
 </tr>
 $u2usout
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
@@ -1334,24 +1337,26 @@ $u2usout
 <br />
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="mediumtxt" bgcolor="$altbg1">
 <div align="center">$lang[uqinfo]</div>
 <img src="$imgdir/pollbar.gif" width="$barwidth%" height="10" alt="$lang[altpollpercentage]" />
 </td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 
 |#*XMB TEMPLATE FILE*#|u2u_row|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" align="center"><input type="checkbox" name="u2u_select[]" value="$u2u[u2uid]" /><input type="hidden" name="type$u2u[u2uid]" value="$u2u[type]" /></td>
-<td class="tablerow" bgcolor="$altbg2">$u2ureadstatus</td>
-<td class="tablerow" bgcolor="$altbg1"><a href="u2u.php?action=view&amp;folder=$folder&amp;u2uid=$u2u[u2uid]">$u2usubject</a></td>
-<td class="tablerow" bgcolor="$altbg2">$u2usent</td>
-<td class="tablerow" bgcolor="$altbg1">$u2udateline</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" align="center"><input type="checkbox" name="u2u_select[]" value="$u2u[u2uid]" /><input type="hidden" name="type$u2u[u2uid]" value="$u2u[type]" /></td>
+<td bgcolor="$altbg2">$u2ureadstatus</td>
+<td bgcolor="$altbg1"><a href="u2u.php?action=view&amp;folder=$folder&amp;u2uid=$u2u[u2uid]">$u2usubject</a></td>
+<td bgcolor="$altbg2">$u2usent</td>
+<td bgcolor="$altbg1">$u2udateline</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|u2u_row_none|#*XMB TEMPLATE*#|
@@ -1369,35 +1374,32 @@ var sendMode = true;
 $u2upreview
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td width="100%" colspan="2" class="category" align="center"><strong><font
-color="$cattext">$lang[textu2u]</font></strong></td>
+<td width="100%" colspan="2" class="category" align="center"><strong><font color="$cattext">$lang[textu2u]</font></strong></td>
 </tr>
-
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textsendto]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="msgto" id="msgto" size="20" value="$username" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textsendto]</td>
+<td bgcolor="$altbg2"><input type="text" name="msgto" id="msgto" size="20" value="$username" /></td>
 </tr>
-
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textsubject]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="subject" size="35" value="$subject" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textsubject]</td>
+<td bgcolor="$altbg2"><input type="text" name="subject" size="35" value="$subject" /></td>
 </tr>
-
-<tr>
-<td valign="top" class="tablerow" bgcolor="$altbg1">$lang[textmessage]</td>
-<td class="tablerow" bgcolor="$altbg2"><textarea rows="10" name="message" id="message" cols="50">$message</textarea><br /></td>
+<tr class="tablerow">
+<td valign="top" bgcolor="$altbg1">$lang[textmessage]</td>
+<td bgcolor="$altbg2"><textarea rows="10" name="message" id="message" cols="50">$message</textarea><br /></td>
 </tr>
-
 <tr>
-<td valign="top" class="header" bgcolor="$altbg1" colspan="2" align="center">
+<td valign="top" class="ctrtablerow" bgcolor="$altbg1" colspan="2">
 <input type="hidden" name="del" value="$del" />
 <input type="submit" class="submit" name="sendsubmit" value="$lang[textsendu2u]" />
 <input type="submit" class="submit" name="savesubmit" value="$lang[textsaveu2u]" />
 <input type="submit" class="submit" name="previewsubmit" value="$lang[textpreviewu2u]" /></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </form>
@@ -1405,77 +1407,69 @@ color="$cattext">$lang[textu2u]</font></strong></td>
 |#*XMB TEMPLATE FILE*#|u2u_send_preview|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" colspan="2">$lang[textsubject] $u2usubject</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="14%">$lang[textmessage]</td>
-<td bgcolor="$altbg2" class="tablerow">$u2umessage</td>
-</tr>
-</table></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="14%">$lang[textmessage]</td>
+<td bgcolor="$altbg2">$u2umessage</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
 
 |#*XMB TEMPLATE FILE*#|u2u_view|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" colspan="2">$lang[textsubject] $u2usubject</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textfrom]</td>
-<td bgcolor="$altbg2" class="tablerow">$u2ufrom</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="15%">$lang[textfrom]</td>
+<td bgcolor="$altbg2">$u2ufrom</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textto]</td>
-<td bgcolor="$altbg2" class="tablerow">$u2uto</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="15%">$lang[textto]</td>
+<td bgcolor="$altbg2">$u2uto</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textu2ufolder]</td>
-<td bgcolor="$altbg2" class="tablerow">$u2ufolder</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="15%">$lang[textu2ufolder]</td>
+<td bgcolor="$altbg2">$u2ufolder</td>
 </tr>
-
 <tr>
 <td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textsent]</td>
 <td bgcolor="$altbg2" class="smalltxt">$u2udateline</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textmessage]</td>
-<td bgcolor="$altbg2" class="tablerow">$u2umessage</td>
-</tr>
-</table></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="15%">$lang[textmessage]</td>
+<td bgcolor="$altbg2">$u2umessage</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <table cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
 <td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=$u2uid" target="_blank">$lang[textprintver]</a></td>
 </tr>
 </table>
-
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <form method="post" action="u2u.php?action=modif">
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="header">
-<td class="category"><font
-color="$cattext">$lang[textu2uoptions]</font></td>
+<tr>
+<td class="category"><font color="$cattext">$lang[textu2uoptions]</font></td>
 </tr>
-
 <tr class="tablerow">
 <td bgcolor="$altbg1">
-
 <input type="hidden" name="u2uid" value="$u2u[u2uid]" />
 <input type="hidden" name="folder" value="$u2u[folder]" />
 <input type="hidden" name="type" value="$u2u[type]" />
@@ -1485,34 +1479,32 @@ $sendoptions
 <input type="radio" name="mod" value="sendtoemail" /> $lang[textforwardu2utoemail]<br />
 <input type="radio" name="mod" value="move" /> $lang[textu2umoveto] $mtofolder<br /></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg2" align="center"><input class="submit" type="submit" name="u2umodsubmit" value="$lang[textsubmitchanges]" />
-</td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2"><input class="submit" type="submit" name="u2umodsubmit" value="$lang[textsubmitchanges]" /></td>
 </tr>
-</table></form></td>
+</table>
+</form>
+</td>
 </tr>
 </table>
 
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
 $spacer
 <tr>
-<td colspan="6" class="category"><a href="index.php?gid=$thing[cat_fid]"><font
-color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
+<td colspan="6" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|popup_footer|#*XMB TEMPLATE*#|
 </div>
-
 </body>
 </html>
 
 |#*XMB TEMPLATE FILE*#|index_forum|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" align="center" class="ctrtablerow" width="4%">$folder</td>
+<td bgcolor="$altbg1" class="ctrtablerow" width="4%">$folder</td>
 <td bgcolor="$altbg2" class="tablerow" width="54%"><font class="mediumtxt"><a href="./forumdisplay.php?fid=$forum[fid]"><strong>$forum[name]</strong></a></font>&nbsp;<font class="smalltxt">$forum[moderator]&nbsp;</font><br /><font class="smalltxt">$forum[description]$subforums</font></td>
-<td bgcolor="$altbg1" align="center" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[threads]</font></td>
-<td bgcolor="$altbg2" align="center" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[posts]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[threads]</font></td>
+<td bgcolor="$altbg2" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[posts]</font></td>
 <td bgcolor="$altbg1" class="rghttablerow" width="19%">$lastpostrow</td>
 <td bgcolor="$altbg2" class="ctrtablerow" width="2%"><a href="./post.php?action=newthread&amp;fid=$forum[fid]"><img src="$imgdir/ipost.gif" border="0" alt="$lang[altpostnewthread]" /></a></td>
 </tr>
@@ -1539,14 +1531,14 @@ $subforums
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td width="4%" class="header">&nbsp;</td>
-<td width="4%" class="header">$lang[texticon]</td>
-<td width="47%" class="header">$lang[textsubject]</td>
-<td width="14%" class="header" align="center">$lang[textauthor]</td>
-<td width="6%" class="header" align="center">$lang[textreplies]</td>
-<td width="6%" class="header" align="center">$lang[textviews]</td>
-<td width="19%" class="header">$lang[textlastpost]</td>
+<tr class="header">
+<td width="4%">&nbsp;</td>
+<td width="4%">$lang[texticon]</td>
+<td width="47%">$lang[textsubject]</td>
+<td width="14%" align="center">$lang[textauthor]</td>
+<td width="6%" align="center">$lang[textreplies]</td>
+<td width="6%" align="center">$lang[textviews]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 $threadlist
 $multipage
@@ -1562,7 +1554,8 @@ $multipage
 <br />
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
 <tr>
-<td><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td>
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td colspan="6">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -1619,17 +1612,17 @@ $subforums
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td width="4%" class="header" align="center"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/modify_settings.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
-<td width="4%" class="header" align="center">$lang[texticon]</td>
-<td width="45%" class="header">$lang[textsubject]</td>
-<td width="6%" class="header">$lang[topuntop]</td>
-<td width="12%" class="header" align="center">$lang[textauthor]</td>
-<td width="6%" class="header" align="center">$lang[textreplies]</td>
-<td width="6%" class="header" align="center">$lang[textviews]</td>
-<td width="10%" class="header">$lang[textlastpost]</td>
-<td width="4%" class="header">$lang[deletecolon]</td>
-<td class="header"> </td>
+<tr class="header">
+<td width="4%" align="center"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/modify_settings.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
+<td width="4%" align="center">$lang[texticon]</td>
+<td width="45%">$lang[textsubject]</td>
+<td width="6%">$lang[topuntop]</td>
+<td width="12%" align="center">$lang[textauthor]</td>
+<td width="6%" align="center">$lang[textreplies]</td>
+<td width="6%" align="center">$lang[textviews]</td>
+<td width="10%">$lang[textlastpost]</td>
+<td width="4%">$lang[deletecolon]</td>
+<td>&nbsp;</td>
 </tr>
 $threadlist
 $multipage
@@ -1637,25 +1630,26 @@ $multipage
 </td>
 </tr>
 </table>
-
 <table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
-<tr><td>
+<tr>
+<td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr><td bgcolor="$altbg1" class="tablerow">
+<tr>
+<td bgcolor="$altbg1" class="tablerow">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr><td class="tablerow" align="left">
+<tr>
+<td class="tablerow" align="left">
 <a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="setCheckboxes('geatneet', 'tid[]', true); return false;">$lang[checkall]</a> -
 <a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="setCheckboxes('geatneet', 'tid[]', false); return false;">$lang[uncheckall]</a> -
 <a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="invertSelection('geatneet', 'tid[]'); return false;">$lang[invertselection]</a>
-</td><td class="tablerow" align="right">
+</td>
+<td class="tablerow" align="right">
 <input type="hidden" name="fid" value="$fid" />
 <input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
 &nbsp;&nbsp;
@@ -1670,14 +1664,17 @@ $multipage
 <option value="f_open">$lang[textopenthread]</option>
 <option value="top">$lang[topuntop]</option>
 </select>
-</td></tr>
+</td>
+</tr>
 </table>
-</td></tr></table>
-</td></tr></table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 </form>
-
 <br />
-
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
 <tr>
 <td>
@@ -1715,8 +1712,10 @@ $multipage
 </tr>
 </table>
 <br />
-<table width="$tablewidth" align="center"><tr>
-<td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
+<table width="$tablewidth" align="center">
+<tr>
+<td class="tablerow">
+<img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
 <img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
 <img src="$imgdir/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
@@ -1728,36 +1727,35 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforum|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" class="tablerow" align="center">$folder</td>
+<td bgcolor="$altbg1" class="ctrtablerow" align="center">$folder</td>
 <td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></font>&nbsp;<font class="smalltxt">$forum[moderator]</font><br /><font class="smalltxt">$forum[description]</font></td>
-<td bgcolor="$altbg1" class="tablerow" align="center"><font class="mediumtxt">$forum[threads]</font></td>
-<td bgcolor="$altbg2" class="tablerow" align="center"><font class="mediumtxt">$forum[posts]</font></td>
-<td bgcolor="$altbg1" class="tablerow">$lastpostrow</td>
+<td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$forum[threads]</font></td>
+<td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$forum[posts]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_thread_admin|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg2" align="center" class="ctrtablerow">$folder</td>
-<td bgcolor="$altbg1" align="center" class="ctrtablerow">$thread[icon]</td>
+<td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
+<td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
 <td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a>  $multipage2</font></td>
-<td bgcolor="$altbg1" class="ctrtablerow" align="center"><font class="mediumtxt"><a href = "topicadmin.php?tid=$thread[tid]&amp;fid=$forum[fid]&amp;action=top">$topimage</a></font></td>
+<td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt"><a href = "topicadmin.php?tid=$thread[tid]&amp;fid=$forum[fid]&amp;action=top">$topimage</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
-<td bgcolor="$altbg2" class="ctrtablerow" align="center"><font class="mediumtxt">$thread[replies]</font></td>
-<td bgcolor="$altbg1" class="ctrtablerow" align="center"><font class="mediumtxt">$thread[views]</font></td>
+<td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
 <td bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
-<td bgcolor="$altbg1" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="./images/admin/deletetopic.gif"
-alt="$lang[deletethread]" border="0" /></a></td>
+<td bgcolor="$altbg1" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="./images/admin/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><input type="checkbox" name="tid[]" value="$thread[realtid]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_thread|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg2" align="center" class="ctrtablerow">$folder</td>
-<td bgcolor="$altbg1" align="center" class="ctrtablerow">$thread[icon]</td>
+<td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
+<td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
 <td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a>  $multipage2</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
-<td bgcolor="$altbg2" class="ctrtablerow" align="center"><font class="mediumtxt">$thread[replies]</font></td>
-<td bgcolor="$altbg1" class="ctrtablerow" align="center"><font class="mediumtxt">$thread[views]</font></td>
+<td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
 <td bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
 </tr>
 
@@ -1790,16 +1788,12 @@ $header
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll_options|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg2">
-<input type="radio" name="postopnum" value="$poll[id]" /><font class="smalltxt">$poll[name]</font>
-</td>
+<td bgcolor="$altbg2"><input type="radio" name="postopnum" value="$poll[id]" /><font class="smalltxt">$poll[name]</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll_submitbutton|#*XMB TEMPLATE*#|
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="3">
-<input type="submit" class="submit" value="$lang[submitvote]" />
-</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="3"><input type="submit" class="submit" value="$lang[submitvote]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll|#*XMB TEMPLATE*#|
@@ -1852,7 +1846,8 @@ $buttoncode
 <br />
 <br />
 $lang[attachment] <a href="./viewthread.php?action=attachment&amp;tid=$tid&amp;pid=$post[pid]" target="_blank">$post[filename]</a> ($attachsize)
-<br /><font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
+<br />
+<font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
 <br />
 
 |#*XMB TEMPLATE FILE*#|viewthread_post|#*XMB TEMPLATE*#|
@@ -1871,7 +1866,6 @@ $rank[avatar]
 <div align="center">
 $avatar
 </div>
-
 <br />
 <br />
 $lang[textposts] $post[postnum]
@@ -1886,16 +1880,15 @@ $mood
 </div>
 <br />
 </td>
-
 <td valign="top" class="tablerow" style="height: 30px; width: 82%;">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-<td class="smalltxt" valign="top">$post[icon]   $poston</td>
+<td class="smalltxt" valign="top">$post[icon] $poston</td>
 <td class="smalltxt" align="right" valign="top">$edit$repquote$reportlink</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
-
 <tr bgcolor="$thisbg">
 <td class="tablerow" valign="top" style="height: 80px; width: 82%" >
 <font class="subject">
@@ -1905,7 +1898,6 @@ $mood
 <br />
 <font class="mediumtxt">$post[message]</td>
 </tr>
-
 <tr bgcolor="$thisbg">
 <td class="tablerow" valign="bottom" style="height: 20px; width: 82%;">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -1915,7 +1907,8 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 </td>
 <td align="right">$ip</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
@@ -1939,9 +1932,9 @@ $poll
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td width="18%" class="header">$lang[textauthor] </td>
-<td class="header">$lang[textsubject] $thread[subject]</td>
+<tr class="header">
+<td width="18%">$lang[textauthor] </td>
+<td>$lang[textsubject] $thread[subject]</td>
 </tr>
 $posts
 $multipage
@@ -1961,57 +1954,59 @@ $multipage
 $quickreply
 
 |#*XMB TEMPLATE FILE*#|faq_messages_smilierow|#*XMB TEMPLATE*#|
-<tr>
-<td width="25%" class="tablerow" bgcolor="$altbg2">$smilie[code]</td>
-<td width="75%" class="tablerow" bgcolor="$altbg2" align="center"><img src="$smdir/$smilie[url]" alt="$smilie[code]" /></td>
+<tr class="tablerow">
+<td width="25%" bgcolor="$altbg2">$smilie[code]</td>
+<td width="75%" bgcolor="$altbg2" align="center"><img src="$smdir/$smilie[url]" alt="$smilie[code]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|faq_using_rankrow|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg2" class="tablerow">$ranks[title]</td>
-<td bgcolor="$altbg2" class="tablerow">$stars</td>
-<td bgcolor="$altbg2" class="tablerow">$ranks[posts] $lang[memposts]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg2">$ranks[title]</td>
+<td bgcolor="$altbg2">$stars</td>
+<td bgcolor="$altbg2">$ranks[posts] $lang[memposts]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_online|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
-<td class="tablerow" bgcolor="$altbg1">$buddystatus</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
+<td bgcolor="$altbg1">$buddystatus</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|faq|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=usermaint"><font color="$cattext"><strong>$lang[textuserman]</strong></font></a></td>
 </tr>
-
 <tr>
-<td class="tablerow" bgcolor="$altbg1"><ul>
+<td class="tablerow" bgcolor="$altbg1">
+<ul>
 <li><a href="faq.php?page=usermaint#1">$lang[textfaq1]</a></li>
 <li><a href="faq.php?page=usermaint#2">$lang[textfaq2]</a></li>
 <li><a href="faq.php?page=usermaint#3">$lang[textfaq3]</a></li>
 <li><a href="faq.php?page=usermaint#4">$lang[textfaq4]</a></li>
 <li><a href="faq.php?page=usermaint#5">$lang[textfaq5]</a></li>
 <li><a href="faq.php?page=usermaint#6">$lang[textfaq6]</a></li>
-</ul></td>
-</tr>
-</table></td>
+</ul>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=using"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></a></td>
 </tr>
-
 <tr>
-<td class="tablerow" bgcolor="$altbg1"><ul>
+<td class="tablerow" bgcolor="$altbg1">
+<ul>
 <li><a href="faq.php?page=using#1">$lang[textfaq7]</a></li>
 <li><a href="faq.php?page=using#2">$lang[textfaq16]</a></li>
 <li><a href="faq.php?page=using#3">$lang[textfaq8]</a></li>
@@ -2019,23 +2014,24 @@ $quickreply
 <li><a href="faq.php?page=using#5">$lang[textfaq10]</a></li>
 <li><a href="faq.php?page=using#6">$lang[textfaq20]</a></li>
 <li><a href="faq.php?page=using#7">$lang[textfaq21]</a></li>
-</ul></td>
-</tr>
-</table></td>
+</ul>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=messages"><font color="$cattext"><strong>$lang[textpostread]</strong></font></a></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1"><ul>
+<td class="tablerow" bgcolor="$altbg1">
+<ul>
 <li><a href="faq.php?page=messages#1">$lang[textfaq11]</a></li>
 <li><a href="faq.php?page=messages#2">$lang[textfaq12]</a></li>
 <li><a href="faq.php?page=messages#3">$lang[textfaq13]</a></li>
@@ -2044,14 +2040,14 @@ $quickreply
 <li><a href="faq.php?page=messages#6">$lang[textfaq17]</a></li>
 <li><a href="faq.php?page=messages#7">$lang[textfaq19]</a></li>
 <li><a href="faq.php?page=messages#8">$lang[textfaq18]</a></li>
-</ul></td>
-</tr>
-</table></td>
+</ul>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2059,16 +2055,13 @@ $quickreply
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textfaqextra]</strong></font></td>
 </tr>
-
 <tr>
-<td class="tablerow" bgcolor="$altbg1"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+<td class="tablerow" bgcolor="$altbg1">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr align="center">
 <td>&nbsp;</td>
-
 <td><a href="http://www.php.net/" target="_blank"><img border="0" src="./images/admin/php.gif" alt="$lang[altpoweredbyphp]" align="middle" /></a></td>
-
 <td><a href="http://www.mysql.com/" target="_blank"><img border="0" src="./images/admin/mysql.gif" alt="$lang[altpoweredbymysql]" align="middle" /></a></td>
-
 <td>&nbsp;</td>
 </tr>
 </table>
@@ -2088,14 +2081,17 @@ $quickreply
 <td class="category"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1"><ul>
+<td width="100%" class="tablerow" bgcolor="$altbg1">
+<ul>
 <li><a href="#1">$lang[textfaq7]</a></li>
 <li><a href="#2">$lang[textfaq16]</a></li>
 <li><a href="#3">$lang[textfaq8]</a></li>
 <li><a href="#4">$lang[textfaq9]</a></li>
 <li><a href="#5">$lang[textfaq10]</a></li>
 <li><a href="#6">$lang[textfaq20]</a></li>
-<li><a href="#7">$lang[textfaq21]</a></li></ul></td>
+<li><a href="#7">$lang[textfaq21]</a></li>
+</ul>
+</td>
 </tr>
 </table>
 </td>
@@ -2172,28 +2168,26 @@ $quickreply
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans10]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq20]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans19]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2201,11 +2195,9 @@ $quickreply
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq21]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[rankinfo]</td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">
 <table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
@@ -2213,7 +2205,8 @@ $quickreply
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="2" width="100%">
 $rankrows
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </td>
@@ -2226,13 +2219,14 @@ $rankrows
 |#*XMB TEMPLATE FILE*#|faq_messages|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textpostread]</strong></font></td>
 </tr>
-
 <tr>
-<td width="100%" class="tablerow" bgcolor="$altbg1"><ul>
+<td width="100%" class="tablerow" bgcolor="$altbg1">
+<ul>
 <li><a href="#1">$lang[textfaq11]</a></li>
 <li><a href="#2">$lang[textfaq12]</a></li>
 <li><a href="#3">$lang[textfaq13]</a></li>
@@ -2240,157 +2234,154 @@ $rankrows
 <li><a href="#5">$lang[textfaq15]</a></li>
 <li><a href="#6">$lang[textfaq17]</a></li>
 <li><a href="#7">$lang[textfaq19]</a></li>
-<li><a href="#8">$lang[textfaq18]</a></li></ul></td>
-</tr>
-</table></td>
+<li><a href="#8">$lang[textfaq18]</a></li>
+</ul>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq11]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans11]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="2"></a> $lang[textfaq12]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans12]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="3"></a> $lang[textfaq13]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans13]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="4"></a> $lang[textfaq14]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans14]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="5"></a> $lang[textfaq15]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans15]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq17]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans16]
 <table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td width="25%" class="header">$lang[textsmiliecode]</td>
-<td width="75%" class="header">$lang[smiliepreview]</td>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr class="header">
+<td width="25%">$lang[textsmiliecode]</td>
+<td width="75%">$lang[smiliepreview]</td>
 </tr>
 $smilierows
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq19]</strong></font></td>
-
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[bbcodeinfo]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
-
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="8"></a> $lang[textfaq18]</strong></font></td>
 </tr>
-
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$lang[textfaqans17]</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </table>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_offline|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
-<td class="tablerow" bgcolor="$altbg1">$lang[textoffline]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[textoffline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist|#*XMB TEMPLATE*#|
@@ -2404,12 +2395,14 @@ $css
 <body text="$text">
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><strong><font color="$cattext">$lang[textbuddylist]</font></strong></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1"><table width="98%">
+<td class="tablerow" bgcolor="$altbg1">
+<table width="98%">
 <tr>
 <td class="tablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textonline]</strong></td>
 </tr>
@@ -2434,10 +2427,10 @@ $buddys[offline]
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="tablerow" bgcolor="$altbg1" align="center"><font class="mediumtxt">
-<a href="buddy.php?action=edit">$lang[editbuddylist]</a></font></td>
+<td class="ctrtablerow" bgcolor="$altbg1"><font class="mediumtxt"><a href="buddy.php?action=edit">$lang[editbuddylist]</a></font></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </body>
@@ -2453,7 +2446,6 @@ $css
 <script type="text/javascript" language="JavaScript" src="./js/buddylistedit.js"></script>
 </head>
 <body text="$text">
-
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2463,23 +2455,20 @@ $css
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[editbuddylist]</font></strong></td>
 </tr>
-
-<tr>
-<td class="tablerow" bgcolor="$altbg2" width="5%" align="center"><strong>$lang[deletecolon]</strong></td>
-<td class="tablerow" bgcolor="$altbg2"><strong>$lang[addressname]</strong></td>
+<tr class="tablerow">
+<td bgcolor="$altbg2" width="5%" align="center"><strong>$lang[deletecolon]</strong></td>
+<td bgcolor="$altbg2"><strong>$lang[addressname]</strong></td>
 </tr>
-
 $buddys
-
 <tr>
 <td class="tablerow" colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
 </tr>
-</table></form></td>
+</table>
+</form>
+</td>
 </tr>
 </table>
 <br />
-
-
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2489,35 +2478,33 @@ $buddys
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[addtoaddresses]</font></strong></td>
 </tr>
-
 <tr>
 <td class="tablerow" bgcolor="$altbg2">
 <div id="addresses">
 <div id="address_add">
 <input type="text" name="buddys[]" size="20"/>
 </div>
-</div></td>
+</div>
+</td>
 </tr>
-
 <tr>
 <td class="tablerow" bgcolor="$altbg1"><a href="#" onclick="javascript:add();return false;">&raquo; $lang[add_buddy]</a></td>
 </tr>
-
 <tr>
 <td class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
 </tr>
-</table></form></td>
+</table>
+</form>
+</td>
 </tr>
 </table>
-
-
 </body>
 </html>
 
 |#*XMB TEMPLATE FILE*#|buddylist_edit_buddy|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" align="center"><input type="checkbox" name="delete[]" value="$buddy[buddyname]" /></td>
-<td class="tablerow" bgcolor="$altbg1">$buddy[buddyname]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" align="center"><input type="checkbox" name="delete[]" value="$buddy[buddyname]" /></td>
+<td bgcolor="$altbg1">$buddy[buddyname]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_message|#*XMB TEMPLATE*#|
@@ -2533,7 +2520,7 @@ $css
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="tablerow" bgcolor="$altbg1" align="center"><font class="mediumtxt">$message$redirectjs</font></td>
+<td class="ctrtablerow" bgcolor="$altbg1"><font class="mediumtxt">$message$redirectjs</font></td>
 </tr>
 </table>
 </td>
@@ -2564,7 +2551,8 @@ $header
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textcoppa]</strong></font></td>
 </tr>
@@ -2572,8 +2560,7 @@ $header
 <td bgcolor="$altbg1" class="tablerow">$lang[textcoppawording]</td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" class="tablerow" align="center"><input type="submit" class="submit" name="coppasubmit" value="$lang[coppaagree]" />
-</td>
+<td bgcolor="$altbg2" class="ctrtablerow"><input type="submit" class="submit" name="coppasubmit" value="$lang[coppaagree]" /></td>
 </tr>
 </table>
 </td>
@@ -2586,33 +2573,27 @@ $header
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
-
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsearchfor]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsearchfor]</td>
 <td bgcolor="$altbg2"><input type="text" name="srchtxt" size="30" maxlength="40" /></td>
 </tr>
-
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsrchuname]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsrchuname]</td>
 <td bgcolor="$altbg2"><input type="text" name="srchuname" size="30" maxlength="40" /></td>
 </tr>
-
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[srchbyforum]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[srchbyforum]</td>
 <td bgcolor="$altbg2">$forumselect</td>
 </tr>
-
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textlfrom]</td>
-<td bgcolor="$altbg2"><select name="srchfrom">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlfrom]</td>
+<td bgcolor="$altbg2">
+<select name="srchfrom">
 <option value="86400">$lang[day1]</option>
 <option value="604800">$lang[aweek]</option>
 <option value="2592000">$lang[month1]</option>
@@ -2620,16 +2601,15 @@ $header
 <option value="15897600">$lang[month6]</option>
 <option value="31536000">$lang[lastyear]</option>
 <option value="0" selected="selected">$lang[beginning]</option>
-</select></td>
+</select>
+</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[srchfilter_double]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[srchfilter_double]</td>
 <td bgcolor="$altbg2"><input type="checkbox" name="filter_distinct" value="yes" checked="checked" /></td>
 </tr>
-
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="2" align="center"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
 </tr>
 </table>
 </td>
@@ -2638,27 +2618,25 @@ $header
 </form>
 
 |#*XMB TEMPLATE FILE*#|member_reg_password|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textpassword]</td>
-<td bgcolor="$altbg2"class="tablerow"><input type="password" name="password" size="25" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="password" size="25" /></td>
 </tr>
-
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textretypepw]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="password" name="password2" size="25" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textretypepw]</td>
+<td bgcolor="$altbg2"><input type="password" name="password2" size="25" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_avatarurl|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="avatar" size="25" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textavatarurl]</td>
+<td bgcolor="$altbg2"><input type="text" name="avatar" size="25" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_avatarlist|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textavatar]</td>
-<td bgcolor="$altbg2" class="tablerow"><select name="avatar" onchange="document.images.avatarpic.src = this[this.selectedIndex].value;">$avatars</select>&nbsp;&amp;&nbsp;
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textavatar]</td>
+<td bgcolor="$altbg2"><select name="avatar" onchange="document.images.avatarpic.src = this[this.selectedIndex].value;">$avatars</select>&nbsp;&amp;&nbsp;
 <img src="./images/avatars/clear_avatar.gif" name="avatarpic" align="middle" border="0" alt="*" /></td>
 </tr>
 
@@ -2672,73 +2650,73 @@ $header
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[required]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow" >$lang[textusername]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="username" size="25" maxlength="25" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" /></td>
 </tr>
 $pwtd
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="email" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
+<td bgcolor="$altbg2"><input type="text" name="email" size="25" value="" /></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[optional]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsite]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="site" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
+<td bgcolor="$altbg2"><input type="text" name="site" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="webcam" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
+<td bgcolor="$altbg2"><input type="text" name="webcam" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textaim]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="aim" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
+<td bgcolor="$altbg2"><input type="text" name="aim" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texticq]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="icq" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texticq]</td>
+<td bgcolor="$altbg2"><input type="text" name="icq" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textyahoo]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="yahoo" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textyahoo]</td>
+<td bgcolor="$altbg2"><input type="text" name="yahoo" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textmsn]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="msn" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textmsn]</td>
+<td bgcolor="$altbg2"><input type="text" name="msn" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textlocation]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="location" size="25" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlocation]</td>
+<td bgcolor="$altbg2"><input type="text" name="location" size="25" value="" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[memcpmood]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="mood" size="25" value="" value="" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[memcpmood]</td>
+<td bgcolor="$altbg2"><input type="text" name="mood" size="25" value="" value="" /></td>
 </tr>
 $avatd
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textbio]</td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="bio"></textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="bio"></textarea></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="sig"></textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="sig"></textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[textoptions]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttheme]</td>
-<td bgcolor="$altbg2" class="tablerow">$themelist</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttheme]</td>
+<td bgcolor="$altbg2">$themelist</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textlanguage]</td>
-<td bgcolor="$altbg2" class="tablerow">$langfileselect</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlanguage]</td>
+<td bgcolor="$altbg2">$langfileselect</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textbday]</td>
-<td bgcolor="$altbg2" class="tablerow">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbday]</td>
+<td bgcolor="$altbg2">
 <select name="month">
 <option value="0">&nbsp;</option>
 <option value="1">$lang[textjan]</option>
@@ -2758,47 +2736,47 @@ $dayselect
 <input type="text" name="year" size="4" />
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttpp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="tpp" value="$topicperpage" size="4" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttpp]</td>
+<td bgcolor="$altbg2"><input type="text" name="tpp" value="$topicperpage" size="4" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textppp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="ppp" value="$postperpage" size="4" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textppp]</td>
+<td bgcolor="$altbg2"><input type="text" name="ppp" value="$postperpage" size="4" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textshowemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="showemail" value="yes" checked="checked" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textshowemail]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="showemail" value="yes" checked="checked" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textgetnews]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="newsletter" value="yes" checked="checked" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textgetnews]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="newsletter" value="yes" checked="checked" /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textuseoldu2u]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="useoldu2u" value="yes" />
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textuseoldu2u]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="useoldu2u" value="yes" />
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsaveog]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="saveogu2u" value="yes" checked="checked" />
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsaveog]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="saveogu2u" value="yes" checked="checked" />
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textemailonu2u]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="emailonu2u" value="yes" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemailonu2u]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="emailonu2u" value="yes" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttimeformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="radio" value="24" name="timeformatnew" $timeFormat24Checked/>&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $timeFormat12Checked />&nbsp;$lang[text12hour]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttimeformat]</td>
+<td bgcolor="$altbg2"><input type="radio" value="24" name="timeformatnew" $timeFormat24Checked/>&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $timeFormat12Checked />&nbsp;$lang[text12hour]</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[dateformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="dateformatnew" size="25" value="$dformatorig" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[dateformat]</td>
+<td bgcolor="$altbg2"><input type="text" name="dateformatnew" size="25" value="$dformatorig" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textoffset]</td>
-<td bgcolor="$altbg2" class="tablerow">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textoffset]</td>
+<td bgcolor="$altbg2">
 <select name="timeoffset1">
 <option value="-12" $timezone1>$lang[timezone1]</option>
 <option value="-11" $timezone2>$lang[timezone2]</option>
@@ -2847,133 +2825,111 @@ $captcharegcheck
 </form>
 
 |#*XMB TEMPLATE FILE*#|member_profile_email|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="mailto:$email">$email</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textemail]</td>
+<td bgcolor="$altbg2"><a href="mailto:$email">$email</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_profile|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textprofor] $member</strong></font></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textusername]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[username]   <small>(<a href="#"
-onclick="Popup('u2u.php?action=send&amp;username=$encodeuser', 'Window', 700, 450);">$lang[textu2u]</a>)&nbsp; (<a
-href="javascript:Popup('buddy.php?action=add&amp;buddys=$memberinfo[username]', 'Window', 450, 400);">$lang[addtobuddies]</a>)</small></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
+<td bgcolor="$altbg2">$memberinfo[username] <small>(<a href="#" onclick="Popup('u2u.php?action=send&amp;username=$encodeuser', 'Window', 700, 450);">$lang[textu2u]</a>)&nbsp;&nbsp;(<a href="javascript:Popup('buddy.php?action=add&amp;buddys=$memberinfo[username]', 'Window', 450, 400);">$lang[addtobuddies]</a>)</small></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textregistered]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[regdate] ($ppd $lang[textmesperday])</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textregistered]</td>
+<td bgcolor="$altbg2">$memberinfo[regdate] ($ppd $lang[textmesperday])</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textposts]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[postnum] ($percent% $lang[textoftotposts])</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textposts]</td>
+<td bgcolor="$altbg2">$memberinfo[postnum] ($percent% $lang[textoftotposts])</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" valign="top">$lang[textstatus]<br /><a href="$sitelink" target="_blank">$memberinfo[avatar]</a></td>
-<td bgcolor="$altbg2" class="tablerow">$showtitle$customstatus<br />$stars<br /><br />$rank[avatarrank]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[textstatus]<br /><a href="$sitelink" target="_blank">$memberinfo[avatar]</a></td>
+<td bgcolor="$altbg2">$showtitle$customstatus<br />$stars<br /><br />$rank[avatarrank]</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" valign="top" class="tablerow">$lang[lastactive]</td>
-<td bgcolor="$altbg2" class="tablerow">$lastmembervisittext</td>
-</tr>
-</table></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[lastactive]</td>
+<td bgcolor="$altbg2">$lastmembervisittext</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otherinfo]</strong></font></td>
 </tr>
-
 $emailblock
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsite]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="$site" target="_blank">$site</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
+<td bgcolor="$altbg2"><a href="$site" target="_blank">$site</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="$webcam" target="_blank">$webcam</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
+<td bgcolor="$altbg2"><a href="$webcam" target="_blank">$webcam</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textaim]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="aim:goim?screenname=$memberinfo[aim]&amp;message=Hi+$memberinfo[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board.">$memberinfo[aim]</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textaim]</td>
+<td bgcolor="$altbg2"><a href="aim:goim?screenname=$memberinfo[aim]&amp;message=Hi+$memberinfo[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board.">$memberinfo[aim]</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[texticq]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="http://people.icq.com/people/about_me.php?uin=$memberinfo[icq]" target="_blank">$memberinfo[icq]</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[texticq]</td>
+<td bgcolor="$altbg2"><a href="http://people.icq.com/people/about_me.php?uin=$memberinfo[icq]" target="_blank">$memberinfo[icq]</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textyahoo]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="http://profiles.yahoo.com/$memberinfo[yahoo]" target="_blank">$memberinfo[yahoo]</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textyahoo]</td>
+<td bgcolor="$altbg2"><a href="http://profiles.yahoo.com/$memberinfo[yahoo]" target="_blank">$memberinfo[yahoo]</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textmsn]</td>
-<td bgcolor="$altbg2" class="tablerow"><a href="http://members.msn.com/$memberinfo[msn]" target="_blank">$memberinfo[msn]</a></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textmsn]</td>
+<td bgcolor="$altbg2"><a href="http://members.msn.com/$memberinfo[msn]" target="_blank">$memberinfo[msn]</a></td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textlocation]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[location]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textlocation]</td>
+<td bgcolor="$altbg2">$memberinfo[location]</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textbday]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[bday]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textbday]</td>
+<td bgcolor="$altbg2">$memberinfo[bday]</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" valign="top" class="tablerow">$lang[textbio]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[bio]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[textbio]</td>
+<td bgcolor="$altbg2">$memberinfo[bio]</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" valign="top" class="tablerow">$lang[userprofilemood]</td>
-<td bgcolor="$altbg2" class="tablerow">$memberinfo[mood]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[userprofilemood]</td>
+<td bgcolor="$altbg2">$memberinfo[mood]</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" valign="top" class="tablerow">$lang[textprofforumma]</td>
-<td bgcolor="$altbg2" class="tablerow">$topforum</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[textprofforumma]</td>
+<td bgcolor="$altbg2">$topforum</td>
 </tr>
-
-<tr>
-<td bgcolor="$altbg1" valign="top"
-class="tablerow">$lang[textproflastpost]</td>
-<td bgcolor="$altbg2" class="tablerow">$lastpost</td>
-</tr>
-</table></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[textproflastpost]</td>
+<td bgcolor="$altbg2">$lastpost</td>
 </tr>
 </table>
-
+</td>
+</tr>
+</table>
 <br />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otheroptions]</strong></font></td>
 </tr>
-
 <tr>
 <td bgcolor="$altbg1" colspan="2" class="tablerow"><strong>$lang[searchusermsg]</strong> $admin_edit</td>
 </tr>
@@ -2990,7 +2946,8 @@ class="tablerow">$lang[textproflastpost]</td>
 </table>
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
@@ -3014,12 +2971,12 @@ $nextlink
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_search_results_none|#*XMB TEMPLATE*#|
-<tr>
+<tr class="tablerow">
 <td bgcolor="$altbg2" colspan="3"><span class="mediumtxt">$lang[noresults]</span></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_results_none|#*XMB TEMPLATE*#|
-<tr>
+<tr class="tablerow">
 <td bgcolor="$altbg1" colspan="8"><span class="mediumtxt">$lang[noresults]</span></td>
 </tr>
 
@@ -3028,7 +2985,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" class="tablerow" align="center">$member[uid]</td>
+<td bgcolor="$altbg1" class="ctrtablerow">$member[uid]</td>
 <td bgcolor="$altbg2" class="tablerow"><a href="member.php?action=viewpro&amp;member=$memurl">$member[username]</a></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$member[status]</td>
 <td bgcolor="$altbg2" class="ctrtablerow">$email</td>
@@ -3049,17 +3006,18 @@ $nextlink
 |#*XMB TEMPLATE FILE*#|misc_mlist|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="header">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
 <td colspan="6" class="category"><font color="$cattext">$lang[textsortby]</font></td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
-<td bgcolor="$altbg2" align="center" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
@@ -3068,17 +3026,18 @@ $nextlink
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td width="5%" class="header" align="center">$lang[mcpuid]</td>
-<td width="20%" class="header">$lang[textusername]</td>
-<td width="16%" class="header" align="center">$lang[status]</td>
-<td width="10%" class="header" align="center">$lang[textemail]:</td>
-<td width="10%" class="header" align="center">$lang[textsite]</td>
-<td class="header" width="19%">$lang[textlocation]</td>
-<td class="header" align="center" width="19%">$lang[textregistered]</td>
-<td class="header" align="center" width="5%">$lang[textposts]</td>
+<tr class="header">
+<td width="5%" align="center">$lang[mcpuid]</td>
+<td width="20%">$lang[textusername]</td>
+<td width="16%" align="center">$lang[status]</td>
+<td width="10%" align="center">$lang[textemail]:</td>
+<td width="10%" align="center">$lang[textsite]</td>
+<td width="19%">$lang[textlocation]</td>
+<td align="center" width="19%">$lang[textregistered]</td>
+<td align="center" width="5%">$lang[textposts]</td>
 </tr>
 $members
 $multipage
@@ -3097,10 +3056,10 @@ $multipage
 <td class="category" colspan="6"><font color="$cattext"><strong>$lang[search_advanced]</strong></font><a name="search_adv" /></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6" align="center">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="6">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" /></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6" align="center"><input type="submit" class="submit" value="$lang[textgo]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
 </table>
 </td>
@@ -3113,80 +3072,81 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textpassword]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="password" name="newpassword" size="25" /> $lang[pwnote]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" /> $lang[pwnote]</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textpasswordcf]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="password" name="newpasswordcf" size="25" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textpasswordcf]</td>
+<td bgcolor="$altbg2"><input type="password" name="newpasswordcf" size="25" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newemail" size="25" value="$member[email]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textsite]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
+<td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textwebcam]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
+<td bgcolor="$altbg2"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textaim]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
+<td bgcolor="$altbg2"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[texticq]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texticq]</td>
+<td bgcolor="$altbg2"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textyahoo]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textyahoo]</td>
+<td bgcolor="$altbg2"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textmsn]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textmsn]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textlocation]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlocation]</td>
+<td bgcolor="$altbg2"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[memcpmood]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[memcpmood]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
 </tr>
 $avatar
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textbio]</td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" width="22%" class="tablerow">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2" class="tablerow"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttheme]</td>
-<td bgcolor="$altbg2" class="tablerow">$themelist </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttheme]</td>
+<td bgcolor="$altbg2">$themelist </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textlanguage]</td>
-<td bgcolor="$altbg2" class="tablerow">$langfileselect </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlanguage]</td>
+<td bgcolor="$altbg2">$langfileselect </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textbday]</td>
-<td bgcolor="$altbg2" class="tablerow"><select name="month">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbday]</td>
+<td bgcolor="$altbg2"><select name="month">
 <option value="" $sel0>&nbsp;</option>
 <option value="1" $sel1>$lang[textjan]</option>
 <option value="2" $sel2>$lang[textfeb]</option>
@@ -3204,50 +3164,51 @@ $avatar
 $dayselect
 <input type="text" name="year" size="4" value="$year" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttpp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="tppnew" size="4" value="$member[tpp]" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttpp]</td>
+<td bgcolor="$altbg2"><input type="text" name="tppnew" size="4" value="$member[tpp]" /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textppp]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="pppnew" size="4" value="$member[ppp]" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textppp]</td>
+<td bgcolor="$altbg2"><input type="text" name="pppnew" size="4" value="$member[ppp]" /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textshowemail]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="newshowemail" value="yes" $checked /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textshowemail]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="newshowemail" value="yes" $checked /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textinvisible]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="newinv" value="1" $invchecked /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textinvisible]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="newinv" value="1" $invchecked /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textgetnews]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="newnewsletter" value="yes" $newschecked /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textgetnews]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="newnewsletter" value="yes" $newschecked /> </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textuseoldu2u]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="useoldu2u" value="yes" $uou2uchecked />
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textuseoldu2u]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="useoldu2u" value="yes" $uou2uchecked />
 </td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textsaveog]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="saveogu2u" value="yes" $ogu2uchecked /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsaveog]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="saveogu2u" value="yes" $ogu2uchecked /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textemailonu2u]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="checkbox" name="emailonu2u" value="yes" $eouchecked /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemailonu2u]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="emailonu2u" value="yes" $eouchecked /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[texttimeformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="radio" value="24" name="timeformatnew" $check24 />&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $check12 />&nbsp;$lang[text12hour]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texttimeformat]</td>
+<td bgcolor="$altbg2"><input type="radio" value="24" name="timeformatnew" $check24 />&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $check12 />&nbsp;$lang[text12hour]</td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[dateformat]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="dateformatnew" size="25" value="$member[dateformat]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[dateformat]</td>
+<td bgcolor="$altbg2"><input type="text" name="dateformatnew" size="25" value="$member[dateformat]" /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textoffset]</td>
-<td bgcolor="$altbg2" class="tablerow"><select name="timeoffset1">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textoffset]</td>
+<td bgcolor="$altbg2">
+<select name="timeoffset1">
 <option value="-12" $timezone1>$lang[timezone1]</option>
 <option value="-11" $timezone2>$lang[timezone2]</option>
 <option value="-10" $timezone3>$lang[timezone3]</option>
@@ -3281,10 +3242,11 @@ $dayselect
 <option value="11" $timezone31>$lang[timezone31]</option>
 <option value="12" $timezone32>$lang[timezone32]</option>
 <option value="13" $timezone33>$lang[timezone33]</option>
-</select></td>
+</select>
+</td>
 </tr>
 <tr>
-<td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpro]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpro]" /></td>
 </tr>
 </table>
 </td>
@@ -3293,9 +3255,9 @@ $dayselect
 </form>
 
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarlist|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textavatar]</td>
-<td bgcolor="$altbg2" class="tablerow">$avatarbox &nbsp;<img src="./images/avatars/clear_avatar.gif" name="avatarpic" align="middle" alt="*" border="0" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textavatar]</td>
+<td bgcolor="$altbg2">$avatarbox &nbsp;<img src="./images/avatars/clear_avatar.gif" name="avatarpic" align="middle" alt="*" border="0" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|u2u_printable|#*XMB TEMPLATE*#|
@@ -3339,9 +3301,9 @@ $lang[textsent] $u2udateline</span>
 </html>
 
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarurl|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" class="tablerow" width="22%">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2" class="tablerow"><input type="text" name="newavatar" size="25" value="$member[avatar]" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textavatarurl]</td>
+<td bgcolor="$altbg2"><input type="text" name="newavatar" size="25" value="$member[avatar]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_favs|#*XMB TEMPLATE*#|
@@ -3354,13 +3316,13 @@ $lang[textsent] $u2udateline</span>
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textfavorites]</font></strong></td>
 </tr>
-<tr>
-<td class="header" align="center" width="4%">$lang[deletebutton]</td>
-<td class="header" width="4%" align="center">$lang[texticon]</td>
-<td class="header" width="43%">$lang[textsubject]</td>
-<td class="header" width="24%">$lang[textforum]</td>
-<td class="header" width="6%" align="center">$lang[textreplies]</td>
-<td class="header" width="19%">$lang[textlastpost]</td>
+<tr class="header">
+<td align="center" width="4%">$lang[deletebutton]</td>
+<td width="4%" align="center">$lang[texticon]</td>
+<td width="43%">$lang[textsubject]</td>
+<td width="24%">$lang[textforum]</td>
+<td width="6%" align="center">$lang[textreplies]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 $favs
 $favsbtn
@@ -3376,33 +3338,33 @@ $favsbtn
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_favs_row|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="4%" align="center"><input type="checkbox" name="delete$fav[tid]" value="$fav[tid]" /></td>
-<td class="tablerow" bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
-<td class="tablerow" bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
-<td class="tablerow" bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
-<td class="tablerow" bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td class="tablerow" bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="4%" align="center"><input type="checkbox" name="delete$fav[tid]" value="$fav[tid]" /></td>
+<td bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
+<td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
+<td bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
+<td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
+<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_favs_button|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg2" align="center" colspan="6"><input type="submit" class="submit" name="favsubmit" value="$lang[textdeleteselectedfavs]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" name="favsubmit" value="$lang[textdeleteselectedfavs]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_row|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="4%" align="center"><input type="checkbox" name="delete$fav[tid]" value="$fav[tid]" /></td>
-<td class="tablerow" bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
-<td class="tablerow" bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
-<td class="tablerow" bgcolor="$altbg2"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
-<td class="tablerow" bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td class="tablerow" bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="4%" align="center"><input type="checkbox" name="delete$fav[tid]" value="$fav[tid]" /></td>
+<td bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
+<td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
+<td bgcolor="$altbg2"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
+<td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
+<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_button|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg2" align="center" colspan="6"><input type="submit" class="submit" name="subsubmit" value="$lang[textdeleteselectedsubs]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" name="subsubmit" value="$lang[textdeleteselectedsubs]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_none|#*XMB TEMPLATE*#|
@@ -3413,18 +3375,20 @@ $favsbtn
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=subscriptions">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center"><tr><td bgcolor="$bordercolor">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textsubscriptions]</font></strong></td>
 </tr>
-<tr>
-<td class="header" width="4%" align="center">$lang[deletebutton]</td>
-<td class="header" width="4%" align="center">$lang[texticon]</td>
-<td class="header" width="43%">$lang[textsubject]</td>
-<td class="header" width="24%">$lang[textforum]</td>
-<td class="header" width="6%" align="center">$lang[textreplies]</td>
-<td class="header" width="19%">$lang[textlastpost]</td>
+<tr class="header">
+<td width="4%" align="center">$lang[deletebutton]</td>
+<td width="4%" align="center">$lang[texticon]</td>
+<td width="43%">$lang[textsubject]</td>
+<td width="24%">$lang[textforum]</td>
+<td width="6%" align="center">$lang[textreplies]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 $subscriptions
 $subsbtn
@@ -3435,11 +3399,11 @@ $subsbtn
 </form>
 
 |#*XMB TEMPLATE FILE*#|memcp_home_u2u_row|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg2"><a href="#" onclick="Popup('u2u.php?action=view&amp;u2uid=$message[u2uid]', 'Window', 700, 450);">$message[subject]</a></td>
-<td class="tablerow" bgcolor="$altbg1">$message[msgfrom]</td>
-<td class="tablerow" bgcolor="$altbg2">$senton</td>
-<td class="tablerow" bgcolor="$altbg2">$read</td>
+<tr class="tablerow">
+<td bgcolor="$altbg2"><a href="#" onclick="Popup('u2u.php?action=view&amp;u2uid=$message[u2uid]', 'Window', 700, 450);">$message[subject]</a></td>
+<td bgcolor="$altbg1">$message[msgfrom]</td>
+<td bgcolor="$altbg2">$senton</td>
+<td bgcolor="$altbg2">$read</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home_u2u_none|#*XMB TEMPLATE*#|
@@ -3562,7 +3526,8 @@ $messages
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
@@ -3586,7 +3551,8 @@ $favs
 <a NAME="admintools"></a>
 <form action="topicadmin.php?tid=$tid&amp;fid=$fid" method="get">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<span class="mediumtxt"><strong>$lang[textadminoptions]</strong><br />
+<span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
+<br />
 <select name="action" id="action" onchange="if(this.options[this.selectedIndex].value != '') { window.location=('topicadmin.php?tid=$tid&amp;fid=$fid&amp;action='+this.options[this.selectedIndex].value) }">
 <option value="" selected="selected"></option>
 <option value="delete">$lang[textdeletethread]</option>
@@ -3599,7 +3565,8 @@ $favs
 <option value="bump">$lang[textbumpthread]</option>
 <option value="empty">$lang[textemptythread]</option>
 <option value="threadprune">$lang[textprunethread]</option>
-</select></span>
+</select>
+</span>
 </form>
 
 |#*XMB TEMPLATE FILE*#|viewthread_invalid|#*XMB TEMPLATE*#|
@@ -3608,8 +3575,7 @@ $favs
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
@@ -3639,10 +3605,10 @@ font-family: arial, verdana;
 <title>$bbname - $lang[textpowered]</title>
 </head>
 <body>
-$logo<br /><br />
+$logo
+<br />
+<br />
 <span class="16px">$thread[subject]</span>
-
-
 $posts
 <hr />
 </body>
@@ -3678,7 +3644,6 @@ $preview
 <input type="hidden" name="token" value="$oToken->newToken" />
 <input type="hidden" name="username" value="$xmbuser" />
 <input type="hidden" name="password" value="$xmbpw" />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3686,9 +3651,9 @@ $preview
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td class="tablerow" bgcolor="$altbg2">
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
+<td bgcolor="$altbg2">
 <span class="smalltxt">
 $whopost1 $lang[and] $whopost2 <br />
 $guestpostingmsg
@@ -3696,11 +3661,12 @@ $guestpostingmsg
 </td>
 </tr>
 $loggedin
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textsubject]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textsubject]</td>
+<td bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /></td>
 </tr>
-<tr class="tablerow"><td bgcolor="$altbg1" valign="top">$lang[texticon]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[texticon]</td>
 <td bgcolor="$altbg1">$icons</td>
 </tr>
 $bbcodeinsert
@@ -3727,7 +3693,7 @@ $topoption $closeoption</td>
 $attachfile
 $captchapostcheck
 <tr>
-<td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
 </table>
 </td>
@@ -3745,12 +3711,12 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textclosethread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="closesubmit" value="$lang[textclosethread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="closesubmit" value="$lang[textclosethread]" /></td>
 </tr>
 </table>
 </td>
@@ -3768,22 +3734,25 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmovemethod1]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2" >$xmbuser  $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textmoveto]</td>
-<td class="tablerow" bgcolor="$altbg2">$forumselect</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textmoveto]</td>
+<td bgcolor="$altbg2">$forumselect</td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" valign="top">$lang[textmovemethod]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="radio" name="type" value="normal" checked="checked" /> $lang[textmovemethod1]<br />
-<input type="radio" name="type" value="redirect" /> $lang[textmovemethod2]<br />
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[textmovemethod]</td>
+<td bgcolor="$altbg2">
+<input type="radio" name="type" value="normal" checked="checked" /> $lang[textmovemethod1]
+<br />
+<input type="radio" name="type" value="redirect" /> $lang[textmovemethod2]
+<br />
 </td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="movesubmit" value="$lang[textmovemethod1]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="movesubmit" value="$lang[textmovemethod1]" /></td>
 </tr>
 </table>
 </td>
@@ -3800,12 +3769,12 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[texttopthread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="topsubmit" value=" $lang[texttopthread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="topsubmit" value=" $lang[texttopthread]" /></td>
 </tr>
 </table>
 </td>
@@ -3822,12 +3791,12 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textbumpthread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="bumpsubmit" value="$lang[textbumpthread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="bumpsubmit" value="$lang[textbumpthread]" /></td>
 </tr>
 </table>
 </td>
@@ -3844,13 +3813,13 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textsplitthread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
-<tr>
-<td class ="tablerow" bgcolor="$altbg1" width="14%">$lang[newsubject]</td>
-<td class ="tablerow" bgcolor="$altbg2"><input type="text" name="subject" size="45" /></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="14%">$lang[newsubject]</td>
+<td bgcolor="$altbg2"><input type="text" name="subject" size="45" /></td>
 </tr>
 <tr class="header">
 <td>$lang[moveques]</td>
@@ -3858,7 +3827,7 @@ $suggestions
 </tr>
 $posts
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="splitsubmit" value="$lang[textsplitthread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="splitsubmit" value="$lang[textsplitthread]" /></td>
 </tr>
 </table>
 </td>
@@ -3867,11 +3836,14 @@ $posts
 </form>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_split_row|#*XMB TEMPLATE*#|
-<tr>
-<td class ="tablerow" bgcolor="$altbg1"><input type="checkbox" name="move$post[pid]" value="$post[pid]" /></td>
-<td class ="tablerow" bgcolor="$altbg2"><font class="smalltxt"><strong>$post[author]</strong>
+<tr class="tablerow">
+<td bgcolor="$altbg1"><input type="checkbox" name="move$post[pid]" value="$post[pid]" /></td>
+<td bgcolor="$altbg2"><font class="smalltxt"><strong>$post[author]</strong>
 <br />
-<br />$post[message]</font></td>
+<br />
+$post[message]
+</font>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_merge|#*XMB TEMPLATE*#|
@@ -3884,16 +3856,16 @@ $posts
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmergethread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="14%">$lang[mergewithmsg]</td>
+<td bgcolor="$altbg2"><input type="text" name="othertid" size="10" /></td>
 </tr>
 <tr>
-<td class ="tablerow" bgcolor="$altbg1" width="14%">$lang[mergewithmsg]</td>
-<td class ="tablerow" bgcolor="$altbg2"><input type="text" name="othertid" size="10" /></td>
-</tr>
-<tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="mergesubmit" value="$lang[textmergethread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="mergesubmit" value="$lang[textmergethread]" /></td>
 </tr>
 </table>
 </td>
@@ -3906,16 +3878,17 @@ $posts
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" valign="top" width="19%">$lang[textreason]</td>
-<td class="tablerow" bgcolor="$altbg2"><textarea rows="9" cols="45" name="reason"></textarea>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top" width="19%">$lang[textreason]</td>
+<td bgcolor="$altbg2"><textarea rows="9" cols="45" name="reason"></textarea>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="tid" value="$tid" /><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="pid" value="$pid" /><input type="submit" class="submit" name="reportsubmit" value="$lang[textreportpost]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="tid" value="$tid" /><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="pid" value="$pid" /><input type="submit" class="submit" name="reportsubmit" value="$lang[textreportpost]" /></td>
 </tr>
 </table>
 </td>
@@ -3936,7 +3909,7 @@ $posts
 <td bgcolor="$altbg2"><input type="password" name="pw" size="25" /> <br /></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1" colspan="2" align="center"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg1" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
 </tr>
 </table>
 </td>
@@ -3975,24 +3948,24 @@ $preview
 <input type="hidden" name="token" value="$oToken->newToken" />
 <input type="hidden" name="username" value="$xmbuser" />
 <input type="hidden" name="password" value="$xmbpw" />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td class="tablerow" bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2 $guestpostingmsg</span></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
+<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2 $guestpostingmsg</span></td>
 </tr>
 $loggedin
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textsubject]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /> </td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textsubject]</td>
+<td bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /> </td>
 </tr>
-<tr class="tablerow"><td bgcolor="$altbg1" valign="top">$lang[texticon]</td><td
-bgcolor="$altbg2">$icons</td>
+<tr class="tablerow"><td bgcolor="$altbg1" valign="top">$lang[texticon]</td>
+<td bgcolor="$altbg2">$icons</td>
 </tr>
 $bbcodeinsert
 <tr>
@@ -4011,17 +3984,16 @@ $smilieinsert
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
 <input type="checkbox" name="usesig" value="yes" $usesigcheck /> $lang[textusesig]<br />
 <input type="checkbox" name="bbcodeoff" value="yes" $codeoffcheck /> $lang[bbcodeoff]<br />
-<input
-type="checkbox" name="emailnotify" value="yes" /> $lang[textemailnotify] $topoption</td>
+<input type="checkbox" name="emailnotify" value="yes" /> $lang[textemailnotify] $topoption</td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" valign="top">$lang[pollanswers]</td>
-<td class="tablerow" bgcolor="$altbg2"><textarea rows="5" cols="40" name="pollanswers">$pollanswers</textarea></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top">$lang[pollanswers]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="40" name="pollanswers">$pollanswers</textarea></td>
 </tr>
 $attachfile
 $captchapostcheck
 <tr>
-<td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
 </table>
 </td>
@@ -4036,21 +4008,20 @@ $preview
 <input type="hidden" name="token" value="$oToken->newToken" />
 <input type="hidden" name="username" value="$xmbuser" />
 <input type="hidden" name="password" value="$xmbpw" />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostreply]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td class="tablerow" bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2$guestpostingmsg</span></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
+<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2$guestpostingmsg</span></td>
 </tr>
 $loggedin
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textsubject]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /> <small>$lang[parenopt]</small></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textsubject]</td>
+<td bgcolor="$altbg2"><input type="text" name="subject" size="45" value="$subject" /> <small>$lang[parenopt]</small></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[texticon]</td>
@@ -4077,7 +4048,7 @@ $smilieinsert
 $attachfile
 $captchapostcheck
 <tr>
-<td align="center" class="tablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="replysubmit" value="$lang[textpostreply]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="replysubmit" value="$lang[textpostreply]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
 </table>
 </td>
@@ -4088,7 +4059,8 @@ $suggestions
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="1" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="1" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texttopicreview]</strong></font></td>
 </tr>
@@ -4118,7 +4090,6 @@ $preview
 <input type="hidden" name="token" value="$oToken->newToken" />
 <input type="hidden" name="username" value="$xmbuser" />
 <input type="hidden" name="password" value="$xmbpw" />
-
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4141,11 +4112,11 @@ $bbcodeinsert
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></td>
-<td bgcolor="$altbg2" class="tablerow"><table width="100%">
+<td bgcolor="$altbg2" class="tablerow">
+<table width="100%">
 <tr>
 <td width="70%">
-<textarea rows="12" cols="65" name="message" id="message"  onselect="storeCaret(this);"
-onclick="storeCaret(this);" onkeyup="storeCaret(this);">$postinfo[message]</textarea></td>
+<textarea rows="12" cols="65" name="message" id="message"  onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$postinfo[message]</textarea></td>
 $smilieinsert
 </tr>
 </table>
@@ -4157,14 +4128,13 @@ $smilieinsert
 </tr>
 $attachment
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpost]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpost]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
 </tr>
 </table>
 </td>
 </tr>
 </table>
 $suggestions
-
 <input type="hidden" name="fid" value="$fid" />
 <input type="hidden" name="tid" value="$tid" />
 <input type="hidden" name="pid" value="$pid" />
@@ -4195,7 +4165,8 @@ $suggestions
 <option value="Stencil">Stencil</option>
 <option value="Verdana" selected="selected">Verdana</option>
 <option value="Lucida Console">Lucida Console</option>
-</select><select name="size" onchange="chsize(this.options[this.selectedIndex].value)" size="1">
+</select>
+<select name="size" onchange="chsize(this.options[this.selectedIndex].value)" size="1">
 <option value="-2">-2</option>
 <option value="-1">-1</option>
 <option value="1">1</option>
@@ -4204,7 +4175,8 @@ $suggestions
 <option value="4">4</option>
 <option value="5">5</option>
 <option value="6">6</option>
-</select><select name="color" onchange="chcolor(this.options[this.selectedIndex].value)" size="1">
+</select>
+<select name="color" onchange="chcolor(this.options[this.selectedIndex].value)" size="1">
 <option value="White" style="color:white;">White</option>
 <option value="Black" style="color:black;">Black</option>
 <option value="Red" style="color:red;">Red</option>
@@ -4219,12 +4191,10 @@ $suggestions
 <option value="Teal" style="color:teal;">Teal</option>
 <option value="Navy" style="color:navy;">Navy</option>
 <option value="Maroon" style="color:maroon;">Maroon</option>
-<option value="LimeGreen" style="color:limegreen;">LimeGreen</option></select>
-
+<option value="LimeGreen" style="color:limegreen;">LimeGreen</option>
+</select>
 $spelling_lang
-
 <br />
-
 <a href="javascript:bold()" accesskey="b"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
 <a href="javascript:italicize()" accesskey="i"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
 <a href="javascript:underline()" accesskey="u"><img src="$imgdir/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
@@ -4241,55 +4211,59 @@ $spelling_lang
 <td valign="top"><a style="cursor:hand" onclick="javascript:icon('$smilie[code]')"><img src="$smdir/$smilie[url]" border="0" alt="$smilie[code]"/></a></td>
 
 |#*XMB TEMPLATE FILE*#|functions_smilieinsert|#*XMB TEMPLATE*#|
-<td><table align="center">
+<td>
+<table align="center">
 $smilies
-</table></td>
+</table>
+</td>
 
 |#*XMB TEMPLATE FILE*#|post_attachmentbox|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[attachment]</td>
-<td bgcolor="$altbg2"><input type="file" name="attach" size="20" />
+<td bgcolor="$altbg2">
+<input type="file" name="attach" size="20" />
 <input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
-<input type="hidden" name="attachment_action" value="edit" /></td>
+<input type="hidden" name="attachment_action" value="edit" />
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|post_notloggedin|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" value="" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" value="" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
 </tr>
-
-
-<tr>
-<td class="tablerow" bgcolor="$altbg1">$lang[textpassword]</td>
-<td class="tablerow" bgcolor="$altbg2"><input type="password" name="password" size="25" value="" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[textpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="password" size="25" value="" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|post_loggedin|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index_welcome_member|#*XMB TEMPLATE*#|
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
 <tr>
-<td><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td>
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="3"><table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td class="tablerow" align="left"><font color="$cattext"><strong>$lang[textpersonalfeat]</strong></font></td>
-<td class="tablerow" align="right"><font color="$cattext"><strong>$lang[textloggedinas] $xmbuser</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
+<tr class="tablerow">
+<td align="left"><font color="$cattext"><strong>$lang[textpersonalfeat]</strong></font></td>
+<td align="right"><font color="$cattext"><strong>$lang[textloggedinas] $xmbuser</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
-
-<tr class="tablerow" bgcolor="$altbg2">
-<td align="center" width="33%"><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
-<td align="center" width="33%"><a href="#" onclick="Popup('u2u.php','Window', 700, 450);"><strong>$lang[textu2umessenger]</strong></a></td>
-<td align="center" width="33%"><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);"><strong>$lang[launchbuddylist]</strong></a></td>
+<tr class="ctrtablerow" bgcolor="$altbg2">
+<td width="33%"><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
+<td width="33%"><a href="#" onclick="Popup('u2u.php','Window', 700, 450);"><strong>$lang[textu2umessenger]</strong></a></td>
+<td width="33%"><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);"><strong>$lang[launchbuddylist]</strong></a></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 <br />
@@ -4316,9 +4290,11 @@ $smilies
 </td>
 </tr>
 </table>
-</form></td>
+</form>
+</td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 <br />
@@ -4346,10 +4322,9 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 
 |#*XMB TEMPLATE FILE*#|index_forum_lastpost|#*XMB TEMPLATE*#|
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr align="right">
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif"
-border="0" alt="$lang[altlastpost]" /></a></td>
+<tr class="rghttablerow">
+<td bgcolor="$altbg1" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
+<td bgcolor="$altbg1" nowrap="nowrap">&nbsp;<a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -4357,8 +4332,7 @@ border="0" alt="$lang[altlastpost]" /></a></td>
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif"
-border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -4366,8 +4340,7 @@ border="0" alt="$lang[altlastpost]" /></a></td>
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif"
-border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -4377,12 +4350,12 @@ border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home_favs_row|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
-<td class="tablerow" bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
-<td class="tablerow" bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
-<td class="tablerow" bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td class="tablerow" bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<tr class="tablerow">
+<td bgcolor="$altbg2" width="4%" align="center">$fav[icon]</td>
+<td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
+<td bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
+<td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
+<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_sig|#*XMB TEMPLATE*#|
@@ -4391,7 +4364,6 @@ border="0" alt="$lang[altlastpost]" /></a></td>
 <br />
 <br />
 <br />
-
 <div class="sig">$post[sig]</div>
 
 |#*XMB TEMPLATE FILE*#|misc_search_nextlink|#*XMB TEMPLATE*#|
@@ -4404,49 +4376,36 @@ border="0" alt="$lang[altlastpost]" /></a></td>
 var bbcode_helpmode = "$lang[bbcode_helpmode]";
 var bbcode_advmode = "$lang[bbcode_advmode]";
 var bbcode_normode = "$lang[bbcode_normode]";
-
 var bbcode_help_email = "$lang[bbcode_help_email]";
 var bbcode_prompt_email_email = "$lang[bbcode_prompt_email_email]";
 var bbcode_prompt_email_error = "$lang[bbcode_prompt_email_error]";
-
 var bbcode_help_size = "$lang[bbcode_help_size]";
 var bbcode_prompt_size = "$lang[bbcode_prompt_size]";
-
 var bbcode_help_font = "$lang[bbcode_help_font]";
 var bbcode_prompt_font = "$lang[bbcode_prompt_font]";
-
 var bbcode_help_bold = "$lang[bbcode_help_bold]";
 var bbcode_prompt_bold = "$lang[bbcode_prompt_bold]";
-
 var bbcode_help_italic = "$lang[bbcode_help_italic]";
 var bbcode_prompt_italic = "$lang[bbcode_prompt_italic]";
-
 var bbcode_help_quote = "$lang[bbcode_help_quote]";
 var bbcode_prompt_quote = "$lang[bbcode_prompt_quote]";
-
 var bbcode_help_color = "$lang[bbcode_help_color]";
 var bbcode_prompt_color = "$lang[bbcode_prompt_color]";
-
 var bbcode_help_center = "$lang[bbcode_help_center]";
 var bbcode_prompt_center = "$lang[bbcode_prompt_center]";
-
 var bbcode_help_link = "$lang[bbcode_help_link]";
 var bbcode_prompt_link_url = "$lang[bbcode_prompt_link_url]";
 var bbcode_prompt_link_url_error = "$lang[bbcode_prompt_link_url_error]";
 var bbcode_prompt_link_desc = "$lang[bbcode_prompt_link_desc]";
-
 var bbcode_help_image = "$lang[bbcode_help_image]";
 var bbcode_prompt_image = "$lang[bbcode_prompt_image]";
-
 var bbcode_help_code = "$lang[bbcode_help_code]";
 var bbcode_prompt_code = "$lang[bbcode_prompt_code]";
-
 var bbcode_help_list = "$lang[bbcode_help_list]";
 var bbcode_prompt_list_item = "$lang[bbcode_prompt_list_item]";
 var bbcode_prompt_list_start = "$lang[bbcode_prompt_list_start]";
 var bbcode_prompt_list_error = "$lang[bbcode_prompt_list_error]";
 var bbcode_prompt_list_end = "$lang[bbcode_prompt_list_end]";
-
 var bbcode_help_underline = "$lang[bbcode_help_underline]";
 var bbcode_prompt_underline = "$lang[bbcode_prompt_underline]";
 
@@ -4482,12 +4441,12 @@ var messageElement;
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
-<tr>
-<td width="4%" class="header">&nbsp;</td>
-<td width="58%" class="header">$lang[textforum]</td>
-<td width="6%" class="header" align="center">$lang[texttopics]</td>
-<td width="6%" class="header" align="center">$lang[textposts]</td>
-<td width="19%" class="header">$lang[textlastpost]</td>
+<tr class="header">
+<td width="4%">&nbsp;</td>
+<td width="58%">$lang[textforum]</td>
+<td width="6%" align="center">$lang[texttopics]</td>
+<td width="6%" align="center">$lang[textposts]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 $forumlist
 </table>
@@ -4505,12 +4464,12 @@ $forumlist
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textdeletethread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="deletesubmit" value="$lang[textdeletethread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="deletesubmit" value="$lang[textdeletethread]" /></td>
 </tr>
 </table>
 </td>
@@ -4527,12 +4486,12 @@ $forumlist
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textemptythread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="emptysubmit" value="$lang[textemptythread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="emptysubmit" value="$lang[textemptythread]" /></td>
 </tr>
 </table>
 </td>
@@ -4543,17 +4502,18 @@ $forumlist
 |#*XMB TEMPLATE FILE*#|misc_mlist_admin|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td colspan="6" class="category"><font color="$cattext">$lang[textsortby]</font></td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2" align="center" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
-<td bgcolor="$altbg2" align="center" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
@@ -4590,11 +4550,11 @@ $multipage
 <tr>
 <td class="category" colspan="6"><font color="$cattext"><strong>$lang[search_advanced]</strong></font><a name="search_adv" /></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6" align="center">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="6">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" /></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6" align="center"><input type="submit" class="submit" value="$lang[textgo]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
 </table>
 </td>
@@ -4604,10 +4564,16 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|post_edit_attachment|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1"><strong>$lang[attachment]</strong><br /><div style="padding-left: 10px;">
-$lang[textfilename] <em>$postinfo[filename]</em><br />
-$lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em><br />
-$lang[textdownloads] <em>$postinfo[downloads]</em><br /><br />
+<td bgcolor="$altbg1"><strong>$lang[attachment]</strong>
+<br />
+<div style="padding-left: 10px;">
+$lang[textfilename] <em>$postinfo[filename]</em>
+<br />
+$lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
+<br />
+$lang[textdownloads] <em>$postinfo[downloads]</em>
+<br />
+<br />
 <em>&raquo; <a href="./viewthread.php?action=attachment&amp;tid=$tid&amp;pid=$pid">$lang[textdownload]</a></em>
 </div>
 </td>
@@ -4678,17 +4644,14 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 <td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[textdissmileys]</div></td>
 </tr>
-
-<tr >
+<tr>
 <td width="15%"> <div align="left"><input type="checkbox" name="usesig" value="yes" $usesigcheck /></div></td>
 <td width="85%"> <div align="left">$lang[textusesig]</div></td>
 </tr>
-
 <tr>
 <td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[bbcodeoff] </div></td>
 </tr>
-
 <tr>
 <td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[textemailnotify] </div></td>
@@ -4696,7 +4659,8 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 </table></div>
 <div align="left"><br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="$lang[textpostreply]" class="submit" /></div></td>
 </tr>
-</table></td>
+</table>
+</td>
 </tr>
 </table>
 </form>
@@ -4720,8 +4684,7 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 </div>
 
 |#*XMB TEMPLATE FILE*#|popup_header|#*XMB TEMPLATE*#|
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <META http-equiv="Content-Type" content="text/html; charset=$charset">
@@ -4752,15 +4715,21 @@ $u2uheader
 <a href="u2u.php?folder=Outbox">$lang[textu2uoutbox]</a> -
 <a href="u2u.php?folder=Drafts">$lang[textu2udrafts]</a> -
 <a href="u2u.php?folder=Trash">$lang[textu2utrash]</a>  (<a href="u2u.php?action=emptytrash">$lang[textemptytrash]</a>)
-</td></tr></table></td></tr></table><br />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br />
 $leftpane
 $u2uquotabar
 $u2ufooter
 
 |#*XMB TEMPLATE FILE*#|spelling_suggestion_row|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" align="center" class="tablerow" width="50%"><strong>$orig</strong></td>
-<td bgcolor="$altbg1" align="center" class="tablerow" width="50%"><input type="hidden" name="old_words[]" value="$orig" />
+<tr class="ctrtablerow">
+<td bgcolor="$altbg1" width="50%"><strong>$orig</strong></td>
+<td bgcolor="$altbg1" width="50%"><input type="hidden" name="old_words[]" value="$orig" />
 <select type="radio" name="replace_$orig">
 <option value="$orig">--IGNORE--</option>
 $mistake
@@ -4779,9 +4748,9 @@ $mistake
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
-<tr>
-<td bgcolor="$altbg1" align="center" class="tablerow" width="50%">$lang[found]:</td>
-<td bgcolor="$altbg1" align="center" class="tablerow" width="50%">$lang[replacedby]:</td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg1" width="50%">$lang[found]:</td>
+<td bgcolor="$altbg1" width="50%">$lang[replacedby]:</td>
 </tr>
 $suggestions
 <tr>
@@ -4800,7 +4769,8 @@ $suggestions
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
 <table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
@@ -4808,7 +4778,7 @@ $suggestions
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" align="center" class="tablerow" colspan="2">$lang[spellingcomplete]<br /><strong>$lang[nothingfound]</strong></td>
+<td bgcolor="$altbg1" class="ctrtablerow" colspan="2">$lang[spellingcomplete]<br /><strong>$lang[nothingfound]</strong></td>
 </tr>
 </table>
 </td>
@@ -4821,7 +4791,7 @@ $suggestions
 
 |#*XMB TEMPLATE FILE*#|today_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td colspan="8" bgcolor="$altbg2" class="tablerow">&nbsp;$multipage</td>
+<td colspan="8" bgcolor="$altbg2">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_threadprune|#*XMB TEMPLATE*#|
@@ -4834,9 +4804,9 @@ $suggestions
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textprunethread]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td class="tablerow" bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr class="header">
 <td>$lang[deletebutton]?</td>
@@ -4844,7 +4814,7 @@ $suggestions
 </tr>
 $posts
 <tr>
-<td align="center" colspan="2" class="tablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" name="threadprunesubmit" value="$lang[textprunethread]" /></td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" name="threadprunesubmit" value="$lang[textprunethread]" /></td>
 </tr>
 </table>
 </td>
@@ -4853,9 +4823,9 @@ $posts
 </form>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_threadprune_row|#*XMB TEMPLATE*#|
-<tr>
-<td class ="tablerow" bgcolor="$altbg1"><input type="checkbox" name="move$post[pid]" value="$post[pid]" $disablePost /></td>
-<td class ="tablerow" bgcolor="$altbg2"><font class="smalltxt"><strong>$post[author]</strong><br /><br />$post[message]</font></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1"><input type="checkbox" name="move$post[pid]" value="$post[pid]" $disablePost /></td>
+<td bgcolor="$altbg2"><font class="smalltxt"><strong>$post[author]</strong><br /><br />$post[message]</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u|#*XMB TEMPLATE*#|
@@ -4868,7 +4838,6 @@ $css
 <title>$bbname - $lang[textbuddylist] - $lang[textpowered]</title>
 </head>
 <body text="$text">
-
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4876,7 +4845,6 @@ $css
 <tr>
 <td class="header">$lang[textbuddylist]</td>
 </tr>
-
 <tr>
 <td class="tablerow" bgcolor="$altbg1">
 <form action="#" onsubmit="javascript:add();">
@@ -4886,15 +4854,13 @@ $css
 <td class="tablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textonline]</strong></td>
 </tr>
 $buddys[online]
-
 <tr>
 <td class="tablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textoffline]</strong></td>
 </tr>
 $buddys[offline]
-
 </table>
-
-<br /><input type="submit" name="submit" value="$lang[textadd2u2u]" />
+<br />
+<input type="submit" name="submit" value="$lang[textadd2u2u]" />
 </form>
 </td>
 </tr>
@@ -4906,21 +4872,21 @@ $buddys[offline]
 </html>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_on|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
-<td class="tablerow" bgcolor="$altbg1">$lang[textonline]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[textonline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_inv|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
-<td class="tablerow" bgcolor="$altbg1">$lang[hidden]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[hidden]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_off|#*XMB TEMPLATE*#|
-<tr>
-<td class="tablerow" bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
-<td class="tablerow" bgcolor="$altbg1">$lang[textoffline]</td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[textoffline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_separator|#*XMB TEMPLATE*#|
@@ -4929,8 +4895,7 @@ $buddys[offline]
 </tr>
 
 |#*XMB TEMPLATE FILE*#|email_html_header|#*XMB TEMPLATE*#|
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <base href="$SETTINGS[boardurl]" />
@@ -4962,25 +4927,29 @@ $css
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply_captcha|#*XMB TEMPLATE*#|
 <tr>
 <td colspan="3" class="ctrtablerow" bgcolor="$altbg1">
-$lang[verificationnote]<br /><br />
-<img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br />
+$lang[verificationnote]
+<br />
+<br />
+<img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" />
+<br />
+<br />
 <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" />
 </td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index_noforum|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" align="center" class="ctrtablerow" colspan="6"><font class="mediumtxt">$lang[textnoforumsexist]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow" colspan="6"><font class="mediumtxt">$lang[textnoforumsexist]</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td colspan="3" bgcolor="$altbg2" class="tablerow">&nbsp;$multipage</td>
+<td colspan="3" bgcolor="$altbg2">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online_multipage_admin|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td colspan="4" bgcolor="$altbg2" class="tablerow">&nbsp;$multipage</td>
+<td colspan="4" bgcolor="$altbg2">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|
