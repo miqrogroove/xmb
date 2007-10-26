@@ -27,7 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
-    exit ("Not allowed to run this file directly.");
+    exit("Not allowed to run this file directly.");
 }
 
 $charset = 'ISO-8859-1';
