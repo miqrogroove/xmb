@@ -177,7 +177,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     if (isset($previewsubmit)) {
         $u2usubject = html_entity_decode(checkOutput(censor(checkInput(stripslashes($subject)))));
-        $u2umessage = html_entity_decode(checkOutput(checkInput(stripslashes($message))));
+        $u2umessage = checkOutput(censor(checkInput(stripslashes($message))));
         $u2umessage = postify($u2umessage, "no", "", "yes", "no");
         $username = htmlspecialchars($msgto);
         $subject = html_entity_decode(htmlspecialchars($subject));
