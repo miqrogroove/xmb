@@ -138,7 +138,7 @@ Add Code Below:
                 $email1 = $email2 = '';
             }
 
-            $query = $db->query("SELECT username$email1 FROM $table_members WHERE username = '$regusername' $email2");
+            $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username = '$regusername' $email2");
             $usercheck = $db->num_rows($query);
             $db->free_result($query);
 
@@ -148,7 +148,7 @@ Add Code Below:
 
             $fail = false;
             $efail = false;
-            $query = $db->query("SELECT * FROM $table_restricted");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while ($restriction = $db->fetch_array($query)) {
                 if ($restriction['case_sensitivity'] == 1) {
                     if ($restriction['partial'] == 1) {
@@ -217,7 +217,7 @@ Add Code Below:
             }
             $newmd5pass = md5(trim($regpassword));
 
-            $db->query("INSERT INTO $table_members (username, password, regdate, email, status, showemail, theme, langfile, timeformat, dateformat, mood, pwdate, tpp, ppp, saveogu2u, emailonu2u, useoldu2u) VALUES ('$regusername', '$newmd5pass', $regdate, '$regemail', 'Member', 'no', '0', 'English', 24, 'dd-mm-yyyy', '', $regdate, 30, 30, 'yes', 'no', 'no');");
+            $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, email, status, showemail, theme, langfile, timeformat, dateformat, mood, pwdate, tpp, ppp, saveogu2u, emailonu2u, useoldu2u) VALUES ('$regusername', '$newmd5pass', $regdate, '$regemail', 'Member', 'no', '0', 'English', 24, 'dd-mm-yyyy', '', $regdate, 30, 30, 'yes', 'no', 'no');");
 
             altMail($regemail, '['.$SETTINGS['bbname'].'] '.$lang['textyourpw'], $lang['textyourpwis']."\n\n".$regusername."\n".$regpassword, "From: ".$SETTINGS['bbname']." <".$SETTINGS['adminemail'].">");
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['regusersuccess'].'</td></tr>';

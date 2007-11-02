@@ -130,7 +130,7 @@ Add Code Below:
 
             if (isset($num_days) && is_numeric($num_days) && isset($num_posts) && is_numeric($num_posts)) {
                 $old = $onlinetime - (60*60*24*$num_days);
-                $db->query("DELETE FROM $table_members WHERE lastvisit < $old AND postnum <= $num_posts AND status = 'Member'");
+                $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit < $old AND postnum <= $num_posts AND status = 'Member'");
             }
 
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_inactive'].'</td></tr>';
