@@ -500,7 +500,7 @@ switch ($action) {
         if (X_ADMIN) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit,$tpp");
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit,$tpp");
         }
 
         $onlineusers = '';
