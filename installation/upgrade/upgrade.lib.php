@@ -1006,6 +1006,9 @@ class Upgrade {
     function fixPolls() {
         $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM ".$this->tablepre."threads WHERE pollopts_temp != ''");
         while ($thread = $this->db->fetch_array($q)) {
+            // Some users find their thread subjects aren't escaped, so escape them. Strip any existing slashes so we don't double escape
+            $thread['subject'] = addslashes(stripslashes($thread['subject']));
+
             $this->db->query("INSERT INTO ".$this->tablepre."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ('".$thread['tid']."', '".$thread['subject']."', 0)");
             $poll_id = $this->db->insert_id();
 
