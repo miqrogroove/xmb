@@ -257,9 +257,9 @@ switch ($action) {
 
                     $offset = ($page-1) * ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                     $start = $offset;
-                    $end = ((isset($member['ppp']) && $member['ppp'] > 0) ? $member['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $end = ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
-                $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
                     $srchfrom = $onlinetime;
@@ -292,7 +292,7 @@ switch ($action) {
                     $ext[] = 'srchfrom'.$srchfromold;
                 }
 
-                $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start,$end";
+                $sql .=" ORDER BY dateline DESC LIMIT $start,$end";
                 if (!$page || $page < 1) {
                     $pagenum = 2;
                 } else {
