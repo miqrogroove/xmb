@@ -231,7 +231,7 @@ while ($thread = $db->fetch_array($querytop)) {
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
     if ($thread['replies'] >= $SETTINGS['hottopic']) {
-        $folder = 'red_folder.gif';
+        $folder = 'hot_folder.gif';
     } else {
         $folder = 'folder.gif';
     }
@@ -241,7 +241,7 @@ while ($thread = $db->fetch_array($querytop)) {
     if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
         $folder = "hot_red_folder.gif";
     } else if ($lastvisit < $dalast && $oT === false) {
-        $folder = "hot_folder.gif";
+        $folder = "red_folder.gif";
     }
 
     if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
