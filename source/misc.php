@@ -100,6 +100,14 @@ $misc = $multipage = $nextlink = '';
 
 switch ($action) {
     case 'login':
+        if (X_MEMBER) {
+            eval('echo "'.template('header').'";');
+            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
+            end_time();
+            eval('echo "'.template('footer').'";');
+            exit();
+        }
+
         if (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
             $misc = stripslashes($misc);
