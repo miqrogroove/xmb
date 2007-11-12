@@ -34,7 +34,7 @@ loadtemplates(
 'functions_smilieinsert_smilie',
 'misc_feature_not_while_loggedin',
 'misc_feature_notavailable',
-'misc_feature_notavailable',
+'misc_login_incorrectdetails',
 'misc_login',
 'misc_lostpw',
 'misc_mlist',
@@ -59,8 +59,7 @@ loadtemplates(
 'misc_search_results_row',
 'misc_smilies',
 'popup_footer',
-'popup_header',
-'misc_login_incorrectdetails'
+'popup_header'
 );
 
 smcwcache();
@@ -434,6 +433,14 @@ switch ($action) {
         break;
 
     case 'lostpw':
+        if (X_MEMBER) {
+            eval('echo "'.template('header').'";');
+            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
+            end_time();
+            eval('echo "'.template('footer').'";');
+            exit();
+        }
+
         if (noSubmit('lostpwsubmit')) {
             eval('$misc = "'.template('misc_lostpw').'";');
             $misc = stripslashes($misc);

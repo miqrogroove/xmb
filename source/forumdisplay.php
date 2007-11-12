@@ -44,10 +44,7 @@ loadtemplates(
 'forumdisplay_subforums',
 'forumdisplay_thread',
 'forumdisplay_thread_admin',
-'forumdisplay_thread_lastpost',
-'functions_bbcode',
-'viewthread_newpoll',
-'viewthread_newtopic'
+'forumdisplay_thread_lastpost'
 );
 
 smcwcache();
