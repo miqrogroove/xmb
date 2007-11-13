@@ -197,15 +197,18 @@ if ($gid == 0) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, 50");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, 50");
         } else {
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY lastvisit DESC LIMIT 0, 50");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY lastvisit DESC LIMIT 0, 50");
         }
 
         $todaymembersnum = 0;
         $todaymembers = array();
+        $pre = $suff = '';
         while ($memberstoday = $db->fetch_array($query)) {
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$memberstoday['username'].'</a>';
+            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+            $suff = '</span>';
+            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
             ++$todaymembersnum;
         }
         $todaymembers = implode(', ', $todaymembers);

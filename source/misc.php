@@ -513,9 +513,9 @@ switch ($action) {
         }
 
         if (X_ADMIN) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit,$tpp");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit, $tpp");
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit,$tpp");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit, $tpp");
         }
 
         $onlineusers = '';
@@ -570,15 +570,18 @@ switch ($action) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
         }
 
         $todaymembersnum = 0;
         $todaymembers = array();
+        $pre = $suff = '';
         while ($memberstoday = $db->fetch_array($query)) {
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$memberstoday['username'].'</a>';
+            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+            $suff = '</span>';
+            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
             ++$todaymembersnum;
         }
         $todaymembers = implode(', ', $todaymembers);
