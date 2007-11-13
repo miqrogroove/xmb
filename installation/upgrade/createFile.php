@@ -1,8 +1,9 @@
 <?php
 /**
- * XMB 1.9.8 Engage Pre-Final
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final
  *
- * Developed By The XMB Group
+ * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
  * http://www.xmbforum.com
  *
@@ -21,8 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -41,7 +41,7 @@ $upgrade->loadTables($tables);
 $new = $upgrade->createUpgradeFile();
 
 $filename = str_replace(array(' ', '.'), '_', $versionshort) . '.xmb';
-if(($handle = @fopen($filename, 'w')) && @fwrite($handle, $new) && $_GET['action'] != 'download') { // If we can create the new upgrade file and or write to it and a download has not been requested close the handle and output success message...
+if (($handle = @fopen($filename, 'w')) && @fwrite($handle, $new) && $_GET['action'] != 'download') { // If we can create the new upgrade file and or write to it and a download has not been requested close the handle and output success message...
     fclose($handle);
     echo $filename . ' has been sucessfully created in ' . substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')+1) . '. Click <a href="?action=download">here</a> to download it.';
 } else { // ...otherwise force the download

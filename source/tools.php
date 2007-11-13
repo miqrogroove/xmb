@@ -1,8 +1,9 @@
 <?php
 /**
- * XMB 1.9.8 Engage Pre-Final
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final
  *
- * Developed By The XMB Group
+ * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
  * http://www.xmbforum.com
  *
@@ -21,8 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -33,7 +33,7 @@ loadtemplates('error_nologinsession');
 eval('$css = "'.template('css').'";');
 
 nav('<a href="cp.php">'.$lang['textcp'].'</a>');
-eval("echo (\"".template('header')."\");");
+eval('echo ("'.template('header').'");');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
 
 if (!X_ADMIN) {
@@ -61,7 +61,6 @@ switch ($action) {
         while ($forum = $db->fetch_array($fquery)) {
             $threadnum = $postnum = $sub_threadnum = $sub_postnum = 0;
             $squery = $stquery = $spquery = $ftquery = $fpquery = '';
-
             $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$forum[fid] AND type='sub'");
             while ($sub = $db->fetch_array($squery)) {
                 $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$sub[fid]");
@@ -236,7 +235,7 @@ switch ($action) {
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['u2udump_confirm']."<br /><form action=\"tools.php?action=u2udump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
-            $db->query("DELETE FROM ".X_PREFIX."u2u");
+            $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_u2u]</td></tr></table></table>";
             end_time();
@@ -251,7 +250,7 @@ switch ($action) {
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['whoodump_confirm']."<br /><form action=\"tools.php?action=whosonlinedump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
         } elseif ($lang['textyes'] == $yessubmit) {
-            $db->query("DELETE FROM ".X_PREFIX."whosonline");
+            $db->query("TRUNCATE ".X_PREFIX."whosonline");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_whosonline]</td></tr></table></table>";
             end_time();

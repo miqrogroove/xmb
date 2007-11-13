@@ -1,17 +1,13 @@
 <?php
 /**
- * XMB 1.9.8 Engage Pre-Final
- *
- * Captcha Image Mod
- * Developed By Adam Clarke
- * Copyright (c) 2007 Adam Clarke
- * http://www.xmbservices.com
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final
  *
  * Based On: PhpCaptcha - A visual and audio CAPTCHA generation library
  * Copyright (c) 2005-2006 Edward Eliot
  * http://www.ejeliot.com/pages/2
  *
- * Developed By The XMB Group
+ * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
  * http://www.xmbforum.com
  *
@@ -30,8 +26,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
