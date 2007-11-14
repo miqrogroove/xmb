@@ -261,8 +261,6 @@ function url_to_text($url) {
         $location = $lang['onlineindex'];
     }
 
-    $location = shortenString($location);
-
     $location = html_entity_decode(str_replace('%20', '&nbsp;', htmlspecialchars($location)));
     $url = addslashes(trim($url));
 
