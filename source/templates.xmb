@@ -4468,8 +4468,8 @@ $forumlist
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
 <td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
-<tr>
-<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="deletesubmit" value="$lang[textdeletethread]" /></td>
+<tr class="ctrtablerow">
+<td colspan="2" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="deletesubmit" value="$lang[textdeletethread]" /></td>
 </tr>
 </table>
 </td>
@@ -4488,7 +4488,7 @@ $forumlist
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="emptysubmit" value="$lang[textemptythread]" /></td>
@@ -4525,15 +4525,15 @@ $forumlist
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr>
-<td width="3%" class="header" align="center">$lang[mcpuid]</td>
-<td width="19%" class="header">$lang[textusername]</td>
-<td width="16%" class="header" align="center">$lang[status]</td>
-<td width="10%" class="header" align="center">$lang[textemail]:</td>
-<td width="10%" class="header" align="center">$lang[textsite]</td>
-<td class="header" width="19%">$lang[textlocation]</td>
-<td class="header" align="center" width="19%">$lang[textregistered]</td>
-<td class="header" align="center" width="5%">$lang[textposts]</td>
+<tr class="header">
+<td width="3%" align="center">$lang[mcpuid]</td>
+<td width="19%">$lang[textusername]</td>
+<td width="16%" align="center">$lang[status]</td>
+<td width="10%" align="center">$lang[textemail]:</td>
+<td width="10%" align="center">$lang[textsite]</td>
+<td width="19%">$lang[textlocation]</td>
+<td align="center" width="19%">$lang[textregistered]</td>
+<td align="center" width="5%">$lang[textposts]</td>
 $members
 $multipage
 </table>
@@ -4605,10 +4605,10 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 </table>
 
 |#*XMB TEMPLATE FILE*#|footer_load|#*XMB TEMPLATE*#|
-[ServerLoad: <strong>$load[0]</strong>]
+[$lang[textserverload] <strong>$load[0]</strong>]
 
 |#*XMB TEMPLATE FILE*#|footer_phpsql|#*XMB TEMPLATE*#|
-[PHP: <strong>${php_duration}%</strong> - SQL: <strong>${db_duration}%</strong>]
+[$lang[textphp] <strong>${php_duration}%</strong> - $lang[textsql] <strong>${db_duration}%</strong>]
 
 |#*XMB TEMPLATE FILE*#|footer_querynum|#*XMB TEMPLATE*#|
 [$lang[queries]: <strong>$querynum</strong>]

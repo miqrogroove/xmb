@@ -26,7 +26,7 @@
  *
  **/
 
-require_once('header.php');
+require 'header.php';
 
 function bbcodeinsert() {
     global $imgdir, $bbinsert, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
@@ -128,7 +128,7 @@ $icons = '<input type="radio" name="posticon" value="" /> <img src="'.$imgdir.'/
 if ($action != 'edit') {
     $captchapostcheck = '';
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-        require(ROOT.'include/captcha.inc.php');
+        require ROOT.'include/captcha.inc.php';
         $Captcha = new Captcha(250, 50);
     }
 
@@ -278,7 +278,7 @@ if ($SETTINGS['spellcheck'] == 'on') {
         if (!$updates_submit) {
             $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
             $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
-            require './include/spelling.inc.php';
+            require ROOT.'include/spelling.inc.php';
             $spelling = new spelling($language);
             $problems = $spelling->check_text($message);
             if (count($problems) > 0) {

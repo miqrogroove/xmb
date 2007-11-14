@@ -26,9 +26,13 @@
  *
  **/
 
-require_once('header.php');
+require 'header.php';
 
-loadtemplates('memcp_profile_avatarurl','memcp_profile_avatarlist','admintool_editprofile');
+loadtemplates(
+'memcp_profile_avatarurl',
+'memcp_profile_avatarlist',
+'admintool_editprofile'
+);
 
 nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
 nav($lang['texteditpro']);

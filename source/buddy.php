@@ -26,8 +26,8 @@
  *
  **/
 
-require_once('header.php');
-require_once(ROOT.'include/buddy.inc.php');
+require 'header.php';
+require ROOT.'include/buddy.inc.php';
 
 loadtemplates(
 'buddy_u2u',

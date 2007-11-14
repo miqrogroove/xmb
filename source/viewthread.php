@@ -26,7 +26,7 @@
  *
  **/
 
-require_once('header.php');
+require 'header.php';
 
 validatePpp();
 
@@ -258,13 +258,14 @@ if (!$action) {
     // captcha code
     $captchapostcheck = '';
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-        require(ROOT.'include/captcha.inc.php');
+        require ROOT.'include/captcha.inc.php';
         $Captcha = new Captcha(250, 50);
         if ($Captcha->bCompatible !== false) {
             $imghash = $Captcha->GenerateCode();
             eval('$captchapostcheck = "'.template('viewthread_quickreply_captcha').'";');
         }
     }
+
     // fixed the way xmb had it before.
     // much cleaner now and refined to check all controls.
     if ($thread['closed'] == 'yes') {

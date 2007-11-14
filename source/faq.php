@@ -26,11 +26,11 @@
  *
  **/
 
-require_once('header.php');
+require 'header.php';
 
 $page = getVar('page');
 
-if ($SETTINGS['faqstatus'] != "on" && $page != 'forumrules') {
+if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
     loadtemplates('misc_feature_notavailable');
     eval('$css = "'.template('css').'";');
     nav('<a href="faq.php">'.$lang['textfaq']. '</a>');

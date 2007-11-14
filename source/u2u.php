@@ -26,8 +26,8 @@
  *
  **/
 
-require_once('header.php');
-require_once(ROOT.'include/u2u.inc.php');
+require 'header.php';
+require ROOT.'include/u2u.inc.php';
 
 loadtemplates(
 'u2u_header',

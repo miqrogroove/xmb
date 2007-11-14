@@ -26,8 +26,8 @@
  *
  **/
 
-require_once('header.php');
-require_once(ROOT.'include/admin.inc.php');
+require 'header.php';
+require ROOT.'include/admin.inc.php';
 
 loadtemplates('error_nologinsession');
 

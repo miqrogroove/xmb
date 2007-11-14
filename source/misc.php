@@ -26,8 +26,8 @@
  *
  **/
 
-require_once('header.php');
-require_once(ROOT.'include/online.inc.php');
+require 'header.php';
+require ROOT.'include/online.inc.php';
 
 loadtemplates(
 'functions_smilieinsert',
@@ -767,7 +767,7 @@ switch ($action) {
         break;
 
     case 'captchaimage':
-        require(ROOT.'include/captcha.inc.php');
+        require ROOT.'include/captcha.inc.php';
         $oPhpCaptcha = new Captcha(250, 50);
         $imagehash = getVar('imagehash');
         $oPhpCaptcha->Create($imagehash);

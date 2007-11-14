@@ -157,10 +157,10 @@ if (!isset($max_reg_day) || $max_reg_day < 1 || $max_reg_day > 100) {
 if (!file_exists(ROOT.'db/'.$database.'.php')) {
     die('Error: XMB is not installed, or is configured incorrectly. <a href="install/index.php">Click Here to install XMB</a>');
 }
-require_once(ROOT.'db/'.$database.'.php');
+require ROOT.'db/'.$database.'.php';
 $oToken = new page_token();
 $oToken->init();
-require_once(ROOT.'include/functions.inc.php');
+require ROOT.'include/functions.inc.php';
 
 // initialize navigation
 $navigation = '';
@@ -445,13 +445,13 @@ define('X_STAFF', $role['staff']);
 
 // Get the required language file
 if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
-    require_once(ROOT.'lang/'.$langfile.'.lang.php');
+    require ROOT.'lang/'.$langfile.'.lang.php';
 } else {
-    require_once(ROOT.'lang/English.lang.php');
+    require ROOT.'lang/English.lang.php';
 }
 
 // Checks for the possibility to register
-if ($regstatus == "on" && X_GUEST) {
+if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
     $reglink = "- <a href=\"member.php?action=coppa\">$lang[textregister]</a>";
 } else {
     $reglink = '';

@@ -26,8 +26,8 @@
  *
  **/
 
-require_once('header.php');
-require_once(ROOT.'include/topicadmin.inc.php');
+require 'header.php';
+require ROOT.'include/topicadmin.inc.php';
 
 $_tid = (isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0));
 $_fid = (isset($_POST['fid']) ? $_POST['fid'] : (isset($_GET['fid']) ? $_GET['fid'] : 0));
@@ -78,7 +78,7 @@ if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
     $threadname = html_entity_decode(stripslashes($thread['subject']));
     $fid = $thread['fid'];
 } else {
-    $threadSubject = ''; // we need to do this because we won't have a subject to display in the browser title bar
+    $threadSubject = '';
 }
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");

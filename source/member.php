@@ -26,7 +26,7 @@
  *
  **/
 
-require_once('header.php');
+require 'header.php';
 
 loadtemplates(
 'member_coppa',
@@ -304,7 +304,7 @@ switch ($action) {
 
                 $captcharegcheck = '';
                 if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
-                    require(ROOT.'include/captcha.inc.php');
+                    require ROOT.'include/captcha.inc.php';
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = $Captcha->GenerateCode();
@@ -428,7 +428,7 @@ switch ($action) {
             }
 
             if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
-                require(ROOT.'include/captcha.inc.php');
+                require ROOT.'include/captcha.inc.php';
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = addslashes($imghash);
