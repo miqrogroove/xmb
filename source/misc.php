@@ -527,7 +527,7 @@ switch ($action) {
             $online['location'] = $array['text'];
             if (X_STAFF) {
                 $online['location'] = '<a href="'.$array['url'].'">'.$array['text'].'</a>';
-                $online['location'] = stripslashes($online['location']);
+                $online['location'] = shortenString(stripslashes($online['location']), 60, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
             }
 
             if ($online['invisible'] == 1 && (X_ADMIN || $online['username'] == $xmbuser)) {
