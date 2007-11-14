@@ -237,7 +237,7 @@ if (X_STAFF) {
         $closecheck = '';
         $closetopic = 'no';
     }
-} else {    // just in case
+} else {
     $topcheck = $closecheck = '';
 }
 
@@ -297,7 +297,6 @@ if ($SETTINGS['spellcheck'] == 'on') {
                 eval('$suggestions = "'.template('spelling_suggestion_no').'";');
                 $spelling_submit2 = '';
             }
-
         } else {
             foreach ($old_words as $word) {
                 $message = str_replace($word, ${'replace_'.$word}, $message);
@@ -310,7 +309,7 @@ if ($SETTINGS['spellcheck'] == 'on') {
 } else {
     $spelling_submit1 = $spelling_submit2 = $spelling_lang = $suggestions = '';
 }
-// End temp-spellcheck //
+// End temp-spellcheck
 
 // check for thread-title
 if (isset($topicsubmit)) {
@@ -427,6 +426,7 @@ if ($action == "newthread") {
             $currtime = $onlinetime + (86400*30);
             put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
+
             if ($self['ban'] == "posts" || $self['ban'] == "both") {
                 error($lang['textbanfrompost']);
             }
@@ -556,10 +556,11 @@ if ($action == "newthread") {
 
         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username like '$username'");
 
-        if ((X_STAFF) && $toptopic == "yes") {
+        if ((X_STAFF) && $toptopic == 'yes') {
             $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid AND fid=$fid");
         }
-        if ((X_STAFF) && $closetopic == "yes") {
+
+        if ((X_STAFF) && $closetopic == 'yes') {
             $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
         }
 
@@ -572,15 +573,11 @@ if ($action == "newthread") {
             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
         }
 
-        //message($lang['postmsg']);
-        //echo "<center><span class=\"mediumtxt \">$lang[postmsg]</span></center>";
-
         $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
 
         $topicpages = quickpage($posts, $ppp);
         message($lang['postmsg'], false, '', '', "viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, true, false, true);
-        //redirect("viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, 2, X_REDIRECT_JS);
     }
 } else if ($action == "reply") {
     nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
@@ -667,15 +664,18 @@ if ($action == "newthread") {
         if (!$subject && !$message) {
             error($lang['postnothing']);
         }
+
         if (X_MEMBER && empty($username) && empty($password)) {
             $username = $xmbuser;
             $password = $xmbpw;
         }
+
         if (!empty($username) && !empty($password)) {
             if (X_GUEST) {
                 $username = trim($username);
                 $password = md5(trim($password));
             }
+
             $q = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$username'");
             if ($db->num_rows($q) != 1) {
                 error($lang['badname']);
@@ -686,17 +686,19 @@ if ($action == "newthread") {
                 }
                 $username = $self['username'];
             }
+
             if ($self['status'] == "Banned") {
                 error($lang['bannedmessage']);
             }
-            $currtime = time() + (86400*30);
+
+            $currtime = $onlinetime + (86400*30);
             put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
+
             if ($self['ban'] == "posts" || $self['ban'] == "both") {
                 error($lang['textbanfrompost']);
             }
-        }
-        else {
+        } else {
             if (X_GUEST) {
                 $username = "Anonymous";
             } else {
@@ -720,18 +722,16 @@ if ($action == "newthread") {
         }
 
         $pperm = explode("|", $forums['postperm']);
-
-        if ($pperm[1] == "2" && !X_ADMIN) {
+        if ($pperm[1] == 2 && !X_ADMIN) {
             error($lang['postpermerr']);
-        } else if ($pperm[1] == "3" && !X_STAFF) {
+        } else if ($pperm[1] == 3 && !X_STAFF) {
             error($lang['postpermerr']);
-        } else if ($pperm[1] == "4") {
+        } else if ($pperm[1] == 4) {
             error($lang['postpermerr']);
         }
 
         if (isset($posticon) && $posticon != "") {
             $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-
             if (!$db->result($query, 0)) {
                 exit();
             }
@@ -1048,7 +1048,7 @@ if ($action == "newthread") {
             }
 
             if (isset($attachment) && is_array($attachment)) {
-                switch($attachment['action']) {
+                switch ($attachment['action']) {
                     case 'replace':
                         if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                             $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
