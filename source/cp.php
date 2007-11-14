@@ -187,7 +187,7 @@ if ($action == "settings") {
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
-        } elseif ($avastatus == 'list') {
+        } else if ($avastatus == 'list') {
             $avatarlist = $selHTML;
         } else {
             $avataroff = $selHTML;
@@ -222,7 +222,7 @@ if ($action == "settings") {
         $notifycheck[0] = $notifycheck[1] = $notifycheck[2] = false;
         if ($SETTINGS['notifyonreg'] == 'off') {
             $notifycheck[0] = true;
-        } elseif ($SETTINGS['notifyonreg'] == 'u2u') {
+        } else if ($SETTINGS['notifyonreg'] == 'u2u') {
             $notifycheck[1] = true;
         } else {
             $notifycheck[2] = true;
@@ -263,7 +263,7 @@ if ($action == "settings") {
         $avchecked[0] = $avchecked[1] = $avchecked[2] = false;
         if (!empty($avatarlist)) {
             $avchecked[1] = true;
-        } elseif (!empty($avataroff)) {
+        } else if (!empty($avataroff)) {
             $avchecked[2] = true;
         } else {
             $avchecked[0] = true;
@@ -1021,7 +1021,7 @@ if ($action == 'forum') {
         </td>
         </tr>
         <?php
-    } elseif ($fdetails && noSubmit('forumsubmit')) {
+    } else if ($fdetails && noSubmit('forumsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1098,33 +1098,33 @@ if ($action == 'forum') {
         $type11 = $type12 = $type13 = $type14 = '';
         if ($pperm[0] == 2) {
             $type12 = $selHTML;
-        } elseif ($pperm['0'] == 3) {
+        } else if ($pperm['0'] == 3) {
             $type13 = $selHTML;
-        } elseif ($pperm[0] == 4) {
+        } else if ($pperm[0] == 4) {
             $type14 = $selHTML;
-        } elseif ($pperm[0] == 1) {
+        } else if ($pperm[0] == 1) {
             $type11 = $selHTML;
         }
 
         $type21 = $type22 = $type23 = $type24 = '';
         if ($pperm[1] == 2) {
             $type22 = $selHTML;
-        } elseif ($pperm[1] == 3) {
+        } else if ($pperm[1] == 3) {
             $type23 = $selHTML;
-        } elseif ($pperm[1] == 4) {
+        } else if ($pperm[1] == 4) {
             $type24 = $selHTML;
-        } elseif ($pperm[1] == 1) {
+        } else if ($pperm[1] == 1) {
             $type21 = $selHTML;
         }
 
         $type31 = $type32 = $type33 = $type34 = '';
         if ($forum['private'] == 2) {
             $type32 = $selHTML;
-        } elseif ($forum['private'] == 3) {
+        } else if ($forum['private'] == 3) {
             $type33 = $selHTML;
-        } elseif ($forum['private'] == 4) {
+        } else if ($forum['private'] == 4) {
             $type34 = $selHTML;
-        } elseif ($forum['private'] == 1) {
+        } else if ($forum['private'] == 1) {
             $type31 = $selHTML;
         }
 
@@ -1208,7 +1208,7 @@ if ($action == 'forum') {
         </td>
         </tr>
         <?php
-    } elseif (onSubmit('forumsubmit') && !$fdetails) {
+    } else if (onSubmit('forumsubmit') && !$fdetails) {
         $queryforum = $db->query("SELECT fid, type FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while ($forum = $db->fetch_array($queryforum)) {
@@ -1341,7 +1341,6 @@ if ($action == "mods") {
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textforum']?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textmoderator']?></font></strong></td>
         </tr>
-
         <?php
         $oldfid = 0;
         $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
@@ -1355,12 +1354,10 @@ if ($action == "mods") {
                 <?php
             }
             ?>
-
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td><?php echo html_entity_decode(stripslashes($forum['name']))?></td>
             <td><input type="text" name="mod[<?php echo $forum['fid']?>]"" value="<?php echo $forum['moderator']?>" /></td>
             </tr>
-
             <?php
             $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='".$forum['fid']."' AND type='sub'");
             while ($sub = $db->fetch_array($querys)) {
@@ -1386,7 +1383,6 @@ if ($action == "mods") {
         </form>
         </td>
         </tr>
-
         <?php
     } else {
         $mod = formArray('mod');
@@ -1395,7 +1391,6 @@ if ($action == "mods") {
                 $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");
             }
         }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';
     }
 }
@@ -1444,7 +1439,7 @@ if ($action == "members") {
             </td>
             </tr>
             <?php
-        } elseif ($members == "search") {
+        } else if ($members == "search") {
             ?>
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
@@ -1580,19 +1575,14 @@ if ($action == "members") {
             }
 
             $origstatus = $mem['status'];
-
             $banstatus = "banstatus".$mem['uid'];
             $banstatus =  isset($_POST[$banstatus]) ? $_POST[$banstatus] : '';
-
             $cusstatus = "cusstatus".$mem['uid'];
             $cusstatus =  isset($_POST[$cusstatus]) ? $_POST[$cusstatus] : '';
-
             $pw = "pw" . $mem['uid'];
             $pw = isset($_POST[$pw]) ? $_POST[$pw] : '';
-
             $postnum = "postnum".$mem['uid'];
             $postnum = isset($_POST[$postnum]) ? $_POST[$postnum] : '';
-
             $delete = "delete".$mem['uid'];
             $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
 
@@ -1626,7 +1616,6 @@ if ($action == "members") {
                 }
             }
         }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';
     }
 }
@@ -1773,7 +1762,6 @@ if ($action == "upgrade") {
         }
 
         $upgrade = str_replace('$table_', $tablepre, $upgrade);
-
         $explode = explode(";", $upgrade);
         $count = count($explode);
 
@@ -1786,7 +1774,6 @@ if ($action == "upgrade") {
 
         for ($num=0;$num<$count;$num++) {
             $explode[$num] = stripslashes($explode[$num]);
-
             if ($allow_spec_q !== true) {
                 if (strtoupper(substr(trim($explode[$num]), 0, 3)) == 'USE' || strtoupper(substr(trim($explode[$num]), 0, 14)) == 'SHOW DATABASES') {
                     error($lang['textillegalquery'], false, '</td></tr></table></td></tr></table><br />');
@@ -1796,7 +1783,6 @@ if ($action == "upgrade") {
             if ($explode[$num] != '') {
                 $query = $db->query($explode[$num], true);
             }
-
             echo '<br />';
             ?>
             <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
@@ -1874,7 +1860,6 @@ if ($action == "upgrade") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 }
@@ -1978,7 +1963,8 @@ if ($action == "search") {
         $select .= "</select>";
         echo $select;
         ?>
-        <br /><br />
+        <br />
+        <br />
         <div align="center"><br /><input type="submit" class="submit" name="searchsubmit" value="Search now" /><br /><br /></div>
         </td>
         </tr>
@@ -1993,8 +1979,6 @@ if ($action == "search") {
 }
 
 echo '</table></td></tr></table>';
-
 end_time();
-
 eval('echo "'.template('footer').'";');
 ?>
