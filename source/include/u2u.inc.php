@@ -45,7 +45,6 @@ function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $
 
     $subject = checkInput(censor(addslashes($subject)));
     $message = checkInput(censor(addslashes($message)));
-
     $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".addslashes($to)."', '".addslashes($from)."', '$type', '".addslashes($owner)."', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
 
@@ -54,7 +53,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
     $recipients = array_unique(array_map('trim', explode(',', $msgto)));
     $u2uid = (int) $u2uid;
 
-    foreach ($recipients as $recp) {
+    foreach($recipients as $recp) {
         $errors .= u2u_send_recp($recp, $subject, $message, $u2uid);
     }
     return $errors;
@@ -105,9 +104,9 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
     $leftpane = '';
-    $del = ('yes' == $del) ? 'yes' : 'no';
-    $u2uid = (int) $u2uid;
-    $msgto = checkInput($msgto, '', '', 'script', false);
+    $del      = ('yes' == $del) ? 'yes' : 'no';
+    $u2uid    = (int) $u2uid;
+    $msgto    = checkInput($msgto, '', '', 'script', false);
     $subject  = strip_tags($subject);
     $username = checkInput($username, '', '', 'script', false);
 
@@ -165,7 +164,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
                 if ($forward == 'yes') {
                     $subject = $lang['textfwd'].' '.$subject;
                     $message = '[quote][i]'.$lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
-                } elseif ($reply == 'yes') {
+                } else if ($reply == 'yes') {
                     $subject = $lang['textre'].' '.$subject;
                     $message = '[quote]'.$message.'[/quote]';
                     $username = $quote['msgfrom'];
@@ -208,7 +207,7 @@ function u2u_view($u2uid, $folders) {
     if ($u2u) {
         if ($u2u['type'] == 'incoming') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$self[username]')");
-        } elseif ($u2u['type'] == 'draft') {
+        } else if ($u2u['type'] == 'draft') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
         }
 
@@ -224,7 +223,7 @@ function u2u_view($u2uid, $folders) {
         if ($u2u['type'] == 'draft') {
             $sendoptions = '<input type="radio" name="mod" value="send" /> '.$lang['textu2u'].'<br />';
             $delchecked = ' checked="checked"';
-        } elseif ($u2u['msgfrom'] != $self['username']) {
+        } else if ($u2u['msgfrom'] != $self['username']) {
             $sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> '.$lang['textreply'].'<br /><input type="radio" name="mod" value="replydel" /> '.$lang['textreplytrash'].'<br /><input type="radio" name="mod" value="forward" /> '.$lang['textforward'].'<br />';
         } else {
             $delchecked = ' checked="checked"';
@@ -232,7 +231,7 @@ function u2u_view($u2uid, $folders) {
         $mtofolder = array();
         $mtofolder[] = '<select name="tofolder">';
         $mtofolder[] = '<option value="">'.$lang['textpickfolder'].'</option>';
-        foreach ($folders as $key => $value) {
+        foreach($folders as $key => $value) {
             if (is_numeric($key)) {
                 $key = $value;
             }
@@ -313,7 +312,7 @@ function u2u_mod_delete($folder, $u2u_select) {
     global $db, $self, $lang, $oToken;
 
     $in = '';
-    foreach ($u2u_select as $value) {
+    foreach($u2u_select as $value) {
         $value = (int) $value;
         $in .= ($value > 0 ? (empty($in) ? "$value" : ", $value") : '');
     }
@@ -351,7 +350,7 @@ function u2u_mod_move($tofolder, $u2u_select) {
     global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder;
 
     $in = '';
-    foreach ($u2u_select as $value) {
+    foreach($u2u_select as $value) {
         $value = (int) $value;
         if ($value > 0) {
             $type = $GLOBALS['type'.$value];
@@ -407,7 +406,7 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     }
 
     $in = '';
-    foreach ($u2u_select as $value) {
+    foreach($u2u_select as $value) {
         $value = (int) $value;
         if ($value > 0) {
             if ($GLOBALS['type'.$value] != 'outgoing') {
@@ -431,14 +430,14 @@ function u2u_folderSubmit($u2ufolders, $folders) {
     $error = '';
 
     $newfolders = explode(",", $u2ufolders);
-    foreach ($newfolders as $key => $value) {
+    foreach($newfolders as $key => $value) {
         $newfolders[$key] = trim($value);
         if (empty($newfolders[$key])) {
             unset($newfolders[$key]);
         }
     }
 
-    foreach ($folders as $value) {
+    foreach($folders as $value) {
         if (isset($farray[$value]) && $farray[$value] != 0 && !in_array($value, $newfolders) && !in_array($value, array('Inbox', 'Outbox', 'Drafts', 'Trash'))) {
             $newfolders[] = $value;
             $error .= (empty($error)) ? '<br />'.$lang['foldersupdateerror'].' '.$value : ', '.$value;
@@ -478,7 +477,7 @@ function u2u_display($folder, $folders) {
     }
 
     $query = $db->query("SELECT u.*, w.username, w.invisible FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."whosonline w ON (u.msgto=w.username OR u.msgfrom=w.username) AND w.username!='$self[username]' WHERE u.folder='$folder' AND u.owner='$self[username]' ORDER BY dateline DESC");
-    while ($u2u = $db->fetch_array($query)) {
+    while($u2u = $db->fetch_array($query)) {
         if ($u2u['readstatus'] == 'yes') {
             $u2ureadstatus = $lang['textread'];
         } else {
@@ -508,7 +507,7 @@ function u2u_display($folder, $folders) {
             }
 
             $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
-        } elseif ($u2u['type'] == 'outgoing') {
+        } else if ($u2u['type'] == 'outgoing') {
             if ($u2u['msgto'] == $u2u['username'] || $u2u['msgto'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {
                     if (X_ADMIN) {
@@ -523,7 +522,7 @@ function u2u_display($folder, $folders) {
                 $online = $lang['textoffline'];
             }
             $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgto']).'" target="_blank">'.$u2u['msgto'].'</a> ('.$online.')';
-        } elseif ($u2u['type'] == 'draft') {
+        } else if ($u2u['type'] == 'draft') {
             $u2usent = $lang['textu2unotsent'];
         }
 
@@ -531,7 +530,7 @@ function u2u_display($folder, $folders) {
         $u2udate = gmdate("$dateformat", $u2u['dateline'] + $adjTime);
         $u2utime = gmdate("$timecode", $u2u['dateline'] + $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";
-        switch ($u2u['type']) {
+        switch($u2u['type']) {
             case 'outgoing':
                 $u2us = 'u2usout';
                 break;
@@ -559,7 +558,7 @@ function u2u_display($folder, $folders) {
         eval('$u2usdraft = "'.template('u2u_row_none').'";');
     }
 
-    switch ($folder) {
+    switch($folder) {
         case 'Outbox':
             eval('$u2ulist = "'.template('u2u_outbox').'";');
             break;
@@ -577,7 +576,7 @@ function u2u_display($folder, $folders) {
     $mtofolder = array();
     $mtofolder[] = '<select name="tofolder">';
     $mtofolder[] = '<option value="">'.$lang['textpickfolder'].'</option>';
-    foreach ($folders as $key => $value) {
+    foreach($folders as $key => $value) {
         if (is_numeric($key)) {
             $key = $value;
         }
@@ -596,7 +595,7 @@ function u2u_folderList() {
 
     $u2ucount = 0;
     $folders = (empty($self['u2ufolders'])) ? array() : explode(",", $self['u2ufolders']);
-    foreach ($folders as $key => $value) {
+    foreach($folders as $key => $value) {
         $folders[$key] = trim($value);
     }
     sort($folders);
@@ -604,14 +603,14 @@ function u2u_folderList() {
 
     $query = $db->query("SELECT folder, count(u2uid) as count FROM ".X_PREFIX."u2u WHERE owner='$self[username]' GROUP BY folder ORDER BY folder ASC");
     $flist = array();
-    while ($flist = $db->fetch_array($query)) {
+    while($flist = $db->fetch_array($query)) {
         $farray[$flist['folder']] = $flist['count'];
         $u2ucount += $flist['count'];
     }
     $db->free_result($query);
 
     $emptytrash = $folderlist = '';
-    foreach ($folders as $link => $value) {
+    foreach($folders as $link => $value) {
         echo ("<!-- $link = $value -->");
         if (is_numeric($link)) {
             $link = $value;

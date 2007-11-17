@@ -68,7 +68,7 @@ class socket_SMTP {
             return false;
         }
         $parts = explode("\r\n", $s);
-        foreach ($parts as $ns) {
+        foreach($parts as $ns) {
             if (substr($ns, 0, 8) == '250-AUTH') {
                 $authAvailable = true;
                 $methods = substr($ns, 8);
@@ -101,7 +101,7 @@ class socket_SMTP {
     }
 
     function get() {
-        while (($line = fgets($this->connection, 515)) !== false) {
+        while(($line = fgets($this->connection, 515)) !== false) {
             $this->doDebug('[S] '.$line);
             $lines .= $line;
 
@@ -138,16 +138,19 @@ class socket_SMTP {
             $this->send('RSET');
             return false;
         }
+
         $this->send('RCPT TO: '.$to);
         if (!$this->isOk($ret = $this->get())) {
             $this->send('RSET');
             return false;
         }
+
         $this->send('DATA');
         if (354 != $this->fetchReturnCode($ret = $this->get())) {
             $this->send('RSET');
             return false;
         }
+
         $this->send($headers);
         $this->send('');
         $this->send($message);
@@ -155,7 +158,6 @@ class socket_SMTP {
         if (!$this->isOk($this->get())) {
             return false;
         }
-
         return true;
     }
 

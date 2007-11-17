@@ -73,7 +73,7 @@ class admin {
         $db->query("UPDATE ".X_PREFIX."whosonline SET username='$userto' WHERE username='$userfrom'");
 
         $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%$userfrom'");
-        while ($result = $db->fetch_array($query)) {
+        while($result = $db->fetch_array($query)) {
             list($posttime, $lastauthor) = explode("|", $result['lastpost']);
             if ($lastauthor == $userfrom) {
                 $newlastpost = $posttime . '|' . $userto;
@@ -83,7 +83,7 @@ class admin {
         $db->free_result($query);
 
         $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
-        while ($usr = $db->fetch_array($query)) {
+        while($usr = $db->fetch_array($query)) {
             $parts = explode(',', $usr['ignoreu2u']);
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
@@ -93,7 +93,7 @@ class admin {
         $db->free_result($query);
 
         $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
-        while ($list = $db->fetch_array($query)) {
+        while($list = $db->fetch_array($query)) {
             $parts = explode(',', $list['moderator']);
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
@@ -103,7 +103,7 @@ class admin {
         $db->free_result($query);
 
         $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
-        while ($list = $db->fetch_array($query)) {
+        while($list = $db->fetch_array($query)) {
             $parts = array_unique(array_map('trim', explode(',', $list['userlist'])));
             $index = array_search($userfrom, $parts);
             $parts[$index] = $userto;
@@ -113,7 +113,7 @@ class admin {
         $db->free_result($query);
 
         $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%$userfrom'");
-        while ($result = $db->fetch_array($query)) {
+        while($result = $db->fetch_array($query)) {
             list($posttime, $lastauthor, $lastpid) = explode("|", $result['lastpost']);
             if ($lastauthor == $userfrom) {
                 $newlastpost = $posttime . '|' . $userto.'|'.$lastpid;
@@ -131,10 +131,10 @@ class admin {
         global $db;
 
         $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
-        while ($loner = $db->fetch_array($q)) {
+        while($loner = $db->fetch_array($q)) {
             $lastpost = array();
             $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
-            while ($sub = $db->fetch_array($subq)) {
+            while($sub = $db->fetch_array($subq)) {
                 $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
@@ -157,7 +157,7 @@ class admin {
             } else {
                 $top = 0;
                 $mkey = -1;
-                foreach ($lastpost as $key => $v) {
+                foreach($lastpost as $key => $v) {
                     if ($v['dateline'] > $top) {
                         $mkey = $key;
                         $top = $v['dateline'];
@@ -169,12 +169,12 @@ class admin {
         }
         $db->free_result($q);
         $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
-        while ($cat = $db->fetch_array($q)) {
+        while($cat = $db->fetch_array($q)) {
             $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
-            while ($forum = $db->fetch_array($fq)) {
+            while($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
                 $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
-                while ($sub = $db->fetch_array($subq)) {
+                while($sub = $db->fetch_array($subq)) {
                     $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
@@ -197,7 +197,7 @@ class admin {
                 } else {
                     $top = 0;
                     $mkey = -1;
-                    foreach ($lastpost as $key => $v) {
+                    foreach($lastpost as $key => $v) {
                         if ($v['dateline'] > $top) {
                             $mkey = $key;
                             $top = $v['dateline'];
@@ -211,7 +211,7 @@ class admin {
         }
         $db->free_result($q);
         $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
-        while ($thread = $db->fetch_array($q)) {
+        while($thread = $db->fetch_array($q)) {
             $lastpost = array();
             $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
@@ -234,14 +234,14 @@ class admin {
         $nameokay = true;
 
         $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'');
-        foreach ($find as $needle) {
+        foreach($find as $needle) {
             if (false !== strpos($userto, $needle)) {
                 return false;
             }
         }
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
-        while ($restriction = $db->fetch_array($query)) {
+        while($restriction = $db->fetch_array($query)) {
             if ($restriction['case_sensitivity'] == 1) {
                 if ($restriction['partial'] == 1) {
                     if (strpos($userto, $restriction['name']) !== false) {
@@ -365,7 +365,7 @@ function settingHTML($setting, &$on, &$off) {
     global $SETTINGS, $selHTML;
 
     $on = $off = '';
-    switch ($SETTINGS[$setting]) {
+    switch($SETTINGS[$setting]) {
         case 'on':
             $on = $selHTML;
             break;
@@ -405,7 +405,7 @@ function printsetting2($setname, $varname, $value, $size) {
 function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=true) {
     global $THEME, $selHTML;
 
-    foreach ($varnames as $key=>$val) {
+    foreach($varnames as $key=>$val) {
         if (isset($checked[$key]) && $checked[$key] !== true) {
             $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
         }else{

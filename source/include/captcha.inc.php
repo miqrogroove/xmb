@@ -3,10 +3,6 @@
  * eXtreme Message Board
  * XMB 1.9.8 Engage Final
  *
- * Based On: PhpCaptcha - A visual and audio CAPTCHA generation library
- * Copyright (c) 2005-2006 Edward Eliot
- * http://www.ejeliot.com/pages/2
- *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2007, The XMB Group
  * http://www.xmbforum.com
@@ -144,7 +140,7 @@ class Captcha {
                 $this->aCharSet = array();
 
                 // loop through items
-                foreach ($aCharSet as $sCurrentItem) {
+                foreach($aCharSet as $sCurrentItem) {
                     // a range should have 3 characters, otherwise is normal character
                     if (strlen($sCurrentItem) == 3) {
                         // split on range character
@@ -183,10 +179,10 @@ class Captcha {
         $this->aFonts = array();
 
         // loop through items
-        foreach ($aFonts as $sCurrentItem) {
+        foreach($aFonts as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while ($file = readdir($dir)) {
+                while($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
                         $this->aFonts[] = $sCurrentItem . '/' . $file;
                     }
@@ -226,10 +222,10 @@ class Captcha {
         $this->aBackgroundImages = array();
 
         // loop through items
-        foreach ($aBackgroundImages as $sCurrentItem) {
+        foreach($aBackgroundImages as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
                 $dir = opendir($sCurrentItem);
-                while ($file = readdir($dir)) {
+                while($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
                         $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {
@@ -408,7 +404,7 @@ class Captcha {
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
 
-        switch ($this->sFileType) {
+        switch($this->sFileType) {
             case 'gif':
                 imagegif ($this->oImage);
                 break;
@@ -432,7 +428,7 @@ class Captcha {
             $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
 
             $ext = substr($vBackgroundImage, -3);
-            switch ($ext) {
+            switch($ext) {
                 case 'gif':
                     $oBackgroundImage = imagecreatefromgif($vBackgroundImage);
                     break;

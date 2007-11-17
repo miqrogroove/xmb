@@ -37,7 +37,7 @@ function url_to_text($url) {
     if (!$rset) {
         $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
         $restrict = array("(password='')");
-        switch ($self['status']) {
+        switch($self['status']) {
             case 'Member':
                 $restrict[] = 'private = 1';
                 $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
@@ -68,7 +68,7 @@ function url_to_text($url) {
             $tid = 0;
             if (!empty($temp[1])) {
                 $urls = explode('&', $temp[1]);
-                foreach ($urls as $key=>$val) {
+                foreach($urls as $key=>$val) {
                     if (strpos($val, 'tid') !== false) {
                         $tid = (int) substr($val, 4);
                     }
@@ -80,7 +80,7 @@ function url_to_text($url) {
                 $location = $lang['onlineviewthread'].' '.$tsub[$tid];
             } else {
                 $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
-                while ($locate = $db->fetch_array($query)) {
+                while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
                     $tsub[$tid] = $locate['subject'];
                 }
@@ -100,7 +100,7 @@ function url_to_text($url) {
             $fid = 0;
             $urls = explode('&', $temp[1]);
             if (!empty($temp[1])) {
-                foreach ($urls as $key=>$val) {
+                foreach($urls as $key=>$val) {
                     if (strpos($val, 'fid') !== false) {
                         $fid = (int) substr($val, 4);
                     }
@@ -112,7 +112,7 @@ function url_to_text($url) {
                 $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
             } else {
                 $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
-                while ($locate = $db->fetch_array($query)) {
+                while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineforumdisplay'].' '.$locate['name'];
                     $fname[$fid] = $locate['name'];
                 }
@@ -175,7 +175,7 @@ function url_to_text($url) {
             $temp = explode('?', $url);
             $urls = explode('&', $temp[1]);
             if (isset($urls[1]) && !empty($urls[1]) && $urls[1] != 'member=') {
-                foreach ($urls as $argument) {
+                foreach($urls as $argument) {
                     if (strpos($argument, 'member') !== false) {
                         $member = str_replace('member=', '', $argument);
                     }
@@ -192,7 +192,7 @@ function url_to_text($url) {
     } else if (false !== strpos($url, "misc.php")) {
         if (false !== strpos($url, 'login')) {
             $location = $lang['onlinelogin'];
-        } elseif (false !== strpos($url, 'logout')) {
+        } else if (false !== strpos($url, 'logout')) {
             $location = $lang['onlinelogout'];
         } else if (false !== strpos($url, 'search')) {
             $location = $lang['onlinesearch'];
@@ -221,7 +221,7 @@ function url_to_text($url) {
         }
     } else if (false !== strpos($url, "/stats.php")) {
         $location = $lang['onlinestats'];
-    } elseif (false !== strpos($url, "/today.php")) {
+    } else if (false !== strpos($url, "/today.php")) {
         $location = $lang['onlinetodaysposts'];
     } else if (false !== strpos($url, "/tools.php")) {
         $location = $lang['onlinetools'];

@@ -11,14 +11,6 @@
  * Copyright (c) 2007, iEntry, Inc.
  * http://www.ientry.com
  *
- * Changes to port UltimaBB 1.0's validation routines
- *
- * This code is from UltimaBB. The (C) notice is as follows:
- *
- * UltimaBB
- * Copyright (c) 2004 - 2007 The UltimaBB Group
- * http://www.ultimabb.com
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -177,11 +169,9 @@ function isValidEmail($addr) {
 */
 function onSubmit($submitname) {
     $retval = (isset($_POST[$submitname]) && !empty($_POST[$submitname]));
-
     if (!$retval) {
         $retval = (isset($_GET[$submitname]) && !empty($_GET[$submitname]));
     }
-
     return($retval);
 }
 
@@ -250,9 +240,9 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
 
     if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
         $arrayItems = $_POST[$varname];
-        foreach ($arrayItems as $item => $theObject) {
+        foreach($arrayItems as $item => $theObject) {
             $theObject = & $arrayItems[$item];
-            switch ($type) {
+            switch($type) {
                 case 'int':
                     $theObject = intval($theObject);
                     break;
@@ -370,15 +360,15 @@ function getFormArrayInt($varname, $doCount = true) {
     if (!isset($_POST[$varname]) || empty($_POST[$varname])) {
         return false;
     }
-    $retval = $_POST[$varname];
 
+    $retval = $_POST[$varname];
     if ($doCount) {
         if (count($retval) == 1) {
             $retval = array($retval);
         }
     }
 
-    foreach ($retval as $bits => $value) {
+    foreach($retval as $bits => $value) {
         $value = intval($value);
     }
     return $retval;
@@ -496,7 +486,7 @@ function encode_ip($dotquad_ip) {
 function createLangFileSelect($currentLangFile) {
     $lfs = array();
     $dir = opendir(ROOT.'lang/');
-    while ($file = readdir($dir)) {
+    while($file = readdir($dir)) {
         if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
             $file = str_replace('.lang.php', '', $file);
             if ($file == $currentLangFile) {
@@ -514,7 +504,7 @@ function getLangFileNameFromHash($ordinal) {
     global $member;
 
     $dir = opendir(ROOT.'lang/');
-    while ($file = readdir($dir)) {
+    while($file = readdir($dir)) {
         if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
             $file = str_replace('.lang.php', '', $file);
             if (md5($file) == $ordinal) {

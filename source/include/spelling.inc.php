@@ -32,8 +32,8 @@ if (!defined('IN_CODE')) {
 
 class spelling {
     var $language = '';
-    var $link = 0;
-    var $mode = 0;
+    var $link     = 0;
+    var $mode     = 0;
 
     function spelling($language='en', $mode=PSPELL_NORMAL) {
         global $charset;
@@ -43,11 +43,9 @@ class spelling {
         }
 
         $charset = '';
-
         $this->language = $language;
         $this->link = pspell_new($language, '', '', $charset, $mode);
         $this->mode = $mode;
-
         return true;
     }
 
@@ -72,13 +70,11 @@ class spelling {
         $return = array();
 
         $words = preg_split("/[\W]+/", $text);
-
-        foreach ($words as $word) {
+        foreach($words as $word) {
             if (!$this->check_word($word)) {
                 $return[$word] = pspell_suggest($this->link, $word);
             }
         }
-
         return $return;
     }
 }

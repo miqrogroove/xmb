@@ -63,7 +63,6 @@ class mod {
         if ($user == '') {
             $user = $xmbuser;
         }
-
         $db->query("REPLACE ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', ".$db->time().")");
         return true;
     }
@@ -73,7 +72,7 @@ class mod {
             $tidstr = (int)$tids;
         } else {
             $tidstr = '';
-            foreach ($tids as $value) {
+            foreach($tids as $value) {
                 $value = (int) $value;
                 if ($value > 0) {
                     $tidstr .= (empty($tidstr)) ? $value : ','.$value;
@@ -86,7 +85,7 @@ class mod {
     function create_tid_array($tids) {
         $tidArr = array();
         $tidP = explode(',', $tids);
-        foreach ($tidP AS $flip) {
+        foreach($tidP AS $flip) {
             $flip = (int) $flip;
             if ($flip > 0) {
                 $tidArr[] = $flip;

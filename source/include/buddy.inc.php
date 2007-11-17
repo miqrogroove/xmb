@@ -54,7 +54,7 @@ function buddy_add($buddys) {
         $buddys = array_slice($buddys, 0, 10);
     }
 
-    foreach ($buddys as $key=>$buddy) {
+    foreach($buddys as $key=>$buddy) {
         if (empty($buddy) || (strlen(trim($buddy)) == 0)) {
             blistmsg($lang['nobuddyselected'], '', true);
         } else {
@@ -87,7 +87,7 @@ function buddy_edit() {
     $buddys = array();
 
     $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'") or die($db->error());
-    while ($buddy = $db->fetch_array($q)) {
+    while($buddy = $db->fetch_array($q)) {
         eval('$buddys[] = "'.template('buddylist_edit_buddy').'";');
     }
 
@@ -104,7 +104,7 @@ function buddy_delete($delete) {
     global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
-    foreach ($delete as $key=>$buddy) {
+    foreach($delete as $key=>$buddy) {
         $buddy = addslashes(checkInput($buddy));
         $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
     }
@@ -122,7 +122,7 @@ function buddy_addu2u() {
     $buddys['online'] = '';
 
     $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
-    while ($buddy = $db->fetch_array($q)) {
+    while($buddy = $db->fetch_array($q)) {
         if ($buddy['invisible'] == 1) {
             if (!X_ADMIN) {
                 eval("\$buddys['offline'] .= \"".template('buddy_u2u_off')."\";");
@@ -151,7 +151,7 @@ function buddy_display() {
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
-    while ($buddy = $db->fetch_array($q)) {
+    while($buddy = $db->fetch_array($q)) {
         if ($buddy['username'] != '') {
             if ($buddy['invisible'] == 1) {
                 if (!X_ADMIN) {

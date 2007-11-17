@@ -68,7 +68,7 @@ function template($name) {
 function templatecache($type=X_CACHE_GET, $name, $data='') {
     static $cache;
 
-    switch ($type) {
+    switch($type) {
         case X_CACHE_GET:
             if (!isset($cache[$name])) {
                 return false;
@@ -94,7 +94,7 @@ function loadtemplates() {
         $namesarray = array_unique(array_merge(func_get_args(), array('header', 'css', 'error', 'message', 'footer', 'footer_querynum', 'footer_phpsql', 'footer_totaltime', 'footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
         $query = $db->query("SELECT name, template FROM ".X_PREFIX."templates WHERE name IN ($sql)");
-        while ($template = $db->fetch_array($query)) {
+        while($template = $db->fetch_array($query)) {
             templatecache(X_CACHE_PUT, $template['name'], $template['template']);
         }
         $db->free_result($query);
@@ -123,7 +123,7 @@ function smile($txt) {
 
     if ($smiliesnum > 0) {
         reset($smiliecache);
-        foreach ($smiliecache as $code=>$url) {
+        foreach($smiliecache as $code=>$url) {
             $txt = str_replace($code, '<img src="./'.$smdir.'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
         }
     }
@@ -216,7 +216,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 11   => '[/list=A]',
         );
 
-        foreach ($begin as $key=>$value) {
+        foreach($begin as $key=>$value) {
             $check = substr_count($message, $value) - substr_count($message, $end[$key]);
             if ($check > 0) {
                 $message = $message.str_repeat($end[$key], $check);
@@ -285,7 +285,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         if ($smiliesallow) {
             $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
-            for ($i = 0; $i < sizeof($messagearray); $i++) {
+            for($i = 0; $i < sizeof($messagearray); $i++) {
                 if (sizeof($messagearray) != 1) {
                     if ($i == 0) {
                         $messagearray[$i] = $messagearray[$i]."[code]";
@@ -360,7 +360,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     } else {
         if ($smiliesallow) {
             $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
-            for ($i = 0; $i < sizeof($messagearray); $i++) {
+            for($i = 0; $i < sizeof($messagearray); $i++) {
                 if (sizeof($messagearray) != 1) {
                     if ($i == 0) {
                         $messagearray[$i] = $messagearray[$i]."[code]";
@@ -401,7 +401,7 @@ function modcheck($status, $username, $mods) {
     if ($status == 'Moderator') {
         $username = strtoupper($username);
         $mods = explode(',', $mods);
-        foreach ($mods as $key=>$moderator) {
+        foreach($mods as $key=>$moderator) {
             if (strtoupper(trim($moderator)) == $username) {
                 $retval = 'Moderator';
                 break;
@@ -418,7 +418,7 @@ function privfcheck($private, $userlist) {
         return true;
     }
 
-    switch ($private) {
+    switch($private) {
         case 4:
             return false;
             break;
@@ -435,7 +435,7 @@ function privfcheck($private, $userlist) {
 
             $user = explode(',', $userlist);
             $xuser = strtolower($xmbuser);
-            foreach ($user as $usr) {
+            foreach($user as $usr) {
                 $usr = strtolower(trim($usr));
                 if ($usr != '' && $xuser == $usr) {
                    return true;
@@ -493,7 +493,7 @@ function forum($forum, $template) {
         if (isset($forum['moderator']) && $forum['moderator'] != '') {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
-            for ($num = 0; $num < count($moderators); $num++) {
+            for($num = 0; $num < count($moderators); $num++) {
                 $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($moderators[$num]).'">'.$moderators[$num].'</a>';
             }
             $forum['moderator'] = implode(', ', $forum['moderator']);
@@ -503,7 +503,7 @@ function forum($forum, $template) {
         // create sub-forums on index
         $subforums = array();
         if (count($index_subforums) > 0) {
-            for ($i=0; $i < count($index_subforums); $i++) {
+            for($i=0; $i < count($index_subforums); $i++) {
                 $sub = $index_subforums[$i];
                 if ($sub['fup'] == $forum['fid']) {
                     if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($sub['private'], $sub['userlist'])) {
@@ -567,7 +567,7 @@ function multi($num, $perpage, $page, $mpurl, $strict = false) {
             $multipage .= '&nbsp;&nbsp;<strong>1</strong>';
         }
 
-        for ($i = $from; $i <= $to; $i++) {
+        for($i = $from; $i <= $to; $i++) {
             if ($i != $page) {
                 $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.$string.'page='.$i.'">'.$i.'</a></u>';
             } else {
@@ -625,7 +625,7 @@ function smilieinsert() {
 
             if ($smilienum%$smcols > 0) {
                 $left = $smcols-($smilienum%$smcols);
-                for ($i=0;$i<$left;$i++) {
+                for($i=0;$i<$left;$i++) {
                     $smilies .= '<td>&nbsp;</td>';
                 }
                 $smilies .= '</tr>';
@@ -653,7 +653,7 @@ function updateforumcount($fid) {
     $db->free_result($query);
 
     $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$fid'");
-    while ($children = $db->fetch_array($query)) {
+    while($children = $db->fetch_array($query)) {
         $chquery1 = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
         $postcount += $db->result($chquery1, 0);
         $db->free_result($chquery1);
@@ -815,7 +815,7 @@ function end_time() {
     if (X_SADMIN && DEBUG) {
         $stuff = array();
         $stuff[] = '<table cols="2" style="width: 97%;"><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
-        foreach ($db->querylist as $key=>$val) {
+        foreach($db->querylist as $key=>$val) {
             $val = mysql_syn_highlight($val);
             $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($db->querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
         }
@@ -847,7 +847,6 @@ function pwverify($pass='', $url, $fid, $showHeader=false) {
         }
         exit();
     }
-
     return true;
 }
 
@@ -889,7 +888,7 @@ function postperm(& $forums, $type) {
 
     $pperm = explode('|', $forums['postperm']);
     if (!isset($cache[$forums['fid']])) {
-        switch ($pperm[0]) {
+        switch($pperm[0]) {
             case 1:
                 $whopost1 = $lang['whocanpost11'];
                 break;
@@ -904,7 +903,7 @@ function postperm(& $forums, $type) {
                 break;
         }
 
-        switch ($pperm[1]) {
+        switch($pperm[1]) {
             case 1:
                 $whopost2 = $lang['whocanpost21'];
                 break;
@@ -926,7 +925,7 @@ function postperm(& $forums, $type) {
     }
 
     $perm = ($type == 'thread') ? $pperm[0] : $pperm[1];
-    switch ($forums['private']) {
+    switch($forums['private']) {
         case 1:
             $fplen = isset($forums['password']) ? strlen($forums['password']) : 0;
             $fulen = isset($forums['userlist']) ? strlen($forums['userlist']) : 0;
@@ -1137,7 +1136,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
 function array_keys2keys($array, $translator) {
     $new_array = array();
 
-    foreach ($array as $key=>$val) {
+    foreach($array as $key=>$val) {
         if (isset($translator[$key])) {
             $new_key = $translator[$key];
         } else {
@@ -1145,7 +1144,6 @@ function array_keys2keys($array, $translator) {
         }
         $new_array[$new_key] = $val;
     }
-
     return $new_array;
 }
 
@@ -1155,7 +1153,7 @@ function mysql_syn_highlight($query) {
     $find = array();
     $replace = array();
 
-    foreach ($tables as $name) {
+    foreach($tables as $name) {
         $find[] = $tablepre.$name;
     }
 
@@ -1186,10 +1184,9 @@ function mysql_syn_highlight($query) {
     $find[] = ' OR ';
     $find[] = ' NOT';
 
-    foreach ($find as $key=>$val) {
+    foreach($find as $key=>$val) {
         $replace[$key] = '</em><strong>'.$val.'</strong><em>';
     }
-
     return '<em>'.str_replace($find, $replace, $query).'</em>';
 }
 
@@ -1209,11 +1206,11 @@ function dump_query($resource, $header=true) {
             echo '</tr>';
         }
 
-        while ($a = $db->fetch_array($resource, SQL_NUM)) {
+        while($a = $db->fetch_array($resource, SQL_NUM)) {
             ?>
             <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
             <?php
-            for ($i=0;$i<$count;$i++) {
+            for($i=0;$i<$count;$i++) {
                 echo '<td align="left">';
 
                 if (trim($a[$i]) == '') {
@@ -1321,7 +1318,7 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
     $message = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $message);
     $subject = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $subject);
 
-    switch ($mailer['type']) {
+    switch($mailer['type']) {
         case 'socket_SMTP':
             if (!isset($isInc['socket_SMTP'])) {
                 require ROOT.'include/smtp.inc.php';
@@ -1343,7 +1340,7 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
             $subjectInHeader = false;
             $toInHeader = false;
             $additional_headers = explode("\r\n", $additional_headers);
-            foreach ($additional_headers as $k=>$h) {
+            foreach($additional_headers as $k=>$h) {
                 if (strpos(trim($h), 'ubject:') === 1) {
                     $additional_headers[$k] = 'Subject: '.$subject."\r\n";
                     $subjectInHeader = true;
@@ -1411,7 +1408,6 @@ function iso8601_date($year=0, $month=0, $day=0) {
     if ($day > 31 || $day < 1) {
         $day = 1;
     }
-
     return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
 }
 
@@ -1432,7 +1428,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     global $db, $self, $lang;
 
     $restrict = array();
-    switch ($self['status']) {
+    switch($self['status']) {
         case 'Member':
             $restrict[] = "private != '3'";
         case 'Moderator':
@@ -1461,7 +1457,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     $forums = array();
     $categories = array();
     $subforums = array();
-    while ($forum = $db->fetch_array($sql)) {
+    while($forum = $db->fetch_array($sql)) {
         $forum['name'] = html_entity_decode($forum['name']);
         if (!X_SADMIN && $forum['password'] != '') {
             $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
@@ -1470,7 +1466,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
             }
         }
 
-        switch ($forum['type']) {
+        switch($forum['type']) {
             case 'group':
                 $categories[] = $forum;
                 break;
@@ -1511,23 +1507,23 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     unset($forum);
     reset($forums);
 
-    foreach ($standAloneForums as $forum) {
+    foreach($standAloneForums as $forum) {
         $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
         if (isset($subforums[$forum['fid']])) {
-            foreach ($subforums[$forum['fid']] as $sub) {
+            foreach($subforums[$forum['fid']] as $sub) {
                 $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
             }
         }
     }
 
     $forumselect[] = '<option value="" disabled="disabled">&nbsp;</option>';
-    foreach ($categories as $group) {
+    foreach($categories as $group) {
         if (isset($forums[$group['fid']]) && count($forums[$group['fid']]) > 0) {
             $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.stripslashes($group['name']).'</option>';
-            foreach ($forums[$group['fid']] as $forum) {
+            foreach($forums[$group['fid']] as $forum) {
                 $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
                 if (isset($subforums[$forum['fid']])) {
-                    foreach ($subforums[$forum['fid']] as $sub) {
+                    foreach($subforums[$forum['fid']] as $sub) {
                         $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
                     }
                 }
@@ -1537,5 +1533,18 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     }
     $forumselect[] = '</select>';
     return implode("\n", $forumselect);
+}
+
+function readFileAsINI($filename) {
+    $lines = file($filename);
+    foreach($lines as $line_num => $line) {
+        $temp = explode("=",$line);
+        if ($temp[0] != 'dummy') {
+            $key = trim($temp[0]);
+            $val = trim($temp[1]);
+            $thefile[$key] = $val;
+        }
+    }
+    return $thefile;
 }
 ?>
