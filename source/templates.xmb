@@ -1063,7 +1063,6 @@ $multipage
 <td width="6%" align="center">$lang[texttopics]</td>
 <td width="6%" align="center">$lang[textposts]</td>
 <td width="19%">$lang[textlastpost]</td>
-<td width="2%">&nbsp;</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index|#*XMB TEMPLATE*#|
@@ -1491,7 +1490,7 @@ $sendoptions
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
 $spacer
 <tr>
-<td colspan="6" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
+<td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|popup_footer|#*XMB TEMPLATE*#|
@@ -1506,7 +1505,6 @@ $spacer
 <td bgcolor="$altbg1" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[threads]</font></td>
 <td bgcolor="$altbg2" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[posts]</font></td>
 <td bgcolor="$altbg1" class="rghttablerow" width="19%">$lastpostrow</td>
-<td bgcolor="$altbg2" class="ctrtablerow" width="2%"><a href="./post.php?action=newthread&amp;fid=$forum[fid]"><img src="$imgdir/ipost.gif" border="0" alt="$lang[altpostnewthread]" /></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage|#*XMB TEMPLATE*#|
@@ -4939,7 +4937,7 @@ $lang[verificationnote]
 
 |#*XMB TEMPLATE FILE*#|index_noforum|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" class="ctrtablerow" colspan="6"><font class="mediumtxt">$lang[textnoforumsexist]</font></td>
+<td bgcolor="$altbg1" class="ctrtablerow" colspan="5"><font class="mediumtxt">$lang[textnoforumsexist]</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online_multipage|#*XMB TEMPLATE*#|
