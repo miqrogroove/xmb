@@ -29,20 +29,6 @@
 require 'header.php';
 require ROOT.'include/admin.inc.php';
 
-function readFileAsINI($filename) {
-    $lines = file($filename);
-    foreach ($lines as $line_num => $line) {
-        $temp = explode("=",$line);
-        if ( $temp[0] != 'dummy') {
-            $key = trim($temp[0]);
-            $val = trim($temp[1]);
-
-            $thefile[$key] = $val;
-        }
-    }
-    return $thefile;
-}
-
 loadtemplates('error_nologinsession');
 eval('$css = "'.template('css').'";');
 
@@ -54,7 +40,7 @@ if (X_ADMIN) {
     if ($action == "templates" && $download) {
         $code = '';
         $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates");
-        while ($template = $db->fetch_array($templates)) {
+        while($template = $db->fetch_array($templates)) {
             $template['template']   = trim($template['template']);
             $template['name']       = trim($template['name']);
 
@@ -78,7 +64,7 @@ if (X_ADMIN) {
         $contents = array();
         $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$download'");
         $themebits = $db->fetch_array($query);
-        foreach ($themebits as $key=>$val) {
+        foreach($themebits as $key=>$val) {
             if (!is_integer($key) && $key != 'themeid' && $key != 'dummy') {
                 $contents[] = $key.'='.$val;
             }

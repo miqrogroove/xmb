@@ -105,7 +105,7 @@ class dbstuff {
     function find_database($tablepre) {
         $found = false;
         $dbs = mysql_list_dbs($this->link);
-        while ($db = mysql_fetch_array($dbs)) {
+        while($db = mysql_fetch_array($dbs)) {
             $q = $this->query("SHOW TABLES FROM `$db[Database]`");
             if (!($this->num_rows($q) > 0)) {
                 continue;
@@ -179,7 +179,7 @@ class dbstuff {
         $this->select_db($dbname);
 
         $q = $this->query("SHOW TABLES");
-        while ($table = $this->fetch_array($q, SQL_NUM)) {
+        while($table = $this->fetch_array($q, SQL_NUM)) {
             $array[] = $table[0];
         }
         return $array;
@@ -225,7 +225,6 @@ class dbstuff {
     function stop_timer() {
         $mtime = explode(" ", microtime());
         $endtime = $mtime[1] + $mtime[0];
-
         $taken = ($endtime - $this->timer);
         $this->duration += $taken;
         $this->timer = 0;
