@@ -1062,6 +1062,7 @@ if ($action == "ranks") {
         $id = formArray('id');
         $delete = formArray('delete');
         $title = formArray('title');
+        $posts = formArray('posts');
         $stars = formArray('stars');
         $allowavatars = formArray('allowavatars');
         $avaurl = formArray('avaurl');
