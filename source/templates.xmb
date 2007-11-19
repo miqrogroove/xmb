@@ -2027,30 +2027,6 @@ $quickreply
 </td>
 </tr>
 </table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong>$lang[textfaqextra]</strong></font></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr align="center">
-<td>&nbsp;</td>
-<td><a href="http://www.php.net/" target="_blank"><img border="0" src="./images/admin/php.gif" alt="$lang[altpoweredbyphp]" align="middle" /></a></td>
-<td><a href="http://www.mysql.com/" target="_blank"><img border="0" src="./images/admin/mysql.gif" alt="$lang[altpoweredbymysql]" align="middle" /></a></td>
-<td>&nbsp;</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
 
 |#*XMB TEMPLATE FILE*#|faq_using|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
