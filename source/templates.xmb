@@ -440,6 +440,7 @@ $multipage
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr>
 <td class="nav" style="padding-bottom: 1px" bgcolor="$altbg1">&nbsp;<a href="index.php">$bbname</a>&nbsp;$navigation</td>
+<td class="tablerow" align="right" bgcolor="$altbg1">$quickjump&nbsp;</td>
 <td align="right" bgcolor="$altbg1" width="2%"><a href="#top"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
 </tr>
 </table>
@@ -522,7 +523,8 @@ $bbcodescript
 <td><table width="100%" cellspacing="0" cellpadding="2" align="center">
 <tr>
 <td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
-<td align="right"><a href="#bottom"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
+<td align="right">$quickjump</td>
+<td align="right" width="1"><a href="#bottom"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
 </tr>
 </table>
 </td>
@@ -1620,37 +1622,17 @@ $multipage
 <td width="6%" align="center">$lang[textviews]</td>
 <td width="10%">$lang[textlastpost]</td>
 <td width="4%">$lang[deletecolon]</td>
-<td>&nbsp;</td>
+<td><input type="checkbox" onclick="invertSelection('geatneet', 'tid[]'); return false;" /></td>
 </tr>
 $threadlist
-$multipage
-</table>
-</td>
-</tr>
-</table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
 <tr>
-<td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
-</tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
-<tr>
-<td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td bgcolor="$altbg1" class="tablerow">
+<td bgcolor="$altbg1" class="tablerow" colspan="10">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-<td class="tablerow" align="left">
-<a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="setCheckboxes('geatneet', 'tid[]', true); return false;">$lang[checkall]</a> -
-<a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="setCheckboxes('geatneet', 'tid[]', false); return false;">$lang[uncheckall]</a> -
-<a href="forumdisplay.php?fid=$fid&amp;page=$page" onclick="invertSelection('geatneet', 'tid[]'); return false;">$lang[invertselection]</a>
-</td>
 <td class="tablerow" align="right">
 <input type="hidden" name="fid" value="$fid" />
-<input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
-&nbsp;&nbsp;
+<input type="hidden" name="token" value="$oToken->newToken" />
+<span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
 <select name="action">
 <option value="" selected="selected"></option>
 <option value="bump">$lang[textbumpthread]</option>
@@ -1662,13 +1644,21 @@ $multipage
 <option value="f_open">$lang[textopenthread]</option>
 <option value="top">$lang[topuntop]</option>
 </select>
+&nbsp;&nbsp;
+<input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
 </td>
 </tr>
 </table>
 </td>
 </tr>
+$multipage
 </table>
 </td>
+</tr>
+</table>
+<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
+<tr>
+<td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 </form>
@@ -2975,7 +2965,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_results_none|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" colspan="8"><span class="mediumtxt">$lang[noresults]</span></td>
+<td bgcolor="$altbg1" colspan="7"><span class="mediumtxt">$lang[noresults]</span></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_email|#*XMB TEMPLATE*#|
@@ -2983,7 +2973,6 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg1" class="ctrtablerow">$member[uid]</td>
 <td bgcolor="$altbg2" class="tablerow"><a href="member.php?action=viewpro&amp;member=$memurl">$member[username]</a></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$member[status]</td>
 <td bgcolor="$altbg2" class="ctrtablerow">$email</td>
@@ -2998,7 +2987,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg2" colspan="8" align="left"  class="multi">&nbsp;$multipage</td>
+<td bgcolor="$altbg2" colspan="7" align="left"  class="multi">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist|#*XMB TEMPLATE*#|
@@ -3027,15 +3016,14 @@ $nextlink
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr class="header">
-<td width="5%" align="center">$lang[mcpuid]</td>
+<tr class="header" align="center">
 <td width="20%">$lang[textusername]</td>
-<td width="16%" align="center">$lang[status]</td>
-<td width="10%" align="center">$lang[textemail]:</td>
-<td width="10%" align="center">$lang[textsite]</td>
+<td width="16%">$lang[status]</td>
+<td width="10%">$lang[textemail]:</td>
+<td width="10%">$lang[textsite]</td>
 <td width="19%">$lang[textlocation]</td>
-<td align="center" width="19%">$lang[textregistered]</td>
-<td align="center" width="5%">$lang[textposts]</td>
+<td width="19%">$lang[textregistered]</td>
+<td width="5%">$lang[textposts]</td>
 </tr>
 $members
 $multipage
@@ -4523,15 +4511,15 @@ $forumlist
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
-<tr class="header">
-<td width="3%" align="center">$lang[mcpuid]</td>
-<td width="19%">$lang[textusername]</td>
-<td width="16%" align="center">$lang[status]</td>
-<td width="10%" align="center">$lang[textemail]:</td>
-<td width="10%" align="center">$lang[textsite]</td>
+<tr class="header" align="center">
+<td width="20%">$lang[textusername]</td>
+<td width="16%">$lang[status]</td>
+<td width="10%">$lang[textemail]:</td>
+<td width="10%">$lang[textsite]</td>
 <td width="19%">$lang[textlocation]</td>
-<td align="center" width="19%">$lang[textregistered]</td>
-<td align="center" width="5%">$lang[textposts]</td>
+<td width="19%">$lang[textregistered]</td>
+<td width="5%">$lang[textposts]</td>
+</tr>
 $members
 $multipage
 </table>

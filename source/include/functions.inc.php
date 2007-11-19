@@ -267,10 +267,10 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 9   => '</blink>',
                 10  => '<strike>',
                 11  => '</strike>',
-                12  => "</font><table align=\"center\" class=\"quote\" cellspacing=\"0\" cellpadding=\"0\"><tr><td class=\"quote\">$lang[textquote]</td></tr><tr><td class=\"quotemessage\">",
-                13  => " </td></tr></table><font class=\"mediumtxt\">",
-                14  => "</font><table align=\"center\" class=\"code\" cellspacing=\"0\" cellpadding=\"0\"><tr><td class=\"code\">$lang[textcode]</td></tr><tr><td class=\"codemessage\">",
-                15  => "</td></tr></table><font class=\"mediumtxt\">",
+                12  => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
+                13  => ' </td></tr></table><font class="mediumtxt">',
+                14  => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
+                15  => '</td></tr></table><font class="mediumtxt">',
                 16  => '<ul type="square">',
                 17  => '</ul>',
                 18  => '<ol type="1">',
@@ -1546,5 +1546,107 @@ function readFileAsINI($filename) {
         }
     }
     return $thefile;
+}
+
+function forumJump() {
+    global $db, $self, $lang;
+
+    $restrict = array();
+    switch($self['status']) {
+        case 'Member':
+            $restrict[] = "private != '3'";
+        case 'Moderator':
+        case 'Super Moderator':
+            $restrict[] = "private != '2'";
+        case 'Administrator':
+            $restrict[] = "userlist = ''";
+        case 'Super Administrator':
+            break;
+        default:
+            $restrict[] = "private != '3'";
+            $restrict[] = "private != '2'";
+            $restrict[] = "userlist = ''";
+            $restrict[] = "password = ''";
+            break;
+    }
+    $restrict = implode(' AND ', $restrict);
+
+    if ($restrict != '') {
+        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE $restrict AND status = 'on' ORDER BY displayorder");
+    } else {
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password, displayorder FROM ".X_PREFIX."forums ORDER BY displayorder");
+    }
+
+    $standAloneForums = array();
+    $forums = array();
+    $categories = array();
+    $subforums = array();
+    while($forum = $db->fetch_array($sql)) {
+        $forum['name'] = html_entity_decode($forum['name']);
+        if (!X_SADMIN && $forum['password'] != '') {
+            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+            if ($forum['password'] !== $fidpw) {
+                continue;
+            }
+        }
+
+        switch($forum['type']) {
+            case 'group':
+                $categories[] = $forum;
+                break;
+            case 'sub':
+                if (!isset($subforums[$forum['fup']])) {
+                    $subforums[$forum['fup']] = array();
+                }
+                $subforums[$forum['fup']][] = $forum;
+                break;
+            case 'forum':
+            default:
+                if ($forum['fup'] == 0) {
+                    $standAloneForums[] = $forum;
+                } else {
+                    if (!isset($forums[$forum['fup']])) {
+                        $forums[$forum['fup']] = array();
+                    }
+                    $forums[$forum['fup']][] = $forum;
+                }
+                break;
+        }
+    }
+    $db->free_result($sql);
+
+    $forumselect = array();
+
+    $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
+    $forumselect[] = '<option value="" selected="selected">'.$lang['forumjumpselect'].'</option>';
+
+    unset($forum);
+    reset($forums);
+
+    foreach($standAloneForums as $forum) {
+        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.$forum['fid'].'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+        if (isset($subforums[$forum['fid']])) {
+            foreach($subforums[$forum['fid']] as $sub) {
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.$sub['fid'].'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+            }
+        }
+    }
+
+    foreach($categories as $group) {
+        if (isset($forums[$group['fid']])) {
+            $forumselect[] = '<option value=""></option>';
+            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.$group['fid'].'">'.stripslashes($group['name']).'</option>';
+            foreach($forums[$group['fid']] as $forum) {
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.$forum['fid'].'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+                if (isset($subforums[$forum['fid']])) {
+                    foreach($subforums[$forum['fid']] as $sub) {
+                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.$sub['fid'].'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                    }
+                }
+            }
+        }
+    }
+    $forumselect[] = '</select>';
+    return implode("\n", $forumselect);
 }
 ?>

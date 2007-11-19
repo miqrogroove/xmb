@@ -1,29 +1,3 @@
-/**
- * eXtreme Message Board
- * XMB 1.9.8 Engage Final
- *
- * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- **/
 var URL_REGEXP_GOES_HERE = new RegExp('(.*)://(.*)');
 var defmode = 'normal';
 
@@ -61,24 +35,23 @@ function chmode(switchMode) {
 }
 
 function AddText(bbFirst, bbLast, text, el) {
-    var len     = el.textLength;
-    var start   = el.selectionStart;
-    var end     = el.selectionEnd;
-    var pre     = el.value.substring(0, start);
-    var post    = el.value.substring(end, len);
+    var len   = el.textLength;
+    var start = el.selectionStart;
+    var end   = el.selectionEnd;
+    var pre   = el.value.substring(0, start);
+    var post  = el.value.substring(end, len);
 
     el.value = pre + bbFirst + text + bbLast + post;
     el.focus();
 }
 
 function wrapText(prePend, apPend, el) {
-    var len     = el.textLength;
-    var start   = el.selectionStart;
-    var end     = el.selectionEnd;
-    var pre     = el.value.substring(0, start);
-    var mid     = el.value.substring(start, end);
-    var post    = el.value.substring(end, len);
-
+    var len   = el.textLength;
+    var start = el.selectionStart;
+    var end   = el.selectionEnd;
+    var pre   = el.value.substring(0, start);
+    var mid   = el.value.substring(start, end);
+    var post  = el.value.substring(end, len);
     el.value = pre + prePend + mid + apPend + post;
 }
 
@@ -112,8 +85,7 @@ function email() {
             if (fetchSelection(messageElement).match(/(.+)@(.+)/) != null) {
                 text = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
                 desc = prompt(bbcode_prompt_link_desc, '');
-
-                while (text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+                while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
                     text = prompt(bbcode_prompt_email_error, fetchSelection(messageElement));
                 }
 
@@ -132,7 +104,7 @@ function email() {
                 }
             } else {
                 text = prompt(bbcode_prompt_email_email, 'user@example.com');
-                while (text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+                while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
                     text = prompt(bbcode_prompt_email_error, text);
                 }
 
@@ -145,7 +117,7 @@ function email() {
             }
         } else {
             text = prompt(bbcode_prompt_email_email, 'user@example.com');
-            while (text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+            while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
                 text = prompt(bbcode_prompt_email_error, text);
             }
 
@@ -429,7 +401,7 @@ function hyperlink() {
             if (fetchSelection(messageElement).match(URL_REGEXP_GOES_HERE) != null) {
                 var url = prompt(bbcode_prompt_link_url, fetchSelection(messageElement));
                 var desc    = prompt(bbcode_prompt_link_desc, '');
-                while (url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
+                while(url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
                     url = prompt(bbcode_prompt_link_error, fetchSelection(messageElement));
                 }
 
@@ -448,7 +420,7 @@ function hyperlink() {
                 }
             } else {
                 var url = prompt(bbcode_prompt_link_url, 'http://www.example.com');
-                while (url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
+                while(url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
                     url = prompt(bbcode_prompt_link_url_error, url);
                 }
 
@@ -461,7 +433,7 @@ function hyperlink() {
             }
         } else {
             var url = prompt(bbcode_prompt_link_url, 'http://www.example.com');
-            while (url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
+            while(url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
                 url = prompt(bbcode_prompt_link_url_error, url);
             }
 
@@ -481,11 +453,10 @@ function list() {
     } else if (advmode) {
         if (hasSelection(messageElement)) {
             var selection = fetchSelection(messageElement);
-            var listReg = new RegExp('(?:^|\r|\n)([^\r\n]+)(?=\r|\n|$)', 'g');
+            var listReg   = new RegExp('(?:^|\r|\n)([^\r\n]+)(?=\r|\n|$)', 'g');
             var result;
             var returnStr = '';
-
-            while (null != (result = listReg.exec(selection))) {
+            while(null != (result = listReg.exec(selection))) {
                 returnStr += '[*]'+result[1]+"\r\n";
             }
             AddText('[list]', '[/list]', returnStr, messageElement);
@@ -496,20 +467,19 @@ function list() {
         if (hasSelection(messageElement)) {
             var type = prompt(bbcode_prompt_list_start, '');
             var cType = type.toLowerCase();
-            while (cType != '' && cType != 'a' && cType != '1' && cType != null) {
+            while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
                 type = prompt(bbcode_prompt_list_error, type);
             }
 
-            var selection   = fetchSelection(messageElement);
-            var listReg     = new RegExp('(?:^|\r|\n)([^\r\n]+)(?=\r|\n|$)', 'g');
+            var selection = fetchSelection(messageElement);
+            var listReg   = new RegExp('(?:^|\r|\n)([^\r\n]+)(?=\r|\n|$)', 'g');
             var result;
-            var returnStr   = '';
-            var endStr      = '[list'+((type == '' || type == null) ? ']' : '='+type+']');
-
-            while (null != (result = listReg.exec(selection))) {
+            var returnStr = '';
+            var endStr    = '[list'+((type == '' || type == null) ? ']' : '='+type+']');
+            while(null != (result = listReg.exec(selection))) {
                 returnStr = prompt(bbcode_prompt_list_item+bbcode_prompt_list_end, result[1]);
                 if (returnStr != result[1] && returnStr != '') {
-                    while (returnStr != result[1] && returnStr != '' && returnStr != null) {
+                    while(returnStr != result[1] && returnStr != '' && returnStr != null) {
                         endStr += '[*]'+returnStr+"\r\n";
                         returnStr = prompt(bbcode_prompt_list_item+bbcode_prompt_list_end, result[1]);
                         if (returnStr == '') {
@@ -526,24 +496,23 @@ function list() {
             }
 
             if (result == null) {
-                while ('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
+                while('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
                     endStr += '[*]'+returnStr+"\r\n";
                 }
             }
-
             endStr += '[/list'+((type == '' || type == null) ? ']' : '='+type+']');
             AddText('', '', endStr, messageElement);
         } else {
             var returnStr = '';
-            var type = prompt(bbcode_prompt_list_start, '');
-            var cType = type.toLowerCase();
-            while (cType != '' && cType != 'a' && cType != '1' && cType != null) {
+            var type      = prompt(bbcode_prompt_list_start, '');
+            var cType     = type.toLowerCase();
+            while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
                 type = prompt(bbcode_prompt_list_error, type);
                 var cType = type.toLowerCase();
             }
             var endStr = '[list'+((type == '' || type == null) ? ']' : '='+type+']');
 
-            while ('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
+            while('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
                 endStr += '[*]'+returnStr+"\r\n";
             }
             endStr += '[/list'+((type == '' || type == null) ? ']' : '='+type+']');

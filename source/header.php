@@ -81,6 +81,7 @@ $cheHTML        = 'checked="checked"';
 $filesize       = 0;
 $filename       = '';
 $filetype       = '';
+$quickjump      = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -729,4 +730,8 @@ if (X_MEMBER) {
         $newu2umsg = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[newu2u1] $newu2unum $lang[newu2u2]</a>";
     }
 }
+
+// create forum jump
+$quickjump = base64_decode($quickjump);
+$quickjump = forumJump();
 ?>

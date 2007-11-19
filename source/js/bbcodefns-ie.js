@@ -1,65 +1,37 @@
-/**
- * eXtreme Message Board
- * XMB 1.9.8 Engage Final
- *
- * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- **/
 var bbcode_prompt_link1 = bbcode_prompt_link_desc;
 var bbcode_prompt_link2 = bbcode_prompt_list_item;
 
 var defmode = 'normal';
 
 if (defmode == 'advanced') {
-    helpmode    = false;
-    normalmode  = false;
-    advmode     = true;
+    helpmode   = false;
+    normalmode = false;
+    advmode    = true;
 } else if (defmode == 'help') {
-    helpmode    = true;
-    normalmode  = false;
-    advmode     = false;
+    helpmode   = true;
+    normalmode = false;
+    advmode    = false;
 } else {
-    helpmode    = false;
-    normalmode  = true;
-    advmode     = false;
+    helpmode   = false;
+    normalmode = true;
+    advmode    = false;
 }
 
 function chmode(switchMode) {
     if (switchMode == 1) {
-        advmode     = false;
-        normalmode  = false;
-        helpmode    = true;
+        advmode    = false;
+        normalmode = false;
+        helpmode   = true;
         alert(bbcode_helpmode);
-
     } else if (switchMode == 0) {
-        helpmode    = false;
-        normalmode  = false;
-        advmode     = true;
+        helpmode   = false;
+        normalmode = false;
+        advmode    = true;
         alert(bbcode_advmode);
-
     } else if (switchMode == 2) {
-        helpmode    = false;
-        advmode     = false;
-        normalmode  = true;
+        helpmode   = false;
+        advmode    = false;
+        normalmode = true;
         alert(bbcode_normode);
     }
 }
@@ -251,7 +223,7 @@ function list() {
             }
 
             txt = "1";
-            while ((txt!="") && (txt!=null)) {
+            while((txt!="") && (txt!=null)) {
                 txt = prompt(bbcode_prompt_list_end, "");
                 if (txt!="") {
                     AddText('', '', "[*]"+txt+"\r", messageElement);

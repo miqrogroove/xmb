@@ -1143,4 +1143,5 @@ $lang['onlinebuddyadd'] = "Adding user(s) to address book";
 $lang['onlinebuddyedit'] = "Editing address book";
 $lang['onlinebuddydelete'] = "Deleting user(s) from address book";
 $lang['onlinebuddyadd2u2u'] = "Adding user(s) to u2u";
+$lang['forumjumpselect'] = "Select A Forum";
 ?>
