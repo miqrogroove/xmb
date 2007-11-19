@@ -30,10 +30,10 @@ require 'header.php';
 
 validatePpp();
 
-$pid = getInt('pid');
-$tid = getInt('tid');
-$page = getInt('page');
-$goto = getVar('goto');
+$pid    = getInt('pid');
+$tid    = getInt('tid');
+$page   = getInt('page');
+$goto   = getVar('goto');
 $action = getVar('action');
 
 if ($goto == 'lastpost') {
@@ -131,8 +131,9 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$notexist = false;
-$notexist_txt = $posts = '';
+$notexist     = false;
+$notexist_txt = '';
+$posts        = '';
 
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
 if ($tid == 0 || $db->num_rows($query) != 1) {
@@ -157,7 +158,7 @@ $thislast = explode('|', $thread['lastpost']);
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 if (!isset($oldtopics)) {
     put_cookie('oldtopics', '|'.$lastPid.'|', $onlinetime+600, $cookiepath, $cookiedomain, null, X_SET_HEADER);
-} elseif (false === strpos($oldtopics, '|'.$lastPid.'|')) {
+} else if (false === strpos($oldtopics, '|'.$lastPid.'|')) {
     $expire = $onlinetime + 600;
     $oldtopics .= $lastPid.'|';
     put_cookie('oldtopics', $oldtopics, $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
@@ -200,24 +201,22 @@ if ($forum['type'] == 'forum') {
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
-$allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
+$allowhtml    = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];
-$allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
+$allowbbcode  = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 
 eval('$bbcodescript = "'.template('functions_bbcode').'";');
 
 if ($smileyinsert == 'on' && $smiliesnum > 0) {
     $max = ($smiliesnum > 16) ? 16 : $smiliesnum;
-
     srand((double)microtime() * 1000000);
     $keys = array_rand($smiliecache, $max);
-
     $smilies = array();
     $smilies[] = '<table border="0"><tr>';
     $i = 0;
     $total = 0;
     $pre = 'opener.';
-    foreach ($keys as $key) {
+    foreach($keys as $key) {
         if ($total == 16) {
             break;
         }
@@ -251,11 +250,10 @@ if (!$action) {
     pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid);
 
     $ppthread = postperm($forum, 'thread');
-    $ppreply = postperm($forum, 'reply');
+    $ppreply  = postperm($forum, 'reply');
 
     $usesigcheck = $usesig ? 'checked="checked"' : '';
 
-    // captcha code
     $captchapostcheck = '';
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
         require ROOT.'include/captcha.inc.php';
@@ -266,8 +264,6 @@ if (!$action) {
         }
     }
 
-    // fixed the way xmb had it before.
-    // much cleaner now and refined to check all controls.
     if ($thread['closed'] == 'yes') {
         if (X_SADMIN) {
             eval('$replylink = "'.template('viewthread_reply').'";');
@@ -315,15 +311,12 @@ if (!$action) {
         $page = 1;
     }
 
-    // Query for user ranks. We do this only once now.  -Aharon
     $specialrank = array();
-    $rankposts = array();
-
+    $rankposts   = array();
     $queryranks = $db->query("SELECT id, title, posts, stars, allowavatars, avatarrank FROM ".X_PREFIX."ranks");
-    while ($query = $db->fetch_row($queryranks)) {
+    while($query = $db->fetch_row($queryranks)) {
         $title = $query[1];
         $rposts= $query[2];
-
         if ($title == 'Super Administrator' || $title == 'Administrator' || $title == 'Super Moderator' || $title == 'Moderator') {
             $specialrank[$title] = "$query[0],$query[1],$query[2],$query[3],$query[4],$query[5]";
         } else {
@@ -331,7 +324,6 @@ if (!$action) {
         }
     }
     $db->free_result($queryranks);
-    // End user rank query.
 
     $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid=$tid");
     $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
@@ -344,9 +336,10 @@ if (!$action) {
         eval('$multipage = "'.template('viewthread_multipage').'";');
     }
 
-    // Start polls
-    $pollhtml = $poll = '';
-    $vote_id = $voted = 0;
+    $pollhtml = '';
+    $poll     = '';
+    $vote_id  = 0;
+    $voted    = 0;
 
     $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
     if ($query) {
@@ -355,10 +348,8 @@ if (!$action) {
     }
     $db->free_result($query);
 
-    // Render polls?
     if ($vote_id > 0 && isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
         if (X_MEMBER) {
-            // Has the user already voted?
             $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id AND vote_user_id=$self[uid]");
             if ($query) {
                 $voted = $db->fetch_array($query);
@@ -368,16 +359,15 @@ if (!$action) {
 
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';
         if ($voted === 1 || $thread['closed'] == 'yes' || X_GUEST || $viewresults) {
-            // show the 'voted' look
             if ($viewresults) {
                 $results = '- [<a href="viewthread.php?tid='.$tid.'"><font color="'.$cattext.'">'.$lang['backtovote'].'</font></a>]';
             } else {
                 $results = '';
             }
-            // Render the poll results
+
             $num_votes = 0;
             $query = $db->query("SELECT vote_result, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id");
-            while ($result = $db->fetch_array($query)) {
+            while($result = $db->fetch_array($query)) {
                 $num_votes += $result['vote_result'];
                 $pollentry = array();
                 $pollentry['name'] = postify($result['vote_option_text'], 'no', 'no', 'yes', 'no', 'yes', 'yes');
@@ -387,7 +377,7 @@ if (!$action) {
             $db->free_result($query);
 
             reset($poll);
-            foreach ($poll as $num=>$array) {
+            foreach($poll as $num=>$array) {
                 $pollimgnum = 0;
                 $pollbar = '';
                 if ($array['votes'] > 0) {
@@ -406,10 +396,9 @@ if (!$action) {
                 $buttoncode = '';
             }
         } else {
-            // Render the poll itself
             $results = '- [<a href="viewthread.php?tid='.$tid.'&amp;viewresults=yes"><font color="'.$cattext.'">'.$lang['viewresults'].'</font></a>]';
             $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id");
-            while ($result = $db->fetch_array($query)) {
+            while($result = $db->fetch_array($query)) {
                 $poll['id'] = (int) $result['vote_option_id'];
                 $poll['name'] = $result['vote_option_text'];
                 eval('$pollhtml .= "'.template('viewthread_poll_options').'";');
@@ -419,12 +408,11 @@ if (!$action) {
         }
         eval('$poll = "'.template('viewthread_poll').'";');
     }
-    // End Polls
 
     $thisbg = $altbg2;
     $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid=$fid AND p.tid=$tid GROUP BY p.pid ORDER BY p.pid ASC LIMIT $start_limit, $ppp");
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while ($post = $db->fetch_array($querypost)) {
+    while($post = $db->fetch_array($querypost)) {
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
         $onlinenow = $lang['memberisoff'];
@@ -490,7 +478,6 @@ if (!$action) {
 
             $showtitle = $post['status'];
             $rank = array();
-
             if ($post['status'] == 'Administrator' || $post['status'] == 'Super Administrator' || $post['status'] == 'Super Moderator' || $post['status'] == 'Moderator') {
                 $sr = $post['status'];
                 $rankinfo = explode(",", $specialrank[$sr]);
@@ -498,14 +485,14 @@ if (!$action) {
                 $rank['title'] = $rankinfo[1];
                 $rank['stars'] = $rankinfo[3];
                 $rank['avatarrank'] = $rankinfo[5];
-            } elseif ($post['status'] == 'Banned') {
+            } else if ($post['status'] == 'Banned') {
                 $rank['allowavatars'] = 'no';
                 $rank['title'] = $lang['textbanned'];
                 $rank['stars'] = 0;
                 $rank['avatarrank'] = '';
             } else {
                 $last_max = -1;
-                foreach ($rankposts as $key => $rankstuff) {
+                foreach($rankposts as $key => $rankstuff) {
                     if ($post['postnum'] >= $key && $key > $last_max) {
                         $last_max = $key;
                         $rankinfo = explode(",", $rankstuff);
@@ -608,14 +595,13 @@ if (!$action) {
         $smileyoff = $post['smileyoff'];
         $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
-        // Deal with the attachment if there is one
         if ($post['filename'] != '' && $forum['attachstatus'] != 'off') {
             $attachsize = $post['filesize'];
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
-            } elseif ($attachsize >= 1048576) {
+            } else if ($attachsize >= 1048576) {
                 $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-                } elseif ($attachsize >= 1024) {
+                } else if ($attachsize >= 1024) {
                 $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
             } else {
                 $attachsize = $attachsize . "b";
@@ -668,9 +654,8 @@ if (!$action) {
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
-} elseif ($action == "attachment" && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
+} else if ($action == 'attachment' && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
     pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
-
     $query = $db->query("SELECT * FROM ".X_PREFIX."attachments WHERE pid=$pid and tid=$tid");
     $file = $db->fetch_array($query);
     $db->free_result($query);
@@ -684,35 +669,28 @@ if (!$action) {
     $type = strtolower($file['filetype']);
     $name = $file['filename'];
     $size = (int) $file['filesize'];
-
     $type = ($type == 'text/html') ? 'text/plain' : $type;
-
     header("Content-type: $type");
     header("Content-length: $size");
     header("Content-Disposition: attachment; filename=$name");
     header("Content-Description: XMB Attachment");
     header("Cache-Control: public; max-age=604800");
     header("Expires: 604800");
-
     echo $file['attachment'];
-
     exit();
-} elseif ($action == "printable") {
+} else if ($action == 'printable') {
     pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
-
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid=$fid AND tid=$tid ORDER BY pid");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while ($post = $db->fetch_array($querypost)) {
+    while($post = $db->fetch_array($querypost)) {
         $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
         $time = gmdate($timecode, $post['dateline'] + $tmoffset);
         $poston = "$date $lang[textat] $time";
         $post['message'] = stripslashes($post['message']);
-
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
         $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-
         eval('$posts .= "'.template('viewthread_printable_row').'";');
     }
     $db->free_result($querypost);
