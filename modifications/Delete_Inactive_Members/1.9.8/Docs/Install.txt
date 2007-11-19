@@ -10,14 +10,14 @@ This mod will provide a new tool in admin panel to delete members with x post co
 
 Mod Copyright: © 2007 John Briggs. All rights reserved.
 
-Mod Compatibility: XMB 1.9.8 Engage Pre-Final
+Mod Compatibility: XMB 1.9.8 Engage Final
 
 Mod Install Note: Before adding this mod to your forum, you should back up all files related to this mod.
 
-Mod License Note: This mod is released under the GPL License. A copy is provided with this software.
+Mod License Note: This mod is released under the GPL v3 License. A copy is provided with this software.
 
 Mod Author Note:
-This modification is developed and released for use with XMB 1.9.8 Engage Pre-Final which is provided by XMBMods.com.
+This modification is developed and released for use with XMB 1.9.8 Engage Final which is provided by XMBMods.com.
 
 =======================================================================================================================================
 =======
