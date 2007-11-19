@@ -137,7 +137,7 @@ if ($action != 'edit') {
     } else {
         $querysmilie = $db->query("SELECT url, code FROM ".X_PREFIX."smilies WHERE type='picon'");
     }
-    while ($smilie = $db->fetch_array($querysmilie)) {
+    while($smilie = $db->fetch_array($querysmilie)) {
         $icons .= ' <input type="radio" name="posticon" value="'.$smilie['url'].'" /><img src="'.$smdir.'/'.$smilie['url'].'" alt="'.$smilie['code'].'" border="0" />';
         $listed_icons += 1;
         if ($listed_icons == 9) {
@@ -165,10 +165,10 @@ if (isset($forums['allowhtml']) && $forums['allowhtml'] == 'yes') {
     $chkInputTags = 'no';
 }
 
-$allowimgcode = (isset($forums['allowimgcode']) && $forums['allowimgcode'] == "yes") ? $lang['texton'] : $lang['textoff'];
-$allowhtml = ($chkInputHTML == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowsmilies = (isset($forums['allowsmilies']) && $forums['allowsmilies'] == "yes") ? $lang['texton'] : $lang['textoff'];
-$allowbbcode = (isset($forums['allowbbcode']) && $forums['allowbbcode'] == "yes") ? $lang['texton'] : $lang['textoff'];
+$allowimgcode  = (isset($forums['allowimgcode']) && $forums['allowimgcode'] == "yes") ? $lang['texton'] : $lang['textoff'];
+$allowhtml     = ($chkInputHTML == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowsmilies  = (isset($forums['allowsmilies']) && $forums['allowsmilies'] == "yes") ? $lang['texton'] : $lang['textoff'];
+$allowbbcode   = (isset($forums['allowbbcode']) && $forums['allowbbcode'] == "yes") ? $lang['texton'] : $lang['textoff'];
 $pperm['type'] = (isset($action) && $action == 'newthread') ? 'thread' : 'reply';
 
 if (!postperm($forums, $pperm['type'])) {
@@ -185,7 +185,6 @@ if ($posterror) {
     error($posterror);
 }
 
-// add all checks in case of preview
 if (isset($smileyoff) && $smileyoff == 'yes') {
     $smileoffcheck = $cheHTML;
 } else {
@@ -243,7 +242,7 @@ if (X_STAFF) {
 
 $repquote = isset($repquote) ? (int) $repquote : 0;
 if (isset($poll)) {
-    if ($poll != "yes") {
+    if ($poll != 'yes') {
         $poll = '';
     } else {
         $poll = 'yes';
@@ -269,11 +268,9 @@ if (!empty($posticon)) {
     $icons = str_replace('<input type="radio" name="posticon" value="" />', '<input type="radio" name="posticon" value="" checked="checked" />', $icons);
 }
 
-// Start temp-spellcheck //
 if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
     $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
-
     if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
         if (!$updates_submit) {
             $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
@@ -282,9 +279,9 @@ if ($SETTINGS['spellcheck'] == 'on') {
             $spelling = new spelling($language);
             $problems = $spelling->check_text($message);
             if (count($problems) > 0) {
-                foreach ($problems as $orig=>$new) {
+                foreach($problems as $orig=>$new) {
                     $mistake = array();
-                    foreach ($new as $suggestion) {
+                    foreach($new as $suggestion) {
                         eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
                     }
                     $mistake = implode("\n", $mistake);
@@ -298,7 +295,7 @@ if ($SETTINGS['spellcheck'] == 'on') {
                 $spelling_submit2 = '';
             }
         } else {
-            foreach ($old_words as $word) {
+            foreach($old_words as $word) {
                 $message = str_replace($word, ${'replace_'.$word}, $message);
             }
             $spelling_submit2 = '';
@@ -309,11 +306,8 @@ if ($SETTINGS['spellcheck'] == 'on') {
 } else {
     $spelling_submit1 = $spelling_submit2 = $spelling_lang = $suggestions = '';
 }
-// End temp-spellcheck
 
-// check for thread-title
 if (isset($topicsubmit)) {
-    // check if subject is set
     if (!isset($subject) || trim($subject) == '') {
         $preview = error($lang['textnosubject'], false, '', '<br /><br />', false, false, true, false);
         $error = true;
@@ -334,13 +328,13 @@ $smilieinsert = smilieinsert();
 
 if (isset($previewpost)) {
     $currtime = $onlinetime;
-    $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-    $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+    $date   = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+    $time   = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
-    $subject = html_entity_decode(checkInput($subject, $chkInputTags, $chkInputHTML, '', false));
-    $message = html_entity_decode(checkInput($message, $chkInputTags, $chkInputHTML, '', true));
-    $message1 = postify($message, $smileyoff, $bbcodeoff, $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
+    $subject    = html_entity_decode(checkInput($subject, $chkInputTags, $chkInputHTML, '', false));
+    $message    = html_entity_decode(checkInput($message, $chkInputTags, $chkInputHTML, '', true));
+    $message1   = postify($message, $smileyoff, $bbcodeoff, $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
     $dissubject = censor($subject);
 
     if ($pid > 0) {
@@ -381,7 +375,7 @@ if ($action == "newthread") {
         }
 
         if (X_STAFF) {
-            $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
+            $topoption   = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
             $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
         } else {
             $topoption = $closeoption = '';
@@ -391,7 +385,6 @@ if ($action == "newthread") {
             $spelling_submit2 = '';
         }
 
-        // new poll code begin
         if (isset($poll) && $poll == 'yes' && $forums['pollstatus'] != 'off') {
             if (!isset($pollanswers)){
                 $pollanswers = '';
@@ -400,7 +393,6 @@ if ($action == "newthread") {
         } else {
             eval('echo stripslashes("'.template('post_newthread').'");');
         }
-        // new poll code end
     } else {
         if (!empty($username) && !empty($password)) {
             if (X_GUEST) {
@@ -501,25 +493,21 @@ if ($action == "newthread") {
 
         $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid=$tid");
 
-        // Check if forum is subforum, if so, make lastpost on fup-forum
         if (isset($forum['type']) && $forum['type'] == 'sub') {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=$for[fup]");
         }
 
         $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=$fid");
 
-        // begin Polls code
         if (X_MEMBER && isset($pollanswers) && $forums['pollstatus'] != 'off') {
             $pollanswers = checkInput($pollanswers);
             $pollopts = explode("\n", $pollanswers);
             $pnumnum = count($pollopts);
 
-            // Must have at least two answers
             if ($pnumnum < 2 && $pollanswers != '') {
                 error($lang['too_few_pollopts']);
             }
 
-            // Does this thread already have poll answers? If so, delete them
             $query = $db->query("SELECT vote_id, vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
             if ($query) {
                 $vote_id = $db->fetch_array($query);
@@ -536,16 +524,14 @@ if ($action == "newthread") {
             $db->query("INSERT INTO ".X_PREFIX."vote_desc (topic_id, vote_text) VALUES ($tid, '$subject')");
             $vote_id =  $db->insert_id();
             $i = 1;
-            foreach ($pollopts as $p) {
+            foreach($pollopts as $p) {
                 $p = addslashes($p);
                 $db->query("INSERT INTO ".X_PREFIX."vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ($vote_id, $i, '$p', 0)");
                 $i++;
             }
             $db->query("UPDATE ".X_PREFIX."threads SET pollopts=1 WHERE tid=$tid");
         }
-        // end poll code
 
-        // Auto subscribe options
         if (isset($emailnotify) && $emailnotify == 'yes') {
             $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid=$tid AND username='$xmbuser' AND type='subscription'");
             $thread = $db->fetch_array($query);
@@ -564,11 +550,8 @@ if ($action == "newthread") {
             $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
         }
 
-        // add the header here already so IF we get an error from get_attach_file() it prints out pretty.
         eval('echo "'.template('header').'";');
 
-        // Insert Attachment if there is one
-        // Do this last so if it errors out it doesn't break anything important
         if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
         }
@@ -601,12 +584,11 @@ if ($action == "newthread") {
             $closeoption = '';
         }
 
-        // Start Reply With Quote
         if (isset($repquote) && ($repquote = (int) $repquote)) {
-            $query = $db->query("SELECT p.message, p.fid, p.author, f.private AS fprivate, f.userlist AS fuserlist, f.password AS fpassword FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
+            $query    = $db->query("SELECT p.message, p.fid, p.author, f.private AS fprivate, f.userlist AS fuserlist, f.password AS fpassword FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
             $thaquote = $db->fetch_array($query);
             $quotefid = $thaquote['fid'];
-            $pass = trim($thaquote['fpassword']);
+            $pass     = trim($thaquote['fpassword']);
 
             if (!X_ADMIN && trim($pass) != '' && $_COOKIE['fidpw'.$quotefid] != $pass) {
                error($lang['privforummsg'], false);
@@ -620,7 +602,6 @@ if ($action == "newthread") {
             $message = html_entity_decode("[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]");
         }
 
-        // Start Topic/Thread Review
         $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $replynum = $db->result($querytop, 0);
 
@@ -652,13 +633,10 @@ if ($action == "newthread") {
             }
         }
 
-        // Start Displaying the Post form
-        if ($forums['attachstatus'] != "off") {
+        $attachfile = '';
+        if (isset($forums['attachstatus']) && $forums['attachstatus'] == 'on') {
             eval('$attachfile = "'.template('post_attachmentbox').'";');
-        } else {
-            $attachfile = '';
         }
-
         eval('echo stripslashes("'.template('post_reply').'");');
     } else {
         if (!$subject && !$message) {
@@ -772,7 +750,7 @@ if ($action == "newthread") {
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
             $pid = $db->insert_id();
 
-            if ((X_STAFF) && $closetopic == "yes") {
+            if ((X_STAFF) && $closetopic == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
             }
 
@@ -785,7 +763,6 @@ if ($action == "newthread") {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid=$fid");
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
-            // Start Subscriptions
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid");
             $posts = $db->result($query,0);
 
@@ -795,10 +772,9 @@ if ($action == "newthread") {
                 $topicpages = 1;
             }
 
-            // let's get the time for the previous post.
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid=$tid AND pid < $pid ORDER BY pid ASC LIMIT 1"), 0);
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status FROM ".X_PREFIX."favorites f LEFT JOIN ".X_PREFIX."members m ON (m.username=f.username) WHERE f.type='subscription' AND f.tid=$tid AND f.username != '$username'");
-            while ($subs = $db->fetch_array($subquery)) {
+            while($subs = $db->fetch_array($subquery)) {
                 if ($subs['status'] == 'banned' || $subs['lastvisit'] < $date) { // don't send double mails...!
                     continue;
                 }
@@ -813,8 +789,6 @@ if ($action == "newthread") {
                 altMail($subs['email'], $lang['textsubsubject'].' '.$threadname, $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
             }
 
-            // End Subscriptions
-            // Auto subscribe options
             if (isset($emailnotify) && $emailnotify == 'yes') {
                 $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid=$tid AND username='$xmbuser' AND type='subscription'");
                 if ($db->num_rows($query) < 1) {
@@ -822,10 +796,8 @@ if ($action == "newthread") {
                 }
             }
 
-            eval('echo "'.template('header').'";'); // do it here so errors won't be shown above the header :P
+            eval('echo "'.template('header').'";');
 
-            // Insert Attachment if there is one
-            // Insert this last so if it errors out it doesn't break something
             if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
@@ -839,7 +811,7 @@ if ($action == "newthread") {
 
         message($lang['replymsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid, true, false, true);
     }
-} else if ($action == "edit") {
+} else if ($action == 'edit') {
     nav('<a href="viewthread.php?tid='.$tid.'">'.html_entity_decode($threadname).'</a>');
     nav($lang['texteditpost']);
 
@@ -872,19 +844,19 @@ if ($action == "newthread") {
         $postinfo['subject'] = html_entity_decode($postinfo['subject']);
         $postinfo['message'] = html_entity_decode(stripslashes($postinfo['message']));
 
-        if ($postinfo['bbcodeoff'] == "yes") {
+        if ($postinfo['bbcodeoff'] == 'yes') {
             $offcheck1 = $cheHTML;
         } else {
             $offcheck1 = '';
         }
 
-        if ($postinfo['smileyoff'] == "yes") {
+        if ($postinfo['smileyoff'] == 'yes') {
             $offcheck2 = $cheHTML;
         } else {
             $offcheck2 = '';
         }
 
-        if ($postinfo['usesig'] == "yes") {
+        if ($postinfo['usesig'] == 'yes') {
             $offcheck3 = $cheHTML;
         } else {
             $offcheck3 = '';
@@ -939,7 +911,6 @@ if ($action == "newthread") {
         } else {
             $attachment = $attachfile;
         }
-
         eval('echo "'.template('post_edit').'";');
     } else {
         if (X_GUEST) {
@@ -983,7 +954,6 @@ if ($action == "newthread") {
 
         if (isset($posticon) && $posticon != "") {
             $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-
             if (!$db->result($query, 0)) {
                 exit();
             }
@@ -1010,7 +980,7 @@ if ($action == "newthread") {
 
         if ((X_STAFF && $status1 == 'Moderator') || $username == $orig['author']) {
             if ($SETTINGS['allowrankedit'] != 'off') {
-                switch ($orig['status']) {
+                switch($orig['status']) {
                     case 'Super Administrator':
                         if (!X_SADMIN && $xmbuser != $orig['author']) {
                             error($lang['noedit']);
@@ -1048,7 +1018,7 @@ if ($action == "newthread") {
             }
 
             if (isset($attachment) && is_array($attachment)) {
-                switch ($attachment['action']) {
+                switch($attachment['action']) {
                     case 'replace':
                         if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                             $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
@@ -1077,15 +1047,11 @@ if ($action == "newthread") {
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
                 updatethreadcount($tid);
                 updateforumcount($fid);
-            } else if (isset($delete) && $delete == "yes" && $isfirstpost['pid'] == $pid) {
-                // find out if thread contains more than one post.
-                // -- If so, delete only the head pid.
-                // -- If not (ie only one post in the thread) kill the thread
+            } else if (isset($delete) && $delete == 'yes' && $isfirstpost['pid'] == $pid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid");
                 $numrows = $db->num_rows($query);
                 $db->free_result($query);
 
-                // one row = kill thread properly
                 if ($numrows == 1) {
                     $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid");
                     while($result = $db->fetch_array($query)) {
@@ -1099,7 +1065,6 @@ if ($action == "newthread") {
                 }
 
                 if ($numrows > 1) {
-                    // delete the old head pid, but leave the rest of the thread intact
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
                     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
@@ -1107,7 +1072,6 @@ if ($action == "newthread") {
                     $threaddelete = 'no';
                 }
 
-                // update forum and thread count stats
                 updatethreadcount($tid);
                 updateforumcount($fid);
             }
