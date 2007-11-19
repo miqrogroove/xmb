@@ -456,15 +456,7 @@ $versionlong<br />
 $lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright
 <br />
 <br />
-$footerstuff[totaltime]$footerstuff[querynum]
-<br />
-$footerstuff[phpsql]
-<br />
-$footerstuff[load]
-<br />
-$footerstuff[querydump]
-<br />
-<br />
+$footerstuff[totaltime]$footerstuff[querynum]$footerstuff[phpsql]$footerstuff[load]$footerstuff[querydump]
 </td>
 </tr>
 </table>
