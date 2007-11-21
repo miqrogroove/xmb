@@ -541,6 +541,7 @@ $lang['splitthreadmsg'] = "Thank you, the topic has been split. You are now bein
 $lang['srchbyforum'] = "in (forum):";
 $lang['srchfilter_double'] = "Filter out all double posts?";
 $lang['startticker'] = "Resume";
+$lang['statistics'] = "Statistics";
 $lang['stats4'] = "Please welcome our newest member";
 $lang['stats_incomplete'] = "Could not generate board statistics, stats can not be viewed during the first 24 hours of the board's existence, or when no posts/members are found.";
 $lang['status'] = "Status";

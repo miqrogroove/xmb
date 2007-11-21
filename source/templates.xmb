@@ -906,33 +906,22 @@ $multipage
 </table>
 
 |#*XMB TEMPLATE FILE*#|index_whosonline|#*XMB TEMPLATE*#|
-</table>
+<tr class="header">
+<td colspan="3">
+<a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
 </td>
 </tr>
-</table>
-<br />
-<table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td class="tablerow" colspan="2" width="100%"><table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
-<tr>
-<td colspan="2" class="category"><a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font></td>
+<td bgcolor="$altbg1" colspan="3" class="smalltxt" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor;">
+$lang[key]<strong><u><i>$lang[superadmin]</i></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden
+</td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" colspan="2" class="mediumtxt">$lang[key]<strong><u><i>$lang[superadmin]</i></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden</td>
-</tr>
-<tr>
-<td bgcolor="$altbg1" align="center" width="4%"><img src="$imgdir/online.gif" alt="$lang[whosonline]" /></td>
-<td bgcolor="$altbg2" class="mediumtxt">$memtally&nbsp;</td>
-</tr>
-<tr>
-<td colspan="2" class="category"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">[+] $lang[last50today]</font></strong></a></td>
-</tr>
-<tr>
-<td bgcolor="$altbg2" colspan="2" class="mediumtxt">$todaymembers&nbsp;</td>
-</tr>
-</table>
+<td bgcolor="$altbg2" width="4%" align="center" style="border-right: {$borderwidth}px solid $bordercolor;">
+<img src="$imgdir/online.gif" alt="$lang[whosonline]" />
+</td>
+<td bgcolor="$altbg2" width="96%" colspan="2" align="left" class="mediumtxt">
+$memtally
 </td>
 </tr>
 
@@ -1068,25 +1057,24 @@ $welcome
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
 $indexBarTop
 $forumlist
-$whosonline
 </table>
 </td>
 </tr>
 </table>
+
 <br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellpadding="$tablespace" cellspacing="0" width="$tablewidth" align="center" style="border: {$borderwidth}px solid $bordercolor;">
 <tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td colspan="3" class="category" style="border-bottom: {$borderwidth}px solid $bordercolor;"><strong><font color="$cattext">$lang[statistics]</font></strong></td>
+</tr>
+$whosonline
 <tr>
-<td align="left" class="category"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
-<td align="left" class="category"><font color="$cattext"><strong>$lang[key]</strong></font></td>
+<td colspan="2" align="left" class="header" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor; border-right: {$borderwidth}px solid $bordercolor;"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
+<td align="left" class="header" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor;"><font color="$cattext"><strong>$lang[key]</strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="$altbg2">
-<td width="50%" align="left" valign="top">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
-<td width="50%" align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
-</tr>
-</table></td>
+<td colspan="2" align="left" valign="top" style="border-right: {$borderwidth}px solid $bordercolor;">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
+<td align="left" width="50%" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
 </tr>
 </table>
 
