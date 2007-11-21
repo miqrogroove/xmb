@@ -882,7 +882,7 @@ $multipage
 </tr>
 $onlineusers
 <tr>
-<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">Who Was Online Today</font></strong></a> | <a href="javascript:history.go(0)"><strong><font color="$cattext">Refresh Page</font></strong></a></td>
+<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">$lang[onlinetoday]</font></strong></a> | <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a></td>
 </tr>
 $multipage
 </table>
