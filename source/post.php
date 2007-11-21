@@ -721,9 +721,9 @@ if ($action == "newthread") {
         $for = $db->fetch_array($query);
         $last = $for['lastpost'];
 
-        if ($last != "") {
+        if ($last != '') {
             $lastpost = explode("|", $last);
-            $rightnow = time() - $floodctrl;
+            $rightnow = $onlinetime - $floodctrl;
 
             if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
                 $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
@@ -886,7 +886,7 @@ if ($action == "newthread") {
                 }
                 $listed_icons += 1;
                 if ($listed_icons == 9) {
-                    $icons .= "<br />";
+                    $icons .= '<br />';
                     $listed_icons = 0;
                 }
             }
@@ -1041,7 +1041,7 @@ if ($action == "newthread") {
                 }
             }
 
-            if (isset($delete) && $delete == "yes" && !($isfirstpost['pid'] == $pid)) {
+            if (isset($delete) && $delete == 'yes' && !($isfirstpost['pid'] == $pid)) {
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
                 $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
@@ -1071,7 +1071,6 @@ if ($action == "newthread") {
                     $db->query("UPDATE ".X_PREFIX."posts SET subject='$orig[subject]' WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
                     $threaddelete = 'no';
                 }
-
                 updatethreadcount($tid);
                 updateforumcount($fid);
             }
@@ -1083,7 +1082,6 @@ if ($action == "newthread") {
             $query =$db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid AND fid=$fid");
             $posts = $db->result($query,0);
             $topicpages = quickpage($posts, $ppp);
-
             message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         } else {
             message($lang['editpostmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);

@@ -320,8 +320,8 @@ if ($topicperpage < 5) {
 
 // Get the user-vars, and make them semi-global
 if (!isset($xmbuser)) {
-    $xmbuser = '';
-    $xmbpw = '';
+    $xmbuser        = '';
+    $xmbpw          = '';
     $self['status'] = '';
 }
 
@@ -452,10 +452,9 @@ if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
 }
 
 // Checks for the possibility to register
+$reglink = '';
 if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
-    $reglink = "- <a href=\"member.php?action=coppa\">$lang[textregister]</a>";
-} else {
-    $reglink = '';
+    $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
 }
 
 // Creates login/logout links
@@ -467,7 +466,7 @@ if (X_MEMBER) {
     $u2ulink = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[banu2u]</a> - ";
 
     if (X_ADMIN) {
-        $cplink = " - <a href=\"cp.php\">$lang[textcp]</a>";
+        $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
 
     $notify = "$lang[loggedin] <a href=\"member.php?action=viewpro&amp;member=".rawurlencode($onlineuser)."\">$xmbuser</a><br />[$loginout - $u2ulink$memcp$cplink]";
@@ -636,32 +635,32 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 }
 
 // Search-link
-if ($SETTINGS['searchstatus'] == "on") {
+if ($SETTINGS['searchstatus'] == 'on') {
     $links[] = "<img src=\"$imgdir/search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
 }
 
 // Faq-link
-if ($SETTINGS['faqstatus'] == "on") {
+if ($SETTINGS['faqstatus'] == 'on') {
     $links[] = "<img src=\"$imgdir/faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
 }
 
 // Memberlist-link
-if ($SETTINGS['memliststatus'] == "on") {
+if ($SETTINGS['memliststatus'] == 'on') {
     $links[] = "<img src=\"$imgdir/members_list.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
 }
 
 // Today's posts-link
-if ($SETTINGS['todaysposts'] == "on") {
+if ($SETTINGS['todaysposts'] == 'on') {
     $links[] = "<img src=\"$imgdir/todays_posts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
 }
 
 // Stats-link
-if ($SETTINGS['stats'] == "on") {
+if ($SETTINGS['stats'] == 'on') {
     $links[] = "<img src=\"$imgdir/stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
 }
 
 // 'Forum Rules'-link
-if ($SETTINGS['bbrules'] == "on") {
+if ($SETTINGS['bbrules'] == 'on') {
     $links[] = "<img src=\"$imgdir/bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
 }
 
@@ -669,7 +668,7 @@ $links = implode(' &nbsp; ', $links);
 
 // Show all plugins
 $pluglinks = array();
-foreach ($plugname as $plugnum => $item) {
+foreach($plugname as $plugnum => $item) {
     if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum]) ) {
         if (trim($plugimg[$plugnum]) != '' ) {
             $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" />&nbsp;';
@@ -690,16 +689,16 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+if ($SETTTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
     $newu2umsg = '';
     eval('$css = "'.template('css').'";');
     message(nl2br(stripslashes($bboffreason)));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($regviewonly == "on") {
+if ($SETTTINGS['regviewonly'] == 'on') {
     if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($coppa == 'on') {
+        if ($SETTTINGS['coppa'] == 'on') {
             $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
         } else {
             $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
