@@ -51,7 +51,6 @@ function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $
 function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
     $errors = '';
     $recipients = array_unique(array_map('trim', explode(',', $msgto)));
-    $u2uid = (int) $u2uid;
 
     foreach($recipients as $recp) {
         $errors .= u2u_send_recp($recp, $subject, $message, $u2uid);

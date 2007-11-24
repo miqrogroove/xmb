@@ -57,6 +57,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
+$action = getVar('action');
 $sendmode = (isset($action) && $action == 'send') ? "true" : "false";
 
 eval('$u2uheader = "'.template('u2u_header').'";');
@@ -67,16 +68,20 @@ if (X_GUEST) {
     exit;
 }
 
+$folder = formVar('folder');
+if (!$folder)
+    $folder = getVar('folder');
+
 $folderlist = $folders = '';
 $farray = array();
-if (isset($folder) && (!isset($action) || $action == 'mod' || $action == 'view')) {
+if ($folder && (!$action || $action == 'mod' || $action == 'view')) {
     $folder = checkInput($folder, true);
 } else {
     $folder = 'Inbox';
 }
 
 $u2ucount = u2u_folderList();
-$u2uid = (isset($u2uid) && is_numeric($u2uid)) ? (int) $u2uid  : 0;
+$u2uid = getInt('u2uid');
 
 $thewidth = ($self['useoldu2u'] == 'yes') ? $tablewidth : '100%';
 
@@ -84,7 +89,7 @@ $u2upreview = $leftpane = '';
 
 switch ($action) {
     case 'modif':
-        $mod = (isset($mod)) ? $mod : '';
+        $mod = formVar('mod');
         switch($mod) {
             case 'send':
                 if ($u2uid > 0) {
@@ -132,7 +137,13 @@ switch ($action) {
         }
         break;
     case 'mod':
-        $modaction = (isset($modaction)) ? $modaction : '';
+        $modaction = formVar('modaction');
+        $u2u_select = getFormArrayInt('u2u_select');
+        $delete = formVar('delete');
+        $move = formVar('move');
+        $tofolder = formVar('tofolder');
+        $markunread = formVar('markunread');
+
         switch ($modaction) {
             case 'delete':
                 if (!isset($u2u_select) || empty($u2u_select)) {
@@ -164,9 +175,9 @@ switch ($action) {
         }
         break;
     case 'send':
-        $msgto = isset($msgto) ? $msgto : '';
-        $subject = isset($subject) ? $subject : '';
-        $message = isset($message) ? $message : '';
+        $msgto = formVar('msgto');
+        $subject = formVar('subject');
+        $message = formVar('message');
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':
@@ -176,7 +187,8 @@ switch ($action) {
         u2u_print($u2uid, false);
         break;
     case 'folders':
-        if (isset($folderssubmit)) {
+        if (onSubmit('folderssubmit')) {
+            $u2ufolders = formVar('u2ufolders');
             u2u_folderSubmit($u2ufolders, $folders);
         } else {
             $self['u2ufolders'] = checkOutput($self['u2ufolders']);
@@ -196,8 +208,8 @@ switch ($action) {
 }
 
 if (!X_STAFF) {
-    $percentage = (0 == $u2uquota) ? 0 : (float)(($u2ucount / $u2uquota) * 100);
-    if (100 < $percentage) {
+    $percentage = (0 == $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / $SETTINGS['u2uquota']) * 100);
+    if ($percentage > 100) {
         $barwidth = 100;
         eval($lang['evaluqinfo_over']);
     } else {
