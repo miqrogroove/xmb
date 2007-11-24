@@ -689,16 +689,16 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($SETTTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
     $newu2umsg = '';
     eval('$css = "'.template('css').'";');
     message(nl2br(stripslashes($bboffreason)));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($SETTTINGS['regviewonly'] == 'on') {
+if ($SETTINGS['regviewonly'] == 'on') {
     if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($SETTTINGS['coppa'] == 'on') {
+        if ($SETTINGS['coppa'] == 'on') {
             $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
         } else {
             $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
