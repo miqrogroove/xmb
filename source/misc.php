@@ -618,7 +618,9 @@ switch ($action) {
             $desc = 'asc';
         }
 
-        if ($page && $page > 0) {
+        $result = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members"), 0);
+        $max_page = (int) ($result / $memberperpage) + 1;
+        if ($page && $page <= $max_page) {
             $start_limit = ($page-1) * $SETTINGS['memberperpage'];
         } else {
             $start_limit = 0;
