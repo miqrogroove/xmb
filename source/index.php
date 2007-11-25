@@ -49,7 +49,7 @@ $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
     $contents = '';
     $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $tickercontents));
-    for ($i=0;$i<count($news);$i++) {
+    for($i=0;$i<count($news);$i++) {
         if (strlen(trim($news[$i])) == 0) {
             continue;
         }
@@ -62,7 +62,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
 
 $gid = getInt('gid');
 if ($gid) {
-    $gid = (int) $gid;
+    $gid = (int)$gid;
     $whosonlinestatus = 'off';
     $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid=$gid AND type='group' LIMIT 1");
     $cat = $db->fetch_array($query);
@@ -109,8 +109,8 @@ if ($gid == 0) {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
         $query  = $db->query("SELECT m.status, m.username, m.invisible, w.* FROM ".X_PREFIX."whosonline w LEFT JOIN ".X_PREFIX."members m ON m.username=w.username ORDER BY w.username");
-        while ($online = $db->fetch_array($query)) {
-            switch ($online['username']) {
+        while($online = $db->fetch_array($query)) {
+            switch($online['username']) {
                 case 'xguest123':
                     $guestcount++;
                     break;
@@ -118,7 +118,7 @@ if ($gid == 0) {
                     if ($online['invisible'] != 0 && X_ADMIN) {
                         $member[] = $online;
                         $hiddencount++;
-                    } elseif ($online['invisible'] != 0) {
+                    } else if ($online['invisible'] != 0) {
                         $hiddencount++;
                     } else {
                         $member[] = $online;
@@ -153,13 +153,12 @@ if ($gid == 0) {
         $memonmsg = '<span class="smalltxt">'.$lang['whosonmsg'].'</span>';
 
         $memtally = array();
-        $num = 1;
-        $comma = '';
+        $num      = 1;
+        $comma    = '';
         $show_total = (X_ADMIN) ? ($membercount+$hiddencount) : ($membercount);
 
         $show_inv_key = false;
-
-        for ($mnum=0; $mnum<$show_total; $mnum++) {
+        for($mnum=0; $mnum<$show_total; $mnum++) {
             $pre = $suff = '';
 
             $online = $member[$mnum];
@@ -195,31 +194,6 @@ if ($gid == 0) {
             $memtally = '&nbsp;';
         }
 
-        $datecut = $onlinetime - (3600 * 24);
-        if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, 50");
-        } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY lastvisit DESC LIMIT 0, 50");
-        }
-
-        $todaymembersnum = 0;
-        $todaymembers = array();
-        $pre = $suff = '';
-        while ($memberstoday = $db->fetch_array($query)) {
-            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
-            $suff = '</span>';
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
-            ++$todaymembersnum;
-        }
-        $todaymembers = implode(', ', $todaymembers);
-        $db->free_result($query);
-
-        if ($todaymembersnum == 1) {
-            $memontoday = $todaymembersnum.$lang['textmembertoday'];
-        } else {
-            $memontoday = $todaymembersnum.$lang['textmemberstoday'];
-        }
-
         eval('$whosonline = "'.template('index_whosonline').'";');
     } else {
         $whosonline = '';
@@ -251,7 +225,7 @@ if ($SETTINGS['catsonly'] != 'on') {
     if ($SETTINGS['indexshowbar'] == 2) {
         eval('$indexBarTop = "'.template('index_category_hr').'";');
     }
-} elseif ($gid > 0) {
+} else if ($gid > 0) {
     eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
@@ -259,21 +233,21 @@ if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $query = $db->query("SELECT fid, fup, name, private, userlist FROM $table_forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
-        while ($queryrow = $db->fetch_array($query)) {
+        while($queryrow = $db->fetch_array($query)) {
             $index_subforums[] = $queryrow;
         }
         $db->free_result($query);
     }
 }
 
-while ($thing = $db->fetch_array($fquery)) {
+while($thing = $db->fetch_array($fquery)) {
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = forum($thing, "index_forum");
     } else {
         $cforum = '';
     }
 
-    if ((int) $thing['cat_fid'] === 0) {
+    if ((int)$thing['cat_fid'] === 0) {
         $catLessForums++;
     }
 
