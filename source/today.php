@@ -133,7 +133,7 @@ if ($results == 0) {
     validatePpp();
 
     $max_page = (int) ($results / $tpp) + 1;
-    $page = (isset($page) && is_numeric($page) && $page <= $max_page) ? ($page < 1 ? 1 : ((int) $page)) : 1;
+    $page = (isset($page) && is_numeric($page) && $page >= 1 && $page <= $max_page) ? ($page < 1 ? 1 : ((int) $page)) : 1;
     $start_limit = ($page > 1) ? (($page-1) * $tpp) : 0;
 
     $mpurl = 'today.php?daysold='.$daysold;

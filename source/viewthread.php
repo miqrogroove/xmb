@@ -301,7 +301,7 @@ if (!$action) {
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
     $max_page = (int) ($thread['replies'] / $ppp) + 1;
-    if ($page && $page <= $max_page) {
+    if ($page && $page >= 1 && $page <= $max_page) {
         if ($page < 1) {
             $page = 1;
         }

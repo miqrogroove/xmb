@@ -497,7 +497,7 @@ switch ($action) {
         $page = getInt('page');
         $count = $db->num_rows($db->query("SELECT * FROM ".X_PREFIX."whosonline"));
         $max_page = (int) ($count / $tpp) + 1;
-        if ($page && $page <= $max_page) {
+        if ($page && $page >= 1 && $page <= $max_page) {
             $start_limit = ($page-1) * $tpp;
         } else {
             $start_limit = 0;
@@ -620,7 +620,7 @@ switch ($action) {
 
         $result = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members"), 0);
         $max_page = (int) ($result / $memberperpage) + 1;
-        if ($page && $page <= $max_page) {
+        if ($page && $page >= 1 && $page <= $max_page) {
             $start_limit = ($page-1) * $SETTINGS['memberperpage'];
         } else {
             $start_limit = 0;
