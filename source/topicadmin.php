@@ -29,12 +29,11 @@
 require 'header.php';
 require ROOT.'include/topicadmin.inc.php';
 
-$_tid = (isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0));
-$_fid = (isset($_POST['fid']) ? $_POST['fid'] : (isset($_GET['fid']) ? $_GET['fid'] : 0));
-$pid = (isset($pid) ? (int) $pid : 0);
-$fid = (isset($_fid) ? (int) $_fid : 0);
-$othertid = (isset($othertid) ? (int) $othertid : 0);
-$action = (isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : ''));
+$_tid     = isset($_POST['tid']) && is_numeric($_POST['tid']) ? (int) $_POST['tid'] : (isset($_GET['tid']) && is_numeric($_GET['tid']) ? (int) $_GET['tid'] : 0);
+$fid      = isset($_POST['fid']) && is_numeric($_POST['fid']) ? (int) $_POST['fid'] : (isset($_GET['fid']) && is_numeric($_GET['fid']) ? (int) $_GET['fid'] : 0);
+$pid      = getInt('pid');
+$othertid = formInt('othertid');
+$action   = isset($_POST['action']) && !empty($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) && !empty($_GET['action']) ? $_GET['action'] : '');
 
 if (is_array($_tid)) {
     $tids = array_unique(array_map('intval', $_tid));
@@ -44,14 +43,15 @@ if (is_array($_tid)) {
     }
 } else if (strstr($_tid, ',')) {
     $tids = array_unique(array_map('intval', explode(',', $_tid)));
-    $tid = '';
+    $tid = array();
     foreach ($tids as $value) {
-        $tid .= (empty($tid)) ? $value : ','.$value;
+        $tid[] = $value;
     }
+    $tid = implode(',', $tid);
 } else {
-    $tid = (int)$_tid;
+    $tid = (int) $_tid;
 }
-$kill= false;
+$kill = false;
 
 loadtemplates(
 'topicadmin_delete',
@@ -72,7 +72,7 @@ loadtemplates(
 
 eval('$css = "'.template('css').'";');
 
-if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
+if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     $thread = $db->fetch_array($query);
     $threadname = html_entity_decode(stripslashes($thread['subject']));
@@ -81,7 +81,7 @@ if (isset($tid) && !is_array($tid) && false === strstr($tid, ',')) {
     $threadSubject = '';
 }
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=".$fid);
 $forums = $db->fetch_array($query);
 $forums['name'] = stripslashes($forums['name']);
 
@@ -93,7 +93,7 @@ if ($fid == 0) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
 } else if (isset($forums['type']) && $forums['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid=$forums[fup]");
+    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums $forums[fup]");
     $fup = $db->fetch_array($query);
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode($fup['name']).'</a>');
