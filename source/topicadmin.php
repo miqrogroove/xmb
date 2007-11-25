@@ -29,7 +29,7 @@
 require 'header.php';
 require ROOT.'include/topicadmin.inc.php';
 
-$_tid     = isset($_POST['tid']) && is_numeric($_POST['tid']) ? (int) $_POST['tid'] : (isset($_GET['tid']) && is_numeric($_GET['tid']) ? (int) $_GET['tid'] : 0);
+$_tid     = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
 $fid      = isset($_POST['fid']) && is_numeric($_POST['fid']) ? (int) $_POST['fid'] : (isset($_GET['fid']) && is_numeric($_GET['fid']) ? (int) $_GET['fid'] : 0);
 $pid      = getInt('pid');
 $othertid = formInt('othertid');
@@ -269,7 +269,8 @@ switch ($action) {
             $forumselect = forumList('moveto', false, false, $fid);
             eval('echo stripslashes("'.template('topicadmin_move').'");');
         } else {
-            if ($moveto != '') {
+            $moveto = formInt('moveto');
+            if ($moveto) {
                 $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
                 $forumtype = $db->result($query, 0);
                 $db->free_result($query);
