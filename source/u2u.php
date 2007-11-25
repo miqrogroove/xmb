@@ -69,8 +69,9 @@ if (X_GUEST) {
 }
 
 $folder = formVar('folder');
-if (!$folder)
+if (!$folder) {
     $folder = getVar('folder');
+}
 
 $folderlist = $folders = '';
 $farray = array();
@@ -82,6 +83,9 @@ if ($folder && (!$action || $action == 'mod' || $action == 'view')) {
 
 $u2ucount = u2u_folderList();
 $u2uid = getInt('u2uid');
+if (!$u2uid) {
+    $u2uid = formVar('u2uid');
+}
 
 $thewidth = ($self['useoldu2u'] == 'yes') ? $tablewidth : '100%';
 
@@ -178,6 +182,7 @@ switch ($action) {
         $msgto = formVar('msgto');
         $subject = formVar('subject');
         $message = formVar('message');
+
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':

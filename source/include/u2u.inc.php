@@ -103,8 +103,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
     $leftpane = '';
-    $del      = ('yes' == $del) ? 'yes' : 'no';
-    $u2uid    = (int) $u2uid;
+    $del      = ($del == 'yes') ? 'yes' : 'no';
     $msgto    = checkInput($msgto, '', '', 'script', false);
     $subject  = strip_tags($subject);
     $username = checkInput($username, '', '', 'script', false);
@@ -117,7 +116,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         error($lang['u2ureachedquota'], false, $u2uheader, $u2ufooter, false, true, false, false);
     }
 
-    if (isset($savesubmit)) {
+    if (onSubmit('savesubmit')) {
         // needs to be fixed
         if (empty($subject) || empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
@@ -126,7 +125,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         u2u_msg($lang['imsavedmsg'], "u2u.php?folder=Drafts");
     }
 
-    if (isset($sendsubmit)) {
+    if (onSubmit('sendsubmit')) {
         $errors = '';
         // needs to be fixed
         if (empty($subject) || empty($message)) {
