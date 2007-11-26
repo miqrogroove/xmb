@@ -37,7 +37,7 @@ loadtemplates(
 
 smcwcache();
 
-nav($lang['alttodayposts']);
+nav($lang['navtodaysposts']);
 
 eval('$css = "'.template('css').'";');
 eval('echo "'.template('header').'";');
