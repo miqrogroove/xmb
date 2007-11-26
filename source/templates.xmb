@@ -2974,6 +2974,9 @@ $nextlink
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
+</tr>
 $multipage
 <tr class="header" align="center">
 <td width="20%">$lang[textusername]</td>
@@ -4469,6 +4472,9 @@ $forumlist
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
+</tr>
 $multipage
 <tr class="header" align="center">
 <td width="20%">$lang[textusername]</td>
