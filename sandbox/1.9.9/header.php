@@ -191,7 +191,7 @@ if (file_exists('./fixhack.php') && !@unlink('./fixhack.php')) {
     exit('<h1>Error:</h1><br />The hack repair tool ("./fixhack.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
-if (file_exists('./upgrade/') && !@unlink('./upgrade/')) {
+if (file_exists('./upgrade/') && !@unlink('./upgrade/') || file_exists('./Upgrade/') && !@unlink('./Upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
