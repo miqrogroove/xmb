@@ -93,7 +93,7 @@ if ($fid == 0) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
 } else if (isset($forums['type']) && $forums['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums $forums[fup]");
+    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
     $fup = $db->fetch_array($query);
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode($fup['name']).'</a>');
