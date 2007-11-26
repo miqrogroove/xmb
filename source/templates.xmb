@@ -386,6 +386,9 @@ $dayselect
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
+</tr>
 $multipage
 <tr class="header">
 <td width="4%" align="center">&nbsp;</td>
