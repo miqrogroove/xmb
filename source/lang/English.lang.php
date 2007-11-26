@@ -626,6 +626,7 @@ $lang['textcattextcolor'] = "Category Text Colour:";
 $lang['textcensorfind'] = "Find";
 $lang['textcensorreplace'] = "Replace With";
 $lang['textcensors'] = "Censors";
+$lang['textcheck'] = "Check Tables";
 $lang['textclosethread'] = "Close Thread";
 $lang['textcode'] = "Code:";
 $lang['textcoppa'] = "COPPA Agreement";

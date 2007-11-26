@@ -55,14 +55,14 @@ displayAdminPanel();
 
 $action = getVar('action');
 
-switch ($action) {
+switch($action) {
     case 'fixftotals':
         $fquery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum'");
-        while ($forum = $db->fetch_array($fquery)) {
+        while($forum = $db->fetch_array($fquery)) {
             $threadnum = $postnum = $sub_threadnum = $sub_postnum = 0;
             $squery = $stquery = $spquery = $ftquery = $fpquery = '';
             $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$forum[fid] AND type='sub'");
-            while ($sub = $db->fetch_array($squery)) {
+            while($sub = $db->fetch_array($squery)) {
                 $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$sub[fid]");
                 $sub_threadnum = $db->result($stquery, 0);
 
@@ -92,7 +92,7 @@ switch ($action) {
 
     case 'fixttotals':
         $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
-        while ($threads = $db->fetch_array($queryt)) {
+        while($threads = $db->fetch_array($queryt)) {
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$threads[tid]");
             $replynum = $db->result($query, 0) -1;
             $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid=$threads[tid]");
@@ -106,7 +106,7 @@ switch ($action) {
 
     case 'fixmposts':
         $queryt = $db->query("SELECT username FROM ".X_PREFIX."members");
-        while ($mem = $db->fetch_array($queryt)) {
+        while($mem = $db->fetch_array($queryt)) {
             $mem['username'] = addslashes(stripslashes($mem['username']));
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$mem[username]'");
             $postsnum = $db->result($query, 0);
@@ -121,10 +121,10 @@ switch ($action) {
 
     case 'fixlastposts':
         $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup='0' OR fup='') AND type = 'forum'");
-        while ($loner = $db->fetch_array($q)) {
+        while($loner = $db->fetch_array($q)) {
             $lastpost = array();
             $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$loner[fid]");
-            while ($sub = $db->fetch_array($subq)) {
+            while($sub = $db->fetch_array($subq)) {
                 $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$sub[fid] ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
@@ -147,7 +147,7 @@ switch ($action) {
             } else {
                 $top = 0;
                 $mkey = -1;
-                foreach ($lastpost as $key => $v) {
+                foreach($lastpost as $key => $v) {
                     if ($v['dateline'] > $top) {
                         $mkey = $key;
                         $top = $v['dateline'];
@@ -159,12 +159,12 @@ switch ($action) {
         }
         $db->free_result($q);
         $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
-        while ($cat = $db->fetch_array($q)) {
+        while($cat = $db->fetch_array($q)) {
             $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
-            while ($forum = $db->fetch_array($fq)) {
+            while($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
                 $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
-                while ($sub = $db->fetch_array($subq)) {
+                while($sub = $db->fetch_array($subq)) {
                     $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
@@ -187,7 +187,7 @@ switch ($action) {
                 } else {
                     $top = 0;
                     $mkey = -1;
-                    foreach ($lastpost as $key => $v) {
+                    foreach($lastpost as $key => $v) {
                         if ($v['dateline'] > $top) {
                             $mkey = $key;
                             $top = $v['dateline'];
@@ -201,7 +201,7 @@ switch ($action) {
         }
         $db->free_result($q);
         $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
-        while ($thread = $db->fetch_array($q)) {
+        while($thread = $db->fetch_array($q)) {
             $lastpost = array();
             $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
@@ -234,7 +234,7 @@ switch ($action) {
     case 'u2udump':
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['u2udump_confirm']."<br /><form action=\"tools.php?action=u2udump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
-        } elseif ($lang['textyes'] == $yessubmit) {
+        } else if ($lang['textyes'] == $yessubmit) {
             $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_u2u]</td></tr></table></table>";
@@ -249,7 +249,7 @@ switch ($action) {
     case 'whosonlinedump':
         if (noSubmit('yessubmit')) {
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['whoodump_confirm']."<br /><form action=\"tools.php?action=whosonlinedump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
-        } elseif ($lang['textyes'] == $yessubmit) {
+        } else if ($lang['textyes'] == $yessubmit) {
             $db->query("TRUNCATE ".X_PREFIX."whosonline");
             nav($lang['tools']);
             echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_whosonline]</td></tr></table></table>";
@@ -275,7 +275,7 @@ switch ($action) {
             }
 
             $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' OR type='sub'");
-            while ($f = $db->fetch_array($q)) {
+            while($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
             $fq = "fid != '";
@@ -285,7 +285,7 @@ switch ($action) {
 
             $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE $fq");
             $i = 0;
-            while ($t = $db->fetch_array($q)) {
+            while($t = $db->fetch_array($q)) {
                 $db->query("UPDATE ".X_PREFIX."threads SET fid='$export_fid' WHERE tid='$t[tid]'");
                 $db->query("UPDATE ".X_PREFIX."posts SET fid='$export_fid' WHERE tid='$t[tid]'");
                 $i++;
@@ -300,7 +300,7 @@ switch ($action) {
         @set_time_limit(180);
         $tables = $db->fetch_tables($dbname);
         $q = array();
-        foreach ($tables as $key=>$val) {
+        foreach($tables as $key=>$val) {
             if ($start) {
                 dump_query($db->query('REPAIR TABLE `'.$val.'`'));
                 $start = false;
@@ -315,7 +315,7 @@ switch ($action) {
         @set_time_limit(180);
         $tables = $db->fetch_tables($dbname);
         $q = array();
-        foreach ($tables as $key=>$val) {
+        foreach($tables as $key=>$val) {
             if ($start) {
                 dump_query($db->query('OPTIMIZE TABLE `'.$val.'`'));
                 $start = false;
@@ -330,12 +330,27 @@ switch ($action) {
         @set_time_limit(180);
         $tables = $db->fetch_tables($dbname);
         $q = array();
-        foreach ($tables as $key=>$val) {
+        foreach($tables as $key=>$val) {
             if ($start) {
                 dump_query($db->query('ANALYZE TABLE `'.$val.'`'));
                 $start = false;
             } else {
                 dump_query($db->query('ANALYZE TABLE `'.$val.'`'), false);
+            }
+        }
+        break;
+
+    case 'checktables':
+        $start = true;
+        @set_time_limit(180);
+        $tables = $db->fetch_tables($dbname);
+        $q = array();
+        foreach($tables as $key=>$val) {
+            if ($start) {
+                dump_query($db->query('CHECK TABLE `'.$val.'`'));
+                $start = false;
+            } else {
+                dump_query($db->query('CHECK TABLE `'.$val.'`'), false);
             }
         }
         break;
@@ -349,7 +364,7 @@ switch ($action) {
         } else {
             $i = 0;
             $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
-            while ($a = $db->fetch_array($q)) {
+            while($a = $db->fetch_array($q)) {
                 $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid='$a[pid]'");
                 if ($db->num_rows($result) == 0) {
                     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$a[aid]'");

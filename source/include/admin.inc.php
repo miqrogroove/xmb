@@ -345,6 +345,7 @@ function displayAdminPanel() {
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp.php?action=upgrade"><?php echo $lang['raw_mysql']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=analyzetables"><?php echo $lang['analyze']?></a><br />
+    &raquo;&nbsp;<a href="tools.php?action=checktables"><?php echo $lang['textcheck']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=optimizetables"><?php echo $lang['optimize']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=repairtables"><?php echo $lang['repair']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=u2udump"><?php echo $lang['u2udump']?></a><br />
