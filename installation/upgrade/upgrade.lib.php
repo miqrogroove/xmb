@@ -91,7 +91,7 @@ class Upgrade {
         $tbl = array();
 
         $q = $this->db->query("SHOW TABLES LIKE '".str_replace('_', '\_', $tablepre)."%'");
-        while ($t = $this->db->fetch_array($q)) {
+        while($t = $this->db->fetch_array($q)) {
             $t = array_values($t);
             if (in_array(str_replace($tablepre, '', $t[0]), $this->xmb_tables)) {
                 $tbl[] = $t[0];
@@ -101,7 +101,7 @@ class Upgrade {
     }
 
     function loadTables($tables) {
-        foreach ($tables as $k=>$t) {
+        foreach($tables as $k=>$t) {
             $this->loadTable($t);
         }
         return true;
@@ -137,7 +137,7 @@ class Upgrade {
         $cols = array();
         $indices = array();
 
-        foreach ($tbl as $line=>$data) {
+        foreach($tbl as $line=>$data) {
             $data = trim($data);
             if (strpos($data, 'PRIMARY KEY') !== 0 && strpos($data, 'KEY') !== 0) {
                 // we have a column
@@ -173,12 +173,13 @@ class Upgrade {
                     $cols[] = $col;
                 }
             } else {
-                unset($index);      unset($d);
-                $index = array();   $d = array();
+                unset($index);
+                unset($d);
+                $index = array();
+                $d = array();
 
                 if (strpos(trim($data), 'PRIMARY KEY') === 0) {
                     // primary key :)
-
                     $d = explode(' ', trim($data));
 
                     if (strpos($d[3], "))")) {
@@ -235,7 +236,7 @@ class Upgrade {
         $table = $this->tables[$tbl];
         $parts = array();
 
-        foreach ($table['cols'] as $col) {
+        foreach($table['cols'] as $col) {
             $p = array();
             $p[] = '`'.$col['name'].'`';
             $p[] = $col['type'];
@@ -258,7 +259,7 @@ class Upgrade {
             $parts[] = implode(' ', $p);
         }
 
-        foreach ($table['indices'] as $index) {
+        foreach($table['indices'] as $index) {
              if ($index['type'] == 'KEY') {
                 $keylen = $index['keylen'];
                 if (is_numeric($keylen) && $keylen > 0) {
@@ -309,11 +310,11 @@ class Upgrade {
 
         $cols = $this->getColsByTable($table);
 
-        foreach ($cols as $c) {
+        foreach($cols as $c) {
             $col[] = implode('-', $c);
         }
 
-        foreach ($this->tables[$table]['cols'] as $c) {
+        foreach($this->tables[$table]['cols'] as $c) {
             $mstr[] = implode('-', $c);
         }
 
@@ -327,11 +328,11 @@ class Upgrade {
         $indices = $this->getIndicesByTable($table);
         $ind = array();
         $mstr = array();
-        foreach ($indices as $c) {
+        foreach($indices as $c) {
             $ind[] = implode('-', $c);
         }
 
-        foreach ($this->tables[$table]['indices'] as $c) {
+        foreach($this->tables[$table]['indices'] as $c) {
             $mstr[] = implode('-', $c);
         }
 
@@ -353,11 +354,11 @@ class Upgrade {
         $diff = array();
 
         $cols = $this->getColsByTable($table);
-        foreach ($cols as $c) {
+        foreach($cols as $c) {
             $col[] = $c['name'];     // name
         }
 
-        foreach ($this->tables[$table]['cols'] as $c) {
+        foreach($this->tables[$table]['cols'] as $c) {
             $mstr[] = $c['name'];    // name again
         }
 
@@ -379,19 +380,19 @@ class Upgrade {
 
     function makeIntelligentDiff($d) {
         $newdiff = array();
-        foreach ($d as $t=>$diff) {
+        foreach($d as $t=>$diff) {
             if ($diff['cols'] == null && $diff['indices'] == null) {
                 continue;
             } else {
                 if (isset($diff['indices']['-'])) {
-                    foreach ($diff['indices']['-'] as $min) {
+                    foreach($diff['indices']['-'] as $min) {
                         $m = explode('-', $min);
                         $newdiff[$t]['indices']['add'][] = $m[2];
                     }
                 }
 
                 if (isset($diff['indices']['+'])) {
-                    foreach ($diff['indices']['+'] as $max) {
+                    foreach($diff['indices']['+'] as $max) {
                         $m = explode('-', $max);
                         $newdiff[$t]['indices']['drop'][] = $m[2];
                     }
@@ -401,14 +402,14 @@ class Upgrade {
                 $add = array();
 
                 if (isset($diff['cols']['-'])) {
-                    foreach ($diff['cols']['-'] as $min) {
+                    foreach($diff['cols']['-'] as $min) {
                         $m = explode('-', $min);
                         $drop[] = $m[0];
                     }
                 }
 
                 if (isset($diff['cols']['+'])) {
-                    foreach ($diff['cols']['+'] as $max) {
+                    foreach($diff['cols']['+'] as $max) {
                         $m = explode('-', $max);
                         $add[] = $m[0];
                     }
@@ -418,19 +419,19 @@ class Upgrade {
                 $ad = array_diff($drop, $add);
                 $dr = array_diff($add, $drop);
 
-                foreach ($dr as $k=>$name) {
+                foreach($dr as $k=>$name) {
                     // drop $name;
                     $newdiff[$t]['cols']['drop'][] = $name;
                 }
 
-                foreach ($ad as $k=>$name) {
+                foreach($ad as $k=>$name) {
                     $newdiff[$t]['cols']['add'][] = $name;
                 }
 
                 $alter = array_diff($drop, $dr);    // this one should be exactly the same as the other one :)
 
-                foreach ($alter as $key=>$name) {
-                    foreach ($diff['cols']['+'] as $k=>$d) {
+                foreach($alter as $key=>$name) {
+                    foreach($diff['cols']['+'] as $k=>$d) {
                         if (strpos($d, $name) === 0) {
                             // just change everything except name :P
                             $newdiff[$t]['cols']['alter'][] = $name;
@@ -444,7 +445,7 @@ class Upgrade {
     }
 
     function getColInfoByName($table, $col) {
-        foreach ($this->tables[$table]['cols'] as $c) {
+        foreach($this->tables[$table]['cols'] as $c) {
             if ($c['name'] == $col) {
                 return $c;
             }
@@ -453,7 +454,7 @@ class Upgrade {
     }
 
     function getIndexInfoByName($table, $index) {
-        foreach ($this->tables[$table]['indices'] as $c) {
+        foreach($this->tables[$table]['indices'] as $c) {
             if ($c['name'] == $index) {
                 return $c;
             }
@@ -462,7 +463,7 @@ class Upgrade {
     }
 
     function getIndexInfoByField($table, $index) {
-        foreach ($this->tables[$table]['indices'] as $c) {
+        foreach($this->tables[$table]['indices'] as $c) {
             if ($c['field'] == $index) {
                 return $c;
             }
@@ -472,7 +473,7 @@ class Upgrade {
     }
 
     function getExistingIndexInfoByName($table, $index) {
-        foreach ($this->tc[$table]['indices'] as $c) {
+        foreach($this->tc[$table]['indices'] as $c) {
             if ($c['name'] == $index) {
                 return $c;
             }
@@ -482,7 +483,7 @@ class Upgrade {
 
     function columnExists($table, $col) {
         if (isset($this->tc[$table])) {
-            foreach ($this->tc[$table]['cols'] as $c) {
+            foreach($this->tc[$table]['cols'] as $c) {
                 if ($c['name'] == $col) {
                     return true;
                 }
@@ -493,7 +494,7 @@ class Upgrade {
 
     function indexExistsOnColumn($table, $column, $specific=null) {
         if (isset($this->tc[$table])) {
-            foreach ($this->tc[$table]['indices'] as $i) {
+            foreach($this->tc[$table]['indices'] as $i) {
                 if ($i['field'] == $column) {
                     if ($specific === null) {
                         return true;
@@ -523,9 +524,9 @@ class Upgrade {
         $query = '';
 
         if (isset($diff['indices']['drop'])) {
-            foreach ($diff['indices']['drop'] as $name) {
+            foreach($diff['indices']['drop'] as $name) {
                 // check that it is not a primary key!!
-                foreach ($this->tc[$table]['indices'] as $k=>$i) {
+                foreach($this->tc[$table]['indices'] as $k=>$i) {
                     if ($i['name'] == $name || $i['field'] == $name) {
                         $info = $i;
                         break;
@@ -552,7 +553,7 @@ class Upgrade {
         }
 
         if (isset($diff['cols']['add'])) {
-            foreach ($diff['cols']['add'] as $name) {
+            foreach($diff['cols']['add'] as $name) {
                 // find the position of it first =/
                 $info = $this->getColInfoByName($table, $name);
                 $p = array();
@@ -591,7 +592,7 @@ class Upgrade {
                     $query .= " ADD COLUMN ".$parts.' FIRST'.$ps . ", ";
                 } else {
                     $c = count($this->tables[$table]['cols']);
-                    for ($i=0;$i<($c-1);$i++) {
+                    for($i=0;$i<($c-1);$i++) {
                         if ($this->tables[$table]['cols'][$i+1]['name'] == $name) {
                             $after = $this->tables[$table]['cols'][$i];
                             $query .= " ADD COLUMN ".$parts.' AFTER `'.$after['name'].'`'.$ps .", ";
@@ -611,7 +612,7 @@ class Upgrade {
         }
 
         if (isset($diff['cols']['alter'])) {
-            foreach ($diff['cols']['alter'] as $name) {
+            foreach($diff['cols']['alter'] as $name) {
                 $info = $this->getColInfoByName($table, $name);
                 $p = array();
                 $p[] = '`'.$info['name'].'`';
@@ -647,7 +648,7 @@ class Upgrade {
         }
 
          if (isset($diff['cols']['drop'])) {
-            foreach ($diff['cols']['drop'] as $name) {
+            foreach($diff['cols']['drop'] as $name) {
                 $query .= "DROP COLUMN `".$name."`, ";
             }
          }
@@ -661,7 +662,7 @@ class Upgrade {
         }
 
         if (isset($diff['indices']['add'])) {
-             foreach ($diff['indices']['add'] as $name) {
+             foreach($diff['indices']['add'] as $name) {
                  if (($info = $this->getIndexInfoByName($table, $name)) === false) {
                      $info = $this->getIndexInfoByField($table, $name);
                  }
@@ -698,7 +699,7 @@ class Upgrade {
             $tablepre = $this->tablepre;
         }
 
-        foreach ($this->tc as $key=>$val) {
+        foreach($this->tc as $key=>$val) {
             $tc[str_replace($tablepre, '', $key)] = $val;
         }
         return serialize($tc);
@@ -709,7 +710,7 @@ class Upgrade {
     }
 
     function findColumn(& $columns, $column) {
-        foreach ($columns as $col) {
+        foreach($columns as $col) {
             if ($col['name'] == $column)
                 return $col;
         }
@@ -751,7 +752,7 @@ class Upgrade {
         );
 
         $query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
-        while ($u2u = $this->db->fetch_array($query)) {
+        while($u2u = $this->db->fetch_array($query)) {
             if ($u2u['folder'] == 'inbox') {
                 $type = 'incoming';
                 $owner = $u2u['msgto'];
@@ -806,7 +807,7 @@ class Upgrade {
             $query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `".$this->tablepre."u2u` where owner=''");
 
             if ($this->db->num_rows($query) != 0) {
-                while ($u2u = $this->db->fetch_array($query)) {
+                while($u2u = $this->db->fetch_array($query)) {
                     if ($u2u['folder'] == 'inbox') {
                         $type = 'incoming';
                         $owner = $u2u['msgto'];
@@ -897,7 +898,7 @@ class Upgrade {
                 $cachedLanguages = array();
 
                 $q = $this->db->query("SELECT uid,bday,langfile FROM ".$this->tablepre."members");
-                while ($m = $this->db->fetch_array($q)) {
+                while($m = $this->db->fetch_array($q)) {
                     if (strlen($m['bday']) == 0) {
                         continue;
                     }
@@ -939,7 +940,7 @@ class Upgrade {
                 // restore
                 if (count($cache) > 0) {
                     $this->db->query("UPDATE ".$this->tablepre."members SET bday='0000-00-00'");
-                    foreach ($cache as $uid=>$bd) {
+                    foreach($cache as $uid=>$bd) {
                         $this->db->query("UPDATE ".$this->tablepre."members SET bday='$bd' WHERE uid=$uid");
                     }
                 }
@@ -974,7 +975,7 @@ class Upgrade {
 
     function fixForumPerms() {
         $q = $this->db->query("SELECT fid, private, userlist, postperm_temp, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
-        while ($forum = $this->db->fetch_array($q)) {
+        while($forum = $this->db->fetch_array($q)) {
             if (empty($forum['postperm_temp'])) {
                 break;
             }
@@ -983,7 +984,7 @@ class Upgrade {
             $guestposting = 'off';
             $perms        = array(0, 0, 0, 0);
 
-            for ($i=1; $i<4; $i++) {
+            for($i=1; $i<4; $i++) {
                 if ($postperm[$i] >= 32) { // Means everyone inc guests
                     $perms[$i] = 1;
                     $guestposting = 'on';
@@ -1005,7 +1006,7 @@ class Upgrade {
 
     function fixPolls() {
         $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM ".$this->tablepre."threads WHERE pollopts_temp != ''");
-        while ($thread = $this->db->fetch_array($q)) {
+        while($thread = $this->db->fetch_array($q)) {
             // Some users find their thread subjects aren't escaped, so escape them. Strip any existing slashes so we don't double escape
             $thread['subject'] = addslashes(stripslashes($thread['subject']));
 
@@ -1018,16 +1019,16 @@ class Upgrade {
             $voters = explode('    ', trim($options[$num_options-1]));
 
             $name = array();
-            foreach ($voters as $v) {
+            foreach($voters as $v) {
                 $name[] = trim($v);
             }
             $name = "'".implode("', '", $name)."'";
             $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN ($name)");
-            while ($u = $this->db->fetch_array($query)) {
+            while($u = $this->db->fetch_array($query)) {
                 $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
             }
 
-            for ($i=0; $i<$num_options-1; $i++) {
+            for($i=0; $i<$num_options-1; $i++) {
                 $bit = explode('||~|~||', $options[$i]);
                 $option_name = addslashes(trim($bit[0]));
                 $num_votes = (int) trim($bit[1]);
@@ -1039,7 +1040,7 @@ class Upgrade {
     function createTempFields() {
         $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default ''");
         $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
-        while ($f = $this->db->fetch_array($q)) {
+        while($f = $this->db->fetch_array($q)) {
             if (strpos($f['postperm'], ',') !== false) {
                 $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
             }
@@ -1047,7 +1048,7 @@ class Upgrade {
 
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
         $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");
-        while ($t = $this->db->fetch_array($q)) {
+        while($t = $this->db->fetch_array($q)) {
             $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".addslashes($t['pollopts'])."', pollopts='1' WHERE tid=".$t['tid']);
         }
     }
