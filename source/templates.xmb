@@ -401,10 +401,10 @@ $multipage
 <td width="23%" align="center">$lang[textlastpost]</td>
 </tr>
 $rows
+$multipage
 <tr class="header">
 <td align="center" colspan="8">$lang[todayshow]&nbsp;&nbsp;<input type="text" name="daysold" size="3" value="$daysold" />&nbsp;&nbsp;$lang[todaydays]&nbsp;&nbsp;<input class="submit" type="submit" name="searchsubmit" value="$lang[todaygo]" /></td>
 </tr>
-$multipage
 </table>
 </td>
 </tr>
