@@ -1808,7 +1808,7 @@ $buttoncode
 <a href="member.php?action=viewpro&amp;member=$encodename"><img src="$imgdir/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_u2u|#*XMB TEMPLATE*#|
-<a href="#" onclick="Popup('u2u.php?action=send&amp;username=$encodename', 'Window', 700, 500);"><img src="$imgdir/u2u.gif" border="0" alt="$lang[altu2umember]" /></a>
+<a href="#pid$post[pid]" onclick="Popup('u2u.php?action=send&amp;username=$encodename', 'Window', 700, 500);"><img src="$imgdir/u2u.gif" border="0" alt="$lang[altu2umember]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_ip|#*XMB TEMPLATE*#|
 <a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
