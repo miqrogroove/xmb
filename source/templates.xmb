@@ -1599,7 +1599,7 @@ $subforums
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header">
-<td width="4%" align="center"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/modify_settings.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
+<td width="4%" align="center"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/editforumsets.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
 <td width="4%" align="center">$lang[texticon]</td>
 <td width="45%">$lang[textsubject]</td>
 <td width="6%">$lang[topuntop]</td>
