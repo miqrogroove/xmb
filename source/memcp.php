@@ -57,7 +57,7 @@ $favs = NULL;
 $buddys = NULL;
 
 $action = getVar('action');
-switch ($action) {
+switch($action) {
     case "profile":
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
         nav($lang['texteditpro']);
@@ -171,7 +171,7 @@ if ($action == 'profile') {
         $timezone19 = $timezone20 = $timezone21 = $timezone22 = $timezone23 = $timezone24 = '';
         $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = '';
         $timezone31 = $timezone32 = $timezone33 = '';
-        switch ($member['timeoffset']) {
+        switch($member['timeoffset']) {
             case '-12.00':
                 $timezone1 = $selHTML;
                 break;
@@ -278,7 +278,7 @@ if ($action == 'profile') {
         $themelist[] = '<select name="thememem">';
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-        while ($themeinfo = $db->fetch_array($query)) {
+        while($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $member['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
             } else {
@@ -290,9 +290,9 @@ if ($action == 'profile') {
 
         $langfileselect = createLangFileSelect($member['langfile']);
 
-        $day   = substr($member['bday'], 8, 2);
+        $day = substr($member['bday'], 8, 2);
         $month = substr($member['bday'], 5, 2);
-        $year  = substr($member['bday'], 0, 4);
+        $year = substr($member['bday'], 0, 4);
 
         $sel0 = $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = $sel6 = '';
         $sel7 = $sel8 = $sel9 = $sel10 = $sel11 = $sel12 = '';
@@ -302,7 +302,7 @@ if ($action == 'profile') {
         $dayselect = array();
         $dayselect[] = '<select name="day">';
         $dayselect[] = '<option value="">&nbsp;</option>';
-        for ($num = 1; $num <= 31; $num++) {
+        for($num = 1; $num <= 31; $num++) {
             if ($day == $num) {
                 $dayselect[] = '<option value="'.$num.'" '.$selHTML.'>'.$num.'</option>';
             } else {
@@ -331,16 +331,15 @@ if ($action == 'profile') {
             $htmlis = $lang['textoff'];
         }
 
+        $avatar = '';
         if ($SETTINGS['avastatus'] == 'on') {
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
-        } else {
-            $avatar = '';
         }
 
         if ($SETTINGS['avastatus'] == 'list')  {
             $avatars = '<option value="" />'.$lang['textnone'].'</option>';
             $dir1 = opendir(ROOT.'images/avatars');
-            while ($avatar1 = readdir($dir1)) {
+            while($avatar1 = readdir($dir1)) {
                 if (is_file(ROOT.'images/avatars/'.$avatar1)) {
                     $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
                 }
@@ -352,7 +351,6 @@ if ($action == 'profile') {
         }
 
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
-
         eval('echo stripslashes("'.template('memcp_profile').'");');
     }
 
@@ -380,7 +378,7 @@ if ($action == 'profile') {
             die("Hack atttempt recorded in audit logs.");
         }
 
-        $newpassword   = formVar('newpassword');
+        $newpassword = formVar('newpassword');
         $newpasswordcf = formVar('newpasswordcf');
         if ($newpassword && (!$newpassword || isset($_GET['newpassword']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
@@ -401,10 +399,10 @@ if ($action == 'profile') {
             $langfilenew = basename($fileNameHash);
         }
 
-        $timeoffset1    = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-        $thememem       = formInt('thememem');
-        $tppnew         = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
-        $pppnew         = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
+        $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
+        $thememem = formInt('thememem');
+        $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
+        $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
 
         $dateformatnew = formVar('dateformatnew');
         if (strlen($dateformatnew) == 0) {
@@ -413,43 +411,40 @@ if ($action == 'profile') {
             $dateformatnew = $dateformatnew ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
         }
 
-        $timeformatnew  = formInt('timeformatnew');
-        $timeformatnew  = isset($timeformatnew) ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
-
-        $saveogu2u      = formYesNo('saveogu2u');
-        $emailonu2u     = formYesNo('emailonu2u');
-        $useoldu2u      = formYesNo('useoldu2u');
-        $invisible      = formInt('newinv');
-        $showemail      = formYesNo('newshowemail');
-        $newsletter     = formYesNo('newnewsletter');
-
-        $year           = formInt('year');
-        $month          = formInt('month');
-        $day            = formInt('day');
-        $bday           = iso8601_date($year, $month, $day);
-
-        $newavatar      = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
-        $avatar         = checkInput($newavatar, 'no', 'no', 'javascript', false);
-        $avatar         = checkInput($newavatar, 'no', 'no', 'php', false);
-        $newlocation    = formVar('newlocation');
-        $location       = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
-        $newicq         = formVar('newicq');
-        $icq            = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
-        $newyahoo       = formVar('newyahoo');
-        $yahoo          = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
-        $newaim         = formVar('newaim');
-        $aim            = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
-        $newmsn         = formVar('newmsn');
-        $msn            = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
-        $newemail       = formVar('newemail');
-        $email          = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
-        $newsite        = formVar('newsite');
-        $site           = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
-        $newwebcam      = formVar('newwebcam');
-        $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
-        $bio            = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
-        $mood           = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
-        $sig            = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
+        $timeformatnew = formInt('timeformatnew');
+        $timeformatnew = isset($timeformatnew) ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+        $saveogu2u = formYesNo('saveogu2u');
+        $emailonu2u = formYesNo('emailonu2u');
+        $useoldu2u = formYesNo('useoldu2u');
+        $invisible = formInt('newinv');
+        $showemail = formYesNo('newshowemail');
+        $newsletter = formYesNo('newnewsletter');
+        $year = formInt('year');
+        $month = formInt('month');
+        $day = formInt('day');
+        $bday = iso8601_date($year, $month, $day);
+        $newavatar = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
+        $avatar = checkInput($newavatar, 'no', 'no', 'javascript', false);
+        $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
+        $newlocation = formVar('newlocation');
+        $location = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+        $newicq = formVar('newicq');
+        $icq = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
+        $newyahoo = formVar('newyahoo');
+        $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+        $newaim = formVar('newaim');
+        $aim = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+        $newmsn = formVar('newmsn');
+        $msn = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+        $newemail = formVar('newemail');
+        $email = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+        $newsite = formVar('newsite');
+        $site = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+        $newwebcam = formVar('newwebcam');
+        $webcam = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+        $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
+        $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
+        $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
@@ -463,16 +458,17 @@ if ($action == 'profile') {
             }
         }
 
-        $avatar         = addslashes($avatar);
-        $location       = addslashes($location);
-        $yahoo          = addslashes($yahoo);
-        $aim            = addslashes($aim);
-        $email          = addslashes($email);
-        $site           = addslashes($site);
-        $webcam         = addslashes($webcam);
-        $bio            = addslashes($bio);
-        $mood           = addslashes($mood);
-        $sig            = addslashes($sig);
+        $avatar = addslashes($avatar);
+        $location = addslashes($location);
+        $yahoo = addslashes($yahoo);
+        $aim = addslashes($aim);
+        $msn = addslashes($msn);
+        $email = addslashes($email);
+        $site = addslashes($site);
+        $webcam = addslashes($webcam);
+        $bio = addslashes($bio);
+        $mood = addslashes($mood);
+        $sig = addslashes($sig);
 
         $max_size = explode('x', $SETTINGS['max_avatar_size']);
         if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {
@@ -493,7 +489,7 @@ if ($action == 'profile') {
 
             $pwtxt = "password='$newpassword',";
 
-            $currtime = time() - (86400*30);
+            $currtime = $onlinetime - (86400*30);
             put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
             put_cookie("xmbpw", $newpassword, $currtime, $cookiepath, $cookiedomain);
         } else {
@@ -507,7 +503,6 @@ if ($action == 'profile') {
     }
 } else if ($action == 'favorites') {
     eval('echo "'.template('header').'";');
-
     makenav($action);
 
     $favadd = getInt('favadd');
@@ -533,7 +528,7 @@ if ($action == 'profile') {
         $favnum = 0;
         $favs = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-        while ($fav = $db->fetch_array($query)) {
+        while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
             $forum['name'] = html_entity_decode($forum['name']);
@@ -564,23 +559,20 @@ if ($action == 'profile') {
         if ($favnum == 0) {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
-
         eval('echo stripslashes("'.template('memcp_favs').'");');
     }
 
     if (!$favadd && onSubmit('favsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='favorite'");
-        while ($fav = $db->fetch_array($query)) {
+        while($fav = $db->fetch_array($query)) {
             $delete = formInt('delete'.$fav['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
         }
-
         echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
 } else if ($action == 'subscriptions') {
     eval('echo "'.template('header').'";');
-
     makenav($action);
 
     $subadd = getInt('subadd');
@@ -589,7 +581,7 @@ if ($action == 'profile') {
         $subnum = 0;
         $subscriptions = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-        while ($fav = $db->fetch_array($query)) {
+        while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
             $forum['name'] = html_entity_decode($forum['name']);
@@ -619,7 +611,6 @@ if ($action == 'profile') {
         if ($subnum == 0) {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
-
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
@@ -632,18 +623,16 @@ if ($action == 'profile') {
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
-        while ($sub = $db->fetch_array($query)) {
+        while($sub = $db->fetch_array($query)) {
             $delete = formInt('delete'.$sub['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
-
         echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
     }
 } else {
     eval('echo "'.template('header').'";');
     eval($lang['evalusercpwelcome']);
-
     makenav($action);
 
     $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
@@ -651,7 +640,7 @@ if ($action == 'profile') {
     $buddys['offline'] = '';
     $buddys['online'] = '';
     if (X_ADMIN) {
-        while ($buddy = $db->fetch_array($q)) {
+        while($buddy = $db->fetch_array($q)) {
             if (strlen($buddy['username']) > 0) {
                 if ($buddy['invisible'] == 1) {
                    $buddystatus = $lang['hidden'];
@@ -665,7 +654,7 @@ if ($action == 'profile') {
         }
         $db->free_result($q);
     } else {
-        while ($buddy = $db->fetch_array($q)) {
+        while($buddy = $db->fetch_array($q)) {
             if (strlen($buddy['username']) > 0) {
                 if ($buddy['invisible'] == 1) {
                    eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
@@ -706,7 +695,7 @@ if ($action == 'profile') {
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while ($message = $db->fetch_array($u2uquery)) {
+    while($message = $db->fetch_array($u2uquery)) {
         $postdate = gmdate($dateformat, $message['dateline'] + $tmOffset);
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
@@ -721,7 +710,6 @@ if ($action == 'profile') {
         } else {
             $read = $lang['textunread'];
         }
-
         $message['subject'] = stripslashes(censor($message['subject']));
         eval('$messages .= "'.template('memcp_home_u2u_row').'";');
     }
@@ -729,7 +717,6 @@ if ($action == 'profile') {
     if ($u2unum == 0) {
         eval('$messages = "'.template('memcp_home_u2u_none').'";');
     }
-
     $db->free_result($u2uquery);
 
     $query2 = $db->query("SELECT * FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t, ".X_PREFIX."posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC LIMIT 0,5");
@@ -737,7 +724,7 @@ if ($action == 'profile') {
 
     $favs = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while ($fav = $db->fetch_array($query2)) {
+    while($fav = $db->fetch_array($query2)) {
         $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
         $forum['name'] = html_entity_decode($forum['name']);
@@ -755,14 +742,12 @@ if ($action == 'profile') {
         } else {
             $fav['icon'] = '';
         }
-
         eval('$favs .= "'.template('memcp_home_favs_row').'";');
     }
 
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
-
     eval('echo stripslashes("'.template('memcp_home').'");');
 }
 
