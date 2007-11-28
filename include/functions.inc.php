@@ -173,7 +173,6 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
 
     $message = checkOutput($message, $allowhtml, '', true);
-
     $message = censor($message, $ignorespaces);
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
@@ -187,33 +186,33 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
 
         $begin = array(
-                0    => '[b]',
-                1    => '[i]',
-                2    => '[u]',
-                3    => '[marquee]',
-                4    => '[blink]',
-                5    => '[strike]',
-                6    => '[quote]',
-                7    => '[code]',
-                8    => '[list]',
-                9    => '[list=1]',
-                10   => '[list=a]',
-                11   => '[list=A]',
+                0 => '[b]',
+                1 => '[i]',
+                2 => '[u]',
+                3 => '[marquee]',
+                4 => '[blink]',
+                5 => '[strike]',
+                6 => '[quote]',
+                7 => '[code]',
+                8 => '[list]',
+                9 => '[list=1]',
+                10 => '[list=a]',
+                11 => '[list=A]',
         );
 
         $end = array(
-                0    => '[/b]',
-                1    => '[/i]',
-                2    => '[/u]',
-                3    => '[/marquee]',
-                4    => '[/blink]',
-                5    => '[/strike]',
-                6    => '[/quote]',
-                7    => '[/code]',
-                8    => '[/list]',
-                9    => '[/list=1]',
-                10   => '[/list=a]',
-                11   => '[/list=A]',
+                0 => '[/b]',
+                1 => '[/i]',
+                2 => '[/u]',
+                3 => '[/marquee]',
+                4 => '[/blink]',
+                5 => '[/strike]',
+                6 => '[/quote]',
+                7 => '[/code]',
+                8 => '[/list]',
+                9 => '[/list=1]',
+                10 => '[/list=a]',
+                11 => '[/list=A]',
         );
 
         foreach($begin as $key=>$value) {
@@ -311,13 +310,10 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $patterns[] = "#\[color=([^\"'<>]*?)\](.*?)\[/color\]#Ssi";
         $replacements[] = '<span style="color: $1;">$2</span>';
-
         $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
         $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';
-
         $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
         $replacements[] = '<span style="font-family: $1;">$2</span>';
-
         $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
         $replacements[] = '<div style="text-align: $1;">$2</div>';
 
@@ -325,10 +321,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             if (false == strpos($message, 'javascript:')) {
                 $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
                 $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
-
                 $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
                 $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
-
                 $patterns[] = "#\[flash=([0-9]*?){1}x([0-9]*?)\]([^\"'<>]*?)\[/flash\]#Ssi";
                 $replacements[] = '<object type="application/x-shockwave-flash" data="$3" width="$1" height="$2"><param name="movie" value="$3" /><param name="AllowScriptAccess" value="never" /></object>';
             }
@@ -338,24 +332,18 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
         $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
-
         $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
         $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
-
         $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
         $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
-
         $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
         $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
-
         $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
         $replacements[] = '<a href="mailto:\1">\1</a>';
-
         $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
         $replacements[] = '<a href="mailto:\1\2">\3</a>';
 
         $message = preg_replace($patterns, $replacements, $message);
-
         $message = addslashes($message);
     } else {
         if ($smiliesallow) {
@@ -385,9 +373,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = wordwrap($message, 150, "\n", 1);
         $message = preg_replace('#(\[/?.*)\n(.*\])#mi', '\\1\\2', $message);
     }
-
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
-
     return $message;
 }
 
@@ -455,7 +441,7 @@ function forum($forum, $template) {
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
     $forum['name'] = html_entity_decode($forum['name']);
-    $forum['description'] = html_entity_decode($forum['description']);      // Fix for HTML characters in forum descriptions
+    $forum['description'] = html_entity_decode($forum['description']);
 
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
         $lastpost = explode('|', $forum['lastpost']);
@@ -500,7 +486,6 @@ function forum($forum, $template) {
             $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
         }
 
-        // create sub-forums on index
         $subforums = array();
         if (count($index_subforums) > 0) {
             for($i=0; $i < count($index_subforums); $i++) {
@@ -522,7 +507,6 @@ function forum($forum, $template) {
         eval('$foruminfo = stripslashes("'.template($template).'");');
     }
     $dalast = '';
-
     return $foruminfo;
 }
 
@@ -598,7 +582,8 @@ function smilieinsert() {
 
     $sms = array();
     $smilienum = 0;
-    $smilies = $smilieinsert = '';
+    $smilies = '';
+    $smilieinsert = '';
 
     if ($smileyinsert == 'on' && $smcols != '') {
         if ($smtotal == 0) {
@@ -654,11 +639,11 @@ function updateforumcount($fid) {
 
     $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$fid'");
     while($children = $db->fetch_array($query)) {
-        $chquery1 = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
+        $chquery1 = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
         $postcount += $db->result($chquery1, 0);
         $db->free_result($chquery1);
 
-        $chquery2 = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE fid='$children[fid]' AND closed != 'moved'");
+        $chquery2 = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$children[fid]' AND closed != 'moved'");
         $threadcount += $db->result($chquery2, 0);
         $db->free_result($chquery2);
     }
@@ -781,7 +766,7 @@ function end_time() {
 
     if (X_ADMIN && in_array('serverload', $footer_options)) {
         $load = ServerLoad();
-        if (! empty($load)) {
+        if (!empty($load)) {
             eval("\$footerstuff['load'] = \"".template('footer_load')."\";");
         } else {
             $footerstuff['load'] = '';
@@ -864,7 +849,6 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         function redirect() {
             window.location.replace("<?php echo $path?>");
         }
-
         setTimeout("redirect();", <?php echo ($timeout*1000)?>);
         </script>
         <?php
@@ -974,7 +958,8 @@ function get_extension($filename) {
 function get_attached_file($file, $attachstatus, $max_size=1000000) {
     global $lang, $filename, $filetype, $filesize;
 
-    $filename = $filetype = '';
+    $filename = '';
+    $filetype = '';
     $filesize = 0;
 
     if ($file['name'] != 'none' && !empty($file['name']) && $attachstatus != 'off' && is_uploaded_file($file['tmp_name'])) {
@@ -1008,11 +993,9 @@ function ServerLoad() {
     if ($stats = @exec('uptime')) {
         $parts = explode(',', $stats);
         $count = count($parts);
-
         $first = explode(' ', $parts[$count-3]);
         $c = count($first);
         $first = $first[$c-1];
-
         return array($first, $parts[$count-2], $parts[$count-1]);
     } else {
         return array();
@@ -1025,6 +1008,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     if (isset($GLOBALS)) {
         extract($GLOBALS);
     }
+
     $args = func_get_args();
 
     $message = (isset($args[0]) ? $args[0] : '');
@@ -1082,6 +1066,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     if (isset($GLOBALS)) {
         extract($GLOBALS);
     }
+
     $args = func_get_args();
 
     $messagedisplay = (isset($args[0]) ? $args[0] : '');
@@ -1161,25 +1146,19 @@ function mysql_syn_highlight($query) {
     $find[] = 'UPDATE';
     $find[] = 'DELETE';
     $find[] = 'INSERT INTO ';
-
     $find[] = ' WHERE ';
     $find[] = ' ON ';
     $find[] = ' FROM ';
-
     $find[] = ' GROUP BY ';
     $find[] = 'ORDER BY ';
     $find[] = ' LEFT JOIN ';
-
     $find[] = ' IN ';
     $find[] = ' SET ';
     $find[] = ' AS ';
-
     $find[] = '(';
     $find[] = ')';
-
     $find[] = ' ASC';
     $find[] = ' DESC';
-
     $find[] = ' AND ';
     $find[] = ' OR ';
     $find[] = ' NOT';
@@ -1239,26 +1218,26 @@ function put_cookie($name, $value=null, $expire=null, $path=null, $domain=null, 
         }
         ?>
         <script type="text/javascript">
-            function setcookie(name, value="deleted", expire=0, path="", domain="", secure=0) {
-                if (expire == 0) {
-                    var now = new Date();
-                    expire = now.toGMTString();
-                }
-
-                if (path == "") {
-                    path = window.location.pathname;
-                }
-
-                if (domain == "") {
-                    domain = window.location.host;
-                }
-
-                // create cookie string (expire in GMT TIME!)
-                var cookie = '';
-                cookie = name+"="+value+"; expires="+expire+"; path="+path+"; domain="+domain+"; secure="+secure"; HttpOnly";
-                document.cookie += cookie;
+        function setcookie(name, value="deleted", expire=0, path="", domain="", secure=0) {
+            if (expire == 0) {
+                var now = new Date();
+                expire = now.toGMTString();
             }
-            setcookie(<?php echo $name?>, <?php echo $value?>, <?php echo $expire?>, <?php echo $path?>, <?php echo $domain?>, <?php echo $secure?>);
+
+            if (path == "") {
+                path = window.location.pathname;
+            }
+
+            if (domain == "") {
+                domain = window.location.host;
+            }
+
+            // create cookie string (expire in GMT TIME!)
+            var cookie = '';
+            cookie = name+"="+value+"; expires="+expire+"; path="+path+"; domain="+domain+"; secure="+secure"; HttpOnly";
+            document.cookie += cookie;
+        }
+        setcookie(<?php echo $name?>, <?php echo $value?>, <?php echo $expire?>, <?php echo $path?>, <?php echo $domain?>, <?php echo $secure?>);
         </script>
         <?php
         return true;
@@ -1279,7 +1258,6 @@ function audit($user='', $action, $fid, $tid, $reason='') {
     $reason = checkInput($reason);
 
     $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', " . $db->time() . ")");
-
     return true;
 }
 
@@ -1324,6 +1302,7 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
                 require ROOT.'include/smtp.inc.php';
                 $isInc['socket_SMTP'] = true;
             }
+
             if (!isset($handlers['socket_SMTP'])) {
                 if (DEBUG) {
                     $mail = new socket_SMTP(true, './smtp-log.txt');
@@ -1418,9 +1397,7 @@ function month2text($num) {
     if ($num < 1 || $num > 12) {
         $num = 1;
     }
-
     $months = array($lang['textjan'],$lang['textfeb'],$lang['textmar'],$lang['textapr'],$lang['textmay'],$lang['textjun'],$lang['textjul'],$lang['textaug'],$lang['textsep'],$lang['textoct'],$lang['textnov'],$lang['textdec']);
-
     return $months[$num-1];
 }
 
