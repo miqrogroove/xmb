@@ -103,9 +103,9 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
     $leftpane = '';
-    $del      = ($del == 'yes') ? 'yes' : 'no';
-    $msgto    = checkInput($msgto, '', '', 'script', false);
-    $subject  = strip_tags($subject);
+    $del = ($del == 'yes') ? 'yes' : 'no';
+    $msgto = checkInput($msgto, '', '', 'script', false);
+    $subject = strip_tags($subject);
     $username = checkInput($username, '', '', 'script', false);
 
     if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
@@ -191,7 +191,8 @@ function u2u_view($u2uid, $folders) {
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
     global $sendoptions, $u2uheader, $u2ufooter;
 
-    $delchecked = $leftpane = '';
+    $delchecked = '';
+    $leftpane = '';
 
     $u2uid = (int) $u2uid;
 
@@ -242,7 +243,6 @@ function u2u_view($u2uid, $folders) {
     }
     $db->free_result($query);
     eval('$leftpane = "'.template('u2u_view').'";');
-
     return $leftpane;
 }
 
@@ -274,7 +274,6 @@ function u2u_print($u2uid, $eMail = false) {
         if ($eMail) {
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
-
             $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".stripslashes($u2umessage).$mailFooter;
             altMail($self['email'], $lang['textu2utoemail'] . " " . $u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
             u2u_msg($lang['textu2utoemailsent'], 'u2u.php?action=view&u2uid='.$u2uid);
@@ -362,7 +361,6 @@ function u2u_mod_move($tofolder, $u2u_select) {
         error($lang['textcantmove'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
         return;
     }
-
     $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid IN($in) AND owner='$self[username]'");
     u2u_msg($lang['textmovesucc'], "u2u.php?folder=$folder");
 }
@@ -385,7 +383,6 @@ function u2u_markUnread($u2uid, $folder, $type) {
     if ($type == 'outgoing') {
         error($lang['textnomur'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
     }
-
     $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid=$u2uid AND owner='$self[username]'");
     u2u_msg($lang['textmarkedunread'], "u2u.php?folder=$folder");
 }
@@ -417,7 +414,6 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     if (empty($in)) {
         error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
     }
-
     $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid IN($in) AND owner='$self[username]'");
     u2u_msg($lang['textmarkedunread'], "u2u.php?folder=$folder");
 }
@@ -427,7 +423,7 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 
     $error = '';
 
-    $newfolders = explode(",", $u2ufolders);
+    $newfolders = explode(',', $u2ufolders);
     foreach($newfolders as $key => $value) {
         $newfolders[$key] = trim($value);
         if (empty($newfolders[$key])) {
@@ -441,7 +437,6 @@ function u2u_folderSubmit($u2ufolders, $folders) {
             $error .= (empty($error)) ? '<br />'.$lang['foldersupdateerror'].' '.$value : ', '.$value;
         }
     }
-
     $u2ufolders = checkInput(implode(', ', $newfolders));
     $db->query("UPDATE ".X_PREFIX."members SET u2ufolders='$u2ufolders' WHERE username='$self[username]'");
     u2u_msg($lang['foldersupdate'].$error, "u2u.php?folder=Inbox");
@@ -468,7 +463,10 @@ function u2u_display($folder, $folders) {
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
-    $u2usin = $u2usout = $u2usdraft = $leftpane = '';
+    $u2usin = '';
+    $u2usout = '';
+    $u2usdraft = '';
+    $leftpane = '';
 
     if (empty($folder)) {
         $folder = "Inbox";
@@ -503,7 +501,6 @@ function u2u_display($folder, $folders) {
             } else {
                 $online = $lang['textoffline'];
             }
-
             $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
         } else if ($u2u['type'] == 'outgoing') {
             if ($u2u['msgto'] == $u2u['username'] || $u2u['msgto'] == $self['username']) {
@@ -582,7 +579,6 @@ function u2u_display($folder, $folders) {
     }
     $mtofolder[] = '</select>';
     $mtofolder = implode("\n", $mtofolder);
-
     eval('$leftpane = "'.template('u2u_main').'";');
     return $leftpane;
 }

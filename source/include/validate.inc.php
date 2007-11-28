@@ -33,16 +33,13 @@ if (!defined('IN_CODE')) {
 /**
 * CSRF protection class. Call this to obtain and test a page token.
 *
-* In UltimaBB 1.0, each user has a single token per page no matter which destination
-* action. These should be used for all actions. UltimaBB 1.1 will extend this to include
+* In XMB 1.9.8, each user has a single token per page no matter which destination
+* action. These should be used for all actions. XMB 2.0 will extend this to include
 * unique tokens per action, making it much harder for attackers to spoof any particular
 * action.
 *
 * As each page has many old and new, and only one token slot in the session,
 * there is a way to re-seed the session.
-* @author   ajv
-* @package UltimaBB
-* @license  GPL
 */
 class page_token {
     /**
@@ -50,19 +47,16 @@ class page_token {
     * @var mixed
     */
     var $pageToken;
-
     /**
     * @access private
     * @var mixed
     */
     var $sessionToken;
-
     /**
     * @access public
     * @var string
     */
     var $newToken;
-
     /**
     * Initialization of the class
     *
