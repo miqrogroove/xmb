@@ -63,7 +63,7 @@ if ($action == "settings") {
         $themelist = array();
         $themelist[] = '<select name="themenew">';
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-        while ($themeinfo = $db->fetch_array($query)) {
+        while($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $SETTINGS['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
             } else {
@@ -275,7 +275,7 @@ if ($action == "settings") {
         $timezone19 = $timezone20 = $timezone21 = $timezone22 = $timezone23 = $timezone24 = false;
         $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = false;
         $timezone31 = $timezone32 = $timezone33 = false;
-        switch ($SETTINGS['def_tz']) {
+        switch($SETTINGS['def_tz']) {
             case '-12.00':
                 $timezone1 = true;
                 break;
@@ -575,7 +575,6 @@ if ($action == "settings") {
         $memberperpagenew = formInt('memberperpagenew');
         $timeformatnew = formInt('timeformatnew');
         $dateformatnew = formVar('dateformatnew');
-
         $searchstatusnew = formOnOff('searchstatusnew');
         $faqstatusnew = formOnOff('faqstatusnew');
         $todaystatusnew = formOnOff('todaystatusnew');
@@ -584,7 +583,6 @@ if ($action == "settings") {
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $coppanew = formOnOff('coppanew');
         $reportpostnew = formOnOff('reportpostnew');
-
         $space_catsnew = formOnOff('space_catsnew');
         $indexShowBarNew = formInt('indexShowBarNew');
         $allowrankeditnew = formOnOff('allowrankeditnew');
@@ -596,7 +594,6 @@ if ($action == "settings") {
         $dotfoldersnew = formOnOff('dotfoldersnew');
         $editedbynew = formOnOff('editedbynew');
         $attachimgpostnew = formOnOff('attachimgpostnew');
-
         $reg_on = formOnOff('reg_on');
         $ipReg = formOnOff('ipReg');
         $maxDayReg = formInt('maxDayReg');
@@ -610,7 +607,6 @@ if ($action == "settings") {
         $resetSigNew = formOnOff('resetSigNew');
         $doubleenew = formOnOff('doubleenew');
         $pruneusersnew = formInt('pruneusersnew');
-
         $hottopicnew = formInt('hottopicnew');
         $bbinsertnew = formOnOff('bbinsertnew');
         $smileyinsertnew = formOnOff('smileyinsertnew');
@@ -649,7 +645,6 @@ if ($action == "settings") {
         $captchaimagemaxfontnew = formInt('captchaimagemaxfontnew');
         $captchaimagecolornew = formOnOff('captchaimagecolornew');
         $showsubforumsnew = formOnOff('showsubforumsnew');
-
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
 
         $db->query("UPDATE ".X_PREFIX."settings SET
@@ -747,7 +742,6 @@ if ($action == "rename") {
     if (onSubmit('renamesubmit')) {
         $vUserFrom = formVar('frmUserFrom');
         $vUserTo = formVar('frmUserTo');
-
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
@@ -795,7 +789,7 @@ if ($action == 'forum') {
         $subs = array();
         $i = 0;
         $query = $db->query("SELECT fid, type, name, displayorder, status, fup FROM ".X_PREFIX."forums ORDER BY fup ASC, displayorder ASC");
-        while ($selForums = $db->fetch_array($query)) {
+        while($selForums = $db->fetch_array($query)) {
             if ($selForums['type'] == 'group') {
                 $groups[$i]['fid'] = $selForums['fid'];
                 $groups[$i]['name'] = htmlspecialchars_decode($selForums['name']);
@@ -832,7 +826,7 @@ if ($action == 'forum') {
         <td class="category"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
         <?php
-        foreach ($forums[0] as $forum) {
+        foreach($forums[0] as $forum) {
             $on = $off = '';
             if ($forum['status'] == 'on') {
                 $on = $selHTML;
@@ -848,7 +842,7 @@ if ($action == 'forum') {
             <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
             &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
             <?php
-            foreach ($groups as $moveforum) {
+            foreach($groups as $moveforum) {
                 echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
             }
             ?>
@@ -857,7 +851,7 @@ if ($action == 'forum') {
             </tr>
             <?php
             if (array_key_exists($forum['fid'], $subs)) {
-                foreach ($subs[$forum['fid']] as $subforum) {
+                foreach($subs[$forum['fid']] as $subforum) {
                     $on = $off = '';
                     if ($subforum['status'] == 'on') {
                         $on = $selHTML;
@@ -873,7 +867,7 @@ if ($action == 'forum') {
                     <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
                     &nbsp; <select name="moveto<?php echo $subforum['fid']?>">
                     <?php
-                    foreach ($forumlist as $moveforum) {
+                    foreach($forumlist as $moveforum) {
                         if ($subforum['fup'] == $moveforum['fid']) {
                             echo '<option value="'.$moveforum['fid'].'" selected="selected">'.stripslashes($moveforum['name']).'</option>';
                         } else {
@@ -889,7 +883,7 @@ if ($action == 'forum') {
             }
         }
 
-        foreach ($groups as $group) {
+        foreach($groups as $group) {
             $on = $off = '';
             if ($group['status'] == 'on') {
                 $on = $selHTML;
@@ -910,7 +904,7 @@ if ($action == 'forum') {
             </tr>
             <?php
             if (array_key_exists($group['fid'], $forums)) {
-                foreach ($forums[$group['fid']] as $forum) {
+                foreach($forums[$group['fid']] as $forum) {
                     $on = $off = '';
                     if ($forum['status'] == 'on') {
                         $on = $selHTML;
@@ -926,7 +920,7 @@ if ($action == 'forum') {
                     <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
                     &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="">-<?php echo $lang['textnone']?>-</option>
                     <?php
-                    foreach ($groups as $moveforum) {
+                    foreach($groups as $moveforum) {
                         if ($moveforum['fid'] == $forum['fup']) {
                             $curgroup = $selHTML;
                         } else {
@@ -940,7 +934,7 @@ if ($action == 'forum') {
                     </tr>
                     <?php
                     if (array_key_exists($forum['fid'], $subs)) {
-                        foreach ($subs[$forum['fid']] as $forum) {
+                        foreach($subs[$forum['fid']] as $forum) {
                             $on = $off = '';
                             if ($forum['status'] == 'on') {
                                 $on = $selHTML;
@@ -956,7 +950,7 @@ if ($action == 'forum') {
                             <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
                             &nbsp; <select name="moveto<?php echo $forum['fid']?>">
                             <?php
-                            foreach ($forumlist as $moveforum) {
+                            foreach($forumlist as $moveforum) {
                                 if ($moveforum['fid'] == $forum['fup']) {
                                     echo '<option value="'.$moveforum['fid'].'" selected="selected">'.html_entity_decode(stripslashes($moveforum['name'])).'</option>';
                                 } else {
@@ -990,7 +984,7 @@ if ($action == 'forum') {
         <option value="on"><?php echo $lang['texton']?></option><option value="off"><?php echo $lang['textoff']?></option></select>
         &nbsp; <select name="newffup"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
         <?php
-        foreach ($groups as $group) {
+        foreach($groups as $group) {
             echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
         }
         ?>
@@ -1003,7 +997,7 @@ if ($action == 'forum') {
         &nbsp; <select name="newsubstatus"><option value="on"><?php echo $lang['texton']?></option><option value="off"><?php echo $lang['textoff']?></option></select>
         &nbsp; <select name="newsubfup">
         <?php
-        foreach ($forumlist as $group) {
+        foreach($forumlist as $group) {
             echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
         }
         ?>
@@ -1041,7 +1035,7 @@ if ($action == 'forum') {
         $themelist[] = '<select name="themeforumnew">';
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-        while ($themeinfo = $db->fetch_array($query)) {
+        while($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $forum['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
             } else {
@@ -1211,7 +1205,7 @@ if ($action == 'forum') {
     } else if (onSubmit('forumsubmit') && !$fdetails) {
         $queryforum = $db->query("SELECT fid, type FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
-        while ($forum = $db->fetch_array($queryforum)) {
+        while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
             $self['status'] = formOnOff('status'.$forum['fid']);
             $name = formVar('name'.$forum['fid']);
@@ -1221,12 +1215,12 @@ if ($action == 'forum') {
             if ($delete) {
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
                 $querythread = $db->query("SELECT tid, author FROM ".X_PREFIX."threads WHERE fid='$delete'");
-                while ($thread = $db->fetch_array($querythread)) {
+                while($thread = $db->fetch_array($querythread)) {
                     $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$thread[tid]'");
                     $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$thread[tid]'");
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$thread[author]'");
                     $querypost = $db->query("SELECT pid, author FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
-                    while ($post = $db->fetch_array($querypost)) {
+                    while($post = $db->fetch_array($querypost)) {
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$post[pid]'");
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$post[author]'");
                     }
@@ -1239,7 +1233,7 @@ if ($action == 'forum') {
         }
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
-        while ($group = $db->fetch_array($querygroup)) {
+        while($group = $db->fetch_array($querygroup)) {
             $name = formVar('name'.$group['fid']);
             $displayorder = formInt('displayorder'.$group['fid']);
             $self['status'] = formOnOff('status'.$group['fid']);
@@ -1247,7 +1241,7 @@ if ($action == 'forum') {
 
             if ($delete) {
                 $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup='$delete'");
-                while ($forum = $db->fetch_array($query)) {
+                while($forum = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."forums SET fup=0 WHERE type='forum' AND fup='$delete'");
                 }
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid='$delete'");
@@ -1282,7 +1276,6 @@ if ($action == 'forum') {
             $newsubname = addslashes($newsubname);
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
         $namenew = addslashes(formVar('namenew', false));
@@ -1344,7 +1337,7 @@ if ($action == "mods") {
         <?php
         $oldfid = 0;
         $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
-        while ($forum = $db->fetch_array($query)) {
+        while($forum = $db->fetch_array($query)) {
             if ($oldfid != $forum['cat_fid']) {
                 $oldfid = $forum['cat_fid']
                 ?>
@@ -1360,7 +1353,7 @@ if ($action == "mods") {
             </tr>
             <?php
             $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='".$forum['fid']."' AND type='sub'");
-            while ($sub = $db->fetch_array($querys)) {
+            while($sub = $db->fetch_array($querys)) {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo html_entity_decode(stripslashes($sub['name']))?></em></td>
@@ -1387,7 +1380,7 @@ if ($action == "mods") {
     } else {
         $mod = formArray('mod');
         if (is_array($mod)) {
-            foreach ($mod as $fid=>$mods) {
+            foreach($mod as $fid=>$mods) {
                 $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");
             }
         }
@@ -1470,8 +1463,8 @@ if ($action == "members") {
             $modselect = $memselect = $banselect = "";
             $noban = $u2uban = $postban = $bothban = "";
 
-            while ($member = $db->fetch_array($query)) {
-                switch ($member['status']) {
+            while($member = $db->fetch_array($query)) {
+                switch($member['status']) {
                     case 'Super Administrator':
                         $sadminselect = $selHTML;
                         break;
@@ -1495,7 +1488,7 @@ if ($action == "members") {
                         break;
                 }
 
-                switch ($member['ban']) {
+                switch($member['ban']) {
                     case 'u2u':
                         $u2uban = $selHTML;
                         break;
@@ -1534,9 +1527,9 @@ if ($action == "members") {
                 </select></td>
                 </tr>
                 <?php
-                $sadminselect = $adminselect = $smodselect = "";
-                $modselect = $memselect = $banselect = "";
-                $noban = $u2uban = $postban = $bothban = "";
+                $sadminselect = $adminselect = $smodselect = '';
+                $modselect = $memselect = $banselect = '';
+                $noban = $u2uban = $postban = $bothban = '';
             }
             ?>
             <tr>
@@ -1552,9 +1545,6 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        /*
-        Get the uid first Super Administrator (the first to register and thus most likely to be the 'top level' admin) to compare against the delete uid. This member should *never* be deleted this way.
-        */
         $query = $db->query("SELECT MIN(`uid`) FROM `" . X_PREFIX. "members` WHERE `status`='Super Administrator'");
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
@@ -1565,11 +1555,10 @@ if ($action == "members") {
             $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
         }
 
-        while ($mem = $db->fetch_array($query)) {
+        while($mem = $db->fetch_array($query)) {
             $to['status'] = "status".$mem['uid'];
             $to['status'] = isset($_POST[$to['status']]) ? $_POST[$to['status']] : '';
 
-            // Fix a race condition noted by wrdyjoey
             if (trim($to['status']) == '') {
                 $to['status'] = 'Member';
             }
@@ -1637,8 +1626,8 @@ if ($action == "ipban") {
         </tr>
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."banned ORDER BY dateline");
-        while ($ipaddress = $db->fetch_array($query)) {
-            for ($i=1; $i<=4; ++$i) {
+        while($ipaddress = $db->fetch_array($query)) {
+            for($i=1; $i<=4; ++$i) {
                 $j = "ip" . $i;
                 if ($ipaddress[$j] == -1) {
                     $ipaddress[$j] = "*";
@@ -1689,7 +1678,7 @@ if ($action == "ipban") {
 
         if ($delete) {
             $dels = array();
-            foreach ($delete as $id => $del) {
+            foreach($delete as $id => $del) {
                 if ($del == 1) {
                     $dels[] = $id;
                 }
@@ -1704,7 +1693,7 @@ if ($action == "ipban") {
 
         if ($newip[1] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
             $invalid = 0;
-            for ($i=0; $i<=3 && !$invalid; ++$i) {
+            for($i=0; $i<=3 && !$invalid; ++$i) {
                 if ($newip[$i] == "*") {
                     $ip[$i+1] = -1;
                 } else if (preg_match("#^[0-9]+$#", $newip[$i])) {
@@ -1772,7 +1761,7 @@ if ($action == "upgrade") {
 
         echo '</table></td></tr></table>';
 
-        for ($num=0;$num<$count;$num++) {
+        for($num=0;$num<$count;$num++) {
             $explode[$num] = stripslashes($explode[$num]);
             if ($allow_spec_q !== true) {
                 if (strtoupper(substr(trim($explode[$num]), 0, 3)) == 'USE' || strtoupper(substr(trim($explode[$num]), 0, 14)) == 'SHOW DATABASES') {
@@ -1875,7 +1864,7 @@ if ($action == "search") {
         $list = array();
         if ($userip) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE regip = '$userip'");
-            while ($users = $db->fetch_array($query)) {
+            while($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
                 $list[] = "<a href = \"$link\">$users[username]<br />";
                 $found++;
@@ -1884,7 +1873,7 @@ if ($action == "search") {
 
         if ($postip) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE useip = '$postip'");
-            while ($users = $db->fetch_array($query)) {
+            while($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users['subject'])) {
                     $list[] = '<a href="$link">'.$users['subject'].'<br />';
@@ -1897,7 +1886,7 @@ if ($action == "search") {
 
         if ($profileword) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE bio = '%$profileword%'");
-            while ($users = $db->fetch_array($query)) {
+            while($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=$users[username]";
                 $list[] = "<a href = \"$link\">$users[username]<br />";
                 $found++;
@@ -1906,7 +1895,7 @@ if ($action == "search") {
 
         if ($postword) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
-            while ($users = $db->fetch_array($query)) {
+            while($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users['subject'])) {
                     $list[] = '<a href="$link">'.$users['subject'].'<br />';
@@ -1924,7 +1913,7 @@ if ($action == "search") {
         </td>
         </tr>
         <?php
-        foreach ($list as $num=>$val) {
+        foreach($list as $num=>$val) {
             ?>
             <tr class="tablerow" width="5%">
             <td align="left" bgcolor="<?php echo $altbg2?>">
@@ -1957,7 +1946,7 @@ if ($action == "search") {
         <?php
         $query = $db->query("SELECT find FROM ".X_PREFIX."words");
         $select = "<select name=\"postword\"><option value=\"\"></option>";
-        while ($temp = $db->fetch_array($query)) {
+        while($temp = $db->fetch_array($query)) {
             $select .= "<option value=\"$temp[find]\">$temp[find]</option>";
         }
         $select .= "</select>";

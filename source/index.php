@@ -53,8 +53,8 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         if (strlen(trim($news[$i])) == 0) {
             continue;
         }
-        $news[$i]  = postify($news[$i], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'yes', 'no');
-        $news[$i]  = str_replace('\"', '"', addslashes($news[$i]));
+        $news[$i] = postify($news[$i], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'yes', 'no');
+        $news[$i] = str_replace('\"', '"', addslashes($news[$i]));
         $contents .= "\tcontents[$i]='$news[$i]';\n";
     }
     eval('$ticker  = "'.template('index_ticker').'";');
@@ -153,8 +153,8 @@ if ($gid == 0) {
         $memonmsg = '<span class="smalltxt">'.$lang['whosonmsg'].'</span>';
 
         $memtally = array();
-        $num      = 1;
-        $comma    = '';
+        $num = 1;
+        $comma = '';
         $show_total = (X_ADMIN) ? ($membercount+$hiddencount) : ($membercount);
 
         $show_inv_key = false;
@@ -205,7 +205,8 @@ if ($gid == 0) {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
-    $welcome = $whosonline = '';
+    $welcome = '';
+    $whosonline = '';
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup=$gid) ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 

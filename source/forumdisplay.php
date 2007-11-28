@@ -96,7 +96,7 @@ if (count($fup) == 0) {
     if ($db->num_rows($query) != 0) {
         $forumlist = '';
         $fulist = $forum['userlist'];
-        while ($sub = $db->fetch_array($query)) {
+        while($sub = $db->fetch_array($query)) {
             $forumlist .= forum($sub, "forumdisplay_subforum");
         }
         $forum['userlist'] = $fulist;
@@ -171,7 +171,7 @@ $forumdisplay_thread = 'forumdisplay_thread';
 
 if (X_STAFF && $self['status'] != 'Moderator') {
     $status1 = 'Moderator';
-} elseif ($self['status'] == 'Moderator') {
+} else if ($self['status'] == 'Moderator') {
     $status1 = modcheck($self['status'], $xmbuser, $forum['moderator']);
 } else {
     $status1 = '';
@@ -186,14 +186,14 @@ $threadlist = '';
 $threadsInFid = array();
 if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER) {
     $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$xmbuser' AND fid=$fid");
-    while ($row = $db->fetch_array($query)) {
+    while($row = $db->fetch_array($query)) {
         array_push($threadsInFid, $row['tid']);
     }
     $db->free_result($query);
 }
 
 $querytop = $db->query("SELECT t.* FROM ".X_PREFIX."threads t WHERE t.fid=$fid $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT $start_limit, $tpp");
-while ($thread = $db->fetch_array($querytop)) {
+while($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
     } else {
@@ -305,7 +305,7 @@ if ($topicsnum == 0 && !$notexist) {
 
 $check1 = $check5 = $check15 = $check30 = '';
 $check60 = $check100 = $checkyear = $checkall = '';
-switch ($cusdate) {
+switch($cusdate) {
     case 86400:
         $check1 = $selHTML;
         break;

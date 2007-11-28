@@ -123,7 +123,7 @@ switch($action) {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
                 eval($lang['evaloffset']);
 
-                $themelist   = array();
+                $themelist = array();
                 $themelist[] = '<select name="thememem">';
                 $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
                 $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
@@ -131,18 +131,18 @@ switch($action) {
                     $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
                 }
                 $themelist[] = '</select>';
-                $themelist   = implode("\n", $themelist);
+                $themelist = implode("\n", $themelist);
 
                 $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
-                $dayselect   = array();
+                $dayselect = array();
                 $dayselect[] = '<select name="day">';
                 $dayselect[] = '<option value="">&nbsp;</option>';
                 for($num = 1; $num <= 31; $num++) {
                     $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
                 }
                 $dayselect[] = '</select>';
-                $dayselect   = implode("\n", $dayselect);
+                $dayselect = implode("\n", $dayselect);
 
                 if ($SETTINGS['sigbbcode'] == 'on') {
                     $bbcodeis = $lang['texton'];
@@ -156,10 +156,9 @@ switch($action) {
                     $htmlis = $lang['textoff'];
                 }
 
+                $pwtd = '';
                 if ($SETTINGS['emailcheck'] == 'off') {
                     eval('$pwtd = "'.template('member_reg_password').'";');
-                } else {
-                    $pwtd = '';
                 }
 
                 if ($SETTINGS['timeformat'] == 24) {
@@ -176,7 +175,7 @@ switch($action) {
                 $timezone19 = $timezone20 = $timezone21 = $timezone22 = $timezone23 = $timezone24 = '';
                 $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = '';
                 $timezone31 = $timezone32 = $timezone33 = '';
-                switch ($SETTINGS['def_tz']) {
+                switch($SETTINGS['def_tz']) {
                     case '-12.00':
                         $timezone1 = $selHTML;
                         break;
@@ -279,6 +278,7 @@ switch($action) {
                         break;
                 }
 
+                $avatd = '';
                 if ($SETTINGS['avastatus'] == 'on') {
                     eval('$avatd = "'.template('member_reg_avatarurl').'";');
                 } else if ($SETTINGS['avastatus'] == 'list') {
@@ -293,8 +293,6 @@ switch($action) {
                     closedir($dirHandle);
                     $avatars = implode("\n", str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars));
                     eval('$avatd = "'.template('member_reg_avatarlist').'";');
-                } else {
-                    $avatd = '';
                 }
 
                 if (empty($dformatorig)) {
@@ -363,7 +361,7 @@ switch($action) {
                 error($lang['pwnomatch']);
             }
 
-            $fail  = false;
+            $fail = false;
             $efail = false;
             $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while($restriction = $db->fetch_array($query)) {
@@ -454,21 +452,19 @@ switch($action) {
 
             $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
-            $timeoffset1   = formInt('timeoffset1');
-            $thememem      = formInt('thememem');
-            $tpp           = formInt('tpp');
-            $ppp           = formInt('ppp');
-
-            $showemail     = formYesNo('showemail');
-            $newsletter    = formYesNo('newsletter');
-            $saveogu2u     = formYesNo('saveogu2u');
-            $emailonu2u    = formYesNo('emailonu2u');
-            $useoldu2u     = formYesNo('useoldu2u');
-
-            $year          = formInt('year');
-            $month         = formInt('month');
-            $day           = formInt('day');
-            $bday          = iso8601_date($year, $month, $day);
+            $timeoffset1 = formInt('timeoffset1');
+            $thememem = formInt('thememem');
+            $tpp = formInt('tpp');
+            $ppp = formInt('ppp');
+            $showemail = formYesNo('showemail');
+            $newsletter = formYesNo('newsletter');
+            $saveogu2u = formYesNo('saveogu2u');
+            $emailonu2u = formYesNo('emailonu2u');
+            $useoldu2u = formYesNo('useoldu2u');
+            $year = formInt('year');
+            $month = formInt('month');
+            $day = formInt('day');
+            $bday = iso8601_date($year, $month, $day);
 
             $dateformatnew = formVar('dateformatnew');
             if (strlen($dateformatnew) == 0) {
@@ -479,42 +475,42 @@ switch($action) {
 
             $timeformatnew = formInt('timeformatnew');
             $timeformatnew = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+            $avatar = formVar('avatar');
+            $avatar = $avatar ? checkInput($avatar, '', '', 'javascript', false) : '';
+            $avatar = $avatar ? checkInput($avatar, '', '', 'php', false) : '';
+            $location = formVar('location');
+            $location = $location ? checkInput($location, '', '', "javascript", false) : '';
+            $icq = formVar('icq');
+            $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
+            $yahoo = formVar('yahoo');
+            $yahoo = $yahoo ? checkInput($yahoo, '', '', 'javascript', false) : '';
+            $aim = formVar('aim');
+            $aim = $aim ? checkInput($aim, '', '', 'javascript', false) : '';
+            $msn = formVar('msn');
+            $msn = $msn ? checkInput($msn, '', '', 'javascript', false) : '';
+            $email = formVar('email');
+            $email = $email ? checkInput($email, '', '', 'javascript', false) : '';
+            $site = formVar('site');
+            $site = $site ? checkInput($site, '', '', 'javascript', false) : '';
+            $webcam = formVar('webcam');
+            $webcam = $webcam ? checkInput($webcam, '', '', 'javascript', false) : '';
+            $bio = isset($_POST['bio']) ? checkInput($_POST['bio'], '', '', 'javascript', false) : '';
+            $mood = isset($_POST['mood']) ? checkInput($_POST['mood'], 'no', 'no', 'javascript', false) : '';
+            $sig = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
 
-            $avatar        = formVar('avatar');
-            $avatar        = $avatar ? checkInput($avatar, '', '', 'javascript', false) : '';
-            $avatar        = $avatar ? checkInput($avatar, '', '', 'php', false) : '';
-            $location      = formVar('location');
-            $location      = $location ? checkInput($location, '', '', "javascript", false) : '';
-            $icq           = formVar('icq');
-            $icq           = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
-            $yahoo         = formVar('yahoo');
-            $yahoo         = $yahoo ? checkInput($yahoo, '', '', 'javascript', false) : '';
-            $aim           = formVar('aim');
-            $aim           = $aim ? checkInput($aim, '', '', 'javascript', false) : '';
-            $msn           = formVar('msn');
-            $msn           = $msn ? checkInput($msn, '', '', 'javascript', false) : '';
-            $email         = formVar('email');
-            $email         = $email ? checkInput($email, '', '', 'javascript', false) : '';
-            $site          = formVar('site');
-            $site          = $site ? checkInput($site, '', '', 'javascript', false) : '';
-            $webcam        = formVar('webcam');
-            $webcam        = $webcam ? checkInput($webcam, '', '', 'javascript', false) : '';
-            $bio           = isset($_POST['bio']) ? checkInput($_POST['bio'], '', '', 'javascript', false) : '';
-            $mood          = isset($_POST['mood']) ? checkInput($_POST['mood'], 'no', 'no', 'javascript', false) : '';
-            $sig           = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
+            $avatar = addslashes($avatar);
+            $location = addslashes($location);
+            $yahoo = addslashes($yahoo);
+            $aim = addslashes($aim);
+            $msn = addslashes($msn);
+            $email = addslashes($email);
+            $site = addslashes($site);
+            $webcam = addslashes($webcam);
+            $bio = addslashes($bio);
+            $mood = addslashes($mood);
+            $sig = addslashes($sig);
 
-            $avatar        = addslashes($avatar);
-            $location      = addslashes($location);
-            $yahoo         = addslashes($yahoo);
-            $aim           = addslashes($aim);
-            $email         = addslashes($email);
-            $site          = addslashes($site);
-            $webcam        = addslashes($webcam);
-            $bio           = addslashes($bio);
-            $mood          = addslashes($mood);
-            $sig           = addslashes($sig);
-
-            $password      = md5(trim($password));
+            $password = md5(trim($password));
 
             $max_size = explode('x', $SETTINGS['max_avatar_size']);
             if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {
@@ -544,7 +540,7 @@ switch($action) {
                     $headers[] = 'X-Priority: 2';
                     $headers[] = "Return-Path: <$SETTINGS[adminemail]>";
                     $headers[] = 'Content-Type: text/plain; charset=ASCII';
-                    $headers   = implode("\r\n", $headers);
+                    $headers = implode("\r\n", $headers);
 
                     $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
                     while($notify = $db->fetch_array($mailquery)) {
@@ -650,21 +646,21 @@ switch($action) {
                 }
 
                 $showtitle = $rank['title'];
-                $stars     = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']);
+                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']);
 
                 if ($memberinfo['customstatus'] != '') {
-                    $showtitle    = $rank['title'];
+                    $showtitle = $rank['title'];
                     $customstatus = '<br />'.$memberinfo['customstatus'];
                 } else {
-                    $showtitle    = $rank['title'];
+                    $showtitle = $rank['title'];
                     $customstatus = '';
                 }
 
                 if (!($memberinfo['lastvisit'] > 0)) {
                     $lastmembervisittext = $lang['textpendinglogin'];
                 } else {
-                    $lastvisitdate       = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $lastvisittime       = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
                     $lastmembervisittext = "$lastvisitdate $lang[textat] $lastvisittime";
                 }
 
@@ -681,12 +677,11 @@ switch($action) {
 
                 $memberinfo['bio'] = stripslashes(censor($memberinfo['bio']));
                 $memberinfo['bio'] = nl2br($memberinfo['bio']);
-                $encodeuser        = rawurlencode($memberinfo['username']);
+                $encodeuser = rawurlencode($memberinfo['username']);
 
+                $emailblock = '';
                 if ($memberinfo['showemail'] == 'yes') {
                     eval('$emailblock = "'.template('member_profile_email').'";');
-                } else {
-                    $emailblock = '';
                 }
 
                 if (X_SADMIN) {
@@ -703,10 +698,10 @@ switch($action) {
                 }
 
                 $memberinfo['location'] = censor($memberinfo['location']);
-                $memberinfo['aim']      = censor($memberinfo['aim']);
-                $memberinfo['icq']      = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
-                $memberinfo['yahoo']    = censor($memberinfo['yahoo']);
-                $memberinfo['msn']      = censor($memberinfo['msn']);
+                $memberinfo['aim'] = censor($memberinfo['aim']);
+                $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
+                $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
+                $memberinfo['msn'] = censor($memberinfo['msn']);
 
                 if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
                     $memberinfo['bday'] = $lang['textnone'];
@@ -756,9 +751,9 @@ switch($action) {
                     $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1;
                     validatePpp();
                     $page = quickpage($posts, $ppp);
-                    $lastpostdate    = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-                    $lastposttime    = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-                    $lastposttext    = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
+                    $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+                    $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+                    $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
                     $post['subject'] = censor($post['subject']);
                     $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.html_entity_decode($post['subject']).'</a> ('.$lastposttext.')';
                 } else {
@@ -766,7 +761,6 @@ switch($action) {
                 }
 
                 $lang['searchusermsg'] = str_replace('*USER*', $memberinfo['username'], $lang['searchusermsg']);
-
                 eval('echo stripslashes("'.template('member_profile').'");');
             }
         }
