@@ -261,6 +261,25 @@ switch($action) {
         }
         break;
 
+    case 'logsdump':
+        if (!X_SADMIN) {
+            error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
+        }
+
+        if (noSubmit('yessubmit')) {
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['logsdump_confirm'].'<br /><form action="tools.php?action=logsdump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+        } else if ($lang['textyes'] == $yessubmit) {
+            $db->query("TRUNCATE ".X_PREFIX."logs");
+            nav($lang['tools']);
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';
+            end_time();
+            eval('echo "'.template('footer').'";');
+            exit();
+        } else {
+            redirect('./cp.php', 0);
+        }
+        break;
+
     case 'fixorphanedthreads':
         if (noSubmit('orphsubmit')) {
             echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td>';
