@@ -29,22 +29,22 @@
 require 'header.php';
 require ROOT.'include/topicadmin.inc.php';
 
-$_tid     = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
-$fid      = isset($_POST['fid']) && is_numeric($_POST['fid']) ? (int) $_POST['fid'] : (isset($_GET['fid']) && is_numeric($_GET['fid']) ? (int) $_GET['fid'] : 0);
-$pid      = getInt('pid');
+$_tid = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
+$fid = isset($_POST['fid']) && is_numeric($_POST['fid']) ? (int) $_POST['fid'] : (isset($_GET['fid']) && is_numeric($_GET['fid']) ? (int) $_GET['fid'] : 0);
+$pid = getInt('pid');
 $othertid = formInt('othertid');
-$action   = isset($_POST['action']) && !empty($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) && !empty($_GET['action']) ? $_GET['action'] : '');
+$action = isset($_POST['action']) && !empty($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) && !empty($_GET['action']) ? $_GET['action'] : '');
 
 if (is_array($_tid)) {
     $tids = array_unique(array_map('intval', $_tid));
     $tid = array();
-    foreach ($tids as $value) {
+    foreach($tids as $value) {
         $tid[] = $value;
     }
 } else if (strstr($_tid, ',')) {
     $tids = array_unique(array_map('intval', explode(',', $_tid)));
     $tid = array();
-    foreach ($tids as $value) {
+    foreach($tids as $value) {
         $tid[] = $value;
     }
     $tid = implode(',', $tid);
@@ -105,7 +105,7 @@ if ($fid == 0) {
     $kill = true;
 }
 
-switch ($action) {
+switch($action) {
     case 'delete':
         nav($lang['textdeletethread']);
         break;
@@ -164,7 +164,7 @@ eval('echo "'.template('header').'";');
 
 $mod = new mod();
 
-switch ($action) {
+switch($action) {
     case 'delete':
         $mod->statuscheck($fid);
         if (noSubmit('deletesubmit')) {
@@ -172,9 +172,9 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_delete').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid");
-                while ($result = $db->fetch_array($query)) {
+                while($result = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
                 }
                 $db->free_result($query);
@@ -194,7 +194,6 @@ switch ($action) {
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
             echo '<center><span class="mediumtxt">'.$lang['deletethreadmsg'].'</span></center>';
-
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
@@ -223,7 +222,6 @@ switch ($action) {
             $mod->log($xmbuser, $act, $fid, $tid);
 
             echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
-
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
@@ -235,7 +233,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
                 $mod->log($xmbuser, 'close', $fid, $tid);
             }
@@ -243,7 +241,6 @@ switch ($action) {
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
-
 
     case 'f_open':
         $mod->statuscheck($fid);
@@ -253,7 +250,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid=$tid AND fid=$fid");
                 $mod->log($xmbuser, 'open', $fid, $tid);
             }
@@ -336,7 +333,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_topuntop').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=$tid");
                 $topped = $db->result($query, 0);
 
@@ -422,7 +419,7 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_bump').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1"), 0);
                 $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
                 $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid=$fid");
@@ -441,10 +438,10 @@ switch ($action) {
             eval('echo stripslashes("'.template('topicadmin_empty').'");');
         } else {
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1"), 0);
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
-                while ($result = $db->fetch_array($query)) {
+                while($result = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
                 }
                 $db->free_result($query);
@@ -503,7 +500,7 @@ switch ($action) {
             $threadcreated = false;
             $firstmove = false;
             $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid=$tid");
-            while ($post = $db->fetch_array($query)) {
+            while($post = $db->fetch_array($query)) {
                 $move = "move".$post['pid'];
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
                 $thatime = $onlinetime;
@@ -584,7 +581,6 @@ switch ($action) {
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
             echo '<center><span class="mediumtxt">'.$lang['mergethreadmsg'].'</span></center>';
-
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
@@ -604,7 +600,7 @@ switch ($action) {
                 $disablePost = '';
                 $posts = '';
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline");
-                while ($post = $db->fetch_array($query)) {
+                while($post = $db->fetch_array($query)) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
@@ -616,7 +612,7 @@ switch ($action) {
                 $ranks = array('Super Administrator'=>5, 'Administrator'=>4, 'Super Moderator'=>3, 'Moderator'=>2, 'Member'=>1, ''=>0);
                 $posts = '';
                 $query = $db->query("SELECT p.*, m.status FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE tid=$tid ORDER BY dateline");
-                while ($post = $db->fetch_array($query)) {
+                while($post = $db->fetch_array($query)) {
                     if ($ranks[$post['status']] > $ranks[$self['status']]) {
                         $disablePost = 'disabled="disabled"';
                     } else {
@@ -634,7 +630,7 @@ switch ($action) {
         } else {
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid=$tid");
-                while ($post = $db->fetch_array($query))    {
+                while($post = $db->fetch_array($query))    {
                     $move = "move".$post['pid'];
                     $move = isset($_POST[$move]) ? $_POST[$move] : '';
                     if (!empty($move)) {
@@ -648,7 +644,7 @@ switch ($action) {
             } else {
                 $ranks = array('Super Administrator'=>5, 'Administrator'=>4, 'Super Moderator'=>3, 'Moderator'=>2, 'Member'=>1, ''=>0);
                 $query = $db->query("SELECT m.status, p.author, p.pid FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON (m.username=p.author) WHERE p.tid=$tid");
-                while ($post = $db->fetch_array($query))    {
+                while($post = $db->fetch_array($query))    {
                     if ($ranks[$post['status']] > $ranks[$self['status']]) {
                         continue;
                     }
@@ -687,7 +683,6 @@ switch ($action) {
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
             echo '<center><span class="mediumtxt">'.$lang['complete_threadprune'].'</span></center>';
-
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
@@ -705,10 +700,10 @@ switch ($action) {
 
             $mod->statuscheck($newfid);
             $tids = $mod->create_tid_array($tid);
-            foreach ($tids AS $tid) {
+            foreach($tids AS $tid) {
                 $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid"));
-                foreach ($thread as $key=>$val) {
-                    switch ($key) {
+                foreach($thread as $key=>$val) {
+                    switch($key) {
                         case 'tid':
                             unset($thread[$key]);
                             break;
@@ -724,7 +719,7 @@ switch ($action) {
                 $vals = array();
 
                 reset($thread);
-                foreach ($thread as $key=>$val) {
+                foreach($thread as $key=>$val) {
                     if (trim($key) == '') {
                         continue;
                     }
@@ -746,7 +741,7 @@ switch ($action) {
                 $vals = array();
 
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC");
-                while ($post = $db->fetch_array($query)) {
+                while($post = $db->fetch_array($query)) {
                     $post['fid'] = $newfid;
                     $post['tid'] = $newtid;
 
@@ -755,7 +750,7 @@ switch ($action) {
                     unset($post['pid']);
                     reset($post);
 
-                    foreach ($post as $key=>$val) {
+                    foreach($post as $key=>$val) {
                         $cols[] = $key;
                         $vals[] = $val;
                     }
@@ -774,7 +769,6 @@ switch ($action) {
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
             echo '<center><span class="mediumtxt">'.$lang['copythreadmsg'].'</span></center>';
-
             redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
@@ -794,12 +788,12 @@ switch ($action) {
             $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
             $query2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
             $mods = explode(", ", $db->result($query, 0));
-            while ($usr = $db->fetch_array($query2)) {
+            while($usr = $db->fetch_array($query2)) {
                 $mods[] = $usr['username'];
             }
-            $sent  = 0;
-            $time  = $onlinetime;
-            foreach ($mods as $key=>$mod) {
+            $sent = 0;
+            $time = $onlinetime;
+            foreach($mods as $key=>$mod) {
                 $mod = trim($mod);
                 $q = $db->query("SELECT ppp FROM ".X_PREFIX."members WHERE username='$mod'");
                 if ($db->num_rows($q) == 0) {
@@ -815,7 +809,6 @@ switch ($action) {
                 $sent++;
             }
             echo "<center><span class=\"mediumtxt\">$lang[reportmsg]</span></center>";
-
             $page = quickpage($postcount, $self['tpp']);
             redirect('viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, 2, X_REDIRECT_JS);
         }

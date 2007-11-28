@@ -30,10 +30,10 @@ require 'header.php';
 
 validatePpp();
 
-$pid    = getInt('pid');
-$tid    = getInt('tid');
-$page   = getInt('page');
-$goto   = getVar('goto');
+$pid = getInt('pid');
+$tid = getInt('tid');
+$page = getInt('page');
+$goto = getVar('goto');
 $action = getVar('action');
 
 if ($goto == 'lastpost') {
@@ -84,7 +84,6 @@ if ($goto == 'lastpost') {
         $posts = $db->result($query, 0);
         $db->free_result($query);
     }
-
     $page = quickpage($posts, $ppp);
     redirect("viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 }
@@ -131,9 +130,9 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$notexist     = false;
+$notexist = false;
 $notexist_txt = '';
-$posts        = '';
+$posts = '';
 
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
 if ($tid == 0 || $db->num_rows($query) != 1) {
@@ -201,9 +200,9 @@ if ($forum['type'] == 'forum') {
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
-$allowhtml    = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
+$allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];
-$allowbbcode  = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
+$allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 
 eval('$bbcodescript = "'.template('functions_bbcode').'";');
 
@@ -312,7 +311,7 @@ if (!$action) {
     }
 
     $specialrank = array();
-    $rankposts   = array();
+    $rankposts = array();
     $queryranks = $db->query("SELECT id, title, posts, stars, allowavatars, avatarrank FROM ".X_PREFIX."ranks");
     while($query = $db->fetch_row($queryranks)) {
         $title = $query[1];
@@ -337,9 +336,9 @@ if (!$action) {
     }
 
     $pollhtml = '';
-    $poll     = '';
-    $vote_id  = 0;
-    $voted    = 0;
+    $poll = '';
+    $vote_id = 0;
+    $voted = 0;
 
     $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
     if ($query) {
@@ -601,7 +600,7 @@ if (!$action) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
             } else if ($attachsize >= 1048576) {
                 $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-                } else if ($attachsize >= 1024) {
+            } else if ($attachsize >= 1024) {
                 $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
             } else {
                 $attachsize = $attachsize . "b";
@@ -648,9 +647,7 @@ if (!$action) {
     if ('Moderator' == $status1) {
         eval('$modoptions = "'.template('viewthread_modoptions').'";');
     }
-
     eval('echo stripslashes("'.template('viewthread').'");');
-
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
@@ -670,12 +667,14 @@ if (!$action) {
     $name = $file['filename'];
     $size = (int) $file['filesize'];
     $type = ($type == 'text/html') ? 'text/plain' : $type;
+
     header("Content-type: $type");
     header("Content-length: $size");
     header("Content-Disposition: attachment; filename=$name");
     header("Content-Description: XMB Attachment");
     header("Cache-Control: public; max-age=604800");
     header("Expires: 604800");
+
     echo $file['attachment'];
     exit();
 } else if ($action == 'printable') {

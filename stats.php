@@ -44,7 +44,7 @@ if ($SETTINGS['stats'] == 'off') {
 
 $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
 $restrict = array("(f.password='')");
-switch ($self['status']) {
+switch($self['status']) {
     case 'Member':
         $restrict[] = 'f.private = 1';
         $restrict[] = "(f.userlist = '' OR f.userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
@@ -69,14 +69,14 @@ switch ($self['status']) {
 $fids = array();
 if (!X_SADMIN) {
     $q = $db->query("SELECT fid FROM ".X_PREFIX."forums f WHERE f.status='on' AND ".implode(' AND ', $restrict));
-    while ($f = $db->fetch_array($q)) {
+    while($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
     $db->free_result($q);
 
     if (X_MEMBER) {
         $r2 = array();
-        foreach ($_COOKIE as $key=>$val) {
+        foreach($_COOKIE as $key=>$val) {
             if (preg_match('#^fidpw([0-9]+)$#', $key, $fetch)) {
                 $r2[] = '(fid="'.$fetch[1].'" AND password="'.addslashes($val).'")';
             }
@@ -85,7 +85,7 @@ if (!X_SADMIN) {
         if (count($r2) > 0) {
             $r = implode(' OR ', $r2);
             $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
-            while ($f = $db->fetch_array($q)) {
+            while($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
             $db->free_result($q);
@@ -170,7 +170,7 @@ $mapercent  = number_format(($membersact*100/$members), 2).'%';
 // Get top 5 most viewed threads
 $viewmost = array();
 $query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
-while ($views = $db->fetch_array($query)) {
+while($views = $db->fetch_array($query)) {
     $view_subject = stripslashes(censor($views['subject']));
     $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.html_entity_decode($view_subject).'</a> ('.$views['views'].')';
 }
@@ -180,7 +180,7 @@ $db->free_result($query);
 // Get top 5 most replied to threads
 $replymost = array();
 $query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
-while ($reply = $db->fetch_array($query)) {
+while($reply = $db->fetch_array($query)) {
     $reply_subject = stripslashes(censor($reply['subject']));
     $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.html_entity_decode($reply_subject).'</a> ('.$reply['replies'].')';
 }
@@ -191,7 +191,7 @@ $db->free_result($query);
 $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
-while ($last = $db->fetch_array($query)) {
+while($last = $db->fetch_array($query)) {
     $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
     $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
     $thislast = "$lang[lpoststats] $lang[lastreply1] $lpdate $lang[textat] $lptime";
