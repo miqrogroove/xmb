@@ -96,7 +96,7 @@ if (noSubmit('editsubmit')) {
     $themelist[] = '<select name="thememem">';
     $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
     $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-    while ($themeinfo = $db->fetch_array($query)) {
+    while($themeinfo = $db->fetch_array($query)) {
         if ($themeinfo['themeid'] == $member['theme']) {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
         } else {
@@ -120,7 +120,7 @@ if (noSubmit('editsubmit')) {
     $dayselect = array();
     $dayselect[] = '<select name="day">';
     $dayselect[] = '<option value="">&nbsp;</option>';
-    for ($num = 1; $num <= 31; $num++) {
+    for($num = 1; $num <= 31; $num++) {
         if ($day == $num) {
             $dayselect[] = '<option value='.$num.'" '.$selHTML.'>'.$num.'</option>';
         } else {
@@ -158,7 +158,7 @@ if (noSubmit('editsubmit')) {
     if ($SETTINGS['avastatus'] == 'list')  {
         $avatars = '<option value="" />'.$lang['textnone'].'</option>';
         $dir1 = opendir(ROOT.'images/avatars');
-        while ($avatar1 = readdir($dir1)) {
+        while($avatar1 = readdir($dir1)) {
             if (is_file(ROOT.'images/avatars/'.$avatar1)) {
                 $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
             }
@@ -175,7 +175,7 @@ if (noSubmit('editsubmit')) {
 
     eval('echo stripslashes("'.template('admintool_editprofile').'");');
 } else {
-    $query  = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
     $member = $db->fetch_array($query);
 
     if (!$member['username']) {
@@ -244,6 +244,7 @@ if (noSubmit('editsubmit')) {
     $location       = addslashes($location);
     $yahoo          = addslashes($yahoo);
     $aim            = addslashes($aim);
+    $msn            = addslashes($msn);
     $email          = addslashes($email);
     $site           = addslashes($site);
     $webcam         = addslashes($webcam);
@@ -256,7 +257,7 @@ if (noSubmit('editsubmit')) {
         $size = @getimagesize($avatar);
         if ($size === false) {
             $avatar = '';
-        } elseif (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
             error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
         }
     }

@@ -47,7 +47,7 @@ smcwcache();
 eval('$css = "'.template('css').'";');
 
 $action = getVar('action');
-switch ($action) {
+switch($action) {
     case 'reg':
         nav($lang['textregister']);
         break;
@@ -62,7 +62,7 @@ switch ($action) {
         break;
 }
 
-switch ($action) {
+switch($action) {
     case 'coppa':
         if (X_MEMBER) {
             eval('echo "'.template('header').'";');
@@ -86,19 +86,19 @@ switch ($action) {
 
     case 'reg':
         if ($SETTINGS['pruneusers'] > 0) {
-            $prunebefore = $onlinetime-(60 * 60 * 24 * $SETTINGS['pruneusers']);
+            $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
             $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
         }
 
         if ($SETTINGS['maxdayreg'] > 0) {
-            $time = $onlinetime-86400; // take the date and distract 24 hours from it
+            $time = $onlinetime - 86400; // take the date and distract 24 hours from it
             $query = $db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
             if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
                 error($lang['max_regs']);
             }
         }
 
-        if ($SETTINGS['regstatus'] != "on") {
+        if ($SETTINGS['regstatus'] == 'off') {
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');
             end_time();
@@ -116,47 +116,47 @@ switch ($action) {
 
         if (noSubmit('regsubmit')) {
             eval('echo "'.template('header').'";');
-            if ($SETTINGS['bbrules'] == "on" && noSubmit('rulesubmit')) {
+            if ($SETTINGS['bbrules'] == 'on' && noSubmit('rulesubmit')) {
                 $SETTINGS['bbrulestxt'] = nl2br(stripslashes(stripslashes($SETTINGS['bbrulestxt'])));
                 eval('echo stripslashes("'.template('member_reg_rules').'");');
             } else {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
                 eval($lang['evaloffset']);
 
-                $themelist = array();
+                $themelist   = array();
                 $themelist[] = '<select name="thememem">';
                 $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
                 $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-                while ($themeinfo = $db->fetch_array($query)) {
+                while($themeinfo = $db->fetch_array($query)) {
                     $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
                 }
                 $themelist[] = '</select>';
-                $themelist = implode("\n", $themelist);
+                $themelist   = implode("\n", $themelist);
 
                 $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
-                $dayselect = array();
+                $dayselect   = array();
                 $dayselect[] = '<select name="day">';
                 $dayselect[] = '<option value="">&nbsp;</option>';
-                for ($num = 1; $num <= 31; $num++) {
+                for($num = 1; $num <= 31; $num++) {
                     $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
                 }
                 $dayselect[] = '</select>';
                 $dayselect   = implode("\n", $dayselect);
 
-                if ($SETTINGS['sigbbcode'] == "on") {
+                if ($SETTINGS['sigbbcode'] == 'on') {
                     $bbcodeis = $lang['texton'];
                 } else {
                     $bbcodeis = $lang['textoff'];
                 }
 
-                if ($SETTINGS['sightml'] == "on") {
+                if ($SETTINGS['sightml'] == 'on') {
                     $htmlis = $lang['texton'];
                 } else {
                     $htmlis = $lang['textoff'];
                 }
 
-                if ($SETTINGS['emailcheck'] != "on") {
+                if ($SETTINGS['emailcheck'] == 'off') {
                     eval('$pwtd = "'.template('member_reg_password').'";');
                 } else {
                     $pwtd = '';
@@ -281,18 +281,17 @@ switch ($action) {
 
                 if ($SETTINGS['avastatus'] == 'on') {
                     eval('$avatd = "'.template('member_reg_avatarurl').'";');
-                } elseif ($SETTINGS['avastatus'] == 'list') {
+                } else if ($SETTINGS['avastatus'] == 'list') {
                     $avatars = array();
                     $avatars[] = '<option value=""/>'.$lang['textnone'].'</option>';
                     $dirHandle = opendir('./images/avatars');
-                    while ($avFile = readdir($dirHandle)) {
+                    while($avFile = readdir($dirHandle)) {
                         if (is_file('./images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..') {
                             $avatars[] = '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
                         }
                     }
                     closedir($dirHandle);
                     $avatars = implode("\n", str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars));
-
                     eval('$avatd = "'.template('member_reg_avatarlist').'";');
                 } else {
                     $avatd = '';
@@ -316,7 +315,7 @@ switch ($action) {
         } else {
             $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'');
             $username = formVar('username');
-            foreach ($find as $needle) {
+            foreach($find as $needle) {
                 if (false !== strpos($username, $needle)) {
                     error($lang['restricted']);
                 }
@@ -353,7 +352,7 @@ switch ($action) {
                 $password = '';
                 $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                 mt_srand((double)microtime() * 1000000);
-                for ($get = strlen($chars); $i < 8; $i++) {
+                for($get = strlen($chars); $i < 8; $i++) {
                     $password .= $chars[mt_rand(0, $get)];
                 }
                 $password2 = $password;
@@ -364,15 +363,16 @@ switch ($action) {
                 error($lang['pwnomatch']);
             }
 
-            $fail = false;
+            $fail  = false;
             $efail = false;
             $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
-            while ($restriction = $db->fetch_array($query)) {
+            while($restriction = $db->fetch_array($query)) {
                 if ($restriction['case_sensitivity'] == 1) {
                     if ($restriction['partial'] == 1) {
                         if (strpos($username, $restriction['name']) !== false) {
                             $fail = true;
                         }
+
                         if (strpos($email, $restriction['name']) !== false) {
                             $efail = true;
                         }
@@ -380,6 +380,7 @@ switch ($action) {
                         if ($username == $restriction['name']) {
                             $fail = true;
                         }
+
                         if ($email == $restriction['name']) {
                             $efail = true;
                         }
@@ -393,6 +394,7 @@ switch ($action) {
                         if (strpos($t_username, $restriction['name']) !== false) {
                             $fail = true;
                         }
+
                         if (strpos($t_email, $restriction['name']) !== false) {
                             $efail = true;
                         }
@@ -400,6 +402,7 @@ switch ($action) {
                         if ($t_username == $restriction['name']) {
                             $fail = true;
                         }
+
                         if ($t_email == $restriction['name']) {
                             $efail = true;
                         }
@@ -473,6 +476,7 @@ switch ($action) {
             } else {
                 $dateformatnew = (intval($dateformatnew) > 0 ? $SETTINGS['dateformat'] : checkInput($dateformatnew, '', '', 'javascript', true)); // Temporary validation of dateformat - if it contains numbers we assume the date is incorrect (blacklist approach) and therefore use the default dateformat otherwise we proceed to validation of input.
             }
+
             $timeformatnew = formInt('timeformatnew');
             $timeformatnew = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
 
@@ -517,7 +521,7 @@ switch ($action) {
                 $size = @getimagesize($avatar);
                 if ($size === false ) {
                     $avatar = '';
-                } elseif(($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                } else if(($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                 }
             }
@@ -527,7 +531,7 @@ switch ($action) {
             if ($SETTINGS['notifyonreg'] != 'off') {
                 if ($SETTINGS['notifyonreg'] == 'u2u') {
                     $mailquery = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-                    while ($admin = $db->fetch_array($mailquery)) {
+                    while($admin = $db->fetch_array($mailquery)) {
                         $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".addslashes($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$lang[textnewmember]', '$lang[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                     }
                     $db->free_result($mailquery);
@@ -540,10 +544,10 @@ switch ($action) {
                     $headers[] = 'X-Priority: 2';
                     $headers[] = "Return-Path: <$SETTINGS[adminemail]>";
                     $headers[] = 'Content-Type: text/plain; charset=ASCII';
-                    $headers = implode("\r\n", $headers);
+                    $headers   = implode("\r\n", $headers);
 
                     $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
-                    while ($notify = $db->fetch_array($mailquery)) {
+                    while($notify = $db->fetch_array($mailquery)) {
                         altMail($notify['email'], $lang['textnewmember'], $lang['textnewmember2'], $headers);
                     }
                     $db->free_result($mailquery);
@@ -628,7 +632,7 @@ switch ($action) {
 
                 if ($memberinfo['avatar'] != '') {
                     if (false !== ($pos = strpos($memberinfo['avatar'], ',')) && substr($memberinfo['avatar'], $pos-4, 4) == '.swf') {
-                        $flashavatar = explode(",",$memberinfo['avatar']);
+                        $flashavatar = explode(',', $memberinfo['avatar']);
                         $memberinfo['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
                     } else {
                         $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
@@ -646,21 +650,21 @@ switch ($action) {
                 }
 
                 $showtitle = $rank['title'];
-                $stars = str_repeat("<img src=\"$imgdir/star.gif\" alt=\"*\" />", $rank['stars']);
+                $stars     = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']);
 
                 if ($memberinfo['customstatus'] != '') {
-                    $showtitle = $rank['title'];
+                    $showtitle    = $rank['title'];
                     $customstatus = '<br />'.$memberinfo['customstatus'];
                 } else {
-                    $showtitle = $rank['title'];
+                    $showtitle    = $rank['title'];
                     $customstatus = '';
                 }
 
                 if (!($memberinfo['lastvisit'] > 0)) {
                     $lastmembervisittext = $lang['textpendinglogin'];
                 } else {
-                    $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $lastvisitdate       = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $lastvisittime       = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
                     $lastmembervisittext = "$lastvisitdate $lang[textat] $lastvisittime";
                 }
 
@@ -677,7 +681,7 @@ switch ($action) {
 
                 $memberinfo['bio'] = stripslashes(censor($memberinfo['bio']));
                 $memberinfo['bio'] = nl2br($memberinfo['bio']);
-                $encodeuser = rawurlencode($memberinfo['username']);
+                $encodeuser        = rawurlencode($memberinfo['username']);
 
                 if ($memberinfo['showemail'] == 'yes') {
                     eval('$emailblock = "'.template('member_profile_email').'";');
@@ -699,10 +703,10 @@ switch ($action) {
                 }
 
                 $memberinfo['location'] = censor($memberinfo['location']);
-                $memberinfo['aim'] = censor($memberinfo['aim']);
-                $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
-                $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
-                $memberinfo['msn'] = censor($memberinfo['msn']);
+                $memberinfo['aim']      = censor($memberinfo['aim']);
+                $memberinfo['icq']      = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
+                $memberinfo['yahoo']    = censor($memberinfo['yahoo']);
+                $memberinfo['msn']      = censor($memberinfo['msn']);
 
                 if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
                     $memberinfo['bday'] = $lang['textnone'];
@@ -740,7 +744,7 @@ switch ($action) {
 
                 if (!($forum['posts'] > 0)) {
                     $topforum = $lang['textnopostsyet'];
-                } elseif($memberinfo['postnum'] <= 0) {
+                } else if ($memberinfo['postnum'] <= 0) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
                     $forum['fid'] = intval($forum['fid']);
@@ -752,9 +756,9 @@ switch ($action) {
                     $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1;
                     validatePpp();
                     $page = quickpage($posts, $ppp);
-                    $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-                    $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-                    $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
+                    $lastpostdate    = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+                    $lastposttime    = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+                    $lastposttext    = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
                     $post['subject'] = censor($post['subject']);
                     $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.html_entity_decode($post['subject']).'</a> ('.$lastposttext.')';
                 } else {
