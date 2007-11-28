@@ -66,7 +66,7 @@ smcwcache();
 eval('$css = "'.template('css').'";');
 
 $action = getVar('action');
-switch ($action) {
+switch($action) {
     case 'login':
         nav($lang['textlogin']);
         break;
@@ -98,7 +98,7 @@ switch ($action) {
 
 $misc = $multipage = $nextlink = '';
 
-switch ($action) {
+switch($action) {
     case 'login':
         if (X_MEMBER) {
             eval('echo "'.template('header').'";');
@@ -183,7 +183,7 @@ switch ($action) {
         put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
         put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
 
-        foreach ($_COOKIE as $key=>$val) {
+        foreach($_COOKIE as $key=>$val) {
             $val = addslashes($val);
             if (preg_match('#^fidpw([0-9]+)$#', $key)) {
                 put_cookie($key, '');
@@ -317,7 +317,7 @@ switch ($action) {
                 if ($filter_distinct == 'yes') {
                     $temparray = array();
                     $searchresults = '';
-                    while ($post = $db->fetch_array($querysrch)) {
+                    while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
                         $authorization = privfcheck($post['fprivate'], $post['fuserlist']); // private forum check
 
@@ -374,7 +374,7 @@ switch ($action) {
                         }
                     }
                 } else {
-                    while ($post = $db->fetch_array($querysrch)) {
+                    while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
                         $authorization = privfcheck($post['fprivate'], $post['fuserlist']); // private forum check
 
@@ -474,7 +474,7 @@ switch ($action) {
             for ($get=strlen($chars), $i=0; $i < $max; $i++) {
                 $newpass .= $chars[mt_rand(0, $get)];
             }
-            $newmd5pass = md5($newpass);
+            $newmd5pass = md5(trim($newpass));
 
             $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
 
@@ -519,7 +519,7 @@ switch ($action) {
         }
 
         $onlineusers = '';
-        while ($online = $db->fetch_array($query)) {
+        while($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
             $onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($addtime * 3600));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
@@ -578,7 +578,7 @@ switch ($action) {
         $todaymembersnum = 0;
         $todaymembers = array();
         $pre = $suff = '';
-        while ($memberstoday = $db->fetch_array($query)) {
+        while($memberstoday = $db->fetch_array($query)) {
             $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
             $suff = '</span>';
             $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
@@ -601,7 +601,6 @@ switch ($action) {
         $order = getVar('order');
         $desc = getVar('desc');
         $page = getInt('page');
-
         $srchmem = formVar('srchmem');
         $srchemail = formVar('srchemail');
         $srchip = formVar('srchip');
@@ -696,7 +695,7 @@ switch ($action) {
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
-            while ($member = $db->fetch_array($querymem)) {
+            while($member = $db->fetch_array($querymem)) {
                 $member['regdate'] = gmdate($dateformat, $member['regdate'] + $adjTime );
 
                 if (X_MEMBER && $member['email'] != '' && $member['showemail'] == 'yes') {
@@ -749,7 +748,6 @@ switch ($action) {
             $init['ascdesc'] = 'desc';
             $ascdesc = $lang['desc'];
         }
-
         eval('$memlist = "'.template($misc_mlist_template).'";');
         $misc = stripslashes($memlist);
         break;

@@ -51,7 +51,7 @@ $srchfrom = $onlinetime - (86400 * $daysold);
 
 $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
 $restrict = array("(password='')");
-switch ($self['status']) {
+switch($self['status']) {
     case 'Member':
         $restrict[] = 'private = 1';
         $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))( )*$modXmbuser( )*((,)|$)')";
@@ -78,13 +78,13 @@ $fids = array();
 $tids = array();
 if (X_SADMIN) {
     $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status='on'");
-    while ($f = $db->fetch_array($q)) {
+    while($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
     $db->free_result($q);
 } else {
     $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status='on' AND $restrict");
-    while ($f = $db->fetch_array($q)) {
+    while($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
     $db->free_result($q);
@@ -92,7 +92,7 @@ if (X_SADMIN) {
     if (X_MEMBER) {
         // let's add fids for passworded forums that the user can access
         $r2 = array();
-        foreach ($_COOKIE as $key=>$val) {
+        foreach($_COOKIE as $key=>$val) {
             if (preg_match('#^fidpw([0-9]+)$#', $key, $fetch)) {
                 $r2[] = '(fid="' . $fetch[1] . '" AND password="'.addslashes($val).'")';
             }
@@ -101,7 +101,7 @@ if (X_SADMIN) {
         if (count($r2) > 0) {
             $r = implode(' OR ', $r2);
             $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
-            while ($f = $db->fetch_array($q)) {
+            while($f = $db->fetch_array($q)) {
                 $fids[] = $f['fid'];
             }
             $db->free_result($q);
@@ -117,7 +117,7 @@ $fids = implode(', ', $fids);
 
 $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN($fids)");
 $results = $db->num_rows($query);
-while ($t = $db->fetch_array($query)) {
+while($t = $db->fetch_array($query)) {
     $tids[] = $t['tid'];
 }
 $db->free_result($query);
@@ -126,7 +126,6 @@ $tids = implode(', ', $tids);
 if ($results == 0) {
     $noPostsMessage = ($daysold == 1) ? $lang["nopoststoday"] : $lang["noPostsTimePeriod"];
     $multipage = '';
-
     eval('$rows = "'.template('today_noposts').'";');
 } else {
     validateTpp();
@@ -145,7 +144,7 @@ if ($results == 0) {
     $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-    while ($thread = $db->fetch_array($query)) {
+    while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(stripslashes($thread['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
         $thread['name'] = stripslashes($thread['name']);
 
@@ -212,7 +211,6 @@ if ($results == 0) {
         $thread['subject'] = censor($thread['subject']);
         $thread['subject'] = addslashes($thread['subject']);
         $thread['name'] = html_entity_decode($thread['name']);
-
         eval('$today_row[] = "'.template('today_row').'";');
     }
 

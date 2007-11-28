@@ -73,7 +73,8 @@ if (!$folder) {
     $folder = getVar('folder');
 }
 
-$folderlist = $folders = '';
+$folderlist = '';
+$folders = '';
 $farray = array();
 if ($folder && (!$action || $action == 'mod' || $action == 'view')) {
     $folder = checkInput($folder, true);
@@ -89,9 +90,10 @@ if (!$u2uid) {
 
 $thewidth = ($self['useoldu2u'] == 'yes') ? $tablewidth : '100%';
 
-$u2upreview = $leftpane = '';
+$u2upreview = '';
+$leftpane = '';
 
-switch ($action) {
+switch($action) {
     case 'modif':
         $mod = formVar('mod');
         switch($mod) {
@@ -147,8 +149,7 @@ switch ($action) {
         $move = formVar('move');
         $tofolder = formVar('tofolder');
         $markunread = formVar('markunread');
-
-        switch ($modaction) {
+        switch($modaction) {
             case 'delete':
                 if (!isset($u2u_select) || empty($u2u_select)) {
                     error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
@@ -164,7 +165,6 @@ switch ($action) {
                     error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
                     return;
                 }
-
                 u2u_mod_move($tofolder, $u2u_select);
                 break;
             case 'markunread':
@@ -182,7 +182,6 @@ switch ($action) {
         $msgto = formVar('msgto');
         $subject = formVar('subject');
         $message = formVar('message');
-
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':
@@ -227,8 +226,6 @@ if (!X_STAFF) {
     eval($lang['evalu2ustaffquota']);
 }
 eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
-
 $tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
-
 eval('echo stripslashes("'.template($tu2u).'");');
 ?>
