@@ -58,15 +58,15 @@ $buddys = NULL;
 
 $action = getVar('action');
 switch($action) {
-    case "profile":
+    case 'profile':
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
         nav($lang['texteditpro']);
         break;
-    case "subscriptions":
+    case 'subscriptions':
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
         nav($lang['textsubscriptions']);
         break;
-    case "favorites":
+    case 'favorites':
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
         nav($lang['textfavorites']);
         break;
