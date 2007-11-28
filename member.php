@@ -517,7 +517,7 @@ switch($action) {
                 $size = @getimagesize($avatar);
                 if ($size === false ) {
                     $avatar = '';
-                } else if(($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                 }
             }
