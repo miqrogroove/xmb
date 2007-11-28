@@ -1314,7 +1314,7 @@ switch($step) {
 
         $newTheme = $u->findThemeIDByName('XMB Engage');
         if (!$newTheme) {
-            $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#CDCECF', '#AEBBCF', '#91A9CF', '#000000', '#2E3E55', '#5472A4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1', '90%', '5', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF')");
+            $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#CDCECF', '#AEBBCF', '#91A9CF', '#000000', '#2E3E55', '#5472A4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1px', '90%', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF')");
             $newTheme = $db->insert_id();
         }
 
