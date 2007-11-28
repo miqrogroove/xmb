@@ -921,7 +921,7 @@ $multipage
 </td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" colspan="2" class="smalltxt" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor;">
+<td bgcolor="$altbg1" colspan="2" class="smalltxt" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;">
 $lang[key]<strong><u><i>$lang[superadmin]</i></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden
 </td>
 </tr>
@@ -1069,17 +1069,17 @@ $forumlist
 </table>
 
 <br />
-<table cellpadding="$tablespace" cellspacing="0" width="$tablewidth" align="center" style="border: {$borderwidth}px solid $bordercolor;">
+<table cellpadding="$tablespace" cellspacing="0" width="$tablewidth" align="center" style="border: $borderwidth solid $bordercolor;">
 <tr>
-<td colspan="2" class="category" style="border-bottom: {$borderwidth}px solid $bordercolor;"><strong><font color="$cattext">$lang[statistics]</font></strong></td>
+<td colspan="2" class="category" style="border-bottom: $borderwidth solid $bordercolor;"><strong><font color="$cattext">$lang[statistics]</font></strong></td>
 </tr>
 $whosonline
 <tr>
-<td align="left" class="header" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor; border-right: {$borderwidth}px solid $bordercolor;"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
-<td align="left" class="header" style="border-top: {$borderwidth}px solid $bordercolor; border-bottom: {$borderwidth}px solid $bordercolor;"><font color="$cattext"><strong>$lang[key]</strong></font></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor; border-right: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[key]</strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="$altbg2">
-<td align="left" valign="top" style="border-right: {$borderwidth}px solid $bordercolor;">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
+<td align="left" valign="top" style="border-right: $borderwidth solid $bordercolor;">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
 <td align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
 </tr>
 </table>
