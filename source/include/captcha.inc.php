@@ -135,22 +135,18 @@ class Captcha {
             if ($vCharSet != '') {
                 // split items on commas
                 $aCharSet = explode(',', $vCharSet);
-
                 // initialise array
                 $this->aCharSet = array();
-
                 // loop through items
                 foreach($aCharSet as $sCurrentItem) {
                     // a range should have 3 characters, otherwise is normal character
                     if (strlen($sCurrentItem) == 3) {
                         // split on range character
                         $aRange = explode('-', $sCurrentItem);
-
                         // check for valid range
                         if (count($aRange) == 2 && $aRange[0] < $aRange[1]) {
                             // create array of characters from range
                             $aRange = range($aRange[0], $aRange[1]);
-
                             // add to charset array
                             $this->aCharSet = array_merge($this->aCharSet, $aRange);
                         }
@@ -177,7 +173,6 @@ class Captcha {
 
         // initialise array
         $this->aFonts = array();
-
         // loop through items
         foreach($aFonts as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
@@ -220,7 +215,6 @@ class Captcha {
 
         // initialise array
         $this->aBackgroundImages = array();
-
         // loop through items
         foreach($aBackgroundImages as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
@@ -272,7 +266,7 @@ class Captcha {
     }
 
     function DrawDots() {
-        for ($i = 0; $i < $this->iNumDots; $i++) {
+        for($i = 0; $i < $this->iNumDots; $i++) {
             // allocate color
             if ($this->bUseColor) {
                 $iDotColor = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
@@ -280,14 +274,13 @@ class Captcha {
                 $iRandColor = rand(100, 250);
                 $iDotColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
             }
-
             // draw dot
             imagesetpixel($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), $iDotColor);
         }
     }
 
     function DrawLines() {
-        for ($i = 0; $i < $this->iNumLines; $i++) {
+        for($i = 0; $i < $this->iNumLines; $i++) {
             // allocate color
             if ($this->bUseColor) {
                 $iLineColor = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
@@ -295,7 +288,6 @@ class Captcha {
                 $iRandColor = rand(100, 250);
                 $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
             }
-
             // draw line
             imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColor);
         }
@@ -305,7 +297,7 @@ class Captcha {
         global $db, $onlinetime;
 
         // loop through and generate the code letter by letter
-        for ($i = 0; $i < $this->iNumChars; $i++) {
+        for($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {
                 // select random character and add to code string
                 $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
@@ -325,7 +317,6 @@ class Captcha {
         }
 
         $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$imagehash', '$this->sCode', '$time')");
-
         return $imagehash;
     }
 
@@ -334,7 +325,6 @@ class Captcha {
 
         // check imagehash
         $imghash = checkInput($imghash, '', '', "javascript", false);
-
         if ($imghash == 'test') {
             $imgCode = 'CaPtChA';
         } else {
@@ -343,7 +333,6 @@ class Captcha {
             $db->free_result($query);
             $imgCode = $captchaimage['imagestring'];
         }
-
         // reset code
         $this->sCode = $imgCode;
         return $imgCode;
@@ -351,14 +340,12 @@ class Captcha {
 
     function DrawCharacters() {
         // loop through and write out selected number of characters
-        for ($i = 0; $i < strlen($this->sCode); $i++) {
+        for($i = 0; $i < strlen($this->sCode); $i++) {
             // select random font
             $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
-
             // select random color
             if ($this->bUseColor) {
                $iTextColor = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
-
                if ($this->bCharShadow) {
                    // shadow color
                    $iShadowColor = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
@@ -366,7 +353,6 @@ class Captcha {
             } else {
                 $iRandColor = rand(0, 100);
                 $iTextColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
-
                 if ($this->bCharShadow) {
                     // shadow color
                     $iRandColor = rand(0, 100);
@@ -376,18 +362,14 @@ class Captcha {
 
             // select random font size
             $iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
-
             // select random angle
             $iAngle = rand(-30, 30);
-
             // get dimensions of character in selected font and text size
             $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
-
             // calculate character starting coordinates
             $iX = $this->iSpacing / 4 + $i * $this->iSpacing;
             $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
             $iY = $this->iHeight / 2 + $iCharHeight / 4;
-
             // write text to image
             imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i], array());
 
@@ -403,7 +385,6 @@ class Captcha {
     function WriteFile() {
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
-
         switch($this->sFileType) {
             case 'gif':
                 imagegif ($this->oImage);
@@ -422,11 +403,9 @@ class Captcha {
         if (!empty($this->aBackgroundImages)) {
             // create new image
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
-
             // create background image
             $iRandImage = array_rand($this->aBackgroundImages);
             $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
-
             $ext = substr($vBackgroundImage, -3);
             switch($ext) {
                 case 'gif':
@@ -438,10 +417,8 @@ class Captcha {
                 default:
                     $oBackgroundImage = imagecreatefromjpeg($vBackgroundImage);
             }
-
             // copy background image
             imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
-
             // free memory used to create background image
             imagedestroy($oBackgroundImage);
         } else {
@@ -453,21 +430,15 @@ class Captcha {
         $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
         $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
         $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
-
         imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-
         $this->DrawDots();
         $this->DrawLines();
-
         $this->RetrieveCode($imghash);
         $this->DrawCharacters();
-
         // write out image to file or browser
         $this->WriteFile();
-
         // free memory used in creating image
         imagedestroy($this->oImage);
-
         return true;
     }
 
@@ -480,7 +451,6 @@ class Captcha {
         }
 
         $this->RetrieveCode($imghash);
-
         if ($this->bCaseInsensitive) {
             $sUserCode = strtoupper($sUserCode);
             $this->sCode = strtoupper($this->sCode);
@@ -491,7 +461,6 @@ class Captcha {
             $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
             return true;
         }
-
         return false;
     }
 
