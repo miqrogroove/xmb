@@ -42,7 +42,7 @@ if (!defined('ROOT')) {
 
 // Resolve Server specific issues
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-switch ($server) {
+switch($server) {
     case 'Aby': // Abyss web server
         $protocol = (getenv('HTTPS') == 'off') ? ('http://') : ('https://');
         $query = (getenv('QUERY_STRING')) ? ('?'.getenv('QUERY_STRING')) : ('');
@@ -57,31 +57,31 @@ require ROOT.'include/global.inc.php';
 require ROOT.'include/validate.inc.php';
 
 // Initialising certain key variables. These are default values, please don't change them!
-$cookiepath     = '';
-$cookiedomain   = '';
-$mtime          = explode(" ", microtime());
-$starttime      = $mtime[1] + $mtime[0];
-$onlinetime     = time();
-$bbcodescript   = '';
-$threadSubject  = '';
-$self           = array();
-$user           = (isset($user)) ? $user : '';
-$SETTINGS       = array();
-$THEME          = array();
-$links          = array();
-$lang           = array();
-$plugname       = array();
-$plugadmin      = array();
-$plugurl        = array();
-$plugimg        = array();
-$footerstuff    = array();
-$mailer         = array();
-$selHTML        = 'selected="selected"';
-$cheHTML        = 'checked="checked"';
-$filesize       = 0;
-$filename       = '';
-$filetype       = '';
-$quickjump      = '';
+$cookiepath = '';
+$cookiedomain = '';
+$mtime = explode(" ", microtime());
+$starttime = $mtime[1] + $mtime[0];
+$onlinetime = time();
+$bbcodescript = '';
+$threadSubject = '';
+$self = array();
+$user = (isset($user)) ? $user : '';
+$SETTINGS = array();
+$THEME = array();
+$links = array();
+$lang = array();
+$plugname = array();
+$plugadmin = array();
+$plugurl = array();
+$plugimg = array();
+$footerstuff = array();
+$mailer = array();
+$selHTML = 'selected="selected"';
+$cheHTML = 'checked="checked"';
+$filesize = 0;
+$filename = '';
+$filetype = '';
+$quickjump = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -99,23 +99,23 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort   = "XMB 1.9.8";
+$versionshort = "XMB 1.9.8";
 $versiongeneral = 'XMB 1.9.8 Engage';
-$copyright      = '2007';
+$copyright = '2007';
 if ($show_full_info) {
-    $alpha        = '';
-    $beta         = '';
-    $gamma        = 'Final';
+    $alpha = '';
+    $beta = '';
+    $gamma = 'Final';
     $service_pack = '';
     $versionbuild = 200707062320;
-    $versionlong  = 'Powered by '.$versiongeneral.' ('.$alpha.$beta.$gamma.$service_pack.')'.(DEBUG === true ? ' (Debug)' : '');
+    $versionlong = 'Powered by '.$versiongeneral.' ('.$alpha.$beta.$gamma.$service_pack.')'.(DEBUG === true ? ' (Debug)' : '');
 } else {
-    $alpha        = '';
-    $beta         = '';
-    $gamma        = '';
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
     $service_pack = '';
     $versionbuild = '[HIDDEN]';
-    $versionlong  = "Powered by XMB".(DEBUG === true ? ' (Debug)' : '');
+    $versionlong = "Powered by XMB".(DEBUG === true ? ' (Debug)' : '');
 }
 
 // discover the most likely browser
@@ -191,7 +191,7 @@ if (file_exists('./fixhack.php') && !@unlink('./fixhack.php')) {
     exit('<h1>Error:</h1><br />The hack repair tool ("./fixhack.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
-if (file_exists('./upgrade/') && !@unlink('./upgrade/')) {
+if (file_exists('./Upgrade/') && !@unlink('./Upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
@@ -217,7 +217,7 @@ if ($ipcheck == 'on') {
 // Checks for various variables in the URL, if any of them is found, script is halted
 $url_check = Array('status=', 'xmbuser=', 'xmbpw=', '<script');
 $url = urldecode($url);
-foreach ($url_check as $name) {
+foreach($url_check as $name) {
     if (strpos(strtolower($url), $name)) {
         exit();
     }
@@ -249,7 +249,7 @@ $tables = array(
     'vote_voters'
 );
 
-foreach ($tables as $name) {
+foreach($tables as $name) {
     ${'table_'.$name} = $tablepre.$name;
 }
 
@@ -305,7 +305,7 @@ if (isset($oldtopics)) {
 
 // Make all settings global, and put them in the $SETTINGS[] array
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
-foreach ($db->fetch_array($squery) as $key => $val) {
+foreach($db->fetch_array($squery) as $key => $val) {
     $$key = $val;
     $SETTINGS[$key] = $val;
 }
@@ -320,8 +320,8 @@ if ($topicperpage < 5) {
 
 // Get the user-vars, and make them semi-global
 if (!isset($xmbuser)) {
-    $xmbuser        = '';
-    $xmbpw          = '';
+    $xmbuser = '';
+    $xmbpw = '';
     $self['status'] = '';
 }
 
@@ -336,7 +336,7 @@ if ($xmbuser != '') {
 }
 
 if ($q) {
-    foreach ($userrec as $key => $val) {
+    foreach($userrec as $key => $val) {
         $self[$key] = $val;
     }
 
@@ -344,16 +344,16 @@ if ($q) {
     define('X_GUEST', false);
 
     $timeoffset = $self['timeoffset'];
-    $themeuser  = $self['theme'];
-    $status     = $self['status'];
-    $tpp        = $self['tpp'];
-    $ppp        = $self['ppp'];
-    $memtime    = $self['timeformat'];
-    $memdate    = $self['dateformat'];
-    $sig        = $self['sig'];
-    $invisible  = $self['invisible'];
-    $time       = $onlinetime;
-    $langfile   = ($self['langfile'] == "" || !file_exists("lang/$self[langfile].lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
+    $themeuser = $self['theme'];
+    $status = $self['status'];
+    $tpp = $self['tpp'];
+    $ppp = $self['ppp'];
+    $memtime = $self['timeformat'];
+    $memdate = $self['dateformat'];
+    $sig = $self['sig'];
+    $invisible = $self['invisible'];
+    $time = $onlinetime;
+    $langfile = ($self['langfile'] == "" || !file_exists("lang/$self[langfile].lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
 
     if (!empty($theme)) {
         $themeuser = $self['theme'];
@@ -365,16 +365,16 @@ if ($q) {
     define('X_GUEST', true);
 
     $timeoffset = $SETTINGS['def_tz'];
-    $themeuser  = '';
-    $status     = 'member';
-    $tpp        = $SETTINGS['topicperpage'];
-    $ppp        = $SETTINGS['postperpage'];
-    $memtime    = '';
-    $memdate    = '';
-    $sig        = '';
-    $invisible  = 0;
-    $time       = $onlinetime;
-    $langfile   = $SETTINGS['langfile'];
+    $themeuser = '';
+    $status = 'member';
+    $tpp = $SETTINGS['topicperpage'];
+    $ppp = $SETTINGS['postperpage'];
+    $memtime = '';
+    $memdate = '';
+    $sig = '';
+    $invisible = 0;
+    $time = $onlinetime;
+    $langfile = $SETTINGS['langfile'];
     $self['ban'] = '';
     $self['sig'] = '';
 }
@@ -395,46 +395,46 @@ if ($memtime == '') {
 
 $role = array();
 $role['sadmin'] = false;
-$role['admin']  = false;
-$role['smod']   = false;
-$role['mod']    = false;
-$role['staff']  = false;
+$role['admin'] = false;
+$role['smod'] = false;
+$role['mod'] = false;
+$role['staff'] = false;
 if (X_MEMBER) {
-    switch ($self['status']) {
+    switch($self['status']) {
         case 'Super Administrator':
             $role['sadmin'] = true;
-            $role['admin']  = true;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = true;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Administrator':
             $role['sadmin'] = false;
-            $role['admin']  = true;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = true;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Super Moderator':
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = false;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Moderator':
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = false;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = false;
+            $role['smod'] = false;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         default:
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = false;
-            $role['mod']    = false;
-            $role['staff']  = false;
+            $role['admin'] = false;
+            $role['smod'] = false;
+            $role['mod'] = false;
+            $role['staff'] = false;
             break;
     }
 }
@@ -464,11 +464,9 @@ if (X_MEMBER) {
     $onlineuser = $xmbuser;
     $cplink = '';
     $u2ulink = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[banu2u]</a> - ";
-
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
-
     $notify = "$lang[loggedin] <a href=\"member.php?action=viewpro&amp;member=".rawurlencode($onlineuser)."\">$xmbuser</a><br />[$loginout - $u2ulink$memcp$cplink]";
 } else {
     $loginout = "<a href=\"misc.php?action=login\">$lang[textlogin]</a>";
@@ -536,11 +534,10 @@ if ((int) $themeuser > 0) {
 
 // Make theme-vars semi-global
 $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
-foreach ($db->fetch_array($query) as $key => $val) {
+foreach($db->fetch_array($query) as $key => $val) {
     if ($key != "name") {
         $$key = $val;
     } else {
-        // make themes with apostrophes safe to display
         $val = stripslashes($val);
     }
     $THEME[$key] = $val;
@@ -596,7 +593,6 @@ if (false !== strpos($boardimg, ',')) {
 // Font stuff...
 $fontedit = preg_replace('#(\D)#', '', $fontsize);
 $fontsuf = preg_replace('#(\d)#', '', $fontsize);
-
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
@@ -709,7 +705,7 @@ if ($SETTINGS['regviewonly'] == 'on') {
 }
 
 // Check if the user is ip-banned
-$ips = explode(".", $onlineip);
+$ips = explode('.', $onlineip);
 // also disable 'ban all'-possibility
 $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
 $result = $db->fetch_array($query);

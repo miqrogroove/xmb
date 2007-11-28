@@ -38,13 +38,13 @@ if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
     eval('$featureoff = "'.template('misc_feature_notavailable').'";');
     end_time();
     eval('$footer = "'.template('footer').'";');
-    echo stripslashes($header . $featureoff . $footer);
+    echo stripslashes($header.$featureoff.$footer);
     exit();
 }
 
 nav('<a href="faq.php">'.$lang['textfaq'].'</a>');
 
-switch ($page) {
+switch($page) {
     case 'usermaint':
         loadtemplates('faq_usermaint');
         nav($lang['textuserman']);
@@ -55,7 +55,7 @@ switch ($page) {
         nav($lang['textuseboa']);
         $stars = $rankrows   = '';
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title !='Moderator' AND title !='Super Moderator' AND title !='Super Administrator' AND title !='Administrator' ORDER BY posts ASC");
-        while ($ranks = $db->fetch_array($query)) {
+        while($ranks = $db->fetch_array($query)) {
             $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $ranks['stars']);
             eval('$rankrows .= "'.template('faq_using_rankrow').'";');
             $stars = '';
@@ -68,7 +68,7 @@ switch ($page) {
         $smilierows = NULL;
         nav($lang['textpostread']);
         $querysmilie = $db->query("SELECT * FROM `" .X_PREFIX. "smilies` WHERE type = 'smiley'") or die($db->error());
-        while ($smilie = $db->fetch_array($querysmilie)) {
+        while($smilie = $db->fetch_array($querysmilie)) {
             eval('$smilierows .= "'.template('faq_messages_smilierow').'";');
         }
         $db->free_result($querysmilie);

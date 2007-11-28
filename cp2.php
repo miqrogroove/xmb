@@ -34,7 +34,6 @@ eval('$css = "'.template('css').'";');
 
 $action = getVar('action');
 
-// Start Download Templates and Theme Code
 if (X_ADMIN) {
     $download = formVar('download');
     if ($action == "templates" && $download) {
@@ -76,7 +75,6 @@ if (X_ADMIN) {
         exit();
     }
 }
-// End Download Templates and Theme Code
 
 nav($lang['textcp']);
 
@@ -118,7 +116,7 @@ if ($action == 'restrictions') {
         </tr>
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted ORDER BY id");
-        while ($restricted = $db->fetch_array($query)) {
+        while($restricted = $db->fetch_array($query)) {
             if ($restricted['case_sensitivity'] == 1) {
                 $case_check = 'checked="checked"';
             } else {
@@ -184,12 +182,11 @@ if ($action == 'restrictions') {
         <?php
     } else {
         $queryrestricted = $db->query("SELECT id FROM ".X_PREFIX."restricted");
-        while ($restricted = $db->fetch_array($queryrestricted)) {
+        while($restricted = $db->fetch_array($queryrestricted)) {
             $name = isset(${'name'.$restricted['id']}) && !empty(${'name'.$restricted['id']}) ? ${'name'.$restricted['id']} : '';
             $delete = formInt('delete'.$restricted['id']);
             $case = formInt('case'.$restricted['id']);
             $partial = formInt('partial'.$restricted['id']);
-
             $newname = isset($newname) && !empty($newname) ? $newname : '';
             $newcase = formInt('newcase');
             $newpartial = formInt('newpartial');
@@ -215,6 +212,7 @@ if ($action == 'restrictions') {
             } else {
                 $newpartial = 1;
             }
+
             if (!$newcase || $newcase != 1) {
                 $newcase = 0;
             } else {
@@ -222,9 +220,7 @@ if ($action == 'restrictions') {
             }
             $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$newname', '$newcase', '$newpartial')");
         }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['restrictedupdate'].'</td></tr>';
-
         redirect('cp2.php?action=restrictions', 2);
     }
 }
@@ -253,8 +249,9 @@ if ($action == 'themes') {
         while($t = $db->fetch_array($tq)) {
             $themeMem[((int)$t['theme'])] = $t['cnt'];
         }
+
         $query = $db->query("SELECT name, themeid FROM ".X_PREFIX."themes ORDER BY name ASC");
-        while ($themeinfo = $db->fetch_array($query)) {
+        while($themeinfo = $db->fetch_array($query)) {
             $themeid = $themeinfo['themeid'];
             if (!isset($themeMem[$themeid])) {
                 $themeMem[$themeid] = 0;
@@ -350,11 +347,10 @@ if ($action == 'themes') {
 
         $keysql = array();
         $valsql = array();
-
-        foreach ($themebits as $key=>$val) {
+        foreach($themebits as $key=>$val) {
             if ($key == 'themeid') {
                 $val = '';
-            } elseif ($key == 'name') {
+            } else if ($key == 'name') {
                 $name = $val;
             }
             $keysql[] = $key;
@@ -379,7 +375,7 @@ if ($action == 'themes') {
             echo $lang['textthemeimportsuccess'];
         }
         echo '</td></tr>';
-    } elseif (onSubmit('themesubmit')) {
+    } else if (onSubmit('themesubmit')) {
         $theme_delete = formArray('theme_delete');
         $theme_name = formArray('theme_name');
 
@@ -390,7 +386,7 @@ if ($action == 'themes') {
         }
 
         if ($theme_delete) {
-            foreach ($theme_delete as $themeid) {
+            foreach($theme_delete as $themeid) {
                 $otherid = $db->result($db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE themeid != '$themeid' ORDER BY rand() LIMIT 1"), 0);
                 $db->query("UPDATE ".X_PREFIX."members SET theme='$otherid' WHERE theme='$themeid'");
                 $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE theme='$themeid'");
@@ -398,11 +394,11 @@ if ($action == 'themes') {
                 if ($SETTINGS['theme'] == $themeid) {
                     $db->query("UPDATE ".X_PREFIX."settings SET theme='$otherid'");
                 }
-
                 $db->query("DELETE FROM ".X_PREFIX."themes WHERE themeid='$themeid'");
             }
         }
-        foreach ($theme_name as $themeid=>$name) {
+
+        foreach($theme_name as $themeid=>$name) {
             $db->query("UPDATE ".X_PREFIX."themes SET name='$name' WHERE themeid='$themeid'");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
@@ -526,7 +522,7 @@ if ($action == 'themes') {
         </td>
         </tr>
         <?php
-    } elseif ($single && $single == "anewtheme1") {
+    } else if ($single && $single == "anewtheme1") {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -630,7 +626,7 @@ if ($action == 'themes') {
         </td>
         </tr>
         <?php
-    } elseif ($single && $single == "submit" && !$newtheme) {
+    } else if ($single && $single == "submit" && !$newtheme) {
         $namenew = formVar('namenew');
         $bgcolornew = formVar('bgcolornew');
         $altbg1new = formVar('altbg1new');
@@ -655,7 +651,7 @@ if ($action == 'themes') {
 
         $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
-    } elseif ($single && $single == "submit" && $newtheme) {
+    } else if ($single && $single == "submit" && $newtheme) {
         $namenew = formVar('namenew');
         $bgcolornew = formVar('bgcolornew');
         $altbg1new = formVar('altbg1new');
@@ -704,7 +700,7 @@ if ($action == "smilies") {
         </tr>
         <?php
         $query = $db->query("SELECT code, id, url FROM ".X_PREFIX."smilies WHERE type='smiley'");
-        while ($smilie = $db->fetch_array($query)) {
+        while($smilie = $db->fetch_array($query)) {
             ?>
             <tr>
             <td bgcolor="<?php echo $altbg2?>" align="center" class="tablerow"><input type="checkbox" name="smdelete[<?php echo $smilie['id']?>]" value="1" /></td>
@@ -724,12 +720,10 @@ if ($action == "smilies") {
         <td><input type="text" name="newcode" /></td>
         <td colspan="2"><input type="text" name="newurl1" /></td>
         </tr>
-        <!-- Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs -->
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg1?>"><input type="checkbox" name="autoinsertsmilies" value="1" /></td>
         <td bgcolor="<?php echo $altbg1?>" colspan="3"><?php echo $lang['autoinsertsmilies']?> (<?php echo $smdir?>)?</td>
         </tr>
-        <!-- End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs -->
         <tr>
         <td bgcolor="<?php echo $altbg2?>" colspan="4" align="left"><img src="./images/pixel.gif" alt="" /></td>
         </tr>
@@ -743,7 +737,7 @@ if ($action == "smilies") {
         </tr>
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon' ORDER BY id");
-        while ($smilie = $db->fetch_array($query)) {
+        while($smilie = $db->fetch_array($query)) {
             ?>
             <tr>
             <td bgcolor="<?php echo $altbg2?>" align="center" class="tablerow"><input type="checkbox" name="pidelete[<?php echo $smilie['id']?>]" value="1" /></td>
@@ -760,12 +754,10 @@ if ($action == "smilies") {
         <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
         <td colspan="4" align="left"><?php echo $lang['textnewpicon']?>&nbsp;&nbsp;<input type="text" name="newurl2" /></td>
         </tr>
-        <!-- Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs -->
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>" align="center"><input type="checkbox" name="autoinsertposticons" value="1" /></td>
         <td bgcolor="<?php echo $altbg1?>" colspan="3"><?php echo $lang['autoinsertposticons']?> (<?php echo $smdir?>)?</td>
         </tr>
-        <!-- End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs -->
         <tr>
         <td class="ctrtablerow" bgcolor="<?php echo $altbg2?>" colspan="4"><input type="submit" class="submit" name="smiliesubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
@@ -793,7 +785,7 @@ if ($action == "smilies") {
         $autoinsertposticons = formInt('autoinsertposticons');
 
         if ($smcode) {
-            foreach ($smcode as $key=>$val) {
+            foreach($smcode as $key=>$val) {
                 if (count(array_keys($smcode, $val)) > 1) {
                     error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
                 }
@@ -801,7 +793,7 @@ if ($action == "smilies") {
         }
 
         $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='smiley'");
-        while ($smilie = $db->fetch_array($querysmilie)) {
+        while($smilie = $db->fetch_array($querysmilie)) {
             $id = $smilie['id'];
             if (isset($smdelete[$id]) && $smdelete[$id] == 1) {
                 $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$id'");
@@ -811,7 +803,7 @@ if ($action == "smilies") {
         }
 
         if ($piurl) {
-            foreach ($piurl as $key=>$val) {
+            foreach($piurl as $key=>$val) {
                 if (count(array_keys($piurl, $val)) > 1) {
                     error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
                 }
@@ -819,7 +811,7 @@ if ($action == "smilies") {
         }
 
         $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon'");
-        while ($picon = $db->fetch_array($querysmilie)) {
+        while($picon = $db->fetch_array($querysmilie)) {
             $id = $picon['id'];
             if (isset($pidelete[$id]) && $pidelete[$id] == 1) {
                 $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$picon[id]'");
@@ -829,28 +821,25 @@ if ($action == "smilies") {
         }
 
         if ($newcode) {
-            // make sure we don't already have one like that
             if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
             }
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
         }
 
-        // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
         if ($autoinsertsmilies) {
             $smilies_count = $newsmilies_count = 0;
-            // Load all existing smilies to ensure we don't insert a duplicate.
             $smiley_url = array();
             $smiley_code = array();
             $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type = 'smiley'");
-            while ($smiley = $db->fetch_array($query)) {
+            while($smiley = $db->fetch_array($query)) {
                 $smiley_url[] = $smiley['url'];
                 $smiley_code[] = $smiley['code'];
             }
             $db->free_result($query);
 
             $dir = opendir($smdir);
-            while ($smiley = readdir($dir)) {
+            while($smiley = readdir($dir)) {
                 if ($smiley != '.' && $smiley != '..' && (strpos($smiley, '.gif') || strpos($smiley, '.jpg') || strpos($smiley, '.jpeg') || strpos($smiley, '.bmp') || strpos($smiley, '.png'))) {
                     $newsmiley_url = $smiley;
                     $newsmiley_code = $smiley;
@@ -866,7 +855,6 @@ if ($action == "smilies") {
             closedir($dir);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$newsmilies_count.' / '.$smilies_count.' '.$lang['smiliesadded'].'</td></tr>';
         }
-        // End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
 
         if ($newurl2) {
             if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
@@ -875,19 +863,17 @@ if ($action == "smilies") {
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('picon', '', '$newurl2')");
         }
 
-        // Begin Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
         if ($autoinsertposticons) {
             $posticons_count = $newposticons_count = 0;
-            // Load all existing post icons to ensure we don't insert a duplicate.
             $posticon_url = array();
             $query = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
-            while ($picon = $db->fetch_array($query)) {
+            while($picon = $db->fetch_array($query)) {
                 $posticon_url[] = $picon['url'];
             }
             $db->free_result($query);
 
             $dir = opendir($smdir);
-            while ($picon = readdir($dir)) {
+            while($picon = readdir($dir)) {
                 if ($picon != '.' && $picon != '..' && (strpos($picon, '.gif') || strpos($picon, '.jpg') || strpos($picon, '.jpeg') || strpos($picon, '.bmp') || strpos($picon, '.png'))) {
                     $newposticon_url = $picon;
                     $newposticon_url = str_replace(' ', '%20', $newposticon_url);
@@ -901,8 +887,6 @@ if ($action == "smilies") {
             closedir($dir);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$newposticons_count.' / '.$posticons_count.' '.$lang['posticonsadded'].'</td></tr>';
         }
-        // End Auto Smiley Insert v1.0 Mod By Adam Clarke & John Briggs
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['smilieupdate'].'</td></tr>';
     }
 }
@@ -910,7 +894,6 @@ if ($action == "smilies") {
 if ($action == "censor") {
     if (noSubmit('censorsubmit')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=censor">
@@ -923,22 +906,18 @@ if ($action == "censor") {
         <td align="left"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textcensorfind']?></strong></font></td>
         <td align="left"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textcensorreplace']?></strong></font></td>
         </tr>
-
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."words ORDER BY id");
-        while ($censor = $db->fetch_array($query)) {
+        while($censor = $db->fetch_array($query)) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td align="center"><input type="checkbox" name="delete<?php echo $censor['id']?>" value="<?php echo $censor['id']?>" /></td>
         <td align="left"><input type="text" size="20" name="find<?php echo $censor['id']?>" value="<?php echo $censor['find']?>" /></td>
         <td align="left"><input type="text" size="20" name="replace<?php echo $censor['id']?>" value="<?php echo $censor['replace1']?>" /></td>
         </tr>
-
         <?php
     }
     ?>
-
     <tr bgcolor="<?php echo $altbg2?>">
     <td colspan="3"><img src="./images/pixel.gif" alt="" /></td>
     </tr>
@@ -948,7 +927,7 @@ if ($action == "censor") {
     <td align="left"><input type="text" size="20" name="newreplace" /></td>
     </tr>
     <tr>
-    <td align="center" colspan="3" class="tablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="censorsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+    <td colspan="3" class="ctrtablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="censorsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
     </tr>
     </table>
     </td>
@@ -963,8 +942,7 @@ if ($action == "censor") {
 
 if (onSubmit('censorsubmit')) {
         $querycensor = $db->query("SELECT id FROM ".X_PREFIX."words");
-
-        while ($censor = $db->fetch_array($querycensor)) {
+        while($censor = $db->fetch_array($querycensor)) {
             $find = formVar('find'.$censor['id']);
             $replace = formVar('replace'.$censor['id']);
             $delete = formVar('delete'.$censor['id']);
@@ -977,16 +955,13 @@ if (onSubmit('censorsubmit')) {
                 $db->query("UPDATE ".X_PREFIX."words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
             }
         }
-
         $db->free_result($querycensor);
 
         if ($newfind) {
-            $db->query("INSERT INTO ".X_PREFIX."words ( find, replace1 ) VALUES ('$newfind', '$newreplace')");
+            $db->query("INSERT INTO ".X_PREFIX."words (find, replace1 ) VALUES ('$newfind', '$newreplace')");
         }
-
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[censorupdate]</td></tr>";
     }
-
 }
 
 if ($action == "ranks") {
@@ -1010,7 +985,7 @@ if ($action == "ranks") {
         <?php
         $avatarno = $avataryes = '';
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
-        while ($rank = $db->fetch_array($query)) {
+        while($rank = $db->fetch_array($query)) {
             if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
                 $staff_disable = 'disabled';
             } else {
@@ -1074,7 +1049,7 @@ if ($action == "ranks") {
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");
         $staffranks = array();
-        while ($ranks = $db->fetch_array($query)) {
+        while($ranks = $db->fetch_array($query)) {
             if ($ranks['title'] == 'Super Administrator' || $ranks['title'] == 'Administrator' || $ranks['title'] == 'Super Moderator' || $ranks['title'] == 'Moderator') {
                 $title[$ranks['id']] = $ranks['title'];
                 $posts[$ranks['id']] = 0;
@@ -1092,7 +1067,7 @@ if ($action == "ranks") {
             $db->query("DELETE FROM ".X_PREFIX."ranks WHERE id IN ($del)");
         }
 
-        foreach ($id as $key=>$val) {
+        foreach($id as $key=>$val) {
             $posts[$key] = (in_array($title[$key], $staffranks)) ? (int) -1 : $posts[$key];
             $db->query("UPDATE ".X_PREFIX."ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
         }
@@ -1100,7 +1075,6 @@ if ($action == "ranks") {
         if ($newtitle) {
             $db->query("INSERT INTO ".X_PREFIX."ranks (title, posts, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '$newstars', '$newallowavatars', '$newavaurl')");
         }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['rankingsupdate'].'</td></tr>';
     }
 }
@@ -1165,11 +1139,9 @@ if ($action == "newsletter") {
         </form>
         </td>
         </tr>
-
         <?php
     } else {
         @set_time_limit(0);
-
         $newssubject = addslashes(formVar('newssubject'));
         $newsmessage = addslashes(formVar('newsmessage'));
         $sendvia = formVar('sendvia');
@@ -1185,21 +1157,21 @@ if ($action == "newsletter") {
 
         if ($to == "all") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE newsletter='yes' $tome ORDER BY uid");
-        } elseif ($to == "staff") {
+        } else if ($to == "staff") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE (status='Super Administrator' OR status='Administrator' OR status='Super Moderator' OR status='Moderator') $tome ORDER BY uid");
-        } elseif ($to == "admin") {
+        } else if ($to == "admin") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE (status='Administrator' OR status = 'Super Administrator') $tome ORDER BY uid");
-        } elseif ($to == "supermod") {
+        } else if ($to == "supermod") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Super moderator' $tome ORDER by uid");
-        } elseif ($to == "mod") {
+        } else if ($to == "mod") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Moderator' ORDER BY uid");
         }
 
         $_xmbuser = addslashes($xmbuser);
 
         if ($sendvia == "u2u") {
-            while ($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u ( msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+            while($memnews = $db->fetch_array($query)) {
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $newssubject = stripslashes(stripslashes($newssubject));
@@ -1219,7 +1191,7 @@ if ($action == "newsletter") {
             @set_time_limit(0);
             @ob_implicit_flush(1);
 
-            while ($memnews = $db->fetch_array($query)) {
+            while($memnews = $db->fetch_array($query)) {
                 if ($i > 0 && $i == $wait) {
                     sleep(3);
                     $i = 0;
@@ -1342,7 +1314,6 @@ if ($action == "prune") {
         </form>
         </td>
         </tr>
-
         <?php
     } else {
         $pruneBy = formArray('pruneBy');
@@ -1356,75 +1327,60 @@ if ($action == "prune") {
         switch($pruneFrom) {
             case 'all':
                 break;
-
             case 'list':
                 $fs = array();
-                foreach ($pruneFromList as $fid) {
+                foreach($pruneFromList as $fid) {
                     $fs[] = (int) trim($fid);
                 }
                 $fs = array_unique($fs);
-
                 if (count($fs) < 1) {
                     error($lang['nopruneforums'], false, '</td></tr></table></td></tr></table><br />');
                 }
-
                 $queryWhere[] = 'fid IN ('.implode(',', $fs).')';
                 break;
-
             case 'fid':
                 $fs = array();
-
                 $fids = explode(',', $pruneFromFid);
-
-                foreach ($fids as $fid) {
+                foreach($fids as $fid) {
                     $fs[] = (int) trim($fid);
                 }
                 $fs = array_unique($fs);
-
                 if (count($fs) < 1) {
                     error($lang['nopruneforums'], false, '</td></tr></table></td></tr></table><br />');
                 }
-
                 $queryWhere[] = 'fid IN ('.implode(',', $fs).')';
                 break;
-
             default:
                 error($lang['nopruneforums'], false, '</td></tr></table></td></tr></table><br />');
         }
 
-        // by!
         if (isset($pruneBy['posts']['check']) && $pruneBy['posts']['check'] == 1) {
             $sign = '';
             switch($pruneBy['posts']['type']) {
                 case 'less':
                     $sign = '<';
                     break;
-
                 case 'is':
                     $sign = '=';
                     break;
-
                 case 'more':
                 default:
                     $sign = '>';
                     break;
             }
-
             $queryWhere[] = 'replies '.$sign.' '.(int) ($pruneBy['posts']['posts']-1);
         }
+
         if (isset($pruneBy['date']['check']) && $pruneBy['date']['check'] == 1) {
             $sign = '';
             switch($pruneBy['date']['type']) {
                 case 'less':
                     $queryWhere[] = 'lastpost >= '.(time()-(24*3600*$pruneBy['date']['date']));
                     break;
-
                 case 'is':
                     $queryWhere[] = 'lastpost >= '.(time()-(24*3600*($pruneBy['date']['date']-1))).' AND lastpost <= '.(time()-(24*3600*($pruneBy['date']['date'])));
                     break;
-
                 case 'more':
-
                 default:
                     $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneBy['date']['date']));
                     break;
@@ -1434,19 +1390,20 @@ if ($action == "prune") {
         if (!isset($pruneType['closed']) || $pruneType['closed'] != 1) {
             $queryWhere[] = "closed != 'yes'";
         }
+
         if (!isset($pruneType['topped']) || $pruneType['topped'] != 1) {
             $queryWhere[] = 'topped != 1';
         }
+
         if (!isset($pruneType['normal']) || $pruneType['normal'] != 1) {
             $queryWhere[] = "(topped == 1 OR closed == 'yes')";
         }
 
         if (count($queryWhere) > 0) {
             $tids = array();
-
             $queryWhere = implode(' AND ', $queryWhere);
             $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE ".$queryWhere);
-            if ( $db->num_rows($q) > 0) {
+            if ($db->num_rows($q) > 0) {
                 while($t = $db->fetch_array($q)) {
                     $tids[] = $t['tid'];
                 }
@@ -1461,7 +1418,6 @@ if ($action == "prune") {
             $db->query("TRUNCATE TABLE ".X_PREFIX."posts");
             $db->query("UPDATE ".X_PREFIX."members SET postnum=0");
         }
-
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[forumpruned]</td></tr>";
     }
 }
@@ -1469,7 +1425,6 @@ if ($action == "prune") {
 if ($action == "templates") {
     if (noSubmit('edit') && noSubmit('editsubmit') && noSubmit('delete') && noSubmit('deletesubmit') && noSubmit('new') && noSubmit('restore') && noSubmit('restoresubmit')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates">
@@ -1488,18 +1443,16 @@ if ($action == "templates") {
         </tr>
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
-
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name");
         echo "<select name=\"tid\"><option value=\"default\">$lang[selecttemplate]</option>";
-        while ($template = $db->fetch_array($query)) {
+        while($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
                 echo "<option value=\"$template[id]\">$template[name]</option>\r\n";
             }
         }
         echo "</select>&nbsp;&nbsp;";
         ?>
-
         </td>
         </tr>
         <tr>
@@ -1517,13 +1470,11 @@ if ($action == "templates") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 
     if (onSubmit('restore')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates">
@@ -1547,7 +1498,6 @@ if ($action == "templates") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 
@@ -1563,12 +1513,11 @@ if ($action == "templates") {
         fclose($fp);
 
         $templates = explode("|#*XMB TEMPLATE FILE*#|", $templatesfile);
-        while (list($key,$val) = each($templates)) {
+        while(list($key,$val) = each($templates)) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
             $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
-
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesrestoredone]</td></tr>";
     }
@@ -1578,9 +1527,7 @@ if ($action == "templates") {
         if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
-
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
@@ -1591,14 +1538,12 @@ if ($action == "templates") {
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
-
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id='$tid' ORDER BY name");
         $template = $db->fetch_array($query);
         $template['template'] = stripslashes($template['template']);
         $template['template'] = htmlspecialchars($template['template']);
         ?>
-
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><?php echo $lang['templatename']?>&nbsp;<strong><?php echo $template['name']?></strong></td>
         </tr>
@@ -1616,7 +1561,6 @@ if ($action == "templates") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 
@@ -1647,7 +1591,6 @@ if ($action == "templates") {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
@@ -1671,7 +1614,6 @@ if ($action == "templates") {
         </form>
         </td>
         </tr>
-
         <?php
     }
 
@@ -1682,7 +1624,6 @@ if ($action == "templates") {
 
     if (onSubmit('new')) {
         ?>
-
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=new">
@@ -1801,7 +1742,6 @@ if ($action == "attachments") {
         <td class="header" width="5%"><?php echo $lang['textdownloads']?></td>
         </tr>
         <?php
-
         $restriction = '';
         $orderby = '';
 
@@ -1810,7 +1750,7 @@ if ($action == "attachments") {
         }
 
         if ($daysold) {
-            $datethen = time() - (86400 * $daysold);
+            $datethen = $onlinetime - (86400 * $daysold);
             $restriction .= "AND p.dateline <= $datethen ";
             $orderby = ' ORDER BY p.dateline ASC';
         }
@@ -1845,17 +1785,18 @@ if ($action == "attachments") {
         }
 
         $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
-        while ($attachment = $db->fetch_array($query)) {
+        while($attachment = $db->fetch_array($query)) {
             $attachsize = strlen($attachment['attachment']);
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
-            } elseif ($attachsize >= 1048576) {
+            } else if ($attachsize >= 1048576) {
                 $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-            } elseif ($attachsize >= 1024) {
+            } else if ($attachsize >= 1024) {
                 $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
             } else {
                 $attachsize = $attachsize . "b";
             }
+
             $attachment['tsubject'] = html_entity_decode(stripslashes($attachment['tsubject']));
             $attachment['fname'] = html_entity_decode(stripslashes($attachment['fname']));
             $attachment['filename'] = stripslashes($attachment['filename']);
@@ -1869,7 +1810,6 @@ if ($action == "attachments") {
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachment['downloads']?></td>
             </tr>
             <?php
-
         }
         ?>
         <tr>
@@ -1909,7 +1849,7 @@ if ($action == "attachments") {
         }
 
         if ($daysold) {
-            $datethen = time() - (86400 * $daysold);
+            $datethen = $onlinetime - (86400 * $daysold);
             $querydate = "AND p.dateline <= '$datethen' ";
         }
 
@@ -1938,10 +1878,9 @@ if ($action == "attachments") {
         }
 
         $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $queryforum $querydate $queryauthor $queryname $querysizeless $querysizemore");
-        while ($attachment = $db->fetch_array($query)) {
+        while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
             $afilename = isset($_POST[$afilename]) ? $_POST[$afilename] : '';
-
             if ($attachment['filename'] != $afilename) {
                 $db->query("UPDATE ".X_PREFIX."attachments SET filename='$afilename' WHERE aid='$attachment[aid]'");
             }
@@ -1966,7 +1905,6 @@ if ($action == "modlog") {
     <td><strong><font color="<?php echo $cattext?>">URL:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
     </tr>
-
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE NOT (fid='0' AND tid='0')"), 0);
 
@@ -1982,15 +1920,13 @@ if ($action == "modlog") {
     $random_var = '';
 
     $query = $db->query("SELECT l.*, t.subject FROM ".X_PREFIX."logs l LEFT JOIN ".X_PREFIX."threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
-
     $url = '';
-
-    while ($recordinfo = $db->fetch_array($query)) {
+    while($recordinfo = $db->fetch_array($query)) {
         $date = gmdate($dateformat, $recordinfo['date']);
         $time = gmdate($timecode, $recordinfo['date']);
         if ($recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '') {
             $url = "<a href=\"./viewthread.php?tid=$recordinfo[tid]\" target=\"_blank\">$recordinfo[subject]</a>";
-        } elseif ($recordinfo['action'] == 'delete') {
+        } else if ($recordinfo['action'] == 'delete') {
             $recordinfo['action'] = '<strong>'.$recordinfo['action'].'</strong>';
             $url = '&nbsp;';
         } else {
@@ -1998,7 +1934,6 @@ if ($action == "modlog") {
         }
         ?>
         <tr>
-
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><a href="./member.php?action=viewpro&amp;member=<?php echo $recordinfo['username']?>"><?php echo $recordinfo['username']?></a></td>
         <td class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $date?> at <?php echo $time?></td>
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo stripslashes($url)?></td>
@@ -2030,12 +1965,10 @@ if ($action == "modlog") {
         if ($page > $first) {
             $firstpage = '<a href="./cp2.php?action=modlog&amp;page='.$first.'">&nbsp;&laquo;&laquo;</a>';
         }
-
         ?>
         <tr class="header">
         <td colspan="4"><?php echo $firstpage?> <?php echo $prevpage?> <?php echo $random_var?> <?php echo $nextpage?> <?php echo $lastpage?></td>
         </tr>
-
         <?php
     } else {
         if ($page > 1) {
@@ -2048,12 +1981,12 @@ if ($action == "modlog") {
         } else {
             $firstpage = '';
         }
+
         if ($prevpage == '' || $nextpage == '') {
             $random_var = '';
         } else {
             $random_var = '-';
         }
-
         ?>
         <tr class="header">
         <td colspan="4"><?php echo $firstpage?> <?php echo $prevpage?> <?php echo $random_var?> <?php echo $nextpage?></td>
@@ -2070,7 +2003,9 @@ if ($action == "modlog") {
     }
     ?>
     </table>
-    </td></tr></table>
+    </td>
+    </tr>
+    </table>
     </td>
     </tr>
     <?php
@@ -2093,7 +2028,6 @@ if ($action == "cplog") {
     <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Ip:</font></strong></td>
     </tr>
-
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
 
@@ -2109,10 +2043,8 @@ if ($action == "cplog") {
     $random_var = '';
 
     $query = $db->query("SELECT l.*, t.subject FROM ".X_PREFIX."logs l LEFT JOIN ".X_PREFIX."threads t ON l.tid=t.tid WHERE (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
-
     $url = '';
-
-    while ($recordinfo = $db->fetch_array($query)) {
+    while($recordinfo = $db->fetch_array($query)) {
         $date = gmdate($dateformat, $recordinfo['date']);
         $time = gmdate($timecode, $recordinfo['date']);
         $action = explode('|#|', $recordinfo['action']);
@@ -2120,14 +2052,11 @@ if ($action == "cplog") {
             $recordinfo['action'] = $action[1];
             $url = '&nbsp';
         } else {
-            // an URL!
             $recordinfo['action'] = '&nbsp;';
             $url = $action[1];
         }
-
         ?>
         <tr>
-
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><a href="./member.php?action=viewpro&amp;member=<?php echo $recordinfo['username']?>"><?php echo $recordinfo['username']?></a></td>
         <td class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $date?> at <?php echo $time?></td>
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $url?></td>
@@ -2160,13 +2089,10 @@ if ($action == "cplog") {
         if ($page > $first) {
             $firstpage = '<a href="./cp2.php?action=cplog&amp;page='.$first.'">&nbsp;&laquo;&laquo;</a>';
         }
-
-
         ?>
         <tr class="header">
         <td colspan="5"><?php echo $firstpage?> <?php echo $prevpage?> <?php echo $random_var?> <?php echo $nextpage?> <?php echo $lastpage?></td>
         </tr>
-
         <?php
     } else {
         if ($page == 1) {
@@ -2179,7 +2105,6 @@ if ($action == "cplog") {
         if ($page > $first) {
             $firstpage = '<a href="./cp2.php?action=cplog&amp;page='.$first.'">&nbsp;&laquo;&laquo;</a>';
         }
-
         ?>
         <tr class="header">
         <td colspan="5"><?php echo $firstpage?> <?php echo $prevpage?> <?php echo $random_var?> <?php echo $nextpage?></td>
@@ -2196,7 +2121,9 @@ if ($action == "cplog") {
     }
     ?>
     </table>
-    </td></tr></table>
+    </td>
+    </tr>
+    </table>
     </td>
     </tr>
     <?php

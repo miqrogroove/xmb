@@ -108,9 +108,9 @@ if (noSubmit('editsubmit')) {
 
     $langfileselect = createLangFileSelect($member['langfile']);
 
-    $day   = substr($member['bday'], 8, 2);
+    $day = substr($member['bday'], 8, 2);
     $month = substr($member['bday'], 5, 2);
-    $year  = substr($member['bday'], 0, 4);
+    $year = substr($member['bday'], 0, 4);
 
     $sel0 = $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = $sel6 = '';
     $sel7 = $sel8 = $sel9 = $sel10 = $sel11 = $sel12 = '';
@@ -149,10 +149,9 @@ if (noSubmit('editsubmit')) {
         $htmlis = $lang['textoff'];
     }
 
+    $avatar = '';
     if ($SETTINGS['avastatus'] == 'on') {
         eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
-    } else {
-        $avatar = '';
     }
 
     if ($SETTINGS['avastatus'] == 'list')  {
@@ -190,67 +189,64 @@ if (noSubmit('editsubmit')) {
         $langfilenew = basename($fileNameHash);
     }
 
-    $timeoffset1    = formInt('timeoffset1');
-    $thememem       = formInt('thememem');
-    $tppnew         = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
-    $pppnew         = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
+    $timeoffset1 = formInt('timeoffset1');
+    $thememem = formInt('thememem');
+    $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
+    $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
 
-    $dateformatnew  = formVar('dateformatnew');
+    $dateformatnew = formVar('dateformatnew');
     if (strlen($dateformatnew) == 0) {
         $dateformatnew = $SETTINGS['dateformat'];
     } else {
         $dateformatnew = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
     }
 
-    $timeformatnew  = formInt('timeformatnew');
-    $timeformatnew  = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+    $timeformatnew = formInt('timeformatnew');
+    $timeformatnew = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+    $saveogu2u = formYesNo('saveogu2u');
+    $emailonu2u = formYesNo('emailonu2u');
+    $useoldu2u = formYesNo('useoldu2u');
+    $invisible = formInt('newinv');
+    $showemail = formYesNo('newshowemail');
+    $newsletter = formYesNo('newnewsletter');
+    $year = formInt('year');
+    $month = formInt('month');
+    $day = formInt('day');
+    $bday = iso8601_date($year, $month, $day);
+    $newavatar = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
+    $avatar = checkInput($newavatar, 'no', 'no', 'javascript', false);
+    $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
+    $newlocation = formVar('newlocation');
+    $location = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+    $newicq = formVar('newicq');
+    $icq = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
+    $newyahoo = formVar('newyahoo');
+    $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+    $newaim = formVar('newaim');
+    $aim = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+    $newmsn = formVar('newmsn');
+    $msn = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+    $newemail = formVar('newemail');
+    $email = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+    $newsite = formVar('newsite');
+    $site = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+    $newwebcam = formVar('newwebcam');
+    $webcam = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+    $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
+    $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
+    $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
-    $saveogu2u      = formYesNo('saveogu2u');
-    $emailonu2u     = formYesNo('emailonu2u');
-    $useoldu2u      = formYesNo('useoldu2u');
-    $invisible      = formInt('newinv');
-    $showemail      = formYesNo('newshowemail');
-    $newsletter     = formYesNo('newnewsletter');
-
-    $year           = formInt('year');
-    $month          = formInt('month');
-    $day            = formInt('day');
-    $bday           = iso8601_date($year, $month, $day);
-
-    $newavatar      = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
-    $avatar         = checkInput($newavatar, 'no', 'no', 'javascript', false);
-    $avatar         = checkInput($newavatar, 'no', 'no', 'php', false);
-    $newlocation    = formVar('newlocation');
-    $location       = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
-    $newicq         = formVar('newicq');
-    $icq            = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
-    $newyahoo       = formVar('newyahoo');
-    $yahoo          = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
-    $newaim         = formVar('newaim');
-    $aim            = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
-    $newmsn         = formVar('newmsn');
-    $msn            = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
-    $newemail       = formVar('newemail');
-    $email          = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
-    $newsite        = formVar('newsite');
-    $site           = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
-    $newwebcam      = formVar('newwebcam');
-    $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
-    $bio            = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
-    $mood           = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
-    $sig            = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
-
-    $avatar         = addslashes($avatar);
-    $location       = addslashes($location);
-    $yahoo          = addslashes($yahoo);
-    $aim            = addslashes($aim);
-    $msn            = addslashes($msn);
-    $email          = addslashes($email);
-    $site           = addslashes($site);
-    $webcam         = addslashes($webcam);
-    $bio            = addslashes($bio);
-    $mood           = addslashes($mood);
-    $sig            = addslashes($sig);
+    $avatar = addslashes($avatar);
+    $location = addslashes($location);
+    $yahoo = addslashes($yahoo);
+    $aim = addslashes($aim);
+    $msn = addslashes($msn);
+    $email = addslashes($email);
+    $site = addslashes($site);
+    $webcam = addslashes($webcam);
+    $bio = addslashes($bio);
+    $mood = addslashes($mood);
+    $sig = addslashes($sig);
 
     $max_size = explode('x', $SETTINGS['max_avatar_size']);
     if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {

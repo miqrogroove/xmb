@@ -46,7 +46,7 @@ if (X_GUEST) {
 }
 
 $action = getVar('action');
-switch ($action) {
+switch($action) {
     case 'add':
         $buddys = getVar('buddys');
         if (empty($buddys)) {
