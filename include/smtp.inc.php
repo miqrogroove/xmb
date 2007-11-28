@@ -91,7 +91,6 @@ class socket_SMTP {
                 return false;
             }
         }
-
         return true;
     }
 
