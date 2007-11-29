@@ -882,7 +882,7 @@ $cssInclude
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
-<td>$lang[whattheyaredoing]</td>
+<td>$lang[textlocation]</td>
 </tr>
 $multipage
 $onlineusers
@@ -906,7 +906,7 @@ $multipage
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
-<td>$lang[whattheyaredoing]</td>
+<td>$lang[textlocation]</td>
 <td>$lang[textipaddress]</td>
 </tr>
 $multipage
