@@ -632,32 +632,32 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 
 // Search-link
 if ($SETTINGS['searchstatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
 }
 
 // Faq-link
 if ($SETTINGS['faqstatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
 }
 
 // Memberlist-link
 if ($SETTINGS['memliststatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/members_list.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_memberslist.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
 }
 
 // Today's posts-link
 if ($SETTINGS['todaysposts'] == 'on') {
-    $links[] = "<img src=\"$imgdir/todays_posts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_todaysposts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
 }
 
 // Stats-link
 if ($SETTINGS['stats'] == 'on') {
-    $links[] = "<img src=\"$imgdir/stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
 }
 
 // 'Forum Rules'-link
 if ($SETTINGS['bbrules'] == 'on') {
-    $links[] = "<img src=\"$imgdir/bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
+    $links[] = "<img src=\"$imgdir/top_bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
 }
 
 $links = implode(' &nbsp; ', $links);
