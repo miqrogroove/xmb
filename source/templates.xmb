@@ -24,7 +24,7 @@ misc_online_today|#*XMB TEMPLATE*#|
 |#*XMB TEMPLATE FILE*#|misc_online_row|#*XMB TEMPLATE*#|
 <tr bgcolor="$altbg1" class="tablerow">
 <td width="22%">$online[username]</td>
-<td width="28%">$onlinetime</td>
+<td align="center" width="28%">$onlinetime</td>
 <td>$online[location]</td>
 </tr>
 
@@ -789,9 +789,9 @@ $cssInclude
 |#*XMB TEMPLATE FILE*#|misc_online_row_admin|#*XMB TEMPLATE*#|
 <tr bgcolor="$altbg1" class="tablerow">
 <td width="18%">$online[username]</td>
-<td width="10%">$onlinetime</td>
+<td align="center" width="10%">$onlinetime</td>
 <td>$online[location]</td>
-<td>
+<td align="center">
 <a href="http://www.nwtools.com/default.asp?prog=network&host=$online[ip]" target="_blank" />W</a>
 <a href="http://www.nwtools.com/default.asp?prog=trace&host=$online[ip]" target="_blank" />T</a>
 <a href="http://www.nwtools.com/default.asp?prog=lookup&host=$online[ip]" target="_blank">L</a>
@@ -877,17 +877,20 @@ $cssInclude
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-$multipage
-<tr class="header">
+<tr>
+<td class="category" colspan="3"><font color="$cattext"><strong>$lang[whosonline]</strong></font></td>
+</tr>
+<tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
 <td>$lang[whattheyaredoing]</td>
 </tr>
-$onlineusers
-<tr>
-<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
-</tr>
 $multipage
+$onlineusers
+$multipage
+<tr>
+<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><font color="$cattext"><strong>$lang[onlinetoday]</strong><font></a> <font color="$cattext"><strong>|</strong></font> <a href="javascript:history.go(0)"><font color="$cattext"><strong>$lang[refreshpage]</strong></font></a></td>
+</tr>
 </table>
 </td>
 </tr>
@@ -898,26 +901,30 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-$multipage
-<tr class="header">
+<tr>
+<td class="category" colspan="4"><font color="$cattext"><strong>$lang[whosonline]</strong></font></td>
+</tr>
+<tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
 <td>$lang[whattheyaredoing]</td>
 <td>$lang[textipaddress]</td>
 </tr>
-$onlineusers
-<tr>
-<td bgcolor="$altbg1" colspan="4" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
-</tr>
 $multipage
-</table></td>
+$onlineusers
+$multipage
+<tr>
+<td bgcolor="$altbg1" colspan="4" align="right" class="header"><a href="misc.php?action=onlinetoday"><font color="$cattext"><strong>$lang[onlinetoday]</strong><font></a> <font color="$cattext"><strong>|</strong></font> <a href="javascript:history.go(0)"><font color="$cattext"><strong>$lang[refreshpage]</strong></font></a></td>
+</tr>
+</table>
+</td>
 </tr>
 </table>
 
 |#*XMB TEMPLATE FILE*#|index_whosonline|#*XMB TEMPLATE*#|
 <tr class="header">
 <td colspan="2">
-<a href="misc.php?action=online"><strong>$lang[whosonline]</strong></a> - $memonmsg
+<a href="misc.php?action=online"><font color="$cattext"><strong>$lang[whosonline]</strong></font></a> <font color="$cattext"><strong>- $memonmsg</strong></font>
 </td>
 </tr>
 <tr>
@@ -1070,12 +1077,12 @@ $forumlist
 <br />
 <table cellpadding="$tablespace" cellspacing="0" width="$tablewidth" align="center" style="border: $borderwidth solid $bordercolor;">
 <tr>
-<td colspan="2" class="category" style="border-bottom: $borderwidth solid $bordercolor;"><strong>$lang[statistics]</strong></td>
+<td colspan="2" class="category" style="border-bottom: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[statistics]</strong><font></td>
 </tr>
 $whosonline
 <tr>
-<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor; border-right: $borderwidth solid $bordercolor;"><strong>$lang[textstats]:</strong></td>
-<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;"><strong>$lang[key]</strong></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor; border-right: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[key]</strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="$altbg2">
 <td align="left" valign="top" style="border-right: $borderwidth solid $bordercolor;">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
