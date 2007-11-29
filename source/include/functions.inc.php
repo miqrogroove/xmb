@@ -32,7 +32,7 @@ function nav($add=false, $raquo=true) {
     if (!$add) {
         $navigation = '';
     } else {
-        $navigation .= ($raquo ? ' &raquo; ' : ''). $add;
+        $navigation .= ($raquo ? ' / ' : ''). $add;
     }
 }
 
