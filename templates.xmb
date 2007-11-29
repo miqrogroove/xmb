@@ -454,7 +454,6 @@ $multipage
 <tr>
 <td align="center" class="smalltxt">
 <br />
-<br />
 $versionlong<br />
 $lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright
 <br />
