@@ -389,7 +389,6 @@ $dayselect
 <tr>
 <td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
 </tr>
-$multipage
 <tr class="header">
 <td width="4%" align="center">&nbsp;</td>
 <td width="4%" align="center">$lang[texticon]</td>
@@ -400,6 +399,7 @@ $multipage
 <td width="5%" align="center">$lang[textviews]</td>
 <td width="23%" align="center">$lang[textlastpost]</td>
 </tr>
+$multipage
 $rows
 $multipage
 <tr class="header">
@@ -2940,13 +2940,13 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row|#*XMB TEMPLATE*#|
 <tr>
-<td bgcolor="$altbg2" class="tablerow"><a href="member.php?action=viewpro&amp;member=$memurl">$member[username]</a></td>
-<td bgcolor="$altbg1" class="ctrtablerow">$member[status]</td>
-<td bgcolor="$altbg2" class="ctrtablerow">$email</td>
-<td bgcolor="$altbg1" class="ctrtablerow">$site</td>
-<td bgcolor="$altbg2" class="tablerow">$member[location]</td>
-<td bgcolor="$altbg1" class="ctrtablerow">$member[regdate]</td>
-<td bgcolor="$altbg2" class="ctrtablerow">$member[postnum]</td>
+<td bgcolor="$altbg1" class="tablerow"><a href="member.php?action=viewpro&amp;member=$memurl">$member[username]</a></td>
+<td bgcolor="$altbg2" class="ctrtablerow">$member[status]</td>
+<td bgcolor="$altbg1" class="ctrtablerow">$email</td>
+<td bgcolor="$altbg2" class="ctrtablerow">$site</td>
+<td bgcolor="$altbg1" class="tablerow">$member[location]</td>
+<td bgcolor="$altbg2" class="ctrtablerow">$member[regdate]</td>
+<td bgcolor="$altbg1" class="ctrtablerow">$member[postnum]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_site|#*XMB TEMPLATE*#|
@@ -2963,40 +2963,15 @@ $nextlink
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="6" class="category"><font color="$cattext">$lang[textsortby]</font></td>
+<td colspan="5" class="category"><font color="$cattext">$lang[textsortby]</font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
 <td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
-</table>
-</td>
-</tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
-</tr>
-$multipage
-<tr class="header" align="center">
-<td width="20%">$lang[textusername]</td>
-<td width="16%">$lang[status]</td>
-<td width="10%">$lang[textemail]:</td>
-<td width="10%">$lang[textsite]</td>
-<td width="19%">$lang[textlocation]</td>
-<td width="19%">$lang[textregistered]</td>
-<td width="5%">$lang[textposts]</td>
-</tr>
-$members
-$multipage
 </table>
 </td>
 </tr>
@@ -3009,13 +2984,22 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="6"><font color="$cattext"><strong>$lang[search_advanced]</strong></font><a name="search_adv" /></td>
+<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="6">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" /></td>
+<tr class="header" align="center">
+<td width="20%">$lang[textusername]</td>
+<td width="16%">$lang[status]</td>
+<td width="10%">$lang[textemail]:</td>
+<td width="10%">$lang[textsite]</td>
+<td width="19%">$lang[textlocation]</td>
+<td width="19%">$lang[textregistered]</td>
+<td width="5%">$lang[textposts]</td>
 </tr>
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" value="$lang[textgo]" /></td>
+$multipage
+$members
+$multipage
+<tr class="header">
+<td align="center" colspan="7">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
 </table>
 </td>
@@ -4461,40 +4445,15 @@ $forumlist
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
-<td colspan="6" class="category"><font color="$cattext">$lang[textsortby]</font></td>
+<td colspan="5" class="category"><font color="$cattext">$lang[textsortby]</font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="#search_adv"><strong>$lang[search_advanced] </strong></a></td>
 <td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
-</table>
-</td>
-</tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
-</tr>
-$multipage
-<tr class="header" align="center">
-<td width="20%">$lang[textusername]</td>
-<td width="16%">$lang[status]</td>
-<td width="10%">$lang[textemail]:</td>
-<td width="10%">$lang[textsite]</td>
-<td width="19%">$lang[textlocation]</td>
-<td width="19%">$lang[textregistered]</td>
-<td width="5%">$lang[textposts]</td>
-</tr>
-$members
-$multipage
 </table>
 </td>
 </tr>
@@ -4507,13 +4466,22 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="6"><font color="$cattext"><strong>$lang[search_advanced]</strong></font><a name="search_adv" /></td>
+<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
-<tr class="ctrtablerow">
-<td bgcolor="$altbg2" colspan="6">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" /></td>
+<tr class="header" align="center">
+<td width="20%">$lang[textusername]</td>
+<td width="16%">$lang[status]</td>
+<td width="10%">$lang[textemail]:</td>
+<td width="10%">$lang[textsite]</td>
+<td width="19%">$lang[textlocation]</td>
+<td width="19%">$lang[textregistered]</td>
+<td width="5%">$lang[textposts]</td>
 </tr>
-<tr class="ctrtablerow">
-<td bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" value="$lang[textgo]" /></td>
+$multipage
+$members
+$multipage
+<tr class="header">
+<td align="center" colspan="7">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" />&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
 </table>
 </td>
@@ -4832,7 +4800,7 @@ $buddys[offline]
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_separator|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="8" class="category"><font color="$cattext"><strong>&raquo;&nbsp;$seperator_text</strong></font></td>
+<td colspan="7" class="category"><font color="$cattext"><strong>&raquo;&nbsp;$seperator_text</strong></font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|email_html_header|#*XMB TEMPLATE*#|
