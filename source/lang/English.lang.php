@@ -1132,7 +1132,6 @@ $lang['welcomeunreg'] = "If you are not registered or logged in, you may still b
 $lang['welcomeunregnotify'] = "You Are Not Registered Or Not Logged In";
 $lang['what_tickerdelay'] = "News Delay:";
 $lang['what_tickerstatus'] = "News Ticker:";
-$lang['whattheyaredoing'] = "What they are currently doing...";
 $lang['whocanpost'] = "Who Can Post?";
 $lang['whocanpost11'] = "All users can post new topics";
 $lang['whocanpost12'] = "<strong>Administrators</strong> can post new topics";
