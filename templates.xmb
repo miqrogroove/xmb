@@ -885,7 +885,7 @@ $multipage
 </tr>
 $onlineusers
 <tr>
-<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">$lang[onlinetoday]</font></strong></a> | <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a></td>
+<td bgcolor="$altbg1" colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
 </tr>
 $multipage
 </table>
@@ -907,7 +907,7 @@ $multipage
 </tr>
 $onlineusers
 <tr>
-<td bgcolor="$altbg1" colspan="4" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong><font color="$cattext">$lang[onlinetoday]</font></strong></a> | <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a></td>
+<td bgcolor="$altbg1" colspan="4" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
 </tr>
 $multipage
 </table></td>
@@ -917,7 +917,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|index_whosonline|#*XMB TEMPLATE*#|
 <tr class="header">
 <td colspan="2">
-<a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
+<a href="misc.php?action=online"><strong>$lang[whosonline]</strong></a> - $memonmsg
 </td>
 </tr>
 <tr>
@@ -1067,20 +1067,19 @@ $forumlist
 </td>
 </tr>
 </table>
-
 <br />
 <table cellpadding="$tablespace" cellspacing="0" width="$tablewidth" align="center" style="border: $borderwidth solid $bordercolor;">
 <tr>
-<td colspan="2" class="category" style="border-bottom: $borderwidth solid $bordercolor;"><strong><font color="$cattext">$lang[statistics]</font></strong></td>
+<td colspan="2" class="category" style="border-bottom: $borderwidth solid $bordercolor;"><strong>$lang[statistics]</strong></td>
 </tr>
 $whosonline
 <tr>
-<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor; border-right: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
-<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;"><font color="$cattext"><strong>$lang[key]</strong></font></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor; border-right: $borderwidth solid $bordercolor;"><strong>$lang[textstats]:</strong></td>
+<td align="left" class="header" style="border-top: $borderwidth solid $bordercolor; border-bottom: $borderwidth solid $bordercolor;"><strong>$lang[key]</strong></td>
 </tr>
 <tr class="tablerow" bgcolor="$altbg2">
 <td align="left" valign="top" style="border-right: $borderwidth solid $bordercolor;">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
-<td align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
+<td align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" border="0" /> = $lang[nonewposts]</td>
 </tr>
 </table>
 
@@ -4380,7 +4379,7 @@ var messageElement;
 </table>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_icq|#*XMB TEMPLATE*#|
-<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" target="_blank"><img src="$imgdir/icq_add.gif" alt="" border="0" /></a>
+<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" target="_blank"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_aim|#*XMB TEMPLATE*#|
 <a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board."><img src="$imgdir/aim.gif" alt="" border="0" /></a>
