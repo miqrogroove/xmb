@@ -502,7 +502,7 @@ if ($action == 'newthread') {
 
         $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=$fid");
 
-        if (X_MEMBER && isset($pollanswers) && $forums['pollstatus'] != 'off') {
+        if (X_MEMBER && isset($pollanswers) && isset($forums['pollstatus']) && $forums['pollstatus'] != 'off') {
             $pollanswers = checkInput($pollanswers);
             $pollopts = explode("\n", $pollanswers);
             $pnumnum = count($pollopts);
@@ -511,7 +511,7 @@ if ($action == 'newthread') {
                 error($lang['too_few_pollopts']);
             }
 
-            $query = $db->query("SELECT vote_id, vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
+            $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
             if ($query) {
                 $vote_id = $db->fetch_array($query);
                 $vote_id = $vote_id['vote_id'];
