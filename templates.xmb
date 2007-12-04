@@ -40,7 +40,7 @@ misc_online_today|#*XMB TEMPLATE*#|
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[copythreadto]:</td>
@@ -64,7 +64,7 @@ misc_online_today|#*XMB TEMPLATE*#|
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[plogtuf]<br /></td>
 </tr>
 </table>
@@ -115,7 +115,7 @@ window.onload = tickerstart;
 <td class="header" colspan="2"><font color="$cattext"><strong>$lang[textlogin_incorrect]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[textpw1]</strong></span><br />$lang[textpw2]<br /></td>
 </tr>
 </table>
@@ -132,7 +132,7 @@ window.onload = tickerstart;
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[fnasorry3]<br/></td>
 </tr>
 </table>
@@ -3294,7 +3294,7 @@ $subsbtn
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr class="header">
-<td colspan="6" class="category"><font color="$cattext">$lang[textbriefsummary] $xmbuser - [$self[status]]</font></td>
+<td colspan="6" class="category"><font color="$cattext">$lang[textbriefsummary] $self[username] - [$self[status]]</font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textusername]</td>
@@ -3511,7 +3511,7 @@ $posts
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid" enctype="multipart/form-data" >
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$xmbuser" />
+<input type="hidden" name="username" value="$self[username]" />
 <input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3582,7 +3582,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="closesubmit" value="$lang[textclosethread]" /></td>
@@ -3605,7 +3605,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2" >$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textmoveto]</td>
@@ -3640,7 +3640,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="topsubmit" value=" $lang[texttopthread]" /></td>
@@ -3662,7 +3662,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2" >$self[username] $lang[textminilogout]</td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="bumpsubmit" value="$lang[textbumpthread]" /></td>
@@ -3684,7 +3684,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="14%">$lang[newsubject]</td>
@@ -3727,7 +3727,7 @@ $post[message]
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2" >$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2" >$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="14%">$lang[mergewithmsg]</td>
@@ -3815,7 +3815,7 @@ $post[message]
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$xmbuser" />
+<input type="hidden" name="username" value="$self[username]" />
 <input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3875,7 +3875,7 @@ $suggestions
 $preview
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$xmbuser" />
+<input type="hidden" name="username" value="$self[username]" />
 <input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3957,7 +3957,7 @@ $posts
 $preview
 <form method="post" name="input" action="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$pid" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$xmbuser" />
+<input type="hidden" name="username" value="$self[username]" />
 <input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -4109,7 +4109,7 @@ $smilies
 |#*XMB TEMPLATE FILE*#|post_loggedin|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index_welcome_member|#*XMB TEMPLATE*#|
@@ -4121,7 +4121,7 @@ $smilies
 <td colspan="3"><table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="tablerow">
 <td align="left"><font color="$cattext"><strong>$lang[textpersonalfeat]</strong></font></td>
-<td align="right"><font color="$cattext"><strong>$lang[textloggedinas] $xmbuser</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
+<td align="right"><font color="$cattext"><strong>$lang[textloggedinas] $self[username]</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
 </tr>
 </table>
 </td>
@@ -4335,7 +4335,7 @@ $forumlist
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="ctrtablerow">
 <td colspan="2" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="deletesubmit" value="$lang[textdeletethread]" /></td>
@@ -4357,7 +4357,7 @@ $forumlist
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="emptysubmit" value="$lang[textemptythread]" /></td>
@@ -4481,7 +4481,7 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 <td><input type="hidden" name="subject" value="" />
 <table width="100%" border="0" cellpadding="$tablespace" cellspacing="1">
 <tr bgcolor="$altbg1">
-<td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$xmbuser</strong>]</font></div></td>
+<td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>
 $captchapostcheck
 <tr bgcolor="$altbg1" class="quickreply">
@@ -4662,7 +4662,7 @@ $suggestions
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
-<td bgcolor="$altbg2">$xmbuser $lang[textminilogout]</td>
+<td bgcolor="$altbg2">$self[username] $lang[textminilogout]</td>
 </tr>
 <tr class="header">
 <td>$lang[deletebutton]?</td>
