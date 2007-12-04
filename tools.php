@@ -84,7 +84,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid=$forum[fid]");
         }
         nav($lang['tools']);
-        echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_forumtotal]</td></tr></table></table>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_forumtotal'].'</td></tr></table></table>';
         end_time();
         eval('echo "'.template('footer').'";');
         exit;
@@ -98,7 +98,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid=$threads[tid]");
         }
         nav($lang['tools']);
-        echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] $lang[tool_threadtotal]</td></tr></table></table>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_threadtotal'].'</td></tr></table></table>';
         end_time();
         eval('echo "'.template('footer').'";');
         exit;
@@ -113,14 +113,14 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."members SET postnum='$postsnum' WHERE username='$mem[username]'");
         }
         nav($lang['tools']);
-        echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_mempost]</td></tr></table></table>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr></table></table>';
         end_time();
         eval('echo "'.template('footer').'";');
         exit;
         break;
 
     case 'fixlastposts':
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup='0' OR fup='') AND type = 'forum'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup=0 OR fup='') AND type='forum'");
         while($loner = $db->fetch_array($q)) {
             $lastpost = array();
             $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$loner[fid]");
@@ -137,11 +137,13 @@ switch($action) {
                 $db->free_result($pq);
             }
             $db->free_result($subq);
+
             $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$loner[fid] ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $lastpost[] = $db->fetch_array($pq);
             }
             $db->free_result($pq);
+
             if (count($lastpost) == 0) {
                 $lastpost = '';
             } else {
@@ -158,14 +160,15 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid=$loner[fid]");
         }
         $db->free_result($q);
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
+
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while($cat = $db->fetch_array($q)) {
-            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
+            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup=$cat[fid]");
             while($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
-                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
+                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup=$forum[fid]");
                 while($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$sub[fid] ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
                         $lastpost[] = $curr;
@@ -174,14 +177,16 @@ switch($action) {
                         $lp = '';
                     }
                     $db->free_result($pq);
-                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid=$sub[fid]");
                 }
                 $db->free_result($subq);
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
+
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid=$forum[fid] ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $lastpost[] = $db->fetch_array($pq);
                 }
                 $db->free_result($pq);
+
                 if (count($lastpost) == 0) {
                     $lastpost = '';
                 } else {
@@ -195,15 +200,16 @@ switch($action) {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid=$forum[fid]");
             }
             $db->free_result($fq);
         }
         $db->free_result($q);
+
         $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
         while($thread = $db->fetch_array($q)) {
             $lastpost = array();
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$thread[tid] ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $curr = $db->fetch_array($pq);
                 $lastpost[] = $curr;
@@ -212,20 +218,77 @@ switch($action) {
                 $lp = '';
             }
             $db->free_result($pq);
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$lp' WHERE tid=$thread[tid]");
         }
         $db->free_result($q);
         nav($lang['tools']);
-        echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_lastpost]</td></tr></table></table>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr></table></table>';
         end_time();
         eval('echo "'.template('footer').'";');
         exit;
         break;
 
+    case 'fixorphanedthreads':
+        if (noSubmit('orphsubmit')) {
+            echo '<form action="tools.php?action=fixorphanedthreads" method="post">';
+            echo '<tr bgcolor="'.$altbg1.'" class="ctrtablerow"><td><input type="text" name="export_fid" size="4"/>&nbsp;'.$lang['export_fid_expl'].'</td></tr>';
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td><input class="submit" type="submit" name="orphsubmit" value="'.$lang['textsubmitchanges'].'" /></td></tr>';
+            echo '</form>';
+        } else {
+            $export_fid = formInt('export_fid');
+            if (!$export_fid) {
+                error($lang['export_fid_not_there'], false, '</table></table><br />');
+            }
+
+            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
+            while($f = $db->fetch_array($q)) {
+                $fids[] = $f['fid'];
+            }
+            $db->free_result($q);
+            $fq = "fid != '";
+            $fids = implode("' AND fid != '", $fids);
+            $fq .= $fids;
+            $fq .= "'";
+
+            $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE $fq");
+            $i = 0;
+            while($t = $db->fetch_array($q)) {
+                $db->query("UPDATE ".X_PREFIX."threads SET fid='$export_fid' WHERE tid='$t[tid]'");
+                $db->query("UPDATE ".X_PREFIX."posts SET fid='$export_fid' WHERE tid='$t[tid]'");
+                $i++;
+            }
+            $db->free_result($q);
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo $i.$lang['o_threads_found'].'</td></tr>';
+        }
+        break;
+
+    case 'fixorphanedattachments':
+        if (noSubmit('orphattachsubmit')) {
+            echo '<form action="tools.php?action=fixorphanedattachments" method="post">';
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" /></td></tr>';
+            echo '</form>';
+        } else {
+            $i = 0;
+            $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
+            while($a = $db->fetch_array($q)) {
+                $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid=$a[pid]");
+                if ($db->num_rows($result) == 0) {
+                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid=$a[aid]");
+                    $i++;
+                }
+            }
+            $db->free_result($q);
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo $i.$lang['o_attachments_found'].'</td></tr>';
+        }
+        break;
+
     case 'updatemoods':
         $db->query("UPDATE ".X_PREFIX."members SET mood='$lang[nomoodtext]' WHERE mood=''");
         nav($lang['tools']);
-        echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_mood]</td></tr></table></table>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mood'].'</td></tr></table></table>';
         end_time();
         eval('echo "'.template('footer').'";');
         exit;
@@ -233,11 +296,11 @@ switch($action) {
 
     case 'u2udump':
         if (noSubmit('yessubmit')) {
-            echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['u2udump_confirm']."<br /><form action=\"tools.php?action=u2udump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['whoodump_confirm'].'<br /><form action="tools.php?action=u2udump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
         } else if ($lang['textyes'] == $yessubmit) {
             $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
-            echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_u2u]</td></tr></table></table>";
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_u2u'].'</td></tr></table></table>';
             end_time();
             eval('echo "'.template('footer').'";');
             exit();
@@ -248,11 +311,11 @@ switch($action) {
 
     case 'whosonlinedump':
         if (noSubmit('yessubmit')) {
-            echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>".$lang['whoodump_confirm']."<br /><form action=\"tools.php?action=whosonlinedump\" method=\"post\"><input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textyes']."\" /> - <input type=\"submit\" name=\"yessubmit\" value=\"".$lang['textno']."\" /></form></td></tr>";
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['whoodump_confirm'].'<br /><form action="tools.php?action=whosonlinedump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
         } else if ($lang['textyes'] == $yessubmit) {
             $db->query("TRUNCATE ".X_PREFIX."whosonline");
             nav($lang['tools']);
-            echo "<tr bgcolor=\"$altbg2\" class=\"ctrtablerow\"><td>$lang[tool_completed] - $lang[tool_whosonline]</td></tr></table></table>";
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_whosonline'].'</td></tr></table></table>';
             end_time();
             eval('echo "'.template('footer').'";');
             exit();
@@ -277,40 +340,6 @@ switch($action) {
             exit();
         } else {
             redirect('./cp.php', 0);
-        }
-        break;
-
-    case 'fixorphanedthreads':
-        if (noSubmit('orphsubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="tablerow"><td>';
-            echo '<form action="tools.php?action=fixorphanedthreads" method="post">';
-            echo '<input type="text" name="export_fid" size="4"/> '.$lang['export_fid_expl'];
-            echo '<br /><input type="submit" name="orphsubmit" />';
-            echo '</form>';
-        } else {
-            $export_fid = formInt('export_fid');
-            if (!$export_fid) {
-                error($lang['export_fid_not_there'], false, '</table></table><br />');
-            }
-
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' OR type='sub'");
-            while($f = $db->fetch_array($q)) {
-                $fids[] = $f['fid'];
-            }
-            $fq = "fid != '";
-            $fids = implode("' AND fid != '", $fids);
-            $fq .= $fids;
-            $fq .= "'";
-
-            $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE $fq");
-            $i = 0;
-            while($t = $db->fetch_array($q)) {
-                $db->query("UPDATE ".X_PREFIX."threads SET fid='$export_fid' WHERE tid='$t[tid]'");
-                $db->query("UPDATE ".X_PREFIX."posts SET fid='$export_fid' WHERE tid='$t[tid]'");
-                $i++;
-            }
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-            echo $i.$lang['o_threads_found'];
         }
         break;
 
@@ -371,27 +400,6 @@ switch($action) {
             } else {
                 dump_query($db->query('CHECK TABLE `'.$val.'`'), false);
             }
-        }
-        break;
-
-    case 'fixorphanedattachments':
-        if (noSubmit('orphattachsubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-            echo '<form action="tools.php?action=fixorphanedattachments" method="post">';
-            echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" />';
-            echo '</form>';
-        } else {
-            $i = 0;
-            $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
-            while($a = $db->fetch_array($q)) {
-                $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid='$a[pid]'");
-                if ($db->num_rows($result) == 0) {
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$a[aid]'");
-                    $i++;
-                }
-            }
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-            echo $i . $lang['o_attachments_found'];
         }
         break;
 }
