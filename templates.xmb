@@ -1519,18 +1519,20 @@ $subforums
 <tr>
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-$multipage
-<tr class="header">
+<tr class="header" align="center">
 <td width="4%">&nbsp;</td>
 <td width="4%">$lang[texticon]</td>
 <td width="47%">$lang[textsubject]</td>
-<td width="14%" align="center">$lang[textauthor]</td>
-<td width="6%" align="center">$lang[textreplies]</td>
-<td width="6%" align="center">$lang[textviews]</td>
+<td width="14%">$lang[textauthor]</td>
+<td width="6%">$lang[textreplies]</td>
+<td width="6%">$lang[textviews]</td>
 <td width="19%">$lang[textlastpost]</td>
 </tr>
+$multipage
 $threadlist
 $multipage
+</form>
+$sortby
 </table>
 </td>
 </tr>
@@ -1538,41 +1540,6 @@ $multipage
 <table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
-</tr>
-</table>
-<br />
-<table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
-<tr>
-<td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="header">
-<td colspan="6">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td align="center" class="header"><form method="post" action="forumdisplay.php?fid=$fid">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<span class="smalltxt">$lang[showtopics]</span>
-<select name="cusdate">
-<option value="86400" $check1>$lang[day1]</option>
-<option value="432000" $check5>$lang[day5]</option>
-<option value="1296000" $check15>$lang[day15]</option>
-<option value="2592000" $check30>$lang[day30]</option>
-<option value="5184000" $check60>$lang[day60]</option>
-<option value="8640000" $check100>$lang[day100]</option>
-<option value="31536000" $checkyear>$lang[lastyear]</option>
-<option value="0" $checkall>$lang[beginning]</option>
-</select>
-<span class="smalltxt">$lang[sortby]</span>
-<select name="ascdesc">
-<option value="ASC">$lang[asc]</option>
-<option value="DESC" selected="selected">$lang[desc]</option>
-</select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></form></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
 </tr>
 </table>
 <br />
@@ -1600,20 +1567,21 @@ $subforums
 <tr>
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-$multipage
-<tr class="header">
-<td width="4%" align="center"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/editforumsets.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
-<td width="4%" align="center">$lang[texticon]</td>
+<tr class="header" align="center">
+<td width="4%"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/editforumsets.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
+<td width="4%">$lang[texticon]</td>
 <td width="45%">$lang[textsubject]</td>
 <td width="6%">$lang[topuntop]</td>
-<td width="12%" align="center">$lang[textauthor]</td>
-<td width="6%" align="center">$lang[textreplies]</td>
-<td width="6%" align="center">$lang[textviews]</td>
+<td width="12%">$lang[textauthor]</td>
+<td width="6%">$lang[textreplies]</td>
+<td width="6%">$lang[textviews]</td>
 <td width="10%">$lang[textlastpost]</td>
 <td width="4%">$lang[deletecolon]</td>
 <td><input type="checkbox" onclick="invertSelection('geatneet', 'tid[]'); return false;" /></td>
 </tr>
+$multipage
 $threadlist
+$multipage
 <tr>
 <td bgcolor="$altbg1" class="tablerow" colspan="10">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -1637,10 +1605,11 @@ $threadlist
 <input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
 </td>
 </tr>
+</form>
+$sortby
 </table>
 </td>
 </tr>
-$multipage
 </table>
 </td>
 </tr>
@@ -1648,44 +1617,6 @@ $multipage
 <table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
-</tr>
-</table>
-</form>
-<br />
-<table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
-<tr>
-<td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="header">
-<td colspan="6">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td align="center" class="header">
-<form method="post" action="forumdisplay.php?fid=$fid">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<span class="smalltxt">$lang[showtopics]</span>
-<select name="cusdate">
-<option value="86400" $check1>$lang[day1]</option>
-<option value="432000" $check5>$lang[day5]</option>
-<option value="1296000" $check15>$lang[day15]</option>
-<option value="2592000" $check30>$lang[day30]</option>
-<option value="5184000" $check60>$lang[day60]</option>
-<option value="8640000" $check100>$lang[day100]</option>
-<option value="31536000" $checkyear>$lang[lastyear]</option>
-<option value="0" $checkall>$lang[beginning]</option>
-</select>
-<span class="smalltxt">$lang[sortby]</span>
-<select name="ascdesc">
-<option value="ASC">$lang[asc]</option>
-<option value="DESC" selected="selected">$lang[desc]</option>
-</select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></form>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
 </tr>
 </table>
 <br />

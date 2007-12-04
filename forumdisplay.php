@@ -31,6 +31,7 @@ require 'header.php';
 loadtemplates(
 'forumdisplay',
 'forumdisplay_admin',
+'forumdisplay_sortby',
 'forumdisplay_invalidforum',
 'forumdisplay_multipage',
 'forumdisplay_multipage_admin',
@@ -67,7 +68,6 @@ $fup = array();
 if ($forum['type'] == 'sub') {
     $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid=$forum[fup]");
     $fup = $db->fetch_array($query);
-
     if (!privfcheck($fup['private'], $fup['userlist'])) {
         error($lang['privforummsg']);
     }
@@ -303,8 +303,14 @@ if ($topicsnum == 0 && !$notexist) {
     eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
 }
 
-$check1 = $check5 = $check15 = $check30 = '';
-$check60 = $check100 = $checkyear = $checkall = '';
+$check1 = '';
+$check5 = '';
+$check15 = '';
+$check30 = '';
+$check60 = '';
+$check100 = '';
+$checkyear = '';
+$checkall = '';
 switch($cusdate) {
     case 86400:
         $check1 = $selHTML;
@@ -334,6 +340,8 @@ switch($cusdate) {
 
 $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE fid=$fid");
 $topicsnum = $db->result($query, 0);
+
+eval('$sortby = "'.template('forumdisplay_sortby').'";');
 
 $mpurl = 'forumdisplay.php?fid='.$fid;
 if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
