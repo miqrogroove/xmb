@@ -124,30 +124,30 @@ if ($show_full_info) {
 // while others are available via IE and/or opera
 $browser = 'mozilla'; // default to mozilla for now
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
-    define('IS_MOZILLA',true);
+    define('IS_MOZILLA', true);
     $browser = 'mozilla';
 }
 
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
-    define('IS_OPERA',  true);
+    define('IS_OPERA', true);
     $browser = 'opera';
 }
 
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], '.NET CLR')) {
-    define('IS_IE',     true);
+    define('IS_IE', true);
     $browser = 'ie';
 }
 
 if(!defined('IS_MOZILLA')) {
-    define('IS_MOZILLA',false);
+    define('IS_MOZILLA', false);
 }
 
 if (!defined('IS_OPERA')) {
-    define('IS_OPERA',  false);
+    define('IS_OPERA', false);
 }
 
 if (!defined('IS_IE')) {
-    define('IS_IE',     false);
+    define('IS_IE', false);
 }
 
 // sanity check maximum registrations
@@ -487,7 +487,7 @@ $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'Y
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
+    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid=".$tid);
     $locate = $db->fetch_array($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
@@ -497,7 +497,7 @@ if (isset($tid) && $action != 'templates') {
         $threadSubject = '';
     }
 } else if (isset($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=".$fid);
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
     } else {
@@ -533,7 +533,7 @@ if ((int) $themeuser > 0) {
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
+$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=".$theme);
 foreach($db->fetch_array($query) as $key => $val) {
     if ($key != "name") {
         $$key = $val;
