@@ -79,7 +79,7 @@ function url_to_text($url) {
             if (isset($tsub[$tid])) {
                 $location = $lang['onlineviewthread'].' '.$tsub[$tid];
             } else {
-                $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
+                $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid=".$tid);
                 while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
                     $tsub[$tid] = $locate['subject'];
@@ -111,7 +111,7 @@ function url_to_text($url) {
             if (isset($fname[$fid])) {
                 $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
             } else {
-                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
+                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid=".$fid);
                 while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineforumdisplay'].' '.$locate['name'];
                     $fname[$fid] = $locate['name'];
@@ -267,7 +267,6 @@ function url_to_text($url) {
     $return = array();
     $return['url'] = checkInput($url, 'yes');
     $return['text'] = $location;
-
     return $return;
 }
 ?>
