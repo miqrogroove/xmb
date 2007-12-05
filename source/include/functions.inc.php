@@ -1212,7 +1212,7 @@ function put_cookie($name, $value=null, $expire=null, $path=null, $domain=null, 
         return setcookie($name, $value, $expire, $path, $domain, $secure);
     } else {
         if ($expire >= 0) {
-            $expire = date('r', $expire);
+            $expire = gmdate('r', $expire);
         } else {
             $expire = null;
         }
