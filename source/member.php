@@ -92,7 +92,7 @@ switch($action) {
 
         if ($SETTINGS['maxdayreg'] > 0) {
             $time = $onlinetime - 86400; // take the date and distract 24 hours from it
-            $query = $db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
+            $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
             if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
                 error($lang['max_regs']);
             }
