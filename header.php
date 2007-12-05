@@ -122,7 +122,7 @@ if ($show_full_info) {
 // so we can use bbcode specifically made for it
 // this allows the use of various nice new features in eg mozilla
 // while others are available via IE and/or opera
-$browser = 'mozilla'; // default to mozilla for now
+$browser = 'opera'; // default to opera for now
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
     define('IS_MOZILLA', true);
     $browser = 'mozilla';
@@ -133,12 +133,12 @@ if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
     $browser = 'opera';
 }
 
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], '.NET CLR')) {
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
     define('IS_IE', true);
     $browser = 'ie';
 }
 
-if(!defined('IS_MOZILLA')) {
+if (!defined('IS_MOZILLA')) {
     define('IS_MOZILLA', false);
 }
 
@@ -148,11 +148,6 @@ if (!defined('IS_OPERA')) {
 
 if (!defined('IS_IE')) {
     define('IS_IE', false);
-}
-
-// sanity check maximum registrations
-if (!isset($max_reg_day) || $max_reg_day < 1 || $max_reg_day > 100) {
-    $max_reg_day = 25;
 }
 
 if (!file_exists(ROOT.'db/'.$database.'.php')) {
