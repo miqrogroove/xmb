@@ -124,7 +124,7 @@ $db->free_result($query);
 $tids = implode(', ', $tids);
 
 if ($results == 0) {
-    $noPostsMessage = ($daysold == 1) ? $lang["nopoststoday"] : $lang["noPostsTimePeriod"];
+    $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
     $multipage = '';
     eval('$rows = "'.template('today_noposts').'";');
 } else {
@@ -141,7 +141,7 @@ if ($results == 0) {
         eval('$multipage = "'.template('today_multipage').'";');
     }
 
-    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
+    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, ".$tpp);
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {

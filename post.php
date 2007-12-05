@@ -83,7 +83,7 @@ if ($tid) {
     }
 }
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=".$fid);
 $forums = $db->fetch_array($query);
 $forums['name'] = stripslashes($forums['name']);
 
@@ -460,7 +460,7 @@ if ($action == 'newthread') {
             error($lang['postpermerr']);
         }
 
-        $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid=$fid");
+        $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid=".$fid);
         $for = $db->fetch_array($query);
 
         if ($for['lastpost'] != '') {
@@ -494,13 +494,13 @@ if ($action == 'newthread') {
         $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subject', ".$db->time($thatime).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
         $pid = $db->insert_id();
 
-        $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid=$tid");
+        $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid=".$tid);
 
         if (isset($forum['type']) && $forum['type'] == 'sub') {
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=$for[fup]");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=".$for['fup']);
         }
 
-        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=$fid");
+        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid=".$fid);
 
         if (X_MEMBER && isset($pollanswers) && isset($forums['pollstatus']) && $forums['pollstatus'] != 'off') {
             $pollanswers = checkInput($pollanswers);
@@ -511,14 +511,14 @@ if ($action == 'newthread') {
                 error($lang['too_few_pollopts']);
             }
 
-            $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
+            $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id=".$tid);
             if ($query) {
                 $vote_id = $db->fetch_array($query);
                 $vote_id = $vote_id['vote_id'];
                 if ($vote_id > 0) {
-                    $db->query("DELETE FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id");
-                    $db->query("DELETE FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id");
-                    $db->query("DELETE FROM ".X_PREFIX."vote_desc WHERE vote_id=$vote_id");
+                    $db->query("DELETE FROM ".X_PREFIX."vote_results WHERE vote_id=".$vote_id);
+                    $db->query("DELETE FROM ".X_PREFIX."vote_voters WHERE vote_id=".$vote_id);
+                    $db->query("DELETE FROM ".X_PREFIX."vote_desc WHERE vote_id=".$vote_id);
                 }
             }
             $db->free_result($query);
@@ -545,11 +545,11 @@ if ($action == 'newthread') {
         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username like '$username'");
 
         if ((X_STAFF) && $toptopic == 'yes') {
-            $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid AND fid=$fid");
+            $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid AND fid=".$fid);
         }
 
         if ((X_STAFF) && $closetopic == 'yes') {
-            $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
+            $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=".$fid);
         }
 
         eval('echo "'.template('header').'";');
@@ -558,7 +558,7 @@ if ($action == 'newthread') {
             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
         }
 
-        $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+        $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."posts WHERE tid=".$tid);
         $posts = $db->result($query, 0);
 
         $topicpages = quickpage($posts, $ppp);
@@ -603,7 +603,7 @@ if ($action == 'newthread') {
             $message = html_entity_decode("[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]");
         }
 
-        $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+        $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid=".$tid);
         $replynum = $db->result($querytop, 0);
         if ($replynum >= $ppp) {
             $threadlink = "viewthread.php?fid=$fid&tid=$tid";
@@ -716,7 +716,7 @@ if ($action == 'newthread') {
             $posticon = '';
         }
 
-        $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid=$fid");
+        $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid=".$fid);
         $for = $db->fetch_array($query);
         $last = $for['lastpost'];
 
@@ -736,7 +736,7 @@ if ($action == 'newthread') {
         $subject = addslashes($subject);
         $message = addslashes($message);
 
-        $query = $db->query("SELECT closed,topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=$tid");
+        $query = $db->query("SELECT closed,topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid=".$tid);
         $closed1 = $db->fetch_array($query);
         $closed = $closed1['closed'];
         if ($closed == "yes" && !X_STAFF) {
@@ -749,19 +749,19 @@ if ($action == 'newthread') {
             $pid = $db->insert_id();
 
             if ((X_STAFF) && $closetopic == 'yes') {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=$fid");
+                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid=$tid AND fid=".$fid);
             }
 
             $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$username|$pid', replies=replies+1 WHERE (tid=$tid AND fid=$fid) OR closed='moved|$tid'");
 
             if ($for['type'] == 'sub') {
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid=$for[fup]");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid=".$for['fup']);
             }
 
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid=$fid");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid=".$fid);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid");
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=".$tid);
             $posts = $db->result($query,0);
 
             if ($posts > $ppp) {
@@ -771,7 +771,7 @@ if ($action == 'newthread') {
             }
 
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid=$tid AND pid < $pid ORDER BY pid ASC LIMIT 1"), 0);
-            $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status FROM ".X_PREFIX."favorites f LEFT JOIN ".X_PREFIX."members m ON (m.username=f.username) WHERE f.type='subscription' AND f.tid=$tid AND f.username != '$username'");
+            $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status FROM ".X_PREFIX."favorites f LEFT JOIN ".X_PREFIX."members m ON (m.username=f.username) WHERE f.type='subscription' AND f.tid=$tid AND f.username!= '$username'");
             while($subs = $db->fetch_array($subquery)) {
                 if ($subs['status'] == 'banned' || $subs['lastvisit'] < $date) { // don't send double mails...!
                     continue;
@@ -814,7 +814,7 @@ if ($action == 'newthread') {
 
     if (!isset($editsubmit)) {
         eval('echo "'.template('header').'";');
-        $queryextra = $db->query("SELECT f.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON (f.fid=p.fid) WHERE p.tid=$tid AND p.pid=$pid");
+        $queryextra = $db->query("SELECT f.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON (f.fid=p.fid) WHERE p.tid=$tid AND p.pid=".$pid);
         $forum = $db->fetch_array($queryextra);
 
         $authorization = privfcheck($forum['private'], $forum['userlist']);
@@ -825,12 +825,12 @@ if ($action == 'newthread') {
 
         if (isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
             $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$message, "subject"=>$subject, 'icon'=>$posticon);
-            $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND tid=$tid");
+            $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND tid=".$tid);
             if ($db->num_rows($query) > 0) {
                 $postinfo = array_merge($postinfo, $db->fetch_array($query));
             }
         } else {
-            $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid = p.pid) WHERE p.pid=$pid AND p.tid=$tid AND p.fid=$forum[fid]");
+            $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid=p.pid) WHERE p.pid=$pid AND p.tid=$tid AND p.fid=".$forum['fid']);
             $postinfo = $db->fetch_array($query);
         }
 
@@ -969,7 +969,7 @@ if ($action == 'newthread') {
         $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
         $posticon = htmlspecialchars($posticon);
 
-        $query = $db->query("SELECT p.author as author, m.status as status, p.subject as subject FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON p.author=m.username WHERE pid=$pid AND tid=$tid AND fid=$fid");
+        $query = $db->query("SELECT p.author as author, m.status as status, p.subject as subject FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON p.author=m.username WHERE pid=$pid AND tid=$tid AND fid=".$fid);
         $orig = $db->fetch_array($query);
         $db->free_result($query);
 
@@ -1002,13 +1002,13 @@ if ($action == 'newthread') {
             }
 
             if ($isfirstpost['pid'] == $pid && !(isset($delete) && $delete == "yes")) {
-                $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$subject' WHERE tid=$tid");
+                $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$subject' WHERE tid=".$tid);
             }
 
             $threaddelete = 'no';
             eval('echo "'.template('header').'";');
 
-            $db->query("UPDATE ".X_PREFIX."posts SET message='$message', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$subject' WHERE pid=$pid");
+            $db->query("UPDATE ".X_PREFIX."posts SET message='$message', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$subject' WHERE pid=".$pid);
 
             if (isset($_FILES['attach']) && ($file = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attach[type]', '$filesize', '$file', 0)");
@@ -1018,7 +1018,7 @@ if ($action == 'newthread') {
                 switch($attachment['action']) {
                     case 'replace':
                         if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
-                            $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
+                            $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=".$pid);
                             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attachment_replace[type]', '$filesize', '$file', 0)");
                         }
                         break;
@@ -1027,11 +1027,11 @@ if ($action == 'newthread') {
                         if (strlen(trim($name)) > 2 || preg_match('#^[^a-z0-9]+$#', $name) == 1) {
                             break;
                         } else {
-                            $db->query("UPDATE ".X_PREFIX."attachments SET filename='$name' WHERE pid=$pid");
+                            $db->query("UPDATE ".X_PREFIX."attachments SET filename='$name' WHERE pid=".$pid);
                         }
                         break;
                     case 'delete':
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
+                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=".$pid);
                         break;
                     default:
                         break;
@@ -1040,31 +1040,31 @@ if ($action == 'newthread') {
 
             if (isset($delete) && $delete == 'yes' && !($isfirstpost['pid'] == $pid)) {
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
+                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=".$pid);
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=".$pid);
                 updatethreadcount($tid);
                 updateforumcount($fid);
             } else if (isset($delete) && $delete == 'yes' && $isfirstpost['pid'] == $pid) {
-                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid");
+                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=".$tid);
                 $numrows = $db->num_rows($query);
                 $db->free_result($query);
 
                 if ($numrows == 1) {
-                    $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid");
+                    $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=".$tid);
                     while($result = $db->fetch_array($query)) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
                     }
                     $db->free_result($query);
-                    $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid");
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=$tid");
-                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
+                    $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=".$tid);
+                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=".$tid);
+                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=".$tid);
                     $threaddelete = 'yes';
                 }
 
                 if ($numrows > 1) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
-                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
+                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=".$pid);
+                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=".$pid);
                     $db->query("UPDATE ".X_PREFIX."posts SET subject='$orig[subject]' WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
                     $threaddelete = 'no';
                 }
@@ -1076,7 +1076,7 @@ if ($action == 'newthread') {
         }
 
         if ($threaddelete != 'yes') {
-            $query =$db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid AND fid=$fid");
+            $query =$db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid<=$pid AND tid=$tid AND fid=".$fid);
             $posts = $db->result($query,0);
             $topicpages = quickpage($posts, $ppp);
             message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
