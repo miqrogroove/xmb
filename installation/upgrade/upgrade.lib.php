@@ -55,7 +55,7 @@ class Upgrade {
         'vote_desc',
         'vote_results',
         'vote_voters'
-   );
+    );
 
     function Upgrade(&$db, $file='', $tablepre) {
         if ($file == '') {
@@ -64,10 +64,8 @@ class Upgrade {
 
         $this->db = &$db;
         $this->tablepre = $tablepre;
-
         $c = $this->fileGetContents($file) or die('Could not open '.$file);
         $this->tables = unserialize($c) or die('Syntax Error: Could not unserialize upgrade file');
-
         return 1;
     }
 
@@ -83,13 +81,11 @@ class Upgrade {
     }
 
     function getTablesByTablepre($tablepre=null) {
-
         if ($tablepre === null) {
             $tablepre = $this->tablepre;
         }
 
         $tbl = array();
-
         $q = $this->db->query("SHOW TABLES LIKE '".str_replace('_', '\_', $tablepre)."%'");
         while($t = $this->db->fetch_array($q)) {
             $t = array_values($t);
@@ -110,14 +106,11 @@ class Upgrade {
 
     function decode_keylen(& $keydata) {
     // we take a piece of data that looks like this: (`foo` (num))
-
         // find the second (. Return if there isn't one
-
         $sp = strpos($keydata, "(", 1);
         if ($sp === false) {
             return '';
         }
-
         $keylen = str_replace(array('(', ')', ' ', ','), '', substr($keydata, $sp));
         $keydata = str_replace(array('(', ')', ' ', '`', ','), '', substr($keydata, 0, $sp));
         return $keylen;
@@ -127,16 +120,13 @@ class Upgrade {
         $q = $this->db->query("SHOW CREATE TABLE `$table`");
         $tbl = $this->db->fetch_array($q);
         $tbl = $tbl['Create Table'];
-
         // now, to extract all of this and save it :|
         $tbl = explode("\n", $tbl);
         $ct = count($tbl);
         unset($tbl[0]); // CREATE TABLE `table` (
         unset($tbl[$ct-1]); // TYPE = MyISAM
-
         $cols = array();
         $indices = array();
-
         foreach($tbl as $line=>$data) {
             $data = trim($data);
             if (strpos($data, 'PRIMARY KEY') !== 0 && strpos($data, 'KEY') !== 0) {
@@ -155,17 +145,16 @@ class Upgrade {
                     [8][0] = extra (auto_increment)
                     [9][0] = optional keys
                     */
-
                     if (substr($d[7][0], -1) == ',') {
                         $d[7][0] = substr($d[7][0], 1, -1); // strip quotes
                     }
+
                     $col['name']    = $d[1][0];
                     $col['type']    = $d[2][0].$d[3][0];
                     $col['null']    = $d[5][0];
                     $col['default'] = trim(substr($d[6][0], strlen('default')));
                     $col['extra']   = $d[8][0];
                     $col['keys']    = $d[9][0];
-
                     if (substr($col['default'], -1) == ',') {
                         $col['default'] = substr($col['default'], 0, -1);
                     }
@@ -181,14 +170,12 @@ class Upgrade {
                 if (strpos(trim($data), 'PRIMARY KEY') === 0) {
                     // primary key :)
                     $d = explode(' ', trim($data));
-
                     if (strpos($d[3], "))")) {
                         $index['keylen'] = $this->decode_keylen($d[3]);
                     } else {
                         $index['keylen'] = '';
                         $d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
                     }
-
                     $index['type'] = 'PRIMARY KEY';
                     $index['field'] = $d[3];
                     $index['name'] = '';
@@ -225,17 +212,14 @@ class Upgrade {
         }
         $tc = array_keys($this->tc);
         $ts = array_keys($this->tables);
-
         $missing = array_diff($tc, $ts);
         $overhead = array_diff($ts, $tc);
-
         return array('+'=>$missing, '-'=>$overhead);
     }
 
     function createTableQueryByTablename($tbl) {
         $table = $this->tables[$tbl];
         $parts = array();
-
         foreach($table['cols'] as $col) {
             $p = array();
             $p[] = '`'.$col['name'].'`';
@@ -276,7 +260,6 @@ class Upgrade {
                 }
              }
         }
-
         $part = 'CREATE TABLE `'.$this->tablepre.$tbl.'` ('."\n";
         $part .= implode(",\n", $parts);
         $part .= "\n) TYPE=MyISAM;";
@@ -338,7 +321,6 @@ class Upgrade {
 
         $p = array_diff($ind, $mstr);
         $m = array_diff($mstr, $ind);
-
         $diff['indices'] = array('+'=>$p, '-'=>$m);
         return $diff;
     }
@@ -355,11 +337,11 @@ class Upgrade {
 
         $cols = $this->getColsByTable($table);
         foreach($cols as $c) {
-            $col[] = $c['name'];     // name
+            $col[] = $c['name']; // name
         }
 
         foreach($this->tables[$table]['cols'] as $c) {
-            $mstr[] = $c['name'];    // name again
+            $mstr[] = $c['name']; // name again
         }
 
         if ($col !== $mstr) {
@@ -400,7 +382,6 @@ class Upgrade {
 
                 $drop = array();
                 $add = array();
-
                 if (isset($diff['cols']['-'])) {
                     foreach($diff['cols']['-'] as $min) {
                         $m = explode('-', $min);
@@ -428,8 +409,7 @@ class Upgrade {
                     $newdiff[$t]['cols']['add'][] = $name;
                 }
 
-                $alter = array_diff($drop, $dr);    // this one should be exactly the same as the other one :)
-
+                $alter = array_diff($drop, $dr); // this one should be exactly the same as the other one :)
                 foreach($alter as $key=>$name) {
                     foreach($diff['cols']['+'] as $k=>$d) {
                         if (strpos($d, $name) === 0) {
@@ -517,12 +497,12 @@ class Upgrade {
         if (!isset($diff['cols'])) {
             $diff['cols'] = array();
         }
+
         if (!isset($diff['indices'])) {
             $diff['indices'] = array();
         }
 
         $query = '';
-
         if (isset($diff['indices']['drop'])) {
             foreach($diff['indices']['drop'] as $name) {
                 // check that it is not a primary key!!
@@ -547,7 +527,6 @@ class Upgrade {
             if (substr($query, -2) == ", ") {
                 $query = substr($query, 0, -2);
             }
-
             $queries[] = $preface . $query;
             $query = '';
         }
@@ -633,7 +612,6 @@ class Upgrade {
                 if ($info['keys'] != '') {
                     $p[] = $info['keys'];
                 }
-
                 $parts = implode(' ', $p);
                 $query .= "MODIFY " . $parts . ", ";
             }
@@ -771,10 +749,8 @@ class Upgrade {
             if (!isset($u2u['new']) || $u2u['new'] == '') {
                 $u2u['new'] = 'yes';
             }
-
             $this->db->query("INSERT INTO `".$this->tablepre."u2u_new` VALUES('', '".$u2u['msgto']."', '".$u2u['msgfrom']."', '".$type."', '".$owner."', '".$u2u['folder']."', '".addslashes($u2u['subject'])."', '".addslashes($u2u['message'])."', '".$u2u['dateline']."', '".$u2u['readstatus']."', '".$u2u['new']."')");
         }
-
         $this->db->free_result($query);
         $this->db->query("DROP TABLE `".$this->tablepre."u2u`");
         $this->db->query("ALTER TABLE `".$this->tablepre."u2u_new` RENAME `".$this->tablepre."u2u`");
@@ -805,7 +781,6 @@ class Upgrade {
             // 1.9.1 schema already.
             // let's do a quick check to see if the u2u table is okay and fix it if not
             $query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `".$this->tablepre."u2u` where owner=''");
-
             if ($this->db->num_rows($query) != 0) {
                 while($u2u = $this->db->fetch_array($query)) {
                     if ($u2u['folder'] == 'inbox') {
@@ -823,7 +798,6 @@ class Upgrade {
             }
             $this->db->free_result($query);
         }
-
         return true;
     }
 
@@ -949,9 +923,9 @@ class Upgrade {
     }
 
     function iso8601_date($year=0, $month=0, $day=0) {
-        $year  = (int) $year;
+        $year = (int) $year;
         $month = (int) $month;
-        $day   = (int) $day;
+        $day = (int) $day;
 
         if ($year < 1 || $month < 1 || $day < 1) {
             return '0000-00-00';
@@ -980,9 +954,9 @@ class Upgrade {
                 break;
             }
 
-            $postperm     = explode(',', $forum['postperm_temp']);
+            $postperm = explode(',', $forum['postperm_temp']);
             $guestposting = 'off';
-            $perms        = array(0, 0, 0, 0);
+            $perms = array(0, 0, 0, 0);
 
             for($i=1; $i<4; $i++) {
                 if ($postperm[$i] >= 32) { // Means everyone inc guests
@@ -1023,7 +997,7 @@ class Upgrade {
                 $name[] = trim($v);
             }
             $name = "'".implode("', '", $name)."'";
-            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN ($name)");
+            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN($name)");
             while($u = $this->db->fetch_array($query)) {
                 $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
             }

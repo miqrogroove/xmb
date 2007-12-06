@@ -103,7 +103,6 @@ define('X_INST_SKIP', 3);
 error_reporting(E_ALL&~E_NOTICE);
 
 $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : '0';
-
 switch($step) {
     case 1: // confirmation you WANT to upgrade
         print_header();
@@ -140,7 +139,6 @@ switch($step) {
         <?php
         print_footer();
         break;
-
     case 2: //version check
         print_header();
         ?>
@@ -178,7 +176,6 @@ switch($step) {
         <?php
         print_footer();
         break;
-
     case 3: // agreement
         print_header();
         ?>
@@ -881,7 +878,6 @@ switch($step) {
         the library.  If this is what you want to do, use the GNU Lesser General
         Public License instead of this License.  But first, please read
         <http://www.gnu.org/philosophy/why-not-lgpl.html>.
-
         </textarea>
         <form action="./upgrade.php?step=4" method="post">
         <p><input type="submit" value="I Agree To These Terms &gt;" /></p>
@@ -892,7 +888,6 @@ switch($step) {
         </div>
         <?php
         break;
-
     case 4:
         print_header();
         ?>
@@ -1050,14 +1045,12 @@ switch($step) {
                     $err = true;
                 }
                 break;
-
             case 'mysql4':
                 if (!defined('MYSQLI_NUM')) {
                     show_result(X_INST_ERR);
                     $err = true;
                 }
                 break;
-
             default:
                 show_result(X_INST_ERR);
                 error('Database Handler', 'Unknown handler provided', true);
@@ -1114,7 +1107,6 @@ switch($step) {
                     show_result(X_INST_OK);
                 }
                 break;
-
             case 'mysql4':
                 $link = new mysqli($dbhost, $dbuser, $dbpw, $dbname);
                 if (mysqli_connect_errno()) {
@@ -1126,7 +1118,6 @@ switch($step) {
                 $i = $link->server_info;
                 $link->close();
                 $mysqlver = explode('.', $i);
-
                 // min = 4.1
                 show_act('Checking Database Version');
                 if ($mysqlver[0] <= 4 && $mysqlver[1] < 10) {
@@ -1136,7 +1127,6 @@ switch($step) {
                     show_result(X_INST_OK);
                 }
                 break;
-
             default:
                 show_result(X_INST_SKIP);
                 break;
@@ -1189,7 +1179,7 @@ switch($step) {
         // When upgrading they shouldn't be necessery anymore anyway, thus saving space
         // and making the board more efficient
         show_act('Clearing logs');
-        $u->dropTableFromCache('logs', true);   // also drops the actual mysql table
+        $u->dropTableFromCache('logs', true); // also drops the actual mysql table
         show_result(X_INST_OK);
 
         show_act('Fixing necessary indices');
@@ -1406,7 +1396,6 @@ switch($step) {
         <?php
         print_footer();
         break;
-
     default:
         header('location: upgrade.php?step=1');
         break;

@@ -27,7 +27,7 @@
  **/
 
 define('ROOT', '../');
-require ROOT . 'header.php';
+require ROOT.'header.php';
 
 if (!X_SADMIN) {
     die('This file is only for developers, who also happen to be Super Administrators.');
@@ -51,7 +51,6 @@ if (($handle = @fopen($filename, 'w')) && @fwrite($handle, $new) && $_GET['actio
     header('Pragma: no-cache');
     header('Expires: 0');
     header('Cache-Control: public; max-age=0');
-
     echo $new;
 }
 ?>
