@@ -1,0 +1,4 @@
+alter table `$table_settings`
+add `bbcimg_status` set('on','off') NOT NULL default 'on',
+add `bbc_maxht` smallint(5) NOT NULL default '350',
+add `bbc_maxwd` smallint(5) NOT NULL default '350';
