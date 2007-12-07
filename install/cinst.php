@@ -71,7 +71,7 @@ if (!function_exists('show_result')) {
 function rmFromDir($path) {
     if (is_dir($path)) {
         $stream = opendir($path);
-        while (($file = readdir($stream)) !== false) {
+        while(($file = readdir($stream)) !== false) {
             if ($file == '.' || $file == '..') {
                 continue;
             }
@@ -84,15 +84,14 @@ function rmFromDir($path) {
     }
 }
 
-while (ob_get_level() > 0) {
+while(ob_get_level() > 0) {
     ob_end_flush();
 }
 ob_implicit_flush(1);
 
-require ROOT."./include/global.inc.php";
-
-require_once ROOT."config.php";
-require_once ROOT."db/$database.php";
+require ROOT.'include/global.inc.php';
+require ROOT.'config.php';
+require ROOT.'db/'.$database.'.php';
 
 $db = new dbstuff;
 $tmphost = $dbhost; // dbhost gets cleared by the following method.
@@ -741,7 +740,7 @@ $file = fread($stream, filesize(ROOT.'templates.xmb'));
 fclose($stream);
 
 $templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
-foreach ($templates as $key=>$val) {
+foreach($templates as $key=>$val) {
     $template = explode("|#*XMB TEMPLATE*#|", $val);
     if (isset($template[1])) {
         $template[1] = addslashes($template[1]);
