@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -101,21 +101,21 @@ if (DEBUG) {
 $versioncompany = 'The XMB Group';
 $versionshort = "XMB 1.9.8";
 $versiongeneral = 'XMB 1.9.8 Engage';
-$copyright = '2007';
+$copyright = '2007-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
     $gamma = 'Final';
     $service_pack = '';
-    $versionbuild = 200707062320;
-    $versionlong = 'Powered by '.$versiongeneral.' ('.$alpha.$beta.$gamma.$service_pack.')'.(DEBUG === true ? ' (Debug)' : '');
+    $versionbuild = 20071207;
+    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
     $beta = '';
     $gamma = '';
     $service_pack = '';
     $versionbuild = '[HIDDEN]';
-    $versionlong = "Powered by XMB".(DEBUG === true ? ' (Debug)' : '');
+    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
 }
 
 // discover the most likely browser
