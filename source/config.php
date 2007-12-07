@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -31,15 +31,15 @@ if (!defined('IN_CODE')) {
 }
 
 // Database connection settings
-    $dbname         = 'DB_NAME';       // Name of your database
-    $dbuser         = 'DB_USER';       // Username used to access it
-    $dbpw           = 'DB_PW';      // Password used to access it
-    $dbhost         = 'DB_HOST';  // Database host, usually 'localhost'
-    $database       = 'DB_TYPE';      // Database type, currently only mysql is supported.
-    $pconnect       = 0;            // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
+    $dbname         = 'DB_NAME'; // Name of your database
+    $dbuser         = 'DB_USER'; // Username used to access it
+    $dbpw           = 'DB_PW';   // Password used to access it
+    $dbhost         = 'DB_HOST'; // Database host, usually 'localhost'
+    $database       = 'DB_TYPE'; // Database type, currently only mysql is supported.
+    $pconnect       = 0;         // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
 
 // Table Settings
-    $tablepre       = 'TABLEPRE';   // Table-pre
+    $tablepre       = 'TABLEPRE'; // Table-pre
 
 // Path-settings
     // In full_path, put the full URL you see when you go to your boards, WITHOUT the filename though!!
@@ -74,18 +74,18 @@ if (!defined('IN_CODE')) {
     // To add extra plugins (links of your own), just edit the code between Start Plugin Code and End Plugin Code. If you with to add more than one, simply copy that block, paste it and add the second one.
 
     // Start Plugin code
-    $plugname[$i]    = '';       // This is the name of your plugin. eg. Avatar Gallery, TeddyBear, etc.
-    $plugurl[$i]     = '';       // This is the location, link, or URL to the plugin
-    $plugadmin[$i]   = false;    // Is this plugin only for admins? Set to true if the plugin can only be seen/used by (super-)admins, false when it's can be used by anyone
-    $plugimg[$i]     = '';       // This is the path (full URL) to the image to show in front of the text.
+    $plugname[$i]    = '';    // This is the name of your plugin. eg. Avatar Gallery, TeddyBear, etc.
+    $plugurl[$i]     = '';    // This is the location, link, or URL to the plugin
+    $plugadmin[$i]   = false; // Is this plugin only for admins? Set to true if the plugin can only be seen/used by (super-)admins, false when it's can be used by anyone
+    $plugimg[$i]     = '';    // This is the path (full URL) to the image to show in front of the text.
     $i++;
     // End plugin code.
 
     // Start Plugin code for plugin #2
-    $plugname[$i]    = '';       // This is the name of your plugin. eg. Avatar Gallery, TeddyBear, etc.
-    $plugurl[$i]     = '';       // This is the location, link, or URL to the plugin
-    $plugadmin[$i]   = false;    // Is this plugin only for admins? Set to true if the plugin can only be seen/used by (super-)admins, false when it's can be used by anyone
-    $plugimg[$i]     = '';       // This is the path (full URL) to the image to show in front of the text.
+    $plugname[$i]    = '';    // This is the name of your plugin. eg. Avatar Gallery, TeddyBear, etc.
+    $plugurl[$i]     = '';    // This is the location, link, or URL to the plugin
+    $plugadmin[$i]   = false; // Is this plugin only for admins? Set to true if the plugin can only be seen/used by (super-)admins, false when it's can be used by anyone
+    $plugimg[$i]     = '';    // This is the path (full URL) to the image to show in front of the text.
     $i++;
     // End plugin code for plugin #2
 
