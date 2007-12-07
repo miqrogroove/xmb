@@ -190,6 +190,10 @@ if (file_exists('./Upgrade/') && !@unlink('./Upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
+if (file_exists('./upgrade/') && !@unlink('./upgrade/')) {
+    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+}
+
 // Checks the format of the URL, blocks if necessary....
 if (eregi("\?[0-9]+$", $url)) {
     exit("Invalid String Format, Please Check Your URL");
