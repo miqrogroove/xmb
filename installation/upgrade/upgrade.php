@@ -1375,7 +1375,7 @@ switch($step) {
                 if (!$problem) {
                     $problem = true;
                 } else {
-                    show_act('   Removing file `'.$file.'`');
+                    show_act('Removing file `'.$file.'`');
                 }
                 show_result(X_INST_WARN);
                 error('Remove File Error', 'XMB could not remove <i>'.$file.'</i> file. Please delete this file before using your board.', false);

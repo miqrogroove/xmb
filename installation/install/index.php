@@ -61,7 +61,7 @@ function show_act($act) {
 }
 
 function show_result($type) {
-    switch ($type) {
+    switch($type) {
         case 0:
             echo '<span class="progressErr">ERROR</span><br />';
             break;
@@ -87,7 +87,7 @@ if (!function_exists('file_get_contents')) {
     }
 }
 
-if (isset($_GET['action']) && $_GET['action'] == 'verifyUrl') {
+if (isset($_GET['action'])) {
     echo md5($_SERVER['PHP_SELF']);
     exit;
 }
@@ -115,7 +115,7 @@ $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 0;
 $substep = isset($_REQUEST['substep']) ? $_REQUEST['substep'] : 0;
 $vStep = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 0;
 
-switch ($vStep) {
+switch($vStep) {
     case 1: // welcome
         ?>
         <div id="sidebar">
@@ -905,7 +905,7 @@ switch ($vStep) {
 
     case 4: // config.php set-up
         $vSubStep = isset($_REQUEST['substep']) ? trim($_REQUEST['substep']) : '';
-        switch ($vSubStep) {
+        switch($vSubStep) {
         case 'create':
             // Open config.php
             $configuration = file_get_contents('../config.php');
@@ -950,7 +950,7 @@ switch ($vStep) {
                 $configuration = str_replace('SHOWFULLINFO', 'false', $configuration);
             }
 
-            switch ($_REQUEST['method']) {
+            switch($_REQUEST['method']) {
                 case 1: // Show configuration on screen
                     ?>
                     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -1063,7 +1063,7 @@ switch ($vStep) {
                 }
             }
             $phpv = explode('.', phpversion());
-            foreach ($dbs as $db) {
+            foreach($dbs as $db) {
                 if ($db == 'mysql4' && $phpv[0] != 5) {
                     continue;
                 }
@@ -1356,7 +1356,7 @@ switch ($vStep) {
        );
 
         show_act('Checking Directory Structure');
-        foreach ($req['dirs'] as $dir) {
+        foreach($req['dirs'] as $dir) {
             if (!file_exists(ROOT.$dir)) {
                 if ($dir == 'images') {
                     show_result(X_INST_WARN);
@@ -1373,7 +1373,7 @@ switch ($vStep) {
         show_result(X_INST_OK);
 
         show_act('Checking Required Files');
-        foreach ($req['files'] as $file) {
+        foreach($req['files'] as $file) {
             if (!file_exists(ROOT.$file)) {
                 show_result(X_INST_ERR);
                 error('Missing File', 'XMB could not locate the file <i>/'.$file.'</i>, this file is required for XMB to work properly. Please upload this file and restart installation.', true);
@@ -1386,17 +1386,14 @@ switch ($vStep) {
         // a) help create a config.php file
         // b) leave the configuration to be done manually offline
         // c) just continue, the forum has already been configured.
-
         if (isset($conf)) {
-            switch ($conf['responce']) {
+            switch($conf['responce']) {
                 case 'create':
                     // create one
                     break;
-
                 case 'manual':
                     // wait till the manual is done
                     // timeout here
-
                 default:
                     break;
             }
@@ -1416,7 +1413,7 @@ switch ($vStep) {
         show_act('Checking Database API');
         // let's check if the actual functionality exists...
         $err = false;
-        switch ($database) {
+        switch($database) {
             case 'mysql':
                 if (!defined('MYSQL_NUM')) {
                     show_result(X_INST_ERR);
@@ -1451,7 +1448,7 @@ switch ($vStep) {
         }
 
         show_act('Checking Database Connection');
-        switch ($database) {
+        switch($database) {
             case 'mysql':
                 $link = mysql_connect($dbhost, $dbuser, $dbpw);
                 if (!$link) {
@@ -1498,6 +1495,7 @@ switch ($vStep) {
         }
 
         show_act('Checking Full Url Compliance');
+        /*
         // let's check the $full_url :)
         $urlP = parse_url($full_url);
         if (($fp = @fsockopen($urlP['host'], $_SERVER['SERVER_PORT'], $errno, $errstr, 5)) === false) {
@@ -1505,20 +1503,28 @@ switch ($vStep) {
             error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured; the connection was aborted. This test will be skipped.', false);
         } else {
             socket_set_timeout($fp, 5);
-            $request    = array();
-            $request[]  = 'GET '.$urlP['path'].'install/index.php?action=verifyUrl HTTP/1.0';
-            $request[]  = 'Host: '.$urlP['host'];
-            $request[]  = 'Connection: close';
-            $request    = implode("\r\n", $request);
+            $request = array();
+            $request[] = 'GET '.$urlP['path'].'install/index.php?action=verifyUrl HTTP/1.0';
+            $request[] = 'Host: '.$urlP['host'];
+            $request[] = 'Connection: close';
+            $request = implode("\r\n", $request);
             @fwrite($fp, $request, strlen($request));
             $return = @fread($fp, 1024);
             fclose($fp);
-            if($return == md5($_SERVER['PHP_SELF'])) {
+            if ($return == md5($_SERVER['PHP_SELF'])) {
                 show_result(X_INST_OK);
             } else {
                 show_result(X_INST_WARN);
                 error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured. If this is configured wrong, it will silently prevent logging in later on in the process. However, if you\'re sure it\'s correct, then you can safely ignore this notice.', false);
             }
+        }
+        */
+        // let's check the $full_url :)
+        if (@file($full_url.'header.php') === false) {
+            show_result(X_INST_WARN);
+            error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured. If this is configured wrong, it will silently prevent logging in later on in the process.', false);
+        } else {
+            show_result(X_INST_OK);
         }
 
         // throw in all stuff then :)
