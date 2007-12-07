@@ -81,26 +81,26 @@ loadtemplates(
 Find Code:
 ==========
 
-            $sig           = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
+            $sig = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
 
 ===============
 Add Code Below:
 ===============
 
-            $stuff         = formVar('stuff');
-            $stuff         = $stuff ? checkInput($stuff, '', '', 'javascript', false) : '';
+            $stuff = formVar('stuff');
+            $stuff = $stuff ? checkInput($stuff, '', '', 'javascript', false) : '';
 
 ==========
 Find Code:
 ==========
 
-            $sig           = addslashes($sig);
+            $sig = addslashes($sig);
 
 ===============
 Add Code Below:
 ===============
 
-            $stuff         = addslashes($stuff);
+            $stuff = addslashes($stuff);
 
 ==========
 Find Code:
@@ -165,27 +165,27 @@ Edit File: memcp.php
 Find Code:
 ==========
 
-        $newwebcam      = formVar('newwebcam');
-        $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+        $newwebcam = formVar('newwebcam');
+        $webcam = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
 
 ===============
 Add Code Below:
 ===============
 
-        $newstuff       = formVar('newstuff');
-        $stuff          = $newstuff ? checkInput($newstuff, 'no', 'no', 'javascript', false) : '';
+        $newstuff = formVar('newstuff');
+        $stuff = $newstuff ? checkInput($newstuff, 'no', 'no', 'javascript', false) : '';
 
 ==========
 Find Code:
 ==========
 
-        $sig            = addslashes($sig);
+        $sig = addslashes($sig);
 
 ===============
 Add Code Below:
 ===============
 
-        $stuff          = addslashes($stuff);
+        $stuff = addslashes($stuff);
 
 ==========
 Find Code:
@@ -218,27 +218,27 @@ Edit File: editprofile.php
 Find Code:
 ==========
 
-    $newwebcam      = formVar('newwebcam');
-    $webcam         = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
+    $newwebcam = formVar('newwebcam');
+    $webcam = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
 
 ===============
 Add Code Below:
 ===============
 
-    $newstuff       = formVar('newstuff');
-    $stuff          = $newstuff ? checkInput($newstuff, 'no', 'no', 'javascript', false) : '';
+    $newstuff = formVar('newstuff');
+    $stuff = $newstuff ? checkInput($newstuff, 'no', 'no', 'javascript', false) : '';
 
 ==========
 Find Code:
 ==========
 
-    $sig            = addslashes($sig);
+    $sig = addslashes($sig);
 
 ===============
 Add Code Below:
 ===============
 
-    $stuff          = addslashes($stuff);
+    $stuff = addslashes($stuff);
 
 ==========
 Find Code:

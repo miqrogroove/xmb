@@ -54,24 +54,22 @@ Edit File: tools.php
 Find Code:
 ==========
 
-    case 'fixorphanedattachments':
-        if (noSubmit('orphattachsubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-            echo '<form action="tools.php?action=fixorphanedattachments" method="post">';
-            echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" />';
-            echo '</form>';
+    case 'logsdump':
+        if (!X_SADMIN) {
+            error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
+        }
+
+        if (noSubmit('yessubmit')) {
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['logsdump_confirm'].'<br /><form action="tools.php?action=logsdump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+        } else if ($lang['textyes'] == $yessubmit) {
+            $db->query("TRUNCATE ".X_PREFIX."logs");
+            nav($lang['tools']);
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';
+            end_time();
+            eval('echo "'.template('footer').'";');
+            exit();
         } else {
-            $i = 0;
-            $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
-            while ($a = $db->fetch_array($q)) {
-                $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid='$a[pid]'");
-                if ($db->num_rows($result) == 0) {
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$a[aid]'");
-                    $i++;
-                }
-            }
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-            echo $i . $lang['o_attachments_found'];
+            redirect('./cp.php', 0);
         }
         break;
 
