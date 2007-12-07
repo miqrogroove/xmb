@@ -9,7 +9,7 @@ Mod Description:
 This mod will provide a new tool in admin panel to pre-register user accounts.
 This mod will auto send passwords to the pre-registered e-mail provided.
 
-Mod Copyright: © 2007 John Briggs. All rights reserved.
+Mod Copyright: © 2007-2008 XMBMods.com. All rights reserved.
 
 Mod Compatibility: XMB 1.9.8 Engage Final
 

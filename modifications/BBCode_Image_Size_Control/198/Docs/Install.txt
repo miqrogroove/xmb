@@ -8,7 +8,7 @@ Mod Author: Scan, John Briggs
 Mod Description:
 This mod will provide controls in admin panel to set max width and height ratio for bbcode images.
 
-Mod Copyright: © 2007 XMBMods.com. All rights reserved.
+Mod Copyright: © 2007-2008 XMBMods.com. All rights reserved.
 
 Mod Compatibility: XMB 1.9.8 Engage Final
 
