@@ -1,7 +1,7 @@
 =======================================================================================================================================
 Mod Title: Close Inactive Threads
 
-Mod Version: 1.0
+Mod Version: 1.1
 
 Mod Author: John Briggs, Area51Mafia
 
@@ -75,7 +75,7 @@ Add Code Below:
 ===============
 
     case 'closeinactivethreads':
-        if (nSubmit('yessubmit')) {
+        if (noSubmit('yessubmit')) {
             ?>
             <form action="tools.php?action=closeinactivethreads" method="post">
             <tr class="category">
