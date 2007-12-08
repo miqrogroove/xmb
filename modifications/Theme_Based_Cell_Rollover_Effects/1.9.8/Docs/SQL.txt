@@ -1,0 +1,1 @@
+ALTER TABLE `$table_themes` ADD celloverfx set('on','off') NOT NULL default 'on';
