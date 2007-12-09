@@ -1,7 +1,7 @@
 =======================================================================================================================================
 Mod Title: Close Inactive Threads
 
-Mod Version: 1.1
+Mod Version: 1.2
 
 Mod Author: John Briggs, Area51Mafia
 
@@ -26,9 +26,9 @@ This modification is developed and released for use with XMB 1.9.8 Engage Final 
 Step 1:
 =======
 
-=====================================
-Edit File: include/admin.user.inc.php
-=====================================
+================================
+Edit File: include/admin.inc.php
+================================
 
 ==========
 Find Code:
