@@ -507,7 +507,7 @@ if ($action == 'newthread') {
             $pollopts = explode("\n", $pollanswers);
             $pnumnum = count($pollopts);
 
-            if ($pnumnum < 2 || $pollanswers != '') {
+            if ($pnumnum < 2 && $pollanswers != '') {
                 error($lang['too_few_pollopts']);
             }
 
