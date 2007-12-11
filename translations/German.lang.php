@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -1141,4 +1141,4 @@ $lang['whosonline'] = "Wer ist Online?";
 $lang['whosonline_on'] = "Wer Online im Index ist:";
 $lang['whosonlinetoday'] = "Wer heute Online gewesen ist";
 $lang['xmbgroup'] = "The XMB Group";
-
+?>

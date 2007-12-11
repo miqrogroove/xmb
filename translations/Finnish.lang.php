@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -767,7 +767,6 @@ $lang['textmergethread'] = "Yhdistä Viestiketju";
 $lang['textmesperday'] = "viestiä päivässä";
 $lang['textmessage'] = "Viesti";
 $lang['textminilogout'] = "<small>[<a href=\"misc.php?action=logout\">Kirjaudu ulos</a>]</span>";
-$lang['textmiscfaq'] = "Sekalaiset kysymykset";
 $lang['textmod'] = "Valvoja";
 $lang['textmodby'] = "Keskustelualueen valvojat";
 $lang['textmoderator'] = "Valvoja";
@@ -1062,7 +1061,6 @@ $lang['welcomeunreg'] = "Keskustelualueiden lukeminen voi olla mahdollista kirja
 $lang['welcomeunregnotify'] = "Et ole rekisteröitynyt tai kirjautunut";
 $lang['what_tickerdelay'] = "Uutistikkerin viive (millisekuntia)";
 $lang['what_tickerstatus'] = "Uutistikkeri";
-$lang['whattheyaredoing'] = "Mitä he tällä hetkellä tekevät...";
 $lang['whoodump_confirm'] = 'Haluatko varmasti nollata keskustelualueen tilastot?';
 $lang['whosoneval'] = '$lang["whosonmsg"] = "Keskustelualueella on nyt $guestn, $membern ja $hiddenn";';
 $lang['whosonline'] = "Keskustelijat";
@@ -1121,3 +1119,35 @@ $lang['verificationnote'] = "Ole hyvä ja kirjoita teksti joka esiintyy kuvassa k
 $lang['textsubforums'] = "Alifoorumit:";
 $lang['showsubforums'] = "Alifoorumit etusivulla:<br /><span class=\"smalltxt\">Näytetäänkö alifoorumit etusivulla.</span>";
 $lang['message'] = "Viesti";
+$lang['filecorrupt'] = "Tiedosto jota yritit ladata on rikki. Tiedoston lataus keskeytettiin.";
+$lang['forumjumpselect'] = "Valitse Alue";
+$lang['logsdump_confirm'] = 'Oletko varma että haluat tyhjentää logit?';
+$lang['nosearchq'] = "Ei mitään etsittävää...";
+$lang['onlinemanagefolders'] = "Järjestää yksityisviesti kansioita";
+$lang['onlinetoday'] = "Kuka on ollut paikalla tänään";
+$lang['onlinenothread'] = 'Katsoo tuntematonta viestiketjua';
+$lang['onlinenoforum'] = 'Katsoo tuntematonta aluetta';
+$lang['onlineeditnoprofile'] = 'Muokkaa tuntematonta profiilia';
+$lang['onlinenoprofile'] = 'Katsoo tuntematonta profiilia';
+$lang['onlineunknown'] = 'Suorittaa tuntematonta tapahtumaa';
+$lang['onlineu2uint'] = 'Katsoo yksityisviesti käyttöliittymää';
+$lang['onlineviewcat'] = "Katsoo alueluokkaa: ";
+$lang['onlinecatunknown'] = "Katsoo tuntematonta alueluokkaa";
+$lang['onlinememcppro'] = "Päivittää profiiliaan";
+$lang['onlinememcpsub'] = "Katsoo tilattuja viestiketjuja";
+$lang['onlinememcpfav'] = "Katsoo suosikki viestiketjuja";
+$lang['onlinebuddy'] = "Katsoo osoitekirjaa";
+$lang['onlinebuddyadd'] = "Lisää käyttäjää osoitekirjaan";
+$lang['onlinebuddyedit'] = "Muokkaa osoitekirjaa";
+$lang['onlinebuddydelete'] = "Poistaa käyttäjää osoitekirjasta";
+$lang['onlinebuddyadd2u2u'] = "Lisää käyttäjää yksityisviestiin";
+$lang['refreshpage'] = 'Päivitä Sivu';
+$lang['statistics'] = "Tilastot";
+$lang['textcheck'] = "Tarkista Taulukot";
+$lang['textlogsdump'] = "Tyhjennä Logit";
+$lang['textnoforumsexist'] = "Aluetta ei ole.";
+$lang['textphp'] = "PHP:";
+$lang['textserverload'] = "Palvelimen Kuorma:";
+$lang['textsql'] = "SQL:";
+$lang['tool_logs'] = 'Logit Tyhjennetty';
+?>

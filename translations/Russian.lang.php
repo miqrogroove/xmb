@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -1101,7 +1101,6 @@ $lang['whosonline_on'] = "\"Кто На Форуме\" на главной странице:";
 $lang['whosonlinetoday'] = "Кто сегодня в сети";
 $lang['whoview'] = "Кто может просматривать этот форум?";
 $lang['xmbgroup'] = "The XMB Group";
-// captcha images lang vars begin
 $lang['admin_main_settings7'] = 'Настройки Картинки Captcha';
 $lang['captchastatus'] = 'Главный Статус:';
 $lang['captcharegstatus'] = 'Статус Регистрации:';
@@ -1123,7 +1122,6 @@ $lang['captchaimagecolor'] = 'Использовать Полный Цвет:';
 $lang['captchaimageinvalid'] = "Вы ввели неправильный код проверики рисунком. Пожалуйта, введите код, так как он показан на рисунке.";
 $lang['captchaverification'] = "Проверка Рисунком Captcha";
 $lang['verificationnote'] = "Пожалуйста введите код показанный на картинке в поле ниже. Это нужно для предотвращения регистрации автоматических ботов.";
-// captcha images lang vars end
 $lang['textsubforums'] = "Под-Форумы:";
 $lang['showsubforums'] = "Статус \"Под-Форумы на Главной Странице\":<br /><span class=\"smalltxt\">Включает и выключает показ под-форумов на главной странице.</span>";
 $lang['message'] = "Сообщение";

@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -26,21 +26,7 @@
  *
  **/
 
-/**
-* languageFileCompare
-*
-* A file that compares 2 language files and tells you what to
-* add and what to remove from the slave file.
-*
-* @author M. Sokolewicz <tularis@xmbforum.com>;
-*
-* @const LANG_INCLUDE_DIR (relative) path to the dir containing the master and slave langfiles
-* @param string $master Provides filename for the master language file to use. Defaults to English.lang.php
-* @param string $slave Provides filename for the slave language file to use.
-*/
-
 define('LANG_INCLUDE_DIR', './');
-define('IN_XMB', true);
 define('IN_CODE', true);
 
 function getAllLanguageFilenames() {
@@ -94,12 +80,12 @@ if ($master === $slave or ($master === 'Base.lang.php' && $slave === 'English.la
 }
 
 $masterl = getLanguageFileAsArray($master);
-$slavel  = getLanguageFileAsArray($slave);
+$slavel = getLanguageFileAsArray($slave);
 $masterf = array_keys($masterl);
-$slavef  = array_keys($slavel);
+$slavef = array_keys($slavel);
 
 $remove = array_diff($slavef, $masterf);
-$add    = array_diff($masterf, $slavef);
+$add = array_diff($masterf, $slavef);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">

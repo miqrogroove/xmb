@@ -4,7 +4,7 @@
  * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -30,7 +30,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-$charset = 'ISO-8859-1'; //$charset = 'UTF-8';
+$charset = 'ISO-8859-1';
 
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Agregar m&aacute;s direcciones";
