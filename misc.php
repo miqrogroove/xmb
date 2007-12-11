@@ -96,7 +96,9 @@ switch($action) {
         break;
 }
 
-$misc = $multipage = $nextlink = '';
+$misc = '';
+$multipage = '';
+$nextlink = '';
 
 switch($action) {
     case 'login':
@@ -122,43 +124,22 @@ switch($action) {
                 $username = $member['username'];
 
                 if (formInt('hide')) {
-                    $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$username'");
+                    $db->query("UPDATE ".X_PREFIX."members SET invisible=1 WHERE username='$username'");
                 } else {
-                    $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$username'");
+                    $db->query("UPDATE ".X_PREFIX."members SET invisible=0 WHERE username='$username'");
                 }
 
-                if ($server == 'Mic') {
-                    $misc = '<script>
-                        function put_cookie(name, value, expires, path, domain, secure) {
-                            var curCookie = name + "=" + escape(value) +
-                            ((expires) ? "; expires=" + expires.toGMTString() : "") +
-                            ((path) ? "; path=" + path : "") +
-                            ((domain) ? "; domain=" + domain : "") +
-                            ((secure) ? "; secure" : "");
-                            document.cookie = curCookie;
-                        }
-
-                        var now = new Date();
-                        now.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-
-                        put_cookie("xmbuser", "'.$username.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-                        put_cookie("xmbpw", "'.$password.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-
-                        window.location="index.php";
-                    </script>';
+                $secure = formYesNo('secure');
+                if ($secure == 'yes') {
+                    put_cookie("xmbuser", $username);
+                    put_cookie("xmbpw", $password);
                 } else {
-                    $secure = formYesNo('secure');
-                    if ($secure == 'yes') {
-                        put_cookie("xmbuser", $username);
-                        put_cookie("xmbpw", $password);
-                    } else {
-                        put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-                        put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
-                    }
-
-                    redirect('index.php', 0);
-                    $misc = '';
+                    put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
+                    put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
                 }
+                session_regenerate_id(); // Help prevent session fixation attacks, requires PHP 4.3.2 and later
+                $misc = '';
+                redirect('index.php', 0);
             } else {
                 eval('echo "'.template('header').'";');
                 eval('echo "'.template('misc_login_incorrectdetails').'";');
@@ -171,26 +152,24 @@ switch($action) {
 
     case 'logout':
         if (X_GUEST) {
-            redirect("index.php", 0);
+            redirect('index.php', 0);
             break;
         }
 
-        $currtime = $onlinetime - (86400*30);
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
 
-        put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-        put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
-        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
-        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
+        put_cookie("xmbuser", '', $onlinetime - 3600, $cookiepath, $cookiedomain);
+        put_cookie("xmbpw", '', $onlinetime - 3600, $cookiepath, $cookiedomain);
 
         foreach($_COOKIE as $key=>$val) {
-            $val = addslashes($val);
-            if (preg_match('#^fidpw([0-9]+)$#', $key)) {
-                put_cookie($key, '');
+            if (preg_match('#^fidpw\[([0-9]+)\]$#', $key)) {
+                put_cookie($key, '', $onlinetime - 3600, $cookiepath, $cookiedomain);
             }
         }
 
-        redirect("index.php", 0);
+        session_regenerate_id();
+
+        redirect('index.php', 0);
         break;
 
     case 'search':
@@ -256,15 +235,15 @@ switch($action) {
                     $page = 1;
                     $offset = 0;
                     $start = 0;
-                    $end = ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 } else {
                     if ($page < 1 ) {
                         $page = 1;
                     }
 
-                    $offset = ($page-1) * ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $offset = ($page-1) * ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                     $start = $offset;
-                    $end = ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
+                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
                 $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
@@ -430,7 +409,7 @@ switch($action) {
 
             if ($results == 0) {
                 eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } else if ($results == ((isset($self['ppp']) && $self['ppp'] > 0) ? $self['ppp'] : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
+            } else if ($results == ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
                 $ext = htmlspecialchars(implode('&', $ext));
                 eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }
