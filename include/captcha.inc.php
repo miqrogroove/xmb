@@ -46,16 +46,6 @@ if (!defined('IN_CODE')) {
     exit ("Not allowed to run this file directly.");
 }
 
-/**
-* Captcha Image generation class.
-*
-* The coding for the class is mostly based on php-captcha.inc.php which was developed by Edward Eliot.
-* I, Adam Clarke, have modified the original code for use with XMB 1.9.7.
-* I have removed some of the original functions that are not needed for the purpose of this mod.
-* I have added some new functions that are needed for the purpose of this mod.
-*
-* For generic access to CAPTCHA images, use this class.
-*/
 class Captcha {
     var $oImage;
     var $aFonts;
@@ -135,18 +125,22 @@ class Captcha {
             if ($vCharSet != '') {
                 // split items on commas
                 $aCharSet = explode(',', $vCharSet);
+
                 // initialise array
                 $this->aCharSet = array();
+
                 // loop through items
                 foreach($aCharSet as $sCurrentItem) {
                     // a range should have 3 characters, otherwise is normal character
                     if (strlen($sCurrentItem) == 3) {
                         // split on range character
                         $aRange = explode('-', $sCurrentItem);
+
                         // check for valid range
                         if (count($aRange) == 2 && $aRange[0] < $aRange[1]) {
                             // create array of characters from range
                             $aRange = range($aRange[0], $aRange[1]);
+
                             // add to charset array
                             $this->aCharSet = array_merge($this->aCharSet, $aRange);
                         }
@@ -173,6 +167,7 @@ class Captcha {
 
         // initialise array
         $this->aFonts = array();
+
         // loop through items
         foreach($aFonts as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
@@ -215,6 +210,7 @@ class Captcha {
 
         // initialise array
         $this->aBackgroundImages = array();
+
         // loop through items
         foreach($aBackgroundImages as $sCurrentItem) {
             if (is_dir($sCurrentItem)) {
@@ -274,6 +270,7 @@ class Captcha {
                 $iRandColor = rand(100, 250);
                 $iDotColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
             }
+
             // draw dot
             imagesetpixel($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), $iDotColor);
         }
@@ -288,6 +285,7 @@ class Captcha {
                 $iRandColor = rand(100, 250);
                 $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
             }
+
             // draw line
             imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColor);
         }
@@ -295,7 +293,6 @@ class Captcha {
 
     function GenerateCode() {
         global $db, $onlinetime;
-
         // loop through and generate the code letter by letter
         for($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {
@@ -322,7 +319,6 @@ class Captcha {
 
     function RetrieveCode($imghash) {
         global $db;
-
         // check imagehash
         $imghash = checkInput($imghash, '', '', "javascript", false);
         if ($imghash == 'test') {
@@ -333,6 +329,7 @@ class Captcha {
             $db->free_result($query);
             $imgCode = $captchaimage['imagestring'];
         }
+
         // reset code
         $this->sCode = $imgCode;
         return $imgCode;
@@ -343,6 +340,7 @@ class Captcha {
         for($i = 0; $i < strlen($this->sCode); $i++) {
             // select random font
             $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
+
             // select random color
             if ($this->bUseColor) {
                $iTextColor = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
@@ -362,17 +360,20 @@ class Captcha {
 
             // select random font size
             $iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
+
             // select random angle
             $iAngle = rand(-30, 30);
+
             // get dimensions of character in selected font and text size
             $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
+
             // calculate character starting coordinates
             $iX = $this->iSpacing / 4 + $i * $this->iSpacing;
             $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
             $iY = $this->iHeight / 2 + $iCharHeight / 4;
+
             // write text to image
             imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i], array());
-
             if ($this->bCharShadow) {
                 $iOffsetAngle = rand(-30, 30);
                 $iRandOffsetX = rand(-5, 5);
@@ -387,7 +388,7 @@ class Captcha {
         header("Content-type: image/$this->sFileType");
         switch($this->sFileType) {
             case 'gif':
-                imagegif ($this->oImage);
+                imagegif($this->oImage);
                 break;
             case 'png':
                 imagepng($this->oImage);
@@ -403,6 +404,7 @@ class Captcha {
         if (!empty($this->aBackgroundImages)) {
             // create new image
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
+
             // create background image
             $iRandImage = array_rand($this->aBackgroundImages);
             $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
@@ -417,8 +419,10 @@ class Captcha {
                 default:
                     $oBackgroundImage = imagecreatefromjpeg($vBackgroundImage);
             }
+
             // copy background image
             imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
+
             // free memory used to create background image
             imagedestroy($oBackgroundImage);
         } else {
@@ -435,8 +439,10 @@ class Captcha {
         $this->DrawLines();
         $this->RetrieveCode($imghash);
         $this->DrawCharacters();
+
         // write out image to file or browser
         $this->WriteFile();
+
         // free memory used in creating image
         imagedestroy($this->oImage);
         return true;
