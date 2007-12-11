@@ -1,7 +1,7 @@
 =======================================================================================================================================
 Mod Title: Theme Based Cell Rollover Effects
 
-Mod Version: 1.0
+Mod Version: 1.1
 
 Mod Author: John Briggs
 
@@ -143,13 +143,13 @@ Replace Code With:
 Find Code:
 ==========
 
-) VALUES('', '$namenew'
+) VALUES('$namenew'
 
 ==================
 Replace Code With:
 ==================
 
-, celloverfx) VALUES('', '$namenew'
+, celloverfx) VALUES('$namenew'
 
 =======================
 Find Code On Same Line:
@@ -463,6 +463,7 @@ Find Code:
 ==================
 Replace Code With:
 ==================
+
 <tr class="tablerow">
 <td bgcolor="$altbg2" $mouseover><strong><a href="viewthread.php?tid=$post[ttid]#pid$post[pid]">$post[tsubject]</a></strong><br />$add_pre $show $add_post</td>
 <td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
@@ -480,6 +481,14 @@ Go To Admin Panel -> Templates -> index_welcome_member
 ==========
 Find Code:
 ==========
+
+<td width="33%"><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
+<td width="33%"><a href="#" onclick="Popup('u2u.php','Window', 700, 450);"><strong>$lang[textu2umessenger]</strong></a></td>
+<td width="33%"><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);"><strong>$lang[launchbuddylist]</strong></a></td>
+
+==================
+Replace Code With:
+==================
 
 <td width="33%" $mouseover><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
 <td width="33%" $u2umsover><a href="#" onclick="Popup('u2u.php','Window', 700, 450);"><strong>$lang[textu2umessenger]</strong></a></td>
