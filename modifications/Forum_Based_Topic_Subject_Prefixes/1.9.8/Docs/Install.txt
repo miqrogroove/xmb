@@ -1,0 +1,466 @@
+=======================================================================================================================================
+Mod Title: Forum Based Topic Subject Prefixes
+
+Mod Version: 1.0
+
+Mod Author: John Briggs
+
+Mod Description:
+This mod will add the ability to specify subject prefixes per forum that can be used for new threads, replying and editing.
+
+Mod Copyright: © 2007-2008 XMBMods.com. All rights reserved.
+
+Mod Compatibility: XMB 1.9.8 Engage Final
+
+Mod Install Note: Before adding this mod to your forum, you should back up all files related to this mod.
+
+Mod License Note: This mod is released under the GPL v3 License. A copy is provided with this software.
+
+Mod Author Note:
+This modification is developed and released for use with XMB 1.9.8 Engage Final which is provided by XMBMods.com.
+
+=======================================================================================================================================
+=======
+Step 1:
+=======
+
+===================================
+Go to admin panel -> Insert Raw SQL
+===================================
+
+Upload provided file named "SQL.txt" & click "Submit Changes" button.
+
+=======================================================================================================================================
+=======
+Step 2:
+=======
+
+================================
+Edit File: lang/English.lang.php
+================================
+
+==========
+Find Code:
+==========
+
+?>
+
+===============
+Add Code Above:
+===============
+
+$lang['topicsubjectprefixes'] = "Topic Subject Prefixes:<br /><span class=\"smalltxt\"><strong>Note:</strong> Seperate each prefix with a comma.<br /><strong>Example:</strong> [prefix #1],[prefix #2],[prefix #3]</span>";
+$lang['topicselectprefix'] = "Select Topic Prefix";
+
+=======================================================================================================================================
+=======
+Step 3:
+=======
+
+=================
+Edit File: cp.php
+=================
+
+==========
+Find Code:
+==========
+
+        $forum['description'] = stripslashes($forum['description']);
+
+===============
+Add Code Below:
+===============
+
+        $forum['subjectprefixes'] = stripslashes($forum['subjectprefixes']);
+
+==========
+Find Code:
+==========
+
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdesc']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars_decode($forum['description'])?></textarea></td>
+        </tr>
+
+===============
+Add Code Below:
+===============
+
+        <?php
+        printsetting2($lang['topicsubjectprefixes'], 'subjectprefixesnew', htmlspecialchars_decode($forum['subjectprefixes']), 5);
+        ?>
+
+==========
+Find Code:
+==========
+
+        if ($newfname != $lang['textnewforum']) {
+            $newfname = addslashes($newfname);
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+        }
+
+=====================================
+Find Code IN-LINE in Above Statement:
+=====================================
+
+) VALUES ('forum',
+
+==================
+Replace Code With:
+==================
+
+, subjectprefixes) VALUES ('forum',
+
+====================================
+Find Code At End Of Above Statement:
+====================================
+
+)");
+
+==================
+Replace Code With:
+==================
+
+, '')");
+
+==========
+Find Code:
+==========
+
+        if ($newgname != $lang['textnewgroup']) {
+            $newgname = addslashes($newgname);
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+        }
+
+=====================================
+Find Code IN-LINE in Above Statement:
+=====================================
+
+) VALUES ('group',
+
+==================
+Replace Code With:
+==================
+
+, subjectprefixes) VALUES ('group',
+
+====================================
+Find Code At End Of Above Statement:
+====================================
+
+)");
+
+==================
+Replace Code With:
+==================
+
+, '')");
+
+==========
+Find Code:
+==========
+
+        if ($newsubname != $lang['textnewsubf']) {
+            $newsubname = addslashes($newsubname);
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+        }
+
+=====================================
+Find Code IN-LINE in Above Statement:
+=====================================
+
+) VALUES ('sub',
+
+==================
+Replace Code With:
+==================
+
+, subjectprefixes) VALUES ('sub',
+
+====================================
+Find Code At End Of Above Statement:
+====================================
+
+)");
+
+==================
+Replace Code With:
+==================
+
+, '')");
+
+==========
+Find Code:
+==========
+
+        $descnew = addslashes(formVar('descnew', false));
+
+===============
+Add Code Below:
+===============
+
+        $subjectprefixesnew = addslashes(formVar('subjectprefixesnew', false));
+
+==========
+Find Code:
+==========
+
+            guestposting='$guestpostingnew'
+
+==================
+Replace Code With:
+==================
+
+            guestposting='$guestpostingnew',
+            subjectprefixes='$subjectprefixesnew'
+
+=======================================================================================================================================
+=======
+Step 4:
+=======
+
+===================
+Edit File: post.php
+===================
+
+==========
+Find Code:
+==========
+
+eval('$bbcodescript = "'.template('functions_bbcode').'";');
+
+===============
+Add Code Below:
+===============
+
+if (isset($forums['subjectprefixes']) && $forums['subjectprefixes'] != '') {
+    $subjectprefix = formVar('subjectprefix');
+    $prefix = array();
+    $prefix[] = '<select name="subjectprefix">';
+    $prefix[] = '<option value="">'.$lang['topicselectprefix'].'</option>';
+    $prefixes = explode(',', $forums['subjectprefixes']);
+    for($i = 0; $i < count($prefixes); $i++) {
+        if ($subjectprefix == $prefixes[$i]) {
+            $prefix[] = '<option value="'.stripslashes($prefixes[$i]).'" '.$selHTML.'>'.stripslashes($prefixes[$i]).'</option>';
+        } else {
+            $prefix[] = '<option value="'.stripslashes($prefixes[$i]).'">'.stripslashes($prefixes[$i]).'</option>';
+        }
+    }
+    $prefix[] = '</select>';
+    $prefix = implode("\n", $prefix);
+} else {
+    $prefix = '';
+    $subjectprefix = '';
+}
+
+==========
+Find Code:
+==========
+
+        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
+
+==================
+Replace Code With:
+==================
+
+        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subjectprefix $subject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
+
+====================
+Find Code: (2 times)
+====================
+
+        $subject = addslashes($subject);
+
+=========================
+Add Code Below: (2 times)
+=========================
+
+        $forums['subjectprefixes'] = addslashes($forums['subjectprefixes']);
+
+==========
+Find Code:
+==========
+
+        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subject', ".$db->time($thatime).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
+
+==================
+Replace Code With:
+==================
+
+        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subjectprefix $subject', ".$db->time($thatime).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
+
+==========
+Find Code:
+==========
+
+            $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
+
+==================
+Replace Code With:
+==================
+
+            $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$message', '$subjectprefix $subject', ".$db->time($thatime).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
+
+==================
+Find Code 6 Times:
+==================
+
+$subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
+
+===============
+Add Code Below:
+===============
+
+$forums['subjectprefixes'] = checkInput($forums['subjectprefixes'], $chkInputTags, $chkInputHTML, '', false);
+
+==========
+Find Code:
+==========
+
+$db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$subject' WHERE tid=".$tid);
+
+==================
+Replace Code With:
+==================
+
+$db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$subjectprefix $subject' WHERE tid=".$tid);
+
+==========
+Find Code:
+==========
+
+$db->query("UPDATE ".X_PREFIX."posts SET message='$message', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$subject' WHERE pid=".$pid);
+
+==================
+Replace Code With:
+==================
+
+$db->query("UPDATE ".X_PREFIX."posts SET message='$message', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$subjectprefix $subject' WHERE pid=".$pid);
+
+=======================================================================================================================================
+=======
+Step 5:
+=======
+
+================================================
+Go to admin panel -> templates -> post_newthread
+================================================
+
+==========
+Find Code:
+==========
+
+<input type="text" name="subject" size="45" value="$subject" />
+
+==================
+Replace Code With:
+==================
+
+$prefix<input type="text" name="subject" size="45" value="$subject" />
+
+=======================================================================================================================================
+=======
+Step 6:
+=======
+
+============================================
+Go to admin panel -> templates -> post_reply
+============================================
+
+==========
+Find Code:
+==========
+
+<input type="text" name="subject" size="45" value="$subject" />
+
+==================
+Replace Code With:
+==================
+
+$prefix<input type="text" name="subject" size="45" value="$subject" />
+
+=======================================================================================================================================
+=======
+Step 7:
+=======
+
+==============================================
+Go to admin panel -> templates -> post_newpoll
+==============================================
+
+==========
+Find Code:
+==========
+
+<input type="text" name="subject" size="45" value="$subject" />
+
+==================
+Replace Code With:
+==================
+
+$prefix<input type="text" name="subject" size="45" value="$subject" />
+
+=======================================================================================================================================
+=======
+Step 8:
+=======
+
+===========================================
+Go to admin panel -> templates -> post_edit
+===========================================
+
+==========
+Find Code:
+==========
+
+<input type="text" name="subject" size="45" value="$postinfo[subject]" />
+
+==================
+Replace Code With:
+==================
+
+$prefix<input type="text" name="subject" size="45" value="$postinfo[subject]" />
+
+=======================================================================================================================================
+=======
+Step 9:
+=======
+
+==============================================
+Go to admin panel -> templates -> post_preview
+==============================================
+
+==========
+Find Code:
+==========
+
+$dissubject
+
+==================
+Replace Code With:
+==================
+
+$subjectprefix $dissubject
+
+=======================================================================================================================================
+========
+Step 10:
+========
+
+=======================================================
+Go to admin panel -> templates -> viewthread_quickreply
+=======================================================
+
+==========
+Find Code:
+==========
+
+<input type="hidden" name="subject" value="" />
+
+==================
+Replace Code With:
+==================
+
+<input type="hidden" name="subject" value="" /><input type="hidden" name="subjectprefix" value="" />
+
+=======================================================================================================================================
