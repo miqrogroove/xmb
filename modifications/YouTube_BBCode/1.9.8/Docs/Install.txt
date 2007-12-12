@@ -1,7 +1,7 @@
 =======================================================================================================================================
 Mod Title: YouTube BBCode
 
-Mod Version: 1.0
+Mod Version: 1.1
 
 Mod Author: Tularis, John Briggs
 
@@ -58,7 +58,7 @@ Find Code:
 Add Code Below:
 ===============
 
-        $patterns[] = "#\[youtube]([a-z0-9]+)\[/youtube\]#Smi";
+        $patterns[] = "#\[youtube]([a-zA-Z0-9_-]+)\[/youtube\]#Smi";
         $replacements[] = '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/\1"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/\1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>';
 
 =======================================================================================================================================
