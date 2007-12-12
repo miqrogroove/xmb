@@ -1,7 +1,7 @@
 =======================================================================================================================================
 Mod Title: Register Users
 
-Mod Version: 1.0
+Mod Version: 1.1
 
 Mod Author: John Briggs
 
@@ -82,7 +82,7 @@ Add Code Below:
             error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
         }
 
-        if (noSubmit('regusersubmit'))) {
+        if (noSubmit('regusersubmit')) {
             ?>
             <tr bgcolor="<?php echo $altbg2?>">
             <td>
