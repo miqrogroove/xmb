@@ -878,7 +878,7 @@ $cssInclude
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="3">
-<font color="$cattext"><strong>$lang[whosonline]</strong></font> - <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+<font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
 </td>
 </tr>
 <tr class="header" align="center">
@@ -901,7 +901,7 @@ $multipage
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="4">
-<font color="$cattext"><strong>$lang[whosonline]</strong></font> - <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+<font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
 </td>
 </tr>
 <tr class="header" align="center">
