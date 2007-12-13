@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1 SP1 SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -56,7 +56,7 @@ $lang['adminemail'] = "Administrator E-Mail:";
 $lang['adminoption'] = "Administration Option:";
 $lang['adminprofilechange'] = "Thank you, you have successfully changed a members profile content.";
 $lang['adminverifyemail'] = "Verify Users E-mail Address";
-$lang['allowrankedit'] = "Prevent Staff Post Editing?<br /><span class=\"smalltxt\">(To prevent staff from editing posts by other staff set status to ON)</span>";
+$lang['allowrankedit'] = "Prevent Staff Post Editing?:<br /><span class=\"smalltxt\">(To prevent staff from editing posts by other staff set status to ON)</span>";
 $lang['alreadyreg'] = "That name and/ or e-mail has already been registered, please try again.";
 $lang['alreadyvoted']  = 'You have already voted in this poll!';
 $lang['altadmintools'] = "Administration Tools";
@@ -353,7 +353,7 @@ $lang['invalidFilename'] = "Invalid Filename";
 $lang['invertselection'] = "Invert Selection";
 $lang['ipwarning'] = "<br /><strong>Warning!</strong> Your IP Address is on the list. You'll be permanently banned if you log out.";
 $lang['key'] = 'Key: ';
-$lang['last50today'] = "50 Members Who Have Visited Today (if applicable) ";
+$lang['last50today'] = "50 Members Who Have Visited Today (if applicable)";
 $lang['lastactive'] = "Last active:";
 $lang['lastreply1'] = "on";
 $lang['lastsadmin'] = "You just tried to de-admin the last remaining Super Administrator. This is a dangerous thing to do. Once de-admin'd, it is not possible anymore to reset one's status back to Super Administrator";
@@ -452,8 +452,7 @@ $lang['onlinelogout'] = "Logging out";
 $lang['onlinelostpw'] = "Recovering Lost Password";
 $lang['onlinemanagefolders'] = "Managing U2U folders";
 $lang['onlinememcp'] = "Viewing User Control Panel";
-$lang['onlinememlist'] = "Viewing memberlist";
-$lang['onlineonlinetoday'] = "Viewing members who have been online today";
+$lang['onlinememlist'] = "Viewing member list";
 $lang['onlineother'] = "Other";
 $lang['onlinepostedit'] = "Editing a Post";
 $lang['onlinepostnewthread'] = "Posting a new thread";
@@ -461,7 +460,6 @@ $lang['onlinepostreply'] = "Replying to a thread";
 $lang['onlinereg'] = "Registering";
 $lang['onlinesearch'] = "Searching the forums";
 $lang['onlinestats'] = "Viewing forum statistics";
-$lang['onlinetoday'] = "Who Was Online Today";
 $lang['onlinetodaysposts'] = "Viewing Today\'s Posts";
 $lang['onlinetools'] = "Administrating the board";
 $lang['onlinetopicadmin'] = "Moderating the board";
@@ -534,6 +532,7 @@ $lang['raw_mysql'] = "Insert Raw SQL";
 $lang['reason'] = "Reason:";
 $lang['refreshbuddylist'] = "Refresh Address Book";
 $lang['reg_on'] = "Allow User Registration";
+$lang['regoptional'] = "Optional fields on registration status:<br /><span class=\"smalltxt\">This option enables or disables optional fields on registration such as AIM, BIO, ICQ, Signatures etc.</span>";
 $lang['reg_today'] = "You have already registered today, you can re-register again in 24 hours.<br />";
 $lang['regged'] = "Thank you for registering. We have logged you in and are forwarding you to the main page.";
 $lang['reggedonly'] = "You must be registered to view these boards.";
@@ -1147,7 +1146,6 @@ $lang['whopostop2'] = "Who Can Post Replies?";
 $lang['whosoneval'] = '$lang["whosonmsg"] = "There are currently $guestn, $membern and $hiddenn browsing $bbname";';
 $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index:";
-$lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmbgroup'] = "The XMB Group";
 ?>
