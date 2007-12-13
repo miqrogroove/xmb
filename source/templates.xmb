@@ -862,8 +862,8 @@ $cssInclude
 <td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
 <td bgcolor="$altbg2"><input type="text" name="email" size="25" /><br /></td>
 </tr>
-<tr>
-<td bgcolor="$altbg2" class="ctrtablerow" colspan="2"><input type="submit" class="submit" name="lostpwsubmit" value="$lang[textsubmit]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="lostpwsubmit" value="$lang[textsubmit]" /></td>
 </tr>
 </table>
 </td>
@@ -877,7 +877,9 @@ $cssInclude
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="3"><font color="$cattext"><strong>$lang[whosonline]</strong></font></td>
+<td class="category" colspan="3">
+<font color="$cattext"><strong>$lang[whosonline]</strong></font> - <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+</td>
 </tr>
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
@@ -887,9 +889,6 @@ $cssInclude
 $multipage
 $onlineusers
 $multipage
-<tr>
-<td colspan="3" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
-</tr>
 </table>
 </td>
 </tr>
@@ -901,7 +900,9 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="4"><font color="$cattext"><strong>$lang[whosonline]</strong></font></td>
+<td class="category" colspan="4">
+<font color="$cattext"><strong>$lang[whosonline]</strong></font> - <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+</td>
 </tr>
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
@@ -912,9 +913,6 @@ $multipage
 $multipage
 $onlineusers
 $multipage
-<tr>
-<td colspan="4" align="right" class="header"><a href="misc.php?action=onlinetoday"><strong>$lang[onlinetoday]</strong></a> | <a href="javascript:history.go(0)"><strong>$lang[refreshpage]</strong></a></td>
-</tr>
 </table>
 </td>
 </tr>
@@ -933,7 +931,7 @@ $multipage
 <td colspan="2"><a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a></td>
 </tr>
 <tr>
-<td bgcolor="$altbg2" colspan="2" class="mediumtxt">$lang[key]<strong><u><i>$lang[superadmin]</i></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden</td>
+<td bgcolor="$altbg2" colspan="2" class="mediumtxt">$lang[key]<strong><u><em>$lang[superadmin]</em></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden</td>
 </tr>
 <tr>
 <td bgcolor="$altbg1" align="center" width="4%" rowspan="4"><img src="$imgdir/online.gif" alt="$lang[whosonline]" border="0" /></td>
