@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP1
+ * XMB 1.9.8 Engage Final
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1510,11 +1510,16 @@ if ($action == "members") {
                         $noban = $selHTML;
                         break;
                 }
+                if ($member['lastvisit'] == 0) {
+                    $pending = '<br />'.$lang['textpendinglogin'];
+                } else {
+                    $pending = '';
+                }
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="confirmActionCheckbox('<?php echo $lang['confirmDeleteUser']?>', this, true, false);" value="<?php echo $member['uid']?>" /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo $member['username']?>"><?php echo $member['username']?></a>
-                <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo $member['username']?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a>
+                <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo $member['username']?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
                 </td>
                 <td><input type="text" size="12" name="pw<?php echo $member['uid']?>"></td>
                 <td><input type="text" size="3" name="postnum<?php echo $member['uid']?>" value="<?php echo $member['postnum']?>"></td>
@@ -1557,8 +1562,12 @@ if ($action == "members") {
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
+        $srchmem = formVar('srchmem');
+        $srchstatus = formVar('srchstatus');
         if ($srchstatus == '0') {
             $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%'");
+        } else if ($srchstatus == "Pending") {
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND lastvisit = 0");
         } else {
             $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
         }
