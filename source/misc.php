@@ -191,7 +191,7 @@ switch($action) {
             }
         }
 
-        redirect("index.php", 0);
+        redirect('index.php', 0);
         break;
 
     case 'search':
@@ -320,7 +320,7 @@ switch($action) {
                     $searchresults = '';
                     while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
-                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']); // private forum check
+                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
 
                         if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
                             continue;
@@ -377,7 +377,7 @@ switch($action) {
                 } else {
                     while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
-                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']); // private forum check
+                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
 
                         if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
                             continue;
@@ -516,7 +516,7 @@ switch($action) {
         if (X_ADMIN) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit, $tpp");
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible = '0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit, $tpp");
+            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible='0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit, $tpp");
         }
 
         $onlineusers = '';
@@ -573,7 +573,7 @@ switch($action) {
         if (X_ADMIN) {
             $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!='1' ORDER BY username ASC");
         }
 
         $todaymembersnum = 0;

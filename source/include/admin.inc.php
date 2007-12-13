@@ -130,12 +130,12 @@ class admin {
     function fix_last_posts() {
         global $db;
 
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup = '0' OR fup = '') AND type = 'forum'");
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup='0' OR fup='') AND type='forum'");
         while($loner = $db->fetch_array($q)) {
             $lastpost = array();
             $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
             while($sub = $db->fetch_array($subq)) {
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$sub[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $curr = $db->fetch_array($pq);
                     $lastpost[] = $curr;
@@ -143,15 +143,17 @@ class admin {
                 } else {
                     $lp = '';
                 }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid='$sub[fid]'");
                 $db->free_result($pq);
             }
             $db->free_result($subq);
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$loner[fid]' ORDER BY pid DESC LIMIT 1");
+
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$loner[fid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $lastpost[] = $db->fetch_array($pq);
             }
             $db->free_result($pq);
+
             if (count($lastpost) == 0) {
                 $lastpost = '';
             } else {
@@ -165,17 +167,18 @@ class admin {
                 }
                 $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$loner[fid]'");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='$loner[fid]'");
         }
         $db->free_result($q);
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'group'");
+
+        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while($cat = $db->fetch_array($q)) {
-            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type = 'forum' AND fup = '$cat[fid]'");
+            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup='$cat[fid]'");
             while($forum = $db->fetch_array($fq)) {
                 $lastpost = array();
-                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$forum[fid]'");
+                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$forum[fid]'");
                 while($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$sub[fid]' ORDER BY pid DESC LIMIT 1");
+                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$sub[fid]' ORDER BY pid DESC LIMIT 1");
                     if ($db->num_rows($pq) > 0) {
                         $curr = $db->fetch_array($pq);
                         $lastpost[] = $curr;
@@ -184,14 +187,16 @@ class admin {
                         $lp = '';
                     }
                     $db->free_result($pq);
-                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lp' WHERE fid = '$sub[fid]'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid='$sub[fid]'");
                 }
                 $db->free_result($subq);
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid = '$forum[fid]' ORDER BY pid DESC LIMIT 1");
+
+                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$forum[fid]' ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($pq) > 0) {
                     $lastpost[] = $db->fetch_array($pq);
                 }
                 $db->free_result($pq);
+
                 if (count($lastpost) == 0) {
                     $lastpost = '';
                 } else {
@@ -205,7 +210,7 @@ class admin {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost = '$lastpost' WHERE fid = '$forum[fid]'");
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='$forum[fid]'");
             }
             $db->free_result($fq);
         }
@@ -213,7 +218,7 @@ class admin {
         $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
         while($thread = $db->fetch_array($q)) {
             $lastpost = array();
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid = '$thread[tid]' ORDER BY pid DESC LIMIT 1");
+            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$thread[tid]' ORDER BY pid DESC LIMIT 1");
             if ($db->num_rows($pq) > 0) {
                 $curr = $db->fetch_array($pq);
                 $lastpost[] = $curr;

@@ -325,7 +325,7 @@ switch($action) {
 
             if ($SETTINGS['ipreg'] != 'off') {
                 $time = $onlinetime-86400;
-                $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip = '$onlineip' AND regdate >= '$time'");
+                $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip='$onlineip' AND regdate >= '$time'");
                 if ($db->num_rows($query) >= 1) {
                     error($lang['reg_today']);
                 }
@@ -661,7 +661,7 @@ switch($action) {
                 } else {
                     $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
                     $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $lastmembervisittext = "$lastvisitdate $lang[textat] $lastvisittime";
+                    $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
                 }
 
                 $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
