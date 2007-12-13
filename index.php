@@ -194,6 +194,30 @@ if ($gid == 0) {
             $memtally = '&nbsp;';
         }
 
+        $datecut = $onlinetime - (3600 * 24);
+        if (X_ADMIN) {
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+        } else {
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC");
+        }
+
+        $todaymembersnum = 0;
+        $todaymembers = array();
+        $pre = $suff = '';
+        while($memberstoday = $db->fetch_array($query)) {
+            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+            $suff = '</span>';
+            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
+            ++$todaymembersnum;
+        }
+        $todaymembers = implode(', ', $todaymembers);
+        $db->free_result($query);
+
+        if ($todaymembersnum == 1) {
+            $memontoday = $todaymembersnum.$lang['textmembertoday'];
+        } else {
+            $memontoday = $todaymembersnum.$lang['textmemberstoday'];
+        }
         eval('$whosonline = "'.template('index_whosonline').'";');
     } else {
         $whosonline = '';
@@ -205,6 +229,7 @@ if ($gid == 0) {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
+    $ticker = '';
     $welcome = '';
     $whosonline = '';
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
