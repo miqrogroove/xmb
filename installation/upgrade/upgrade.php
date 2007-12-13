@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,7 @@
  *
  **/
 
-define('XMB_V', '1.9.8 Final');
+define('XMB_V', '1.9.8 Final SP1');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_8.xmb');
 
 function print_header() {

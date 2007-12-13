@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -28,7 +28,7 @@
 
 define('ROOT', '../');
 define('X_VERSION', '1.9.8');
-define('X_VERSION_EXT', '1.9.8 Engage Final');
+define('X_VERSION_EXT', '1.9.8 Engage Final SP1');
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);

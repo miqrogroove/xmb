@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1468,10 +1468,9 @@ if ($action == "members") {
                 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
             }
 
-            $sadminselect = $adminselect = $smodselect = "";
-            $modselect = $memselect = $banselect = "";
-            $noban = $u2uban = $postban = $bothban = "";
-
+            $sadminselect = $adminselect = $smodselect = '';
+            $modselect = $memselect = $banselect = '';
+            $noban = $u2uban = $postban = $bothban = '';
             while($member = $db->fetch_array($query)) {
                 switch($member['status']) {
                     case 'Super Administrator':
