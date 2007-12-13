@@ -196,9 +196,9 @@ if ($gid == 0) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC LIMIT 0, 50");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC LIMIT 0, 50");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC");
         }
 
         $todaymembersnum = 0;
@@ -229,9 +229,7 @@ if ($gid == 0) {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
-    $ticker = '';
-    $welcome = '';
-    $whosonline = '';
+    $ticker = $welcome = $whosonline = '';
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
