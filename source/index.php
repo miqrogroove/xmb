@@ -196,9 +196,9 @@ if ($gid == 0) {
 
         $datecut = $onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC LIMIT 0, 50");
         } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC LIMIT 0, 50");
         }
 
         $todaymembersnum = 0;
