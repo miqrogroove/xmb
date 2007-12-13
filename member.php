@@ -35,6 +35,7 @@ loadtemplates(
 'member_reg_avatarurl',
 'member_reg_avatarlist',
 'member_reg',
+'member_reg_optional',
 'member_reg_captcha',
 'member_profile_email',
 'member_profile',
@@ -159,6 +160,11 @@ switch($action) {
                 $pwtd = '';
                 if ($SETTINGS['emailcheck'] == 'off') {
                     eval('$pwtd = "'.template('member_reg_password').'";');
+                }
+
+                $regoptional = '';
+                if ($SETTINGS['regoptional'] == 'on') {
+                    eval('$pwtd = "'.template('member_reg_optional').'";');
                 }
 
                 if ($SETTINGS['timeformat'] == 24) {
