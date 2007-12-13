@@ -184,6 +184,9 @@ if ($action == "settings") {
         $showsubson = $showsubsoff = '';
         settingHTML('showsubforums', $showsubson, $showsubsoff);
 
+        $regoptionalon = $regoptionaloff = '';
+        settingHTML('regoptional', $regoptionalon, $regoptionaloff);
+
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
@@ -485,6 +488,7 @@ if ($action == "settings") {
         printsetting1($lang['textreggedonly'], 'regviewnew', $regonlyon, $regonlyoff);
         printsetting1($lang['texthidepriv'], 'hidepriv', $hideon, $hideoff);
         printsetting1($lang['emailverify'], 'emailchecknew',$echeckon, $echeckoff);
+        printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
         printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
@@ -646,6 +650,7 @@ if ($action == "settings") {
         $captchaimagecolornew = formOnOff('captchaimagecolornew');
         $showsubforumsnew = formOnOff('showsubforumsnew');
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
+        $regoptionalnew = formOnOff('regoptionalnew');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -727,7 +732,8 @@ if ($action == "settings") {
             captcha_image_minfont='$captchaimageminfontnew',
             captcha_image_maxfont='$captchaimagemaxfontnew',
             captcha_image_color='$captchaimagecolornew',
-            showsubforums='$showsubforumsnew'
+            showsubforums='$showsubforumsnew',
+            regoptionalnew='$regoptionalnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';

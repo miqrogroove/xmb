@@ -466,7 +466,8 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `captcha_image_minfont` int(2) NOT NULL default '16',
       `captcha_image_maxfont` int(2) NOT NULL default '25',
       `captcha_image_color` set('on','off') NOT NULL default 'off',
-      `showsubforums` set('on','off') NOT NULL default 'off'
+      `showsubforums` set('on','off') NOT NULL default 'off',
+      `regoptional` set('on','off') NOT NULL default 'off'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
@@ -689,7 +690,7 @@ $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Administrator', -1, 9,
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."settings");
-$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'off', 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'no', 'off', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off');");
+$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'off', 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'no', 'off', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off', 'off');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."smilies");
