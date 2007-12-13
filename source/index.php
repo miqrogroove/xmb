@@ -74,7 +74,7 @@ if ($gid) {
 
 eval('echo "'.template('header').'";');
 
-$query = $db->query("SELECT username FROM ".X_PREFIX."members ORDER BY regdate DESC LIMIT 1");
+$query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY regdate DESC LIMIT 1");
 $lastmember = $db->fetch_array($query);
 $db->free_result($query);
 
