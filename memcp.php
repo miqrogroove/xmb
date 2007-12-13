@@ -53,8 +53,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$favs = NULL;
-$buddys = NULL;
+$favs = $buddys = NULL;
 
 $action = getVar('action');
 switch($action) {
@@ -77,7 +76,6 @@ switch($action) {
 
 function makenav($current) {
     global $bordercolor, $tablewidth, $borderwidth, $tablespacing, $altbg1, $altbg2, $lang;
-
     ?>
     <table cellpadding="0" cellspacing="0" border="0" bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>" align="center"><tr><td>
     <table cellpadding="4" cellspacing="1" border="0" width="100%">
@@ -691,7 +689,7 @@ if ($action == 'profile') {
         $member['mood'] = '';
     }
 
-    $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' ORDER BY dateline DESC LIMIT 0,5");
+    $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' ORDER BY dateline DESC LIMIT 0, 5");
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);

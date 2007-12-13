@@ -64,7 +64,7 @@ $gid = getInt('gid');
 if ($gid) {
     $gid = (int)$gid;
     $whosonlinestatus = 'off';
-    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid=$gid AND type='group' LIMIT 1");
+    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' LIMIT 1");
     $cat = $db->fetch_array($query);
     $db->free_result($query);
     nav(html_entity_decode(stripslashes($cat['name'])));
@@ -207,7 +207,7 @@ if ($gid == 0) {
 } else {
     $welcome = '';
     $whosonline = '';
-    $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup=$gid) ORDER BY c.displayorder ASC, f.displayorder ASC");
+    $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
 $indexBarTop = $indexBar = $forumlist = $spacer = '';

@@ -91,7 +91,7 @@ function loadtemplates() {
         echo 'Not enough arguments given to loadtemplates() on line: '.__LINE__;
         return false;
     } else {
-        $namesarray = array_unique(array_merge(func_get_args(), array('header', 'css', 'error', 'message', 'footer', 'footer_querynum', 'footer_phpsql', 'footer_totaltime', 'footer_load')));
+        $namesarray = array_unique(array_merge(func_get_args(), array('header','css','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
         $query = $db->query("SELECT name, template FROM ".X_PREFIX."templates WHERE name IN ($sql)");
         while($template = $db->fetch_array($query)) {
@@ -225,61 +225,61 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
 
         $find = array(
-                0   => '[b]',
-                1   => '[/b]',
-                2   => '[i]',
-                3   => '[/i]',
-                4   => '[u]',
-                5   => '[/u]',
-                6   => '[marquee]',
-                7   => '[/marquee]',
-                8   => '[blink]',
-                9   => '[/blink]',
-                10  => '[strike]',
-                11  => '[/strike]',
-                12  => '[quote]',
-                13  => '[/quote]',
-                14  => '[code]',
-                15  => '[/code]',
-                16  => '[list]',
-                17  => '[/list]',
-                18  => '[list=1]',
-                19  => '[list=a]',
-                20  => '[list=A]',
-                21  => '[/list=1]',
-                22  => '[/list=a]',
-                23  => '[/list=A]',
-                24  => '[*]',
-                25  => '<br />'
+                0 => '[b]',
+                1 => '[/b]',
+                2 => '[i]',
+                3 => '[/i]',
+                4 => '[u]',
+                5 => '[/u]',
+                6 => '[marquee]',
+                7 => '[/marquee]',
+                8 => '[blink]',
+                9 => '[/blink]',
+                10 => '[strike]',
+                11 => '[/strike]',
+                12 => '[quote]',
+                13 => '[/quote]',
+                14 => '[code]',
+                15 => '[/code]',
+                16 => '[list]',
+                17 => '[/list]',
+                18 => '[list=1]',
+                19 => '[list=a]',
+                20 => '[list=A]',
+                21 => '[/list=1]',
+                22 => '[/list=a]',
+                23 => '[/list=A]',
+                24 => '[*]',
+                25 => '<br />'
         );
 
         $replace = array(
-                0   => '<strong>',
-                1   => '</strong>',
-                2   => '<em>',
-                3   => '</em>',
-                4   => '<u>',
-                5   => '</u>',
-                6   => '<marquee>',
-                7   => '</marquee>',
-                8   => '<blink>',
-                9   => '</blink>',
-                10  => '<strike>',
-                11  => '</strike>',
-                12  => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
-                13  => ' </td></tr></table><font class="mediumtxt">',
-                14  => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
-                15  => '</td></tr></table><font class="mediumtxt">',
-                16  => '<ul type="square">',
-                17  => '</ul>',
-                18  => '<ol type="1">',
-                19  => '<ol type="A">',
-                20  => '<ol type="A">',
-                21  => '</ol>',
-                22  => '</ol>',
-                23  => '</ol>',
-                24  => '<li />',
-                25  => ' <br />'
+                0 => '<strong>',
+                1 => '</strong>',
+                2 => '<em>',
+                3 => '</em>',
+                4 => '<u>',
+                5 => '</u>',
+                6 => '<marquee>',
+                7 => '</marquee>',
+                8 => '<blink>',
+                9 => '</blink>',
+                10 => '<strike>',
+                11 => '</strike>',
+                12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
+                13 => ' </td></tr></table><font class="mediumtxt">',
+                14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
+                15 => '</td></tr></table><font class="mediumtxt">',
+                16 => '<ul type="square">',
+                17 => '</ul>',
+                18 => '<ol type="1">',
+                19 => '<ol type="A">',
+                20 => '<ol type="A">',
+                21 => '</ol>',
+                22 => '</ol>',
+                23 => '</ol>',
+                24 => '<li />',
+                25 => ' <br />'
         );
 
         if ($smiliesallow) {
@@ -629,7 +629,7 @@ function updateforumcount($fid) {
     $postcount = 0;
     $threadcount = 0;
 
-    $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid=".$fid);
+    $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
@@ -639,7 +639,7 @@ function updateforumcount($fid) {
 
     $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$fid'");
     while($children = $db->fetch_array($query)) {
-        $chquery1 = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid=".$children['fid']);
+        $chquery1 = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
         $postcount += $db->result($chquery1, 0);
         $db->free_result($chquery1);
 
@@ -649,16 +649,16 @@ function updateforumcount($fid) {
     }
     $db->free_result($query);
 
-    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE (t.fid=f.fid AND f.fid='$fid') OR (t.fid=f.fid AND f.fup='$fid') ORDER BY t.lastpost DESC LIMIT 0,1");
+    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE (t.fid=f.fid AND f.fid='$fid') OR (t.fid=f.fid AND f.fup='$fid') ORDER BY t.lastpost DESC LIMIT 0, 1");
     $lp = $db->fetch_array($query);
-    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid=".$fid);
+    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid='$fid'");
     $db->free_result($query);
 }
 
 function updatethreadcount($tid) {
     global $db;
 
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid=".$tid);
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid='$tid'");
     $replycount = $db->num_rows($query);
     $db->free_result($query);
     $replycount--;
@@ -666,7 +666,7 @@ function updatethreadcount($tid) {
     $lp = $db->fetch_array($query);
     $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
-    $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid=".$tid);
+    $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
 
 function smcwcache() {

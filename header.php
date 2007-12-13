@@ -106,8 +106,8 @@ if ($show_full_info) {
     $alpha = '';
     $beta = '';
     $gamma = 'Final';
-    $service_pack = '';
-    $versionbuild = 20071207;
+    $service_pack = ' SP1';
+    $versionbuild = 20071212;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -466,12 +466,12 @@ if (X_MEMBER) {
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
-    $notify = "$lang[loggedin] <a href=\"member.php?action=viewpro&amp;member=".rawurlencode($onlineuser)."\">$xmbuser</a><br />[$loginout - $u2ulink$memcp$cplink]";
+    $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 } else {
-    $loginout = "<a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+    $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
     $onlineuser = 'xguest123';
-    $self['status'] = "";
-    $notify = "$lang[notloggedin] [$loginout $reglink]";
+    $self['status'] = '';
+    $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
 }
 
 // Checks if the timeformat has been set, if not, use default
@@ -526,14 +526,14 @@ if (X_MEMBER) {
 if ((int) $themeuser > 0) {
     $theme = (int) $themeuser;
 } else if (!empty($forumtheme) && (int) $forumtheme > 0) {
-    $theme = $forumtheme;
+    $theme = (int) $forumtheme;
 } else {
-    $theme = $SETTINGS['theme'];
+    $theme = (int) $SETTINGS['theme'];
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=".$theme);
-foreach($db->fetch_array($query) as $key => $val) {
+$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
+foreach($db->fetch_array($query) as $key=>$val) {
     if ($key != "name") {
         $$key = $val;
     } else {
@@ -631,32 +631,32 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 
 // Search-link
 if ($SETTINGS['searchstatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
 }
 
 // Faq-link
 if ($SETTINGS['faqstatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
 }
 
 // Memberlist-link
 if ($SETTINGS['memliststatus'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_memberslist.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
 }
 
 // Today's posts-link
 if ($SETTINGS['todaysposts'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_todaysposts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
 }
 
 // Stats-link
 if ($SETTINGS['stats'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
 }
 
 // 'Forum Rules'-link
 if ($SETTINGS['bbrules'] == 'on') {
-    $links[] = "<img src=\"$imgdir/top_bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
+    $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
 }
 
 $links = implode(' &nbsp; ', $links);
@@ -694,9 +694,9 @@ if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc
 if ($SETTINGS['regviewonly'] == 'on') {
     if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
         if ($SETTINGS['coppa'] == 'on') {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         } else {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         }
         eval('$css = "'.template('css').'";');
         message($message);
@@ -704,7 +704,7 @@ if ($SETTINGS['regviewonly'] == 'on') {
 }
 
 // Check if the user is ip-banned
-$ips = explode('.', $onlineip);
+$ips = explode(".", $onlineip);
 // also disable 'ban all'-possibility
 $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
 $result = $db->fetch_array($query);
