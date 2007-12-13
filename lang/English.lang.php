@@ -534,7 +534,7 @@ $lang['raw_mysql'] = "Insert Raw SQL";
 $lang['reason'] = "Reason:";
 $lang['refreshbuddylist'] = "Refresh Address Book";
 $lang['reg_on'] = "Allow User Registration";
-$lang['regoptional'] = "Optional fields on registration status:<br /><span class=\"smalltxt\">This option enables or disables optional fields on registration such as AIM, BIO, ICQ, Signatures etc. etc.</span>";
+$lang['regoptional'] = "Optional fields on registration status:<br /><span class=\"smalltxt\">This option enables or disables optional fields on registration such as AIM, BIO, ICQ, Signatures etc.</span>";
 $lang['reg_today'] = "You have already registered today, you can re-register again in 24 hours.<br />";
 $lang['regged'] = "Thank you for registering. We have logged you in and are forwarding you to the main page.";
 $lang['reggedonly'] = "You must be registered to view these boards.";
