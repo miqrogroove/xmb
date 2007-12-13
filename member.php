@@ -162,11 +162,6 @@ switch($action) {
                     eval('$pwtd = "'.template('member_reg_password').'";');
                 }
 
-                $regoptional = '';
-                if ($SETTINGS['regoptional'] == 'on') {
-                    eval('$pwtd = "'.template('member_reg_optional').'";');
-                }
-
                 if ($SETTINGS['timeformat'] == 24) {
                     $timeFormat12Checked = '';
                     $timeFormat24Checked = $cheHTML;
@@ -303,6 +298,11 @@ switch($action) {
 
                 if (empty($dformatorig)) {
                     $dformatorig = $SETTINGS['dateformat'];
+                }
+
+                $regoptional = '';
+                if ($SETTINGS['regoptional'] == 'on') {
+                    eval('$pwtd = "'.template('member_reg_optional').'";');
                 }
 
                 $captcharegcheck = '';
