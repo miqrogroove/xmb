@@ -302,7 +302,7 @@ switch($action) {
 
                 $regoptional = '';
                 if ($SETTINGS['regoptional'] == 'on') {
-                    eval('$pwtd = "'.template('member_reg_optional').'";');
+                    eval('$regoptional = "'.template('member_reg_optional').'";');
                 }
 
                 $captcharegcheck = '';
