@@ -1424,6 +1424,7 @@ if ($action == "members") {
             <option value="Moderator"><?php echo $lang['textmod']?></option>
             <option value="Member"><?php echo $lang['textmem']?></option>
             <option value="Banned"><?php echo $lang['textbanned']?></option>
+            <option value="Pending"><?php echo $lang['textpendinglogin']?></option>
             </select>
             </td>
             </tr>
@@ -1461,6 +1462,8 @@ if ($action == "members") {
             $srchstatus = formVar('srchstatus');
             if ($srchstatus == '0') {
                 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' ORDER BY username");
+            } else if ($srchstatus == "Pending") {
+                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE lastvisit=0 ORDER BY username");
             } else {
                 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
             }
