@@ -85,9 +85,6 @@ switch($action) {
     case 'list':
         nav($lang['textmemberlist']);
         break;
-    case 'onlinetoday':
-        nav($lang['whosonlinetoday']);
-        break;
     case 'captchaimage':
         nav($lang['textregister']);
         break;
@@ -557,44 +554,6 @@ switch($action) {
             eval('$misc = "'.template('misc_online').'";');
         }
 
-        $misc = stripslashes($misc);
-        break;
-
-    case 'onlinetoday':
-        if ($SETTINGS['whosonlinestatus'] == 'off') {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        $datecut = $onlinetime - (3600 * 24);
-        if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
-        } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!='1' ORDER BY username ASC");
-        }
-
-        $todaymembersnum = 0;
-        $todaymembers = array();
-        $pre = $suff = '';
-        while($memberstoday = $db->fetch_array($query)) {
-            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
-            $suff = '</span>';
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
-            ++$todaymembersnum;
-        }
-        $todaymembers = implode(', ', $todaymembers);
-        $db->free_result($query);
-
-        if ($todaymembersnum == 1) {
-            $memontoday = $todaymembersnum.$lang['textmembertoday'];
-        } else {
-            $memontoday = $todaymembersnum.$lang['textmemberstoday'];
-        }
-
-        eval('$misc = "'.template('misc_online_today').'";');
         $misc = stripslashes($misc);
         break;
 

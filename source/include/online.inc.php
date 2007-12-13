@@ -200,8 +200,6 @@ function url_to_text($url) {
             $location = $lang['onlinelostpw'];
         } else if (false !== strpos($url, 'online')) {
             $location = $lang['onlinewhosonline'];
-        } else if (false !== strpos($url, 'onlinetoday')) {
-            $location = $lang['onlineonlinetoday'];
         } else if (false !== strpos($url, 'list')) {
             $location = $lang['onlinememlist'];
         } else if (false !== strpos($url, 'captchaimage')) {
