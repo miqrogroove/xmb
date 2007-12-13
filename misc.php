@@ -618,7 +618,7 @@ switch($action) {
             $desc = 'asc';
         }
 
-        $result = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members"), 0);
+        $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit != 0"), 0);
         $max_page = (int) ($result / $memberperpage) + 1;
         if ($page && $page >= 1 && $page <= $max_page) {
             $start_limit = ($page-1) * $SETTINGS['memberperpage'];
@@ -627,7 +627,7 @@ switch($action) {
             $page = 1;
         }
 
-        if (!$order || ($order != "username" && $order != "postnum" && $order != 'status')) {
+        if (!$order || ($order != 'username' && $order != 'postnum' && $order != 'status')) {
             $orderby = "uid";
             $order = 'uid';
         } else if ($order == 'status') {
@@ -677,13 +677,14 @@ switch($action) {
             $srchmem = '';
         }
 
+        $where[] = "lastvisit != 0";
         if (isset($where) && isset($where[0]) && $where[0] != '') {
             $q = implode(' AND', $where);
             $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
+            $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
         } else {
-            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members"), 0);
+            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE lastvisit != 0 ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
+            $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
         }
 
         $ext = htmlspecialchars(implode('&amp;', $ext));
