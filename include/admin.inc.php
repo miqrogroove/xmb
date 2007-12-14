@@ -215,6 +215,7 @@ class admin {
             $db->free_result($fq);
         }
         $db->free_result($q);
+
         $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
         while($thread = $db->fetch_array($q)) {
             $lastpost = array();
@@ -415,7 +416,7 @@ function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=
     foreach($varnames as $key=>$val) {
         if (isset($checked[$key]) && $checked[$key] !== true) {
             $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
-        }else{
+        } else {
             $optionlist[] = '<option value="'.$values[$key].'" '.$selHTML.'>'.$varnames[$key].'</option>';
         }
     }

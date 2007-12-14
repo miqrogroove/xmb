@@ -611,7 +611,7 @@ if ($action == 'profile') {
         }
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } else if ($subadd && noSubmit('subsubmit')) {
-        $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
+        $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             error($lang['subonlistmsg'], false);
         } else {
@@ -670,6 +670,7 @@ if ($action == 'profile') {
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
     $member = $db->fetch_array($query);
+    $db->free_result($query);
 
     if ($member['avatar'] == '') {
         $member['avatar'] = '';

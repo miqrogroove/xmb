@@ -87,11 +87,11 @@ $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forums = $db->fetch_array($query);
 $forums['name'] = stripslashes($forums['name']);
 
-if (($fid == 0 && $tid == 0) || ($forums['type'] != 'forum' && $forums['type'] != 'sub' && $forums['fid'] != $fid)) {
+if (($fid == 0 && $tid == 0) || (!isset($forums['type']) && $forums['type'] != 'forum' && $forums['type'] != 'sub' && $forums['fid'] != $fid)) {
     $posterror = $lang['textnoforum'];
 }
 
-if (isset($forums['type']) && $forums['type'] == "forum") {
+if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
 } else {
     if (!isset($forums['fup']) || !is_numeric($forums['fup'])) {
@@ -175,7 +175,7 @@ if (!postperm($forums, $pperm['type'])) {
     error($lang['privforummsg']);
 }
 
-if (X_GUEST && $forums['guestposting'] == 'on') {
+if (X_GUEST && isset($forums['guestposting']) && $forums['guestposting'] == 'on') {
     $guestpostingmsg = $lang['guestpostingonmsg'];
 } else {
     $guestpostingmsg = '';
@@ -446,7 +446,7 @@ if ($action == 'newthread') {
             }
         }
 
-        if ($forums['guestposting'] != 'on' && $username == "Anonymous") {
+        if ($forums['guestposting'] != 'on' && $username == 'Anonymous') {
             error($lang['textnoguestposting']);
         }
 
@@ -558,7 +558,7 @@ if ($action == 'newthread') {
             $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
         }
 
-        $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+        $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
         $posts = $db->result($query, 0);
 
         $topicpages = quickpage($posts, $ppp);
@@ -581,7 +581,7 @@ if ($action == 'newthread') {
         eval('echo "'.template('header').'";');
 
         if (X_STAFF) {
-            $closeoption = "<br /><input type=\"checkbox\" name=\"closetopic\" value=\"yes\" $closecheck/> $lang[closemsgques]<br />";
+            $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
         } else {
             $closeoption = '';
         }
@@ -606,7 +606,7 @@ if ($action == 'newthread') {
         $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
         $replynum = $db->result($querytop, 0);
         if ($replynum >= $ppp) {
-            $threadlink = "viewthread.php?fid=$fid&tid=$tid";
+            $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
             eval($lang['evaltrevlt']);
             eval('$posts .= "'.template('post_reply_review_toolong').'";');
         } else {
@@ -673,12 +673,12 @@ if ($action == 'newthread') {
             put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
 
-            if ($self['ban'] == "posts" || $self['ban'] == "both") {
+            if ($self['ban'] == 'posts' || $self['ban'] == 'both') {
                 error($lang['textbanfrompost']);
             }
         } else {
             if (X_GUEST) {
-                $username = "Anonymous";
+                $username = 'Anonymous';
             } else {
                 $username = $xmbuser;
             }
@@ -694,7 +694,7 @@ if ($action == 'newthread') {
             }
         }
 
-        if ($forums['guestposting'] != 'on' && $username == "Anonymous") {
+        if ($forums['guestposting'] != 'on' && $username == 'Anonymous') {
             error($lang['textnoguestposting']);
         }
 
@@ -773,7 +773,7 @@ if ($action == 'newthread') {
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid < $pid ORDER BY pid ASC LIMIT 1"), 0);
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status FROM ".X_PREFIX."favorites f LEFT JOIN ".X_PREFIX."members m ON (m.username=f.username) WHERE f.type='subscription' AND f.tid='$tid' AND f.username!= '$username'");
             while($subs = $db->fetch_array($subquery)) {
-                if ($subs['status'] == 'banned' || $subs['lastvisit'] < $date) { // don't send double mails...!
+                if ($subs['status'] == 'banned' || $subs['lastvisit'] < $date) {
                     continue;
                 }
 
@@ -1076,7 +1076,7 @@ if ($action == 'newthread') {
         }
 
         if ($threaddelete != 'yes') {
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid' AND fid='$fid'");
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= '$pid' AND tid='$tid' AND fid='$fid'");
             $posts = $db->result($query,0);
             $topicpages = quickpage($posts, $ppp);
             message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);

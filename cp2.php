@@ -909,13 +909,14 @@ if ($action == "censor") {
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."words ORDER BY id");
         while($censor = $db->fetch_array($query)) {
-        ?>
-        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-        <td align="center"><input type="checkbox" name="delete<?php echo $censor['id']?>" value="<?php echo $censor['id']?>" /></td>
-        <td align="left"><input type="text" size="20" name="find<?php echo $censor['id']?>" value="<?php echo $censor['find']?>" /></td>
-        <td align="left"><input type="text" size="20" name="replace<?php echo $censor['id']?>" value="<?php echo $censor['replace1']?>" /></td>
-        </tr>
-        <?php
+            ?>
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+            <td align="center"><input type="checkbox" name="delete<?php echo $censor['id']?>" value="<?php echo $censor['id']?>" /></td>
+            <td align="left"><input type="text" size="20" name="find<?php echo $censor['id']?>" value="<?php echo $censor['find']?>" /></td>
+            <td align="left"><input type="text" size="20" name="replace<?php echo $censor['id']?>" value="<?php echo $censor['replace1']?>" /></td>
+            </tr>
+            <?php
+        }
     }
     ?>
     <tr bgcolor="<?php echo $altbg2?>">
@@ -936,32 +937,28 @@ if ($action == "censor") {
     </form>
     </td>
     </tr>
-
     <?php
-}
+} else if (onSubmit('censorsubmit')) {
+    $querycensor = $db->query("SELECT id FROM ".X_PREFIX."words");
+    while($censor = $db->fetch_array($querycensor)) {
+        $find = formVar('find'.$censor['id']);
+        $replace = formVar('replace'.$censor['id']);
+        $delete = formVar('delete'.$censor['id']);
 
-if (onSubmit('censorsubmit')) {
-        $querycensor = $db->query("SELECT id FROM ".X_PREFIX."words");
-        while($censor = $db->fetch_array($querycensor)) {
-            $find = formVar('find'.$censor['id']);
-            $replace = formVar('replace'.$censor['id']);
-            $delete = formVar('delete'.$censor['id']);
-
-            if ($delete) {
-                $db->query("DELETE FROM ".X_PREFIX."words WHERE id='$delete'");
-            }
-
-            if ($find) {
-                $db->query("UPDATE ".X_PREFIX."words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
-            }
+        if ($delete) {
+            $db->query("DELETE FROM ".X_PREFIX."words WHERE id='$delete'");
         }
-        $db->free_result($querycensor);
 
-        if ($newfind) {
-            $db->query("INSERT INTO ".X_PREFIX."words (find, replace1 ) VALUES ('$newfind', '$newreplace')");
+        if ($find) {
+            $db->query("UPDATE ".X_PREFIX."words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
         }
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[censorupdate]</td></tr>";
     }
+    $db->free_result($querycensor);
+
+    if ($newfind) {
+        $db->query("INSERT INTO ".X_PREFIX."words (find, replace1 ) VALUES ('$newfind', '$newreplace')");
+    }
+    echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['censorupdate'].'</td></tr>';
 }
 
 if ($action == "ranks") {

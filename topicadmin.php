@@ -518,12 +518,12 @@ switch($action) {
                     }
                     $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid='$move'");
                     $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid='$move'");
-                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid=$newtid");
+                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid='$newtid'");
                     $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                 }
             }
 
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline ASC LIMIT 0,1");
+            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$newtid' ORDER BY dateline ASC LIMIT 0,1");
             $firstauthor = $db->result($query, 0);
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
@@ -559,7 +559,7 @@ switch($action) {
             $replyadd++;
             $replyadd = $replyadd + $replyadd2;
 
-            $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid=$fid WHERE tid='$othertid'");
+            $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
             $db->query("UPDATE ".X_PREFIX."attachments SET tid='$tid' WHERE tid='$othertid'");
 
             $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$othertid'");
