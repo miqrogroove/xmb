@@ -62,7 +62,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
 
 $gid = getInt('gid');
 if ($gid) {
-    $gid = (int)$gid;
+    $gid = (int) $gid;
     $whosonlinestatus = 'off';
     $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' LIMIT 1");
     $cat = $db->fetch_array($query);
@@ -105,6 +105,7 @@ if ($gid == 0) {
         eval('$welcome = "'.template('index_welcome_guest').'";');
     }
 
+    $whosonline = '';
     if ($whosonlinestatus == 'on') {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
@@ -154,7 +155,6 @@ if ($gid == 0) {
 
         $memtally = array();
         $num = 1;
-        $comma = '';
         $show_total = (X_ADMIN) ? ($membercount+$hiddencount) : ($membercount);
 
         $show_inv_key = false;
@@ -219,8 +219,6 @@ if ($gid == 0) {
             $memontoday = $todaymembersnum.$lang['textmemberstoday'];
         }
         eval('$whosonline = "'.template('index_whosonline').'";');
-    } else {
-        $whosonline = '';
     }
 
     if ($SETTINGS['catsonly'] == 'on') {
