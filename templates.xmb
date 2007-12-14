@@ -427,15 +427,27 @@ $multipage
 </td>
 </tr>
 </table>
-<table align="center">
-<tr>
-<td align="center" class="smalltxt">
 <br />
-$versionlong<br />
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2">
+<font class="smalltxt">
+$versionlong
+<br />
 $lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank"><strong>$lang[xmbgroup]</strong></a>&nbsp;&copy; $copyright
 <br />
-<br />
-$footerstuff[totaltime]$footerstuff[querynum]$footerstuff[phpsql]$footerstuff[load]$footerstuff[querydump]
+$footerstuff[totaltime]
+$footerstuff[querynum]
+$footerstuff[phpsql]
+$footerstuff[load]
+$footerstuff[querydump]
+</font>
+</td>
+</tr>
+</table>
 </td>
 </tr>
 </table>
