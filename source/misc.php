@@ -264,7 +264,7 @@ switch($action) {
                     $start = $offset;
                     $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
-                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type. f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
                     $srchfrom = $onlinetime;
@@ -374,7 +374,7 @@ switch($action) {
                                 $post['subject'] = censor($post['subject']);
                                 eval('$searchresults .= "'.template('misc_search_results_row').'";');
 
-                                $result++;
+                                $results++;
                             }
                         }
                     }
@@ -437,7 +437,7 @@ switch($action) {
                                 $post['tsubject'] = html_entity_decode($post['subject']);
                             }
                             eval('$searchresults .= "'.template('misc_search_results_row').'";');
-                            $result++;
+                            $results++;
                         }
                     }
                 }
