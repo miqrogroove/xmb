@@ -93,9 +93,7 @@ switch($action) {
         break;
 }
 
-$misc = '';
-$multipage = '';
-$nextlink = '';
+$misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
@@ -249,6 +247,8 @@ switch($action) {
                 $srchtxt = '';
             }
 
+            $results = 0;
+
             if (onSubmit('searchsubmit') || $page) {
                 if (!$page) {
                     $page = 1;
@@ -264,7 +264,7 @@ switch($action) {
                     $start = $offset;
                     $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
-                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type. f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
                     $srchfrom = $onlinetime;
@@ -305,8 +305,6 @@ switch($action) {
                 }
 
                 $querysrch = $db->query($sql);
-                $results = 0;
-                $results = $db->num_rows($querysrch);
 
                 if ($srchuname) {
                     $srchtxt = '\0';
@@ -320,6 +318,15 @@ switch($action) {
                         $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
                         if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
                             continue;
+                        }
+
+                        if (isset($post['type']) && $post['type'] == 'sub') {
+                            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$post[fup]'");
+                            $fup = $db->fetch_array($query);
+                            if (!privfcheck($fup['private'], $fup['userlist'])) {
+                                continue;
+                            }
+                            $db->free_result($query);
                         }
 
                         if ($authorization) {
@@ -366,6 +373,8 @@ switch($action) {
 
                                 $post['subject'] = censor($post['subject']);
                                 eval('$searchresults .= "'.template('misc_search_results_row').'";');
+
+                                $result++;
                             }
                         }
                     }
@@ -376,6 +385,15 @@ switch($action) {
 
                         if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
                             continue;
+                        }
+
+                        if (isset($post['type']) && $post['type'] == 'sub') {
+                            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$post[fup]'");
+                            $fup = $db->fetch_array($query);
+                            if (!privfcheck($fup['private'], $fup['userlist'])) {
+                                continue;
+                            }
+                            $db->free_result($query);
                         }
 
                         if ($authorization) {
@@ -419,6 +437,7 @@ switch($action) {
                                 $post['tsubject'] = html_entity_decode($post['subject']);
                             }
                             eval('$searchresults .= "'.template('misc_search_results_row').'";');
+                            $result++;
                         }
                     }
                 }
@@ -575,6 +594,44 @@ switch($action) {
             $desc = 'asc';
         }
 
+        $letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',$lang['lettermisc']);
+
+        $lettersort = '<tr>';
+
+        $list = (isset($list)) ? $list : '';
+
+        if ($list != '') {
+            $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg2.'"><u><a href="misc.php?action=list">'.$lang['letterall'].'</a></u></td>';
+        } else {
+            $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg1.'"><strong>'.$lang['letterall'].'</strong></td>';
+        }
+
+        for($i = 0; $i < count($letters); $i++) {
+            if ($list == strtolower($letters[$i])) {
+                $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg1.'"><strong>'.$letters[$i].'</strong></td>';
+            } else {
+                $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg2.'"><u><a href="misc.php?action=list&amp;list='.strtolower($letters[$i]).'">'.$letters[$i].'</a></u></td>';
+            }
+        }
+        $lettersort .= '</tr>';
+
+        $ltrqry = '';
+        if ($list != '' && $list != 'misc') {
+            $ltrqry = " username LIKE '$list%' ";
+        }
+
+        if ($list == 'misc') {
+            $ltrqry = " username NOT LIKE 'A%' ";
+            for($i = 0; $i < count($letters); $i++) {
+                $ltrqry .= " AND username NOT LIKE '$letters[$i]%' ";
+            }
+        }
+
+        $listsort = '';
+        if ($list != '' && $list != 'misc') {
+            $listsort = '&amp;list='.$list;
+        }
+
         $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
         $max_page = (int) ($result / $memberperpage) + 1;
         if ($page && $page >= 1 && $page <= $max_page) {
@@ -608,7 +665,7 @@ switch($action) {
         if ($srchemail) {
             if (!X_SADMIN) {
                 $where[] = " email LIKE '%".$srchemail."%'";
-                $where[] = " showemail = 'yes'";
+                $where[] = " showemail='yes'";
             } else {
                 $where[] = " email LIKE '%".$srchemail."%'";
             }
@@ -635,6 +692,10 @@ switch($action) {
         }
 
         $where[] = " lastvisit!=0 ";
+
+        if ($ltrqry != '') {
+            $where[] = $ltrqry;
+        }
 
         $q = implode(' AND', $where);
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
@@ -686,11 +747,12 @@ switch($action) {
             }
         }
 
-        if (!isset($SETTINGS['memberperpage'])) {
+        if (!isset($memberperpage)) {
             $memberperpage = $postperpage;
         }
 
-        if (($multipage = multi($num, $SETTINGS['memberperpage'], $page, 'misc.php?action=list&amp;desc='.$desc.$ext)) === false) {
+        $mpurl = 'misc.php?action=list'.$listsort.'&amp;desc='.$desc.''.$ext;
+        if (($multipage = multi($num, $memberperpage, $page, $mpurl)) === false) {
             $multipage = '';
         } else {
             eval('$multipage = "'.template('misc_mlist_multipage').'";');
