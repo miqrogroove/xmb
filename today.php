@@ -128,6 +128,26 @@ if ($results == 0) {
     $multipage = '';
     eval('$rows = "'.template('today_noposts').'";');
 } else {
+    $t_extension = get_extension($lang['toppedprefix']);
+    switch($t_extension) {
+        case 'gif':
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+            $lang['toppedprefix'] = '<img src="'.$imgdir.'/'.$lang['toppedprefix'].'" alt="'.$lang['toppedpost'].'" border="0" />';
+            break;
+    }
+
+    $p_extension = get_extension($lang['pollprefix']);
+    switch($p_extension) {
+        case 'gif':
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+            $lang['pollprefix'] = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
+            break;
+    }
+
     validateTpp();
     validatePpp();
 
@@ -141,7 +161,7 @@ if ($results == 0) {
         eval('$multipage = "'.template('today_multipage').'";');
     }
 
-    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
+    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.topped, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
@@ -197,7 +217,11 @@ if ($results == 0) {
 
         $prefix = '';
         if ($thread['pollopts'] == 1) {
-            $prefix = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" /> ';
+            $prefix = $lang['pollprefix'].' ';
+        }
+
+        if ($thread['topped'] == 1) {
+            $prefix = $lang['toppedprefix'].' '.$prefix;
         }
 
         if ($thread['posts'] > $ppp) {
