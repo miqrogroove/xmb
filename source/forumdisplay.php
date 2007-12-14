@@ -60,18 +60,18 @@ $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
 $notexist = false;
-if ($forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
+if (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
     $notexist = $lang['textnoforum'];
 }
 
 $fup = array();
-if ($forum['type'] == 'sub') {
+if (isset($forum['type']) && $forum['type'] == 'sub') {
     $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
     if (!privfcheck($fup['private'], $fup['userlist'])) {
         error($lang['privforummsg']);
     }
-} else if ($forum['type'] != 'forum') {
+} else if (!isset($forum['type']) && $forum['type'] != 'forum') {
     error($notexist);
 }
 
@@ -264,7 +264,11 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['replies'] = "-";
         $thread['views'] = "-";
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $postnum = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'"), 0);
+        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]");
+        $postnum = 0;
+        if ($query !== false) {
+            $postnum = $db->result($query, 0);
+        }
     } else {
         $thread['realtid'] = $thread['tid'];
     }

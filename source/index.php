@@ -57,7 +57,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         $news[$i] = str_replace('\"', '"', addslashes($news[$i]));
         $contents .= "\tcontents[$i]='$news[$i]';\n";
     }
-    eval('$ticker  = "'.template('index_ticker').'";');
+    eval('$ticker = "'.template('index_ticker').'";');
 }
 
 $gid = getInt('gid');

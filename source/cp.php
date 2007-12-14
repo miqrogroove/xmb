@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -740,7 +740,7 @@ if ($action == "settings") {
     }
 }
 
-if ($action == "rename") {
+if ($action == 'rename') {
     if (!X_SADMIN) {
         error($lang['superadminonly'], false, '</td></tr></table></td></tr></table><br />');
     }
@@ -1510,6 +1510,7 @@ if ($action == "members") {
                         $noban = $selHTML;
                         break;
                 }
+
                 if ($member['lastvisit'] == 0) {
                     $pending = '<br />'.$lang['textpendinglogin'];
                 } else {

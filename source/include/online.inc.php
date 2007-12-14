@@ -62,7 +62,7 @@ function url_to_text($url) {
         $rset = true;
     }
 
-    if (false !== strpos($url, "/viewthread.php")) {
+    if (false !== strpos($url, '/viewthread.php')) {
         $temp = explode('?', $url);
         if (count($temp) > 1) {
             $tid = 0;
@@ -79,7 +79,7 @@ function url_to_text($url) {
             if (isset($tsub[$tid])) {
                 $location = $lang['onlineviewthread'].' '.$tsub[$tid];
             } else {
-                $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid=".$tid);
+                $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
                 while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
                     $tsub[$tid] = $locate['subject'];
@@ -94,7 +94,7 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlinenothread'];
         }
-    } else if (false !== strpos($url, "/forumdisplay.php")) {
+    } else if (false !== strpos($url, '/forumdisplay.php')) {
         $temp = explode('?', $url);
         if (count($temp) > 1) {
             $fid = 0;
@@ -111,7 +111,7 @@ function url_to_text($url) {
             if (isset($fname[$fid])) {
                 $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
             } else {
-                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid=".$fid);
+                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
                 while($locate = $db->fetch_array($query)) {
                     $location = $lang['onlineforumdisplay'].' '.$locate['name'];
                     $fname[$fid] = $locate['name'];
@@ -131,18 +131,18 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlinememcp'];
         }
-    } else if (false !== strpos($url, "/cp.php") || false !== strpos($url, "/cp2.php")) {
+    } else if (false !== strpos($url, '/cp.php') || false !== strpos($url, '/cp2.php')) {
         $location = $lang['onlinecp'];
         if (!X_ADMIN) {
             $url = 'index.php';
         }
-    } else if (false !== strpos($url, "/editprofile.php")) {
+    } else if (false !== strpos($url, '/editprofile.php')) {
         $temp = explode('?', $url);
         if (!X_SADMIN) {
             $url = 'index.php';
         }
 
-        if (false!== strpos($temp[1], "user=")) {
+        if (false!== strpos($temp[1], 'user=')) {
             if (isset($temp[1]) && !empty($temp[1]) && $temp[1] != 'user=') {
                 $user = str_replace('user=', '', $temp[1]);
                 eval("\$location = \"$lang[onlineeditprofile]\";");
@@ -152,13 +152,13 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineeditnoprofile'];
         }
-    } else if (false !== strpos($url, "/faq.php")) {
+    } else if (false !== strpos($url, '/faq.php')) {
         $location = $lang['onlinefaq'];
-    } else if (false !== strpos($url, "/index.php")) {
+    } else if (false !== strpos($url, '/index.php')) {
         if (false !== strpos($url, 'gid=')) {
             $temp = explode('?', $url);
             $gid = (int) str_replace('gid=', '', $temp[1]);
-            $q = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid=".$gid);
+            $q = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$gid'");
             $cat = $db->fetch_array($q);
             if (!$cat) {
                 $location = $lang['onlinecatunknown'];
@@ -168,7 +168,7 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineindex'];
         }
-    } else if (false !== strpos($url, "/member.php")) {
+    } else if (false !== strpos($url, '/member.php')) {
         if (false !== strpos($url, 'action=reg')) {
             $location = $lang['onlinereg'];
         } else if (false !== strpos($url, 'action=viewpro')) {
@@ -189,7 +189,7 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlinenoprofile'];
         }
-    } else if (false !== strpos($url, "misc.php")) {
+    } else if (false !== strpos($url, 'misc.php')) {
         if (false !== strpos($url, 'login')) {
             $location = $lang['onlinelogin'];
         } else if (false !== strpos($url, 'logout')) {
@@ -207,7 +207,7 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineunknown'];
         }
-    } else if (false !== strpos($url, "/post.php")) {
+    } else if (false !== strpos($url, '/post.php')) {
         if (false !== strpos($url, 'action=edit')) {
             $location = $lang['onlinepostedit'];
         } else if (false !== strpos($url, 'action=newthread')) {
@@ -217,15 +217,15 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineunknown'];
         }
-    } else if (false !== strpos($url, "/stats.php")) {
+    } else if (false !== strpos($url, '/stats.php')) {
         $location = $lang['onlinestats'];
-    } else if (false !== strpos($url, "/today.php")) {
+    } else if (false !== strpos($url, '/today.php')) {
         $location = $lang['onlinetodaysposts'];
-    } else if (false !== strpos($url, "/tools.php")) {
+    } else if (false !== strpos($url, '/tools.php')) {
         $location = $lang['onlinetools'];
-    } else if (false !== strpos($url, "/topicadmin.php")) {
+    } else if (false !== strpos($url, '/topicadmin.php')) {
         $location = $lang['onlinetopicadmin'];
-    } else if (false !== strpos($url, "/u2u.php")) {
+    } else if (false !== strpos($url, '/u2u.php')) {
         if (false !== strpos($url, 'action=send')) {
             $location = $lang['onlineu2usend'];
         } else if (false !== strpos($url, 'action=delete')) {
@@ -243,7 +243,7 @@ function url_to_text($url) {
         if (!X_SADMIN) {
             $url = './u2u.php';
         }
-    } else if (false !== strpos($url, "/buddy.php")) {
+    } else if (false !== strpos($url, '/buddy.php')) {
         if (false !== strpos($url, 'action=add2u2u')) {
             $location = $lang['onlinebuddyadd2u2u'];
         } else if (false !== strpos($url, 'action=add')) {

@@ -256,7 +256,7 @@ switch($action) {
                     $start = 0;
                     $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 } else {
-                    if ($page < 1 ) {
+                    if ($page < 1) {
                         $page = 1;
                     }
 
@@ -264,7 +264,7 @@ switch($action) {
                     $start = $offset;
                     $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
                 }
-                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
                     $srchfrom = $onlinetime;
@@ -282,12 +282,12 @@ switch($action) {
                     $ext[] = 'srchtxt='.$srchtxt;
                 }
 
-                if ($srchuname != "") {
+                if ($srchuname != '') {
                     $sql .= " AND p.author='".addslashes($srchuname)."'";
                     $ext[] = 'srchuname='.$srchuname;
                 }
 
-                if ($srchfid != "all" && $srchfid != "") {
+                if ($srchfid != 'all' && $srchfid != '') {
                     $sql .= " AND p.fid='$srchfid'";
                     $ext[] = 'srchfid='.$srchfid;
                 }
@@ -318,7 +318,6 @@ switch($action) {
                     while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
                         $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
-
                         if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
                             continue;
                         }
@@ -328,7 +327,6 @@ switch($action) {
                                 $tid = $post['ttid'];
                                 $temparray[$tid] = true;
                                 $message = $post['message'];
-
                                 $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
                                 $position = strpos($message, $srchtxt, 0);
                                 $show_num = 100;
@@ -356,7 +354,7 @@ switch($action) {
 
                                 $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
                                 $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                                $poston = "$date $lang[textat] $time";
+                                $poston = $date.' '.$lang['textat'].' '.$time;
                                 $postby = $post['author'];
 
                                 $post['tsubject'] = html_entity_decode(stripslashes(censor($post['tsubject'])));
@@ -411,7 +409,7 @@ switch($action) {
 
                             $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
                             $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                            $poston = "$date $lang[textat] $time";
+                            $poston = $date.' '.$lang['textat'].' '.$time;
                             $postby = $post['author'];
 
                             $post['tsubject'] = stripslashes(censor($post['tsubject']));
@@ -657,7 +655,7 @@ switch($action) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
             while($member = $db->fetch_array($querymem)) {
-                $member['regdate'] = gmdate($dateformat, $member['regdate'] + $adjTime );
+                $member['regdate'] = gmdate($dateformat, $member['regdate'] + $adjTime);
 
                 if (X_MEMBER && $member['email'] != '' && $member['showemail'] == 'yes') {
                     eval('$email = "'.template('misc_mlist_row_email').'";');

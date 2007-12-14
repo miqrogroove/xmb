@@ -169,7 +169,7 @@ $fid = (int) $thread['fid'];
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
-if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $db->num_rows($query) != 1) {
+if ((!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'sub') || $db->num_rows($query) != 1) {
     $db->free_result($query);
     error($lang['textnoforum']);
 }
@@ -177,7 +177,7 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $db->num_rows($que
 $db->free_result($query);
 
 $authorization = true;
-if ($forum['type'] == 'sub') {
+if (isset($forum['type']) && $forum['type'] == 'sub') {
     $query = $db->query("SELECT name, fid, private, userlist FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
@@ -190,7 +190,7 @@ if (!$authorization || !privfcheck($forum['private'], $forum['userlist'])) {
 }
 
 $ssForumName = html_entity_decode(stripslashes($forum['name']));
-if ($forum['type'] == 'forum') {
+if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'"> '.$ssForumName.'</a>');
     nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
 } else {
@@ -417,7 +417,7 @@ if (!$action) {
         $onlinenow = $lang['memberisoff'];
         if ($post['time'] != '' && $post['author'] != "xguest123") {
             if ($post['invisible'] == 1) {
-                $onlinenow = X_ADMIN ? $lang['memberison'] . ' (' . $lang['hidden'] . ')' : $lang['memberisoff'];
+                $onlinenow = X_ADMIN ? $lang['memberison'] . ' ('.$lang['hidden'].')' : $lang['memberisoff'];
             } else {
                 $onlinenow = $lang['memberison'];
             }
@@ -581,7 +581,7 @@ if (!$action) {
         }
 
         if ($post['subject'] != '') {
-            $post['subject'] = censor($post['subject']).'<br /><br />';
+            $post['subject'] = censor($post['subject']).'<br />';
             $post['subject'] = checkOutput($post['subject'], 'no', '', true);
         }
 

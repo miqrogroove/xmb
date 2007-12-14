@@ -279,7 +279,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 22 => '</ol>',
                 23 => '</ol>',
                 24 => '<li />',
-                25 => ' <br />'
+                25 => '<br />'
         );
 
         if ($smiliesallow) {
@@ -629,11 +629,11 @@ function updateforumcount($fid) {
     $postcount = 0;
     $threadcount = 0;
 
-    $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
+    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT count(tid) FROM ".X_PREFIX."threads WHERE (fid='$fid' AND closed!='moved')");
+    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE (fid='$fid' AND closed!='moved')");
     $threadcount = $db->result($query, 0);
     $db->free_result($query);
 

@@ -496,7 +496,7 @@ if (isset($tid) && $action != 'templates') {
         $threadSubject = '';
     }
 } else if (isset($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=".$fid);
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
     } else {
@@ -600,9 +600,9 @@ if (isset($lastvisit) && X_MEMBER) {
     $theTime = $xmblva + ($timeoffset * 3600) + ($addtime * 3600);
     $lastdate = gmdate($dateformat, $theTime);
     $lasttime = gmdate($timecode, $theTime);
-    $lastvisittext = "$lang[lastactive] $lastdate $lang[textat] $lasttime";
+    $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = "$lang[lastactive] $lang[textnever]";
+    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
 }
 
 // Checks for various settings
