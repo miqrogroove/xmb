@@ -76,6 +76,7 @@ $restrict = implode(' AND ', $restrict);
 
 $fids = array();
 $tids = array();
+$fup = array();
 if (X_SADMIN) {
     $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status='on'");
     while($f = $db->fetch_array($q)) {
@@ -83,9 +84,18 @@ if (X_SADMIN) {
     }
     $db->free_result($q);
 } else {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status='on' AND $restrict");
+    $q = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE status='on' AND $restrict");
     while($f = $db->fetch_array($q)) {
-        $fids[] = $f['fid'];
+        if (isset($f['type']) && $f['type'] == 'sub') {
+            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$f[fup]'");
+            $fup = $db->fetch_array($query);
+            if (privfcheck($fup['private'], $fup['userlist'])) {
+                $fids[] = $f['fid'];
+            }
+            $db->free_result($query);
+        } else {
+            $fids[] = $f['fid'];
+        }
     }
     $db->free_result($q);
 
