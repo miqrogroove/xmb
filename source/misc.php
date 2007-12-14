@@ -634,15 +634,11 @@ switch($action) {
             $srchmem = '';
         }
 
-        $where[] = " lastvisit != 0 ";
-        if (isset($where) && isset($where[0]) && $where[0] != '') {
-            $q = implode(' AND', $where);
-            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
-        } else {
-            $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-            $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
-        }
+        $where[] = " lastvisit!=0 ";
+
+        $q = implode(' AND', $where);
+        $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
+        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
 
         $ext = htmlspecialchars(implode('&amp;', $ext));
 
