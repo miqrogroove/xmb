@@ -73,7 +73,8 @@ if (!X_SADMIN) {
         if (isset($f['type']) && $f['type'] == 'sub') {
             $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$f[fup]'");
             $fup = $db->fetch_array($query);
-            if (privfcheck($fup['private'], $fup['userlist'])) {                                                                             $fids[] = $f['fid'];
+            if (privfcheck($fup['private'], $fup['userlist'])) {
+                $fids[] = $f['fid'];
             }
             $db->free_result($query);
         } else {
