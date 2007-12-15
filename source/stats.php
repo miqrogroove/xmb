@@ -105,7 +105,11 @@ if (X_SADMIN) {
     $restrict = '(1=1)';
 } else {
     $fids = implode(',', $fids);
-    $restrict = 'fid IN('.$fids.')';
+    if ($fids == '') {
+         $restrict = '(1=2)';
+    } else {
+         $restrict = 'fid IN('.$fids.')';
+    }
 }
 
 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
