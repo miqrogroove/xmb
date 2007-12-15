@@ -1147,14 +1147,4 @@ $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index:";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmbgroup'] = "The XMB Group";
-$lang['mergeforumstxt'] = "Merge Forums";
-$lang['mergeforums_note'] = "Note: Here you can merge threads from one forum to another by selecting the forum to merge threads to.";
-$lang['mergeforums_newfid'] = "To New Forum:";
-$lang['mergeforums_oldfid'] = "From Old Forum:";
-$lang['mergeforum_newfid_none'] = "You did not select an new forum.";
-$lang['mergeforum_oldfid_none'] = "You did not select an old forum.";
-$lang['tool_mergeforums'] = "Forums merged successfully.";
-$lang['letterall'] = "All";
-$lang['lettermisc'] = "Misc";
-$lang['lettersortby'] = "Sort By Letter:";
 ?>
