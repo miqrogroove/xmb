@@ -68,9 +68,17 @@ switch($self['status']) {
 
 $fids = array();
 if (!X_SADMIN) {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums f WHERE f.status='on' AND ".implode(' AND ', $restrict));
+    $q = $db->query("SELECT fid, fup, type FROM ".X_PREFIX."forums f WHERE f.status='on' AND ".implode(' AND ', $restrict));
     while($f = $db->fetch_array($q)) {
-        $fids[] = $f['fid'];
+        if (isset($f['type']) && $f['type'] == 'sub') {
+            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$f[fup]'");
+            $fup = $db->fetch_array($query);
+            if (privfcheck($fup['private'], $fup['userlist'])) {                                                                             $fids[] = $f['fid'];
+            }
+            $db->free_result($query);
+        } else {
+            $fids[] = $f['fid'];
+        }
     }
     $db->free_result($q);
 
