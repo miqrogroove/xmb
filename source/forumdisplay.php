@@ -264,7 +264,7 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['replies'] = "-";
         $thread['views'] = "-";
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]");
+        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
         $postnum = 0;
         if ($query !== false) {
             $postnum = $db->result($query, 0);
