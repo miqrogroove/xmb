@@ -594,44 +594,6 @@ switch($action) {
             $desc = 'asc';
         }
 
-        $letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',$lang['lettermisc']);
-
-        $lettersort = '<tr>';
-
-        $list = (isset($list)) ? $list : '';
-
-        if ($list != '') {
-            $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg2.'"><u><a href="misc.php?action=list">'.$lang['letterall'].'</a></u></td>';
-        } else {
-            $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg1.'"><strong>'.$lang['letterall'].'</strong></td>';
-        }
-
-        for($i = 0; $i < count($letters); $i++) {
-            if ($list == strtolower($letters[$i])) {
-                $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg1.'"><strong>'.$letters[$i].'</strong></td>';
-            } else {
-                $lettersort .= '<td class="ctrtablerow" bgcolor="'.$altbg2.'"><u><a href="misc.php?action=list&amp;list='.strtolower($letters[$i]).'">'.$letters[$i].'</a></u></td>';
-            }
-        }
-        $lettersort .= '</tr>';
-
-        $ltrqry = '';
-        if ($list != '' && $list != 'misc') {
-            $ltrqry = " username LIKE '$list%' ";
-        }
-
-        if ($list == 'misc') {
-            $ltrqry = " username NOT LIKE 'A%' ";
-            for($i = 0; $i < count($letters); $i++) {
-                $ltrqry .= " AND username NOT LIKE '$letters[$i]%' ";
-            }
-        }
-
-        $listsort = '';
-        if ($list != '' && $list != 'misc') {
-            $listsort = '&amp;list='.$list;
-        }
-
         $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
         $max_page = (int) ($result / $memberperpage) + 1;
         if ($page && $page >= 1 && $page <= $max_page) {
@@ -693,10 +655,6 @@ switch($action) {
 
         $where[] = " lastvisit!=0 ";
 
-        if ($ltrqry != '') {
-            $where[] = $ltrqry;
-        }
-
         $q = implode(' AND', $where);
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
         $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
@@ -751,7 +709,7 @@ switch($action) {
             $memberperpage = $postperpage;
         }
 
-        $mpurl = 'misc.php?action=list'.$listsort.'&amp;desc='.$desc.''.$ext;
+        $mpurl = 'misc.php?action=list&amp;desc='.$desc.''.$ext;
         if (($multipage = multi($num, $memberperpage, $page, $mpurl)) === false) {
             $multipage = '';
         } else {
