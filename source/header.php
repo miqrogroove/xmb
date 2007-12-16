@@ -541,9 +541,7 @@ if ((int) $themeuser > 0) {
 // Make theme-vars semi-global
 $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
 foreach($db->fetch_array($query) as $key=>$val) {
-    if ($key != "name") {
-        $$key = $val;
-    } else {
+    if ($key == "name") {
         $val = stripslashes($val);
     }
     $THEME[$key] = $val;
