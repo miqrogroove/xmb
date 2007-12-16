@@ -57,31 +57,31 @@ require ROOT.'include/global.inc.php';
 require ROOT.'include/validate.inc.php';
 
 // Initialising certain key variables. These are default values, please don't change them!
-$cookiepath = '';
-$cookiedomain = '';
-$mtime = explode(" ", microtime());
-$starttime = $mtime[1] + $mtime[0];
-$onlinetime = time();
-$bbcodescript = '';
+$cookiepath    = '';
+$cookiedomain  = '';
+$mtime         = explode(" ", microtime());
+$starttime     = $mtime[1] + $mtime[0];
+$onlinetime    = time();
+$bbcodescript  = '';
 $threadSubject = '';
-$self = array();
-$user = (isset($user)) ? $user : '';
-$SETTINGS = array();
-$THEME = array();
-$links = array();
-$lang = array();
-$plugname = array();
-$plugadmin = array();
-$plugurl = array();
-$plugimg = array();
-$footerstuff = array();
-$mailer = array();
-$selHTML = 'selected="selected"';
-$cheHTML = 'checked="checked"';
-$filesize = 0;
-$filename = '';
-$filetype = '';
-$quickjump = '';
+$self          = array();
+$user          = (isset($user)) ? $user : '';
+$SETTINGS      = array();
+$THEME         = array();
+$links         = array();
+$lang          = array();
+$plugname      = array();
+$plugadmin     = array();
+$plugurl       = array();
+$plugimg       = array();
+$footerstuff   = array();
+$mailer        = array();
+$selHTML       = 'selected="selected"';
+$cheHTML       = 'checked="checked"';
+$filesize      = 0;
+$filename      = '';
+$filetype      = '';
+$quickjump     = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -548,57 +548,57 @@ foreach($db->fetch_array($query) as $key=>$val) {
     }
     $THEME[$key] = $val;
 }
-$imgdir = './'.$imgdir;
+$THEME['imgdir'] = './'.$THEME['imgdir'];
 
 // additional CSS to load?
-if (file_exists($imgdir.'/theme.css')) {
-    $cssInclude = '<style type="text/css">'."\n"."@import url('".$imgdir."/theme.css');"."\n".'</style>';
+if (file_exists($THEME['imgdir'].'/theme.css')) {
+    $cssInclude = '<style type="text/css">'."\n"."@import url('".$THEME['imgdir']."/theme.css');"."\n".'</style>';
 } else {
     $cssInclude = '';
 }
 
 // Alters certain visibility-variables
-if (false === strpos($bgcolor, '.')) {
-    $bgcode = "background-color: $bgcolor;";
+if (false === strpos($THEME['bgcolor'], '.')) {
+    $bgcode = "background-color: $THEME[bgcolor];";
 } else {
-    $bgcode = "background-image: url('$imgdir/$bgcolor');";
+    $bgcode = "background-image: url('$THEME[imgdir]/$THEME[bgcolor]');";
 }
 
-if (false === strpos($catcolor, '.')) {
-    $catbgcode = "bgcolor=\"$catcolor\"";
-    $catcss = 'background-color: '.$catcolor.';';
+if (false === strpos($THEME['catcolor'], '.')) {
+    $catbgcode = "bgcolor=\"$THEME[catcolor]\"";
+    $catcss = 'background-color: '.$THEME['catcolor'].';';
 } else {
-    $catbgcode = "style=\"background-image: url($imgdir/$catcolor)\"";
-    $catcss = 'background-image: url('.$imgdir.'/'.$catcolor.');';
+    $catbgcode = "style=\"background-image: url($THEME[imgdir]/$THEME[catcolor])\"";
+    $catcss = 'background-image: url('.$THEME['imgdir'].'/'.$THEME['catcolor'].');';
 }
 
-if (false === strpos($top, '.')) {
-    $topbgcode = "bgcolor=\"$top\"";
+if (false === strpos($THEME['top'], '.')) {
+    $topbgcode = "bgcolor=\"$THEME[top]\"";
 } else {
-    $topbgcode = "style=\"background-image: url($imgdir/$top)\"";
+    $topbgcode = "style=\"background-image: url($THEME[imgdir]/$THEME[top])\"";
 }
 
-if (false !== strpos($boardimg, ',')) {
-    $flashlogo = explode(",",$boardimg);
+if (false !== strpos($THEME['boardimg'], ',')) {
+    $flashlogo = explode(",",$THEME['boardimg']);
     //check if it's an URL or just a filename
     $l = array();
     $l = parse_url($flashlogo[0]);
     if (!isset($l['scheme']) || !isset($l['host'])) {
-        $flashlogo[0] = $imgdir.'/'.$flashlogo[0];
+        $flashlogo[0] = $THEME['imgdir'].'/'.$flashlogo[0];
     }
     $logo = '<object type="application/x-shockwave-flash" data="'.$flashlogo[0].'" width="'.$flashlogo[1].'" height="'.$flashlogo[2].'"><param name="movie" value="'.$flashlogo[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
 } else {
     $l = array();
-    $l = parse_url($boardimg);
+    $l = parse_url($THEME['boardimg']);
     if (!isset($l['scheme']) || !isset($l['host'])) {
-        $boardimg = $imgdir.'/'.$boardimg;
+        $THEME['boardimg'] = $THEME['imgdir'].'/'.$THEME['boardimg'];
     }
-    $logo = '<a href="index.php"><img src="'.$boardimg.'" alt="'.$bbname.'" border="0" /></a>';
+    $logo = '<a href="index.php"><img src="'.$THEME['boardimg'].'" alt="'.$SETTINGS['bbname'].'" border="0" /></a>';
 }
 
 // Font stuff...
-$fontedit = preg_replace('#(\D)#', '', $fontsize);
-$fontsuf = preg_replace('#(\d)#', '', $fontsize);
+$fontedit = preg_replace('#(\D)#', '', $THEME['fontsize']);
+$fontsuf = preg_replace('#(\d)#', '', $THEME['fontsize']);
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
@@ -638,32 +638,32 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 
 // Search-link
 if ($SETTINGS['searchstatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
 }
 
 // Faq-link
 if ($SETTINGS['faqstatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
 }
 
 // Memberlist-link
 if ($SETTINGS['memliststatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
 }
 
 // Today's posts-link
 if ($SETTINGS['todaysposts'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
 }
 
 // Stats-link
 if ($SETTINGS['stats'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
 }
 
 // 'Forum Rules'-link
 if ($SETTINGS['bbrules'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
+    $links[] = '<img src="'.$THEME['imgdir'].'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
 }
 
 $links = implode(' &nbsp; ', $links);
