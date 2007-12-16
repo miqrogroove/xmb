@@ -498,8 +498,6 @@ switch($action) {
             $email = $email ? checkInput($email, '', '', 'javascript', false) : '';
             $site = formVar('site');
             $site = $site ? checkInput($site, '', '', 'javascript', false) : '';
-            $webcam = formVar('webcam');
-            $webcam = $webcam ? checkInput($webcam, '', '', 'javascript', false) : '';
             $bio = isset($_POST['bio']) ? checkInput($_POST['bio'], '', '', 'javascript', false) : '';
             $mood = isset($_POST['mood']) ? checkInput($_POST['mood'], 'no', 'no', 'javascript', false) : '';
             $sig = isset($_POST['sig']) ? checkInput($_POST['sig'], '', $SETTINGS['sightml'], '', false) : '';
@@ -511,7 +509,6 @@ switch($action) {
             $msn = addslashes($msn);
             $email = addslashes($email);
             $site = addslashes($site);
-            $webcam = addslashes($webcam);
             $bio = addslashes($bio);
             $mood = addslashes($mood);
             $sig = addslashes($sig);
@@ -529,9 +526,9 @@ switch($action) {
             }
 
             if ($SETTINGS['regoptional'] == 'on') {
-                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp,  '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '$webcam')");
+                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]',  '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp,  '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u')");
             } else {
-                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, webcam) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '', '', '$self[status]', '', '', '', '$showemail', '$timeoffset1', '', '$avatar', '', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '', '', '$dateformatnew', '', 0, '', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u', '')");
+                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '', '', '$self[status]', '', '', '', '$showemail', '$timeoffset1', '', '$avatar', '', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '', '', '$dateformatnew', '', 0, '', 0, 0, '', '$saveogu2u', '$emailonu2u', '$useoldu2u')");
             }
 
             if ($SETTINGS['notifyonreg'] != 'off') {
@@ -611,16 +608,6 @@ switch($action) {
                     $site = $memberinfo['site'];
                 } else {
                     $site = '';
-                }
-
-                if (strpos($memberinfo['webcam'], 'http') === false) {
-                    $memberinfo['webcam'] = "http://$memberinfo[webcam]";
-                }
-
-                if ($memberinfo['webcam'] != 'http://') {
-                    $webcam = $memberinfo['webcam'];
-                } else {
-                    $webcam = '';
                 }
 
                 if (X_MEMBER && $memberinfo['email'] != '' && $memberinfo['showemail'] == 'yes') {

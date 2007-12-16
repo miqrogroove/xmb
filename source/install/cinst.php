@@ -311,7 +311,6 @@ $db->query("CREATE TABLE ".$tablepre."members (
       `saveogu2u` char(3) NOT NULL default '',
       `emailonu2u` char(3) NOT NULL default '',
       `useoldu2u` char(3) NOT NULL default '',
-      `webcam` varchar(75) NOT NULL default '',
       PRIMARY KEY  (`uid`),
       KEY `username` (username (8)),
       KEY `status` (`status`),
