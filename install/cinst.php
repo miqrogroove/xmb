@@ -414,7 +414,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `boardurl` varchar(60) NOT NULL default '',
       `coppa` char(3) NOT NULL default '',
       `timeformat` smallint(2) NOT NULL default 0,
-      `adminemail` varchar(32) NOT NULL default '',
+      `adminemail` varchar(60) NOT NULL default '',
       `dateformat` varchar(10) NOT NULL default '',
       `sigbbcode` char(3) NOT NULL default '',
       `sightml` char(3) NOT NULL default '',
