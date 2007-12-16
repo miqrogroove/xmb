@@ -388,15 +388,15 @@ if ($action == "settings") {
         $max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
         $lang['spell_checker'] .= $spell_off_reason;
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=settings">
-        <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']?>" align="center">
+        <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
         </tr>
         <?php
         printsetting2($lang['textsitename'], 'sitenamenew', stripslashes($SETTINGS['sitename']), 50);
@@ -413,18 +413,18 @@ if ($action == "settings") {
         printsetting1($lang['gzipcompression'], 'gzipcompressnew', $gzipcompresson, $gzipcompressoff);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings2']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings2']?></font></strong></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['textlanguage']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $langfileselect?></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textlanguage']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><?php echo $langfileselect?></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['texttheme']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $themelist?></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['texttheme']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><?php echo $themelist?></td>
         </tr>
         <?php
         printsetting2($lang['textppp'], 'postperpagenew', ((int)$SETTINGS['postperpage']), 3);
@@ -432,17 +432,17 @@ if ($action == "settings") {
         printsetting2($lang['textmpp'], 'memberperpagenew', ((int)$SETTINGS['memberperpage']), 3);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['texttimeformat']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="radio" value="24" name="timeformatnew" <?php echo $check24?> />&nbsp;<?php echo $lang['text24hour']?>&nbsp;<input type="radio" value="12" name="timeformatnew" <?php echo $check12?> />&nbsp;<?php echo $lang['text12hour']?></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['texttimeformat']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="radio" value="24" name="timeformatnew" <?php echo $check24?> />&nbsp;<?php echo $lang['text24hour']?>&nbsp;<input type="radio" value="12" name="timeformatnew" <?php echo $check12?> />&nbsp;<?php echo $lang['text12hour']?></td>
         </tr>
         <?php
         printsetting2($lang['dateformat'], 'dateformatnew', $SETTINGS['dateformat'], 20);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings3']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings3']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['textsearchstatus'], 'searchstatusnew', $searchon, $searchoff);
@@ -455,10 +455,10 @@ if ($action == "settings") {
         printsetting1($lang['reportpoststatus'], 'reportpostnew', $reportposton, $reportpostoff);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
@@ -475,10 +475,10 @@ if ($action == "settings") {
         printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['reg_on'], 'reg_on', $regon, $regoff);
@@ -497,10 +497,10 @@ if ($action == "settings") {
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
         </tr>
         <?php
         printsetting2($lang['texthottopic'], 'hottopicnew', ((int)$SETTINGS['hottopic']), 3);
@@ -519,10 +519,10 @@ if ($action == "settings") {
         printsetting4($lang['tickercontents'], 'tickercontentsnew', stripslashes($SETTINGS['tickercontents']), 5, 50);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2">&nbsp;</td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $THEME['cattext']?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
@@ -544,7 +544,7 @@ if ($action == "settings") {
         printsetting1($lang['captchaimagecolor'], 'captchaimagecolornew', $captchaimagecolorOn, $captchaimagecolorOff);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -736,7 +736,7 @@ if ($action == "settings") {
             regoptional='$regoptionalnew'
         ");
 
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
     }
 }
 
@@ -750,29 +750,29 @@ if ($action == 'rename') {
         $vUserTo = formVar('frmUserTo');
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
     } else {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form action="cp.php?action=rename" method="post">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
-        <td class="category" colspan="2"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['admin_rename_txt']?></font></strong></td>
+        <td class="category" colspan="2"><strong><font color="<?php echo $cattext?>"><?php echo $lang['admin_rename_txt']?></font></strong></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>" width="22%"><?php echo $lang['admin_rename_userfrom']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" name="frmUserFrom" size="25" /></td>
+        <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['admin_rename_userfrom']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="frmUserFrom" size="25" /></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>" width="22%"><?php echo $lang['admin_rename_userto']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" name="frmUserTo" size="25" /></td>
+        <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['admin_rename_userto']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="frmUserTo" size="25" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" name="renamesubmit" value="<?php echo $lang['admin_rename_txt']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" name="renamesubmit" value="<?php echo $lang['admin_rename_txt']?>" /></td>
         </tr>
         </table>
         </td>
@@ -821,15 +821,15 @@ if ($action == 'forum') {
             $i++;
         }
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=forum">
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
-        <td class="category"><font color="<?php echo $THEME['cattext']?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
+        <td class="category"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
         <?php
         foreach($forums[0] as $forum) {
@@ -840,7 +840,7 @@ if ($action == 'forum') {
                 $off = $selHTML;
             }
             ?>
-            <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td class="smalltxt"><input type="checkbox" name="delete<?php echo $forum['fid']?>" value="<?php echo $forum['fid']?>" />
             &nbsp;<input type="text" name="name<?php echo $forum['fid']?>" value="<?php echo stripslashes($forum['name'])?>" />
             &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $forum['fid']?>" size="2" value="<?php echo $forum['displayorder']?>" />
@@ -865,7 +865,7 @@ if ($action == 'forum') {
                         $off = $selHTML;
                     }
                     ?>
-                    <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+                    <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                     <td class="smalltxt"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="delete<?php echo $subforum['fid']?>" value="<?php echo $subforum['fid']?>" />
                     &nbsp;<input type="text" name="name<?php echo $subforum['fid']?>" value="<?php echo stripslashes($subforum['name'])?>" />
                     &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $subforum['fid']?>" size="2" value="<?php echo $subforum['displayorder']?>" />
@@ -897,10 +897,10 @@ if ($action == 'forum') {
                 $off = $selHTML;
             }
             ?>
-            <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td>&nbsp;</td>
             </tr>
-            <tr bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow">
+            <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
             <td class="smalltxt"><input type="checkbox" name="delete<?php echo $group['fid']?>" value="<?php echo $group['fid']?>" />
             <input type="text" name="name<?php echo $group['fid']?>" value="<?php echo stripslashes($group['name'])?>" />
             &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $group['fid']?>" size="2" value="<?php echo $group['displayorder']?>" />
@@ -918,7 +918,7 @@ if ($action == 'forum') {
                         $off = $selHTML;
                     }
                     ?>
-                    <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+                    <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                     <td class="smalltxt"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="delete<?php echo $forum['fid']?>" value="<?php echo $forum['fid']?>" />
                     &nbsp;<input type="text" name="name<?php echo $forum['fid']?>" value="<?php echo stripslashes($forum['name'])?>" />
                     &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $forum['fid']?>" size="2" value="<?php echo $forum['displayorder']?>" />
@@ -948,7 +948,7 @@ if ($action == 'forum') {
                                 $off = $selHTML;
                             }
                             ?>
-                            <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+                            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                             <td class="smalltxt"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input type="checkbox" name="delete<?php echo $forum['fid']?>" value="<?php echo $forum['fid']?>" />
                             &nbsp;<input type="text" name="name<?php echo $forum['fid']?>" value="<?php echo stripslashes($forum['name'])?>" />
                             &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $forum['fid']?>" size="2" value="<?php echo $forum['displayorder']?>" />
@@ -974,17 +974,17 @@ if ($action == 'forum') {
             }
         }
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow">
+        <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
         <td>&nbsp;</td>
         </tr>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td class="smalltxt"><input type="text" name="newgname" value="<?php echo $lang['textnewgroup']?>" />
         &nbsp; <?php echo $lang['textorder']?> <input type="text" name="newgorder" size="2" />
         &nbsp; <select name="newgstatus">
         <option value="on"><?php echo $lang['texton']?></option><option value="off"><?php echo $lang['textoff']?></option></select></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="smalltxt"><input type="text" name="newfname" value="<?php echo $lang['textnewforum']?>" />
+        <td bgcolor="<?php echo $altbg2?>" class="smalltxt"><input type="text" name="newfname" value="<?php echo $lang['textnewforum']?>" />
         &nbsp; <?php echo $lang['textorder']?> <input type="text" name="newforder" size="2" />
         &nbsp; <select name="newfstatus">
         <option value="on"><?php echo $lang['texton']?></option><option value="off"><?php echo $lang['textoff']?></option></select>
@@ -997,7 +997,7 @@ if ($action == 'forum') {
         </select>
         </td>
         </tr>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td class="smalltxt"><input type="text" name="newsubname" value="<?php echo $lang['textnewsubf']?>" />
         &nbsp; <?php echo $lang['textorder']?> <input type="text" name="newsuborder" size="2" />
         &nbsp; <select name="newsubstatus"><option value="on"><?php echo $lang['texton']?></option><option value="off"><?php echo $lang['textoff']?></option></select>
@@ -1011,7 +1011,7 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="ctrtablerow"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
         </table>
         </td>
@@ -1023,15 +1023,15 @@ if ($action == 'forum') {
         <?php
     } else if ($fdetails && noSubmit('forumsubmit')) {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=forum&amp;fdetails=<?php echo $fdetails?>">
         <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
-        <td class="category" colspan="2"><font color="<?php echo $THEME['cattext']?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
+        <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
         <?php
         $queryg = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fdetails'");
@@ -1132,16 +1132,16 @@ if ($action == 'forum') {
         $forum['description'] = stripslashes($forum['description']);
         ?>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['textforumname']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" name="namenew" value="<?php echo htmlspecialchars_decode($forum['name'])?>" /></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textforumname']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="namenew" value="<?php echo htmlspecialchars_decode($forum['name'])?>" /></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['textdesc']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars_decode($forum['description'])?></textarea></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdesc']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars_decode($forum['description'])?></textarea></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $lang['textallow']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="smalltxt">
+        <td bgcolor="<?php echo $altbg1?>" valign="top"><?php echo $lang['textallow']?></td>
+        <td bgcolor="<?php echo $altbg2?>" class="smalltxt">
         <input type="checkbox" name="allowhtmlnew" value="yes" <?php echo $checked2?> /><?php echo $lang['texthtml']?><br />
         <input type="checkbox" name="allowsmiliesnew" value="yes" <?php echo $checked3?> /><?php echo $lang['textsmilies']?><br />
         <input type="checkbox" name="allowbbcodenew" value="yes" <?php echo $checked4?> /><?php echo $lang['textbbcode']?><br />
@@ -1152,12 +1152,12 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['texttheme']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $themelist?></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['texttheme']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><?php echo $themelist?></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['whopostop1']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><select name="postperm1">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop1']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><select name="postperm1">
         <option value="1" <?php echo $type11?>><?php echo $lang['textpermission1']?>
         <option value="2" <?php echo $type12?>><?php echo $lang['textpermission2']?>
         <option value="3" <?php echo $type13?>><?php echo $lang['textpermission3']?>
@@ -1166,8 +1166,8 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['whopostop2']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><select name="postperm2">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop2']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><select name="postperm2">
         <option value="1" <?php echo $type21?>><?php echo $lang['textpermission1']?>
         <option value="2" <?php echo $type22?>><?php echo $lang['textpermission2']?>
         <option value="3" <?php echo $type23?>><?php echo $lang['textpermission3']?>
@@ -1176,8 +1176,8 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['whoview']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><select name="privatenew">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whoview']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><select name="privatenew">
         <option value="1" <?php echo $type31?>><?php echo $lang['textpermission1']?>
         <option value="2" <?php echo $type32?>><?php echo $lang['textpermission2']?>
         <option value="3" <?php echo $type33?>><?php echo $lang['textpermission3']?>
@@ -1186,19 +1186,19 @@ if ($action == 'forum') {
         </td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['textuserlist']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="4" cols="30" name="userlistnew"><?php echo $forum['userlist']?></textarea></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textuserlist']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="userlistnew"><?php echo $forum['userlist']?></textarea></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['forumpw']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" name="passwordnew" value="<?php echo htmlspecialchars($forum['password'])?>" /></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['forumpw']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="passwordnew" value="<?php echo htmlspecialchars($forum['password'])?>" /></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $THEME['altbg1']?>"><?php echo $lang['textdeleteques']?></td>
-        <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="checkbox" name="delete" value="<?php echo $forum['fid']?>" /></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdeleteques']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="checkbox" name="delete" value="<?php echo $forum['fid']?>" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="ctrtablerow" colspan="2"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" name="forumsubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
         </table>
         </td>
@@ -1282,7 +1282,7 @@ if ($action == 'forum') {
             $newsubname = addslashes($newsubname);
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
         }
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
         $namenew = addslashes(formVar('namenew', false));
         $descnew = addslashes(formVar('descnew', false));
@@ -1322,23 +1322,23 @@ if ($action == 'forum') {
         if ($delete) {
             $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid='$delete'");
         }
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     }
 }
 
 if ($action == "mods") {
     if (noSubmit('modsubmit')) {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=mods">
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textforum']?></font></strong></td>
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textmoderator']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textforum']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textmoderator']?></font></strong></td>
         </tr>
         <?php
         $oldfid = 0;
@@ -1347,13 +1347,13 @@ if ($action == "mods") {
             if ($oldfid != $forum['cat_fid']) {
                 $oldfid = $forum['cat_fid']
                 ?>
-                <tr bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow">
+                <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
                 <td colspan="2"><strong><?php echo html_entity_decode(stripslashes($forum['cat_name']))?></strong></td>
                 </tr>
                 <?php
             }
             ?>
-            <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td><?php echo html_entity_decode(stripslashes($forum['name']))?></td>
             <td><input type="text" name="mod[<?php echo $forum['fid']?>]"" value="<?php echo $forum['moderator']?>" /></td>
             </tr>
@@ -1361,7 +1361,7 @@ if ($action == "mods") {
             $querys = $db->query("SELECT name, fid, moderator FROM ".X_PREFIX."forums WHERE fup='".$forum['fid']."' AND type='sub'");
             while($sub = $db->fetch_array($querys)) {
                 ?>
-                <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+                <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo html_entity_decode(stripslashes($sub['name']))?></em></td>
                 <td><input type="text" name="mod[<?php echo $sub['fid']?>]"" value="<?php echo $sub['moderator']?>" /></td>
                 </tr>
@@ -1370,10 +1370,10 @@ if ($action == "mods") {
         }
         ?>
         <tr>
-        <td colspan="2" class="tablerow" bgcolor="<?php echo $THEME['altbg1']?>"><span class="smalltxt"><?php echo $lang['multmodnote']?></span></td>
+        <td colspan="2" class="tablerow" bgcolor="<?php echo $altbg1?>"><span class="smalltxt"><?php echo $lang['multmodnote']?></span></td>
         </tr>
         <tr>
-        <td colspan="2" class="ctrtablerow" bgcolor="<?php echo $THEME['altbg2']?>"><input type="submit" class="submit" name="modsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td colspan="2" class="ctrtablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="modsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1390,7 +1390,7 @@ if ($action == "mods") {
                 $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");
             }
         }
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';
     }
 }
 
@@ -1399,23 +1399,23 @@ if ($action == "members") {
     if (noSubmit('membersubmit')) {
         if (!$members) {
             ?>
-            <tr bgcolor="<?php echo $THEME['altbg2']?>">
+            <tr bgcolor="<?php echo $altbg2?>">
             <td>
             <form method="post" action="cp.php?action=members&amp;members=search">
             <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
             <tr>
-            <td bgcolor="<?php echo $THEME['bordercolor']?>">
-            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+            <td bgcolor="<?php echo $bordercolor?>">
+            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr>
-            <td class="category" colspan="2"><font color="<?php echo $THEME['cattext']?>"><strong><?php echo $lang['textmembers']?></strong></font></td>
+            <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textmembers']?></strong></font></td>
             </tr>
             <tr class="tablerow">
-            <td bgcolor="<?php echo $THEME['altbg1']?>" width="22%"><?php echo $lang['textsrchusr']?></td>
-            <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" name="srchmem" /></td>
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textsrchusr']?></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="text" name="srchmem" /></td>
             </tr>
             <tr class="tablerow">
-            <td bgcolor="<?php echo $THEME['altbg1']?>" width="22%"><?php echo $lang['textwithstatus']?></td>
-            <td bgcolor="<?php echo $THEME['altbg2']?>">
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textwithstatus']?></td>
+            <td bgcolor="<?php echo $altbg2?>">
             <select name="srchstatus">
             <option value="0"><?php echo $lang['anystatus']?></option>
             <option value="Super Administrator"><?php echo $lang['superadmin']?></option>
@@ -1429,7 +1429,7 @@ if ($action == "members") {
             </td>
             </tr>
             <tr>
-            <td bgcolor="<?php echo $THEME['altbg2']?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" value="<?php echo $lang['textgo']?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" value="<?php echo $lang['textgo']?>" /></td>
             </tr>
             </table>
             </td>
@@ -1441,21 +1441,21 @@ if ($action == "members") {
             <?php
         } else if ($members == "search") {
             ?>
-            <tr bgcolor="<?php echo $THEME['altbg2']?>">
+            <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
             <table cellspacing="0" cellpadding="0" border="0" width="91%" align="center">
             <tr>
-            <td bgcolor="<?php echo $THEME['bordercolor']?>">
-            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+            <td bgcolor="<?php echo $bordercolor?>">
+            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr class="category">
-            <td align="center" width="3%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textdeleteques']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textusername']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textnewpassword']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textposts']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textstatus']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcusstatus']?></font></strong></td>
-            <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textbanfrom']?></font></strong></td>
+            <td align="center" width="3%"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textnewpassword']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textposts']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textstatus']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textcusstatus']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textbanfrom']?></font></strong></td>
             </tr>
             <?php
             $srchmem = formVar('srchmem');
@@ -1517,7 +1517,7 @@ if ($action == "members") {
                     $pending = '';
                 }
                 ?>
-                <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+                <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="confirmActionCheckbox('<?php echo $lang['confirmDeleteUser']?>', this, true, false);" value="<?php echo $member['uid']?>" /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo $member['username']?>"><?php echo $member['username']?></a>
                 <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo $member['username']?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
@@ -1547,7 +1547,7 @@ if ($action == "members") {
             }
             ?>
             <tr>
-            <td bgcolor="<?php echo $THEME['altbg2']?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
             </tr>
             </table>
             </td>
@@ -1623,24 +1623,24 @@ if ($action == "members") {
                 }
             }
         }
-        echo '<tr bgcolor="'.$THEME['altbg2'].'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';
     }
 }
 
 if ($action == "ipban") {
     if (noSubmit('ipbansubmit')) {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=ipban">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-        <tr><td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <tr><td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textdeleteques']?></font></strong></td>
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textip']?>:</font></strong></td>
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
-        <td><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textadded']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']?>:</font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
         </tr>
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."banned ORDER BY dateline");
@@ -1654,7 +1654,7 @@ if ($action == "ipban") {
             $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
             $theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
             ?>
-            <tr class="tablerow" bgcolor="<?php echo $THEME['altbg1']?>">
+            <tr class="tablerow" bgcolor="<?php echo $altbg1?>">
             <td><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
             <td><?php echo $theip?></td>
             <td><?php echo @gethostbyaddr($theip)?></td>
@@ -1671,9 +1671,9 @@ if ($action == "ipban") {
             $warning = '';
         }
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
-        <td colspan="4" class="tablerow" bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $lang['textnewip']?>
-        <input type="text" name="newip1" size="3" maxlength="3" bgcolor="<?php echo $THEME['altbg2']?>" />.<input type="text" name="newip2" size="3" maxlength="3" bgcolor="<?php echo $THEME['altbg2']?>" />.<input type="text" name="newip3" size="3" maxlength="3" bgcolor="<?php echo $THEME['altbg2']?>" />.<input type="text" name="newip4" size="3" maxlength="3" bgcolor="<?php echo $THEME['altbg2']?>" /></td>
+        <tr bgcolor="<?php echo $altbg2?>">
+        <td colspan="4" class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $lang['textnewip']?>
+        <input type="text" name="newip1" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip2" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip3" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip4" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" /></td>
         </tr>
         </table>
         </td>
@@ -1737,7 +1737,7 @@ if ($action == "ipban") {
                 }
             }
         }
-        echo '<tr bgcolor="'.$THEME['altbg2'].'"><td class="ctrtablerow">'.$self['status'].'</td></tr>';
+        echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$self['status'].'</td></tr>';
     }
 }
 
@@ -1792,11 +1792,11 @@ if ($action == "upgrade") {
             }
             echo '<br />';
             ?>
-            <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']?>" align="center">
+            <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
             <tr>
-            <td bgcolor="<?php echo $THEME['bordercolor']?>">
-            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
-            <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+            <td bgcolor="<?php echo $bordercolor?>">
+            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
             <?php
             $xn = strtoupper($explode[$num]);
@@ -1818,11 +1818,11 @@ if ($action == "upgrade") {
         }
         ?>
         <br />
-        <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']?>" align="center">
+        <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
-        <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['upgradesuccess']?></td>
         </tr>
         </table>
@@ -1835,30 +1835,30 @@ if ($action == "upgrade") {
         exit();
     } else {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=upgrade" enctype="multipart/form-data">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
-        <td class="tablerow" bgcolor="<?php echo $THEME['altbg1']?>" colspan="2"><strong><?php echo $lang['textupgrade']?></strong></td>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>" colspan="2"><strong><?php echo $lang['textupgrade']?></strong></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow" colspan="2"><?php echo $lang['upgrade']?></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow" colspan="2"><?php echo $lang['upgrade']?></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow" valign="top"><textarea cols="85" rows="10" name="upgrade"></textarea></td>
+        <td bgcolor="<?php echo $altbg1?>" class="tablerow" valign="top"><textarea cols="85" rows="10" name="upgrade"></textarea></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow" colspan="2"><input type="file" name="sql_file" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow" colspan="2"><input type="file" name="sql_file" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow" colspan="2"><?php echo $lang['upgradenote']?></td>
+        <td bgcolor="<?php echo $altbg1?>" class="tablerow" colspan="2"><?php echo $lang['upgradenote']?></td>
         </tr>
         <tr>
-        <td class="ctrtablerow" bgcolor=<?php echo $THEME['altbg2']?> colspan="2"><input type="submit" class="submit" name="upgradesubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td class="ctrtablerow" bgcolor=<?php echo $altbg2?> colspan="2"><input type="submit" class="submit" name="upgradesubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1924,7 +1924,7 @@ if ($action == "search") {
             }
         }
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td align="left" colspan="2">
         <strong><?php echo $found?></strong> <?php echo $lang['beenfound']?>
         <br />
@@ -1934,10 +1934,10 @@ if ($action == "search") {
         foreach($list as $num=>$val) {
             ?>
             <tr class="tablerow" width="5%">
-            <td align="left" bgcolor="<?php echo $THEME['altbg2']?>">
+            <td align="left" bgcolor="<?php echo $altbg2?>">
             <strong><?php echo ($num+1)?>.</strong>
             </td>
-            <td align="left" width="95%" bgcolor="<?php echo $THEME['altbg1']?>">
+            <td align="left" width="95%" bgcolor="<?php echo $altbg1?>">
             <?php echo html_entity_decode(stripslashes($val))?>
             </td>
             </tr>
@@ -1945,17 +1945,17 @@ if ($action == "search") {
          }
     } else {
         ?>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>">
+        <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=search">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
-        <td bgcolor="<?php echo $THEME['bordercolor']?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td colspan=2><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['insertdata']?>:</font></strong></td>
+        <td colspan=2><strong><font color="<?php echo $cattext?>"><?php echo $lang['insertdata']?>:</font></strong></td>
         </tr>
-        <tr bgcolor="<?php echo $THEME['altbg2']?>" class="tablerow">
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td valign="top"><div align="center"><br />
         <?php echo $lang['userip']?><br /><input type="text" name="userip" /></input><br /><br />
         <?php echo $lang['postip']?><br /><input type="text" name="postip" /></input><br /><br />
