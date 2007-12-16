@@ -1033,7 +1033,6 @@ $lang['textusesig'] = "Use signature?";
 $lang['textviewpro'] = "View Profile";
 $lang['textviews'] = "Views:";
 $lang['textvote'] = "Vote:";
-$lang['textwebcam'] = "WebCam:";
 $lang['textwidth'] = "Table Width:";
 $lang['textwithstatus'] = "with this status:";
 $lang['textyahoo'] = "Yahoo:";

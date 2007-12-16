@@ -242,10 +242,6 @@ $lang[bestmember]
 <td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
 <td bgcolor="$altbg2"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
 </tr>
@@ -2695,10 +2691,6 @@ $captcharegcheck
 <td bgcolor="$altbg2"><input type="text" name="site" size="25" value="" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2"><input type="text" name="webcam" size="25" value="" /></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
 <td bgcolor="$altbg2"><input type="text" name="aim" size="25" value="" /></td>
 </tr>
@@ -2781,10 +2773,6 @@ $emailblock
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
 <td bgcolor="$altbg2"><a href="$site" target="_blank">$site</a></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2"><a href="$webcam" target="_blank">$webcam</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textaim]</td>
@@ -2988,10 +2976,6 @@ $multipage
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
 <td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textwebcam]</td>
-<td bgcolor="$altbg2"><input type="text" name="newwebcam" size="25" value="$member[webcam]" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textaim]</td>

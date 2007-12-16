@@ -438,8 +438,6 @@ if ($action == 'profile') {
         $email = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
         $newsite = formVar('newsite');
         $site = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
-        $newwebcam = formVar('newwebcam');
-        $webcam = $newwebcam ? checkInput($newwebcam, 'no', 'no', 'javascript', false) : '';
         $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
         $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
         $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
@@ -463,7 +461,6 @@ if ($action == 'profile') {
         $msn = addslashes($msn);
         $email = addslashes($email);
         $site = addslashes($site);
-        $webcam = addslashes($webcam);
         $bio = addslashes($bio);
         $mood = addslashes($mood);
         $sig = addslashes($sig);
@@ -494,7 +491,7 @@ if ($action == 'profile') {
             $pwtxt = '';
         }
 
-        $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', webcam='$webcam' WHERE username='$xmbuser'");
+        $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$xmbuser'");
 
         echo '<center><span class="mediumtxt">'.$lang['usercpeditpromsg'].'</span></center>';
         redirect('memcp.php', 2.5, X_REDIRECT_JS);
