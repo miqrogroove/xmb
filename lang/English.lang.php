@@ -730,7 +730,7 @@ $lang['textfaqans8'] = "By clicking on the 'Search' button in the menu. Then inp
 $lang['textfaqans9'] = "First click on the <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">U2U</a> button in the menu, another smaller window will pop-up, from there you can access the 'Send a U2U' screen, by clicking on it at the top. Place the users name in the 'To' field, and then insert a subject and a message and click 'Send'. ";
 $lang['textfaqextra'] = "Extra";
 $lang['textfaqstatus'] = "FAQ Status:";
-$lang['textfavorites'] = "favorites";
+$lang['textfavorites'] = "Favorites";
 $lang['textfeb'] = "February";
 $lang['textfilename'] = "Filename:";
 $lang['textfilesize'] = "Filesize:";

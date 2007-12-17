@@ -2895,7 +2895,7 @@ $nextlink
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="5" class="category"><font color="$cattext">$lang[textsortby]</font></td>
+<td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
@@ -3196,7 +3196,7 @@ $favsbtn
 
 |#*XMB TEMPLATE FILE*#|memcp_favs_none|#*XMB TEMPLATE*#|
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6">$lang[nofavsmsg]</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="6">$lang[nofavsmsg]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_favs_row|#*XMB TEMPLATE*#|
@@ -3231,7 +3231,7 @@ $favsbtn
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_none|#*XMB TEMPLATE*#|
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="6">$lang[nosubmsg]</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="6">$lang[nosubmsg]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
@@ -3297,17 +3297,17 @@ $subsbtn
 <td colspan="6"><font color="$cattext"><strong>$lang[textbriefsummary] $xmbuser - [$self[status]]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[textusername]</td>
+<td bgcolor="$altbg1">$lang[textusername]:</td>
 <td bgcolor="$altbg2">$member[username]</td>
 <td bgcolor="$altbg1">$lang[textposts]</td>
 <td bgcolor="$altbg2">$member[postnum]</td>
-<td bgcolor="$altbg1" valign="top">$lang[mcpuid]</td>
+<td bgcolor="$altbg1" valign="top">$lang[mcpuid]:</td>
 <td bgcolor="$altbg2" valign="top">$member[uid]</td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" valign="top">$lang[textcusstatus]</td>
+<td bgcolor="$altbg1" valign="top">$lang[textcusstatus]:</td>
 <td bgcolor="$altbg2" valign="top">$member[customstatus]</td>
-<td bgcolor="$altbg1" valign="top">$lang[textemail]</td>
+<td bgcolor="$altbg1" valign="top">$lang[textemail]:</td>
 <td bgcolor="$altbg2" valign="top">$member[email]</td>
 <td bgcolor="$altbg1" valign="top">$lang[mood]</td>
 <td bgcolor="$altbg2" valign="top">$member[mood]</td>
@@ -4321,7 +4321,7 @@ $forumlist
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="5" class="category"><font color="$cattext">$lang[textsortby]</font></td>
+<td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
