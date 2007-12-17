@@ -1241,17 +1241,17 @@ if ($action == 'forum') {
 
         if ($newfname != $lang['textnewforum']) {
             $newfname = addslashes($newfname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting, mt_open, mt_close) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off', '', '')");
         }
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting, mt_open, mt_close) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off', '', '')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {
             $newsubname = addslashes($newsubname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting, mt_open, mt_close) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off', '', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
