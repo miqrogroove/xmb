@@ -2942,7 +2942,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|memcp_profile|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=profile" name="reg">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
@@ -3171,7 +3171,7 @@ $lang[textsent] $u2udateline</span>
 |#*XMB TEMPLATE FILE*#|memcp_favs|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=favorites">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
@@ -3237,7 +3237,7 @@ $favsbtn
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=subscriptions">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
@@ -3274,20 +3274,27 @@ $subsbtn
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home|#*XMB TEMPLATE*#|
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="tablerow">
-<td bgcolor="$altbg1">
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td align="center" colspan="2" style="padding-bottom: 3px"><font class="mediumtxt">$lang[usercpwelcome]</font></td>
+<tr class="category">
+<td><font color="$cattext"><strong>$lang[textusercp]</strong></font></td>
 </tr>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2">$lang[evalusercpwelcome]</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br />
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr class="header">
-<td colspan="6" class="category"><font color="$cattext">$lang[textbriefsummary] $self[username] - [$self[status]]</font></td>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr class="category">
+<td colspan="6"><font color="$cattext"><strong>$lang[textbriefsummary] $xmbuser - [$self[status]]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textusername]</td>
@@ -3298,8 +3305,8 @@ $subsbtn
 <td bgcolor="$altbg2" valign="top">$member[uid]</td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" valign="top">$lang[cp_subscription]</td>
-<td bgcolor="$altbg2" valign="top">$member[newsletter]</td>
+<td bgcolor="$altbg1" valign="top">$lang[textcusstatus]</td>
+<td bgcolor="$altbg2" valign="top">$member[customstatus]</td>
 <td bgcolor="$altbg1" valign="top">$lang[textemail]</td>
 <td bgcolor="$altbg2" valign="top">$member[email]</td>
 <td bgcolor="$altbg1" valign="top">$lang[mood]</td>
@@ -3313,57 +3320,11 @@ $subsbtn
 <td bgcolor="$altbg1" valign="top">$lang[texttheme]</td>
 <td bgcolor="$altbg2" valign="top">$THEME[name]</td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" valign="top">$lang[textcusstatus]</td>
-<td bgcolor="$altbg2" valign="top">$member[customstatus]</td>
-<td bgcolor="$altbg1" valign="top">&nbsp;</td>
-<td bgcolor="$altbg2" valign="top">&nbsp;</td>
-<td bgcolor="$altbg1" valign="top">&nbsp;</td>
-<td bgcolor="$altbg2" valign="top">&nbsp;</td>
-</tr>
 </table>
 </td>
 </tr>
 </table>
 <br />
-<br />
-</td>
-</tr>
-</table></td>
-</tr>
-</table>
-<br />
-<table width="$tablewidth" align="center">
-<tr>
-<td valign="top">
-<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
-<tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category"><font color="$cattext"><strong>$lang[textbuddylist]</strong></font></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg1"><table width="98%">
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textonline]</strong></td>
-</tr>
-$buddys[online]
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textoffline]</strong></td>
-</tr>
-$buddys[offline]
-</table>
-</td>
-</tr>
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2"><strong><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);">$lang[launchbuddylist]</a></strong></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-<td valign="top">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3378,8 +3339,8 @@ $buddys[offline]
 <td>$lang[mcpread]</td>
 </tr>
 $messages
-<tr>
-<td colspan="4" class="header" valign="top"><a href="#" onclick ="Popup('u2u.php','Window', 700, 450);">[$lang[viewcompleteinbox]]</a></td>
+<tr class="header">
+<td colspan="4" valign="top"><a href="#" onclick ="Popup('u2u.php','Window', 700, 450);">[$lang[viewcompleteinbox]]</a></td>
 </tr>
 </table>
 </td>
@@ -3393,17 +3354,14 @@ $messages
 <tr class="category">
 <td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
-<tr class="header">
-<td align="center" width="4%">$lang[texticon]</td>
+<tr class="header" align="center">
+<td width="4%">$lang[texticon]</td>
 <td width="43%">$lang[textsubject]</td>
 <td width="24%">$lang[textforum]</td>
-<td align="center" width="6%">$lang[textreplies]</td>
+<td width="6%">$lang[textreplies]</td>
 <td width="19%">$lang[textlastpost]</td>
 </tr>
 $favs
-</table>
-</td>
-</tr>
 </table>
 </td>
 </tr>
@@ -4734,5 +4692,63 @@ $lang[sortby]
 </form>
 </td>
 </tr>
+
+|#*XMB TEMPLATE FILE*#|memcp_home_layout|#*XMB TEMPLATE*#|
+<table cellspacing="0" cellpadding="0" border="0" width="$THEME[tablewidth]" align="center">
+<tr>
+<td valign="top">
+<table cellspacing="0" cellpadding="0" border="0" width="180px" align="center">
+<tr>
+<td bgcolor="$THEME[bordercolor]">
+<table border="0" cellspacing="$THEME[borderwidth]" cellpadding="$THEME[tablespace]" width="100%">
+$menu
+</table>
+</td>
+</tr>
+</table>
+<br />
+<table cellspacing="0" cellpadding="0" border="0" width="180px" align="center">
+<tr>
+<td bgcolor="$THEME[bordercolor]">
+<table border="0" cellspacing="$THEME[borderwidth]" cellpadding="$THEME[tablespace]" width="100%">
+<tr class="category">
+<td colspan="2" align="center"><font color="$THEME[cattext]"><strong>$lang[textbuddylist]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$THEME[altbg2]" colspan="2"><strong>$lang[textonline]</strong></td>
+</tr>
+$buddys[online]
+<tr class="tablerow">
+<td bgcolor="$THEME[altbg2]" colspan="2"><strong>$lang[textoffline]</strong></td>
+</tr>
+$buddys[offline]
+<tr class="ctrtablerow">
+<td bgcolor="$THEME[altbg2]" colspan="2"><strong><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);">$lang[launchbuddylist]</a></strong></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+<td width="10px">&nbsp;</td>
+<td width="100%" valign="top" height="100%">$output</td>
+</tr>
+</table>
+
+|#*XMB TEMPLATE FILE*#|memcp_outputmsg|#*XMB TEMPLATE*#|
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+<tr>
+<td bgcolor="$THEME[bordercolor]">
+<table border="0" cellspacing="$THEME[borderwidth]" cellpadding="$THEME[tablespace]" width="100%">
+<tr class="category">
+<td width="100%"><font color="$THEME[cattext]"><strong>$lang[message]</strong></font></td>
+</tr>
+<tr class="ctrtablerow">
+<td bgcolor="$THEME[altbg1]" class="mediumtxt" width="100%">$outputmsg</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 
 |#*XMB TEMPLATE FILE*#|
