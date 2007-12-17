@@ -407,7 +407,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `memliststatus` char(3) NOT NULL default '',
       `sitename` varchar(50) NOT NULL default '',
       `siteurl` varchar(60) NOT NULL default '',
-      `avastatus` varchar(4) NOT NULL default '',
+      `avastatus` set('on','off') NOT NULL default 'on',
       `u2uquota` smallint(5) NOT NULL default 0,
       `gzipcompress` varchar(30) NOT NULL default '',
       `boardurl` varchar(60) NOT NULL default '',

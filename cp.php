@@ -187,14 +187,8 @@ if ($action == "settings") {
         $index_statson = $index_statsoff = '';
         settingHTML('index_stats', $index_statson, $index_statsoff);
 
-        $avataron = $avataroff = $avatarlist = '';
-        if ($SETTINGS['avastatus'] == 'on') {
-            $avataron = $selHTML;
-        } else if ($avastatus == 'list') {
-            $avatarlist = $selHTML;
-        } else {
-            $avataroff = $selHTML;
-        }
+        $avataron = $avataroff = '';
+        settingHTML('avastatus', $avastatuson, $avastatusoff);
 
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
@@ -470,7 +464,7 @@ if ($action == "settings") {
         printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
-        printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
+        printsetting1($lang['textavastatus'], 'avastatusnew', $avastatuson, $avastatusoff);
         printsetting1($lang['resetSigDesc'], 'resetSigNew', $resetSigOn, $resetSigOff);
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);

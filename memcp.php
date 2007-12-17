@@ -41,7 +41,6 @@ loadtemplates(
 'memcp_home_u2u_none',
 'memcp_home_u2u_row',
 'memcp_profile',
-'memcp_profile_avatarlist',
 'memcp_profile_avatarurl',
 'memcp_subscriptions',
 'memcp_subscriptions_button',
@@ -334,21 +333,8 @@ if ($action == 'profile') {
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
         }
 
-        if ($SETTINGS['avastatus'] == 'list')  {
-            $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-            $dir1 = opendir(ROOT.'images/avatars');
-            while($avatar1 = readdir($dir1)) {
-                if (is_file(ROOT.'images/avatars/'.$avatar1)) {
-                    $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
-                }
-            }
-            $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
-            $avatarbox = '<select name="newavatar" onchange="document.images.avatarpic.src=this[this.selectedIndex].value;">'.$avatars.'</select>';
-            eval('$avatar = "'.template('memcp_profile_avatarlist').'";');
-            closedir($dir1);
-        }
-
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+
         eval('echo stripslashes("'.template('memcp_profile').'");');
     }
 

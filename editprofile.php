@@ -30,7 +30,6 @@ require 'header.php';
 
 loadtemplates(
 'memcp_profile_avatarurl',
-'memcp_profile_avatarlist',
 'admintool_editprofile'
 );
 
@@ -154,20 +153,6 @@ if (noSubmit('editsubmit')) {
         eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
     }
 
-    if ($SETTINGS['avastatus'] == 'list')  {
-        $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-        $dir1 = opendir(ROOT.'images/avatars');
-        while($avatar1 = readdir($dir1)) {
-            if (is_file(ROOT.'images/avatars/'.$avatar1)) {
-                $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
-            }
-        }
-        $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
-        $avatarbox = '<select name="newavatar" onchange="document.images.avatarpic.src=this[this.selectedIndex].value;">'.$avatars.'</select>';
-        eval('$avatar = "'.template('memcp_profile_avatarlist').'";');
-        closedir($dir1);
-    }
-
     $lang['searchusermsg'] = str_replace('*USER*', $user, $lang['searchusermsg']);
 
     $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
@@ -176,6 +161,7 @@ if (noSubmit('editsubmit')) {
 } else {
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
     $member = $db->fetch_array($query);
+    $db_>free_result($query);
 
     if (!$member['username']) {
         error($lang['badname'], false);
