@@ -1684,7 +1684,7 @@ $multipage
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_nothreads|#*XMB TEMPLATE*#|
-<tr class="tablerow">
+<tr class="ctrtablerow">
 <td colspan="11" bgcolor="$altbg2">$lang[noposts]</td>
 </tr>
 
@@ -3114,7 +3114,7 @@ $dayselect
 </td>
 </tr>
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpro]" /></td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="editsubmit" value="$lang[textsubmitchanges]" /></td>
 </tr>
 </table>
 </td>
@@ -3270,7 +3270,7 @@ $subsbtn
 
 |#*XMB TEMPLATE FILE*#|memcp_home_u2u_none|#*XMB TEMPLATE*#|
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="4">$lang[nou2umsg]</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="4">$lang[nou2umsg]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home|#*XMB TEMPLATE*#|
@@ -3339,9 +3339,6 @@ $subsbtn
 <td>$lang[mcpread]</td>
 </tr>
 $messages
-<tr class="header">
-<td colspan="4" valign="top"><a href="#" onclick ="Popup('u2u.php','Window', 700, 450);">[$lang[viewcompleteinbox]]</a></td>
-</tr>
 </table>
 </td>
 </tr>
@@ -4165,7 +4162,7 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 
 |#*XMB TEMPLATE FILE*#|memcp_home_favs_none|#*XMB TEMPLATE*#|
 <tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="5">$lang[nofavsmsg]</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="5">$lang[nofavsmsg]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home_favs_row|#*XMB TEMPLATE*#|
