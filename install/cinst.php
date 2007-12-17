@@ -439,7 +439,6 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `notifyonreg` SET('off','u2u','email') NOT NULL default 'off',
       `subject_in_title` char(3) NOT NULL default '',
       `def_tz` decimal(4,2) NOT NULL default '0.00',
-      `indexshowbar` tinyint(2) NOT NULL default 2,
       `resetsigs` char(3) NOT NULL default '',
       `pruneusers` smallint(3) NOT NULL default 0,
       `ipreg` char(3) NOT NULL default 'on',
@@ -689,7 +688,7 @@ $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Administrator', -1, 9,
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."settings");
-$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off', 'off', 'on', 'on', 'on');");
+$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'on', 'off', 'off', '0.00', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off', 'off', 'on', 'on', 'on');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."smilies");

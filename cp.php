@@ -203,19 +203,6 @@ if ($action == "settings") {
             $check12 = $cheHTML;
         }
 
-        $indexShowBarCats = $indexShowBarTop = $indexShowBarNone = false;
-        switch($SETTINGS['indexshowbar']) {
-            case 1:
-                $indexShowBarCats = true;
-                break;
-            case 3:
-                $indexShowBarNone = true;
-                break;
-            default:
-                $indexShowBarTop = true;
-                break;
-        }
-
         $notifycheck[0] = $notifycheck[1] = $notifycheck[2] = false;
         if ($SETTINGS['notifyonreg'] == 'off') {
             $notifycheck[0] = true;
@@ -454,7 +441,6 @@ if ($action == "settings") {
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
-        printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
         printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
@@ -579,7 +565,6 @@ if ($action == "settings") {
         $memliststatusnew = formOnOff('memliststatusnew');
         $coppanew = formOnOff('coppanew');
         $reportpostnew = formOnOff('reportpostnew');
-        $indexShowBarNew = formInt('indexShowBarNew');
         $allowrankeditnew = formOnOff('allowrankeditnew');
         $subjectInTitleNew = formOnOff('subjectInTitleNew');
         $whos_on = formOnOff('whos_on');
@@ -697,7 +682,6 @@ if ($action == "settings") {
             footer_options='$footer_options',
             allowrankedit='$allowrankeditnew',
             notifyonreg='$notifyonregnew',
-            indexshowbar='$indexShowBarNew',
             subject_in_title='$subjectInTitleNew',
             def_tz='$def_tz_new',
             resetsigs='$resetSigNew',
