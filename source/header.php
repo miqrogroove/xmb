@@ -1,9 +1,10 @@
 <?php
 /**
- * XMB 1.9.8 Engage Final
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP1
  *
- * Developed By The XMB Group
- * Copyright (c) 2001-2007, The XMB Group
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -21,8 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -42,13 +42,13 @@ if (!defined('ROOT')) {
 
 // Resolve Server specific issues
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-switch ($server) {
-    case 'Aby':     // Abyss web server
+switch($server) {
+    case 'Aby': // Abyss web server
         $protocol = (getenv('HTTPS') == 'off') ? ('http://') : ('https://');
         $query = (getenv('QUERY_STRING')) ? ('?'.getenv('QUERY_STRING')) : ('');
         $url = $protocol.getenv('SERVER_NAME').getenv('SCRIPT_NAME').$query;
         break;
-    default:        // includes Apache and IIS using module and CGI forms
+    default: // includes Apache and IIS using module and CGI forms
         $url = $_SERVER['REQUEST_URI'];
 }
 
@@ -57,30 +57,31 @@ require ROOT.'include/global.inc.php';
 require ROOT.'include/validate.inc.php';
 
 // Initialising certain key variables. These are default values, please don't change them!
-$cookiepath     = '';
-$cookiedomain   = '';
-$mtime          = explode(" ", microtime());
-$starttime      = $mtime[1] + $mtime[0];
-$onlinetime     = time();
-$bbcodescript   = '';
-$threadSubject  = '';
-$self           = array();
-$user           = (isset($user)) ? $user : '';
-$SETTINGS       = array();
-$THEME          = array();
-$links          = array();
-$lang           = array();
-$plugname       = array();
-$plugadmin      = array();
-$plugurl        = array();
-$plugimg        = array();
-$footerstuff    = array();
-$mailer         = array();
-$selHTML        = 'selected="selected"';
-$cheHTML        = 'checked="checked"';
-$filesize       = 0;
-$filename       = '';
-$filetype       = '';
+$cookiepath = '';
+$cookiedomain = '';
+$mtime = explode(" ", microtime());
+$starttime = $mtime[1] + $mtime[0];
+$onlinetime = time();
+$bbcodescript = '';
+$threadSubject = '';
+$self = array();
+$user = (isset($user)) ? $user : '';
+$SETTINGS = array();
+$THEME = array();
+$links = array();
+$lang = array();
+$plugname = array();
+$plugadmin = array();
+$plugurl = array();
+$plugimg = array();
+$footerstuff = array();
+$mailer = array();
+$selHTML = 'selected="selected"';
+$cheHTML = 'checked="checked"';
+$filesize = 0;
+$filename = '';
+$filetype = '';
+$quickjump = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -97,70 +98,72 @@ if (DEBUG) {
 
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
-$versioncompany = 'iEntry & The XMB Group';
-$versionshort   = "XMB 1.9.8";
+$versioncompany = 'The XMB Group';
+$versionshort = "XMB 1.9.8";
 $versiongeneral = 'XMB 1.9.8 Engage';
-$copyright      = '2007';
+$copyright = '2007-2008';
 if ($show_full_info) {
-    $alpha        = '';
-    $beta         = '';
-    $gamma        = 'Pre-Final';
-    $service_pack = '';
-    $versionbuild = 200707062320;
-    $versionlong  = 'Powered by '.$versiongeneral.' ('.$alpha.$beta.$gamma.$service_pack.')'.(DEBUG === true ? ' (Debug)' : '');
+    $alpha = '';
+    $beta = '';
+    $gamma = 'Final';
+    $service_pack = ' SP1';
+    $versionbuild = 20071212;
+    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
-    $alpha        = '';
-    $beta         = '';
-    $gamma        = '';
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
     $service_pack = '';
     $versionbuild = '[HIDDEN]';
-    $versionlong  = "Powered by XMB".(DEBUG === true ? ' (Debug)' : '');
+    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
 }
 
 // discover the most likely browser
-//  so we can use bbcode specifically made for it
-//  this allows the use of various nice new features in eg mozilla
-//  while others are available via IE and/or opera
-$browser = 'mozilla'; // default to mozilla for now
+// so we can use bbcode specifically made for it
+// this allows the use of various nice new features in eg mozilla
+// while others are available via IE and/or opera
+$browser = 'opera'; // default to opera for now
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
-    define('IS_MOZILLA',true);
+    define('IS_MOZILLA', true);
     $browser = 'mozilla';
 }
 
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
-    define('IS_OPERA',  true);
+    define('IS_OPERA', true);
     $browser = 'opera';
 }
 
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], '.NET CLR')) {
-    define('IS_IE',     true);
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
+    define('IS_IE', true);
     $browser = 'ie';
 }
 
-if(!defined('IS_MOZILLA')) {
-    define('IS_MOZILLA',false);
+// Fix provided by whinpo :)
+// Browser incompatability regarding insertion.
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+    define('IS_IE', true);
+    $browser = 'ie';
+}
+
+if (!defined('IS_MOZILLA')) {
+    define('IS_MOZILLA', false);
 }
 
 if (!defined('IS_OPERA')) {
-    define('IS_OPERA',  false);
+    define('IS_OPERA', false);
 }
 
 if (!defined('IS_IE')) {
-    define('IS_IE',     false);
-}
-
-// sanity check maximum registrations
-if (!isset($max_reg_day) || $max_reg_day < 1 || $max_reg_day > 100) {
-    $max_reg_day = 25;
+    define('IS_IE', false);
 }
 
 if (!file_exists(ROOT.'db/'.$database.'.php')) {
     die('Error: XMB is not installed, or is configured incorrectly. <a href="install/index.php">Click Here to install XMB</a>');
 }
-require_once(ROOT.'db/'.$database.'.php');
+require ROOT.'db/'.$database.'.php';
 $oToken = new page_token();
 $oToken->init();
-require_once(ROOT.'include/functions.inc.php');
+require ROOT.'include/functions.inc.php';
 
 // initialize navigation
 $navigation = '';
@@ -190,6 +193,10 @@ if (file_exists('./fixhack.php') && !@unlink('./fixhack.php')) {
     exit('<h1>Error:</h1><br />The hack repair tool ("./fixhack.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
+if (file_exists('./Upgrade/') && !@unlink('./Upgrade/')) {
+    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+}
+
 if (file_exists('./upgrade/') && !@unlink('./upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
@@ -216,7 +223,7 @@ if ($ipcheck == 'on') {
 // Checks for various variables in the URL, if any of them is found, script is halted
 $url_check = Array('status=', 'xmbuser=', 'xmbpw=', '<script');
 $url = urldecode($url);
-foreach ($url_check as $name) {
+foreach($url_check as $name) {
     if (strpos(strtolower($url), $name)) {
         exit();
     }
@@ -248,7 +255,7 @@ $tables = array(
     'vote_voters'
 );
 
-foreach ($tables as $name) {
+foreach($tables as $name) {
     ${'table_'.$name} = $tablepre.$name;
 }
 
@@ -287,7 +294,7 @@ put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $coo
 
 if (isset($xmblvb)) {
     $thetime = $xmblvb;
-} elseif (isset($xmblva)) {
+} else if (isset($xmblva)) {
     $thetime = $xmblva;
 } else {
     $thetime = $onlinetime;
@@ -304,7 +311,7 @@ if (isset($oldtopics)) {
 
 // Make all settings global, and put them in the $SETTINGS[] array
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
-foreach ($db->fetch_array($squery) as $key => $val) {
+foreach($db->fetch_array($squery) as $key => $val) {
     $$key = $val;
     $SETTINGS[$key] = $val;
 }
@@ -335,7 +342,7 @@ if ($xmbuser != '') {
 }
 
 if ($q) {
-    foreach ($userrec as $key => $val) {
+    foreach($userrec as $key => $val) {
         $self[$key] = $val;
     }
 
@@ -343,35 +350,37 @@ if ($q) {
     define('X_GUEST', false);
 
     $timeoffset = $self['timeoffset'];
-    $themeuser  = $self['theme'];
-    $status     = $self['status'];
-    $tpp        = $self['tpp'];
-    $ppp        = $self['ppp'];
-    $memtime    = $self['timeformat'];
-    $memdate    = $self['dateformat'];
-    $sig        = $self['sig'];
-    $invisible  = $self['invisible'];
-    $time       = $onlinetime;
-    $langfile   = ($self['langfile'] == "" || !file_exists("lang/$self[langfile].lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
+    $themeuser = $self['theme'];
+    $status = $self['status'];
+    $tpp = $self['tpp'];
+    $ppp = $self['ppp'];
+    $memtime = $self['timeformat'];
+    $memdate = $self['dateformat'];
+    $sig = $self['sig'];
+    $invisible = $self['invisible'];
+    $time = $onlinetime;
+    $langfile = ($self['langfile'] == "" || !file_exists("lang/$self[langfile].lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
 
     if (!empty($theme)) {
         $themeuser = $self['theme'];
     }
+
     $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
-}else{
+} else {
     define('X_MEMBER', false);
     define('X_GUEST', true);
+
     $timeoffset = $SETTINGS['def_tz'];
-    $themeuser  = '';
-    $status     = 'member';
-    $tpp        = $SETTINGS['topicperpage'];
-    $ppp        = $SETTINGS['postperpage'];
-    $memtime    = '';
-    $memdate    = '';
-    $sig        = '';
-    $invisible  = 0;
-    $time       = $onlinetime;
-    $langfile   = $SETTINGS['langfile'];
+    $themeuser = '';
+    $status = 'member';
+    $tpp = $SETTINGS['topicperpage'];
+    $ppp = $SETTINGS['postperpage'];
+    $memtime = '';
+    $memdate = '';
+    $sig = '';
+    $invisible = 0;
+    $time = $onlinetime;
+    $langfile = $SETTINGS['langfile'];
     $self['ban'] = '';
     $self['sig'] = '';
 }
@@ -390,49 +399,48 @@ if ($memtime == '') {
     }
 }
 
-// Fix by John Briggs Begin
 $role = array();
 $role['sadmin'] = false;
-$role['admin']  = false;
-$role['smod']   = false;
-$role['mod']    = false;
-$role['staff']  = false;
+$role['admin'] = false;
+$role['smod'] = false;
+$role['mod'] = false;
+$role['staff'] = false;
 if (X_MEMBER) {
-    switch ($self['status']) {
+    switch($self['status']) {
         case 'Super Administrator':
             $role['sadmin'] = true;
-            $role['admin']  = true;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = true;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Administrator':
             $role['sadmin'] = false;
-            $role['admin']  = true;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = true;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Super Moderator':
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = true;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = false;
+            $role['smod'] = true;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         case 'Moderator':
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = false;
-            $role['mod']    = true;
-            $role['staff']  = true;
+            $role['admin'] = false;
+            $role['smod'] = false;
+            $role['mod'] = true;
+            $role['staff'] = true;
             break;
         default:
             $role['sadmin'] = false;
-            $role['admin']  = false;
-            $role['smod']   = false;
-            $role['mod']    = false;
-            $role['staff']  = false;
+            $role['admin'] = false;
+            $role['smod'] = false;
+            $role['mod'] = false;
+            $role['staff'] = false;
             break;
     }
 }
@@ -441,19 +449,18 @@ define('X_ADMIN', $role['admin']);
 define('X_SMOD', $role['smod']);
 define('X_MOD', $role['smod']);
 define('X_STAFF', $role['staff']);
-// Fix by John Briggs End
 
 // Get the required language file
-if (!file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
-    exit('You do not have a language file present. Please upload one to proceed with use of the bulletin board.');
+if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
+    require ROOT.'lang/'.$langfile.'.lang.php';
+} else {
+    require ROOT.'lang/English.lang.php';
 }
-require_once(ROOT.'lang/'.$langfile.'.lang.php');
 
 // Checks for the possibility to register
-if ($regstatus == "on" && X_GUEST) {
-    $reglink = "- <a href=\"member.php?action=coppa\">$lang[textregister]</a>";
-} else {
-    $reglink = '';
+$reglink = '';
+if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
+    $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
 }
 
 // Creates login/logout links
@@ -463,17 +470,15 @@ if (X_MEMBER) {
     $onlineuser = $xmbuser;
     $cplink = '';
     $u2ulink = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[banu2u]</a> - ";
-
     if (X_ADMIN) {
-        $cplink = " - <a href=\"cp.php\">$lang[textcp]</a>";
+        $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
-
-    $notify = "$lang[loggedin] <a href=\"member.php?action=viewpro&amp;member=".rawurlencode($onlineuser)."\">$xmbuser</a><br />[$loginout - $u2ulink$memcp$cplink]";
+    $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 } else {
-    $loginout = "<a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+    $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
     $onlineuser = 'xguest123';
-    $self['status'] = "";
-    $notify = "$lang[notloggedin] [$loginout $reglink]";
+    $self['status'] = '';
+    $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
 }
 
 // Checks if the timeformat has been set, if not, use default
@@ -492,13 +497,13 @@ if (isset($tid) && $action != 'templates') {
     $locate = $db->fetch_array($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
-    if ($SETTINGS['subject_in_title'] == 'on') {
-        $threadSubject = '- '.stripslashes($locate['subject']);
+    if ($SETTINGS['subject_in_title'] == 'on' && $locate['subject']) {
+        $threadSubject = '- '.html_entity_decode(stripslashes(htmlspecialchars($locate['subject'])));
     } else {
         $threadSubject = '';
     }
-} elseif (isset($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
+} else if (isset($fid)) {
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
     } else {
@@ -527,19 +532,18 @@ if (X_MEMBER) {
 // Check what theme to use
 if ((int) $themeuser > 0) {
     $theme = (int) $themeuser;
-} elseif (!empty($forumtheme) && (int) $forumtheme > 0) {
-    $theme = $forumtheme;
+} else if (!empty($forumtheme) && (int) $forumtheme > 0) {
+    $theme = (int) $forumtheme;
 } else {
-    $theme = $SETTINGS['theme'];
+    $theme = (int) $SETTINGS['theme'];
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
-foreach ($db->fetch_array($query) as $key => $val) {
+$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
+foreach($db->fetch_array($query) as $key=>$val) {
     if ($key != "name") {
         $$key = $val;
     } else {
-        // make themes with apostrophes safe to display
         $val = stripslashes($val);
     }
     $THEME[$key] = $val;
@@ -595,7 +599,6 @@ if (false !== strpos($boardimg, ',')) {
 // Font stuff...
 $fontedit = preg_replace('#(\D)#', '', $fontsize);
 $fontsuf = preg_replace('#(\d)#', '', $fontsize);
-
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
@@ -604,9 +607,9 @@ if (isset($lastvisit) && X_MEMBER) {
     $theTime = $xmblva + ($timeoffset * 3600) + ($addtime * 3600);
     $lastdate = gmdate($dateformat, $theTime);
     $lasttime = gmdate($timecode, $theTime);
-    $lastvisittext = "$lang[lastactive] $lastdate $lang[textat] $lasttime";
+    $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = "$lang[lastactive] $lang[textnever]";
+    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
 }
 
 // Checks for various settings
@@ -618,7 +621,7 @@ if (empty($action)) {
 if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
-    } elseif ($res === false) {
+    } else if ($res === false) {
         // ini_get not supported. So let's just leave it
     } else {
         if (function_exists('gzopen')) {
@@ -634,40 +637,40 @@ if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
 }
 
 // Search-link
-if ($SETTINGS['searchstatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/search.gif\" alt=\"$lang[altsearch]\" border=\"0\" /> <a href=\"misc.php?action=search\"><font class=\"navtd\">$lang[textsearch]</font></a>";
+if ($SETTINGS['searchstatus'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
 }
 
 // Faq-link
-if ($SETTINGS['faqstatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/faq.gif\" alt=\"$lang[altfaq]\" border=\"0\" /> <a href=\"faq.php\"><font class=\"navtd\">$lang[textfaq]</font></a>";
+if ($SETTINGS['faqstatus'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
 }
 
 // Memberlist-link
-if ($SETTINGS['memliststatus'] == "on") {
-    $links[] = "<img src=\"$imgdir/members_list.gif\" alt=\"$lang[altmemberlist]\" border=\"0\" /> <a href=\"misc.php?action=list\"><font class=\"navtd\">$lang[textmemberlist]</font></a>";
+if ($SETTINGS['memliststatus'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
 }
 
 // Today's posts-link
-if ($SETTINGS['todaysposts'] == "on") {
-    $links[] = "<img src=\"$imgdir/todays_posts.gif\" alt=\"$lang[alttodayposts]\" border=\"0\" /> <a href=\"today.php\"><font class=\"navtd\">$lang[navtodaysposts]</font></a>";
+if ($SETTINGS['todaysposts'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
 }
 
 // Stats-link
-if ($SETTINGS['stats'] == "on") {
-    $links[] = "<img src=\"$imgdir/stats.gif\" alt=\"$lang[altstats]\" border=\"0\" /> <a href=\"stats.php\"><font class=\"navtd\">$lang[navstats]</font></a>";
+if ($SETTINGS['stats'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
 }
 
 // 'Forum Rules'-link
-if ($SETTINGS['bbrules'] == "on") {
-    $links[] = "<img src=\"$imgdir/bbrules.gif\" alt=\"$lang[altrules]\" border=\"0\" /> <a href=\"faq.php?page=forumrules\"><font class=\"navtd\">$lang[textbbrules]</font></a>";
+if ($SETTINGS['bbrules'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
 }
 
 $links = implode(' &nbsp; ', $links);
 
 // Show all plugins
 $pluglinks = array();
-foreach ($plugname as $plugnum => $item) {
+foreach($plugname as $plugnum => $item) {
     if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum]) ) {
         if (trim($plugimg[$plugnum]) != '' ) {
             $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" />&nbsp;';
@@ -688,18 +691,19 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($bbstatus == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+    $newu2umsg = '';
     eval('$css = "'.template('css').'";');
     message(nl2br(stripslashes($bboffreason)));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($regviewonly == "on") {
+if ($SETTINGS['regviewonly'] == 'on') {
     if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($coppa == 'on') {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=coppa\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+        if ($SETTINGS['coppa'] == 'on') {
+            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         } else {
-            $message = "$lang[reggedonly] <a href=\"member.php?action=reg\">$lang[textregister]</a> $lang[textor] <a href=\"misc.php?action=login\">$lang[textlogin]</a>";
+            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         }
         eval('$css = "'.template('css').'";');
         message($message);
@@ -727,4 +731,8 @@ if (X_MEMBER) {
         $newu2umsg = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[newu2u1] $newu2unum $lang[newu2u2]</a>";
     }
 }
+
+// create forum jump
+$quickjump = base64_decode($quickjump);
+$quickjump = forumJump();
 ?>
