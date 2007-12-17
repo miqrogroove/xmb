@@ -362,6 +362,7 @@ $dayselect
 <tr>
 <td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
 </tr>
+$multipage
 <tr class="header" align="center">
 <td width="4%">&nbsp;</td>
 <td width="4%">$lang[texticon]</td>
@@ -372,12 +373,11 @@ $dayselect
 <td width="5%">$lang[textviews]</td>
 <td width="23%">$lang[textlastpost]</td>
 </tr>
-$multipage
 $rows
-$multipage
-<tr class="header" align="center">
+<tr class="ctrtablerow" bgcolor="$altbg2">
 <td colspan="8">$lang[todayshow]&nbsp;&nbsp;<input type="text" name="daysold" size="3" value="$daysold" />&nbsp;&nbsp;$lang[todaydays]&nbsp;&nbsp;<input class="submit" type="submit" name="searchsubmit" value="$lang[todaygo]" /></td>
 </tr>
+$multipage
 </table>
 </td>
 </tr>
@@ -875,13 +875,13 @@ $cssInclude
 <td class="category" colspan="3">
 <font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
 </td>
+$multipage
 </tr>
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
 <td>$lang[textlocation]</td>
 </tr>
-$multipage
 $onlineusers
 $multipage
 </table>
@@ -899,13 +899,13 @@ $multipage
 <font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
 </td>
 </tr>
+$multipage
 <tr class="header" align="center">
 <td>$lang[textusername]</td>
 <td>$lang[texttime]</td>
 <td>$lang[textlocation]</td>
 <td>$lang[textipaddress]</td>
 </tr>
-$multipage
 $onlineusers
 $multipage
 </table>
@@ -1539,6 +1539,7 @@ $subforums
 <tr>
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+$multipage
 <tr class="header" align="center">
 <td width="4%">&nbsp;</td>
 <td width="4%">$lang[texticon]</td>
@@ -1548,11 +1549,10 @@ $subforums
 <td width="6%">$lang[textviews]</td>
 <td width="19%">$lang[textlastpost]</td>
 </tr>
-$multipage
 $threadlist
-$multipage
 </form>
 $sortby
+$multipage
 </table>
 </td>
 </tr>
@@ -1587,6 +1587,7 @@ $subforums
 <tr>
 <td>
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+$multipage
 <tr class="header" align="center">
 <td width="4%"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/editforumsets.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
 <td width="4%">$lang[texticon]</td>
@@ -1599,11 +1600,9 @@ $subforums
 <td width="4%">$lang[deletecolon]</td>
 <td><input type="checkbox" onclick="invertSelection('geatneet', 'tid[]'); return false;" /></td>
 </tr>
-$multipage
 $threadlist
-$multipage
 <tr>
-<td bgcolor="$altbg1" class="tablerow" colspan="10">
+<td bgcolor="$altbg2" class="tablerow" colspan="10">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" align="right">
@@ -1630,6 +1629,7 @@ $multipage
 $sortby
 </td>
 </tr>
+$multipage
 </table>
 </td>
 </tr>
@@ -2929,6 +2929,7 @@ $nextlink
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
+$multipage
 <tr class="header" align="center">
 <td width="20%">$lang[textusername]</td>
 <td width="16%">$lang[status]</td>
@@ -2938,12 +2939,11 @@ $nextlink
 <td width="19%">$lang[textregistered]</td>
 <td width="5%">$lang[textposts]</td>
 </tr>
-$multipage
 $members
-$multipage
-<tr class="header">
+<tr class="ctrtablerow" bgcolor="$altbg2">
 <td align="center" colspan="7">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
+$multipage
 </table>
 </td>
 </tr>
@@ -4407,6 +4407,7 @@ $forumlist
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
+$multipage
 <tr class="header" align="center">
 <td width="20%">$lang[textusername]</td>
 <td width="16%">$lang[status]</td>
@@ -4416,12 +4417,11 @@ $forumlist
 <td width="19%">$lang[textregistered]</td>
 <td width="5%">$lang[textposts]</td>
 </tr>
-$multipage
 $members
-$multipage
-<tr class="header">
-<td align="center" colspan="7">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" />&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></td>
+<tr class="ctrtablerow" bgcolor="$altbg2">
+<td colspan="7">$lang[textsrchusr]&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="$srchmem" />&nbsp;&nbsp;$lang[textsrchemail]&nbsp;&nbsp;<input type="text" size="15" name="srchemail" value="$srchemail" />&nbsp;&nbsp;$lang[textsrchip]&nbsp;&nbsp;<input type="text" size="15" name="srchip" value="$srchip" />&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" /></td>
 </tr>
+$multipage
 </table>
 </td>
 </tr>
@@ -4803,10 +4803,11 @@ $lang[verificationnote]
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_sortby|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="10" class="header" align="center">
+<td colspan="10" class="ctrtablerow" bgcolor="$altbg2">
 <form method="post" action="forumdisplay.php?fid=$fid">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<span class="smalltxt">$lang[showtopics]</span>
+$lang[showtopics]
+&nbsp;&nbsp;
 <select name="cusdate">
 <option value="86400" $check1>$lang[day1]</option>
 <option value="432000" $check5>$lang[day5]</option>
@@ -4817,11 +4818,14 @@ $lang[verificationnote]
 <option value="31536000" $checkyear>$lang[lastyear]</option>
 <option value="0" $checkall>$lang[beginning]</option>
 </select>
-<span class="smalltxt">$lang[sortby]</span>
+&nbsp;&nbsp;
+$lang[sortby]
+&nbsp;&nbsp;
 <select name="ascdesc">
 <option value="ASC">$lang[asc]</option>
 <option value="DESC" selected="selected">$lang[desc]</option>
-</select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" />
+</select>
+&nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" />
 </form>
 </td>
 </tr>
