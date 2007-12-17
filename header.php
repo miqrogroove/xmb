@@ -101,7 +101,7 @@ if (DEBUG) {
 $versioncompany = 'The XMB Group';
 $versionshort = "XMB 1.9.8";
 $versiongeneral = 'XMB 1.9.8 Engage';
-$copyright = '2007-2008';
+$copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
