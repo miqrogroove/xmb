@@ -1875,7 +1875,6 @@ $multipage
 <td colspan="2">$modoptions</td>
 </tr>
 </table>
-<br />
 $quickreply
 
 |#*XMB TEMPLATE FILE*#|faq_messages_smilierow|#*XMB TEMPLATE*#|
@@ -4481,6 +4480,7 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 [$lang[timemsg]: <strong>$totaltime</strong> $lang[textseconds]]
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
+<br />
 <a name="qreply"></a>
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid">
 <input type="hidden" name="token" value="$oToken->newToken" />

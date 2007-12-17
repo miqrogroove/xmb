@@ -187,6 +187,9 @@ if ($action == "settings") {
         $regoptionalon = $regoptionaloff = '';
         settingHTML('regoptional', $regoptionalon, $regoptionaloff);
 
+        $quickreply_statuson = $quickreply_statusoff = '';
+        settingHTML('quickreply_status', $quickreply_statuson, $quickreply_statusoff);
+
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
@@ -462,8 +465,9 @@ if ($action == "settings") {
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
-        printsetting1($lang['space_cats'], 'space_catsnew',$spacecatson, $spacecatsoff);
+        printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
+        printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
         printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
@@ -651,6 +655,7 @@ if ($action == "settings") {
         $showsubforumsnew = formOnOff('showsubforumsnew');
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
         $regoptionalnew = formOnOff('regoptionalnew');
+        $quickreply_statusnew = formOnOff('quickreply_statusnew');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -733,7 +738,8 @@ if ($action == "settings") {
             captcha_image_maxfont='$captchaimagemaxfontnew',
             captcha_image_color='$captchaimagecolornew',
             showsubforums='$showsubforumsnew',
-            regoptional='$regoptionalnew'
+            regoptional='$regoptionalnew',
+            quickreply_status ='$quickreply_statusnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';

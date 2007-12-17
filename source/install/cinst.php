@@ -451,22 +451,23 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `captcha_status` set('on','off') NOT NULL default 'on',
       `captcha_reg_status` set('on','off') NOT NULL default 'on',
       `captcha_post_status` set('on','off') NOT NULL default 'on',
-      `captcha_code_charset` varchar(128) NOT NULL default 'A-Z',
-      `captcha_code_length` int(2) NOT NULL default '8',
-      `captcha_code_casesensitive` set('on','off') NOT NULL default 'off',
+      `captcha_code_charset` varchar(128) NOT NULL default 'A-Z,1-9',
+      `captcha_code_length` int(2) NOT NULL default '10',
+      `captcha_code_casesensitive` set('on','off') NOT NULL default 'on',
       `captcha_code_shadow` set('on','off') NOT NULL default 'off',
       `captcha_image_type` varchar(4) NOT NULL default 'png',
       `captcha_image_width` int(3) NOT NULL default '250',
       `captcha_image_height` int(3) NOT NULL default '50',
       `captcha_image_bg` varchar(128) NOT NULL default '',
       `captcha_image_dots` int(3) NOT NULL default '0',
-      `captcha_image_lines` int(2) NOT NULL default '70',
+      `captcha_image_lines` int(2) NOT NULL default '0',
       `captcha_image_fonts` varchar(128) NOT NULL default '',
       `captcha_image_minfont` int(2) NOT NULL default '16',
       `captcha_image_maxfont` int(2) NOT NULL default '25',
-      `captcha_image_color` set('on','off') NOT NULL default 'off',
+      `captcha_image_color` set('on','off') NOT NULL default 'on',
       `showsubforums` set('on','off') NOT NULL default 'off',
-      `regoptional` set('on','off') NOT NULL default 'off'
+      `regoptional` set('on','off') NOT NULL default 'off',
+      `quickreply_status` set('on','off') NOT NULL default 'on'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------

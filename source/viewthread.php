@@ -131,8 +131,7 @@ smcwcache();
 eval('$css = "'.template('css').'";');
 
 $notexist = false;
-$notexist_txt = '';
-$posts = '';
+$notexist_txt = $posts = '';
 
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
 if ($tid == 0 || $db->num_rows($query) != 1) {
@@ -266,14 +265,20 @@ if (!$action) {
     if ($thread['closed'] == 'yes') {
         if (X_SADMIN) {
             eval('$replylink = "'.template('viewthread_reply').'";');
-            eval('$quickreply = "'.template('viewthread_quickreply').'";');
+            $quickreply = '';
+            if ($SETTINGS['quickreply_status'] == 'on') {
+                eval('$quickreply = "'.template('viewthread_quickreply').'";');
+            }
         }
         $closeopen = $lang['textopenthread'];
     } else {
         if (X_MEMBER || X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] == 'on') {
             $closeopen = $lang['textclosethread'];
             eval('$replylink = "'.template('viewthread_reply').'";');
-            eval('$quickreply = "'.template('viewthread_quickreply').'";');
+            $quickreply = '';
+            if ($SETTINGS['quickreply_status'] == 'on') {
+                eval('$quickreply = "'.template('viewthread_quickreply').'";');
+            }
         }
     }
 
@@ -335,10 +340,8 @@ if (!$action) {
         eval('$multipage = "'.template('viewthread_multipage').'";');
     }
 
-    $pollhtml = '';
-    $poll = '';
-    $vote_id = 0;
-    $voted = 0;
+    $pollhtml = $poll = '';
+    $vote_id = $voted = 0;
 
     $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
     if ($query) {
