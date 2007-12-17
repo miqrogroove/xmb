@@ -1086,6 +1086,9 @@ $forumlist
 </tr>
 </table>
 $whosonline
+$statsbar
+
+|#*XMB TEMPLATE FILE*#|index|#*XMB TEMPLATE*#|
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>

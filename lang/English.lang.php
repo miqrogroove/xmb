@@ -332,7 +332,6 @@ $lang['gzipcompression'] = "Use Gzip Page Compression<br /><span class=\"smalltx
 $lang['helpbar'] = "Help";
 $lang['hidden'] = "Invisible";
 $lang['hottopic'] = "more than $hottopic replies";
-$lang['ientry'] = "Financed &amp; Sponsored By <a href=\"http://www.ientry.com\" taget=\"_blank\">iEntry, Inc.</a>";
 $lang['ipreg'] = "Allow maximum 1 user to register per ip per day?";
 $lang['ignorelist'] = "Ignore List";
 $lang['ignoremsg'] = "Ignore List:<br /><span class=\"smalltxt\">Separate names with commas (i.e. \"Person 1, Person 2,\"). Make sure you leave a comma after the last name.</span>";
@@ -346,6 +345,7 @@ $lang['indexShowBarCats'] = "In all categories";
 $lang['indexShowBarDesc'] = "Where should, in the forumlist, the tableheader be shown?";
 $lang['indexShowBarNone'] = "Nowhere";
 $lang['indexShowBarTop'] = "Top of the page only";
+$lang['index_stats'] = "Index Stats Bar Status:<br /><span class=\"smalltxt\">This option will enable/disable the stats bar on index.</span>";
 $lang['insertdata'] = "Insert your Data";
 $lang['invalidforumpw'] = "The password you entered is invalid.";
 $lang['invalidip'] = "Invalid IP Address Format";
