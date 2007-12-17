@@ -572,7 +572,6 @@ $lang['smiliesadded'] = "Smilies Have Been Added.";
 $lang['smilieupdate'] = "Smilies Updated";
 $lang['smtotal'] = "Total Visible Clickable Smilies:";
 $lang['sortby'] = " and sort them by";
-$lang['space_cats'] = "Spaced Categories Status:";
 $lang['splitthreadmsg'] = "Thank you, the topic has been split. You are now being forwarded back to the thread list.";
 $lang['srchbyforum'] = "in (forum):";
 $lang['srchfilter_double'] = "Filter out all double posts?";

@@ -145,9 +145,6 @@ if ($action == "settings") {
         $tickerstatuson = $tickerstatusoff = '';
         settingHTML('tickerstatus', $tickerstatuson, $tickerstatusoff);
 
-        $spacecatson = $spacecatsoff = '';
-        settingHTML('space_cats', $spacecatson, $spacecatsoff);
-
         $subjectInTitleOn = $subjectInTitleOff = '';
         settingHTML('subject_in_title', $subjectInTitleOn, $subjectInTitleOff);
 
@@ -457,7 +454,6 @@ if ($action == "settings") {
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
-        printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
@@ -583,7 +579,6 @@ if ($action == "settings") {
         $memliststatusnew = formOnOff('memliststatusnew');
         $coppanew = formOnOff('coppanew');
         $reportpostnew = formOnOff('reportpostnew');
-        $space_catsnew = formOnOff('space_catsnew');
         $indexShowBarNew = formInt('indexShowBarNew');
         $allowrankeditnew = formOnOff('allowrankeditnew');
         $subjectInTitleNew = formOnOff('subjectInTitleNew');
@@ -700,7 +695,6 @@ if ($action == "settings") {
             stats='$statsstatusnew',
             max_avatar_size='$max_avatar_size',
             footer_options='$footer_options',
-            space_cats='$space_catsnew',
             allowrankedit='$allowrankeditnew',
             notifyonreg='$notifyonregnew',
             indexshowbar='$indexShowBarNew',
