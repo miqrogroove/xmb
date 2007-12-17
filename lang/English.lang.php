@@ -298,7 +298,7 @@ $lang['evaltrevlt'] = '$lang["trevltmsg"] = "This is a long topic, click <a href
 $lang['evaluqinfo'] = '$lang["uqinfo"] = "You have $u2ucount U2Us. This is $percent% of the maximum, the maximum is set to $u2uquota.";';
 $lang['evaluqinfo_over'] = '$lang["uqinfo"] = "<strong>Note! You cannot send any U2Us before you lessen the number of your current U2Us.</strong><br />You have $u2ucount U2Us. The maximum is set to $u2uquota.";';
 $lang['evalu2ustaffquota'] = '$lang["uqinfo"] = "You have $u2ucount U2Us with no limits.";';
-$lang['evalusercpwelcome'] = '$lang["usercpwelcome"] = "Hello $xmbuser, welcome to your user control panel. Here you can edit your profile, board options, send/ read your U2U messages, view your favourite threads and more.";';
+$lang['evalusercpwelcome'] = "Hello $xmbuser, welcome to your user control panel. Here you can edit your profile, board options, send/ read your u2u messages, view your favorite threads and more.";
 $lang['existingip'] = "This IP Address is already banned";
 $lang['export_fid_expl'] = "Which forum (fid) should all orphaned threads be moved?";
 $lang['export_fid_not_there'] = "No forum was specified to send the orphaned threads to.";
