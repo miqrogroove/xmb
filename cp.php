@@ -157,9 +157,6 @@ if ($action == "settings") {
         $allowrankediton = $allowrankeditoff = '';
         settingHTML('allowrankedit', $allowrankediton, $allowrankeditoff);
 
-        $spellcheckon = $spellcheckoff = '';
-        settingHTML('spellcheck', $spellcheckon, $spellcheckoff);
-
         $resetSigOn = $resetSigOff = '';
         settingHTML('resetsigs', $resetSigOn, $resetSigOff);
 
@@ -223,12 +220,6 @@ if ($action == "settings") {
             default:
                 $indexShowBarTop = true;
                 break;
-        }
-
-        $spell_off_reason = '';
-        if (!defined('PSPELL_FAST')) {
-            $spell_off_reason = $lang['pspell_needed'];
-            $SETTINGS['spellcheck'] = 'off';
         }
 
         $notifycheck[0] = $notifycheck[1] = $notifycheck[2] = false;
@@ -395,7 +386,6 @@ if ($action == "settings") {
         $checked = array($sel_serverload, $sel_queries, $sel_phpsql, $sel_loadtimes);
 
         $max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
-        $lang['spell_checker'] .= $spell_off_reason;
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -459,7 +449,6 @@ if ($action == "settings") {
         printsetting1($lang['texttodaystatus'], 'todaystatusnew', $todayon, $todayoff);
         printsetting1($lang['textstatsstatus'], 'statsstatusnew', $statson,  $statsoff);
         printsetting1($lang['textmemliststatus'], 'memliststatusnew', $memliston, $memlistoff);
-        printsetting1($lang['spell_checker'], 'spellchecknew', $spellcheckon, $spellcheckoff);
         printsetting1($lang['coppastatus'], 'coppanew', $coppaon, $coppaoff);
         printsetting1($lang['reportpoststatus'], 'reportpostnew', $reportposton, $reportpostoff);
         ?>
@@ -596,7 +585,6 @@ if ($action == "settings") {
         $todaystatusnew = formOnOff('todaystatusnew');
         $statsstatusnew = formOnOff('statsstatusnew');
         $memliststatusnew = formOnOff('memliststatusnew');
-        $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $coppanew = formOnOff('coppanew');
         $reportpostnew = formOnOff('reportpostnew');
         $space_catsnew = formOnOff('space_catsnew');
@@ -719,7 +707,6 @@ if ($action == "settings") {
             max_avatar_size='$max_avatar_size',
             footer_options='$footer_options',
             space_cats='$space_catsnew',
-            spellcheck='$spellchecknew',
             allowrankedit='$allowrankeditnew',
             notifyonreg='$notifyonregnew',
             indexshowbar='$indexShowBarNew',
