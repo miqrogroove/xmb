@@ -104,8 +104,8 @@ $versionshort = "XMB 1.9.9";
 $versiongeneral = 'XMB 1.9.9 Engage';
 $copyright = '2001-2008';
 if ($show_full_info) {
-    $alpha = '';
-    $beta = 'Beta 1';
+    $alpha = 'Alpha 1';
+    $beta = '';
     $gamma = '';
     $service_pack = '';
     $versionbuild = 20071212;
