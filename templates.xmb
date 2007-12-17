@@ -4421,47 +4421,47 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
 <br />
-<a name="qreply"></a>
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
+<table cellspacing="0" cellpadding="0" width="$tablewidth" border="0" align="center">
 <tr>
-<td><input type="hidden" name="subject" value="" />
-<table width="100%" border="0" cellpadding="$tablespace" cellspacing="1">
-<tr bgcolor="$altbg1">
-<td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr class="category">
+<td colspan="2">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr class="tablerow">
+<td width="50%"><font color="$cattext"><strong>$lang[quickreply]</strong></font></td>
+<td width="50%" align="right"><font color="$cattext"><strong>[$lang[loggedin] <strong>$xmbuser</strong>]</strong></font></td>
 </tr>
-$captchapostcheck
-<tr bgcolor="$altbg1" class="quickreply">
-<td colspan="3" class="tablerow"><div align="left"><strong>&nbsp;&raquo;</strong>&nbsp;$whopost2</div></td>
+</table>
+</td>
 </tr>
-<tr class="quickreply">
-<td width="8%" height="101" bgcolor="$altbg1" class="tablerow"> <div align="left"><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
-$lang[textsmiliesare] $allowsmilies<br />
-$lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span><hr /></div><div align="center">
-$smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Window', 175, 250);">[$lang[moresmilies]]</a></div></td>
-<td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
-<td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
-<table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
-<tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" /></div></td>
-<td width="85%"> <div align="left">$lang[textdissmileys]</div></td>
+<tr class="tablerow">
+<td width="30%" bgcolor="$altbg1" align="left"><strong>$lang[quickreplywho]</strong></td>
+<td width="70%" bgcolor="$altbg2" align="left">$whopost2</td>
 </tr>
-<tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="usesig" value="yes" $usesigcheck /></div></td>
-<td width="85%"> <div align="left">$lang[textusesig]</div></td>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="30%" valign="top">$lang[quickreplymessage]</td>
+<td bgcolor="$altbg2" width="70%">
+<table width="100%">
+<tr class="tablerow">
+<td><textarea rows="4" cols="60" name="message"></textarea></td>
+<td width="100%" valign="bottom">
+<input type="checkbox" name="smileyoff" value="yes" />&nbsp;$lang[textdissmileys]
+<br />
+<input type="checkbox" name="usesig" value="yes" $usesigcheck />&nbsp;$lang[textusesig]
+<br />
+<input type="checkbox" name="bbcodeoff" value="yes" />&nbsp;$lang[bbcodeoff]
+<br />
+<input type="checkbox" name="emailnotify" value="yes" />&nbsp;$lang[textemailnotify]
+<br /><br />
+</td>
 </tr>
-<tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" /></div></td>
-<td width="85%"> <div align="left">$lang[bbcodeoff] </div></td>
+</table>
+</td>
 </tr>
-<tr>
-<td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" /></div></td>
-<td width="85%"> <div align="left">$lang[textemailnotify] </div></td>
-</tr>
-</table></div>
-<div align="left"><br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="$lang[textpostreply]" class="submit" /></div></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="2"><input type="hidden" name="subject" value="" /><input class="submit" type="submit" name="replysubmit" value="$lang[textpostreply]" /></td>
 </tr>
 </table>
 </td>

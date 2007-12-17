@@ -1135,4 +1135,7 @@ $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index:";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmbgroup'] = "The XMB Group";
+$lang['quickreplymessage'] = '$lang["quickreplymessage"] = "You can use this form to post a quick reply using plain text only, otherwise please click the <a href=\"post.php?action=reply&fid=$fid&tid=$tid\"><strong>New Reply</strong></a> button.";';
+$lang['quickthreadmessage'] = '$lang["quickthreadmessage"] = "You can use this form to post a quick thread using plain text only, otherwise please click the <a href=\"post.php?action=newthread&amp;fid=$fid\"><strong>New Thread</strong></a> button.";';
+$lang['quickreplywho'] = "Who Can Quick Reply?";
 ?>
