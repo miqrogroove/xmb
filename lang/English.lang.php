@@ -524,6 +524,7 @@ $lang['pspell_needed'] = "(<strong>This feature can not be turned on until your 
 $lang['pwnomatch'] = "Passwords do not match";
 $lang['pwnote'] = "Enter new password if changing, otherwise leave blank.";
 $lang['queries'] = "Queries";
+$lang['quickjump_status'] = "Quick Jump Status:<br /><span class=\"smalltxt\">This option enables/disables the Quick Jump feature when selecting forums and categories in the header and footer.</span>";
 $lang['quickreply'] = 'Quick Reply';
 $lang['quickreply_status'] = "Quick Reply Status:<br /><span class=\"smalltxt\">This option enables/disables the Quick Reply feature when viewing threads.</span>";
 $lang['rankinfo'] = "Based on the number of posts you have, you are assigned to a rank. Each rank has its own status and its own amount of stars. Below are the user rank settings for this board:";

@@ -190,6 +190,9 @@ if ($action == "settings") {
         $quickreply_statuson = $quickreply_statusoff = '';
         settingHTML('quickreply_status', $quickreply_statuson, $quickreply_statusoff);
 
+        $quickjump_statuson = $quickjump_statusoff = '';
+        settingHTML('quickjump_status', $quickjump_statuson, $quickjump_statusoff);
+
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
@@ -468,6 +471,7 @@ if ($action == "settings") {
         printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
+        printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
         printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
@@ -656,6 +660,7 @@ if ($action == "settings") {
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
         $regoptionalnew = formOnOff('regoptionalnew');
         $quickreply_statusnew = formOnOff('quickreply_statusnew');
+        $quickjump_statusnew = formOnOff('quickjump_statusnew');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -739,7 +744,8 @@ if ($action == "settings") {
             captcha_image_color='$captchaimagecolornew',
             showsubforums='$showsubforumsnew',
             regoptional='$regoptionalnew',
-            quickreply_status ='$quickreply_statusnew'
+            quickreply_status='$quickreply_statusnew',
+            quickjump_status='$quickjump_statusnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';

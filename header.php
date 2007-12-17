@@ -82,6 +82,7 @@ $filesize = 0;
 $filename = '';
 $filetype = '';
 $quickjump = '';
+$newu2umsg = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -733,6 +734,9 @@ if (X_MEMBER) {
 }
 
 // create forum jump
-$quickjump = base64_decode($quickjump);
-$quickjump = forumJump();
+$quickjump = '';
+if ($SETTINGS['quickjump_status'] == 'on') {
+    $quickjump = base64_decode($quickjump);
+    $quickjump = forumJump();
+}
 ?>
