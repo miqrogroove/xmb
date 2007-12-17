@@ -31,8 +31,6 @@ require 'header.php';
 loadtemplates(
 'index',
 'index_category',
-'index_category_hr',
-'index_category_spacer',
 'index_forum',
 'index_forum_lastpost',
 'index_forum_nolastpost',
@@ -228,7 +226,7 @@ if ($gid == 0) {
         eval('$whosonline = "'.template('index_whosonline').'";');
     }
 
-    if ($SETTINGS['catsonly'] == 'on') {
+    if ($gid > 0) {
         $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder ASC");
     } else {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
@@ -238,29 +236,9 @@ if ($gid == 0) {
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
-$indexBarTop = $indexBar = $forumlist = $spacer = '';
-$catLessForums = $lastcat = 0;
-
-if ($SETTINGS['space_cats'] == 'on') {
-    eval('$spacer = "'.template('index_category_spacer').'";');
-}
-
-if ($SETTINGS['catsonly'] != 'on') {
-    if ($SETTINGS['indexshowbar'] == 1) {
-        eval('$indexBar = "'.template('index_category_hr').'";');
-        $indexBarTop = $indexBar;
-    }
-
-    if ($SETTINGS['indexshowbar'] == 2) {
-        eval('$indexBarTop = "'.template('index_category_hr').'";');
-    }
-} else if ($gid > 0) {
-    eval('$indexBar = "'.template('index_category_hr').'";');
-}
-
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
-    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+    if ($gid > 0) {
         $query = $db->query("SELECT fid, fup, name, private, userlist FROM $table_forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $index_subforums[] = $queryrow;
@@ -269,39 +247,22 @@ if ($SETTINGS['showsubforums'] == 'on') {
     }
 }
 
+$lastcat = 0;
+$forumlist = $cforum = '';
 while($thing = $db->fetch_array($fquery)) {
-    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $cforum = forum($thing, "index_forum");
-    } else {
-        $cforum = '';
-    }
-
-    if ((int)$thing['cat_fid'] === 0) {
-        $catLessForums++;
-    }
-
-    if ($lastcat != $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || (!empty($cforum) && $SETTINGS['catsonly'] != 'on'))) {
-        $lastcat = $thing['cat_fid'];
+    $cforum = forum($thing, 'index_forum');
+    if ($lastcat != (int) $thing['cat_fid'] && !empty($cforum)) {
+        $lastcat = (int) $thing['cat_fid'];
         $thing['cat_name'] = html_entity_decode($thing['cat_name']);
         eval('$forumlist .= "'.template('index_category').'";');
-        if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-            $forumlist .= $indexBar;
-        }
     }
-
-    if (!empty($cforum)) {
-        $forumlist .= $cforum;
-    }
+    $forumlist .= $cforum;
 }
 
 if (empty($forumlist)) {
     eval('$forumlist = "'.template('index_noforum').'";');
 }
 $db->free_result($fquery);
-
-if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
-    $indexBarTop = '';
-}
 
 eval('$index = "'.template('index').'";');
 end_time();

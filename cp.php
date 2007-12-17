@@ -85,9 +85,6 @@ if ($action == "settings") {
         $regonlyon = $regonlyoff = '';
         settingHTML('regviewonly', $regonlyon, $regonlyoff);
 
-        $catsonlyon = $catsonlyoff = '';
-        settingHTML('catsonly', $catsonlyon, $catsonlyoff);
-
         $hideon = $hideoff = '';
         settingHTML('hideprivate', $hideon, $hideoff);
 
@@ -467,7 +464,6 @@ if ($action == "settings") {
         printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
-        printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
         printsetting1($lang['whosonline_on'], 'whos_on', $whosonlineon, $whosonlineoff);
         printsetting2($lang['smtotal'], 'smtotalnew', ((int)$SETTINGS['smtotal']), 5);
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
@@ -591,7 +587,6 @@ if ($action == "settings") {
         $indexShowBarNew = formInt('indexShowBarNew');
         $allowrankeditnew = formOnOff('allowrankeditnew');
         $subjectInTitleNew = formOnOff('subjectInTitleNew');
-        $catsonlynew = formOnOff('catsonlynew');
         $whos_on = formOnOff('whos_on');
         $smtotalnew = formInt('smtotalnew');
         $smcolsnew = formInt('smcolsnew');
@@ -669,7 +664,6 @@ if ($action == "settings") {
             regviewonly='$regviewnew',
             floodctrl='$floodctrlnew',
             memberperpage='$memberperpagenew',
-            catsonly='$catsonlynew',
             hideprivate='$hidepriv',
             emailcheck='$emailchecknew',
             bbrules='$bbrulesnew',

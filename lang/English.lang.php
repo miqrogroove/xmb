@@ -655,7 +655,6 @@ $lang['textbumpthread'] = "Bump Thread";
 $lang['textby'] = "by";
 $lang['textcantmove'] = "You cannot move this U2U to the selected location.";
 $lang['textcatcolor'] = "Category Color (Enter a hex code or an image name):";
-$lang['textcatsonly'] = "Categories Only On Main Page?";
 $lang['textcattextcolor'] = "Category Text Color:";
 $lang['textcensorfind'] = "Find";
 $lang['textcensorreplace'] = "Replace With";

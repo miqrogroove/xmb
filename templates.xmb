@@ -1063,15 +1063,6 @@ $multipage
 </tr>
 </table>
 
-|#*XMB TEMPLATE FILE*#|index_category_hr|#*XMB TEMPLATE*#|
-<tr class="header" align="center">
-<td width="4%">&nbsp;</td>
-<td width="54%">$lang[textforum]</td>
-<td width="6%">$lang[texttopics]</td>
-<td width="6%">$lang[textposts]</td>
-<td width="19%">$lang[textlastpost]</td>
-</tr>
-
 |#*XMB TEMPLATE FILE*#|index|#*XMB TEMPLATE*#|
 $ticker
 $welcome
@@ -1079,14 +1070,13 @@ $welcome
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
-$indexBarTop
 $forumlist
 </table>
 </td>
 </tr>
 </table>
 $whosonline
-$statsbar
+$statsblock
 
 |#*XMB TEMPLATE FILE*#|index_stats|#*XMB TEMPLATE*#|
 <br />
@@ -1499,9 +1489,15 @@ $sendoptions
 </table>
 
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
-$spacer
 <tr>
 <td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
+</tr>
+<tr class="header" align="center">
+<td width="4%">&nbsp;</td>
+<td width="54%">$lang[textforum]</td>
+<td width="6%">$lang[texttopics]</td>
+<td width="6%">$lang[textposts]</td>
+<td width="19%">$lang[textlastpost]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|popup_footer|#*XMB TEMPLATE*#|
@@ -4530,17 +4526,6 @@ $smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Windo
 </tr>
 </table>
 </form>
-
-|#*XMB TEMPLATE FILE*#|index_category_spacer|#*XMB TEMPLATE*#|
-</table>
-</td>
-</tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 
 |#*XMB TEMPLATE FILE*#|misc_smilies|#*XMB TEMPLATE*#|
 <div align="center">
