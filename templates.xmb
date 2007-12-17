@@ -3572,7 +3572,7 @@ $topoption $closeoption</td>
 $attachfile
 $captchapostcheck
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" /></td>
 </tr>
 </table>
 </td>
@@ -3872,7 +3872,7 @@ $smilieinsert
 $attachfile
 $captchapostcheck
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="$lang[textpostnew]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" /></td>
 </tr>
 </table>
 </td>
@@ -3927,7 +3927,7 @@ $smilieinsert
 $attachfile
 $captchapostcheck
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="replysubmit" value="$lang[textpostreply]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="replysubmit" value="$lang[textpostreply]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" /></td>
 </tr>
 </table>
 </td>
@@ -4007,7 +4007,7 @@ $smilieinsert
 </tr>
 $attachment
 <tr>
-<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpost]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" />&nbsp;$spelling_submit1 &nbsp;$spelling_submit2</td>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[texteditpost]" />&nbsp;<input type="submit" class="submit" name="previewpost" value="$lang[textpreview]" /></td>
 </tr>
 </table>
 </td>
@@ -4072,7 +4072,6 @@ $suggestions
 <option value="Maroon" style="color:maroon;">Maroon</option>
 <option value="LimeGreen" style="color:limegreen;">LimeGreen</option>
 </select>
-$spelling_lang
 <br />
 <a href="javascript:bold()" accesskey="b"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
 <a href="javascript:italicize()" accesskey="i"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
@@ -4567,9 +4566,6 @@ $bbcodescript
 <div align="center">
 <br />
 
-|#*XMB TEMPLATE FILE*#|spelling_suggestion_new|#*XMB TEMPLATE*#|
-<option value="$suggestion">$suggestion</option>
-
 |#*XMB TEMPLATE FILE*#|u2u_old|#*XMB TEMPLATE*#|
 $u2uheader
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
@@ -4592,69 +4588,6 @@ $u2uheader
 $leftpane
 $u2uquotabar
 $u2ufooter
-
-|#*XMB TEMPLATE FILE*#|spelling_suggestion_row|#*XMB TEMPLATE*#|
-<tr class="ctrtablerow">
-<td bgcolor="$altbg1" width="50%"><strong>$orig</strong></td>
-<td bgcolor="$altbg1" width="50%"><input type="hidden" name="old_words[]" value="$orig" />
-<select type="radio" name="replace_$orig">
-<option value="$orig">--IGNORE--</option>
-$mistake
-</select>
-</td>
-</tr>
-
-|#*XMB TEMPLATE FILE*#|spelling_suggestion|#*XMB TEMPLATE*#|
-<br />
-<form action="post.php?fid=$fid&amp;tid=$tid&amp;action=$action&amp;pid=$pid" method="post">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
-<tr>
-<td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
-</tr>
-<tr class="ctrtablerow">
-<td bgcolor="$altbg1" width="50%">$lang[found]:</td>
-<td bgcolor="$altbg1" width="50%">$lang[replacedby]:</td>
-</tr>
-$suggestions
-<tr>
-<td colspan="2" bgcolor="$altbg2" class="tablerow">
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</form>
-
-|#*XMB TEMPLATE FILE*#|spelling_suggestion_no|#*XMB TEMPLATE*#|
-<br />
-<form action="post.php?fid=$fid&amp;tid=$tid&amp;action=$action" method="post">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
-<tr>
-<td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
-</tr>
-<tr>
-<td bgcolor="$altbg1" class="ctrtablerow" colspan="2">$lang[spellingcomplete]<br /><strong>$lang[nothingfound]</strong></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</form>
 
 |#*XMB TEMPLATE FILE*#|today_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow">

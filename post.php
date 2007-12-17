@@ -29,7 +29,7 @@
 require 'header.php';
 
 function bbcodeinsert() {
-    global $imgdir, $bbinsert, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
+    global $imgdir, $bbinsert, $altbg1, $altbg2, $lang, $SETTINGS;
 
     $bbcode = '';
     if ($SETTINGS['bbinsert'] == 'on') {
@@ -206,12 +206,6 @@ if (isset($emailnotify) && $emailnotify == 'yes') {
     $emailnotify = 'no';
 }
 
-if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($spellcheckersubmit))) {
-    $sc = true;
-} else {
-    $sc = false;
-}
-
 if ((isset($previewpost) || $sc) && isset($usesig) && $usesig == 'yes') {
     $usesigcheck = $cheHTML;
 } else if (isset($previewpost) || $sc) {
@@ -267,49 +261,6 @@ if (!empty($posticon)) {
 } else {
     $thread['icon'] = '';
     $icons = str_replace('<input type="radio" name="posticon" value="" />', '<input type="radio" name="posticon" value="" checked="checked" />', $icons);
-}
-
-if ($SETTINGS['spellcheck'] == 'on') {
-    $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
-    $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
-    if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
-        if (!$updates_submit) {
-            $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
-            $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
-            require ROOT.'include/spelling.inc.php';
-            $spelling = new spelling($language);
-            $problems = $spelling->check_text($message);
-            if (count($problems) > 0) {
-                foreach($problems as $orig=>$new) {
-                    $mistake = array();
-                    foreach($new as $suggestion) {
-                        eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
-                    }
-                    $mistake = implode("\n", $mistake);
-                    eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
-                }
-                $suggestions = implode("\n", $suggest);
-                eval('$suggestions = "'.template('spelling_suggestion').'";');
-                $spelling_submit2 = '<input type="submit" class="submit" name="updates_submit" value="'.$lang['replace'].'" />';
-            } else {
-                eval('$suggestions = "'.template('spelling_suggestion_no').'";');
-                $spelling_submit2 = '';
-            }
-        } else {
-            foreach($old_words as $word) {
-                $message = str_replace($word, ${'replace_'.$word}, $message);
-            }
-            $spelling_submit2 = '';
-        }
-    } else {
-        $suggestions = '';
-        $spelling_submit2 = '';
-    }
-} else {
-    $spelling_submit1 = '';
-    $spelling_submit2 = '';
-    $spelling_lang = '';
-    $suggestions = '';
 }
 
 if (isset($topicsubmit)) {
@@ -385,10 +336,6 @@ if ($action == 'newthread') {
         } else {
             $topoption = '';
             $closeoption = '';
-        }
-
-        if (!isset($spelling_submit2)) {
-            $spelling_submit2 = '';
         }
 
         if (isset($poll) && $poll == 'yes' && $forums['pollstatus'] != 'off') {
@@ -823,7 +770,7 @@ if ($action == 'newthread') {
             error($lang['privforummsg']);
         }
 
-        if (isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
+        if (isset($previewpost)) {
             $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$message, "subject"=>$subject, 'icon'=>$posticon);
             $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid='$pid' AND tid='$tid'");
             if ($db->num_rows($query) > 0) {
