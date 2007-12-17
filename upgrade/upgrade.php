@@ -50,7 +50,7 @@ function print_footer() {
     ?>
     <div id="footer">
     <img src="images/footer-arrow2.gif" alt="" />
-    <span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span>
+    <span>&copy;2008 The XMB Group.</span>
     </div>
     </body>
     </html>
@@ -64,7 +64,7 @@ function error($head, $msg, $die=true) {
     echo "\n";
     ob_flush();
     if ($die) {
-        echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2007 The XMB Group. <br />Sponsored by <a href="http://www.ientry.com/">iEntry, Inc.</a></span></div></body></html>';
+        echo '</div></div><span class="rounding"><span class="round4 light">&nbsp;</span><span class="round3 light">&nbsp;</span><span class="round2 light">&nbsp;</span><span class="round1">&nbsp;</span></span></div></div><div id="footer"><img src="images/footer-arrow2.gif" alt="" /><span>&copy;2008 The XMB Group.</span></div></body></html>';
         exit();
     }
 }
