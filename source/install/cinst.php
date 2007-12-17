@@ -467,7 +467,8 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `captcha_image_color` set('on','off') NOT NULL default 'on',
       `showsubforums` set('on','off') NOT NULL default 'off',
       `regoptional` set('on','off') NOT NULL default 'off',
-      `quickreply_status` set('on','off') NOT NULL default 'on'
+      `quickreply_status` set('on','off') NOT NULL default 'on',
+      `quickjump_status` set('on','off') NOT NULL default 'on'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
