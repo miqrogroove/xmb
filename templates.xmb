@@ -1076,7 +1076,7 @@ $forumlist
 </tr>
 </table>
 $whosonline
-$statsblock
+$statsbar
 
 |#*XMB TEMPLATE FILE*#|index_stats|#*XMB TEMPLATE*#|
 <br />
