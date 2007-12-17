@@ -468,7 +468,8 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `showsubforums` set('on','off') NOT NULL default 'off',
       `regoptional` set('on','off') NOT NULL default 'off',
       `quickreply_status` set('on','off') NOT NULL default 'on',
-      `quickjump_status` set('on','off') NOT NULL default 'on'
+      `quickjump_status` set('on','off') NOT NULL default 'on',
+      `index_stats` set('on','off') NOT NULL default 'on'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------

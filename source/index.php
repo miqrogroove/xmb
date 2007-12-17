@@ -38,6 +38,7 @@ loadtemplates(
 'index_forum_nolastpost',
 'index_noforum',
 'index_ticker',
+'index_stats',
 'index_welcome_guest',
 'index_welcome_member',
 'index_whosonline'
@@ -63,7 +64,9 @@ if ($SETTINGS['tickerstatus'] == 'on') {
 $gid = getInt('gid');
 if ($gid) {
     $gid = (int) $gid;
-    $whosonlinestatus = 'off';
+    $SETTINGS['tickerstatus'] = 'off';
+    $SETTINGS['whosonlinestatus'] = 'off';
+    $SETTINGS['index_stats'] = 'off';
     $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' LIMIT 1");
     $cat = $db->fetch_array($query);
     $db->free_result($query);
@@ -74,29 +77,33 @@ if ($gid) {
 
 eval('echo "'.template('header').'";');
 
-$query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY regdate DESC LIMIT 1");
-$lastmember = $db->fetch_array($query);
-$db->free_result($query);
+$statsbar = '';
+if ($SETTINGS['index_stats'] == 'on') {
+    $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY regdate DESC LIMIT 1");
+    $lastmember = $db->fetch_array($query);
+    $db->free_result($query);
 
-$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
-$members = $db->result($query, 0);
-if ($members == false) {
-    $members = 0;
+    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+    $members = $db->result($query, 0);
+    if ($members == false) {
+        $members = 0;
+    }
+
+    $threads = $db->result($query, 1);
+    if ($threads == false) {
+        $threads = 0;
+    }
+
+    $posts = $db->result($query, 2);
+    if ($posts == false) {
+        $posts = 0;
+    }
+    $db->free_result($query);
+
+    $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
+    eval($lang['evalindexstats']);
+    eval('$statsbar = "'.template('index_stats').'";');
 }
-
-$threads = $db->result($query, 1);
-if ($threads == false) {
-    $threads = 0;
-}
-
-$posts = $db->result($query, 2);
-if ($posts == false) {
-    $posts = 0;
-}
-$db->free_result($query);
-
-$memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
-eval($lang['evalindexstats']);
 
 if ($gid == 0) {
     if (X_MEMBER) {
@@ -106,7 +113,7 @@ if ($gid == 0) {
     }
 
     $whosonline = '';
-    if ($whosonlinestatus == 'on') {
+    if ($SETTINGS['whosonlinestatus'] == 'on') {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
         $query  = $db->query("SELECT m.status, m.username, m.invisible, w.* FROM ".X_PREFIX."whosonline w LEFT JOIN ".X_PREFIX."members m ON m.username=w.username ORDER BY w.username");
@@ -227,7 +234,7 @@ if ($gid == 0) {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
-    $ticker = $welcome = $whosonline = '';
+    $ticker = $welcome = $whosonline = $statsbar = '';
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 

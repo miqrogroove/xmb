@@ -193,6 +193,9 @@ if ($action == "settings") {
         $quickjump_statuson = $quickjump_statusoff = '';
         settingHTML('quickjump_status', $quickjump_statuson, $quickjump_statusoff);
 
+        $index_statson = $index_statsoff = '';
+        settingHTML('index_stats', $index_statson, $index_statsoff);
+
         $avataron = $avataroff = $avatarlist = '';
         if ($SETTINGS['avastatus'] == 'on') {
             $avataron = $selHTML;
@@ -470,6 +473,7 @@ if ($action == "settings") {
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
         printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
+        printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
         printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
@@ -661,6 +665,7 @@ if ($action == "settings") {
         $regoptionalnew = formOnOff('regoptionalnew');
         $quickreply_statusnew = formOnOff('quickreply_statusnew');
         $quickjump_statusnew = formOnOff('quickjump_statusnew');
+        $index_statsnew = formOnOff('index_statsnew');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -745,7 +750,8 @@ if ($action == "settings") {
             showsubforums='$showsubforumsnew',
             regoptional='$regoptionalnew',
             quickreply_status='$quickreply_statusnew',
-            quickjump_status='$quickjump_statusnew'
+            quickjump_status='$quickjump_statusnew',
+            index_stats='$index_statsnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
