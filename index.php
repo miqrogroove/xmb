@@ -226,7 +226,7 @@ if ($gid == 0) {
         eval('$whosonline = "'.template('index_whosonline').'";');
     }
 
-    if ($gid > 0) {
+    if ($gid = 0) {
         $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder ASC");
     } else {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
@@ -238,8 +238,8 @@ if ($gid == 0) {
 
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
-    if ($gid > 0) {
-        $query = $db->query("SELECT fid, fup, name, private, userlist FROM $table_forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
+    if ($gid == 0) {
+        $query = $db->query("SELECT fid, fup, name, private, userlist FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $index_subforums[] = $queryrow;
         }
