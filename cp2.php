@@ -38,14 +38,13 @@ if (X_ADMIN) {
     $download = formVar('download');
     if ($action == "templates" && $download) {
         $code = '';
-        $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates");
+        $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
         while($template = $db->fetch_array($templates)) {
-            $template['template']   = trim($template['template']);
-            $template['name']       = trim($template['name']);
+            $template['template'] = trim($template['template']);
+            $template['name'] = trim($template['name']);
 
             if ($template['name'] != '') {
                 $template['template'] = stripslashes($template['template']);
-
                 $code.= $template['name'].'|#*XMB TEMPLATE*#|'."\r\n".$template['template']."\r\n\r\n".'|#*XMB TEMPLATE FILE*#|';
             }
         }

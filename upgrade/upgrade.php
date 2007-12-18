@@ -887,6 +887,7 @@ switch($step) {
         </div>
         </div>
         <?php
+        print_footer();
         break;
     case 4:
         print_header();
