@@ -647,7 +647,7 @@ switch($action) {
 
                 if ($memberinfo['customstatus'] != '') {
                     $showtitle = $rank['title'];
-                    $customstatus = '<br />'.$memberinfo['customstatus'];
+                    $customstatus = '<br />'.censor($memberinfo['customstatus']);
                 } else {
                     $showtitle = $rank['title'];
                     $customstatus = '';
@@ -733,6 +733,7 @@ switch($action) {
 
                 $query = $db->query("SELECT f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' GROUP BY p.fid ORDER BY posts DESC LIMIT 1");
                 $forum = $db->fetch_array($query);
+                $db->free_result($query);
 
                 if (!($forum['posts'] > 0)) {
                     $topforum = $lang['textnopostsyet'];
@@ -753,6 +754,7 @@ switch($action) {
                     $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
                     $post['subject'] = censor($post['subject']);
                     $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.html_entity_decode($post['subject']).'</a> ('.$lastposttext.')';
+                    $db->free_result($query);
                 } else {
                     $lastpost = $lang['textnopostsyet'];
                 }

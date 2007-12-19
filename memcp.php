@@ -285,6 +285,7 @@ if ($action == 'profile') {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
+        $db->free_result($query);
 
         $langfileselect = createLangFileSelect($member['langfile']);
 
@@ -512,6 +513,7 @@ if ($action == 'profile') {
         if ($favthread) {
             error($lang['favonlistmsg'], false);
         }
+        $db->free_result($query);
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
         echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
@@ -526,6 +528,7 @@ if ($action == 'profile') {
         while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
+            $db->free_result($query2);
             $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -554,6 +557,7 @@ if ($action == 'profile') {
         if ($favnum == 0) {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
+		$db->free_result($query);
         eval('echo stripslashes("'.template('memcp_favs').'");');
     }
 
@@ -563,6 +567,8 @@ if ($action == 'profile') {
             $delete = formInt('delete'.$fav['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
         }
+        $db->free_result($query);
+
         echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
@@ -579,6 +585,7 @@ if ($action == 'profile') {
         while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
+            $db->free_result($query2);
             $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -606,6 +613,7 @@ if ($action == 'profile') {
         if ($subnum == 0) {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
+		$db->free_result($query);
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
@@ -622,6 +630,7 @@ if ($action == 'profile') {
             $delete = formInt('delete'.$sub['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
+		$db->free_result($query);
         echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
     }
@@ -723,11 +732,12 @@ if ($action == 'profile') {
     while($fav = $db->fetch_array($query2)) {
         $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
+        $db->free_result($query);
         $forum['name'] = html_entity_decode($forum['name']);
 
         $lastpost = explode('|', $fav['lastpost']);
         $dalast = $lastpost[0];
-        $lastpost['1'] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
         $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -744,6 +754,7 @@ if ($action == 'profile') {
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
+	$db->free_result($query2);
     eval('echo stripslashes("'.template('memcp_home').'");');
 }
 

@@ -519,8 +519,8 @@ if (!$action) {
             }
 
             $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
-            $avatar = '';
 
+            $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
                     if (false !== ($pos = strpos($post['avatar'], ',')) && substr($post['avatar'], $pos-4, 4) == '.swf') {
