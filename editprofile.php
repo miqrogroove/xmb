@@ -105,6 +105,7 @@ if (noSubmit('editsubmit')) {
     }
     $themelist[] = '</select>';
     $themelist = implode("\n", $themelist);
+    $db->free_result($query);
 
     $langfileselect = createLangFileSelect($member['langfile']);
 
