@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -36,13 +36,12 @@ loadtemplates(
 'memcp_favs_none',
 'memcp_favs_row',
 'memcp_home',
-'memcp_home_layout',
-'memcp_outputmsg',
 'memcp_home_favs_none',
 'memcp_home_favs_row',
 'memcp_home_u2u_none',
 'memcp_home_u2u_row',
 'memcp_profile',
+'memcp_profile_avatarlist',
 'memcp_profile_avatarurl',
 'memcp_subscriptions',
 'memcp_subscriptions_button',
@@ -54,7 +53,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$favs = $buddys = $menu = NULL;
+$favs = $buddys = NULL;
 
 $action = getVar('action');
 switch($action) {
@@ -76,90 +75,52 @@ switch($action) {
 }
 
 function makenav($current) {
-    global $THEME, $lang, $menu;
-
-    $menu .= '<tr class="ctrcategory"><td width="20%"><font color="'.$THEME['cattext'].'"><strong>'.$lang['textu2uoptions'].'</strong></font></td></tr>';
-
+    global $bordercolor, $tablewidth, $borderwidth, $tablespacing, $altbg1, $altbg2, $lang;
+    ?>
+    <table cellpadding="0" cellspacing="0" border="0" bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>" align="center"><tr><td>
+    <table cellpadding="4" cellspacing="1" border="0" width="100%">
+    <tr align="center" class="tablerow">
+    <?php
     if ($current == '') {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg1'].'" class="tablerow" width="20%">&raquo;&nbsp;<strong>'.$lang['textmyhome'].'</strong></td></tr>';
+        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textmyhome']. "</td>";
     } else {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="memcp.php">'.$lang['textmyhome'].'</a></td></tr>';
+        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php\">" .$lang['textmyhome']. "</a></td>";
     }
 
     if ($current == 'profile') {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg1'].'" class="tablerow" width="20%">&raquo;&nbsp;<strong>'.$lang['texteditpro'].'</strong></td></tr>';
+        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['texteditpro']. "</td>";
     } else {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="memcp.php?action=profile">'.$lang['texteditpro'].'</a></td></tr>';
+        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=profile\">" .$lang['texteditpro']. "</a></td>";
     }
 
     if ($current == 'subscriptions') {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg1'].'" class="tablerow" width="20%">&raquo;&nbsp;<strong>'.$lang['textsubscriptions'].'</strong></td></tr>';
+        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textsubscriptions']. "</td>";
     } else {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="memcp.php?action=subscriptions">'.$lang['textsubscriptions'].'</a></td></tr>';
+        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=subscriptions\">" .$lang['textsubscriptions']. "</a></td>";
     }
 
     if ($current == 'favorites') {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg1'].'" class="tablerow" width="20%">&raquo;&nbsp;<strong>'.$lang['textfavorites'].'</strong></td></tr>';
+        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textfavorites']. "</td>";
     } else {
-        $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="memcp.php?action=favorites">'.$lang['textfavorites'].'</a></td></tr>';
+        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
     }
 
-    $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="#" onclick="Popup(\'u2u.php\', \'Window\', 700, 450);">'.$lang['textu2umessenger'].'</a></td></tr>';
-    $menu .= '<tr><td bgcolor="'.$THEME['altbg2'].'" class="tablerow" width="20%">&raquo;&nbsp;<a href="#" onclick="Popup(\'buddy.php?\', \'Window\', 450, 400);">'.$lang['textbuddylist'].'</a></td></tr>';
-}
-
-function table_msg($outputmsg, $return=0) {
-    global $lang, $THEME;
-
-    $output = '';
-    $return = ((isset($return) && $return == 1) ? true : false);
-    eval('$output = "'.template('memcp_outputmsg').'";');
-
-    if ($return === false) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    echo "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">" .$lang['textu2umessenger']. "</a></td>";
+    echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"#\" onclick=\"Popup('buddy.php?', 'Window', 450, 400);\">" .$lang['textbuddylist']. "</a></td>";
+    echo "<td bgcolor=\"$altbg2\" width=\"10%\" class=\"ctrtablerow\"><a href=\"faq.php\">" .$lang['helpbar']. "</a></td>";
+    ?>
+    </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+    <br />
+    <?php
 }
 
 if (X_GUEST) {
     redirect('misc.php?action=login', 0);
     exit();
-}
-
-$q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM $table_buddys b LEFT JOIN $table_whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
-$buddys = array();
-$buddys['offline'] = '';
-$buddys['online'] = '';
-if (X_ADMIN) {
-    while($buddy = $db->fetch_array($q)) {
-        if (strlen($buddy['username']) > 0) {
-            if ($buddy['invisible'] == 1) {
-                $buddystatus = $lang['hidden'];
-            } else {
-                $buddystatus = $lang['textonline'];
-            }
-            eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
-        } else {
-            eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
-        }
-    }
-    $db->free_result($q);
-} else {
-    while($buddy = $db->fetch_array($q)) {
-        if (strlen($buddy['username']) > 0) {
-            if ($buddy['invisible'] == 1) {
-                eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
-                continue;
-            } else {
-                $buddystatus = $lang['textonline'];
-            }
-            eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
-        } else {
-            eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
-        }
-    }
-    $db->free_result($q);
 }
 
 if ($action == 'profile') {
@@ -324,7 +285,6 @@ if ($action == 'profile') {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
-        $db->free_result($query);
 
         $langfileselect = createLangFileSelect($member['langfile']);
 
@@ -374,10 +334,22 @@ if ($action == 'profile') {
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
         }
 
-        $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+        if ($SETTINGS['avastatus'] == 'list')  {
+            $avatars = '<option value="" />'.$lang['textnone'].'</option>';
+            $dir1 = opendir(ROOT.'images/avatars');
+            while($avatar1 = readdir($dir1)) {
+                if (is_file(ROOT.'images/avatars/'.$avatar1)) {
+                    $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
+                }
+            }
+            $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
+            $avatarbox = '<select name="newavatar" onchange="document.images.avatarpic.src=this[this.selectedIndex].value;">'.$avatars.'</select>';
+            eval('$avatar = "'.template('memcp_profile_avatarlist').'";');
+            closedir($dir1);
+        }
 
-        eval('$output = "'.template('memcp_profile').'";');
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
+        $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+        eval('echo stripslashes("'.template('memcp_profile').'");');
     }
 
     if (onSubmit('editsubmit')) {
@@ -521,8 +493,7 @@ if ($action == 'profile') {
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$xmbuser'");
 
-        $output = table_msg($lang['usercpeditpromsg']);
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
+        echo '<center><span class="mediumtxt">'.$lang['usercpeditpromsg'].'</span></center>';
         redirect('memcp.php', 2.5, X_REDIRECT_JS);
     }
 } else if ($action == 'favorites') {
@@ -541,13 +512,10 @@ if ($action == 'profile') {
         if ($favthread) {
             error($lang['favonlistmsg'], false);
         }
-        $db->free_result($query);
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
-
-        $output = table_msg($lang['favaddedmsg']);
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
-        redirect('memcp.php?action=favorites', 2.5, X_REDIRECT_JS);
+        echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
+        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
@@ -558,7 +526,6 @@ if ($action == 'profile') {
         while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
-            $db->free_result($query2);
             $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -587,10 +554,7 @@ if ($action == 'profile') {
         if ($favnum == 0) {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
-        $db->free_result($query);
-
-        eval('$output = "'.template('memcp_favs').'";');
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
+        eval('echo stripslashes("'.template('memcp_favs').'");');
     }
 
     if (!$favadd && onSubmit('favsubmit')) {
@@ -599,10 +563,8 @@ if ($action == 'profile') {
             $delete = formInt('delete'.$fav['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
         }
-        $db->free_result($query);
-        $output = table_msg($lang['favsdeletedmsg']);
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
-        redirect('memcp.php?action=favorites', 2.5, X_REDIRECT_JS);
+        echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
+        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
     }
 } else if ($action == 'subscriptions') {
     eval('echo "'.template('header').'";');
@@ -617,7 +579,6 @@ if ($action == 'profile') {
         while($fav = $db->fetch_array($query)) {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
-            $db->free_result($query2);
             $forum['name'] = html_entity_decode($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -645,19 +606,15 @@ if ($action == 'profile') {
         if ($subnum == 0) {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
-        $db->free_result($query);
-        eval('$output = "'.template('memcp_subscriptions').'";');
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
+        eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
-
-            $output = table_msg($lang['subaddedmsg']);
-            eval('echo stripslashes("'.template('memcp_home_layout').'");');
-            redirect('memcp.php?action=subscriptions', 2.5, X_REDIRECT_JS);
+            echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
+            redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
@@ -665,14 +622,48 @@ if ($action == 'profile') {
             $delete = formInt('delete'.$sub['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
-        $db->free_result($query);
-        $output = table_msg($lang['subsdeletedmsg']);
-        eval('echo stripslashes("'.template('memcp_home_layout').'");');
-        redirect('memcp.php?action=subscriptions', 2.5, X_REDIRECT_JS);
+        echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
+        redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
     }
 } else {
     eval('echo "'.template('header').'";');
+    eval($lang['evalusercpwelcome']);
     makenav($action);
+
+    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $buddys = array();
+    $buddys['offline'] = '';
+    $buddys['online'] = '';
+    if (X_ADMIN) {
+        while($buddy = $db->fetch_array($q)) {
+            if (strlen($buddy['username']) > 0) {
+                if ($buddy['invisible'] == 1) {
+                   $buddystatus = $lang['hidden'];
+                } else {
+                    $buddystatus = $lang['textonline'];
+                }
+                eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
+            } else {
+                eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
+            }
+        }
+        $db->free_result($q);
+    } else {
+        while($buddy = $db->fetch_array($q)) {
+            if (strlen($buddy['username']) > 0) {
+                if ($buddy['invisible'] == 1) {
+                   eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
+                   continue;
+                } else {
+                    $buddystatus = $lang['textonline'];
+                }
+                eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
+            } else {
+                eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
+            }
+        }
+        $db->free_result($q);
+    }
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
     $member = $db->fetch_array($query);
@@ -732,7 +723,6 @@ if ($action == 'profile') {
     while($fav = $db->fetch_array($query2)) {
         $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
-        $db->free_result($query);
         $forum['name'] = html_entity_decode($forum['name']);
 
         $lastpost = explode('|', $fav['lastpost']);
@@ -754,9 +744,7 @@ if ($action == 'profile') {
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
-    $db->free_result($query2);
-    eval('$output = "'.template('memcp_home').'";');
-    eval('echo stripslashes("'.template('memcp_home_layout').'");');
+    eval('echo stripslashes("'.template('memcp_home').'");');
 }
 
 end_time();

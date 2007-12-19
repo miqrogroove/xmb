@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -100,14 +100,14 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort = "XMB 1.9.9";
-$versiongeneral = 'XMB 1.9.9 Engage';
+$versionshort = "XMB 1.9.8";
+$versiongeneral = 'XMB 1.9.8 Engage';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
-    $beta = 'Beta 1';
-    $gamma = '';
-    $service_pack = '';
+    $beta = '';
+    $gamma = 'Final';
+    $service_pack = ' SP1';
     $versionbuild = 20071212;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
@@ -323,6 +323,14 @@ if ($postperpage < 5) {
 
 if ($topicperpage < 5) {
     $topicperpage = 30;
+}
+
+if ($memberperpage < 5) {
+    $memberperpage = 30;
+}
+
+if ($onlinetodaycount < 5) {
+    $onlinetodaycount = 30;
 }
 
 // Get the user-vars, and make them semi-global

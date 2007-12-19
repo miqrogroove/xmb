@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -33,6 +33,7 @@ loadtemplates(
 'member_reg_rules',
 'member_reg_password',
 'member_reg_avatarurl',
+'member_reg_avatarlist',
 'member_reg',
 'member_reg_optional',
 'member_reg_captcha',
@@ -281,6 +282,18 @@ switch($action) {
                 $avatd = '';
                 if ($SETTINGS['avastatus'] == 'on') {
                     eval('$avatd = "'.template('member_reg_avatarurl').'";');
+                } else if ($SETTINGS['avastatus'] == 'list') {
+                    $avatars = array();
+                    $avatars[] = '<option value=""/>'.$lang['textnone'].'</option>';
+                    $dirHandle = opendir('./images/avatars');
+                    while($avFile = readdir($dirHandle)) {
+                        if (is_file('./images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..') {
+                            $avatars[] = '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
+                        }
+                    }
+                    closedir($dirHandle);
+                    $avatars = implode("\n", str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars));
+                    eval('$avatd = "'.template('member_reg_avatarlist').'";');
                 }
 
                 if (empty($dformatorig)) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -398,6 +398,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `regviewonly` char(3) NOT NULL default '',
       `floodctrl` smallint(5) NOT NULL default 0,
       `memberperpage` smallint(5) NOT NULL default 0,
+      `catsonly` char(3) NOT NULL default '',
       `hideprivate` char(3) NOT NULL default '',
       `emailcheck` char(3) NOT NULL default '',
       `bbrules` char(3) NOT NULL default '',
@@ -407,7 +408,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `memliststatus` char(3) NOT NULL default '',
       `sitename` varchar(50) NOT NULL default '',
       `siteurl` varchar(60) NOT NULL default '',
-      `avastatus` set('on','off') NOT NULL default 'on',
+      `avastatus` varchar(4) NOT NULL default '',
       `u2uquota` smallint(5) NOT NULL default 0,
       `gzipcompress` varchar(30) NOT NULL default '',
       `boardurl` varchar(60) NOT NULL default '',
@@ -435,10 +436,13 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `addtime` DECIMAL(4,2) NOT NULL default 0,
       `max_avatar_size` varchar(9) NOT NULL default '100x100',
       `footer_options` varchar(45) NOT NULL default 'queries-phpsql-loadtimes-totaltime',
+      `space_cats` char(3) NOT NULL default '',
+      `spellcheck` char(3) NOT NULL default 'off',
       `allowrankedit` char(3) NOT NULL default '',
       `notifyonreg` SET('off','u2u','email') NOT NULL default 'off',
       `subject_in_title` char(3) NOT NULL default '',
       `def_tz` decimal(4,2) NOT NULL default '0.00',
+      `indexshowbar` tinyint(2) NOT NULL default 2,
       `resetsigs` char(3) NOT NULL default '',
       `pruneusers` smallint(3) NOT NULL default 0,
       `ipreg` char(3) NOT NULL default 'on',
@@ -465,7 +469,9 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `regoptional` set('on','off') NOT NULL default 'off',
       `quickreply_status` set('on','off') NOT NULL default 'on',
       `quickjump_status` set('on','off') NOT NULL default 'on',
-      `index_stats` set('on','off') NOT NULL default 'on'
+      `index_stats` set('on','off') NOT NULL default 'on',
+      `onlinetodaycount` smallint(5) NOT NULL default 0,
+      `onlinetoday_status` set('on','off') NOT NULL default 'on'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
@@ -688,7 +694,7 @@ $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Administrator', -1, 9,
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."settings");
-$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'on', 'off', 'off', '0.00', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off', 'off', 'on', 'on', 'on');");
+$db->query("INSERT INTO ".$tablepre."settings VALUES ('English', 'Your Forums', 25, 30, 20, 1, 'on', 'on', 'on', '', 'off', 5, 45, 'off', 'on', 'off', 'off', '', 'on', 'on', 'on', 'YourDomain.com', '$full_url', 'on', 600, 'on', '$full_url', 'off', 12, 'webmaster@domain.ext', 'dd-mm-yyyy', 'on', 'off', 'on', 'on', 'on', 'off', '16', '4', 'off', 'on', 'on', 'on', 'on', 'on', 'on', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', '4000', '0', '100x100', 'queries-phpsql-loadtimes-totaltime', 'no', 'off', 'on', 'off', 'off', '0.00', '2', 'off', '0', 'on', 25, 256000, 'on', 'on', 'on', 'A-Z', '8', 'off', 'off', 'png', '250', '50', '', '0', '70', '', '16', '25', 'off', 'off', 'off', 'on', 'on', 'on', '50', 'on');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."smilies");

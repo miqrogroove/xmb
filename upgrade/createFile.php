@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -35,7 +35,7 @@ if (!X_SADMIN) {
 
 require 'upgrade.lib.php';
 
-$upgrade = new Upgrade(&$db, 'XMB_1_9_9.xmb', $tablepre);
+$upgrade = new Upgrade(&$db, 'XMB_1_9_8.xmb', $tablepre);
 $tables = $upgrade->getTablesByTablepre($tablepre);
 $upgrade->loadTables($tables);
 $new = $upgrade->createUpgradeFile();

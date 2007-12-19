@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -200,6 +200,8 @@ function url_to_text($url) {
             $location = $lang['onlinelostpw'];
         } else if (false !== strpos($url, 'online')) {
             $location = $lang['onlinewhosonline'];
+        } else if (false !== strpos($url, 'onlinetoday')) {
+            $location = $lang['onlineonlinetoday'];
         } else if (false !== strpos($url, 'list')) {
             $location = $lang['onlinememlist'];
         } else if (false !== strpos($url, 'captchaimage')) {

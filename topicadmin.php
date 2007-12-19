@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -725,7 +725,8 @@ switch($action) {
                     }
 
                     if ($key == 'subject') {
-                        $val = '[COPY] '.$val;
+                        //$val = '[COPY] '.$val;
+                        $val = $val;
                     }
                     $cols[] = $key;
                     $vals[] = addslashes($val);

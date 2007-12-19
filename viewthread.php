@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -89,6 +89,8 @@ if ($goto == 'lastpost') {
 }
 
 loadtemplates(
+'functions_bbcode',
+'functions_smilieinsert_smilie',
 'viewthread_reply',
 'viewthread_quickreply',
 'viewthread_quickreply_captcha',
@@ -201,6 +203,36 @@ $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 
+eval('$bbcodescript = "'.template('functions_bbcode').'";');
+
+if ($smileyinsert == 'on' && $smiliesnum > 0) {
+    $max = ($smiliesnum > 16) ? 16 : $smiliesnum;
+    srand((double)microtime() * 1000000);
+    $keys = array_rand($smiliecache, $max);
+    $smilies = array();
+    $smilies[] = '<table border="0"><tr>';
+    $i = 0;
+    $total = 0;
+    $pre = 'opener.';
+    foreach($keys as $key) {
+        if ($total == 16) {
+            break;
+        }
+        $smilie['code'] = $key;
+        $smilie['url'] = $smiliecache[$key];
+
+        if ($i >= 4) {
+            $smilies[] = '</tr><tr>';
+            $i = 0;
+        }
+        eval('$smilies[] = "'.template('functions_smilieinsert_smilie').'";');
+        $i++;
+        $total++;
+    }
+    $smilies[] = '</tr></table>';
+    $smilies = implode("\n", $smilies);
+}
+
 $usesig = false;
 $replylink = $quickreply = '';
 
@@ -235,7 +267,6 @@ if (!$action) {
             eval('$replylink = "'.template('viewthread_reply').'";');
             $quickreply = '';
             if ($SETTINGS['quickreply_status'] == 'on') {
-                eval($lang['quickreplymessage']);
                 eval('$quickreply = "'.template('viewthread_quickreply').'";');
             }
         }
@@ -246,7 +277,6 @@ if (!$action) {
             eval('$replylink = "'.template('viewthread_reply').'";');
             $quickreply = '';
             if ($SETTINGS['quickreply_status'] == 'on') {
-                eval($lang['quickreplymessage']);
                 eval('$quickreply = "'.template('viewthread_quickreply').'";');
             }
         }
@@ -489,9 +519,9 @@ if (!$action) {
             }
 
             $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
-
             $avatar = '';
-            if ($SETTINGS['avastatus'] == 'on') {
+
+            if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
                     if (false !== ($pos = strpos($post['avatar'], ',')) && substr($post['avatar'], $pos-4, 4) == '.swf') {
                         $flashavatar = explode(',',$post['avatar']);

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -31,6 +31,8 @@ require 'header.php';
 loadtemplates(
 'index',
 'index_category',
+'index_category_hr',
+'index_category_spacer',
 'index_forum',
 'index_forum_lastpost',
 'index_forum_nolastpost',
@@ -39,7 +41,8 @@ loadtemplates(
 'index_stats',
 'index_welcome_guest',
 'index_welcome_member',
-'index_whosonline'
+'index_whosonline',
+'index_whosonline_today'
 );
 
 eval('$css = "'.template('css').'";');
@@ -110,7 +113,7 @@ if ($gid == 0) {
         eval('$welcome = "'.template('index_welcome_guest').'";');
     }
 
-    $whosonline = '';
+    $whosonline = $whosonlinetoday = '';
     if ($SETTINGS['whosonlinestatus'] == 'on') {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
@@ -199,46 +202,71 @@ if ($gid == 0) {
             $memtally = '&nbsp;';
         }
 
-        $datecut = $onlinetime - (3600 * 24);
-        if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
-        } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY username ASC");
+        $whosonlinetoday = '';
+        if ($SETTINGS['onlinetoday_status'] == 'on') {
+            $datecut = $onlinetime - (3600 * 24);
+            if (X_ADMIN) {
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
+            } else {
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
+            }
+
+            $todaymembersnum = 0;
+            $todaymembers = array();
+            $pre = $suff = '';
+            while($memberstoday = $db->fetch_array($query)) {
+                $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+                $suff = '</span>';
+                $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
+                ++$todaymembersnum;
+            }
+            $todaymembers = implode(', ', $todaymembers);
+            $db->free_result($query);
+
+            if ($todaymembersnum == 1) {
+                $memontoday = $todaymembersnum.$lang['textmembertoday'];
+            } else {
+                $memontoday = $todaymembersnum.$lang['textmemberstoday'];
+            }
+            eval('$whosonlinetoday = "'.template('index_whosonline_today').'";');
         }
 
-        $todaymembersnum = 0;
-        $todaymembers = array();
-        $pre = $suff = '';
-        while($memberstoday = $db->fetch_array($query)) {
-            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
-            $suff = '</span>';
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
-            ++$todaymembersnum;
-        }
-        $todaymembers = implode(', ', $todaymembers);
-        $db->free_result($query);
-
-        if ($todaymembersnum == 1) {
-            $memontoday = $todaymembersnum.$lang['textmembertoday'];
-        } else {
-            $memontoday = $todaymembersnum.$lang['textmemberstoday'];
-        }
         eval('$whosonline = "'.template('index_whosonline').'";');
     }
 
-    if ($gid = 0) {
+    if ($SETTINGS['catsonly'] == 'on') {
         $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder ASC");
     } else {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
 } else {
-    $ticker = $welcome = $whosonline = $statsbar = '';
+    $ticker = $welcome = $whosonline = $statsbar = $whosonlinetoday = '';
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
+}
+
+$indexBarTop = $indexBar = $forumlist = $spacer = '';
+$catLessForums = $lastcat = 0;
+
+if ($SETTINGS['space_cats'] == 'on') {
+    eval('$spacer = "'.template('index_category_spacer').'";');
+}
+
+if ($SETTINGS['catsonly'] != 'on') {
+    if ($SETTINGS['indexshowbar'] == 1) {
+        eval('$indexBar = "'.template('index_category_hr').'";');
+        $indexBarTop = $indexBar;
+    }
+
+    if ($SETTINGS['indexshowbar'] == 2) {
+        eval('$indexBarTop = "'.template('index_category_hr').'";');
+    }
+} else if ($gid > 0) {
+    eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
-    if ($gid == 0) {
+    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $query = $db->query("SELECT fid, fup, name, private, userlist FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $index_subforums[] = $queryrow;
@@ -247,22 +275,39 @@ if ($SETTINGS['showsubforums'] == 'on') {
     }
 }
 
-$lastcat = 0;
-$forumlist = $cforum = '';
 while($thing = $db->fetch_array($fquery)) {
-    $cforum = forum($thing, 'index_forum');
-    if ($lastcat != (int) $thing['cat_fid'] && !empty($cforum)) {
-        $lastcat = (int) $thing['cat_fid'];
+    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+        $cforum = forum($thing, "index_forum");
+    } else {
+        $cforum = '';
+    }
+
+    if ((int)$thing['cat_fid'] === 0) {
+        $catLessForums++;
+    }
+
+    if ($lastcat != $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || (!empty($cforum) && $SETTINGS['catsonly'] != 'on'))) {
+        $lastcat = $thing['cat_fid'];
         $thing['cat_name'] = html_entity_decode($thing['cat_name']);
         eval('$forumlist .= "'.template('index_category').'";');
+        if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+            $forumlist .= $indexBar;
+        }
     }
-    $forumlist .= $cforum;
+
+    if (!empty($cforum)) {
+        $forumlist .= $cforum;
+    }
 }
 
 if (empty($forumlist)) {
     eval('$forumlist = "'.template('index_noforum').'";');
 }
 $db->free_result($fquery);
+
+if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
+    $indexBarTop = '';
+}
 
 eval('$index = "'.template('index').'";');
 end_time();

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.9 Engage Beta 1
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -85,6 +85,9 @@ if ($action == "settings") {
         $regonlyon = $regonlyoff = '';
         settingHTML('regviewonly', $regonlyon, $regonlyoff);
 
+        $catsonlyon = $catsonlyoff = '';
+        settingHTML('catsonly', $catsonlyon, $catsonlyoff);
+
         $hideon = $hideoff = '';
         settingHTML('hideprivate', $hideon, $hideoff);
 
@@ -145,11 +148,17 @@ if ($action == "settings") {
         $tickerstatuson = $tickerstatusoff = '';
         settingHTML('tickerstatus', $tickerstatuson, $tickerstatusoff);
 
+        $spacecatson = $spacecatsoff = '';
+        settingHTML('space_cats', $spacecatson, $spacecatsoff);
+
         $subjectInTitleOn = $subjectInTitleOff = '';
         settingHTML('subject_in_title', $subjectInTitleOn, $subjectInTitleOff);
 
         $allowrankediton = $allowrankeditoff = '';
         settingHTML('allowrankedit', $allowrankediton, $allowrankeditoff);
+
+        $spellcheckon = $spellcheckoff = '';
+        settingHTML('spellcheck', $spellcheckon, $spellcheckoff);
 
         $resetSigOn = $resetSigOff = '';
         settingHTML('resetsigs', $resetSigOn, $resetSigOff);
@@ -187,14 +196,42 @@ if ($action == "settings") {
         $index_statson = $index_statsoff = '';
         settingHTML('index_stats', $index_statson, $index_statsoff);
 
-        $avataron = $avataroff = '';
-        settingHTML('avastatus', $avastatuson, $avastatusoff);
+        $onlinetoday_statuson = $onlinetoday_statusoff = '';
+        settingHTML('onlinetoday_status', $onlinetoday_statuson, $onlinetoday_statusoff);
+
+        $avataron = $avataroff = $avatarlist = '';
+        if ($SETTINGS['avastatus'] == 'on') {
+            $avataron = $selHTML;
+        } else if ($avastatus == 'list') {
+            $avatarlist = $selHTML;
+        } else {
+            $avataroff = $selHTML;
+        }
 
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
         } else {
             $check12 = $cheHTML;
+        }
+
+        $indexShowBarCats = $indexShowBarTop = $indexShowBarNone = false;
+        switch($SETTINGS['indexshowbar']) {
+            case 1:
+                $indexShowBarCats = true;
+                break;
+            case 3:
+                $indexShowBarNone = true;
+                break;
+            default:
+                $indexShowBarTop = true;
+                break;
+        }
+
+        $spell_off_reason = '';
+        if (!defined('PSPELL_FAST')) {
+            $spell_off_reason = $lang['pspell_needed'];
+            $SETTINGS['spellcheck'] = 'off';
         }
 
         $notifycheck[0] = $notifycheck[1] = $notifycheck[2] = false;
@@ -361,6 +398,7 @@ if ($action == "settings") {
         $checked = array($sel_serverload, $sel_queries, $sel_phpsql, $sel_loadtimes);
 
         $max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
+        $lang['spell_checker'] .= $spell_off_reason;
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -424,6 +462,7 @@ if ($action == "settings") {
         printsetting1($lang['texttodaystatus'], 'todaystatusnew', $todayon, $todayoff);
         printsetting1($lang['textstatsstatus'], 'statsstatusnew', $statson,  $statsoff);
         printsetting1($lang['textmemliststatus'], 'memliststatusnew', $memliston, $memlistoff);
+        printsetting1($lang['spell_checker'], 'spellchecknew', $spellcheckon, $spellcheckoff);
         printsetting1($lang['coppastatus'], 'coppanew', $coppaon, $coppaoff);
         printsetting1($lang['reportpoststatus'], 'reportpostnew', $reportposton, $reportpostoff);
         ?>
@@ -435,14 +474,19 @@ if ($action == "settings") {
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
+        printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
+        printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
         printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
+        printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
         printsetting1($lang['whosonline_on'], 'whos_on', $whosonlineon, $whosonlineoff);
+        printsetting1($lang['onlinetoday_status'], 'onlinetoday_statusnew', $onlinetoday_statuson, $onlinetoday_statusoff);
         printsetting2($lang['smtotal'], 'smtotalnew', ((int)$SETTINGS['smtotal']), 5);
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
+        printsetting2($lang['max_onlinetodaycount'], 'onlinetodaycountnew', ((int)$SETTINGS['onlinetodaycount']), 5);
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
         printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
@@ -464,7 +508,7 @@ if ($action == "settings") {
         printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
-        printsetting1($lang['textavastatus'], 'avastatusnew', $avastatuson, $avastatusoff);
+        printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
         printsetting1($lang['resetSigDesc'], 'resetSigNew', $resetSigOn, $resetSigOff);
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
@@ -557,10 +601,14 @@ if ($action == "settings") {
         $todaystatusnew = formOnOff('todaystatusnew');
         $statsstatusnew = formOnOff('statsstatusnew');
         $memliststatusnew = formOnOff('memliststatusnew');
+        $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $coppanew = formOnOff('coppanew');
         $reportpostnew = formOnOff('reportpostnew');
+        $space_catsnew = formOnOff('space_catsnew');
+        $indexShowBarNew = formInt('indexShowBarNew');
         $allowrankeditnew = formOnOff('allowrankeditnew');
         $subjectInTitleNew = formOnOff('subjectInTitleNew');
+        $catsonlynew = formOnOff('catsonlynew');
         $whos_on = formOnOff('whos_on');
         $smtotalnew = formInt('smtotalnew');
         $smcolsnew = formInt('smcolsnew');
@@ -623,6 +671,8 @@ if ($action == "settings") {
         $quickreply_statusnew = formOnOff('quickreply_statusnew');
         $quickjump_statusnew = formOnOff('quickjump_statusnew');
         $index_statsnew = formOnOff('index_statsnew');
+        $onlinetodaycountnew = formInt('onlinetodaycountnew');
+        $onlinetoday_statusnew = formOnOff('onlinetoday_statusnew');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -638,6 +688,7 @@ if ($action == "settings") {
             regviewonly='$regviewnew',
             floodctrl='$floodctrlnew',
             memberperpage='$memberperpagenew',
+            catsonly='$catsonlynew',
             hideprivate='$hidepriv',
             emailcheck='$emailchecknew',
             bbrules='$bbrulesnew',
@@ -674,8 +725,11 @@ if ($action == "settings") {
             stats='$statsstatusnew',
             max_avatar_size='$max_avatar_size',
             footer_options='$footer_options',
+            space_cats='$space_catsnew',
+            spellcheck='$spellchecknew',
             allowrankedit='$allowrankeditnew',
             notifyonreg='$notifyonregnew',
+            indexshowbar='$indexShowBarNew',
             subject_in_title='$subjectInTitleNew',
             def_tz='$def_tz_new',
             resetsigs='$resetSigNew',
@@ -704,7 +758,9 @@ if ($action == "settings") {
             regoptional='$regoptionalnew',
             quickreply_status='$quickreply_statusnew',
             quickjump_status='$quickjump_statusnew',
-            index_stats='$index_statsnew'
+            index_stats='$index_statsnew',
+            onlinetodaycount='$onlinetodaycountnew',
+            onlinetoday_status='$onlinetoday_statusnew'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
