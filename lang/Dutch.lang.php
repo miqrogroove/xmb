@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final
+ * XMB 1.9.8 Engage Final SP1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -25,6 +25,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
+
+// NOT FINISHED
 
 if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
