@@ -172,7 +172,6 @@ if ((!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 's
     $db->free_result($query);
     error($lang['textnoforum']);
 }
-
 $db->free_result($query);
 
 $authorization = true;
@@ -188,14 +187,15 @@ if (!$authorization || !privfcheck($forum['private'], $forum['userlist'])) {
     error($lang['privforummsg']);
 }
 
-$ssForumName = html_entity_decode(stripslashes($forum['name']));
 if (isset($forum['type']) && $forum['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'"> '.$ssForumName.'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
     nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
 } else {
-    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.$ssForumName.'</a>');
-    nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
+    if (isset($forum['type']) && $forum['type'] == 'sub') {
+        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
+        nav(checkOutput(stripslashes($thread['subject']), 'no', '', true));
+    }
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
@@ -208,7 +208,13 @@ eval('$bbcodescript = "'.template('functions_bbcode').'";');
 if ($smileyinsert == 'on' && $smiliesnum > 0) {
     $max = ($smiliesnum > 16) ? 16 : $smiliesnum;
     srand((double)microtime() * 1000000);
-    $keys = array_rand($smiliecache, $max);
+    // Fix for Invalid argument supplied for foreach()
+    // Provided by JDaniels
+    if ($max == 1) {
+        $keys = array_keys($smiliecache, $max);
+    } else {
+        $keys = array_rand($smiliecache, $max);
+    }
     $smilies = array();
     $smilies[] = '<table border="0"><tr>';
     $i = 0;
@@ -357,6 +363,7 @@ if (!$action) {
                 $voted = $db->fetch_array($query);
                 $voted = (int) $voted['cVotes'];
             }
+            $db->free_result($query);
         }
 
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';

@@ -509,11 +509,11 @@ if ($action == 'profile') {
 
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$favadd' AND username='$xmbuser' AND type='favorite'");
         $favthread = $db->fetch_array($query);
+        $db->free_result($query);
 
         if ($favthread) {
             error($lang['favonlistmsg'], false);
         }
-        $db->free_result($query);
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
         echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
@@ -557,7 +557,7 @@ if ($action == 'profile') {
         if ($favnum == 0) {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
-		$db->free_result($query);
+        $db->free_result($query);
         eval('echo stripslashes("'.template('memcp_favs').'");');
     }
 
@@ -613,11 +613,12 @@ if ($action == 'profile') {
         if ($subnum == 0) {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
-		$db->free_result($query);
+        $db->free_result($query);
         eval('echo stripslashes("'.template('memcp_subscriptions').'");');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
+            $db->free_result($query);
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
@@ -630,7 +631,7 @@ if ($action == 'profile') {
             $delete = formInt('delete'.$sub['tid']);
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
-		$db->free_result($query);
+        $db->free_result($query);
         echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
         redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
     }
@@ -726,7 +727,6 @@ if ($action == 'profile') {
 
     $query2 = $db->query("SELECT * FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t, ".X_PREFIX."posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC LIMIT 0,5");
     $favnum = $db->num_rows($query2);
-
     $favs = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($fav = $db->fetch_array($query2)) {
@@ -754,7 +754,7 @@ if ($action == 'profile') {
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
-	$db->free_result($query2);
+    $db->free_result($query2);
     eval('echo stripslashes("'.template('memcp_home').'");');
 }
 

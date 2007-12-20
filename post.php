@@ -76,6 +76,7 @@ if ($tid) {
     $query = $db->query("SELECT fid, subject FROM ".X_PREFIX."threads WHERE tid='$tid' LIMIT 1");
     if ($db->num_rows($query) == 1) {
         $thread = $db->fetch_array($query);
+        $db->free_result($query);
         $threadname = html_entity_decode(stripslashes(htmlspecialchars($thread['subject'])));
         $fid = (int) $thread['fid'];
     } else {
@@ -85,6 +86,7 @@ if ($tid) {
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forums = $db->fetch_array($query);
+$db->free_result($query);
 $forums['name'] = stripslashes($forums['name']);
 
 if (($fid == 0 && $tid == 0) || (!isset($forums['type']) && $forums['type'] != 'forum' && $forums['type'] != 'sub' && $forums['fid'] != $fid)) {
@@ -99,7 +101,7 @@ if (isset($forums['type']) && $forums['type'] == 'forum') {
     } else {
         $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
         $fup = $db->fetch_array($query);
-        nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
         nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
     }
 }
@@ -124,7 +126,7 @@ if ($self['status'] == "Banned") {
 }
 
 $listed_icons = 0;
-$icons = '<input type="radio" name="posticon" value="" /> <img src="'.$imgdir.'/default_icon.gif" alt="[*]" />';
+$icons = '<input type="radio" name="posticon" value="" /> <img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
 if ($action != 'edit') {
     $captchapostcheck = '';
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
@@ -256,6 +258,7 @@ pwverify($forums['password'], 'post.php?action='.$action.'&fid='.$fid.'&tid='.$t
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
+$db->free_result($query);
 $authorization = privfcheck($forum['private'], $forum['userlist']);
 if (!$authorization) {
     error($lang['privforummsg']);
@@ -408,6 +411,7 @@ if ($action == 'newthread') {
             $username = trim($username);
             $q = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$username'");
             if ($db->num_rows($q) != 1) {
+                $db->free_result($q);
                 error($lang['badname']);
             } else {
                 $self = $db->fetch_array($q);
@@ -415,6 +419,7 @@ if ($action == 'newthread') {
                     error($lang['textpw1']);
                 }
                 $username = $self['username'];
+                $db->free_result($q);
             }
 
             if ($self['status'] == "Banned") {
@@ -462,6 +467,7 @@ if ($action == 'newthread') {
 
         $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
         $for = $db->fetch_array($query);
+        $db->free_result($query);
 
         if ($for['lastpost'] != '') {
             $lastpost = explode('|', $for['lastpost']);
@@ -474,6 +480,7 @@ if ($action == 'newthread') {
         if (isset($posticon) && $posticon != '') {
             $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
             if (!$db->result($query, 0)) {
+                $db->free_result($query);
                 exit();
             }
         } else {
@@ -537,6 +544,7 @@ if ($action == 'newthread') {
         if (isset($emailnotify) && $emailnotify == 'yes') {
             $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$xmbuser' AND type='subscription'");
             $thread = $db->fetch_array($query);
+            $db->free_result($query);
             if (!$thread) {
                 $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
             }
@@ -560,6 +568,7 @@ if ($action == 'newthread') {
 
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
         $posts = $db->result($query, 0);
+        $db->free_result($query);
 
         $topicpages = quickpage($posts, $ppp);
         message($lang['postmsg'], false, '', '', "viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, true, false, true);
@@ -589,6 +598,7 @@ if ($action == 'newthread') {
         if (isset($repquote) && ($repquote = (int) $repquote)) {
             $query = $db->query("SELECT p.message, p.fid, p.author, f.private AS fprivate, f.userlist AS fuserlist, f.password AS fpassword FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
             $thaquote = $db->fetch_array($query);
+            $db->free_result($query);
             $quotefid = $thaquote['fid'];
             $pass = trim($thaquote['fpassword']);
 
@@ -631,7 +641,9 @@ if ($action == 'newthread') {
                     $thisbg = $altbg2;
                 }
             }
+            $db->free_result($query);
         }
+        $db->free_result($querytop);
 
         $attachfile = '';
         if (isset($forums['attachstatus']) && $forums['attachstatus'] == 'on') {
@@ -656,6 +668,7 @@ if ($action == 'newthread') {
 
             $q = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$username'");
             if ($db->num_rows($q) != 1) {
+                $db->free_result($q);
                 error($lang['badname']);
             } else {
                 $self = $db->fetch_array($q);
@@ -663,6 +676,7 @@ if ($action == 'newthread') {
                     error($lang['textpw1']);
                 }
                 $username = $self['username'];
+                $db->free_result($q);
             }
 
             if ($self['status'] == "Banned") {
@@ -710,6 +724,7 @@ if ($action == 'newthread') {
         if (isset($posticon) && $posticon != "") {
             $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
             if (!$db->result($query, 0)) {
+                $db->free_result($query);
                 exit();
             }
         } else {
@@ -718,6 +733,7 @@ if ($action == 'newthread') {
 
         $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
         $for = $db->fetch_array($query);
+        $db->free_result($query);
         $last = $for['lastpost'];
 
         if ($last != '') {
@@ -738,6 +754,7 @@ if ($action == 'newthread') {
 
         $query = $db->query("SELECT closed, topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
         $closed1 = $db->fetch_array($query);
+        $db->free_result($query);
         $closed = $closed1['closed'];
         if ($closed == 'yes' && !X_STAFF) {
             error($lang['closedmsg']);
@@ -763,6 +780,7 @@ if ($action == 'newthread') {
 
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
             $posts = $db->result($query,0);
+            $db->free_result($query);
 
             if ($posts > $ppp) {
                 $topicpages = quickpage($posts, $ppp);
@@ -785,12 +803,14 @@ if ($action == 'newthread') {
                 $threadurl = $SETTINGS['boardurl'] . 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
                 altMail($subs['email'], $lang['textsubsubject'].' '.$threadname, $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
             }
+            $db->free_result($subquery);
 
             if (isset($emailnotify) && $emailnotify == 'yes') {
                 $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$xmbuser' AND type='subscription'");
                 if ($db->num_rows($query) < 1) {
                     $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
                 }
+                $db->free_result($query);
             }
 
             eval('echo "'.template('header').'";');
@@ -816,6 +836,7 @@ if ($action == 'newthread') {
         eval('echo "'.template('header').'";');
         $queryextra = $db->query("SELECT f.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON (f.fid=p.fid) WHERE p.tid='$tid' AND p.pid='$pid'");
         $forum = $db->fetch_array($queryextra);
+        $db->free_result($queryextra);
 
         $authorization = privfcheck($forum['private'], $forum['userlist']);
         if (!$authorization) {
@@ -829,9 +850,11 @@ if ($action == 'newthread') {
             if ($db->num_rows($query) > 0) {
                 $postinfo = array_merge($postinfo, $db->fetch_array($query));
             }
+            $db->free_result($query);
         } else {
             $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid=p.pid) WHERE p.pid='$pid' AND p.tid='$tid' AND p.fid=".$forum['fid']);
             $postinfo = $db->fetch_array($query);
+            $db->free_result($query);
         }
 
         if (isset($postinfo['filesize'])) {
@@ -873,6 +896,7 @@ if ($action == 'newthread') {
                     $listed_icons = 0;
                 }
             }
+            $db->free_result($querysmilie);
         } else {
             $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
             while($smilie = $db->fetch_array($querysmilie)) {
@@ -887,6 +911,7 @@ if ($action == 'newthread') {
                     $listed_icons = 0;
                 }
             }
+            $db->free_result($querysmilie);
         }
 
         $postinfo['subject'] = stripslashes($postinfo['subject']);
@@ -918,12 +943,14 @@ if ($action == 'newthread') {
         $q = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$username'");
         if ($db->num_rows($q) != 1) {
             error($lang['badname']);
+            $db->free_result($q);
         } else {
             $self = $db->fetch_array($q);
             if ($password != $self['password']) {
                 error($lang['textpw1']);
             }
             $username = $self['username'];
+            $db->free_result($q);
         }
 
         if ($self['status'] == "Banned") {
@@ -952,6 +979,7 @@ if ($action == 'newthread') {
         if (isset($posticon) && $posticon != "") {
             $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
             if (!$db->result($query, 0)) {
+                $db->free_result($query);
                 exit();
             }
         } else {
@@ -960,6 +988,7 @@ if ($action == 'newthread') {
 
         $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline LIMIT 1");
         $isfirstpost = $db->fetch_array($query);
+        $db->free_result($query);
 
         if ((trim($subject) == '' && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
             error($lang['textnosubject']);
@@ -1078,6 +1107,7 @@ if ($action == 'newthread') {
         if ($threaddelete != 'yes') {
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= '$pid' AND tid='$tid' AND fid='$fid'");
             $posts = $db->result($query,0);
+            $db->free_result($query);
             $topicpages = quickpage($posts, $ppp);
             message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         } else {

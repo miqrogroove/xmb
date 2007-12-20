@@ -316,6 +316,7 @@ foreach($db->fetch_array($squery) as $key => $val) {
     $$key = $val;
     $SETTINGS[$key] = $val;
 }
+$db->free_result($squery);
 
 if ($postperpage < 5) {
     $postperpage = 30;
@@ -504,6 +505,7 @@ $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'Y
 if (isset($tid) && $action != 'templates') {
     $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
     $locate = $db->fetch_array($query);
+    $db->free_result($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
     if ($SETTINGS['subject_in_title'] == 'on' && $locate['subject']) {
@@ -515,6 +517,7 @@ if (isset($tid) && $action != 'templates') {
     $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
+        $db->free_result($q);
     } else {
         $forumtheme = 0;
     }
@@ -536,6 +539,7 @@ if (X_MEMBER) {
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }
+    $db->free_result($result);
 }
 
 // Check what theme to use
@@ -558,6 +562,7 @@ foreach($db->fetch_array($query) as $key=>$val) {
     $THEME[$key] = $val;
 }
 $imgdir = './'.$imgdir;
+$db->free_result($query);
 
 // additional CSS to load?
 if (file_exists($imgdir.'/theme.css')) {
@@ -724,6 +729,7 @@ $ips = explode(".", $onlineip);
 // also disable 'ban all'-possibility
 $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
 $result = $db->fetch_array($query);
+$db->free_result($query);
 
 // don't *ever* ban a (super-)admin!
 if (!X_ADMIN && ($self['status'] == 'Banned' || $result)) {
@@ -739,6 +745,7 @@ if (X_MEMBER) {
     if ($newu2unum > 0) {
         $newu2umsg = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[newu2u1] $newu2unum $lang[newu2u2]</a>";
     }
+    $db->free_result($query);
 }
 
 // create forum jump

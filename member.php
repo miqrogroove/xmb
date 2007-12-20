@@ -97,6 +97,7 @@ switch($action) {
             if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
                 error($lang['max_regs']);
             }
+            $db->free_result($query);
         }
 
         if ($SETTINGS['regstatus'] == 'off') {
@@ -335,6 +336,7 @@ switch($action) {
                 if ($db->num_rows($query) >= 1) {
                     error($lang['reg_today']);
                 }
+                $db->free_result($query);
             }
 
             $email = addslashes(formVar('email'));
@@ -348,6 +350,7 @@ switch($action) {
 
             $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$username' $email2");
             if ($member = $db->fetch_array($query)) {
+                $db->free_result($query);
                 error($lang['alreadyreg']);
             }
 
@@ -413,6 +416,7 @@ switch($action) {
                     }
                 }
             }
+            $db->free_result($query);
 
             if ($fail) {
                 error($lang['restricted']);
@@ -455,6 +459,7 @@ switch($action) {
 
             $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members");
             $count1 = $db->result($query,0);
+            $db->free_result($query);
 
             $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
@@ -663,6 +668,7 @@ switch($action) {
 
                 $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
                 $posts = $db->result($query, 0);
+                $db->free_result($query);
 
                 $posttot = $posts;
                 if ($posttot == 0) {

@@ -58,6 +58,7 @@ $page = getInt('page');
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
+$db->free_result($query);
 
 $notexist = false;
 if (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
@@ -68,6 +69,7 @@ $fup = array();
 if (isset($forum['type']) && $forum['type'] == 'sub') {
     $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
+    $db->free_result($query);
     if (!privfcheck($fup['private'], $fup['userlist'])) {
         error($lang['privforummsg']);
     }
@@ -103,6 +105,7 @@ if (count($fup) == 0) {
         if (!empty($forumlist)) {
             eval('$subforums .= "'.template('forumdisplay_subforums').'";');
         }
+        $db->free_result($query);
     }
 }
 
@@ -298,6 +301,7 @@ while($thread = $db->fetch_array($querytop)) {
     $prefix = '';
     $topicsnum++;
 }
+$db->free_result($querytop);
 
 if ($notexist) {
     eval('$threadlist = "'.template('forumdisplay_invalidforum').'";');
@@ -344,6 +348,7 @@ switch($cusdate) {
 
 $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$fid'");
 $topicsnum = $db->result($query, 0);
+$db->free_result($query);
 
 eval('$sortby = "'.template('forumdisplay_sortby').'";');
 

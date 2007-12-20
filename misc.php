@@ -117,6 +117,7 @@ switch($action) {
             $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$username' AND password='$password'");
             if ($query && $db->num_rows($query) == 1) {
                 $member = $db->fetch_array($query);
+                $db->free_result($query);
                 $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
                 $currtime = $onlinetime + (86400*30);
                 $username = $member['username'];
@@ -381,6 +382,7 @@ switch($action) {
                             }
                         }
                     }
+                    $db->free_result($querysrch);
                 } else {
                     while($post = $db->fetch_array($querysrch)) {
                         $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
@@ -443,6 +445,7 @@ switch($action) {
                             $results++;
                         }
                     }
+                    $db->free_result($querysrch);
                 }
             }
 
@@ -475,6 +478,7 @@ switch($action) {
             $email = addslashes(formVar('email'));
             $query = $db->query("SELECT username, email, pwdate FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             $member = $db->fetch_array($query);
+            $db->free_result($query);
 
             $time = $onlinetime-86400;
             if ($member['pwdate'] > $time) {
@@ -743,6 +747,7 @@ switch($action) {
                 }
                 eval('$members .= "'.template('misc_mlist_row').'";');
             }
+            $db->free_result($querymem);
         }
 
         if (!isset($memberperpage)) {

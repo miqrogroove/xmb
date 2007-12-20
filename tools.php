@@ -77,9 +77,11 @@ switch($action) {
 
             $ftquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$forum[fid]'");
             $threadnum += $db->result($ftquery, 0);
+            $db->free_result($ftquery);
 
             $fpquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$forum[fid]'");
             $postnum += $db->result($fpquery, 0);
+            $db->free_result($fpquery);
 
             $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
         }
@@ -95,8 +97,10 @@ switch($action) {
         while($threads = $db->fetch_array($queryt)) {
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
             $replynum = $db->result($query, 0) -1;
+            $db->free_result($query);
             $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid='$threads[tid]'");
         }
+        $db->free_result($queryt);
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_threadtotal'].'</td></tr></table></table>';
         end_time();
@@ -110,8 +114,10 @@ switch($action) {
             $mem['username'] = addslashes(stripslashes($mem['username']));
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$mem[username]'");
             $postsnum = $db->result($query, 0);
+            $db->free_result($query);
             $db->query("UPDATE ".X_PREFIX."members SET postnum='$postsnum' WHERE username='$mem[username]'");
         }
+        $db->free_result($queryt);
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr></table></table>';
         end_time();
@@ -245,6 +251,7 @@ switch($action) {
                 $fids[] = $f['fid'];
             }
             $db->free_result($q);
+
             $fq = "fid != '";
             $fids = implode("' AND fid != '", $fids);
             $fq .= $fids;
@@ -258,6 +265,7 @@ switch($action) {
                 $i++;
             }
             $db->free_result($q);
+
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_threads_found'].'</td></tr>';
         }
@@ -275,11 +283,13 @@ switch($action) {
             while($a = $db->fetch_array($q)) {
                 $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid='$a[pid]'");
                 if ($db->num_rows($result) == 0) {
+                    $db->free_result($result);
                     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$a[aid]'");
                     $i++;
                 }
             }
             $db->free_result($q);
+
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_attachments_found'].'</td></tr>';
         }
