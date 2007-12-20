@@ -708,8 +708,7 @@ switch($action) {
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 
         $replace = array('http://', 'https://', 'ftp://');
-        $members = '';
-        $oldst = '';
+        $members = $oldst = '';
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
