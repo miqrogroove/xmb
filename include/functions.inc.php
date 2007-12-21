@@ -1369,6 +1369,84 @@ function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...') 
     }
 }
 
+function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
+    global $self, $SETTINGS, $timeoffset, $addtime;
+
+    if ($timestamp === null) {
+        $timestamp = time();
+    }
+
+    if ($altFormat === null) {
+        $altFormat = $self['dateformat'];
+    }
+
+    $f = false;
+    if ((($pos = strpos($altFormat, 'F')) !== false && $f = true) || ($pos2 = strpos($altFormat, 'M')) !== false) {
+        $startStr = substr($altFormat, 0, $pos);
+        $endStr = substr($altFormat, $pos+1);
+        $month = gmdate('m', $timestamp + ($timeoffset*3600)+(($altOffset+$addtime)*3600));
+        $textM = month2text($month);
+        return printGmDate($timestamp, $startStr, $altOffset).substr($textM,0, ($f ? strlen($textM) : 3)).printGmDate($timestamp, $endStr, $altOffset);
+    } else {
+        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+    }
+}
+
+function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
+    global $self, $SETTINGS, $timeoffset, $addtime;
+
+    if ($timestamp === null) {
+        $timestamp = time();
+    }
+
+    if ($altFormat !== null) {
+        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+    } else {
+        return gmdate($timecode, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+    }
+}
+
+function MakeTime() {
+   $objArgs = func_get_args();
+   $nCount = count($objArgs);
+   if ($nCount < 7) {
+       $objDate = getdate();
+       if ($nCount < 1) {
+           $objArgs[] = $objDate['hours'];
+       } else if ($nCount < 2) {
+           $objArgs[] = $objDate['minutes'];
+       } else if ($nCount < 3) {
+           $objArgs[] = $objDate['seconds'];
+       } else if ($nCount < 4) {
+           $objArgs[] = $objDate['mon'];
+       } else if ($nCount < 5) {
+           $objArgs[] = $objDate['mday'];
+       } else if ($nCount < 6) {
+           $objArgs[] = $objDate['year'];
+       } else if ($nCount < 7) {
+           $objArgs[] = -1;
+       }
+   }
+
+   $nYear = $objArgs[5];
+   $nOffset = 0;
+   if ($nYear < 1970) {
+       if ($nYear < 1902) {
+           return 0;
+       } else if ($nYear < 1952) {
+           $nOffset = -2650838400;
+           $objArgs[5] += 84;
+           if ($nYear < 1942) {
+               $objArgs[6] = 0;
+           }
+       } else {
+           $nOffset = -883612800;
+           $objArgs[5] += 28;
+       }
+   }
+   return call_user_func_array("mktime", $objArgs) + $nOffset;
+}
+
 function iso8601_date($year=0, $month=0, $day=0) {
     $year = (int) $year;
     $month = (int) $month;
@@ -1399,7 +1477,20 @@ function month2text($num) {
     if ($num < 1 || $num > 12) {
         $num = 1;
     }
-    $months = array($lang['textjan'],$lang['textfeb'],$lang['textmar'],$lang['textapr'],$lang['textmay'],$lang['textjun'],$lang['textjul'],$lang['textaug'],$lang['textsep'],$lang['textoct'],$lang['textnov'],$lang['textdec']);
+    $months = array(
+        $lang['textjan'],
+        $lang['textfeb'],
+        $lang['textmar'],
+        $lang['textapr'],
+        $lang['textmay'],
+        $lang['textjun'],
+        $lang['textjul'],
+        $lang['textaug'],
+        $lang['textsep'],
+        $lang['textoct'],
+        $lang['textnov'],
+        $lang['textdec']
+    );
     return $months[$num-1];
 }
 
