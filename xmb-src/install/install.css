@@ -1,0 +1,103 @@
+/*
+General CSS
+*/
+body {
+	background-color: #e9edef;
+	background-image: url('./bgg.gif')
+	color: #000000;
+	font-family: Verdana, Times New Roman, Arial, sans-serif;
+	font-size: 10px;
+}
+
+a {
+	color: #000000;
+}
+
+/*
+Cinst.php progress specific
+*/
+
+.progressErr {
+	color: #B00000;
+}
+
+.progressWarn {
+	color: #A08000;
+}
+
+.progressOk {
+	color: #00A000;
+}
+
+.progressSkip {
+	color: #A0A000;
+}
+
+.progress {
+	font-family: Courier New, monospace;
+	font-size: 12px;
+}
+
+.progressErrorDiv {
+	margin-top: 5px;
+	margin-left: 15px;
+	margin-bottom: 5px;
+}
+
+/*
+Config creation specific
+*/
+
+#title {
+	color: #1C8BCB;
+	font-weight: bold;
+	font-size: 12pt;
+	display: block;
+}
+
+.subTitle {
+	color: #1C8BCB;
+	font-weight: bold;
+	display: block;
+	padding-top: 10px;
+}
+
+#contentDiv {
+	text-align: left;
+	margin: auto auto;
+	width: 60%;
+	background-image: url('./bg.gif');
+	background-repeat: repeat-x;
+}
+
+#contentDiv * {
+	text-align: left;
+}
+
+.mediumText, .radioTable .radioDesc, .settingTable .settingDesc {
+	color: #000000;
+	font-family: Verdana, Times New Roman, Arial, sans-serif;
+	font-size: 10px;
+}
+
+.separator {
+	color: #1C8BCB;
+	background-color: #1C8BCB;
+	border: 0px none;
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.radioTable, .settingTable {
+	border: 0px none;
+	width: 97%;
+}
+
+.radioTable .radioButton, .settingTable .settingInput {
+	vertical-align: top;
+}
+
+.settingInput {
+	text-align: left;
+}
