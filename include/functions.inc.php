@@ -1020,8 +1020,8 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     $return_str = (isset($args[6]) ? $args[6] : false);
     $showfooter = (isset($args[7]) ? $args[7] : true);
 
-    $navigation = '';
-    nav();
+    $header = $footer = $return = '';
+
     nav($lang['error']);
 
     end_time();
@@ -1041,6 +1041,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 
     $error = '';
     eval('$error = "'.template('error').'";');
+
     if ($showfooter === true) {
         eval('$footer = "'.template('footer').'";');
     } else {
@@ -1048,7 +1049,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     }
 
     if ($return_str !== false) {
-        $return = $prepend . $error . $footer . $append;
+        $return = $prepend . $error . $append . $footer;
     } else {
         echo $prepend . $error . $append . $footer;
         $return = '';
@@ -1069,7 +1070,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
 
     $args = func_get_args();
 
-    $messagedisplay = (isset($args[0]) ? $args[0] : '');
+    $message = (isset($args[0]) ? $args[0] : '');
     $showheader = (isset($args[1]) ? $args[1] : true);
     $prepend = (isset($args[2]) ? $args[2] : '');
     $append = (isset($args[3]) ? $args[3] : '');
@@ -1078,8 +1079,8 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     $return_str = (isset($args[6]) ? $args[6] : false);
     $showfooter = (isset($args[7]) ? $args[7] : true);
 
-    $navigation = '';
-    nav();
+    $header = $footer = $return = '';
+
     nav($lang['message']);
 
     end_time();
@@ -1097,8 +1098,9 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
         eval('$header = "'.template('header').'";');
     }
 
-    $message = '';
-    eval('$message = "'.template('message').'";');
+    $success = '';
+    eval('$success = "'.template('message').'";');
+
     if ($showfooter === true) {
         eval('$footer = "'.template('footer').'";');
     } else {
@@ -1106,9 +1108,9 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     }
 
     if ($return_str !== false) {
-        $return = $prepend . $message . $footer . $append;
+        $return = $prepend . $success . $append . $footer;
     } else {
-        echo $prepend . $message . $append . $footer;
+        echo $prepend . $success . $append . $footer;
         $return = '';
     }
 

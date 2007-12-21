@@ -289,18 +289,18 @@ function displayAdminPanel() {
     <tr class="category">
     <td colspan="30" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcp']?></font></strong></td>
     </tr>
-    <tr bgcolor="<?php echo $THEME['altbg1']?>" class="tablerow">
-    <td colspan="30" align="center">
+    <tr bgcolor="<?php echo $THEME['altbg1']?>" class="ctrtablerow">
+    <td colspan="30">
     <br />
     <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
     <tr>
     <td bgcolor="<?php echo $THEME['bordercolor']?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
-    <tr class="category">
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['general']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textforums']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textmembers']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['look_feel']?></font></strong></td>
+    <tr class="ctrcategory">
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['general']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textforums']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textmembers']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['look_feel']?></font></strong></td>
     </tr>
     <tr>
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
@@ -328,11 +328,11 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="cp2.php?action=themes"><?php echo $lang['themes']?></a><br />
     </td>
     </tr>
-    <tr class="category">
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['logs']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['tools']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['mysql_tools']?></font></strong></td>
-    <td valign="top" width="20%" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textfaqextra']?></font></strong></td>
+    <tr class="ctrcategory">
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['logs']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['tools']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['mysql_tools']?></font></strong></td>
+    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textfaqextra']?></font></strong></td>
     </tr>
     <tr>
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
