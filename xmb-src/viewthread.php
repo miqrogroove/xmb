@@ -27,11 +27,11 @@ validatePpp();
 
 // validation of pid, tid and fid. If they don't exist, they will after this, allowing
 // us to drop most tid, fid validation post these lines.
-$pid	= safeInt(fetchFromRequest('pid', X_GET|X_POST), 0);
-$fid	= safeInt(fetchFromRequest('fid', X_GET|X_POST), 0);
-$tid	= safeInt(fetchFromRequest('tid', X_GET|X_POST), 0);
-$page	= safeInt(fetchFromRequest('page', X_GET|X_POST), 1);
-$goto	= fetchFromRequest('goto', X_GET|X_POST);
+$pid    = safeInt(fetchFromRequest('pid', X_GET|X_POST), 0);
+$fid    = safeInt(fetchFromRequest('fid', X_GET|X_POST), 0);
+$tid    = safeInt(fetchFromRequest('tid', X_GET|X_POST), 0);
+$page   = safeInt(fetchFromRequest('page', X_GET|X_POST), 1);
+$goto   = fetchFromRequest('goto', X_GET|X_POST);
 
 if (!is_null($goto) && 'lastpost' === safeString($goto, false)) {
     $pid = 0;
@@ -80,9 +80,9 @@ loadtemplates('footer_load', 'footer_querynum', 'footer_phpsql', 'footer_totalti
 smcwcache();
 eval('$css = "'.template('css').'";');
 
-$notexist		= false;
-$notexist_txt	= '';
-$posts			= '';
+$notexist       = false;
+$notexist_txt   = '';
+$posts          = '';
 
 $query = $db->query("SELECT fid, subject, closed, topped, pollopts, lastpost FROM $table_threads WHERE tid='$tid'");
 if ($tid == 0 || $db->num_rows($query) != 1 ) {
@@ -90,8 +90,8 @@ if ($tid == 0 || $db->num_rows($query) != 1 ) {
     error($lang['textnoforum']);
 }
 
-$thread	= $db->fetch_array($query);
-		  $db->free_result($query);
+$thread = $db->fetch_array($query);
+          $db->free_result($query);
 
 if(strpos($thread['closed'], '|') !== false) {
     $moved = explode('|', $thread['closed']);
@@ -412,7 +412,7 @@ if (!$action) {
         if ($post['icon'] != '') {
             $post['icon'] = "<img src=\"$smdir/$post[icon]\" alt=\"$post[icon]\" />";
         } else {
-        	$post['icon'] = '<img src="'.$THEME['imgdir'].'" alt="[*]" />';
+            $post['icon'] = '<img src="'.$THEME['imgdir'].'" alt="[*]" />';
         }
 
         if ($post['author'] != "Anonymous") {

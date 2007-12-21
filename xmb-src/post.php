@@ -36,7 +36,7 @@ function bbcodeinsert() {
     if ($bbinsert == 'on') {
         eval('return "'.template('functions_bbcodeinsert').'";');
     } else {
-    	return '';
+        return '';
     }
 }
 
@@ -86,7 +86,7 @@ if ( $forums['type'] == "forum") {
 if ( $forums['attachstatus'] != "off") {
     eval("\$attachfile = \"".template("post_attachmentbox")."\";");
 } else {
-	$attachfile = '';
+    $attachfile = '';
 }
 
 if (X_GUEST) {
@@ -302,29 +302,29 @@ if ( $SETTINGS['spellcheck'] == 'on') {
 // End temp-spellcheck //
 
 if(isset($topicsubmit)) {
-	// check if subject is set
-	if(!isset($subject) || trim($subject) == '') {
-		$preview = error($lang['textnosubject'], false, '', '<br /><br />', false, false, true, false);
-		$error = true;
-		unset($topicsubmit);
-		if(isset($previewpost)) {
-			unset($previewpost);
-		}
-	} else {
-		$preview = '';
-		$error = false;
-	}
+    // check if subject is set
+    if(!isset($subject) || trim($subject) == '') {
+        $preview = error($lang['textnosubject'], false, '', '<br /><br />', false, false, true, false);
+        $error = true;
+        unset($topicsubmit);
+        if(isset($previewpost)) {
+            unset($previewpost);
+        }
+    } else {
+        $preview = '';
+        $error = false;
+    }
 } else {
-	$error = false;
+    $error = false;
 }
 
 $bbcodeinsert = bbcodeinsert();
 $smilieinsert = smilieinsert();
 
 if (isset($previewpost)) {
-    $date	= printGmDate();
-    $time	= printGmTime();
-    $poston	= $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+    $date   = printGmDate();
+    $time   = printGmTime();
+    $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
     $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
     $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
@@ -607,7 +607,7 @@ if ( $action == "newthread") {
         if ( $forums['attachstatus'] != "off") {
             eval("\$attachfile = \"".template("post_attachmentbox")."\";");
         } else {
-        	$attachfile = '';
+            $attachfile = '';
         }
 
         eval('echo stripslashes("'.template('post_reply').'");');
@@ -731,7 +731,7 @@ if ( $action == "newthread") {
             } else {
                 $topicpages = 1;
             }
-			eval('echo "'.template('header').'";'); // do it here so errors won't be shown above the header :P
+            eval('echo "'.template('header').'";'); // do it here so errors won't be shown above the header :P
             redirect("viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", 2, X_REDIRECT_JS);
 
             // let's get the time for the previous post.
@@ -762,8 +762,8 @@ if ( $action == "newthread") {
 
             // Insert Attachment if there is one
             // Insert this last so if it errors out it doesn't break something
-           	if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $max_attach_size)) !== false) {
-           	    $db->query("INSERT INTO $table_attachments ( tid, pid, filename, filetype, filesize, attachment, downloads ) VALUES ('$tid', '$pid', '$filename', '$filetype', '$filesize', '$attachedfile', '0')");
+            if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $max_attach_size)) !== false) {
+                $db->query("INSERT INTO $table_attachments ( tid, pid, filename, filetype, filesize, attachment, downloads ) VALUES ('$tid', '$pid', '$filename', '$filetype', '$filesize', '$attachedfile', '0')");
             }
 
         }

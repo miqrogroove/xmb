@@ -132,16 +132,16 @@ function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=
 *
 * Display localized HTML textarea
 *
-* @param    $settingDesc	Description of the setting
-* @param	$name			Name of Element
-* @param    $value			Value of element
-* @param    $rows			Size of element (in rows)
-* @param    $cols			Size of element (in cols)
+* @param    $settingDesc    Description of the setting
+* @param    $name           Name of Element
+* @param    $value          Value of element
+* @param    $rows           Size of element (in rows)
+* @param    $cols           Size of element (in cols)
 * @return   no return value
 */
 function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     global $altbg1, $altbg2;
-	?>
+    ?>
         <tr>
         <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $settingDesc?></td>
         <td class="tablerow" bgcolor="<?php echo $altbg2?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>"><?php echo $value?></textarea></td>
@@ -160,20 +160,20 @@ $selHTML = 'selected="selected"';
 
 if ($action == "settings") {
     if (!isset($_POST['settingsubmit'])) {
-		$lfs = array();
-		$dir = opendir(ROOT.'/lang/');
-		while($file = readdir($dir)) {
-			if (is_file(ROOT.'/lang/'.$file) && false !== strpos($file, '.lang.php')) {
-				$file = str_replace('.lang.php', '', $file);
-				if ($file == $SETTINGS['langfile']) {
-					$lfs[] = '<option value="' .$file. '" selected="selected">'.$file.'</option>';
-				} else {
-					$lfs[] = '<option value="' .$file. '">'.$file.'</option>';
-				}
-			}
-		}
-		natcasesort($lfs);
-		$langfileselect = '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
+        $lfs = array();
+        $dir = opendir(ROOT.'/lang/');
+        while($file = readdir($dir)) {
+            if (is_file(ROOT.'/lang/'.$file) && false !== strpos($file, '.lang.php')) {
+                $file = str_replace('.lang.php', '', $file);
+                if ($file == $SETTINGS['langfile']) {
+                    $lfs[] = '<option value="' .$file. '" selected="selected">'.$file.'</option>';
+                } else {
+                    $lfs[] = '<option value="' .$file. '">'.$file.'</option>';
+                }
+            }
+        }
+        natcasesort($lfs);
+        $langfileselect = '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
 
         $themelist   = array();
         $themelist[] = '<select name="themenew">';
@@ -386,17 +386,17 @@ if ($action == "settings") {
             $spacecatsoff = $selHTML;
         }
 
-		$indexShowBarCats = $indexShowBarTop = $indexShowBarNone = false;
+        $indexShowBarCats = $indexShowBarTop = $indexShowBarNone = false;
         switch($SETTINGS['indexshowbar']) {
-        	case 1:
-        		$indexShowBarCats = true;
-        		break;
-        	case 3:
-        		$indexShowBarNone = true;
-        		break;
-        	default:
-        		$indexShowBarTop = true;
-        		break;
+            case 1:
+                $indexShowBarCats = true;
+                break;
+            case 3:
+                $indexShowBarNone = true;
+                break;
+            default:
+                $indexShowBarTop = true;
+                break;
         }
 
         $subjectInTitleOn = $subjectInTitleOff = '';
@@ -435,9 +435,9 @@ if ($action == "settings") {
 
         $resetSigOn = $resetSigOff = '';
         if($SETTINGS['resetsigs'] == 'on') {
-        	$resetSigOn = $selHTML;
+            $resetSigOn = $selHTML;
         } else {
-        	$resetSigOff = $selHTML;
+            $resetSigOff = $selHTML;
         }
 
         $notifycheck[0] = false;
@@ -495,110 +495,110 @@ if ($action == "settings") {
         $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = false;
         $timezone31 = $timezone32 = $timezone33 = false;
 
-		switch($SETTINGS['def_tz']) {
-			case '-12.00':
-				$timezone1 = true;
-				break;
-			case '-11.00':
-				$timezone2 = true;
-				break;
-			case '-10.00':
-				$timezone3 = true;
-				break;
-			case '-9.00':
-				$timezone4 = true;
-				break;
-			case '-8.00':
-				$timezone5 = true;
-				break;
-			case '-7.00':
-				$timezone6 = true;
-				break;
-			case '-6.00':
-				$timezone7 = true;
-				break;
-			case '-5.00':
-				$timezone8 = true;
-				break;
-			case '-4.00':
-				$timezone9 = true;
-				break;
-			case '-3.50':
-				$timezone10 = true;
-				break;
-			case '-3.00':
-				$timezone11 = true;
-				break;
-			case '-2.00':
-				$timezone12 = true;
-				break;
-			case '-1.00':
-				$timezone13 = true;
-				break;
+        switch($SETTINGS['def_tz']) {
+            case '-12.00':
+                $timezone1 = true;
+                break;
+            case '-11.00':
+                $timezone2 = true;
+                break;
+            case '-10.00':
+                $timezone3 = true;
+                break;
+            case '-9.00':
+                $timezone4 = true;
+                break;
+            case '-8.00':
+                $timezone5 = true;
+                break;
+            case '-7.00':
+                $timezone6 = true;
+                break;
+            case '-6.00':
+                $timezone7 = true;
+                break;
+            case '-5.00':
+                $timezone8 = true;
+                break;
+            case '-4.00':
+                $timezone9 = true;
+                break;
+            case '-3.50':
+                $timezone10 = true;
+                break;
+            case '-3.00':
+                $timezone11 = true;
+                break;
+            case '-2.00':
+                $timezone12 = true;
+                break;
+            case '-1.00':
+                $timezone13 = true;
+                break;
 
-			case '1.00':
-				$timezone15 = true;
-				break;
-			case '2.00':
-				$timezone16 = true;
-				break;
-			case '3.00':
-				$timezone17 = true;
-				break;
-			case '3.50':
-				$timezone18 = true;
-				break;
-			case '4.00':
-				$timezone19 = true;
-				break;
-			case '4.50':
-				$timezone20 = true;
-				break;
-			case '5.00':
-				$timezone21 = true;
-				break;
-			case '5.50':
-				$timezone22 = true;
-				break;
-			case '5.75':
-				$timezone23 = true;
-				break;
-			case '6.00':
-				$timezone24 = true;
-				break;
-			case '6.50':
-				$timezone25 = true;
-				break;
-			case '7.00':
-				$timezone26 = true;
-				break;
-			case '8.00':
-				$timezone27 = true;
-				break;
-			case '9.00':
-				$timezone28 = true;
-				break;
-			case '9.50':
-				$timezone29 = true;
-				break;
-			case '10.00':
-				$timezone30 = true;
-				break;
-			case '11.00':
-				$timezone31 = true;
-				break;
-			case '12.00':
-				$timezone32 = true;
-				break;
-			case '13.00':
-				$timezone33 = true;
-				break;
+            case '1.00':
+                $timezone15 = true;
+                break;
+            case '2.00':
+                $timezone16 = true;
+                break;
+            case '3.00':
+                $timezone17 = true;
+                break;
+            case '3.50':
+                $timezone18 = true;
+                break;
+            case '4.00':
+                $timezone19 = true;
+                break;
+            case '4.50':
+                $timezone20 = true;
+                break;
+            case '5.00':
+                $timezone21 = true;
+                break;
+            case '5.50':
+                $timezone22 = true;
+                break;
+            case '5.75':
+                $timezone23 = true;
+                break;
+            case '6.00':
+                $timezone24 = true;
+                break;
+            case '6.50':
+                $timezone25 = true;
+                break;
+            case '7.00':
+                $timezone26 = true;
+                break;
+            case '8.00':
+                $timezone27 = true;
+                break;
+            case '9.00':
+                $timezone28 = true;
+                break;
+            case '9.50':
+                $timezone29 = true;
+                break;
+            case '10.00':
+                $timezone30 = true;
+                break;
+            case '11.00':
+                $timezone31 = true;
+                break;
+            case '12.00':
+                $timezone32 = true;
+                break;
+            case '13.00':
+                $timezone33 = true;
+                break;
 
-			case '0.00':
-			default:
-				$timezone14 = true;
-				break;
-		}
+            case '0.00':
+            default:
+                $timezone14 = true;
+                break;
+        }
 
         $values = array('serverload', 'queries', 'phpsql', 'loadtimes');
         $names = array('Enable Server Load', 'Enable Queries', 'Enable PHP/SQL Calculation', 'Enable Page-loadtimes');
@@ -632,7 +632,7 @@ if ($action == "settings") {
         ?>
 
         <?php
-		printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', $SETTINGS['bbrulestxt'], 5, 50);
+        printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', $SETTINGS['bbrulestxt'], 5, 50);
         printsetting1($lang['textbstatus'], "bbstatusnew", $onselect, $offselect);
         printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
         printsetting1($lang['gzipcompression'], 'gzipcompressnew', $gzipcompresson, $gzipcompressoff);
@@ -695,7 +695,7 @@ if ($action == "settings") {
 
         <?php
         printsetting1($lang['space_cats'], 'space_catsnew',$spacecatson, $spacecatsoff);
-		printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
+        printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
         printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
@@ -1798,14 +1798,14 @@ if ($action == "ipban") {
     } else {
         $dels = array();
         foreach($delete as $id=>$del) {
-        	if($del == 1) {
-        		$dels[] = $id;
-        	}
+            if($del == 1) {
+                $dels[] = $id;
+            }
         }
         if(count($dels) > 0) {
-        	$dels = implode(',', $dels);
-        	$db->query("DELETE FROM $table_banned WHERE id IN($dels)");
-		}
+            $dels = implode(',', $dels);
+            $db->query("DELETE FROM $table_banned WHERE id IN($dels)");
+        }
         $self['status'] = $lang['textipupdate'];
 
         if ($newip1 != "" || $newip2 != "" || $newip3 != "" || $newip4 != "") {
