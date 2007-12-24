@@ -62,9 +62,9 @@ eval('$css = "'.template('css').'";');
 
 smcwcache();
 
-$pid = getInt('pid');
-$tid = getInt('tid');
-$fid = getInt('fid');
+$pid = getRequestInt('pid');
+$tid = getRequestInt('tid');
+$fid = getRequestInt('fid');
 $posterror = false;
 
 validatePpp();
@@ -571,7 +571,7 @@ if ($action == 'newthread') {
         $db->free_result($query);
 
         $topicpages = quickpage($posts, $ppp);
-        message($lang['postmsg'], false, '', '', "viewthread.php?tid=".$tid."&page=".$topicpages."#pid".$pid, true, false, true);
+        message($lang['postmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
     }
 } else if ($action == 'reply') {
     nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
