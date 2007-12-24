@@ -102,9 +102,9 @@ if ($SETTINGS['index_stats'] == 'on') {
     $db->free_result($query);
 
     if ($lastmember['lastvisit'] !=0) {
-        $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
-    } else {
         $memhtml = '<strong>'.$lang['textnone'].'</strong>';
+    } else {
+        $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
     }
     eval($lang['evalindexstats']);
     eval('$statsbar = "'.template('index_stats').'";');
