@@ -148,9 +148,16 @@ switch($p_extension) {
 
 validateTpp();
 validatePpp();
-
+/*
 $max_page = (int) ($forum['threads'] / $tpp) + 1;
 if ($page && $page >= 1 && $page <= $max_page) {
+    $start_limit = ($page-1) * $tpp;
+} else {
+    $start_limit = 0;
+    $page = 1;
+}
+*/
+if ($page) {
     $start_limit = ($page-1) * $tpp;
 } else {
     $start_limit = 0;
@@ -311,14 +318,10 @@ if ($topicsnum == 0 && !$notexist) {
     eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
 }
 
-$check1 = '';
-$check5 = '';
-$check15 = '';
-$check30 = '';
-$check60 = '';
-$check100 = '';
-$checkyear = '';
-$checkall = '';
+$check1 = $check5 = '';
+$check15 = $check30 = '';
+$check60 = $check100 = '';
+$checkyear = $checkall = '';
 switch($cusdate) {
     case 86400:
         $check1 = $selHTML;

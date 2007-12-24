@@ -826,7 +826,7 @@ if ($action == 'newthread') {
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
         }
 
-        message($lang['replymsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid, true, false, true);
+        message($lang['replymsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
     }
 } else if ($action == 'edit') {
     nav('<a href="viewthread.php?tid='.$tid.'">'.html_entity_decode($threadname).'</a>');
