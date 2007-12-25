@@ -675,7 +675,7 @@ if (!$action) {
     }
 
     $type = strtolower($file['filetype']);
-    $name = $file['filename'];
+    $name = str_replace(' ', '_', $file['filename']);
     $size = (int) $file['filesize'];
     $type = ($type == 'text/html') ? 'text/plain' : $type;
 
