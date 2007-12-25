@@ -202,43 +202,31 @@ switch($action) {
             exit();
         }
 
-        $searchresults = '';
-        $page = getInt('page');
+        $srchfrom = intval(getRequestVar('srchfrom'));
+        $srchtxt = addslashes(getRequestVar('srchtxt'));
+        $srchuname = addslashes(getRequestVar('srchuname'));
+        $srchfid = formArray('srchfid');
+        if (empty($srchfid)) {
+            $srchfid[] = 'all';
+        }
 
-        if (noSubmit('searchsubmit') && !$page) {
-            $forumselect = forumList('srchfid', true, true);
+        $filter_distinct = getRequestVar('filter_distinct');
+        $filter_distinct = valYesNo($filter_distinct);
+
+        $page = getInt('page');
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        validatePpp();
+
+        $searchresults = '';
+
+        if (noSubmit('searchsubmit')) {
+            $forumselect = forumList('srchfid[]', true, true);
             eval('$search = "'.template('misc_search').'";');
             $misc = stripslashes($search);
         } else {
-            $srchuname = getVar('srchuname');
-            $srchtxt = getVar('srchtxt');
-            $srchfid = getInt('srchfid');
-            $srchfrom = getInt('srchfrom');
-            $filter_distinct = getVar('filter_distinct');
-            if ($filter_distinct != 'yes') {
-                $filter_distinct = formYesNo('filter_distinct');
-            }
-
-            if (!$srchuname) {
-                $srchuname = formVar('srchuname');
-            }
-
-            if (!$srchtxt) {
-                $srchtxt = formVar('srchtxt');
-            }
-
-            if (!$srchfid) {
-                $srchfid = formInt('srchfid');
-            }
-
-            if (!$srchfrom) {
-                $srchfrom = formInt('srchfrom');
-            }
-
-            if (!$srchfid) {
-                $srchfid = 'all';
-            }
-
             if (!$srchuname && !$srchtxt || (strlen($srchuname) < 3 && strlen($srchtxt) < 3)) {
                 error($lang['nosearchq']);
             }
@@ -251,23 +239,11 @@ switch($action) {
                 $srchtxt = '';
             }
 
-            $results = 0;
+            if (onSubmit('searchsubmit')) {
+                $offset = ($page-1) * $self['ppp'];
+                $start = $offset;
+                $end = $self['ppp'];
 
-            if (onSubmit('searchsubmit') || $page) {
-                if (!$page) {
-                    $page = 1;
-                    $offset = 0;
-                    $start = 0;
-                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
-                } else {
-                    if ($page < 1) {
-                        $page = 1;
-                    }
-
-                    $offset = ($page-1) * ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
-                    $start = $offset;
-                    $end = ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20));
-                }
                 $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
 
                 if ($srchfrom == 0) {
@@ -281,8 +257,7 @@ switch($action) {
 
                 $srchfrom = $onlinetime - (int) $srchfrom;
                 if ($srchtxt) {
-                    $srchtxtsq = addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchtxt));
-                    $sql .= " AND (p.message LIKE '%$srchtxtsq%' OR p.subject LIKE '%$srchtxtsq%' OR t.subject LIKE '%$srchtxtsq')";
+                    $sql .= " AND (p.message LIKE '%$srchtxt%' OR p.subject LIKE '%$srchtxt%' OR t.subject LIKE '%$srchtxt')";
                     $ext[] = 'srchtxt='.$srchtxt;
                 }
 
@@ -291,24 +266,34 @@ switch($action) {
                     $ext[] = 'srchuname='.$srchuname;
                 }
 
-                if ($srchfid != 'all' && $srchfid != '') {
-                    $sql .= " AND p.fid='$srchfid'";
-                    $ext[] = 'srchfid='.$srchfid;
+                $all = false;
+                $strsql = '';
+                if (!empty($srchfid)) {
+                    foreach($srchfid as $dummy=>$fid) {
+                        if ($fid == 'all') {
+                            $all = true;
+                            break;
+                        }
+                        $strsql .= "'".intval($fid)."', ";
+                    }
+                    $strsql = substr($strsql, 0, -2);
+                }
+
+                if ($all == false) {
+                    $sql .= " AND p.fid IN ($strsql)";
+                    $ext[] = 'srchfid IN ('.$strsql.')';
                 }
 
                 if ($srchfrom) {
                     $sql .= " AND p.dateline >= '$srchfrom'";
-                    $ext[] = 'srchfrom'.$srchfromold;
+                    $ext[] = 'srchfrom'.((int)$srchfromold);
                 }
 
-                $sql .=" ORDER BY dateline DESC LIMIT $start,$end";
-                if (!$page || $page < 1) {
-                    $pagenum = 2;
-                } else {
-                    $pagenum = $page+1;
-                }
+                $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start, $end";
+                $pagenum = $page + 1;
 
                 $querysrch = $db->query($sql);
+                $results = $db->num_rows($querysrch);
 
                 if ($srchuname) {
                     $srchtxt = '\0';
@@ -337,9 +322,16 @@ switch($action) {
                             if (!array_key_exists($post['ttid'], $temparray)) {
                                 $tid = $post['ttid'];
                                 $temparray[$tid] = true;
+
+                                if ($post['status'] == 'Banned') {
+                                    $post['message'] = $lang['bannedpostmsg'];
+                                }
+
                                 $message = $post['message'];
+
                                 $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
                                 $position = strpos($message, $srchtxt, 0);
+
                                 $show_num = 100;
                                 $msg_leng = strlen($message);
 
@@ -360,7 +352,7 @@ switch($action) {
                                 }
 
                                 $show = substr($message, $min, $max);
-                                $show = str_replace($srchtxt, '<b><i>'.$srchtxt.'</i></b>', $show);
+                                $show = preg_replace("/($srchtxt)/i", '<strong><em>\\0</em></strong>', $show);
                                 $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
 
                                 $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
@@ -376,9 +368,14 @@ switch($action) {
                                 }
 
                                 $post['subject'] = censor($post['subject']);
-                                eval('$searchresults .= "'.template('misc_search_results_row').'";');
 
-                                $results++;
+                                if ($post['posts'] > $self['ppp']) {
+                                    $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
+                                    $page = ceil(($pbefore+1)/$self['ppp']);
+                                } else {
+                                    $page = 1;
+                                }
+                                eval('$searchresults .= "'.template('misc_search_results_row').'";');
                             }
                         }
                     }
@@ -403,10 +400,19 @@ switch($action) {
 
                         if ($authorization) {
                             $tid = $post['ttid'];
+                            if ($post['status'] == 'Banned') {
+                                $post['message'] = $lang['bannedpostmsg'];
+                            }
+
                             $message = $post['message'];
 
                             $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
-                            $position = strpos($message, $srchtxt, 0);
+
+                            $position = 0;
+                            if (!empty($srchtxt)) {
+                                $position = strpos($message, $srchtxt, 0);
+                            }
+
                             $show_num = 100;
                             $msg_leng = strlen($message);
 
@@ -427,7 +433,7 @@ switch($action) {
                             }
 
                             $show = substr($message, $min, $max);
-                            $show = str_replace($srchtxt, '<strong><em>'.$srchtxt.'</em></strong>', $show);
+                            $show = preg_replace("/($srchtxt)/i", '<strong><em>\\0</em></strong>', $show);
                             $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
 
                             $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
@@ -441,8 +447,14 @@ switch($action) {
                             } else {
                                 $post['tsubject'] = html_entity_decode($post['subject']);
                             }
+
+                            if ($post['posts'] > $self['ppp']) {
+                                $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
+                                $page = ceil(($pbefore+1)/$self['ppp']);
+                            } else {
+                                $page = 1;
+                            }
                             eval('$searchresults .= "'.template('misc_search_results_row').'";');
-                            $results++;
                         }
                     }
                     $db->free_result($querysrch);
@@ -451,7 +463,7 @@ switch($action) {
 
             if ($results == 0) {
                 eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } else if ($results == ((isset($ppp) && $ppp > 0) ? $ppp : (isset($SETTINGS['postperpage']) && $SETTINGS['postperpage'] > 0 ? $SETTINGS['postperpage'] : 20))) {
+            } else if ($results == $self['ppp']) {
                 $ext = htmlspecialchars(implode('&', $ext));
                 eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }

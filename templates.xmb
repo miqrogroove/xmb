@@ -3207,12 +3207,12 @@ $multipage
 <td bgcolor="$altbg2">
 <select name="srchfrom">
 <option value="86400">$lang[day1]</option>
-<option value="604800">$lang[aweek]</option>
+<option value="604800" $selHTML>$lang[aweek]</option>
 <option value="2592000">$lang[month1]</option>
 <option value="7948800">$lang[month3]</option>
 <option value="15897600">$lang[month6]</option>
 <option value="31536000">$lang[lastyear]</option>
-<option value="0" selected="selected">$lang[beginning]</option>
+<option value="0">$lang[beginning]</option>
 </select>
 </td>
 </tr>
@@ -3220,8 +3220,8 @@ $multipage
 <td bgcolor="$altbg1" width="22%">$lang[srchfilter_double]</td>
 <td bgcolor="$altbg2"><input type="checkbox" name="filter_distinct" value="yes" checked="checked" /></td>
 </tr>
-<tr>
-<td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
 </tr>
 </table>
 </td>
@@ -3230,16 +3230,11 @@ $multipage
 </form>
 
 |#*XMB TEMPLATE FILE*#|misc_search_nextlink|#*XMB TEMPLATE*#|
-<tr>
-<td bgcolor="$altbg1" colspan="3" align="right" class="mediumtxt"><a href="misc.php?action=search&amp;page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct">$lang[nextsearch]</a></td>
+<tr class="mediumtxt" bgcolor="$altbg1">
+<td colspan="3"><a href="misc.php?action=search&amp;page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct&amp;searchsubmit=a">$lang[nextsearch]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_search_results|#*XMB TEMPLATE*#|
-<table width="$tablewidth" border="0">
-<tr>
-<td class="multipage">$multipage</td>
-</tr>
-</table>
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3247,14 +3242,9 @@ $multipage
 <tr>
 <td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
-<tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="3">&nbsp;$multipage</td>
-</tr>
+$nextlink
 $searchresults
 $nextlink
-<tr>
-<td class="tablerow" bgcolor="$altbg2" colspan="3">&nbsp;$multipage</td>
-</tr>
 </table>
 </td>
 </tr>
@@ -3267,7 +3257,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_search_results_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid=$post[ttid]#pid$post[pid]">$post[tsubject]</a></strong><br />$add_pre $show $add_post</td>
+<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid=$post[ttid]&amp;page=$page#pid$post[pid]">$post[tsubject]</a></strong><br />$add_pre $show $add_post</td>
 <td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
 </tr>
 
