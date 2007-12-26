@@ -84,7 +84,7 @@ if ($SETTINGS['index_stats'] == 'on') {
     $lastmember = $db->fetch_array($query);
     $db->free_result($query);
 
-    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0 UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
     $members = $db->result($query, 0);
     if ($members == false) {
         $members = 0;
@@ -101,11 +101,7 @@ if ($SETTINGS['index_stats'] == 'on') {
     }
     $db->free_result($query);
 
-    if ($lastmember['lastvisit'] !=0) {
-        $memhtml = '<strong>'.$lang['textnone'].'</strong>';
-    } else {
-        $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
-    }
+    $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
     eval($lang['evalindexstats']);
     eval('$statsbar = "'.template('index_stats').'";');
 }

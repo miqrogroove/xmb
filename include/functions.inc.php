@@ -1586,7 +1586,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
         }
     }
 
-    $forumselect[] = '<option value="" disabled="disabled">&nbsp;</option>';
+    $forumselect[] = '<option value="0" disabled="disabled">&nbsp;</option>';
     foreach($categories as $group) {
         if (isset($forums[$group['fid']]) && count($forums[$group['fid']]) > 0) {
             $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.stripslashes($group['name']).'</option>';
@@ -1688,7 +1688,7 @@ function forumJump() {
     $forumselect = array();
 
     $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
-    $forumselect[] = '<option value="" selected="selected">'.$lang['forumjumpselect'].'</option>';
+    $forumselect[] = '<option value="0" selected="selected">'.$lang['forumjumpselect'].'</option>';
 
     unset($forum);
     reset($forums);
@@ -1704,7 +1704,7 @@ function forumJump() {
 
     foreach($categories as $group) {
         if (isset($forums[$group['fid']])) {
-            $forumselect[] = '<option value=""></option>';
+            $forumselect[] = '<option value="0"></option>';
             $forumselect[] = '<option value="'.ROOT.'index.php?gid='.$group['fid'].'">'.stripslashes($group['name']).'</option>';
             foreach($forums[$group['fid']] as $forum) {
                 $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.$forum['fid'].'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';

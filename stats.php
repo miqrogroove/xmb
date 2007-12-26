@@ -113,7 +113,7 @@ if (X_SADMIN) {
     }
 }
 
-$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0 UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
 if ($members == false) {
     $members = 0;
