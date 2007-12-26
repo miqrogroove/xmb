@@ -100,14 +100,14 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort = "XMB 1.9.8";
-$versiongeneral = 'XMB 1.9.8 Engage';
+$versionshort = 'XMB 1.9.8 ';
+$versiongeneral = 'XMB 1.9.8 Engage ';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
     $gamma = 'Final';
-    $service_pack = ' SP1';
+    $service_pack = 'SP2';
     $versionbuild = 20071212;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
