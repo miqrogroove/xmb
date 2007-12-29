@@ -30,10 +30,11 @@ require 'header.php';
 
 validatePpp();
 
-$pid = getInt('pid');
-$tid = getInt('tid');
-$fid = getInt('fid');
+$pid = (isset($pid) && is_numeric($pid)) ? (int) $pid : 0;
+$tid = (isset($tid) && is_numeric($tid)) ? (int) $tid : 0;
+$fid = (isset($fid) && is_numeric($fid)) ? (int) $fid : 0;
 $page = getInt('page');
+$page = (isset($page) && is_numeric($page)) ? (int) $page : 1;
 $goto = getVar('goto');
 $action = getVar('action');
 

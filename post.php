@@ -826,6 +826,7 @@ if ($action == 'newthread') {
             put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
         }
 
+        $topicpages = quickpage($posts, $ppp);
         message($lang['replymsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
     }
 } else if ($action == 'edit') {
