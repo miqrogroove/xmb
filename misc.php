@@ -558,9 +558,9 @@ switch($action) {
             $onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($addtime * 3600));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
-            $online['location'] = shortenString($array['text'], 60, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+            $online['location'] = shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
             if (X_STAFF) {
-                $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 60, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
+                $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
                 $online['location'] = stripslashes($online['location']);
             }
 
