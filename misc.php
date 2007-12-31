@@ -240,9 +240,9 @@ switch($action) {
             }
 
             if (onSubmit('searchsubmit')) {
-                $offset = ($page-1) * $self['ppp'];
+                $offset = ($page-1) * $ppp;
                 $start = $offset;
-                $end = $self['ppp'];
+                $end = $ppp;
 
                 $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
 
@@ -369,9 +369,9 @@ switch($action) {
 
                                 $post['subject'] = censor($post['subject']);
 
-                                if ($post['posts'] > $self['ppp']) {
+                                if ($post['posts'] > $ppp) {
                                     $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
-                                    $page = ceil(($pbefore+1)/$self['ppp']);
+                                    $page = ceil(($pbefore+1)/$ppp);
                                 } else {
                                     $page = 1;
                                 }
@@ -448,9 +448,9 @@ switch($action) {
                                 $post['tsubject'] = html_entity_decode($post['subject']);
                             }
 
-                            if ($post['posts'] > $self['ppp']) {
+                            if ($post['posts'] > $ppp) {
                                 $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
-                                $page = ceil(($pbefore+1)/$self['ppp']);
+                                $page = ceil(($pbefore+1)/$ppp);
                             } else {
                                 $page = 1;
                             }
@@ -463,7 +463,7 @@ switch($action) {
 
             if ($results == 0) {
                 eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } else if ($results == $self['ppp']) {
+            } else if ($results == $ppp) {
                 $ext = htmlspecialchars(implode('&', $ext));
                 eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }

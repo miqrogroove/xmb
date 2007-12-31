@@ -215,7 +215,7 @@ function u2u_view($u2uid, $folders) {
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
         $u2usubject = html_entity_decode(checkOutput(censor($u2u['subject'])));
-        $u2umessage = checkOutput(postify($u2u['message'], 'no', '', 'yes', 'no'));
+        $u2umessage = html_entity_decode(checkOutput(postify($u2u['message'], 'no', '', 'yes', 'no')));
         $u2ufolder = $u2u['folder'];
         $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
@@ -265,8 +265,8 @@ function u2u_print($u2uid, $eMail = false) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";
-        $u2usubject = stripslashes(checkOutput(censor($u2u['subject'])));
-        $u2umessage = postify(stripslashes($u2u['message']), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");;
+        $u2usubject = html_entity_decode(stripslashes(checkOutput(censor($u2u['subject']))));
+        $u2umessage = postify(html_entity_decode(stripslashes($u2u['message'])), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");;
         $u2ufolder = $u2u['folder'];
         $u2ufrom = $u2u['msgfrom'];
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : $u2u['msgto'];
@@ -275,7 +275,7 @@ function u2u_print($u2uid, $eMail = false) {
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
             $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".stripslashes($u2umessage).$mailFooter;
-            altMail($self['email'], $lang['textu2utoemail'] . " " . $u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
+            altMail($self['email'], $lang['textu2utoemail']." ".$u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
             u2u_msg($lang['textu2utoemailsent'], 'u2u.php?action=view&u2uid='.$u2uid);
         } else {
             eval('echo stripslashes("'.template('u2u_printable').'");');
