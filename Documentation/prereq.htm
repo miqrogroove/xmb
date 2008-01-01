@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+			<base target="main">
+	</head>
+	<body>
+		<p class="MsoBodyText">To install and run an XMB forum, your web host must include 
+			both MySQL and PHP support with your account. These are essential in running 
+			the forum software. If your hoster does not have these available, check the 
+			"Hosting" forum on XMB http://www.xmbforum.com/community/forums. Members 
+			regularly post "finds" or offer hosting.</p>
+		<h2><a name="_Toc83140550">Resource Requirements</a></h2>
+		<p class="MsoBodyText">XMB uses about 1 MB of disk space once installed. Most 
+			forums will use less than 20 MB of disk space between the PHP files and 
+			database usage, and use less than 100 MB of network bandwidth a month. Careful 
+			attention to pruning old posts can keep total disk space to acceptable levels 
+			for light usage.</p>
+		<p class="MsoBodyText">XMB 1.9.1 is very CPU efficient compared to previous 
+			versions, and compares very favorably to other forum software. Most hosts 
+			should not see any significant load from XMB until large numbers of users are 
+			active on a single host (such as about 200 simultaneous users).</p>
+		<p class="MsoBodyText">A busy forum with 2,500 users, 125,000 posts, 20,000 
+			attachments, and 35,000 U2U's uses about 400 MB of disk space, and will 
+			normally consume about 20-25 Gb of bandwidth per month. You should be on a 
+			dedicated server with this level of activity.&nbsp;
+		</p>
+		<h2><a name="_Toc83140551">Web server</a></h2>
+		<p class="MsoBodyText">Most web hosts will use Apache. However, XMB is compatible 
+			with any web server capable of running PHP, which includes Windows 2000’s 
+			Personal Web Server, IIS 5, 5.1 (Windows XP) and 6 (Windows 2003), and Apache 
+			1.3.x and 2.0.x under both Unix and Windows.
+		</p>
+		<p class="MsoBodyText">XMB recommends the latest version of Apache 2.0, suitably 
+			hardened and tuned for running forum software. Luckily, this is the web server 
+			of choice for most web hosts. If you have any queries about web server 
+			configuration, ask your web host for more details about their configuration.
+		</p>
+		<p class="MsoBodyText">For high traffic forums, please see section XXX for tuning 
+			recommendations.
+		</p>
+		<h2><a name="_Toc83140552">MySQL</a></h2>
+		<p class="MsoBodyText">XMB stores your forum data, such as posts, threads, and 
+			attachments in a database. XMB uses the freely available MySQL database for 
+			data storage and fast searching. MySQL is available both as a free version and 
+			as a commercially supported version, depending on your needs.
+		</p>
+		<p class="MsoBodyText">XMB uses fairly straightforward SQL queries, so the minimum 
+			support version of MySQL required is the rather old 3.00, but this is not 
+			recommended. MySQL 3.0 is slow and has many bugs fixed by later versions of 
+			both 3.x and 4.0.x branches.</p>
+		<p class="MsoBodyText">For maximum performance, security and stability, XMB 
+			recommends the latest current 4.0.x branch. If you are running a very busy 
+			forum (more than 100,000 hits a day), you should be running only the latest 
+			version 4.0.x and asking your hoster to help you with MySQL tuning (see section 
+			XXX).</p>
+		<p class="MsoBodyText">Although not officially supported, XMB 1.9.1 works just fine 
+			with MySQL 5.0 alpha and MySQL 4.1. XMB does not use any MySQL 4.1 or 5.0 
+			features.
+		</p>
+		<h2><a name="_Toc83140553">PHP</a></h2>
+		<p class="MsoBodyText">XMB is written in PHP, a very common scripting language. PHP 
+			is far from ideal in many ways – it is slow, it has a very long history of 
+			being insecure, and it chews a lot of resources when things get busy. However, 
+			practically every web host has it available, so you should be able to get XMB 
+			to run with your preferred ISP or web host.</p>
+		<p class="MsoBodyText">To use XMB 1.9.1, you will need at least PHP version 4.1.0, 
+			but the absolute latest version of XMB (such as 4.3.8 or 5.0.1 at the time of 
+			writing) are recommended.
+		</p>
+		<p class="MsoBodyText" style="MARGIN-LEFT:3cm;TEXT-INDENT:-3cm">
+			<span style="FONT-SIZE: 24pt; FONT-FAMILY: Wingdings">N</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<b>PHP versions prior to 4.3.4 are essentially insecure and not recommended</b>. 
+			Future versions of XMB may not support PHP earlier than 4.3.4.
+		</p>
+		<p class="MsoBodyText">XMB works just fine with PHP5 and is supported. XMB 1.9 does 
+			not take advantage of any new PHP 5.0 features. PHP 5.0 is faster and more 
+			secure, so if you run a busy forum, you should be using PHP 5.0 or later, 
+			preferably with a PHP accelerator. If you run a busy forum, please see <A href="highperf.htm">
+				high performance XMB</A> for more details.</p>
+		<h2><a name="_Toc83140554">Additional programs</a></h2>
+		<p class="MsoBodyText">Being the administrator of an XMB forum requires a bit of 
+			massaging, and some additional programs make working with XMB that much easier.
+		</p>
+		<h3><a name="_Toc83140555">FTP</a></h3>
+		<p class="MsoBodyText">FTP (File Transfer Protocol) is the most common method of 
+			uploading to hosters. Better hosters support the use of secure copy (scp), a 
+			portion of the secure shell (ssh) protocol suite, which if you have available, 
+			you should use. FTP transmits your username and password and all data without 
+			encryption. If you are security conscious, you probably will not be using FTP. 
+			For more details regarding scp, please see the next section.
+		</p>
+		<p class="MsoBodyText">There are several good, free FTP clients out there - here 
+			are a few you could check out:
+		</p>
+		<UL>
+			<LI>
+				<DIV class="Bullets" style="MARGIN-LEFT: 17.85pt; TEXT-INDENT: -17.85pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 11pt; FONT-FAMILY: Wingdings"><span style="FONT:7pt 'Times New Roman'">&nbsp;
+</span>
+					</span><span style="FONT-SIZE:12pt">Windows XP's built in web folders
+</span></DIV>
+			<LI>
+				<DIV class="Bullets" style="MARGIN-LEFT: 17.85pt; TEXT-INDENT: -17.85pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 11pt; FONT-FAMILY: Wingdings"><span style="FONT:7pt 'Times New Roman'">&nbsp;
+</span>
+					</span><span style="FONT-SIZE:12pt">FTP Commander 7.0 - 
+www.internet-soft.com/ftpcomm.htm </span></DIV>
+			<LI>
+				<DIV class="Bullets" style="MARGIN-LEFT: 17.85pt; TEXT-INDENT: -17.85pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 11pt; FONT-FAMILY: Wingdings"><span style="FONT:7pt 'Times New Roman'">&nbsp;
+</span>
+					</span><span style="FONT-SIZE:12pt">Core FTP Lite - www.coreftp.com/
+</span></DIV>
+			<LI>
+				<DIV class="Bullets" style="MARGIN-LEFT: 17.85pt; TEXT-INDENT: -17.85pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 11pt; FONT-FAMILY: Wingdings"><span style="FONT:7pt 'Times New Roman'">&nbsp;
+</span>
+					</span><span style="FONT-SIZE:12pt">FileZilla Open Source FTP / SFTP 
+Client - http://sourceforge.net/projects/filezilla/ </span></DIV>
+			<LI>
+				<DIV class="Bullets" style="MARGIN-LEFT: 17.85pt; TEXT-INDENT: -17.85pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE:12pt">SmartFTP - www.smartftp.com/ </span></DIV>
+			</LI>
+		</UL>
+		<H3 class="Bullets" style="LINE-HEIGHT: 12pt"><a name="_Toc83140556">Text Editor</a></H3>
+		<p class="MsoBodyText">Another suggestion is a good text editor. PHP files require 
+			a plain text editor - don't use your Cpanel File Manager, MSWord or any other 
+			word processor for the editing of your files.</p>
+		<p class="MsoBodyText">Probably the best "free" text editor is Crimson Editor - 
+			http://crimsoneditor.com/</p>
+	</body>
+</html>
