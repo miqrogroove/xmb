@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
+		<p>
+		XMB 1.9.2 is mainly a bug-fix release to patch up the majority of bugs reported since the
+		 last release of XMB.  The change-log for this release has listed below.
+		</p>
+
+		<h2>Change Log</h2>
+		<ul>
+			<li />added checks for '.' and '..' in avatarlist options. This stops '.' and '..' from being chosen as valid avatars
+			(they're not files!)<br />
+			<li />added "prune normal posts" to thread pruning<br />
+			<li />added "reply and delete" feature to u2u<br />
+			<li />added "reset usesig on sig-change"<br />
+
+			<li />added "show thread subject in title"<br />
+			<li />added "threads marked as read" code<br />
+			<li />added $footerads<br />
+			<li />added (missing) put_cookie constants<br />
+			<li />added automatic preloading of header,css,error and footer templates<br />
+			<li />added Czech lang file<br />
+			<li />added check for '.swf' extension in flash-avatars<br />
+			<li />added check for magic_quotes_runtime, so XMB won't break when it's turn On (in most cases)<br />
+			<li />added DEBUG-flag shows in page-title<br />
+
+			<li />added dropIfExists option to `Database Backup`s create_table() function (is automatically turned On in this feature)<br />
+			<li />added Serbian lang file<br />
+			<li />added XHTML valid flash (X)HMTL<br />
+			<li />added alternative SMTP-mail-handling<br />
+			<li />added browser-sniffing code<br />
+			<li />added browser-specific bbcode JS<br />
+			<li />added checks for htmlentities_decode() and htmlspecialchars_decode()<br />
+			<li />added default full_url based on system used to installer<br />
+			<li />added default icon for threads that have none<br />
+
+			<li />added default timezone<br />
+			<li />added e-coupons ads<br />
+			<li />added full_url checker to installer<br />
+			<li />added ignore max avatar size on flash movies<br />
+			<li />added indexBar<br />
+			<li />added missing templates to preload()<br />
+			<li />added (new) mozilla-specific bbcode<br />
+			<li />added protection to delete user and delete posts links with JS<br />
+			<li />added support for optional theme-specific theme.css file<br />
+
+			<li />added u2u flood protection<br />
+			<li />fixed "attachment isn't copied when using copy thread"<br />
+			<li />fixed "avatars are mistakenly interpreted as flash due to commas in the filename"<br />
+			<li />fixed "categories stacking in 'specific forum' select, in search"<br />
+			<li />fixed "database not found error is not fatal"<br />
+			<li />fixed "empty categories showing"<br />
+			<li />fixed "fixLastposts() doesn't update xmb_threads table"<br />
+			<li />fixed "installer never removes /install/ dir"<br />
+
+			<li />fixed "invalid size for [size] bbcode causes Parse Error"<br />
+			<li />fixed "language files not ordered (alphabeticaly)"<br />
+			<li />fixed "max avatar size is flawed with flash movies"-bug<br />
+			<li />fixed "most active forum also shows categories"<br />
+			<li />fixed "no ROOT (contant) support in language-selection"<br />
+			<li />fixed "poll options contain empty bar on the right"<br />
+			<li />fixed "quickreply bulging out"<br />
+			<li />fixed "regexp error in todays posts when usernames contain '*', '.' or '%' <br />
+			<li />fixed "rename user does not rename moderators in the moderator section"<br />
+
+			<li />fixed "threads can be moved to forums that are off"<br />
+			<li />fixed "view as printable - doesn't show proper time and date"<br />
+			<li />fixed "view as printable - dumps everything on one line"<br />
+			<li />fixed updatethreadcount() lastposts issue<br />
+			<li />fixed various `rename user`-bugs<br />
+			<li />fixed various XHTML validity issues<br />
+			<br />
+			<li />removed bbcodefns.js<br />
+			<br />
+			<li />updated wording of $lang['disclaimer'] to reflect the fact that it's NOT fixed (yet)<br />
+
+<li />updated the way the disclaimer is shown (via JS popup)</ul>
+
+		<h2>XMB is now hoster-friendly</h2>
+		<ul>
+			<li>Professional quality security review completed - vastly more secure than XMB
+			1.8 SP3
+			<li>Saves about 40-50% bandwidth over XMB 1.8 SP3
+			<li>Can handle about
+			twice the number of simultaneous users on the same host as XMB 1.8 SP3
+			<li>All	SQL queries are fully specified, use compact indexes, and return minimal data.
+			Reduces MySQL load by sometimes up to 540x over 1.8 SP3
+			<li>PHP5 Compliant</li>
+		</ul>
+	</body>
+</html>
