@@ -1694,10 +1694,10 @@ function forumJump() {
     reset($forums);
 
     foreach($standAloneForums as $forum) {
-        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.html_entity_decode(stripslashes($forum['name'])).'</option>';
         if (isset($subforums[$forum['fid']])) {
             foreach($subforums[$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.html_entity_decode(stripslashes($sub['name'])).'</option>';
             }
         }
     }
@@ -1705,17 +1705,18 @@ function forumJump() {
     foreach($categories as $group) {
         if (isset($forums[$group['fid']])) {
             $forumselect[] = '<option value="0"></option>';
-            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.stripslashes($group['name']).'</option>';
+            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
             foreach($forums[$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.html_entity_decode(stripslashes($forum['name'])).'</option>';
                 if (isset($subforums[$forum['fid']])) {
                     foreach($subforums[$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.html_entity_decode(stripslashes($sub['name'])).'</option>';
                     }
                 }
             }
         }
     }
+
     $forumselect[] = '</select>';
     return implode("\n", $forumselect);
 }

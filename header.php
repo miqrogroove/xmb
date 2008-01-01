@@ -533,7 +533,7 @@ $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, in
 // Find duplicate entries for users only
 $username = isset($username) ? $username : '';
 if (X_MEMBER) {
-    $result = $db->query("SELECT count(username) FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
+    $result = $db->query("SELECT COUNT(username) FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
     $usercount = $db->result($result, 0);
     if ($usercount > 1) {
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
