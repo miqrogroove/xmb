@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+			<base target="main">
+	</head>
+	<body>
+		<H1>Installation</H1>
+		<p>Suitable for most operating systems including: Windows, MacOS X, FreeBSD,
+			NetBSD, OpenBSD and Linux</p>
+		<p>Please review the <a href="prereq.htm">Prerequisites</a> before you begin.</p>
+		<p>Most web hosts run a version of Unix, such as Solaris or AIX, or a freely
+			available versions such as FreeBSD (such as Yahoo and Pair Networks) or Linux
+			(such as Aventure Media or EV1). As long as your hoster runs the required
+			versions of MySQL and PHP, there’s no minimum or recommended operating system
+			version.</p>
+		<p>The basic installation process is as follows:
+		</p>
+		<UL>
+			<LI>
+			Create a database for your forum
+			<LI>
+			Upload all files
+			<LI>
+				Do one of:
+				<UL>
+					<LI>
+					Locally edit config.php and upload to your host
+					<LI>
+					Use the installation script to configure your config.php (may not work due to
+					hoster's&nbsp;permissions) or
+					<LI>
+						Use the installation script to generate a config.php and upload to your host</LI></UL>
+			<LI>
+			Run the installation script and follow the instructions
+			<LI>
+				Logon and customize your forum</LI></UL>
+		<p>Let’s go through these steps in detail.</p>
+		<H2>Create the database</H2>
+		<p>Make sure that you have enough web space for your forum, and that your hosting
+			account includes both PHP and MySQL support.</p>
+		<p>Create a database for your forums, using the MySQL Management Tool from your
+			site's Control Panel or by using MySQL's administration tool directly. When you
+			are creating the database, note the database name ($dbname), username ($dbuser)
+			and password ($dbpw).
+		</p>
+		<p>In the following example, we will use the mysql command line tool to create the
+			database. You should create a name and use usernames and passwords which are
+			different, or else you will have a security issue.</p>
+		<p class="progress">mysql&gt; CREATE DATABASE xmb19;</p>
+		<p class="progress">Query OK, 1 rows affected (0.03 sec)</p>
+		<p class="progress">mysql&gt; GRANT ALL PRIVILEGES ON xmb19.* TO
+			'xmbuser'@'localhost' IDENTIFIED BY 'foo123';</p>
+		<p class="progress">Query OK, 0 rows affected (0.03 sec)</p>
+		<p>In the above example case, $dbname will be <i>xmb19</i>, $dbuser is <i>xmbuser</i>,
+			and $dbpw is <i>foo123</i>. In addition, we have restricted database access to
+			the localhost, which is fine if the database server is on the same host as the
+			web server. If it is not the same, you should put in the fully qualified domain
+			name of your web server in place of <i>localhost</i>.</p>
+		<H2>Upload</H2>
+		<p>Create a folder for your forum in your web space. How you do this is dependant
+			upon your web host, but we will demonstrate here using cPanel, as it is very
+			common:</p>
+		<p align="center">
+		</p>
+		<p>Open the cPanel File Manager, navigate inside your public_html folder by
+			clicking on the little folder icon on the left of “public_html”, and then click
+			“Create New Folder”. You can use any name, but most people use “forum”.
+		</p>
+		<p>Whatever folder name you use is part of the $full_url variable, so if your site
+			is located at <a style="COLOR: blue; TEXT-DECORATION: underline; text-underline: single" href="http://www.example.com/">
+				www.example.com</a>, and the name for the folder you created is “forum”,
+			the value of $full_url will be <a style="COLOR: blue; TEXT-DECORATION: underline; text-underline: single" href="http://www.example.com/forum/">
+				http://www.example.com/forum/</a>
+		</p>
+		<p>If you want, you can simply use the top level of your account, but this means
+			your account will display the forum by default, which may not be what you had
+			in mind.</p>
+		<p>Alternatives to cPanel include using Frontpage (WebDAV), ftp’s “mkdir” command
+			or logging on directly to your host using telnet or ssh and using Unix’s
+			“mkdir” command.
+		</p>
+		<p>Upload all the files from the distribution to your site. Everything in the
+			"Files" folder requires uploading, including all sub-folders and files.
+		</p>
+		<P align="center"><IMG src="images/image001.jpg"></P>
+		<p align="center">Figure 1: Files to be uploaded</p>
+		<p>You should use “binary” to ensure that the XMB is correctly transferred to your
+			host. Most FTP clients do this automatically for you, but if you are using a
+			command line ftp client, use the “bin” command prior to transferring.</p>
+		<p>You must create each of the folders and upload each of the files within the
+			“db”, “images”, “include”, “install” and “lang” folders or else XMB will not
+			function.</p>
+		<H2>Configure config.php</H2>
+		<p>There are two methods of installing XMB: configuring config.php manually or
+			automatically. There are pros and cons for each. Experienced users will
+			probably prefer to use the manual method and first time administrators will
+			probably prefer to use the automatic method.
+		</p>
+		<p><i><STRONG>Manual configuration</STRONG></i></p>
+		<p>Edit config.php in your favorite text editor. The only fields which MUST be
+			changed are:</p>
+		<P>
+			<TABLE id="Table1" height="88" cellSpacing="1" cellPadding="1" width="456" border="1">
+				<TR>
+					<TD width="107" height="16">$dbname</TD>
+					<TD height="16">MySQL database name</TD>
+				</TR>
+				<TR>
+					<TD width="107">$dbuser</TD>
+					<TD>MySQL database user</TD>
+				</TR>
+				<TR>
+					<TD width="107">$dbpasswd</TD>
+					<TD>MySQL database password</TD>
+				</TR>
+				<TR>
+					<TD width="107">$full_url
+					</TD>
+					<TD>The full URL to your forum, including a trailing slash</TD>
+				</TR>
+				<TR>
+					<TD width="107">$tablepre
+					</TD>
+					<TD>The table prefixes. Normally xmb_</TD>
+				</TR>
+			</TABLE>
+		</P>
+		<p><b>Do not add any lines or convert this file to DOS format or XMB will not work. </b>
+		</p>
+		<p>Once you have edited config.php to your satisfaction, upload it (in binary mode
+			if using ftp), over-writing the previous copy of config.php.
+		</p>
+		<p>Skip ahead to the installation section.
+		</p>
+		<p><i><STRONG>Automatic configuration</STRONG></i></p>
+		<p><FONT class="mediumtxt">Automatic configuration requires a temporary weakening of
+				file permissions (security) during installation <EM>on </EM>most systems.<BR>
+				<BR>
+				There are many ways to achieve this. In many graphical FTP clients, you right
+				click on a file and choose chmod or Change Attributes or something similar.
+				Then check all check marks in the permissions area pertaining to write or read,
+				or enter 666 where it shows a textbox with the numbers: 644. This represents:</FONT>
+		</p>
+		<p style="MARGIN-LEFT:3cm">user: read/write
+		</p>
+		<p style="MARGIN-LEFT:3cm">group: read/write
+		</p>
+		<p style="MARGIN-LEFT:3cm">other: read/write
+		</p>
+		<p>You may need to do this in your host's CPanel or via shell access. If you can't
+			work it out, ask your host for help.</p>
+		<p><FONT face="Wingdings" size="6">N</FONT> <b>With file permissions set to
+				world-writable (mode 666),</b> <b>anyone on the Internet could take over your
+				forum, so make sure you check or change the permissions back to 644 after you
+				have installed XMB. </b>
+		</p>
+		<p>XMB’s installer tries to automatically change the file permissions of config.php
+			after installation has finished, but some security conscious hosts do not allow
+			this functionality, so it does not always work. All XMB files should be mode
+			644 once installation is complete.</p>
+		<H2>Installation</H2>
+		<p class="progress"><b><FONT face="Wingdings" size="6">G</FONT> </b>Please note
+			that the XMB 1.9.1 (Nexus) (and later) installation method is different from older
+			versions, including beta versions of 1.9.
+		</p>
+		<p>Start your web browser
+		</p>
+		<p>Input the URL where your forum will be located and then add /install/index.php
+			to the end. Example:
+		</p>
+		<p>
+			<a style="COLOR: blue; TEXT-DECORATION: underline; text-underline: single" href="http://www.example.com/forums/install/index.php">
+				http://www.example.com/forums/install/index.php</a>
+		</p>
+		<p>If you have typed the installation URL correctly, you will see the following
+			image:
+		</p>
+		<p align="center" style="TEXT-ALIGN:center">
+			<img border="0" src="images/step1.jpg"></p>
+		<p>Click on it to begin installation.
+		</p>
+		<p>The second page is the XMB Version Check. This is used to show you the most
+			recent build of XMB Forum. If your version is earlier, go get a later version
+			as it'll be more secure and contain fewer bugs.
+		</p>
+		<p align="center" style="TEXT-ALIGN:center">
+			<img border="0" src="images/step2.jpg"></p>
+		<p>However, if you have the latest version, click on the 'Install XMB 1.9.4' button
+			to proceed.
+		</p>
+		<p>Read and understand the XMB 1.9.4 Nexus License Agreement, which is the GNU GPL
+			version 2. If you're prepared to accept it, 'I agree to terms' button to
+			proceed.
+		</p>
+		<p align="center">
+			<img border="0" src="images/step3.jpg"></p>
+		<p>Next up is the Configuration File Setup Page. This is the most important step.
+			Input the required database name, username, password from above where you
+			configured the database.
+		</p>
+		<p align="center">
+			<img border="0" src="images/step4.jpg"></p>
+		<p>The only other mandatory field is "Full URL". The Full URL helps the forum base
+			itself relative to wherever you need it, and allows you to move XMB easily
+			between hosters if you need it.
+		</p>
+		<p>If your forum is going to be at
+		</p>
+		<p>
+			<a style="COLOR: blue; TEXT-DECORATION: underline; text-underline: single" href="http://www.example.com/forum/">
+				http://www.example.com/forum/</a>
+		</p>
+		<p>then, that's the full URL. Simple! Remember to put a slash at the end.
+		</p>
+		<p>The other settings are optional, but you may activate them if you wish. The most
+			important to note is "ipreg". This is not a useful setting in many countries
+			where ISPs use transparent proxies. Leaving this in the "on" state stops more
+			than a couple of registrations per day.
+		</p>
+		<p>Once finished with the configuration choices, click on the 'Configure' button to
+			proceed. If the file permissions on config.php are correct, XMB will have
+			written out a correct config.php.
+		</p>
+		<p>You need to set an Super Administrator password. This is a new feature since
+			earlier versions of XMB.</p>
+		<p align="center">
+			<img border="0" src="images/step5.jpg"></p>
+		<p>Do not choose a name like "admin" or "Administrator" or "root". Be creative. The
+			password be complex - more than 8 characters long, and contain numbers and
+			punctuation marks.</p>
+		<p>The installer automatically installs XMB 1.9.4 Nexus on to your database.</p>
+		<p align="center">
+			<img border="0" src="images/step6.jpg"></p>
+		<p>Scroll down to the end of the page, and click on 'here' to redirect to your
+			forums.
+		</p>
+		<p><b><FONT face="Wingdings" size="6">M</FONT> If you have WARNINGS from the Installer,
+				it will tell you why it has stopped the installation process. Contact your host
+				if it has issues related to PHP or mySQL versions.</b></p>
+		<H2>Post-installation Checks</H2>
+		<UL>
+			<LI>
+			Make sure the file permissions of all files, including config.php, are mode 644
+			(or user: read/write, group and other: read only).
+			<LI>
+			Directories should be mode 755 (or user: read/write/execute, group and other:
+			read and execute), but can also be 711 (or user: read/write/execute, group and
+			other: execute only)
+			<LI>
+				If it still exists, delete the /install/ folder using FTP, shell or your host’s
+				control panel.</LI></UL>
+		<H2>Customizing Your Forum</H2>
+		<p>Now that you have successfully installed XMB, you can make it your own.</p>
+		<p>
+			You can modify or create a new theme, or add what are termed “hacks” to your
+			forum to provide additional functionality.
+		</p>
+	</body>
+</html>

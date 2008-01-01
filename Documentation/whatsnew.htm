@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
+		<p>
+		XMB 1.9.4 is a security fix release to patch various minor security vulnerabilities discovered, as well as fix any
+		small bugs that have been discovered since 1.9.3 was released. The change-log for this release, as well as the original 1.9.3 and 1.9.2 change-logs
+		are listed below.
+		</p>
+
+		<h2>Change Log</h2>
+		<ul>
+			<li> <strong>XMB 1.9.4</strong>
+			</li><li> Added better security to the [size][/size] pattern
+			</li><li> Added new birthday-date format (ISO 8601 compatible)
+			</li><li> Added optional (easier) debugging
+			</li><li> Added post_edit_attachment to the template-preload-queue
+			</li><li> Added printsetting4() for textarea's and converted existing ones to use it
+			</li><li> Added SMTP-logging when DEBUG=true
+			</li><li> Added limit for usernames, making them have min. 3 chars
+			</li><li> Check for a 250 response on QUIT using socket_SMTP, according to the RFC this is required, and if missed could lead to odd behaviour
+			</li><li> Date format fixes
+			</li><li> Fixed '.' characters in urls breaking links
+			</li><li> Fixed css template to be loaded in error()
+			</li><li> Fixed default timeformat not used during registration
+			</li><li> Fixed HTML not properly being escaped in custom-status field
+			</li><li> Fixed Moderator can still delete posts via thread-prune when allowrankedit=On
+			</li><li> Fixed newsletters showing weird chars
+			</li><li> Fixed no categories (and forums belonging to them) are shown in search to members and guests
+			</li><li> Fixed 'no subject'-error may be shown on delete-post.
+			</li><li> Fixed Read folders turning back to unread folders after 10 min
+			</li><li> Fixed slashes stripped from threadtitles too often
+			</li><li> Fixed slashes stripped from message/subject on newthread
+			</li><li> Fixed 2 typos in error()
+			</li><li> Fixed 2 uninitialized vars
+			</li><li> Fixed Anonymous poster inherits Rank avatar from previous poster
+			</li><li> Fixed banned users are still recieving subscription-emails
+			</li><li> Fixed edit attachment > replace with [new attachment] doesn't work
+			</li><li> Fixed password-protected forums showing in forums-select-lists
+			</li><li> Fixed bug where "xmb_" was used instead of $table_
+			</li><li> Fixed bug where email-input (message and headers) was not normalized correctly
+			</li><li> Fixed bug where thread-redirect (created using Move Thread > Leave Redirect) was not removed when original thread was deleted.
+			</li><li> Fixed bug with tableheader showing at the top when there were no cat-less forums shown and 'show at top only' was not turned on.
+			</li><li> Fixed checking for text/html mimetype in attachments to be case-insensitive
+			</li><li> Fixed E_NOTICE on $attachfile
+			</li><li> Fixed flash-avatars not displaying correctly
+			</li><li> Fixed forum names containing quotes
+			</li><li> Fixed IP banning
+			</li><li> Fixed miscasting of array/string in altMail() with socket_SMTP
+			</li><li> Fixed SQL errors when no fid's are restricted.
+			</li><li> Fixed page totalling for subscriptions.
+			</li><li> Fixed password-protected forums show in `Forum most active in`
+			</li><li> Fixed possible tid injection
+			</li><li> Fixed security issue with being able to delete your current account and top level super administrator
+			</li><li> Fixed slashes in post-preview.
+			</li><li> Fixed subject-in-title showing thread-subject on template-edit
+			</li><li> Fixed U2U folder highlight
+			</li><li> Fixed XSS injection exploit by unsanitized input.
+			</li><li> Fixed date format validation during registration/profile-update
+			</li><li> Fixed theme-default set to '' instead of 0
+			</li><li> Fixed To header usually missing in the mail-headers
+			</li><li> Fixed various HTML-validation errors
+			</li><li> Fixed 'send u2u to email' showing raw HTML output
+			</li><li> Altered theme code to produce a 20x speed increase
+			</li><li> Access to password-protected forums is now automatically cleared at (explicit) logout
+			</li><li> Better password-protected forum support in search
+			</li><li> Better support for password-protected forums
+			</li><li> Changed LEFT JOINs to STRAIGHT JOINs to improve query-speed
+			</li><li> Changed login to use putCookie()
+			</li><li> Cleaned up initialization of $indexBar/$indexBarTop vars
+			</li><li> Cleaned up theme-download code
+			</li><li> Decreased memory usage, thus increasing efficiency on hosts with little memory (set for mysql)
+			</li><li> Fixed various E_NOTICE level errors
+			</li><li> Enhanced Edit button
+			</li><li> Got rid of xmb_forums JOINs in most stats-queries, thus improving loadingtimes
+			</li><li> Improved viewthread validation procedures.
+			</li><li> Lowered default maximum attachment size for smaller boards. (1MB -> 250 KB)
+			</li><li> A lot of MySQL 5.0 compatibility fixes
+			</li><li> Switched from delete3=3 style to delete[3]=true style in ipban
+			</li><li> Updated stats to show as efficiently as possible for super admins
+			</li><li> Updated $restrict to be more efficient
+			</li><li> Updated censor() regexp to catch more words
+			</li><li> Updated smilieinsert() to correctly create a table with smileys
+			</li><li> Rewrote part of the socket_SMTP class to correctly talk with the SMTP server; thus fixing many previous issues with it
+			</li><li> Removed $lang['copyright'] (same in all languages; always) and moved it to header.php
+			</li><li> Removed duplicate (unused) code
+			</li><li> Removed noaccess() function as it's no longer in use
+
+			<br /><br />
+			</li><li> <strong>XMB 1.9.3</strong>
+			</li><li>(re-)fixed class="tablerow" missing in faq_misc_rankrow template<br />
+			</li><li>Added a newline between the "no subject found" and the actual post-screen when an error is found<br />
+			</li><li>Added better $restrict regexp (which now also allows \n and \r as a separator)<br />
+			</li><li>Added error when given fid AND tid are incorrect (non-existent)<br />
+			</li><li>Added fix to censor thread subjects in the Who's Online.<br />
+			</li><li>Added footer_* templates to automatically preload (aswell)<br />
+			</li><li>Added non-preloaded templates to preload queue<br />
+			</li><li>Added temporary unicode-entities fix<br />
+			</li><li>Cleaned up subforums code and fixed code so that the table header for subforums only shows when neccessary (Thanks Stu! (tid=755422))<br />
+			</li><li>Encoded moderator usernames for RFC member profile URLS<br />
+			</li><li>Fixed 'no categories (and forums belonging to them) are shown in search to members and guests'<br />
+			</li><li>Fixed various E_NOTICE notices<br />
+			</li><li>Fixed `$self[dateformat] and $self[timecode] undefined` [tid=755518]<br />
+			</li><li>Fixed `delete on reply does not delete message`<br />
+			</li><li>Fixed `no quote is added when quoting`<br />
+			</li><li>Fixed `no slashes in preview`<br />
+			</li><li>Fixed `original U2Us being deleted despite "reply&delete" not being selected` [tid=755080]<br />
+			</li><li>Fixed bbcode for Safari Browsers<br />
+			</li><li>Fixed bbcode-security-hole<br />
+			</li><li>Fixed `board logo not showing in view printable` (threads and u2us).<br />
+			</li><li>Fixed bug where email sent had the subject as the message, and no actual message in it at all<br />
+			</li><li>Fixed bug where setting the default timezone didn't work correctly<br />
+			</li><li>Fixed bug with an E_WARNING being sent when using altMail() in safe_mode<br />
+			</li><li>Fixed bug with tableheader showing at the top when there were no cat-less forums shown and 'show at top only' was not turned on. [tid=755551]<br />
+			</li><li>Fixed bug with tableheader showing in categories [tid=755551]<br />
+			</li><li>Fixed division-by-zero in member > profile<br />
+			</li><li>Fixed email-bbcode button not working in normal mode<br />
+			</li><li>Fixed error when deleting U2U's from Trash folder<br />
+			</li><li>Fixed missing apostrophe which caused errors editing forums when debug was on.<br />
+			</li><li>Fixed page issues when ppp was less than 5 (Missing validatePpp())<br />
+			</li><li>Fixed security issue that showed subjects of threads you were not authorized to view in title bar. [tid=755557]<br />
+			</li><li>Fixed undefined variables when viewing printable U2U's by adding them to the globals line.<br />
+			</li><li>Fixed various XHTML 1.0 non-comformational bugs [tid=755581]<br />
+			</li><li>Fixed various minor issues<br />
+			</li><li>Fixed warning when viewing non-existent forum<br />
+			</li><li>changed file_exists checks to use the ROOT constant<br />
+			</li><li>got rid of notices<br />
+			</li><li>implemented shortenString()<br />
+			</li><li>made various regexps quicker<br />
+			</li><li>preloaded all templates that require it<br />
+			</li><li>removed ?> to prevent headers-already-sent-warnings due to whitespaces; according to php.net this will still work.<br />
+			</li><li>updated $restrict switches to work generally better<br />
+			</li><li>updated versioning
+
+			<br /><br />
+			</li><li><strong>XMB 1.9.2</strong>
+
+			</li><li>added checks for '.' and '..' in avatarlist options. This stops '.' and '..' from being chosen as valid avatars
+			(they're not files!)<br />
+			</li><li>added "prune normal posts" to thread pruning<br />
+			</li><li>added "reply and delete" feature to u2u<br />
+			</li><li>added "reset usesig on sig-change"<br />
+
+			</li><li>added "show thread subject in title"<br />
+			</li><li>added "threads marked as read" code<br />
+			</li><li>added $footerads<br />
+			</li><li>added (missing) put_cookie constants<br />
+			</li><li>added automatic preloading of header,css,error and footer templates<br />
+			</li><li>added Czech lang file<br />
+			</li><li>added check for '.swf' extension in flash-avatars<br />
+			</li><li>added check for magic_quotes_runtime, so XMB won't break when it's turn On (in most cases)<br />
+			</li><li>added DEBUG-flag shows in page-title<br />
+
+			</li><li>added dropIfExists option to `Database Backup`s create_table() function (is automatically turned On in this feature)<br />
+			</li><li>added Serbian lang file<br />
+			</li><li>added XHTML valid flash (X)HMTL<br />
+			</li><li>added alternative SMTP-mail-handling<br />
+			</li><li>added browser-sniffing code<br />
+			</li><li>added browser-specific bbcode JS<br />
+			</li><li>added checks for htmlentities_decode() and htmlspecialchars_decode()<br />
+			</li><li>added default full_url based on system used to installer<br />
+			</li><li>added default icon for threads that have none<br />
+
+			</li><li>added default timezone<br />
+			</li><li>added e-coupons ads<br />
+			</li><li>added full_url checker to installer<br />
+			</li><li>added ignore max avatar size on flash movies<br />
+			</li><li>added indexBar<br />
+			</li><li>added missing templates to preload()<br />
+			</li><li>added (new) mozilla-specific bbcode<br />
+			</li><li>added protection to delete user and delete posts links with JS<br />
+			</li><li>added support for optional theme-specific theme.css file<br />
+
+			</li><li>added u2u flood protection<br />
+			</li><li>fixed "attachment isn't copied when using copy thread"<br />
+			</li><li>fixed "avatars are mistakenly interpreted as flash due to commas in the filename"<br />
+			</li><li>fixed "categories stacking in 'specific forum' select, in search"<br />
+			</li><li>fixed "database not found error is not fatal"<br />
+			</li><li>fixed "empty categories showing"<br />
+			</li><li>fixed "fixLastposts() doesn't update xmb_threads table"<br />
+			</li><li>fixed "installer never removes /install/ dir"<br />
+
+			</li><li>fixed "invalid size for [size] bbcode causes Parse Error"<br />
+			</li><li>fixed "language files not ordered (alphabeticaly)"<br />
+			</li><li>fixed "max avatar size is flawed with flash movies"-bug<br />
+			</li><li>fixed "most active forum also shows categories"<br />
+			</li><li>fixed "no ROOT (contant) support in language-selection"<br />
+			</li><li>fixed "poll options contain empty bar on the right"<br />
+			</li><li>fixed "quickreply bulging out"<br />
+			</li><li>fixed "regexp error in todays posts when usernames contain '*', '.' or '%' <br />
+			</li><li>fixed "rename user does not rename moderators in the moderator section"<br />
+
+			</li><li>fixed "threads can be moved to forums that are off"<br />
+			</li><li>fixed "view as printable - doesn't show proper time and date"<br />
+			</li><li>fixed "view as printable - dumps everything on one line"<br />
+			</li><li>fixed updatethreadcount() lastposts issue<br />
+			</li><li>fixed various `rename user`-bugs<br />
+			</li><li>fixed various XHTML validity issues<br />
+			<br />
+			</li><li>removed bbcodefns.js<br />
+			<br />
+			</li><li>updated wording of $lang['disclaimer'] to reflect the fact that it's NOT fixed (yet)<br />
+			</li><li>updated the way the disclaimer is shown (via JS popup)</li>
+			</ul>
+
+		<h2>XMB is now hoster-friendly</h2>
+		<ul>
+			<li>Professional quality security review completed - vastly more secure than XMB
+			1.8 SP3</li>
+			<li>Saves about 40-50% bandwidth over XMB 1.8 SP3</li>
+			<li>Can handle about</li>
+			twice the number of simultaneous users on the same host as XMB 1.8 SP3
+			<li>All	SQL queries are fully specified, use compact indexes, and return minimal data.
+			Reduces MySQL load by sometimes up to 540x over 1.8 SP3</li>
+			<li>PHP5 Compliant</li>
+			<li>MySQL 5 Compliant</li>
+		</ul>
+	</body>
+</html>
