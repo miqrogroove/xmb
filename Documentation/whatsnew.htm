@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
+		<p>
+		XMB 1.9.3 is a security fix release to patch a security vulnerability discovered, as well as fix any
+		small bugs that have been discovered since 1.9.2 was released. The change-log for this release, as well as the original 1.9.2 change-log
+		has been listed below.
+		</p>
+
+		<h2>Change Log</h2>
+		<ul>
+
+			<li> <strong>XMB 1.9.3</strong>
+			<li />(re-)fixed class="tablerow" missing in faq_misc_rankrow template<br />
+			<li />Added a newline between the "no subject found" and the actual post-screen when an error is found<br />
+			<li />Added better $restrict regexp (which now also allows \n and \r as a separator)<br />
+			<li />Added error when given fid AND tid are incorrect (non-existent)<br />
+			<li />Added fix to censor thread subjects in the Who's Online.<br />
+			<li />Added footer_* templates to automatically preload (aswell)<br />
+			<li />Added non-preloaded templates to preload queue<br />
+			<li />Added temporary unicode-entities fix<br />
+			<li />Cleaned up subforums code and fixed code so that the table header for subforums only shows when neccessary (Thanks Stu! (tid=755422))<br />
+			<li />Encoded moderator usernames for RFC member profile URLS<br />
+			<li />Fixed 'no categories (and forums belonging to them) are shown in search to members and guests'<br />
+			<li />Fixed various E_NOTICE notices<br />
+			<li />Fixed `$self[dateformat] and $self[timecode] undefined` [tid=755518]<br />
+			<li />Fixed `delete on reply does not delete message`<br />
+			<li />Fixed `no quote is added when quoting`<br />
+			<li />Fixed `no slashes in preview`<br />
+			<li />Fixed `original U2Us being deleted despite "reply&delete" not being selected` [tid=755080]<br />
+			<li />Fixed bbcode for Safari Browsers<br />
+			<li />Fixed bbcode-security-hole<br />
+			<li />Fixed `board logo not showing in view printable` (threads and u2us).<br />
+			<li />Fixed bug where email sent had the subject as the message, and no actual message in it at all<br />
+			<li />Fixed bug where setting the default timezone didn't work correctly<br />
+			<li />Fixed bug with an E_WARNING being sent when using altMail() in safe_mode<br />
+			<li />Fixed bug with tableheader showing at the top when there were no cat-less forums shown and 'show at top only' was not turned on. [tid=755551]<br />
+			<li />Fixed bug with tableheader showing in categories [tid=755551]<br />
+			<li />Fixed division-by-zero in member > profile<br />
+			<li />Fixed email-bbcode button not working in normal mode<br />
+			<li />Fixed error when deleting U2U's from Trash folder<br />
+			<li />Fixed missing apostrophe which caused errors editing forums when debug was on.<br />
+			<li />Fixed page issues when ppp was less than 5 (Missing validatePpp())<br />
+			<li />Fixed security issue that showed subjects of threads you were not authorized to view in title bar. [tid=755557]<br />
+			<li />Fixed undefined variables when viewing printable U2U's by adding them to the globals line.<br />
+			<li />Fixed various XHTML 1.0 non-comformational bugs [tid=755581]<br />
+			<li />Fixed various minor issues<br />
+			<li />Fixed warning when viewing non-existent forum<br />
+			<li />changed file_exists checks to use the ROOT constant<br />
+			<li />got rid of notices<br />
+			<li />implemented shortenString()<br />
+			<li />made various regexps quicker<br />
+			<li />preloaded all templates that require it<br />
+			<li />removed ?> to prevent headers-already-sent-warnings due to whitespaces; according to php.net this will still work.<br />
+			<li />updated $restrict switches to work generally better<br />
+			<li />updated versioning
+
+			<br /><br />
+			<li /><strong>XMB 1.9.2</strong>
+
+			<li />added checks for '.' and '..' in avatarlist options. This stops '.' and '..' from being chosen as valid avatars
+			(they're not files!)<br />
+			<li />added "prune normal posts" to thread pruning<br />
+			<li />added "reply and delete" feature to u2u<br />
+			<li />added "reset usesig on sig-change"<br />
+
+			<li />added "show thread subject in title"<br />
+			<li />added "threads marked as read" code<br />
+			<li />added $footerads<br />
+			<li />added (missing) put_cookie constants<br />
+			<li />added automatic preloading of header,css,error and footer templates<br />
+			<li />added Czech lang file<br />
+			<li />added check for '.swf' extension in flash-avatars<br />
+			<li />added check for magic_quotes_runtime, so XMB won't break when it's turn On (in most cases)<br />
+			<li />added DEBUG-flag shows in page-title<br />
+
+			<li />added dropIfExists option to `Database Backup`s create_table() function (is automatically turned On in this feature)<br />
+			<li />added Serbian lang file<br />
+			<li />added XHTML valid flash (X)HMTL<br />
+			<li />added alternative SMTP-mail-handling<br />
+			<li />added browser-sniffing code<br />
+			<li />added browser-specific bbcode JS<br />
+			<li />added checks for htmlentities_decode() and htmlspecialchars_decode()<br />
+			<li />added default full_url based on system used to installer<br />
+			<li />added default icon for threads that have none<br />
+
+			<li />added default timezone<br />
+			<li />added e-coupons ads<br />
+			<li />added full_url checker to installer<br />
+			<li />added ignore max avatar size on flash movies<br />
+			<li />added indexBar<br />
+			<li />added missing templates to preload()<br />
+			<li />added (new) mozilla-specific bbcode<br />
+			<li />added protection to delete user and delete posts links with JS<br />
+			<li />added support for optional theme-specific theme.css file<br />
+
+			<li />added u2u flood protection<br />
+			<li />fixed "attachment isn't copied when using copy thread"<br />
+			<li />fixed "avatars are mistakenly interpreted as flash due to commas in the filename"<br />
+			<li />fixed "categories stacking in 'specific forum' select, in search"<br />
+			<li />fixed "database not found error is not fatal"<br />
+			<li />fixed "empty categories showing"<br />
+			<li />fixed "fixLastposts() doesn't update xmb_threads table"<br />
+			<li />fixed "installer never removes /install/ dir"<br />
+
+			<li />fixed "invalid size for [size] bbcode causes Parse Error"<br />
+			<li />fixed "language files not ordered (alphabeticaly)"<br />
+			<li />fixed "max avatar size is flawed with flash movies"-bug<br />
+			<li />fixed "most active forum also shows categories"<br />
+			<li />fixed "no ROOT (contant) support in language-selection"<br />
+			<li />fixed "poll options contain empty bar on the right"<br />
+			<li />fixed "quickreply bulging out"<br />
+			<li />fixed "regexp error in todays posts when usernames contain '*', '.' or '%' <br />
+			<li />fixed "rename user does not rename moderators in the moderator section"<br />
+
+			<li />fixed "threads can be moved to forums that are off"<br />
+			<li />fixed "view as printable - doesn't show proper time and date"<br />
+			<li />fixed "view as printable - dumps everything on one line"<br />
+			<li />fixed updatethreadcount() lastposts issue<br />
+			<li />fixed various `rename user`-bugs<br />
+			<li />fixed various XHTML validity issues<br />
+			<br />
+			<li />removed bbcodefns.js<br />
+			<br />
+			<li />updated wording of $lang['disclaimer'] to reflect the fact that it's NOT fixed (yet)<br />
+
+<li />updated the way the disclaimer is shown (via JS popup)</ul>
+
+		<h2>XMB is now hoster-friendly</h2>
+		<ul>
+			<li>Professional quality security review completed - vastly more secure than XMB
+			1.8 SP3
+			<li>Saves about 40-50% bandwidth over XMB 1.8 SP3
+			<li>Can handle about
+			twice the number of simultaneous users on the same host as XMB 1.8 SP3
+			<li>All	SQL queries are fully specified, use compact indexes, and return minimal data.
+			Reduces MySQL load by sometimes up to 540x over 1.8 SP3
+			<li>PHP5 Compliant</li>
+		</ul>
+	</body>
+</html>

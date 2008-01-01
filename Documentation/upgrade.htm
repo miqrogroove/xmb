@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+			<base target="main">
+	</head>
+	<body>
+		<h2>Before you start</h2>
+		<p>Please check the Prerequisites before you start to upgrade. Generally, if you
+			can run a prior version of XMB, you will be able to run XMB 1.9.3</p>
+		<p><a href="prereq.htm">Prerequisites</a>
+		</p>
+		<p>Also note that upgrading to XMB 1.9.3 is a one way process. If you need to back
+			out, you will need to restore from backup.
+		</p>
+		<h2>Compatibility</h2>
+		<p>Upgrades from XMB 1.6 and higher have been tested, including 1.9 beta. If you
+			have earlier versions, this upgrade script may work, but it has not been
+			tested.</p>
+		<p>Files used by the backup process:</p>
+		<ul>
+			<li>
+			upgrade.lib.php
+			<li>
+			upgrade.php
+			<li>
+			install.css
+			<li>
+				XMB_*.xmb (at the time of writing, XMB_1_9_2.xmb)</li>
+		</ul>
+		<p>
+			createFile.php creates the schema for XMB developers.</p>
+		<h2>Known issues with upgrade</h2>
+		<p>These issues are known. Most issues affect only a small percentage of users.</p>
+		<ul>
+			<li>
+			The upgrade can be quite resource-intensive, especially with large databases.
+			<li>
+			The script might time out or look to be inactive - do not stop it or close the
+			browser window
+			<li>
+			The script can consume up to twice the amount of disk space you are currently
+			using. Make sure you have enough room!
+			<li>
+			The upgrade script cannot cope with some indexes. If upgrade stops whilst
+			trying to drop, alter or add an index, you will need to remove all indexes from
+			the affected table. It's safe to remove as many indexes as possible as the
+			upgrade script will put back the ones it needs. After dropping all additional
+			indexes, simply restart the upgrade process.
+			<li>
+				The upgrade script occasionally cannot handle out of order columns,
+				particularly in xmb_settings. If upgrade stops whilst performing a change to
+				any table, you will need to change the table yourself. Once the table is closer
+				to XMB's schema, just re-run upgrade.php</li>
+		</ul>
+		<h1>Instructions
+		</h1>
+		<h2>WARNING: Hacks and data loss<br>
+			<br>
+			<font color="#ff0000">!!! </font>
+		</h2>
+		<h2><font color="#ff0000">This upgrade is designed to work when hacks are installed.
+				However, all hack data including templates and code will be destroyed by the
+				upgrade process! Proceed with extreme caution if you want to keep your hack
+				data </font>
+		</h2>
+		<h2><font color="#ff0000">!!!</font></h2>
+		<p>Disable posting to your board in Admin -&gt; Settings<br>
+			&nbsp;</p>
+		<h2>Backups</h2>
+		<p><font color="#ff0000">Always take a backup before using *ANY* upgrade script!
+				Although this is common sense, it's often forgotten.
+				<br>
+			</font>
+			<br>
+			0. Backup your database
+			<br>
+			1. Backup all your forum's files</p>
+		<p><font color="#ff0000">If you have not performed a backup, XMB cannot help you if
+				something goes wrong. You could lose all your data, posts, and users. You have
+				been warned. </font>
+		</p>
+		<p><font color="#ff0000">Do not proceed after this step if you have not performed a
+				comprehensive backup.</font></p>
+		<p>2. Upload all of Nexus 1.9's files over the top of your existing forum files<br>
+			3. Delete ./install/<br>
+			4. Edit the new config.php to suit your needs<br>
+			5. Upload the upgrade folder your forum<br>
+			6. Run <A href="http://www.example.com/pathtoyourforum/upgrade/upgrade.php">http://www.example.com/pathtoyourforum/upgrade/upgrade.php</A>
+			<br>
+			7. When it succeeds, check that the upgrade folder has been deleted.<br>
+			8. Log on your shiny new 1.9.3 board
+			<br>
+			9. Turn on the board in Admin -&gt; Settings.
+		</p>
+		<p>Adjust other new settings as you see fit.
+		</p>
+		<h2>Keeping XMB healthy</h2>
+		<p>If your database is not looked after regularly, it can slow down. XMB 1.9.3 has
+			many performance improvements which can be best utilized with a healthy
+			database. XMB recommends administrators use Admin -&gt; Analyze on their
+			databases weekly, followed by Admin -&gt; Optimize. This keeps your board in
+			the best possible shape. Try it now!<br>
+			&nbsp;</p>
+		<h2>Basic system administration</h2>
+		<p>You should find out if your hoster performs regular backups for you. If they
+			don't, you need to take backups manually. XMB 1.9.3 has a backup utility, but
+			it is best if you use your hoster's utilities (such as phpMyAdmin or the
+			mysqldump tool for this purpose).
+		</p>
+		<p>Backups should be taken about once a week, and more often for very busy sites.</p>
+		<h2>Security</h2>
+		<p>All software has bugs, XMB included. You should check back with
+			http://www.xmbforum.com/ regularly to see if you need to install patches.
+		</p>
+		<p>When customizing your board, remember the following:</p>
+		<ul>
+			<li>
+			Changes to themes are supported
+			<li>
+				Modifications to XMB's PHP files, or to the database schema, or altering
+				templates within the
+				<br>
+				Admin -&gt; Templates area makes it much harder for *YOU* to upgrade to the
+				next service pack or a<br>
+			later version of XMB.
+			<li>
+				Try to keep the number of hacks down, and consider using "diff" to allow you to
+				reapply them if you need<br>
+				to reload XMB from scratch.
+			</li>
+		</ul>
+	</body>
+</html>
