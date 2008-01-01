@@ -108,7 +108,7 @@ if ($show_full_info) {
     $beta = '';
     $gamma = 'Final';
     $service_pack = ' SP2';
-    $versionbuild = 20071212;
+    $versionbuild = 20071231;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';

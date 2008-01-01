@@ -257,7 +257,8 @@ switch($action) {
 
                 $srchfrom = $onlinetime - (int) $srchfrom;
                 if ($srchtxt) {
-                    $sql .= " AND (p.message LIKE '%$srchtxt%' OR p.subject LIKE '%$srchtxt%' OR t.subject LIKE '%$srchtxt')";
+                    $srchtxtsq = addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchtxt));
+                    $sql .= " AND (p.message LIKE '%$srchtxtsq%' OR p.subject LIKE '%$srchtxtsq%' OR t.subject LIKE '%$srchtxtsq')";
                     $ext[] = 'srchtxt='.$srchtxt;
                 }
 
@@ -289,7 +290,7 @@ switch($action) {
                     $ext[] = 'srchfrom'.((int)$srchfromold);
                 }
 
-                $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start, $end";
+                $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start,$end";
                 $pagenum = $page + 1;
 
                 $querysrch = $db->query($sql);

@@ -214,9 +214,8 @@ if (noSubmit('editsubmit')) {
     $month = formInt('month');
     $day = formInt('day');
     $bday = iso8601_date($year, $month, $day);
-    $newavatar = formVar('newavatar') ? ereg_replace(' ', '%20', $newavatar) : '';
-    $avatar = checkInput($newavatar, 'no', 'no', 'javascript', false);
-    $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
+    $newavatar = formVar('newavatar');
+    $avatar = $newavatar ? checkInput($newavatar, 'no', 'no', 'javascript', false) : '';
     $newlocation = formVar('newlocation');
     $location = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
     $newicq = formVar('newicq');
