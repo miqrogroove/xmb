@@ -117,19 +117,24 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (onSubmit('savesubmit')) {
-        // needs to be fixed
-        if (empty($subject) || empty($message)) {
+        // fixed by John Briggs
+        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
+
+        if (empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
         db_u2u_insert('', '', 'draft', $self['username'], 'Drafts', $subject, $message, 'yes', 'no');
-        u2u_msg($lang['imsavedmsg'], "u2u.php?folder=Drafts");
+        u2u_msg($lang['imsavedmsg'], 'u2u.php?folder=Drafts');
     }
 
     if (onSubmit('sendsubmit')) {
         $errors = '';
-        // needs to be fixed
-        if (empty($subject) || empty($message)) {
-            error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
+        // fixed by John Briggs
+        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
+
+        // fixed lang variable use by John Briggs
+        if (empty($message)) {
+            error($lang['u2umsgempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
         if ($db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$self[username]' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
@@ -175,7 +180,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     if (isset($previewsubmit)) {
         $u2usubject = html_entity_decode(checkOutput(censor(checkInput(stripslashes($subject)))));
         $u2umessage = checkOutput(censor(checkInput(stripslashes($message))));
-        $u2umessage = postify($u2umessage, "no", "", "yes", "no");
+        $u2umessage = postify($u2umessage, 'no', '', 'yes', 'no');
         $username = htmlspecialchars($msgto);
         $subject = html_entity_decode(htmlspecialchars($subject));
         $message = html_entity_decode(htmlspecialchars($message));
@@ -264,7 +269,7 @@ function u2u_print($u2uid, $eMail = false) {
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
-        $u2udateline = "$u2udate $lang[textat] $u2utime";
+        $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
         $u2usubject = html_entity_decode(stripslashes(checkOutput(censor($u2u['subject']))));
         $u2umessage = postify(html_entity_decode(stripslashes($u2u['message'])), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");;
         $u2ufolder = $u2u['folder'];

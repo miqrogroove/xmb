@@ -658,6 +658,11 @@ switch($action) {
                 eval('echo stripslashes("'.template('post_newthread').'");');
             }
         } else {
+            // fix provided by John briggs to prevent empty new threads
+            if (!$subject && !$message) {
+                error($lang['postnothing']);
+            }
+
             if (!empty($username) && !empty($password)) {
                 if (X_GUEST) {
                     $password = md5(trim($password));
