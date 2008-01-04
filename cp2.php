@@ -1458,8 +1458,8 @@ if ($action == "templates") {
         </tr>
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
-        <input type="submit" class="submit"name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
-        <input type="submit" class="submit"name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
+        <input type="submit" class="submit" name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
+        <input type="submit" class="submit" name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
         <input type="submit" class="submit" name="restore" value="<?php echo $lang['textrestoredeftemps']?>" />&nbsp;
         <input type="submit" class="submit" name="download" value="<?php echo $lang['textdownloadtemps']?>" />
         </td>

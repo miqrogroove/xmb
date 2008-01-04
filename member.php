@@ -134,6 +134,7 @@ switch($action) {
                 }
                 $themelist[] = '</select>';
                 $themelist = implode("\n", $themelist);
+                $db->free_result($query);
 
                 $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 

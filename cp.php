@@ -72,6 +72,7 @@ if ($action == "settings") {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
+        $db->free_result($query);
 
         $onselect = $offselect = '';
         settingHTML('bbstatus', $onselect, $offselect);
@@ -1077,6 +1078,7 @@ if ($action == 'forum') {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
+        $db->free_result($query);
 
         if ($forum['allowhtml'] == "yes") {
             $checked2 = $cheHTML;
