@@ -336,8 +336,8 @@ if (isset($previewpost)) {
     $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
-    $subject = html_entity_decode(checkInput($subject, $chkInputTags, $chkInputHTML, '', false));
-    $message = html_entity_decode(checkInput($message, $chkInputTags, $chkInputHTML, '', true));
+    $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
+    $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
     $message1 = postify($message, $smileyoff, $bbcodeoff, $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
     $dissubject = censor($subject);
 
@@ -868,8 +868,8 @@ switch($action) {
                 $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
             }
 
-            $postinfo['subject'] = html_entity_decode($postinfo['subject']);
-            $postinfo['message'] = html_entity_decode(stripslashes($postinfo['message']));
+            $postinfo['subject'] = $postinfo['subject'];
+            $postinfo['message'] = stripslashes($postinfo['message']);
 
             if ($postinfo['bbcodeoff'] == 'yes') {
                 $offcheck1 = $cheHTML;
