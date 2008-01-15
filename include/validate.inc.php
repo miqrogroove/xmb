@@ -205,37 +205,13 @@ function formVar($varname, $striptags = true, $quotes = false) {
     return $retval;
 }
 
-/**
-* Retrieve the contents of an array from a POST
-*
-* This function will attempt to retrieve a named array($varname)
-* and sanitize it based upon type($type). If a string, $striptags indicates
-* if striptags should be used, and $quotes is only enabled when you want it
-*
-* This function always returns an array. It will be an empty array if there's
-* no data or variable to be returned.
-*
-* @param   string   $varname   name of the variable in $_POST
-* @param   boolean   $striptags   strings only: do a striptags to remove HTML tags
-* @param   boolean   $quotes   strings only: do a htmlspecialchars to sanitize input for XSS
-* @param   string   $type   'string' or 'int' to specify what needs to be done to the values
-* @return   array   the array found for $varname, empty otherwise
-*/
-function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
-    $arrayItems = array();
-    // Convert a single or comma delimited list to an array
-    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
-        if (strpos($_POST[$varname], ',') !== false) {
-            $_POST[$varname] = explode(',', $_POST[$varname]);
-        } else {
-            $_POST[$varname] = array($_POST[$varname]);
-        }
-    }
+function processArray($arrayItems, $striptags, $quotes, $type) {
+    foreach($arrayItems as $item => $theObject) {
+        $theObject = & $arrayItems[$item];
 
-    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
-        $arrayItems = $_POST[$varname];
-        foreach($arrayItems as $item => $theObject) {
-            $theObject = & $arrayItems[$item];
+        if (is_array($theObject)) {
+            processArray($theObject, $striptags, $quotes, $type );
+        } else {
             switch($type) {
                 case 'int':
                     $theObject = intval($theObject);
@@ -254,6 +230,39 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
             }
             unset($theObject);
         }
+    }
+}
+
+/**
+* Retrieve the contents of an array from a POST
+*
+* This function will attempt to retrieve a named array($varname)
+* and sanitize it based upon type($type). If a string, $striptags indicates
+* if striptags should be used, and $quotes is only enabled when you want it
+*
+* This function always returns an array. It will be an empty array if there's
+* no data or variable to be returned.
+*
+* @param string $varname name of the variable in $_POST
+* @param boolean $striptags strings only: do a striptags to remove HTML tags
+* @param boolean $quotes strings only: do a htmlspecialchars to sanitize input for XSS
+* @param string $type 'string' or 'int' to specify what needs to be done to the values
+* @return array the array found for $varname, empty otherwise
+*/
+function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
+    $arrayItems = array();
+    // Convert a single or comma delimited list to an array
+    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
+        if (strpos($_POST[$varname], ',') !== false) {
+            $_POST[$varname] = explode(',', $_POST[$varname]);
+        } else {
+            $_POST[$varname] = array($_POST[$varname]);
+        }
+    }
+
+    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
+        $arrayItems = $_POST[$varname];
+        processArray($arrayItems, $striptags, $quotes, $type);
     }
     return $arrayItems;
 }
