@@ -1,16 +1,12 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP2 SP1 SP1
+ * XMB 1.9.8 Engage Stable
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
+ * Copyright (c) 2001-2008 The XMB Group
  * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -1147,5 +1143,6 @@ $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index status:";
 $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
+$lang['xmb'] = "XMB";
 $lang['xmbgroup'] = "The XMB Group";
 ?>
