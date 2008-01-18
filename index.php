@@ -244,7 +244,8 @@ if ($gid == 0) {
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
-$indexBarTop = $indexBar = $forumlist = $spacer = '';
+$indexBarTop = $indexBar = $forumlist =  $spacer = '';
+$forumarray = array();
 $catLessForums = $lastcat = 0;
 
 if ($SETTINGS['space_cats'] == 'on') {
@@ -276,6 +277,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
 }
 
 while($thing = $db->fetch_array($fquery)) {
+
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = forum($thing, "index_forum");
     } else {
@@ -298,10 +300,16 @@ while($thing = $db->fetch_array($fquery)) {
     if (!empty($cforum)) {
         $forumlist .= $cforum;
     }
+
+    $forumarray[] = $forumlist;
+    $forumlist = '';
+
 }
 
-if (empty($forumlist)) {
+if (empty($forumarray)) {
     eval('$forumlist = "'.template('index_noforum').'";');
+} else {
+    $forumlist = implode($spacer, $forumarray);
 }
 $db->free_result($fquery);
 

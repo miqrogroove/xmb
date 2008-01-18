@@ -1724,7 +1724,7 @@ $bbcodescript
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="1" cellpadding="6" width="100%">
+<table border="0" cellspacing="$borderwidth" cellpadding="6" width="100%">
 <tr>
 <td width="74%" $topbgcode>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
@@ -1783,7 +1783,6 @@ $whosonline
 $statsbar
 
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
-$spacer
 <tr>
 <td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
 </tr>
@@ -1875,7 +1874,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
@@ -1955,7 +1954,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="2" class="category">
 <a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
@@ -4797,7 +4796,7 @@ $posts
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>
 <td><input type="hidden" name="subject" value="" />
-<table width="100%" border="0" cellpadding="$tablespace" cellspacing="1">
+<table width="100%" border="0" cellpadding="$tablespace" cellspacing="$borderwidth">
 <tr bgcolor="$altbg1">
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>

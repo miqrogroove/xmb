@@ -78,7 +78,7 @@ function makenav($current) {
     global $bordercolor, $tablewidth, $borderwidth, $tablespacing, $altbg1, $altbg2, $lang;
     ?>
     <table cellpadding="0" cellspacing="0" border="0" bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>" align="center"><tr><td>
-    <table cellpadding="4" cellspacing="1" border="0" width="100%">
+    <table cellpadding="4" cellspacing="<?php echo $borderwidth ?>" border="0" width="100%">
     <tr align="center" class="tablerow">
     <?php
     if ($current == '') {

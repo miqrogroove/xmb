@@ -150,7 +150,7 @@ class dbstuff {
                 }
             }
         } else {
-            return 'oops';
+            return 'MySQL encountered an error, but did not return an error code.';
         }
     }
 
