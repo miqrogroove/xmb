@@ -1281,7 +1281,7 @@ $lang[bestmember]
 <font class="smalltxt">
 $versionlong
 <br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank"><strong>$lang[xmbgroup]</strong></a>&nbsp;&copy; $copyright
+$lang[developedby]&nbsp;<a href="http://www.xmbgroup.com" target="_blank"><strong>$lang[xmbgroup]</strong></a>&nbsp;&copy; $copyright
 <br />
 $footerstuff[totaltime]
 $footerstuff[querynum]
