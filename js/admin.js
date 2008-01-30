@@ -41,3 +41,25 @@ function confirmActionCheckbox(message, el, onCheck, onUncheck) {
         }
     }
 }
+
+function addUserDel(uid, member, e) {
+    if (e.checked) {
+        delmem[uid] = member;
+    } else {
+        delmem[uid] = '';
+    }
+}
+
+function confirmUserDel(message) {
+    var members = '';
+    for (var i = 0; i < delmem.length; i++) {
+        if (delmem[i] != null && delmem[i] != '') {
+            members = members + delmem[i] + "\n";
+        }
+    }
+    if (members != null && members != '') {
+        return window.confirm(message + "\n\n" + members);
+    } else {
+        return true;
+    }
+}
