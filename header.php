@@ -623,7 +623,7 @@ if (isset($lastvisit) && X_MEMBER) {
     $lasttime = gmdate($timecode, $theTime);
     $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
+    $lastvisittext = '';
 }
 
 // Checks for various settings
