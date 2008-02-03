@@ -1346,7 +1346,6 @@ switch($vStep) {
             'include/smtp.inc.php',
             'include/topicadmin.inc.php',
             'include/u2u.inc.php',
-            'stats.php',
             'templates.xmb',
             'today.php',
             'tools.php',
