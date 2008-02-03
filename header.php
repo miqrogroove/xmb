@@ -670,11 +670,6 @@ if ($SETTINGS['todaysposts'] == 'on') {
     $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
 }
 
-// Stats-link
-if ($SETTINGS['stats'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
-}
-
 // 'Forum Rules'-link
 if ($SETTINGS['bbrules'] == 'on') {
     $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';

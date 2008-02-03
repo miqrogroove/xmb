@@ -110,9 +110,6 @@ if ($action == "settings") {
         $todayon = $todayoff = '';
         settingHTML('todaysposts', $todayon, $todayoff);
 
-        $statson = $statsoff = '';
-        settingHTML('stats', $statson, $statsoff);
-
         $gzipcompresson = $gzipcompressoff = '';
         settingHTML('gzipcompress', $gzipcompresson, $gzipcompressoff);
 
@@ -461,7 +458,6 @@ if ($action == "settings") {
         printsetting1($lang['textsearchstatus'], 'searchstatusnew', $searchon, $searchoff);
         printsetting1($lang['textfaqstatus'], 'faqstatusnew', $faqon, $faqoff);
         printsetting1($lang['texttodaystatus'], 'todaystatusnew', $todayon, $todayoff);
-        printsetting1($lang['textstatsstatus'], 'statsstatusnew', $statson,  $statsoff);
         printsetting1($lang['textmemliststatus'], 'memliststatusnew', $memliston, $memlistoff);
         printsetting1($lang['spell_checker'], 'spellchecknew', $spellcheckon, $spellcheckoff);
         printsetting1($lang['coppastatus'], 'coppanew', $coppaon, $coppaoff);
@@ -600,7 +596,6 @@ if ($action == "settings") {
         $searchstatusnew = formOnOff('searchstatusnew');
         $faqstatusnew = formOnOff('faqstatusnew');
         $todaystatusnew = formOnOff('todaystatusnew');
-        $statsstatusnew = formOnOff('statsstatusnew');
         $memliststatusnew = formOnOff('memliststatusnew');
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $coppanew = formOnOff('coppanew');
@@ -723,7 +718,6 @@ if ($action == "settings") {
             tickerdelay='$tickerdelaynew',
             addtime='$addtimenew',
             todaysposts='$todaystatusnew',
-            stats='$statsstatusnew',
             max_avatar_size='$max_avatar_size',
             footer_options='$footer_options',
             space_cats='$space_catsnew',

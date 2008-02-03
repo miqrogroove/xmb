@@ -428,7 +428,6 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `dotfolders` char(3) NOT NULL default '',
       `attachimgpost` char(3) NOT NULL default '',
       `todaysposts` char(3) NOT NULL default '',
-      `stats` char(3) NOT NULL default '',
       `authorstatus` char(3) NOT NULL default '',
       `tickerstatus` char(3) NOT NULL default '',
       `tickercontents` text NOT NULL,

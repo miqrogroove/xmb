@@ -1207,6 +1207,15 @@ switch($step) {
         } else {
             show_result(X_INST_OK);
         }
+        
+        // XMB 1.9.8 - remove stats, as it's unnecessary in this version
+        $db->query("UPDATE `".$u->tablepre."settings` DROP `stats`");
+        if (file_exists(ROOT . 'stats.php') && !@unlink(ROOT . 'stats.php')) {
+            show_result(X_INST_SKIP);
+            error('Permission Error', 'The statistics file("stats.php") has been found on the server, but could not be removed. It should be removed as soon as possible, as it is not supported in this version.', false);
+        } else {
+            show_result(X_INST_OK);
+        }
 
         show_act("Check and remove sid");
         $u->removeSid();
