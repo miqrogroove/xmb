@@ -180,8 +180,8 @@ switch($action) {
         break;
     case 'send':
         $msgto = formVar('msgto');
-        $subject = formVar('subject');
-        $message = formVar('message');
+        $subject = formVar('subject', false);
+        $message = formVar('message', false);
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':

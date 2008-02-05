@@ -105,7 +105,6 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
     $msgto = checkInput($msgto, '', '', 'script', false);
-    $subject = strip_tags($subject);
     $username = checkInput($username, '', '', 'script', false);
 
     if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
@@ -178,12 +177,10 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (isset($previewsubmit)) {
-        $u2usubject = html_entity_decode(checkOutput(censor(checkInput(stripslashes($subject)))));
-        $u2umessage = checkOutput(censor(checkInput(stripslashes($message))));
+        $u2usubject = censor(stripslashes($subject));
+        $u2umessage = censor(stripslashes($message));
         $u2umessage = postify($u2umessage, 'no', '', 'yes', 'no');
         $username = htmlspecialchars($msgto);
-        $subject = html_entity_decode(htmlspecialchars($subject));
-        $message = html_entity_decode(htmlspecialchars($message));
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
     }
 

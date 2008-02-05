@@ -83,6 +83,7 @@ $filename = '';
 $filetype = '';
 $quickjump = '';
 $newu2umsg = '';
+$othertid = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
