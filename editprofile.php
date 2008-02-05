@@ -123,9 +123,9 @@ if (noSubmit('editsubmit')) {
     $dayselect[] = '<option value="">&nbsp;</option>';
     for($num = 1; $num <= 31; $num++) {
         if ($day == $num) {
-            $dayselect[] = '<option value='.$num.'" '.$selHTML.'>'.$num.'</option>';
+            $dayselect[] = '<option value="'.$num.'" '.$selHTML.'>'.$num.'</option>';
         } else {
-            $dayselect[] = '<option value='.$num.'">'.$num.'</option>';
+            $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
         }
     }
     $dayselect[] = '</select>';

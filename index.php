@@ -294,6 +294,10 @@ while($thing = $db->fetch_array($fquery)) {
     }
 
     if ($lastcat != $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || (!empty($cforum) && $SETTINGS['catsonly'] != 'on'))) {
+        if ($forumlist != '') {
+            $forumarray[] = $forumlist;
+            $forumlist = '';
+        }
         $lastcat = $thing['cat_fid'];
         $thing['cat_name'] = html_entity_decode($thing['cat_name']);
         eval('$forumlist .= "'.template('index_category').'";');
@@ -306,15 +310,13 @@ while($thing = $db->fetch_array($fquery)) {
         $forumlist .= $cforum;
     }
 
-    $forumarray[] = $forumlist;
-    $forumlist = '';
-
 }
 
-if (empty($forumarray)) {
+$forumarray[] = $forumlist;
+$forumlist = implode($spacer, $forumarray);
+
+if ($forumlist == '') {
     eval('$forumlist = "'.template('index_noforum').'";');
-} else {
-    $forumlist = implode($spacer, $forumarray);
 }
 $db->free_result($fquery);
 
