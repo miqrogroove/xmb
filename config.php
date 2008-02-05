@@ -125,4 +125,12 @@ if (!defined('IN_CODE')) {
     / Comment first line and uncomment second line to use debug mode (1.9+ only). Only one define can be
     / active as define is immutable once set.
     */
+    //
+    /*
+    / To allow guests to see debug errors (in the case of registration errors or the like), comment first
+    / line and uncomment second line.  DEBUG queries will not be shown.
+    / ****  DEBUG MUST BE SET TO TRUE  ****
+    */
+    define('DEBUG_GUEST', false);
+    // define('DEBUG_GUEST', true);
 ?>

@@ -143,7 +143,7 @@ class dbstuff {
             if ($overwriteErrorPerms) {
                 return $error;
             } else {
-                if ((defined('X_SADMIN') && X_SADMIN && defined('DEBUG') && DEBUG) || (!defined('X_MEMBER') && !defined('X_GUEST'))) {
+                if ((defined('X_SADMIN') && X_SADMIN && defined('DEBUG') && DEBUG) || (defined('DEBUG_GUEST') && DEBUG_GUEST) || (!defined('X_MEMBER') && !defined('X_GUEST'))) {
                     return 'MySQL encountered the following error: '.$error."\n<br />".'In the following query: <em>'.$sql.'</em>';
                 } else {
                     return 'MySQL has encountered an unknown error. To find out the exact problem, please set the DEBUG flag to true in config.php.';
