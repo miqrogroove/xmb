@@ -1340,13 +1340,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" align="center"><tr>
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center"><tr>
 <td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
 <img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
@@ -1417,13 +1417,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="tablerow">
 <img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
@@ -1754,7 +1754,7 @@ $bbcodescript
 </table>
 <table cellspacing="0" cellpadding="1" border="0" width="$tablewidth" align="center">
 <tr>
-<td><table width="100%" cellspacing="0" cellpadding="2" align="center">
+<td><table width="100%" cellspacing="0" cellpadding="$tablespace" align="center">
 <tr>
 <td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
 <td align="right">$quickjump</td>
@@ -3166,7 +3166,7 @@ $multipage
 <table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><strong><font color="$cattext">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
 </tr>
@@ -3609,7 +3609,7 @@ $suggestions
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="1" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texttopicreview]</strong></font></td>
 </tr>
@@ -3640,7 +3640,7 @@ $posts
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -3672,7 +3672,7 @@ $suggestions
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -4515,7 +4515,7 @@ $sendoptions
 
 |#*XMB TEMPLATE FILE*#|viewthread|#*XMB TEMPLATE*#|
 $poll
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="smalltxt"><a href="viewthread.php?fid=$fid&amp;tid=$tid&amp;action=printable">$lang[textprintver]</a> | <a href="memcp.php?action=subscriptions&amp;subadd=$tid">$lang[textsubscribe]</a> | <a href="memcp.php?action=favorites&amp;favadd=$tid">$lang[textaddfav]</a></td>
 <td class="post" align="right" valign="bottom">&nbsp;$newtopiclink$newpolllink$replylink</td>
@@ -4536,7 +4536,7 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="post" align="right" style="padding-top: 3px">$newtopiclink$newpolllink$replylink</td>
 </tr>
