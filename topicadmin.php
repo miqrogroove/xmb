@@ -545,13 +545,13 @@ switch($action) {
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
             } elseif ($tid == $othertid) {
-                error($lang['cannotmergesamethread', false]);
+                error($lang['cannotmergesamethread'], false);
             }
 
             $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid='$othertid'");
 
             if ($db->num_rows($queryadd1) == 0) {
-                error($lang['tidnoexist', false]);
+                error($lang['tidnoexist'], false);
             }
 
             $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");

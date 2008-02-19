@@ -393,7 +393,7 @@ switch($action) {
                 if (!$authorization) {
                     error($lang['privforummsg'], false);
                 }
-                $message = html_entity_decode("[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]");
+                $message = "[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]";
             }
 
             $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
