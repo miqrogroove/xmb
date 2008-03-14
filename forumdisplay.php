@@ -66,22 +66,27 @@ if (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'su
 }
 
 $fup = array();
-if (isset($forum['type']) && $forum['type'] == 'sub') {
-    $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
-    $db->free_result($query);
-    if (!privfcheck($fup['private'], $fup['userlist'])) {
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
     }
 } else if (!isset($forum['type']) && $forum['type'] != 'forum') {
     error($notexist);
 }
 
-$authorization = privfcheck($forum['private'], $forum['userlist']);
-if (!$authorization) {
+$perms = checkForumPermissions($forum);
+if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid, basename(__FILE__), $_GET);
 }
-pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav(html_entity_decode(stripslashes($forum['name'])));
@@ -109,21 +114,16 @@ if (count($fup) == 0) {
     }
 }
 
-if (!$notexist) {
-    if (!postperm($forum, 'thread')) {
-        $newtopiclink = $newpolllink = '';
-    } else {
-        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
-            $newtopiclink = $newpolllink = '';
-        } else {
-            eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
-            if (isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
-                eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
-            } else {
-                $newpolllink = '';
-            }
-        }
-    }
+if($perms[X_PERMS_POLL]) {
+    eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
+} else {
+    $newpolllink = '';
+}
+
+if($perms[X_PERMS_THREAD]) {
+    eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
+} else {
+    $newtopiclink = '';
 }
 
 $t_extension = get_extension($lang['toppedprefix']);

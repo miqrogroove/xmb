@@ -85,29 +85,29 @@ if ($tid) {
 }
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
-$forums = $db->fetch_array($query);
+$forum = $db->fetch_array($query);
 $db->free_result($query);
-$forums['name'] = stripslashes($forums['name']);
+$forum['name'] = stripslashes($forum['name']);
 
-if (($fid == 0 && $tid == 0) || (!isset($forums['type']) && $forums['type'] != 'forum' && $forums['type'] != 'sub' && $forums['fid'] != $fid)) {
+if (($fid == 0 && $tid == 0) || (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'sub' && $forum['fid'] != $fid)) {
     $posterror = $lang['textnoforum'];
 }
 
-if (isset($forums['type']) && $forums['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
+if (isset($forum['type']) && $forum['type'] == 'forum') {
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
 } else {
-    if (!isset($forums['fup']) || !is_numeric($forums['fup'])) {
+    if (!isset($forum['fup']) || !is_numeric($forum['fup'])) {
         $posterror = $lang['textnoforum'];
     } else {
-        $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
+        $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
         $fup = $db->fetch_array($query);
         nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forums['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
     }
 }
 
 $attachfile = '';
-if (isset($forums['attachstatus']) && $forums['attachstatus'] != 'off') {
+if (isset($forum['attachstatus']) && $forum['attachstatus'] != 'off') {
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
@@ -158,25 +158,61 @@ if ($usesig != 'yes') {
 
 $chkInputHTML = 'no';
 $chkInputTags = 'no';
-if (isset($forums['allowhtml']) && $forums['allowhtml'] == 'yes') {
+if (isset($forum['allowhtml']) && $forum['allowhtml'] == 'yes') {
     $chkInputHTML = 'yes';
     $chkInputTags = 'no';
 }
 
-$allowimgcode = (isset($forums['allowimgcode']) && $forums['allowimgcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowimgcode = (isset($forum['allowimgcode']) && $forum['allowimgcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowhtml = ($chkInputHTML == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowsmilies = (isset($forums['allowsmilies']) && $forums['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowbbcode = (isset($forums['allowbbcode']) && $forums['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$pperm['type'] = (isset($action) && $action == 'newthread') ? 'thread' : 'reply';
+$allowsmilies = (isset($forum['allowsmilies']) && $forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowbbcode = (isset($forum['allowbbcode']) && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
-if (!postperm($forums, $pperm['type'])) {
+
+// check permissions on this forum (and top forum if it's a sub?)
+$perms = checkForumPermissions($forum);
+if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid, basename(__FILE__), $_GET);
 }
 
-if (X_GUEST && isset($forums['guestposting']) && $forums['guestposting'] == 'on') {
-    $guestpostingmsg = $lang['guestpostingonmsg'];
+// check posting permissions specifically
+if(isset($action)) {
+    if($action == 'newthread') {
+        if (!$perms[X_PERMS_THREAD]) {
+            error($lang['textnoaction']);
+        } else if(isset($poll) && $poll == 'yes') {
+            if(!$perms[X_PERMS_POLL]) {
+                error($lang['textnoaction']);
+            }
+        } else {
+            // allowed to do whatever it is they're doing
+        }
+    } elseif($action == 'reply') {
+        if(!$perms[X_PERMS_REPLY]) {
+            error($lang['textnoaction']);
+        } else {
+            // allowed to post a reply!
+        }
+    } elseif($action == 'edit') {
+        // let's allow edits for now, we'll check for permissions later on in the script
+    } else {
+        error($lang['textnoaction']);
+    }
 } else {
-    $guestpostingmsg = '';
+    error($lang['textnoaction']);
+}
+
+// check parent-forum permissions
+if($forum['type'] == 'sub') {
+    $fup = $db->fetch_array($db->query("SELECT postperm, userlist, password FROM ".X_PREFIX."forums WHERE fid=$forum[fup]"));
+    $fupPerms = checkForumPermissions($fup);
+
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
+        error($lang['privforummsg']);
+    }
+    // do not show password-dialog here; it makes the situation too complicated
 }
 
 if ($posterror) {
@@ -248,16 +284,6 @@ if (isset($poll)) {
     }
 } else {
     $poll = '';
-}
-
-pwverify($forums['password'], 'post.php?action='.$action.'&fid='.$fid.'&tid='.$tid.'&repquote='.$repquote.'&poll='.$poll, $fid);
-
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
-$forum = $db->fetch_array($query);
-$db->free_result($query);
-$authorization = privfcheck($forum['private'], $forum['userlist']);
-if (!$authorization) {
-    error($lang['privforummsg']);
 }
 
 if (!empty($posticon)) {
@@ -338,7 +364,7 @@ if (isset($previewpost)) {
 
     $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
     $message = checkInput($message, $chkInputTags, $chkInputHTML, '', true);
-    $message1 = postify($message, $smileyoff, $bbcodeoff, $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
+    $message1 = postify($message, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
     $dissubject = censor($subject);
 
     if ($pid > 0) {
@@ -360,7 +386,6 @@ switch($action) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['textreply']);
 
-        $priv = privfcheck($forums['private'], $forums['userlist']);
         if (!isset($replysubmit) || !$replysubmit) {
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                 if ($Captcha->bCompatible !== false) {
@@ -416,7 +441,7 @@ switch($action) {
                         $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
                     }
 
-                    $post['message'] = postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forums['allowsmilies'], $forums['allowhtml'], $forums['allowbbcode'], $forums['allowimgcode']);
+                    $post['message'] = postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                     eval('$posts .= "'.template('post_reply_review_post').'";');
                     if ($thisbg == $altbg2) {
                         $thisbg = $altbg1;
@@ -429,7 +454,7 @@ switch($action) {
             $db->free_result($querytop);
 
             $attachfile = '';
-            if (isset($forums['attachstatus']) && $forums['attachstatus'] == 'on') {
+            if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
                 eval('$attachfile = "'.template('post_attachmentbox').'";');
             }
             eval('echo stripslashes("'.template('post_reply').'");');
@@ -489,19 +514,6 @@ switch($action) {
                         error($lang['captchaimageinvalid']);
                     }
                 }
-            }
-
-            if ($forums['guestposting'] != 'on' && $username == 'Anonymous') {
-                error($lang['textnoguestposting']);
-            }
-
-            $pperm = explode('|', $forums['postperm']);
-            if ($pperm[1] == 2 && !X_ADMIN) {
-                error($lang['postpermerr']);
-            } else if ($pperm[1] == 3 && !X_STAFF) {
-                error($lang['postpermerr']);
-            } else if ($pperm[1] == 4) {
-                error($lang['postpermerr']);
             }
 
             if (isset($posticon) && $posticon != "") {
@@ -598,7 +610,7 @@ switch($action) {
 
                 eval('echo "'.template('header').'";');
 
-                if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+                if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                     $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
                 }
             }
@@ -615,7 +627,6 @@ switch($action) {
         break;
 
     case 'newthread':
-        $priv = privfcheck($forums['private'], $forums['userlist']);
         if (isset($poll) && $poll == 'yes') {
             nav($lang['textnewpoll']);
         } else {
@@ -632,7 +643,7 @@ switch($action) {
 
             eval('echo "'.template('header').'";');
 
-            $status1 = modcheck($self['status'], $xmbuser, $forums['moderator']);
+            $status1 = modcheck($self['status'], $xmbuser, $forum['moderator']);
             if ($self['status'] == "Super Moderator") {
                 $status1 = "Moderator";
             }
@@ -649,7 +660,7 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            if (isset($poll) && $poll == 'yes' && $forums['pollstatus'] != 'off') {
+            if (isset($poll) && $poll == 'yes' && $perms[X_PERMS_POLL]) {
                 if (!isset($pollanswers)){
                     $pollanswers = '';
                 }
@@ -711,20 +722,6 @@ switch($action) {
                 }
             }
 
-            if ($forums['guestposting'] != 'on' && $username == 'Anonymous') {
-                error($lang['textnoguestposting']);
-            }
-
-            $pperm = explode('|', $forums['postperm']);
-
-            if ($pperm[0] == 2 && !X_ADMIN) {
-                error($lang['postpermerr']);
-            } else if ($pperm[0] == 3 && !X_STAFF) {
-                error($lang['postpermerr']);
-            } else if ($pperm[0] == 4) {
-                error($lang['postpermerr']);
-            }
-
             $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
             $for = $db->fetch_array($query);
             $db->free_result($query);
@@ -769,12 +766,12 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid='$fid'");
 
-            if (X_MEMBER && isset($pollanswers) && isset($forums['pollstatus']) && $forums['pollstatus'] != 'off') {
+            if (X_MEMBER && isset($pollanswers) && isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
                 $pollanswers = checkInput($pollanswers);
                 $pollopts = explode("\n", $pollanswers);
                 $pnumnum = count($pollopts);
 
-                if ($pnumnum < 2 && $pollanswers != '') {
+                if ($pnumnum < 2) {
                     error($lang['too_few_pollopts']);
                 }
 
@@ -822,7 +819,7 @@ switch($action) {
 
             eval('echo "'.template('header').'";');
 
-            if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+            if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
 
@@ -844,12 +841,6 @@ switch($action) {
             $queryextra = $db->query("SELECT f.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON (f.fid=p.fid) WHERE p.tid='$tid' AND p.pid='$pid'");
             $forum = $db->fetch_array($queryextra);
             $db->free_result($queryextra);
-
-            $authorization = privfcheck($forum['private'], $forum['userlist']);
-            if (!$authorization) {
-                $header = '';
-                error($lang['privforummsg']);
-            }
 
             if (isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
                 $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$message, "subject"=>$subject, 'icon'=>$posticon);
@@ -961,7 +952,7 @@ switch($action) {
 
             $subject = addslashes($subject);
 
-            $status1 = modcheck($self['status'], $username, $forums['moderator']);
+            $status1 = modcheck($self['status'], $username, $forum['moderator']);
             if ($self['status'] == "Super Moderator") {
                 $status1 = "Moderator";
             }
@@ -1029,14 +1020,14 @@ switch($action) {
 
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$message', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$subject' WHERE pid='$pid'");
 
-                if (isset($_FILES['attach']) && ($file = get_attached_file($_FILES['attach'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+                if (isset($_FILES['attach']) && ($file = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                     $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attach[type]', '$filesize', '$file', 0)");
                 }
 
                 if (isset($attachment) && is_array($attachment)) {
                     switch($attachment['action']) {
                         case 'replace':
-                            if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forums['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+                            if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                                 $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
                                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attachment_replace[type]', '$filesize', '$file', 0)");
                             }

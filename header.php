@@ -36,6 +36,13 @@ define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
 
+define('X_PERMS_POLL',      0);
+define('X_PERMS_THREAD',    1);
+define('X_PERMS_REPLY',     2);
+define('X_PERMS_VIEW',      3);
+define('X_PERMS_USERLIST',  4);
+define('X_PERMS_PASSWORD',  5);
+
 if (!defined('ROOT')) {
     define('ROOT', './');
 }
@@ -340,6 +347,7 @@ if (!isset($xmbuser)) {
     $xmbuser = '';
     $xmbpw = '';
     $self['status'] = '';
+    $self['username'] = '';
 }
 
 $q = false;

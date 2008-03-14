@@ -206,9 +206,9 @@ if ($gid == 0) {
         if ($SETTINGS['onlinetoday_status'] == 'on') {
             $datecut = $onlinetime - (3600 * 24);
             if (X_ADMIN) {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC");
             } else {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC");
             }
 
             $todaymembersnum = $db->num_rows($query);
@@ -273,9 +273,12 @@ if ($SETTINGS['catsonly'] != 'on') {
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $query = $db->query("SELECT fid, fup, name, private, userlist FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
-            $index_subforums[] = $queryrow;
+            $subperms = checkForumPermissions($queryrow);
+            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] && $subperms[X_PERMS_USERLIST])) {
+                $index_subforums[] = $queryrow;
+            }
         }
         $db->free_result($query);
     }

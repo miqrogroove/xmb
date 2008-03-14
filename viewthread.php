@@ -175,17 +175,25 @@ if ((!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 's
 }
 $db->free_result($query);
 
-$authorization = true;
-if (isset($forum['type']) && $forum['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid, private, userlist FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
+$fup = array();
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT userlist, name, fid, password, postperm FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
-    $db->free_result($query);
-    $authorization = privfcheck($fup['private'], $fup['userlist']);
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+        error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
+    }
 }
 
-if (!$authorization || !privfcheck($forum['private'], $forum['userlist'])) {
-    $threadSubject = '';
+// Check for authorization to be here in the first place
+$perms = checkForumPermissions($forum);
+if(!$perms[X_PERMS_VIEW] && !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid, basename(__FILE__), array());
 }
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
@@ -252,11 +260,6 @@ if (!$action) {
 
     eval('echo "'.template('header').'";');
 
-    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid);
-
-    $ppthread = postperm($forum, 'thread');
-    $ppreply  = postperm($forum, 'reply');
-
     $usesigcheck = $usesig ? 'checked="checked"' : '';
 
     $captchapostcheck = '';
@@ -279,34 +282,29 @@ if (!$action) {
         }
         $closeopen = $lang['textopenthread'];
     } else {
-        if (X_MEMBER || X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] == 'on') {
-            $closeopen = $lang['textclosethread'];
+        $closeopen = $lang['textclosethread'];
+        if($perms[X_PERMS_REPLY]) {
             eval('$replylink = "'.template('viewthread_reply').'";');
             $quickreply = '';
             if ($SETTINGS['quickreply_status'] == 'on') {
                 eval('$quickreply = "'.template('viewthread_quickreply').'";');
             }
+        } else {
+            $replylink = '';
+            $quickreply = '';
         }
     }
 
-    if (!$ppthread) {
-        $newtopiclink = $newpolllink = '';
-        if (!$ppreply || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on')) {
-            $replylink = $quickreply = '';
-        }
+    if($perms[X_PERMS_THREAD]) {
+        eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
     } else {
-        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
-            $newtopiclink = $newpolllink = '';
-        } else {
-            eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
-            if (isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
-                eval('$newpolllink = "'.template('viewthread_newpoll').'";');
-            }
-        }
+        $newtopiclink = '';
+    }
 
-        if (!$ppreply || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on')) {
-            $replylink = $quickreply = '';
-        }
+    if($perms[X_PERMS_POLL]) {
+        eval('$newpolllink = "'.template('viewthread_newpoll').'";');
+    } else {
+        $newpolllink = '';
     }
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
@@ -580,10 +578,8 @@ if (!$action) {
         }
 
         $repquote = '';
-        if (X_ADMIN || $status1 == 'Moderator' || ($thread['closed'] != 'yes')) {
-            if (X_MEMBER || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] == 'on')) {
-                eval('$repquote = "'.template('viewthread_post_repquote').'";');
-            }
+        if ($perms[X_PERMS_REPLY] && $thread['closed'] != 'yes') {
+            eval("\$repquote = \"".template('viewthread_post_repquote')."\";");
         }
 
         $reportlink = '';
@@ -663,7 +659,6 @@ if (!$action) {
     eval('echo "'.template('footer').'";');
     exit();
 } else if ($action == 'attachment' && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
-    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
     $query = $db->query("SELECT * FROM ".X_PREFIX."attachments WHERE pid='$pid' and tid='$tid'");
     $file = $db->fetch_array($query);
     $db->free_result($query);
@@ -689,7 +684,6 @@ if (!$action) {
     echo $file['attachment'];
     exit();
 } else if ($action == 'printable') {
-    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY pid");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);

@@ -1104,53 +1104,6 @@ if ($action == 'forum') {
             $checked6 = '';
         }
 
-        if ($forum['pollstatus'] == "on") {
-            $checked7 = $cheHTML;
-        } else {
-            $checked7 = '';
-        }
-
-        if ($forum['guestposting'] == "on") {
-            $checked8 = $cheHTML;
-        } else {
-            $checked8 = '';
-        }
-
-        $pperm = explode('|', $forum['postperm']);
-
-        $type11 = $type12 = $type13 = $type14 = '';
-        if ($pperm[0] == 2) {
-            $type12 = $selHTML;
-        } else if ($pperm['0'] == 3) {
-            $type13 = $selHTML;
-        } else if ($pperm[0] == 4) {
-            $type14 = $selHTML;
-        } else if ($pperm[0] == 1) {
-            $type11 = $selHTML;
-        }
-
-        $type21 = $type22 = $type23 = $type24 = '';
-        if ($pperm[1] == 2) {
-            $type22 = $selHTML;
-        } else if ($pperm[1] == 3) {
-            $type23 = $selHTML;
-        } else if ($pperm[1] == 4) {
-            $type24 = $selHTML;
-        } else if ($pperm[1] == 1) {
-            $type21 = $selHTML;
-        }
-
-        $type31 = $type32 = $type33 = $type34 = '';
-        if ($forum['private'] == 2) {
-            $type32 = $selHTML;
-        } else if ($forum['private'] == 3) {
-            $type33 = $selHTML;
-        } else if ($forum['private'] == 4) {
-            $type34 = $selHTML;
-        } else if ($forum['private'] == 1) {
-            $type31 = $selHTML;
-        }
-
         $forum['name'] = stripslashes($forum['name']);
         $forum['description'] = stripslashes($forum['description']);
         ?>
@@ -1170,44 +1123,54 @@ if ($action == 'forum') {
         <input type="checkbox" name="allowbbcodenew" value="yes" <?php echo $checked4?> /><?php echo $lang['textbbcode']?><br />
         <input type="checkbox" name="allowimgcodenew" value="yes" <?php echo $checked5?> /><?php echo $lang['textimgcode']?><br />
         <input type="checkbox" name="attachstatusnew" value="on" <?php echo $checked6?> /><?php echo $lang['attachments']?><br />
-        <input type="checkbox" name="pollstatusnew" value="on" <?php echo $checked7?> /><?php echo $lang['polls']?><br />
-        <input type="checkbox" name="guestpostingnew" value="on" <?php echo $checked8?> /><?php echo $lang['textanonymousposting']?><br />
         </td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['texttheme']?></td>
         <td bgcolor="<?php echo $altbg2?>"><?php echo $themelist?></td>
         </tr>
+
         <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop1']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="postperm1">
-        <option value="1" <?php echo $type11?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type12?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type13?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type14?>><?php echo $lang['textpermission41']?>
-        </select>
-        </td>
+        <td style="background-color: <?php echo $THEME['altbg1']?>"><?php echo $lang['forumpermissions']?></td>
+        <td style="background-color: <?php echo $THEME['altbg2']?>"><table style="width: 100%; text-align: center;">
+        <?php
+        $perms = explode(',', $forum['postperm']);
+        $statusList = array(
+            'Super Administrator'   => 1,
+            'Administrator'         => 2,
+            'Super Moderator'       => 4,
+            'Moderator'             => 8,
+            'Member'                => 16,
+            'guest'                 => 32);
+         ?>
+        <tr>
+            <td class="tablerow" style="width: 25ex;">&nbsp;</td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['polls'];   ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['threads']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['replies']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['view'];    ?></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop2']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="postperm2">
-        <option value="1" <?php echo $type21?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type22?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type23?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type24?>><?php echo $lang['textpermission41']?>
-        </select>
-        </td>
+        <?php
+        foreach($statusList as $key=>$val) {
+            if(!X_SADMIN and $key == 'Super Administrator') {
+                $disabled = 'disabled="disabled"';
+            } else {
+                $disabled = '';
+            }
+            ?>
+            <tr class="tablerow">
+                <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo ucwords($key);?></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[0][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_POLL]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[1][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_THREAD]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[2][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_REPLY]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[3][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_VIEW]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+            </tr>
+            <?php
+        }
+        ?>
+        </table></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whoview']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="privatenew">
-        <option value="1" <?php echo $type31?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type32?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type33?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type34?>><?php echo $lang['textpermission42']?>
-        </select>
-        </td>
-        </tr>
+
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textuserlist']?></td>
         <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="userlistnew"><?php echo $forum['userlist']?></textarea></td>
@@ -1293,17 +1256,17 @@ if ($action == 'forum') {
 
         if ($newfname != $lang['textnewforum']) {
             $newfname = addslashes($newfname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '31,31,31,63', 'yes', 'on', '')");
         }
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {
             $newsubname = addslashes($newsubname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
@@ -1314,15 +1277,31 @@ if ($action == 'forum') {
         $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
         $attachstatusnew = formOnOff('attachstatusnew');
-        $pollstatusnew = formOnOff('pollstatusnew');
-        $guestpostingnew = formOnOff('guestpostingnew');
         $themeforumnew = formInt('themeforumnew');
-        $postperm1 = formInt('postperm1');
-        $postperm2 = formInt('postperm2');
-        $privatenew = formInt('privatenew');
         $userlistnew = addslashes(formVar('userlistnew'));
         $passwordnew = formVar('passwordnew');
         $delete = formInt('delete');
+
+        if(!X_SADMIN) {
+            $overrule = array(0,0,0,0);
+            $forum = $db->fetch_array($db->query("SELECT postperm FROM ".X_PREFIX."forums WHERE fid=$fdetails"));
+            $parts = explode(',', $forum['postperm']);
+            foreach($parts as $p=>$v) {
+                if($v & 1 == 1) {
+                    // super admin status set
+                    $overrule[$p] = 1;
+                }
+            }
+        } else {
+            $overrule = array(0,0,0,0);
+        }
+
+        $perms = array(0,0,0,0);
+        foreach($permsNew as $key=>$val) {
+            $perms[$key] = array_sum($val);
+            $perms[$key] |= $overrule[$key];
+        }
+        $perms = implode(',', $perms);
 
         $db->query("UPDATE ".X_PREFIX."forums SET
             name='$namenew',
@@ -1332,13 +1311,10 @@ if ($action == 'forum') {
             allowbbcode='$allowbbcodenew',
             theme='$themeforumnew',
             userlist='$userlistnew',
-            private='$privatenew',
-            postperm='$postperm1|$postperm2',
+            postperm='$perms',
             allowimgcode='$allowimgcodenew',
             attachstatus='$attachstatusnew',
-            pollstatus='$pollstatusnew',
-            password='$passwordnew',
-            guestposting='$guestpostingnew'
+            password='$passwordnew'
             WHERE fid='$fdetails'"
         );
 
