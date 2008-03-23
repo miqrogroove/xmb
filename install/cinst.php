@@ -673,7 +673,7 @@ $db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `pa
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."forums");
-$db->query("INSERT INTO ".$tablepre."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'no', 'yes', 'yes', '', 0, 0, 0, 0, '31,31,31,63', 'yes', 'on', 'on');");
+$db->query("INSERT INTO ".$tablepre."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'no', 'yes', 'yes', '', 0, 0, 0, 0, '31,31,31,63', 'yes', 'on', '');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."ranks");
