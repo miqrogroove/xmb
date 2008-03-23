@@ -1688,10 +1688,10 @@ if ($action == "ipban") {
         <?php
     } else {
         $newip = array();
-        $newip[] = trim(formInt('newip1'));
-        $newip[] = trim(formInt('newip2'));
-        $newip[] = trim(formInt('newip3'));
-        $newip[] = trim(formInt('newip4'));
+        $newip[] = trim(formVar('newip1'));
+        $newip[] = trim(formVar('newip2'));
+        $newip[] = trim(formVar('newip3'));
+        $newip[] = trim(formVar('newip4'));
         $delete = formArray('delete');
 
         if ($delete) {
@@ -1709,7 +1709,7 @@ if ($action == "ipban") {
         }
         $self['status'] = $lang['textipupdate'];
 
-        if ($newip[1] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
+        if ($newip[0] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
             $invalid = 0;
             for($i=0; $i<=3 && !$invalid; ++$i) {
                 if ($newip[$i] == "*") {

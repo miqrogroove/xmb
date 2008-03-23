@@ -2279,8 +2279,12 @@ $captcharegcheck
 
 |#*XMB TEMPLATE FILE*#|member_reg_avatarurl|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2"><input type="text" name="avatar" size="25" /></td>
+<td bgcolor="$altbg1" width="22%">$lang[textavatarurl]</td>
+<td bgcolor="$altbg2">
+<input type="hidden" name="newavatarcheck" id="newavatarcheck" value="no" />
+<input type="text" name="newavatar" size="25" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<p id="avatarCheck" style="display: inline;"></p>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_captcha|#*XMB TEMPLATE*#|
@@ -2770,7 +2774,11 @@ $dayselect
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarurl|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2"><input type="text" name="newavatar" size="25" value="$member[avatar]" /></td>
+<td bgcolor="$altbg2">
+<input type="hidden" name="newavatarcheck" id="newavatarcheck" value="no" />
+<input type="text" name="newavatar" size="25" value="$member[avatar]" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<p id="avatarCheck" style="display: inline;"></p>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
@@ -3209,12 +3217,12 @@ $multipage
 <td bgcolor="$altbg2">
 <select name="srchfrom">
 <option value="86400">$lang[day1]</option>
-<option value="604800" $selHTML>$lang[aweek]</option>
+<option value="604800">$lang[aweek]</option>
 <option value="2592000">$lang[month1]</option>
 <option value="7948800">$lang[month3]</option>
 <option value="15897600">$lang[month6]</option>
 <option value="31536000">$lang[lastyear]</option>
-<option value="0">$lang[beginning]</option>
+<option value="0" $selHTML>$lang[beginning]</option>
 </select>
 </td>
 </tr>
@@ -3410,10 +3418,6 @@ $preview
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2 $guestpostingmsg</span></td>
-</tr>
 $loggedin
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textsubject]</td>
@@ -3469,15 +3473,6 @@ $preview
 <table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2">
-<span class="smalltxt">
-$whopost1 $lang[and] $whopost2 <br />
-$guestpostingmsg
-</span>
-</td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3562,10 +3557,6 @@ $preview
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostreply]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2$guestpostingmsg</span></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -4804,9 +4795,6 @@ $posts
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>
 $captchapostcheck
-<tr bgcolor="$altbg1" class="quickreply">
-<td colspan="3" class="tablerow"><div align="left"><strong>&nbsp;&raquo;</strong>&nbsp;$whopost2</div></td>
-</tr>
 <tr class="quickreply">
 <td width="8%" height="101" bgcolor="$altbg1" class="tablerow"> <div align="left"><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />

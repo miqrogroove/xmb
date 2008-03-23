@@ -1142,8 +1142,6 @@ $lang['whocanpost22'] = "Administrators can reply.";
 $lang['whocanpost23'] = "Administrators and Moderators can reply.";
 $lang['whocanpost24'] = "no replies are allowed.";
 $lang['whoodump_confirm'] = 'Are you sure you want to empty the whosonline?';
-$lang['whopostop1'] = "Who Can Post New Topics?";
-$lang['whopostop2'] = "Who Can Post Replies?";
 $lang['whosoneval'] = '$lang["whosonmsg"] = "There are currently $guestn, $membern and $hiddenn browsing $bbname";';
 $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index status:";

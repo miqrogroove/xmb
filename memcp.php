@@ -423,6 +423,7 @@ if ($action == 'profile') {
         $day = formInt('day');
         $bday = iso8601_date($year, $month, $day);
         $newavatar = formVar('newavatar');
+        $newavatarcheck = formVar('newavatarcheck');
         $avatar = $newavatar ? checkInput($newavatar, 'no', 'no', 'javascript', false) : '';
         $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
         $newlocation = formVar('newlocation');
@@ -456,6 +457,7 @@ if ($action == 'profile') {
         }
 
         $avatar = addslashes($avatar);
+        $newavatarcheck = addslashes($newavatarcheck);
         $location = addslashes($location);
         $yahoo = addslashes($yahoo);
         $aim = addslashes($aim);
@@ -466,14 +468,8 @@ if ($action == 'profile') {
         $mood = addslashes($mood);
         $sig = addslashes($sig);
 
-        $max_size = explode('x', $SETTINGS['max_avatar_size']);
-        if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {
-            $size = @getimagesize($avatar);
-            if ($size === false ) {
-                $avatar = '';
-            } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
-                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
-            }
+        if ($newavatarcheck == "no") {
+            $avatar = '';
         }
 
         if ($newpassword != '' || $newpasswordcf != '' ) {

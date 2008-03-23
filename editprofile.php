@@ -215,6 +215,7 @@ if (noSubmit('editsubmit')) {
     $day = formInt('day');
     $bday = iso8601_date($year, $month, $day);
     $newavatar = formVar('newavatar');
+    $newavatarcheck = formVar('newavatarcheck');
     $avatar = $newavatar ? checkInput($newavatar, 'no', 'no', 'javascript', false) : '';
     $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
     $newlocation = formVar('newlocation');
@@ -236,6 +237,7 @@ if (noSubmit('editsubmit')) {
     $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
     $avatar = addslashes($avatar);
+    $newavatarcheck = addslashes($newavatarcheck);
     $location = addslashes($location);
     $yahoo = addslashes($yahoo);
     $aim = addslashes($aim);
@@ -246,14 +248,8 @@ if (noSubmit('editsubmit')) {
     $mood = addslashes($mood);
     $sig = addslashes($sig);
 
-    $max_size = explode('x', $SETTINGS['max_avatar_size']);
-    if ($max_size[0] > 0 && $max_size[1] > 0 && substr_count($avatar, ',') < 2) {
-        $size = @getimagesize($avatar);
-        if ($size === false) {
-            $avatar = '';
-        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
-            error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
-        }
+    if ($newavatarcheck == "no") {
+        $avatar = '';
     }
 
     $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$user'");

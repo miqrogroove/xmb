@@ -1392,71 +1392,50 @@ function month2text($num) {
 }
 
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
-    global $db, $self, $lang;
+    global $db, $self, $lang, $SETTINGS;
 
-    $restrict = array();
-    switch($self['status']) {
-        case 'Member':
-            $restrict[] = "private != '3'";
-        case 'Moderator':
-        case 'Super Moderator':
-            $restrict[] = "private != '2'";
-        case 'Administrator':
-            $restrict[] = "userlist = ''";
-        case 'Super Administrator':
-            break;
-        default:
-            $restrict[] = "private != '3'";
-            $restrict[] = "private != '2'";
-            $restrict[] = "userlist = ''";
-            $restrict[] = "password = ''";
-            break;
-    }
-    $restrict = implode(' AND ', $restrict);
-
-    if ($restrict != '') {
-        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
-    } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums ORDER BY displayorder");
-    }
+    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($sql)) {
-        $forum['name'] = html_entity_decode($forum['name']);
-        if (!X_SADMIN && $forum['password'] != '') {
-            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
-            if ($forum['password'] !== $fidpw) {
-                continue;
+    while($forum = $db->fetch_array($query)) {
+        $perms = checkForumPermissions($forum);
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+            $forum['name'] = html_entity_decode($forum['name']);
+            if (!X_SADMIN && $forum['password'] != '') {
+                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+                if ($forum['password'] !== $fidpw) {
+                    continue;
+                }
+            }
+
+            switch($forum['type']) {
+                case 'group':
+                    $categories[] = $forum;
+                    break;
+                case 'sub':
+                    if (!isset($subforums[$forum['fup']])) {
+                        $subforums[$forum['fup']] = array();
+                    }
+                    $subforums[$forum['fup']][] = $forum;
+                    break;
+                case 'forum':
+                default:
+                    if ($forum['fup'] == 0) {
+                        $standAloneForums[] = $forum;
+                    } else {
+                        if (!isset($forums[$forum['fup']])) {
+                            $forums[$forum['fup']] = array();
+                        }
+                        $forums[$forum['fup']][] = $forum;
+                    }
+                    break;
             }
         }
-
-        switch($forum['type']) {
-            case 'group':
-                $categories[] = $forum;
-                break;
-            case 'sub':
-                if (!isset($subforums[$forum['fup']])) {
-                    $subforums[$forum['fup']] = array();
-                }
-                $subforums[$forum['fup']][] = $forum;
-                break;
-            case 'forum':
-            default:
-                if ($forum['fup'] == 0) {
-                    $standAloneForums[] = $forum;
-                } else {
-                    if (!isset($forums[$forum['fup']])) {
-                        $forums[$forum['fup']] = array();
-                    }
-                    $forums[$forum['fup']][] = $forum;
-                }
-                break;
-        }
     }
-    $db->free_result($sql);
+    $db->free_result($query);
 
     $forumselect = array();
     if (!$multiple) {
@@ -1526,7 +1505,7 @@ function forumJump() {
     $subforums = array();
     while($forum = $db->fetch_array($query)) {
         $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
             $forum['name'] = html_entity_decode($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
                 $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
