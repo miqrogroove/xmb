@@ -110,6 +110,9 @@ if ($action == "settings") {
         $todayon = $todayoff = '';
         settingHTML('todaysposts', $todayon, $todayoff);
 
+        $statson = $statsoff = '';
+        settingHTML('stats', $statson, $statsoff);
+
         $gzipcompresson = $gzipcompressoff = '';
         settingHTML('gzipcompress', $gzipcompresson, $gzipcompressoff);
 
@@ -458,6 +461,7 @@ if ($action == "settings") {
         printsetting1($lang['textsearchstatus'], 'searchstatusnew', $searchon, $searchoff);
         printsetting1($lang['textfaqstatus'], 'faqstatusnew', $faqon, $faqoff);
         printsetting1($lang['texttodaystatus'], 'todaystatusnew', $todayon, $todayoff);
+        printsetting1($lang['textstatsstatus'], 'statsstatusnew', $statson,  $statsoff);
         printsetting1($lang['textmemliststatus'], 'memliststatusnew', $memliston, $memlistoff);
         printsetting1($lang['spell_checker'], 'spellchecknew', $spellcheckon, $spellcheckoff);
         printsetting1($lang['coppastatus'], 'coppanew', $coppaon, $coppaoff);
@@ -596,6 +600,7 @@ if ($action == "settings") {
         $searchstatusnew = formOnOff('searchstatusnew');
         $faqstatusnew = formOnOff('faqstatusnew');
         $todaystatusnew = formOnOff('todaystatusnew');
+        $statsstatusnew = formOnOff('statsstatusnew');
         $memliststatusnew = formOnOff('memliststatusnew');
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $coppanew = formOnOff('coppanew');
@@ -718,6 +723,7 @@ if ($action == "settings") {
             tickerdelay='$tickerdelaynew',
             addtime='$addtimenew',
             todaysposts='$todaystatusnew',
+            stats='$statsstatusnew',
             max_avatar_size='$max_avatar_size',
             footer_options='$footer_options',
             space_cats='$space_catsnew',
@@ -1145,10 +1151,10 @@ if ($action == 'forum') {
          ?>
         <tr>
             <td class="tablerow" style="width: 25ex;">&nbsp;</td>
-            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['polls'];   ?></td>
-            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['threads']; ?></td>
-            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['replies']; ?></td>
-            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo $lang['view'];    ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['polls'];   ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['threads']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['replies']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['view'];    ?></td>
         </tr>
         <?php
         foreach($statusList as $key=>$val) {
@@ -1159,7 +1165,7 @@ if ($action == 'forum') {
             }
             ?>
             <tr class="tablerow">
-                <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold;"><?php echo ucwords($key);?></td>
+                <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: right;"><?php echo ucwords($key);?></td>
                 <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[0][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_POLL]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
                 <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[1][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_THREAD]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
                 <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[2][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_REPLY]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
@@ -1261,7 +1267,7 @@ if ($action == 'forum') {
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {

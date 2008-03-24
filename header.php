@@ -1,29 +1,17 @@
 <?php
-/**
- * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP2
- *
- * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+/** 
+ * XMB 1.9.9 Saigo 
+ * 
+ * Developed by the XMB Group Copyright (c) 2001-2008 
+ * Sponsored by iEntry Inc. Copyright (c) 2007 
+ * 
+ * http://xmbgroup.com , http://ientry.com 
+ * 
+ * This software is released under the GPL License, you should 
+ * have received a copy of this license with the download of this 
+ * software. If not, you can obtain a copy by visiting the GNU 
+ * General Public License website <http://www.gnu.org/licenses/>. 
+ * 
  **/
 
 error_reporting(E_ALL&~E_NOTICE);
@@ -108,15 +96,15 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort = 'XMB 1.9.8';
-$versiongeneral = 'XMB 1.9.8 Engage';
+$versionshort = 'XMB 1.9.9';
+$versiongeneral = 'XMB 1.9.9 Saigo';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
-    $gamma = 'Final';
-    $service_pack = ' SP2';
-    $versionbuild = 20071231;
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = 20080325;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -677,6 +665,11 @@ if ($SETTINGS['memliststatus'] == 'on') {
 // Today's posts-link
 if ($SETTINGS['todaysposts'] == 'on') {
     $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
+}
+
+// Stats-link
+if ($SETTINGS['stats'] == 'on') {
+    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
 }
 
 // 'Forum Rules'-link
