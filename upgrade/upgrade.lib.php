@@ -971,79 +971,76 @@ class Upgrade {
         switch($v) {
             case 0:
                 // store
-                if(!$this->columnExists('forums', 'private') || !$this->columnExists('forums', 'guestposting') || !$this->columnExists('forums', 'pollstatus')) {
-                    // permissions are already upgraded. No need to redo this again (can't even!)
-                    break;
-                }
+                if ($this->columnExists('forums', 'private') || $this->columnExists('forums', 'guestposting') || $this->columnExists('forums', 'pollstatus')) {
+                    $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
+                    while($forum = $this->db->fetch_array($q)) {
+                        // check if we need to change it first
+                        $parts = explode('|', $forum['postperm']);
+                        if(count($parts) == 1) {
+                            // no need to upgrade these; new format in use [we hope]
+                            continue;
+                        }
+                        $newFormat = array(0,0,0,0);
 
-                $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
-                while($forum = $this->db->fetch_array($q)) {
-                    // check if we need to change it first
-                    $parts = explode('|', $forum['postperm']);
-                    if(count($parts) == 1) {
-                        // no need to upgrade these; new format in use [we hope]
-                        continue;
-                    }
-                    $newFormat = array(0,0,0,0);
+                        $fid            = $forum['fid'];
+                        $private        = $forum['private'];
+                        $permField      = $forum['postperm'];
+                        $guestposting   = $forum['guestposting'];
+                        $polls          = $forum['pollstatus'];
 
-                    $fid            = $forum['fid'];
-                    $private        = $forum['private'];
-                    $permField      = $forum['postperm'];
-                    $guestposting   = $forum['guestposting'];
-                    $polls          = $forum['pollstatus'];
-
-                    $translationFields = array(0=>1, 1=>2);
-                    foreach($parts as $key=>$val) {
-                        switch($val) {
+                        $translationFields = array(0=>1, 1=>2);
+                        foreach($parts as $key=>$val) {
+                            switch($val) {
+                                case 1:
+                                    $newFormat[$translationFields[$key]] = 31;
+                                    break;
+                                case 2:
+                                    $newFormat[$translationFields[$key]] = 3;
+                                    break;
+                                case 3:
+                                    $newFormat[$translationFields[$key]] = 15;
+                                    break;
+                                case 4:
+                                    $newFormat[$translationFields[$key]] = 1;
+                                    break;
+                                default:
+                                    // allow only superadmin
+                                    $newFormat[$translationFields[$key]] = 1;
+                                    break;
+                            }
+                        }
+                        switch($private) {
                             case 1:
-                                $newFormat[$translationFields[$key]] = 31;
+                                $newFormat[3] = 63;
                                 break;
                             case 2:
-                                $newFormat[$translationFields[$key]] = 3;
+                                $newFormat[3] = 3;
                                 break;
                             case 3:
-                                $newFormat[$translationFields[$key]] = 15;
+                                $newFormat[3] = 15;
                                 break;
                             case 4:
-                                $newFormat[$translationFields[$key]] = 1;
+                                $newFormat[3] = 1;
                                 break;
                             default:
                                 // allow only superadmin
-                                $newFormat[$translationFields[$key]] = 1;
+                                $newFormat[3] = 1;
                                 break;
                         }
-                    }
-                    switch($private) {
-                        case 1:
-                            $newFormat[3] = 63;
-                            break;
-                        case 2:
-                            $newFormat[3] = 3;
-                            break;
-                        case 3:
-                            $newFormat[3] = 15;
-                            break;
-                        case 4:
-                            $newFormat[3] = 1;
-                            break;
-                        default:
-                            // allow only superadmin
-                            $newFormat[3] = 1;
-                            break;
-                    }
-                    if($guestposting == 'yes' || $guestposting == 'on') {
-                        $newFormat[0] |= 32;
-                        $newFormat[1] |= 32;
-                        $newFormat[2] |= 32;
-                    }
+                        if($guestposting == 'yes' || $guestposting == 'on') {
+                            $newFormat[0] |= 32;
+                            $newFormat[1] |= 32;
+                            $newFormat[2] |= 32;
+                        }
 
-                    if($polls == 'yes' || $polls == 'on') {
-                        $newFormat[0] = $newFormat[1];
-                    } else {
-                        $newFormat[0] = 0;
-                    }
+                        if($polls == 'yes' || $polls == 'on') {
+                            $newFormat[0] = $newFormat[1];
+                        } else {
+                            $newFormat[0] = 0;
+                        }
 
-                    $cache[$fid] = $newFormat;
+                        $cache[$fid] = $newFormat;
+                    }
                 }
                 break;
 
@@ -1092,20 +1089,6 @@ class Upgrade {
     }
 
     function createTempFields() {
-        $q = $this->db->query("SHOW COLUMNS FROM ".$this->tablepre."forums LIKE 'postperm_temp'");
-        if ($this->db->num_rows($q) != 0) {
-            $this->db->query("ALTER TABLE ".$this->tablepre."forums DROP `postperm_temp`");
-        }
-        $this->db->free_result($q);
-
-        $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default ''");
-        $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
-        while($f = $this->db->fetch_array($q)) {
-            if (strpos($f['postperm'], ',') !== false) {
-                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
-            }
-        }
-
         $q = $this->db->query("SHOW COLUMNS FROM ".$this->tablepre."threads LIKE 'pollopts_temp'");
         if ($this->db->num_rows($q) != 0) {
             $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
