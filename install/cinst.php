@@ -754,7 +754,7 @@ $db->query("DELETE FROM ".$tablepre."templates WHERE name=''");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."themes");
-$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#cdcecf', '#aebbcf', '#91a9cf', '#000000', '#2E3E55', '#5472a4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1px', '90%', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF');");
+$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."words");

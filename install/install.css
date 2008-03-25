@@ -40,6 +40,7 @@ body {
 
 #header {
 	margin-bottom: 10px;
+	text-align: center;
 }
 
 #sidebar {
@@ -77,6 +78,10 @@ input, select, textarea {
 	background-color: #666666;
 	border: 1px solid #000000;
 	padding: 2px;
+}
+
+textarea {
+	margin: 0px;
 }
 
 table {

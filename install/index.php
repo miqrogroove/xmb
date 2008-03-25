@@ -107,7 +107,7 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.gif" alt="XMB" title="XMB" />
+        <img src="images/logo.png" alt="XMB" title="XMB" />
     </div>
 <?php
 }
@@ -202,7 +202,7 @@ switch($vStep) {
         <div class="center-content">
             <h1>XMB <?php echo X_VERSION;?> License Agreement</h1>
             <p>Please read over the agreement below, and if you agree to it select the button at the very bottom. By selecting the button, you agree to the terms below.</p>
-            <textarea style="width: 100%;" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
+            <textarea style="width: 90%;" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
 XMB <?php echo X_VERSION;?>  License (Updated November 2007)
 www.xmbforum.com
 ----------------------------------------------
@@ -953,7 +953,7 @@ Public License instead of this License.  But first, please read
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.gif" alt="XMB" title="XMB" />
+        <img src="images/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="configure">
         <div class="top"><span></span></div>
@@ -966,7 +966,7 @@ Public License instead of this License.  But first, please read
     <div id="config">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <textarea readonly="readonly" style="width: 100%;" rows="100"><?php echo($configuration); ?></textarea>
+            <textarea readonly="readonly" style="width: 90%;" rows="100"><?php echo($configuration); ?></textarea>
             <form action="index.php?step=5" method="post">
                 <p class="button"><input type="submit" value="Close Window" onclick="window.close()"></p>
             </form>
@@ -989,7 +989,7 @@ Public License instead of this License.  But first, please read
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.gif" alt="XMB" title="XMB" />
+        <img src="images/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="configure">
         <div class="top"><span></span></div>
@@ -1079,7 +1079,7 @@ Public License instead of this License.  But first, please read
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.gif" alt="XMB" title="XMB" />
+        <img src="images/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="sidebar">
         <div class="top"><span></span></div>
@@ -1258,10 +1258,8 @@ Public License instead of this License.  But first, please read
                     </tr>
                     <tr>
                         <td>E-Mail Address:</td>
-                        <td><input type="text" name="frmEmail" size="32" /></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="configure"><input type="hidden" name="conf" value="<?php echo $conf?>" /></td>
+                        <td><input type="text" name="frmEmail" size="32" />
+                        <input type="hidden" name="conf" value="<?php echo $conf?>" /></td>
                     </tr>
                 </table>
                 <p class="button"><input type="submit" value="Begin Installation &gt;" /></p>
