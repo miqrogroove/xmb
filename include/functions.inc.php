@@ -385,45 +385,6 @@ function modcheck($status, $username, $mods) {
     return $retval;
 }
 
-function privfcheck($private, $userlist) {
-    global $self, $xmbuser;
-
-    if (X_SADMIN) {
-        return true;
-    }
-
-    switch($private) {
-        case 4:
-            return false;
-            break;
-        case 3:
-            return X_STAFF;
-            break;
-        case 2:
-            return X_ADMIN;
-            break;
-        case 1:
-            if (trim($userlist) == '') {
-                return true;
-            }
-
-            $user = explode(',', $userlist);
-            $xuser = strtolower($xmbuser);
-            foreach($user as $usr) {
-                $usr = strtolower(trim($usr));
-                if ($usr != '' && $xuser == $usr) {
-                   return true;
-                }
-            }
-            return false;
-            break;
-        default:
-            return false;
-            break;
-    }
-    return false;
-}
-
 function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;

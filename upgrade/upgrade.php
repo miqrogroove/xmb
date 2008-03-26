@@ -164,7 +164,7 @@ switch($step) {
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
                 <li>Your Version: XMB <?php echo XMB_V;?></li>
-                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=aebbcf&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./upgrade.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Upgrade to XMB <?php echo XMB_V;?> &gt;" /></p>
@@ -1273,7 +1273,7 @@ Public License instead of this License.  But first, please read
 
         $newTheme = $u->findThemeIDByName('Oxygen XMB');
         if (!$newTheme) {
-            $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', 'ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF')");
+            $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF')");
             $newTheme = $db->insert_id();
         }
 

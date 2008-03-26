@@ -197,13 +197,13 @@ switch($action) {
             if (!isset($searchsubmit) && !isset($page)) {
                 $fids = array();
                 if (X_SADMIN) {
-                    $q = $db->query("SELECT fid FROM $table_forums WHERE status = 'on'");
+                    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
                     while($f = $db->fetch_array($q)) {
                         $fids[] = $f['fid'];
                     }
                 } else {
                     $fCache = array();
-                    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM $table_forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+                    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
                     while($forum = $db->fetch_array($q)) {
                         $perms = checkForumPermissions($forum);
                         $fCache[$forum['fid']] = $perms;
@@ -231,11 +231,11 @@ switch($action) {
                     $forumselect = "<select name=\"srchfid\">\n";
                     $forumselect .= '<option value="all">'.$lang['textallforumsandsubs']."</option>\n";
 
-                    $queryfor = $db->query("SELECT fid, name FROM $table_forums WHERE $restrict AND fup='' AND type='forum' ORDER BY displayorder");
+                    $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='' AND type='forum' ORDER BY displayorder");
 
                     while ($forum = $db->fetch_array($queryfor)) {
                         $forumselect .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
-                        $querysub = $db->query("SELECT fid, name FROM $table_forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
+                        $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
 
                         while ($sub = $db->fetch_array($querysub)) {
                             $forumselect .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
@@ -244,16 +244,16 @@ switch($action) {
                         $forumselect .= "<option value=\"\" disabled=\"disabled\">&nbsp;</option>";
                     }
 
-                    $querygrp = $db->query("SELECT fid, name FROM $table_forums WHERE type='group' ORDER BY displayorder");
+                    $querygrp = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder");
                     while ($group = $db->fetch_array($querygrp)) {
                         $forumselect2 = "<option value=\"$group[fid]\"disabled=\"disabled\">$group[name]</option>";
 
                         $forumselect3 = '';
-                        $queryfor = $db->query("SELECT fid, name FROM $table_forums WHERE $restrict AND fup='$group[fid]' AND type='forum' ORDER BY displayorder");
+                        $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$group[fid]' AND type='forum' ORDER BY displayorder");
                         while ($forum = $db->fetch_array($queryfor)) {
                             $forumselect3 .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
 
-                            $querysub = $db->query("SELECT fid, name FROM $table_forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
+                            $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
                             while ($sub = $db->fetch_array($querysub)) {
                                 $forumselect3 .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
                             }
@@ -301,7 +301,7 @@ switch($action) {
                         $start = $offset;
                     }
 
-                    $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM $table_posts p, $table_threads t LEFT JOIN $table_forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+                    $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
                     if ($srchfrom == 0) {
                         $srchfrom = time();

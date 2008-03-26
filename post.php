@@ -402,8 +402,8 @@ switch($action) {
                    error($lang['privforummsg'], false);
                 }
 
-                $authorization = privfcheck($thaquote['fprivate'], $thaquote['fuserlist']);
-                if (!$authorization) {
+		$quoteperms = checkForumPermissions($thaquote);
+                if(!$quoteperms[X_PERMS_VIEW] || !$quoteperms[X_PERMS_USERLIST]) {
                     error($lang['privforummsg'], false);
                 }
                 $message = "[quote][i]$lang[origpostedby] $thaquote[author][/i]\n$thaquote[message] [/quote]";

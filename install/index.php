@@ -170,7 +170,7 @@ switch($vStep) {
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
                 <li>Your Version: XMB <?php echo X_VERSION_EXT;?></li>
-                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=aebbcf&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./index.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Install XMB <?php echo X_VERSION;?> &gt;" /></p>
