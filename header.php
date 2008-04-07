@@ -454,7 +454,7 @@ if (X_MEMBER) {
 define('X_SADMIN', $role['sadmin']);
 define('X_ADMIN', $role['admin']);
 define('X_SMOD', $role['smod']);
-define('X_MOD', $role['smod']);
+define('X_MOD', $role['mod']);
 define('X_STAFF', $role['staff']);
 
 // Get the required language file
