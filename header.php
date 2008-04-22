@@ -1,17 +1,29 @@
 <?php
-/** 
- * XMB 1.9.9 Saigo 
- * 
- * Developed by the XMB Group Copyright (c) 2001-2008 
- * Sponsored by iEntry Inc. Copyright (c) 2007 
- * 
- * http://xmbgroup.com , http://ientry.com 
- * 
- * This software is released under the GPL License, you should 
- * have received a copy of this license with the download of this 
- * software. If not, you can obtain a copy by visiting the GNU 
- * General Public License website <http://www.gnu.org/licenses/>. 
- * 
+/**
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
+ *
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
+ *
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  **/
 
 error_reporting(E_ALL&~E_NOTICE);
@@ -23,13 +35,6 @@ define('X_SET_HEADER', 1);
 define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
-
-define('X_PERMS_POLL',      0);
-define('X_PERMS_THREAD',    1);
-define('X_PERMS_REPLY',     2);
-define('X_PERMS_VIEW',      3);
-define('X_PERMS_USERLIST',  4);
-define('X_PERMS_PASSWORD',  5);
 
 if (!defined('ROOT')) {
     define('ROOT', './');
@@ -78,7 +83,6 @@ $filename = '';
 $filetype = '';
 $quickjump = '';
 $newu2umsg = '';
-$othertid = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -96,15 +100,15 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort = 'XMB 1.9.9';
-$versiongeneral = 'XMB 1.9.9 Saigo';
+$versionshort = 'XMB 1.9.8';
+$versiongeneral = 'XMB 1.9.8 Engage';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = 20080325;
+    $gamma = 'Final';
+    $service_pack = ' SP2';
+    $versionbuild = 20071231;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -137,7 +141,7 @@ if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_
 
 // Fix provided by whinpo :)
 // Browser incompatability regarding insertion.
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && !defined('IS_IE')) {
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
     define('IS_IE', true);
     $browser = 'ie';
 }
@@ -331,19 +335,22 @@ if ($onlinetodaycount < 5) {
 }
 
 // Get the user-vars, and make them semi-global
-if (!isset($xmbuser)) {
-    $xmbuser = '';
+$xmbuser = '';
+if (isset($_COOKIE['xmbuser'])) {
+    $xmbuserinput = $db->escape($_COOKIE['xmbuser']);
+} else {
+    $xmbuserinput = '';
     $xmbpw = '';
     $self['status'] = '';
-    $self['username'] = '';
 }
 
 $q = false;
-if ($xmbuser != '') {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
+if ($xmbuserinput != '') {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
     $userrec = $db->fetch_array($query);
     if ($db->num_rows($query) == 1 && $userrec['password'] == $xmbpw) {
         $q = true;
+        $xmbuser = $db->escape($userrec['username']);
     }
     $db->free_result($query);
 }
@@ -454,7 +461,7 @@ if (X_MEMBER) {
 define('X_SADMIN', $role['sadmin']);
 define('X_ADMIN', $role['admin']);
 define('X_SMOD', $role['smod']);
-define('X_MOD', $role['mod']);
+define('X_MOD', $role['smod']);
 define('X_STAFF', $role['staff']);
 
 // Get the required language file
@@ -480,7 +487,7 @@ if (X_MEMBER) {
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
-    $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.rawurlencode($onlineuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
+    $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.recodeOut($xmbuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 } else {
     $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
     $onlineuser = 'xguest123';
@@ -499,8 +506,8 @@ $dformatorig = $dateformat;
 $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
 // Get themes, [fid, [tid]]
-if (isset($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid='$tid'");
+if (isset($tid) && is_numeric($tid) && $action != 'templates') {
+    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid=$tid");
     $locate = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $locate['fid'];
@@ -510,8 +517,8 @@ if (isset($tid) && $action != 'templates') {
     } else {
         $threadSubject = '';
     }
-} else if (isset($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid='$fid'");
+ } else if (isset($fid) && is_numeric($fid)) {
+    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($q) === 1) {
         $forumtheme = $db->result($q, 0);
         $db->free_result($q);
@@ -526,18 +533,6 @@ $newtime = $onlinetime - 600;
 // clear out old entries and guests
 $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
 $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
-
-// Find duplicate entries for users only
-$username = isset($username) ? $username : '';
-if (X_MEMBER) {
-    $result = $db->query("SELECT COUNT(username) FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
-    $usercount = $db->result($result, 0);
-    if ($usercount > 1) {
-        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE (username='$xmbuser')");
-        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
-    }
-    $db->free_result($result);
-}
 
 // Check what theme to use
 if ((int) $themeuser > 0) {
@@ -620,7 +615,7 @@ if (isset($lastvisit) && X_MEMBER) {
     $lasttime = gmdate($timecode, $theTime);
     $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = '';
+    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
 }
 
 // Checks for various settings

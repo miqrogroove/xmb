@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -73,7 +85,7 @@ if ($folder && (!$action || $action == 'mod' || $action == 'view')) {
 $u2ucount = u2u_folderList();
 $u2uid = getInt('u2uid');
 if (!$u2uid) {
-    $u2uid = formVar('u2uid');
+    $u2uid = postedVar('u2uid');
 }
 
 $thewidth = ($self['useoldu2u'] == 'yes') ? $tablewidth : '100%';
@@ -167,9 +179,9 @@ switch($action) {
         }
         break;
     case 'send':
-        $msgto = formVar('msgto');
-        $subject = formVar('subject', false);
-        $message = formVar('message', false);
+        $msgto = postedVar('msgto', 'javascript', TRUE, TRUE, TRUE);
+        $subject = postedVar('subject', 'javascript', TRUE, TRUE, TRUE);
+        $message = postedVar('message');
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':
@@ -191,7 +203,7 @@ switch($action) {
         $leftpane = u2u_ignore();
         break;
     case 'emptytrash':
-        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE folder='Trash' AND owner='$self[username]'");
+        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE folder='Trash' AND owner='$xmbuser'");
         u2u_msg($lang['texttrashemptied'], 'u2u.php');
         break;
     default:

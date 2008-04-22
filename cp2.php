@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -24,9 +36,9 @@ $action = getVar('action');
 
 if (X_ADMIN) {
     $download = formVar('download');
-    if ($action == 'templates' && $download) {
+    if ($action == "templates" && $download) {
         $code = '';
-        $templates = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
+        $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
         while($template = $db->fetch_array($templates)) {
             $template['template'] = trim($template['template']);
             $template['name'] = trim($template['name']);
@@ -347,7 +359,7 @@ if ($action == 'themes') {
         $keysql = implode(', ', $keysql);
         $valsql = implode(', ', $valsql);
 
-        $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
+        $query = $db->query("SELECT count(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
         if ($db->result($query, 0) > 0) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table>');
         }
@@ -394,7 +406,6 @@ if ($action == 'themes') {
     if ($single && $single != "submit" && $single != "anewtheme1") {
         $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single'");
         $themestuff = $db->fetch_array($query);
-        $db->free_result($query);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -603,8 +614,8 @@ if ($action == 'themes') {
         <td><?php echo $lang['smdir']?></td>
         <td><input type="text" name="smdirnew" value="images" /></td>
         </tr>
-        <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="<?php echo $single?>" /></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="<?php echo $single?>" /></td>
         </tr>
         </table>
         </td>
@@ -615,52 +626,52 @@ if ($action == 'themes') {
         </tr>
         <?php
     } else if ($single && $single == "submit" && !$newtheme) {
-        $namenew = formVar('namenew');
-        $bgcolornew = formVar('bgcolornew');
-        $altbg1new = formVar('altbg1new');
-        $altbg2new = formVar('altbg2new');
-        $linknew = formVar('linknew');
-        $bordercolornew = formVar('bordercolornew');
-        $headernew = formVar('headernew');
-        $headertextnew = formVar('headertextnew');
-        $topnew = formVar('topnew');
-        $catcolornew = formVar('catcolornew');
-        $cattextnew = formVar('cattextnew');
-        $tabletextnew = formVar('tabletextnew');
-        $textnew = formVar('textnew');
-        $borderwidthnew = formVar('borderwidthnew');
-        $tablewidthnew = formVar('tablewidthnew');
-        $tablespacenew = formVar('tablespacenew');
-        $fnew = formVar('fnew');
-        $fsizenew = formVar('fsizenew');
-        $boardlogonew = formVar('boardlogonew');
-        $imgdirnew = formVar('imgdirnew');
-        $smdirnew = formVar('smdirnew');
+        $namenew = postedVar('namenew');
+        $bgcolornew = postedVar('bgcolornew');
+        $altbg1new = postedVar('altbg1new');
+        $altbg2new = postedVar('altbg2new');
+        $linknew = postedVar('linknew');
+        $bordercolornew = postedVar('bordercolornew');
+        $headernew = postedVar('headernew');
+        $headertextnew = postedVar('headertextnew');
+        $topnew = postedVar('topnew');
+        $catcolornew = postedVar('catcolornew');
+        $cattextnew = postedVar('cattextnew');
+        $tabletextnew = postedVar('tabletextnew');
+        $textnew = postedVar('textnew');
+        $borderwidthnew = postedVar('borderwidthnew');
+        $tablewidthnew = postedVar('tablewidthnew');
+        $tablespacenew = postedVar('tablespacenew');
+        $fnew = postedVar('fnew');
+        $fsizenew = postedVar('fsizenew');
+        $boardlogonew = postedVar('boardlogonew');
+        $imgdirnew = postedVar('imgdirnew');
+        $smdirnew = postedVar('smdirnew');
 
         $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } else if ($single && $single == "submit" && $newtheme) {
-        $namenew = formVar('namenew');
-        $bgcolornew = formVar('bgcolornew');
-        $altbg1new = formVar('altbg1new');
-        $altbg2new = formVar('altbg2new');
-        $linknew = formVar('linknew');
-        $bordercolornew = formVar('bordercolornew');
-        $headernew = formVar('headernew');
-        $headertextnew = formVar('headertextnew');
-        $topnew = formVar('topnew');
-        $catcolornew = formVar('catcolornew');
-        $cattextnew = formVar('cattextnew');
-        $tabletextnew = formVar('tabletextnew');
-        $textnew = formVar('textnew');
-        $borderwidthnew = formVar('borderwidthnew');
-        $tablewidthnew = formVar('tablewidthnew');
-        $tablespacenew = formVar('tablespacenew');
-        $fnew = formVar('fnew');
-        $fsizenew = formVar('fsizenew');
-        $boardlogonew = formVar('boardlogonew');
-        $imgdirnew = formVar('imgdirnew');
-        $smdirnew = formVar('smdirnew');
+        $namenew = postedVar('namenew');
+        $bgcolornew = postedVar('bgcolornew');
+        $altbg1new = postedVar('altbg1new');
+        $altbg2new = postedVar('altbg2new');
+        $linknew = postedVar('linknew');
+        $bordercolornew = postedVar('bordercolornew');
+        $headernew = postedVar('headernew');
+        $headertextnew = postedVar('headertextnew');
+        $topnew = postedVar('topnew');
+        $catcolornew = postedVar('catcolornew');
+        $cattextnew = postedVar('cattextnew');
+        $tabletextnew = postedVar('tabletextnew');
+        $textnew = postedVar('textnew');
+        $borderwidthnew = postedVar('borderwidthnew');
+        $tablewidthnew = postedVar('tablewidthnew');
+        $tablespacenew = postedVar('tablespacenew');
+        $fnew = postedVar('fnew');
+        $fsizenew = postedVar('fsizenew');
+        $boardlogonew = postedVar('boardlogonew');
+        $imgdirnew = postedVar('imgdirnew');
+        $smdirnew = postedVar('smdirnew');
 
         $db->query("INSERT INTO ".X_PREFIX."themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
@@ -762,14 +773,14 @@ if ($action == "smilies") {
         $smcode = formArray('smcode');
         $smurl = formArray('smurl');
 
-        $newcode = formVar('newcode');
-        $newurl1 = formVar('newurl1');
+        $newcode = postedVar('newcode');
+        $newurl1 = postedVar('newurl1');
         $autoinsertsmilies = formInt('autoinsertsmilies');
 
         $pidelete = formArray('pidelete');
         $piurl = formArray('piurl');
 
-        $newurl2 = formVar('newurl2');
+        $newurl2 = postedVar('newurl2');
         $autoinsertposticons = formInt('autoinsertposticons');
 
         if ($smcode) {
@@ -929,14 +940,16 @@ if ($action == 'censor') {
     }
 
     if (onSubmit('censorsubmit')) {
+        $newfind = postedVar('newfind', 'javascript');
+        $newreplace = postedVar('newreplace', 'javascript');
         $querycensor = $db->query("SELECT id FROM ".X_PREFIX."words");
         while($censor = $db->fetch_array($querycensor)) {
-            $find = formVar('find'.$censor['id']);
-            $replace = formVar('replace'.$censor['id']);
-            $delete = formVar('delete'.$censor['id']);
+            $find = postedVar('find'.$censor['id']);
+            $replace = postedVar('replace'.$censor['id']);
+            $delete = formInt('delete'.$censor['id']);
 
             if ($delete) {
-                $db->query("DELETE FROM ".X_PREFIX."words WHERE id='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."words WHERE id=$delete");
             }
 
             if ($find) {
@@ -1029,11 +1042,11 @@ if ($action == "ranks") {
         $stars = formArray('stars');
         $allowavatars = formArray('allowavatars');
         $avaurl = formArray('avaurl');
-        $newtitle = formVar('newtitle');
+        $newtitle = postedVar('newtitle');
         $newposts = formInt('newposts');
         $newstars = formInt('newstars');
         $newallowavatars = formOnOff('newallowavatars');
-        $newavaurl = formVar('newavaurl');
+        $newavaurl = postedVar('newavaurl');
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");
         $staffranks = array();
@@ -1433,21 +1446,20 @@ if ($action == "templates") {
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name");
-        echo '<select name="tid"><option value="default">'.$lang['selecttemplate'].'</option>';
+        echo "<select name=\"tid\"><option value=\"default\">$lang[selecttemplate]</option>";
         while($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
-                echo '<option value="'.intval($template['id']).'">'.stripslashes($template['name']).'</option>\r\n';
+                echo "<option value=\"$template[id]\">$template[name]</option>\r\n";
             }
         }
-        echo '</select>&nbsp;&nbsp;';
-        $db->free_result($query);
+        echo "</select>&nbsp;&nbsp;";
         ?>
         </td>
         </tr>
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
-        <input type="submit" class="submit" name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
-        <input type="submit" class="submit" name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
+        <input type="submit" class="submit"name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
+        <input type="submit" class="submit"name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
         <input type="submit" class="submit" name="restore" value="<?php echo $lang['textrestoredeftemps']?>" />&nbsp;
         <input type="submit" class="submit" name="download" value="<?php echo $lang['textdownloadtemps']?>" />
         </td>
@@ -1507,10 +1519,8 @@ if ($action == "templates") {
             $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
             $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
-
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
-        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesrestoredone'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesrestoredone]</td></tr>";
     }
 
     if (onSubmit('edit') && noSubmit('editsubmit')) {
@@ -1518,6 +1528,7 @@ if ($action == "templates") {
         if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
+        $tid = formInt('tid');
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1532,16 +1543,18 @@ if ($action == "templates") {
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id='$tid' ORDER BY name");
         $template = $db->fetch_array($query);
-        $db->free_result($query);
+        $template['template'] = stripslashes($template['template']);
+        $template['template'] = htmlspecialchars($template['template']);
         ?>
-        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
-        <td><?php echo $lang['templatename']?>&nbsp;<strong><?php echo stripslashes($template['name'])?></strong></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><?php echo $lang['templatename']?>&nbsp;<strong><?php echo $template['name']?></strong></td>
         </tr>
-        <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
-        <td><textarea cols="100" rows="30" name="templatenew"><?php echo stripslashes(htmlspecialchars($template['template']))?></textarea></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
+        <textarea cols="100" rows="30" name="templatenew"><?php echo $template['template']?></textarea></td>
         </tr>
-        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
-        <td><input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></strong></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></strong></td>
         </tr>
         </table>
         </td>
@@ -1555,14 +1568,15 @@ if ($action == "templates") {
 
     if (onSubmit('editsubmit')) {
         $tid = getVar('tid');
-        $namenew = formVar('namenew');
-        $templatenew = addslashes(getRequestVar('templatenew'));
+        $namenew = postedVar('namenew');
+        //Templates are double-slashed so that they can be eval'd as raw strings.
+        $templatenew = $db->escape(getRequestVar('templatenew'));
 
-        if ($tid == 'new') {
+        if ($tid == "new") {
             if (!$namenew) {
                 error($lang['templateempty'], false, '</td></tr></table></td></tr></table><br />');
             } else {
-                $check = $db->query("SELECT name FROM ".X_PREFIX."templates WHERE name='$namenew'");
+                $check = $db->query("SELECT name FROM ".X_PREFIX."templates WHERE name = '$namenew'");
                 if ($db->num_rows($check) != 0) {
                     error($lang['templateexists'], false, '</td></tr></table></td></tr></table><br />');
                 } else {
@@ -1572,12 +1586,11 @@ if ($action == "templates") {
         } else {
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id='$tid'");
         }
-        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesupdate'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesupdate]</td></tr>";
     }
 
     if (onSubmit('delete')) {
-        if ($tid == 'default') {
+        if ($tid == "default") {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
         ?>
@@ -1591,11 +1604,11 @@ if ($action == "templates") {
         <tr>
         <td class="category"><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
-        <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
-        <td><?php echo $lang['templatedelconfirm']?></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg1?>" class="ctrtablerow"><?php echo $lang['templatedelconfirm']?></td>
         </tr>
-        <tr bgcolor="<?php echo $altbg2?>" class="ctrtablerow">
-        <td><input type="submit" class="submit" name="deletesubmit" value="<?php echo $lang['textyes']?>" /></td>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" class="submit" name="deletesubmit" value="<?php echo $lang['textyes']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1609,8 +1622,7 @@ if ($action == "templates") {
 
     if (onSubmit('deletesubmit')) {
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE id='$tid'");
-        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesdelete]</td></tr>";
     }
 
     if (onSubmit('new')) {
@@ -1658,40 +1670,40 @@ if ($action == "attachments") {
         <tr>
         <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textsearch']?></font></strong></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwherename']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwherename']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="filename" size="30" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereauthor']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereauthor']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="author" size="40" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereforum']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereforum']?></td>
         <td bgcolor="<?php echo $altbg2?>"><?php echo $forumselect?></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizesmaller']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizesmaller']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizeless" size="20" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizegreater']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizegreater']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizemore" size="20" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountsmaller']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountsmaller']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountless" size="20" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountgreater']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountgreater']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountmore" size="20" /></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredaysold']?></td>
+        <tr>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredaysold']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="daysold" size="20" /></td>
         </tr>
-        <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input type="submit" name="searchsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <tr>
+        <td align="center" class="tablerow" bgcolor="<?php echo $altbg2?>" colspan="2"><input type="submit" name="searchsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1704,9 +1716,9 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('searchsubmit')) {
-        $filename = formVar('filename');
-        $author = formVar('author');
-        $forumprune = formVar('forumprune');
+        $filename = postedVar('filename');
+        $author = postedVar('author');
+        $forumprune = postedVar('forumprune');
         $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
         $sizeless = formInt('sizeless');
         $sizemore = formInt('sizemore');
@@ -1737,7 +1749,7 @@ if ($action == "attachments") {
         $orderby = '';
 
         if ($forumprune) {
-            $restriction .= "AND p.fid=$forumprune ";
+            $restriction .= "AND t.fid=$forumprune ";
         }
 
         if ($daysold) {
@@ -1775,9 +1787,9 @@ if ($action == "attachments") {
             $orderby = ' ORDER BY a.downloads DESC ';
         }
 
-        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $restriction $orderby");
+        $query = $db->query("SELECT a.aid, a.pid, a.filename, LENGTH(a.attachment) AS rowsize, a.downloads, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a LEFT JOIN (".X_PREFIX."posts p LEFT JOIN (".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f USING (fid)) USING (tid)) USING (pid) WHERE 1=1 $restriction $orderby");
         while($attachment = $db->fetch_array($query)) {
-            $attachsize = strlen($attachment['attachment']);
+            $attachsize = $attachment['rowsize'];
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
             } else if ($attachsize >= 1048576) {
@@ -1788,9 +1800,9 @@ if ($action == "attachments") {
                 $attachsize = $attachsize . "b";
             }
 
-            $attachment['tsubject'] = html_entity_decode(stripslashes($attachment['tsubject']));
-            $attachment['fname'] = html_entity_decode(stripslashes($attachment['fname']));
-            $attachment['filename'] = stripslashes($attachment['filename']);
+            $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
+            $attachment['fname'] = stripslashes($attachment['fname']);
+            $attachment['filename'] = attrOut($attachment['filename'], 'javascript');
             ?>
             <tr>
             <td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center" valign="middle"><a href="cp2.php?action=delete_attachment&amp;aid=<?php echo $attachment['aid']?>">Delete</a>
@@ -1810,14 +1822,6 @@ if ($action == "attachments") {
         </td>
         </tr>
         </table>
-        <input type="hidden" name="filename" value="<?php echo $filename?>" />
-        <input type="hidden" name="author" value="<?php echo $author?>" />
-        <input type="hidden" name="forumprune" value="<?php echo $forumprune?>" />
-        <input type="hidden" name="sizeless" value="<?php echo $sizeless?>" />
-        <input type="hidden" name="sizemore" value="<?php echo $sizemore?>" />
-        <input type="hidden" name="dlcountless" value="<?php echo $dlcountless?>" />
-        <input type="hidden" name="dlcountmore" value="<?php echo $dlcountmore?>" />
-        <input type="hidden" name="daysold" value="<?php echo $daysold?>" />
         </form>
         </td>
         </tr>
@@ -1825,55 +1829,20 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('deletesubmit')) {
-        $filename1 = formVar('filename1');
-        $filename = formVar('filename');
-        $author = formVar('author');
-        $forumprune = formInt('forumprune');
-        $sizeless = formInt('sizeless');
-        $sizemore = formInt('sizemore');
-        $dlcountless = formInt('dlcountless');
-        $dlcountmore = formInt('dlcountmore');
-        $daysold = formInt('daysold');
-
-        if ($forumprune) {
-            $queryforum = "AND p.fid='$forumprune' ";
+        $filelist = '';
+        foreach ($_POST as $postedname => $rawvalue) {
+            if (substr($postedname, 0, 8) == 'filename' And is_numeric($fileaid = substr($postedname, 8))) {
+                $filelist .= $fileaid.', ';
+            }
         }
+        $filelist = substr($filelist, 0, -2);
 
-        if ($daysold) {
-            $datethen = $onlinetime - (86400 * $daysold);
-            $querydate = "AND p.dateline <= '$datethen' ";
-        }
-
-        if ($author) {
-            $queryauthor = "AND p.author = '$author' ";
-        }
-
-        if ($filename) {
-            $queryname = "AND a.filename LIKE '%$filename%' ";
-        }
-
-        if ($sizeless) {
-            $querysizeless = "AND a.filesize < '$sizeless' ";
-        }
-
-        if ($sizemore) {
-            $querysizemore = "AND a.filesize > '$sizemore' ";
-        }
-
-        if ($dlcountless) {
-            $querydlcountless = "AND a.downloads < '$dlcountless' ";
-        }
-
-        if ($dlcountmore) {
-            $querydlcountmore = "AND a.downloads > '$dlcountmore' ";
-        }
-
-        $query = $db->query("SELECT a.*, p.*, t.tid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a, ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE a.pid=p.pid AND t.tid=a.tid AND f.fid=p.fid $queryforum $querydate $queryauthor $queryname $querysizeless $querysizemore");
+        $query = $db->query("SELECT a.aid, a.filename FROM ".X_PREFIX."attachments a WHERE a.aid IN ($filelist)");
         while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
-            $afilename = isset($_POST[$afilename]) ? $_POST[$afilename] : '';
-            if ($attachment['filename'] != $afilename) {
-                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$afilename' WHERE aid='$attachment[aid]'");
+            if ($attachment['filename'] != $_POST[$afilename] And isValidFilename($_POST[$afilename])) {
+                $afilename = isset($_POST[$afilename]) ? $db->escape(trim($_POST[$afilename])) : '';
+                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$afilename' WHERE aid='{$attachment['aid']}'");
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2121,8 +2090,8 @@ if ($action == "cplog") {
 }
 
 if ($action == "delete_attachment") {
-    $aid = getInt($aid);
-    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid='$aid'");
+    $aid = getInt('aid');
+    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid=$aid");
     echo "<p align=\"center\">Deleted ...</br>";
 }
 

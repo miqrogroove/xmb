@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP2
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -935,112 +947,35 @@ class Upgrade {
         return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
     }
 
-    function fixForumPerms($v) {
-        static $cache;
-        /***
-            OLD FORMAT:
-            "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
-            - 1 normal (all ranks),
-            - 2 admin only,
-            - 3 admin/mod only,
-            - 4 no posting/viewing.
-        ***/
-
-        /***
-            NEW FORMAT:
-            NewPolls,NewThreads,NewReplies,View. Each field contains a number between 0-63 (a sum of the following:)
-            - 1  Super Administrator
-            - 2  Administrator
-            - 4  Super Moderator
-            - 8  Moderator
-            - 16 Member
-            - 32 Guest
-        ***/
-        switch($v) {
-            case 0:
-                // store
-                if ($this->columnExists('forums', 'private') || $this->columnExists('forums', 'guestposting') || $this->columnExists('forums', 'pollstatus')) {
-                    $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
-                    while($forum = $this->db->fetch_array($q)) {
-                        // check if we need to change it first
-                        $parts = explode('|', $forum['postperm']);
-                        if(count($parts) == 1) {
-                            // no need to upgrade these; new format in use [we hope]
-                            continue;
-                        }
-                        $newFormat = array(0,0,0,0);
-
-                        $fid            = $forum['fid'];
-                        $private        = $forum['private'];
-                        $permField      = $forum['postperm'];
-                        $guestposting   = $forum['guestposting'];
-                        $polls          = $forum['pollstatus'];
-
-                        $translationFields = array(0=>1, 1=>2);
-                        foreach($parts as $key=>$val) {
-                            switch($val) {
-                                case 1:
-                                    $newFormat[$translationFields[$key]] = 31;
-                                    break;
-                                case 2:
-                                    $newFormat[$translationFields[$key]] = 3;
-                                    break;
-                                case 3:
-                                    $newFormat[$translationFields[$key]] = 15;
-                                    break;
-                                case 4:
-                                    $newFormat[$translationFields[$key]] = 1;
-                                    break;
-                                default:
-                                    // allow only superadmin
-                                    $newFormat[$translationFields[$key]] = 1;
-                                    break;
-                            }
-                        }
-                        switch($private) {
-                            case 1:
-                                $newFormat[3] = 63;
-                                break;
-                            case 2:
-                                $newFormat[3] = 3;
-                                break;
-                            case 3:
-                                $newFormat[3] = 15;
-                                break;
-                            case 4:
-                                $newFormat[3] = 1;
-                                break;
-                            default:
-                                // allow only superadmin
-                                $newFormat[3] = 1;
-                                break;
-                        }
-                        if($guestposting == 'yes' || $guestposting == 'on') {
-                            $newFormat[0] |= 32;
-                            $newFormat[1] |= 32;
-                            $newFormat[2] |= 32;
-                        }
-
-                        if($polls == 'yes' || $polls == 'on') {
-                            $newFormat[0] = $newFormat[1];
-                        } else {
-                            $newFormat[0] = 0;
-                        }
-
-                        $cache[$fid] = $newFormat;
-                    }
-                }
+    function fixForumPerms() {
+        $q = $this->db->query("SELECT fid, private, userlist, postperm_temp, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
+        while($forum = $this->db->fetch_array($q)) {
+            if (empty($forum['postperm_temp'])) {
                 break;
+            }
 
-            case 1:
-                // restore
-                if(isset($cache) && count($cache) > 0) {
-                    foreach($cache as $fid=>$format) {
-                        $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
-                    }
+            $postperm = explode(',', $forum['postperm_temp']);
+            $guestposting = 'off';
+            $perms = array(0, 0, 0, 0);
+
+            for($i=1; $i<4; $i++) {
+                if ($postperm[$i] >= 32) { // Means everyone inc guests
+                    $perms[$i] = 1;
+                    $guestposting = 'on';
+                } else if ($postperm[$i] >= 16 && $postperm[$i] <= 31) { // All but guests. if guests can post assume everyone can
+                    $perms[$i] = 1;
+                } else if ($postperm[$i] >= 4 && $postperm[$i] <= 15) { // Mods & Admins only
+                    $perms[$i] = 3;
+                } else if ($postperm[$i] >= 1 && $postperm[$i] <= 3) { // Means admins only
+                    $perms[$i] = 2;
+                } else if ($postperm[$i] == 0) { // Means  no one
+                    $perms[$i] = 4;
                 }
-                break;
+            }
+
+            $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".$perms[1]."|".$perms[2]."', private='".$perms[3]."', guestposting='$guestposting', pollstatus='on' WHERE fid=".$forum['fid']);
         }
+        $this->db->query("ALTER TABLE ".$this->tablepre."forums DROP `postperm_temp`");
     }
 
     function fixPolls() {
@@ -1077,11 +1012,13 @@ class Upgrade {
     }
 
     function createTempFields() {
-        $q = $this->db->query("SHOW COLUMNS FROM ".$this->tablepre."threads LIKE 'pollopts_temp'");
-        if ($this->db->num_rows($q) != 0) {
-            $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
+        $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default ''");
+        $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
+        while($f = $this->db->fetch_array($q)) {
+            if (strpos($f['postperm'], ',') !== false) {
+                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
+            }
         }
-        $this->db->free_result($q);
 
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
         $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");

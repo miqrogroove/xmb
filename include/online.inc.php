@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP2
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -23,35 +35,30 @@ function url_to_text($url) {
     static $restrict, $rset, $fname, $tsub;
 
     if (!$rset) {
-        if (X_SADMIN) {
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
-            while($f = $db->fetch_array($q)) {
-                $fids[] = $f['fid'];
-            }
-        } else {
-            $fCache = array();
-            $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
-            while($forum = $db->fetch_array($q)) {
-                $perms = checkForumPermissions($forum);
-                $fCache[$forum['fid']] = $perms;
-
-                if($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST] && $perms[X_PERMS_PASSWORD]) {
-                    if($forum['type'] == 'sub') {
-                        // also check above forum!
-                        $parentP = $fCache[$forum['fup']];
-                        if($parentP[X_PERMS_VIEW] && $parentP[X_PERMS_USERLIST] && $parentP[X_PERMS_PASSWORD]) {
-                            $fids[] = $forum['fid'];
-                        }
-                    } else {
-                        $fids[] = $forum['fid'];
-                    }
-                }
-            }
+        $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
+        $restrict = array("(password='')");
+        switch($self['status']) {
+            case 'Member':
+                $restrict[] = 'private = 1';
+                $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
+                break;
+            case 'Moderator':
+            case 'Super Moderator':
+                $restrict[] = '(private = 1 OR private = 3)';
+                $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
+                break;
+            case 'Administrator':
+                $restrict[] = '(private > 0 AND private < 4)';
+                $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
+                break;
+            case 'Super Administrator':
+                break;
+            default:
+                $restrict[] = '(private=1)';
+                $restrict[] = "(userlist='')";
+                break;
         }
-
-        $fids = implode(',', $fids);
-        $restrict = ' f.fid IN('.$fids.')';
-
+        $restrict = implode(' AND ', $restrict);
         $rset = true;
     }
 

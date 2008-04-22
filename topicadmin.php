@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -63,9 +75,8 @@ eval('$css = "'.template('css').'";');
 if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
     $thread = $db->fetch_array($query);
-    $db->free_result($query);
     $threadname = html_entity_decode(stripslashes($thread['subject']));
-    $fid = (int)$thread['fid'];
+    $fid = $thread['fid'];
 } else {
     $threadSubject = '';
 }
@@ -182,7 +193,8 @@ switch($action) {
 
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
-            message($lang['deletethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['deletethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -209,7 +221,8 @@ switch($action) {
             $act = ($closed != '') ? 'open' : 'close';
             $mod->log($xmbuser, $act, $fid, $tid);
 
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -224,8 +237,8 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
                 $mod->log($xmbuser, 'close', $fid, $tid);
             }
-
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -241,8 +254,8 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
                 $mod->log($xmbuser, 'open', $fid, $tid);
             }
-
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['closethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -299,7 +312,8 @@ switch($action) {
             updateforumcount($fid);
             updateforumcount($moveto);
 
-            message($lang['movethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['movethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -308,8 +322,12 @@ switch($action) {
         if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
+                if (mysql_num_rows($query) == 0) {
+                    error($lang['textnothread'], FALSE);
+                }
                 $topped = $db->result($query, 0);
                 if ($topped == 1) {
+
                     $lang['texttopthread'] = $lang['textuntopthread'];
                 }
             } else {
@@ -321,6 +339,9 @@ switch($action) {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
+                if (mysql_num_rows($query) == 0) {
+                    error($lang['textnothread'], FALSE);
+                }
                 $topped = $db->result($query, 0);
 
                 if ($topped == 1) {
@@ -333,7 +354,8 @@ switch($action) {
                 $mod->log($xmbuser, $act, $fid, $tid);
             }
 
-            message($lang['topthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['topthreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -411,8 +433,8 @@ switch($action) {
 
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
-
-            message($lang['bumpthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['bumpthreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -442,7 +464,8 @@ switch($action) {
             }
             updateforumcount($fid);
 
-            message($lang['emptythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['emptythreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -521,7 +544,8 @@ switch($action) {
 
             $mod->log($xmbuser, $action, $fid, $tid);
 
-            message($lang['splitthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['splitthreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -530,18 +554,11 @@ switch($action) {
         if (noSubmit('mergesubmit')) {
             eval('echo stripslashes("'.template('topicadmin_merge').'");');
         } else {
-            if ($othertid == 0) {
-                error($lang['invalidtid'], false);
-            } elseif ($tid == $othertid) {
-                error($lang['cannotmergesamethread'], false);
+            if ($tid == $othertid) {
+                error($lang['cannotmergesamethread']);
             }
 
             $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid='$othertid'");
-
-            if ($db->num_rows($queryadd1) == 0) {
-                error($lang['tidnoexist'], false);
-            }
-
             $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
             $replyadd = $db->result($queryadd1, 0, 'replies');
             $otherfid = $db->result($queryadd1, 0, 'fid');
@@ -570,7 +587,8 @@ switch($action) {
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
-            message($lang['mergethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['mergethreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -671,7 +689,8 @@ switch($action) {
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
-            message($lang['complete_threadprune'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['complete_threadprune'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -757,8 +776,8 @@ switch($action) {
 
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
-
-            message($lang['copythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['copythreadmsg'].'</span></center>';
+            redirect('forumdisplay.php?fid='.$fid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -797,9 +816,9 @@ switch($action) {
                 $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$self[username]', 'incoming', '$mod', 'Inbox', '$lang[reportsubject]', '$message', ".$db->time($time).", 'no', 'yes')");
                 $sent++;
             }
-
+            echo "<center><span class=\"mediumtxt\">$lang[reportmsg]</span></center>";
             $page = quickpage($postcount, $self['tpp']);
-            message($lang['reportmsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
+            redirect('viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, 2, X_REDIRECT_JS);
         }
         break;
 
@@ -842,9 +861,11 @@ switch($action) {
         $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id='$vote_id' AND vote_option_id='$postopnum'");
 
         if ($tid > 0) {
-            message($lang['votemsg'], false, '', '', 'viewthread.php?tid='.$tid, true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['votemsg'].'</span></center>';
+            redirect('viewthread.php?tid='.$tid, 2, X_REDIRECT_JS);
         } else {
-            message($lang['votemsg'], false, '', '', 'index.php', true, false, true);
+            echo '<center><span class="mediumtxt">'.$lang['votemsg'].'</span></center>';
+            redirect('index.php', 2, X_REDIRECT_JS);
         }
         break;
 }

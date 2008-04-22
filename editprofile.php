@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -111,9 +123,9 @@ if (noSubmit('editsubmit')) {
     $dayselect[] = '<option value="">&nbsp;</option>';
     for($num = 1; $num <= 31; $num++) {
         if ($day == $num) {
-            $dayselect[] = '<option value="'.$num.'" '.$selHTML.'>'.$num.'</option>';
+            $dayselect[] = '<option value='.$num.'" '.$selHTML.'>'.$num.'</option>';
         } else {
-            $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
+            $dayselect[] = '<option value='.$num.'">'.$num.'</option>';
         }
     }
     $dayselect[] = '</select>';
@@ -203,29 +215,26 @@ if (noSubmit('editsubmit')) {
     $day = formInt('day');
     $bday = iso8601_date($year, $month, $day);
     $newavatar = formVar('newavatar');
-    $newavatarcheck = formVar('newavatarcheck');
-    $avatar = $newavatar ? checkInput($newavatar, 'no', 'no', 'javascript', false) : '';
-    $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
+    $avatar = $newavatar ? checkInput($newavatar, 'no', 'yes', 'javascript', false) : '';
     $newlocation = formVar('newlocation');
-    $location = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+    $location = $newlocation ? checkInput($newlocation, 'no', 'yes', 'javascript', false) : '';
     $newicq = formVar('newicq');
     $icq = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
     $newyahoo = formVar('newyahoo');
-    $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+    $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'yes', 'javascript', false) : '';
     $newaim = formVar('newaim');
-    $aim = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+    $aim = $newaim ? checkInput($newaim, 'no', 'yes', 'javascript', false) : '';
     $newmsn = formVar('newmsn');
-    $msn = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+    $msn = $newmsn ? checkInput($newmsn, 'no', 'yes', 'javascript', false) : '';
     $newemail = formVar('newemail');
-    $email = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+    $email = $newemail ? checkInput($newemail, 'no', 'yes', 'javascript', false) : '';
     $newsite = formVar('newsite');
-    $site = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+    $site = $newsite ? checkInput($newsite, 'no', 'yes', 'javascript', false) : '';
     $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
     $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
     $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
     $avatar = addslashes($avatar);
-    $newavatarcheck = addslashes($newavatarcheck);
     $location = addslashes($location);
     $yahoo = addslashes($yahoo);
     $aim = addslashes($aim);
@@ -236,13 +245,18 @@ if (noSubmit('editsubmit')) {
     $mood = addslashes($mood);
     $sig = addslashes($sig);
 
-    if ($newavatarcheck == "no") {
-        $avatar = '';
+    $max_size = explode('x', $SETTINGS['max_avatar_size']);
+    if ($max_size[0] > 0 && $max_size[1] > 0 && ini_get('allow_url_fopen')) {
+        $size = @getimagesize($_POST['newavatar']);
+        if ($size === false) {
+            $avatar = '';
+        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+            error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+        }
     }
 
     $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$user'");
-
-    $newpassword = formVar('newpassword');
+    $newpassword = $_POST['newpassword'];
     if ($newpassword) {
         $newpassword = md5($newpassword);
         $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");

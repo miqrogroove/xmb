@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -36,6 +48,7 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
 
         if ($posts == 0) {
+            header('HTTP/1.1 404 Not Found');
             eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
@@ -45,6 +58,7 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
 
         if ($posts == 0) {
+            header('HTTP/1.1 404 Not Found');
             eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
@@ -125,6 +139,7 @@ $notexist_txt = $posts = '';
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
 if ($tid == 0 || $db->num_rows($query) != 1) {
     $db->free_result($query);
+    header('HTTP/1.1 404 Not Found');
     error($lang['textnothread']);
 }
 
@@ -163,25 +178,17 @@ if ((!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 's
 }
 $db->free_result($query);
 
-$fup = array();
-if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT userlist, name, fid, password, postperm FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
+$authorization = true;
+if (isset($forum['type']) && $forum['type'] == 'sub') {
+    $query = $db->query("SELECT name, fid, private, userlist FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
-        error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
-    }
+    $db->free_result($query);
+    $authorization = privfcheck($fup['private'], $fup['userlist']);
 }
 
-// Check for authorization to be here in the first place
-$perms = checkForumPermissions($forum);
-if(!$perms[X_PERMS_VIEW] && !$perms[X_PERMS_USERLIST]) {
+if (!$authorization || !privfcheck($forum['private'], $forum['userlist'])) {
+    $threadSubject = '';
     error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid, basename(__FILE__), array());
 }
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
@@ -248,6 +255,11 @@ if (!$action) {
 
     eval('echo "'.template('header').'";');
 
+    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid);
+
+    $ppthread = postperm($forum, 'thread');
+    $ppreply  = postperm($forum, 'reply');
+
     $usesigcheck = $usesig ? 'checked="checked"' : '';
 
     $captchapostcheck = '';
@@ -270,29 +282,34 @@ if (!$action) {
         }
         $closeopen = $lang['textopenthread'];
     } else {
-        $closeopen = $lang['textclosethread'];
-        if($perms[X_PERMS_REPLY]) {
+        if (X_MEMBER || X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] == 'on') {
+            $closeopen = $lang['textclosethread'];
             eval('$replylink = "'.template('viewthread_reply').'";');
             $quickreply = '';
             if ($SETTINGS['quickreply_status'] == 'on') {
                 eval('$quickreply = "'.template('viewthread_quickreply').'";');
             }
-        } else {
-            $replylink = '';
-            $quickreply = '';
         }
     }
 
-    if($perms[X_PERMS_THREAD]) {
-        eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
+    if (!$ppthread) {
+        $newtopiclink = $newpolllink = '';
+        if (!$ppreply || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on')) {
+            $replylink = $quickreply = '';
+        }
     } else {
-        $newtopiclink = '';
-    }
+        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
+            $newtopiclink = $newpolllink = '';
+        } else {
+            eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
+            if (isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
+                eval('$newpolllink = "'.template('viewthread_newpoll').'";');
+            }
+        }
 
-    if($perms[X_PERMS_POLL]) {
-        eval('$newpolllink = "'.template('viewthread_newpoll').'";');
-    } else {
-        $newpolllink = '';
+        if (!$ppreply || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on')) {
+            $replylink = $quickreply = '';
+        }
     }
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
@@ -343,7 +360,7 @@ if (!$action) {
     }
     $db->free_result($query);
 
-    if ($vote_id > 0 && $perms[X_PERMS_POLL]) {
+    if ($vote_id > 0 && isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
         if (X_MEMBER) {
             $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id=".intval($self['uid']));
             if ($query) {
@@ -446,7 +463,7 @@ if (!$action) {
                 eval('$site = "'.template('viewthread_post_site').'";');
             }
 
-            $encodename = rawurlencode($post['author']);
+            $encodename = recodeOut($post['author']);
 
             $icq = '';
             if ($post['icq'] != '' && $post['icq'] > 0) {
@@ -455,16 +472,19 @@ if (!$action) {
 
             $aim = '';
             if ($post['aim'] != '') {
+                $post['aim'] = recodeOut($post['aim']);
                 eval('$aim = "'.template('viewthread_post_aim').'";');
             }
 
             $msn = '';
             if ($post['msn'] != '') {
+                $post['msn'] = recodeOut($post['msn']);
                 eval('$msn = "'.template('viewthread_post_msn').'";');
             }
 
             $yahoo = '';
             if ($post['yahoo'] != '') {
+                $post['yahoo'] = recodeOut($post['yahoo']);
                 eval('$yahoo = "'.template('viewthread_post_yahoo').'";');
             }
 
@@ -517,12 +537,7 @@ if (!$action) {
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
-                    if (false !== ($pos = strpos($post['avatar'], ',')) && substr($post['avatar'], $pos-4, 4) == '.swf') {
-                        $flashavatar = explode(',',$post['avatar']);
-                        $avatar = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
-                    } else {
-                        $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
-                    }
+                    $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
             }
 
@@ -566,8 +581,10 @@ if (!$action) {
         }
 
         $repquote = '';
-        if ($perms[X_PERMS_REPLY] && $thread['closed'] != 'yes') {
-            eval("\$repquote = \"".template('viewthread_post_repquote')."\";");
+        if (X_ADMIN || $status1 == 'Moderator' || ($thread['closed'] != 'yes')) {
+            if (X_MEMBER || (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] == 'on')) {
+                eval('$repquote = "'.template('viewthread_post_repquote').'";');
+            }
         }
 
         $reportlink = '';
@@ -590,7 +607,8 @@ if (!$action) {
         $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
         if ($post['filename'] != '' && $forum['attachstatus'] != 'off') {
-            $attachsize = $post['filesize'];
+                $post['filename'] = checkInput($post['filename'], 'no', 'no', '', false);
+                $post['filetype'] = checkInput($post['filetype'], 'no', 'no', '', false);$attachsize = $post['filesize'];
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
             } else if ($attachsize >= 1048576) {
@@ -647,6 +665,7 @@ if (!$action) {
     eval('echo "'.template('footer').'";');
     exit();
 } else if ($action == 'attachment' && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
+    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
     $query = $db->query("SELECT * FROM ".X_PREFIX."attachments WHERE pid='$pid' and tid='$tid'");
     $file = $db->fetch_array($query);
     $db->free_result($query);
@@ -658,13 +677,12 @@ if (!$action) {
     }
 
     $type = strtolower($file['filetype']);
-    $name = str_replace(' ', '_', $file['filename']);
     $size = (int) $file['filesize'];
     $type = ($type == 'text/html') ? 'text/plain' : $type;
 
     header("Content-type: $type");
     header("Content-length: $size");
-    header("Content-Disposition: attachment; filename=$name");
+    header("Content-Disposition: attachment; filename=\"{$file['filename']}\"");
     header("Content-Description: XMB Attachment");
     header("Cache-Control: public; max-age=604800");
     header("Expires: 604800");
@@ -672,6 +690,7 @@ if (!$action) {
     echo $file['attachment'];
     exit();
 } else if ($action == 'printable') {
+    pwverify($forum['password'], 'viewthread.php?tid='.$tid, $fid, true);
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY pid");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);

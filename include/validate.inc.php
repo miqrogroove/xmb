@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -21,7 +33,7 @@ if (!defined('IN_CODE')) {
 /**
 * CSRF protection class. Call this to obtain and test a page token.
 *
-* From XMB 1.9.8, each user has a single token per page no matter which destination
+* In XMB 1.9.8, each user has a single token per page no matter which destination
 * action. These should be used for all actions. XMB 2.0 will extend this to include
 * unique tokens per action, making it much harder for attackers to spoof any particular
 * action.
@@ -176,13 +188,14 @@ function noSubmit($submitname) {
 * @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
 * @return   string   the "safe" string if the variable is available, empty otherwise
 */
+/* formVar() is deprecated */
 function formVar($varname, $striptags = true, $quotes = false) {
     $retval = '';
     if (isset($_POST[$varname]) && $_POST[$varname] !== '') {
         $retval = trim($_POST[$varname]);
         if ($striptags) {
             $retval = strip_tags($retval);
-        }
+            }
 
         if ($quotes) {
             $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -193,13 +206,143 @@ function formVar($varname, $striptags = true, $quotes = false) {
     return $retval;
 }
 
-function processArray($arrayItems, $striptags, $quotes, $type) {
-    foreach($arrayItems as $item => $theObject) {
-        $theObject = & $arrayItems[$item];
-
-        if (is_array($theObject)) {
-            processArray($theObject, $striptags, $quotes, $type );
+function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
+    if (isset($_POST[$varname])) {
+        $retval = $_POST[$varname];
+        if (get_magic_quotes_gpc()) {
+            $retval = stripslashes($_POST[$varname]);
         } else {
+            $retval = $_POST[$varname];
+        }
+        if ($word != '') {
+            $retval = str_ireplace($word, "_".$word, $retval);
+        }
+        if ($htmlencode) {
+            if ($quoteencode) {
+                $retval = htmlspecialchars($retval, ENT_QUOTES);
+            } else {
+                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
+            }
+        }
+        if ($dbescape) {
+            $retval = dbstuff::escape($retval);
+        }
+    } else {
+        $retval = '';
+    }
+    return $retval;
+}
+
+function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
+    $arrayItems = array();
+    // Convert a single or comma delimited list to an array
+    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
+        if (strpos($_POST[$varname], ',') !== false) {
+            $_POST[$varname] = explode(',', $_POST[$varname]);
+        } else {
+            $_POST[$varname] = array($_POST[$varname]);
+        }
+    }
+
+    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
+        $arrayItems = $_POST[$varname];
+        foreach($arrayItems as $item => $theObject) {
+            $theObject = & $arrayItems[$item];
+            switch($type) {
+                case 'int':
+                    $theObject = intval($theObject);
+                    break;
+                case 'string':
+                default:
+                    if (get_magic_quotes_gpc()) {
+                        $theObject = stripslashes($theObject);
+                    }
+                    if ($word != '') {
+                        $theObject = str_ireplace($word, "_".$word, $theObject);
+                    }
+                    if ($htmlencode) {
+                        if ($quoteencode) {
+                            $theObject = htmlspecialchars($theObject, ENT_QUOTES);
+                        } else {
+                            $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
+                        }
+                    }
+                    if ($dbescape) {
+                        $theObject = dbstuff::escape($theObject);
+                    }
+                    break;
+            }
+            unset($theObject);
+        }
+   }
+   return $arrayItems;
+}
+
+function recodeOut($rawstring) {
+    return rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES));
+}
+
+function cdataOut($rawstring) {
+    return htmlspecialchars($rawstring, ENT_NOQUOTES);
+}
+
+function attrOut($rawstring, $word='') { //Never safe for STYLE attributes.
+    $retval = $rawstring;
+    if ($word != '') {
+        $retval = str_ireplace($word, "_".$word, $retval);
+    }
+    return htmlspecialchars($retval, ENT_QUOTES);
+}
+
+if (!function_exists('stripos')) {
+    function stripos($haystack, $needle, $offset = 0) {
+        return strpos(strtolower($haystack), strtolower($needle), $offset);
+    }
+}
+
+if (!function_exists('str_ireplace')) {
+    function str_ireplace($search, $replace, $subject) {
+        $ipos = 0;
+        while (($ipos = stripos($subject, $search, $ipos)) !== FALSE) {
+            $subject = substr($subject, 0, $ipos).$replace.substr($subject, $ipos + strlen($search));
+            $ipos += strlen($replace);
+        }
+        return $subject;
+    }
+}
+
+/**
+* Retrieve the contents of an array from a POST
+*
+* This function will attempt to retrieve a named array($varname)
+* and sanitize it based upon type($type). If a string, $striptags indicates
+* if striptags should be used, and $quotes is only enabled when you want it
+*
+* This function always returns an array. It will be an empty array if there's
+* no data or variable to be returned.
+*
+* @param   string   $varname   name of the variable in $_POST
+* @param   boolean   $striptags   strings only: do a striptags to remove HTML tags
+* @param   boolean   $quotes   strings only: do a htmlspecialchars to sanitize input for XSS
+* @param   string   $type   'string' or 'int' to specify what needs to be done to the values
+* @return   array   the array found for $varname, empty otherwise
+*/
+/* formArray() is deprecated */
+function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
+    $arrayItems = array();
+    // Convert a single or comma delimited list to an array
+    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
+        if (strpos($_POST[$varname], ',') !== false) {
+            $_POST[$varname] = explode(',', $_POST[$varname]);
+        } else {
+            $_POST[$varname] = array($_POST[$varname]);
+        }
+    }
+
+    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
+        $arrayItems = $_POST[$varname];
+        foreach($arrayItems as $item => $theObject) {
+            $theObject = & $arrayItems[$item];
             switch($type) {
                 case 'int':
                     $theObject = intval($theObject);
@@ -219,39 +362,6 @@ function processArray($arrayItems, $striptags, $quotes, $type) {
             unset($theObject);
         }
     }
-}
-
-/**
-* Retrieve the contents of an array from a POST
-*
-* This function will attempt to retrieve a named array($varname)
-* and sanitize it based upon type($type). If a string, $striptags indicates
-* if striptags should be used, and $quotes is only enabled when you want it
-*
-* This function always returns an array. It will be an empty array if there's
-* no data or variable to be returned.
-*
-* @param string $varname name of the variable in $_POST
-* @param boolean $striptags strings only: do a striptags to remove HTML tags
-* @param boolean $quotes strings only: do a htmlspecialchars to sanitize input for XSS
-* @param string $type 'string' or 'int' to specify what needs to be done to the values
-* @return array the array found for $varname, empty otherwise
-*/
-function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
-    $arrayItems = array();
-    // Convert a single or comma delimited list to an array
-    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
-        if (strpos($_POST[$varname], ',') !== false) {
-            $_POST[$varname] = explode(',', $_POST[$varname]);
-        } else {
-            $_POST[$varname] = array($_POST[$varname]);
-        }
-    }
-
-    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
-        $arrayItems = $_POST[$varname];
-        processArray($arrayItems, $striptags, $quotes, $type);
-    }
     return $arrayItems;
 }
 
@@ -263,6 +373,7 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
 * @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
 * @return   string   the "safe" string if the variable is available, empty otherwise
 */
+/* getVar() is deprecated */
 function getVar($varname, $striptags = true, $quotes = true) {
     $retval = '';
     if (isset($_GET[$varname]) && $_GET[$varname] !== '') {
@@ -313,7 +424,15 @@ function getRequestInt($varname) {
 * @return   mixed   the value of $varname, false otherwise
 */
 function getRequestVar($varname) {
-    return (isset($_REQUEST[$varname])) ? $_REQUEST[$varname] : false;
+    if (isset($_REQUEST[$varname])) {
+        if (get_magic_quotes_gpc()) {
+            return $_REQUEST[$varname];
+        } else {
+            return addslashes($_REQUEST[$varname]);
+        }
+    } else {
+        return FALSE;
+    }
 }
 
 /**
@@ -352,17 +471,15 @@ function getFormArrayInt($varname, $doCount = true) {
         return false;
     }
 
-    $retval = array();
-    $formval = $_POST[$varname];
-
+    $retval = $_POST[$varname];
     if ($doCount) {
         if (count($retval) == 1) {
             $retval = array($retval);
         }
     }
 
-    foreach($formval as $value) {
-        $retval[] = intval($value);
+    foreach($retval as $bits => $value) {
+        $value = intval($value);
     }
     return $retval;
 }
@@ -509,6 +626,6 @@ function getLangFileNameFromHash($ordinal) {
 }
 
 function isValidFilename($filename) {
-    return preg_match('#^[^:\\/?*<>|]+$#', trim($filename));
+    return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]*$#", trim($filename));
 }
 ?>

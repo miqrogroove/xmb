@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -31,9 +43,9 @@ function u2u_msg($msg, $redirect) {
 function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent) {
     global $db, $onlinetime, $oToken;
 
-    $subject = checkInput(censor(addslashes($subject)));
-    $message = checkInput(censor(addslashes($message)));
-    $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".addslashes($to)."', '".addslashes($from)."', '$type', '".addslashes($owner)."', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
+    $subject = censor($subject);
+    $message = censor($message);
+    $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
 
 function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
@@ -85,15 +97,14 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
 }
 
 function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
-    global $db, $self, $lang, $username, $SETTINGS, $del;
+    global $db, $self, $lang, $xmbuser, $SETTINGS, $del;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
-    $msgto = checkInput($msgto, '', '', 'script', false);
-    $username = checkInput($username, '', '', 'script', false);
+    $username = attrOut($_GET['username'], 'javascript'); //username is the param from u2u links on profiles.
 
     if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
         error($lang['textbanfromu2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
@@ -104,27 +115,22 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (onSubmit('savesubmit')) {
-        // fixed by John Briggs
-        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
-
-        if (empty($message)) {
+        // needs to be fixed
+        if (empty($subject) || empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
-        db_u2u_insert('', '', 'draft', $self['username'], 'Drafts', $subject, $message, 'yes', 'no');
-        u2u_msg($lang['imsavedmsg'], 'u2u.php?folder=Drafts');
+        db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', $subject, $message, 'yes', 'no');
+        u2u_msg($lang['imsavedmsg'], "u2u.php?folder=Drafts");
     }
 
     if (onSubmit('sendsubmit')) {
         $errors = '';
-        // fixed by John Briggs
-        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
-
-        // fixed lang variable use by John Briggs
-        if (empty($message)) {
-            error($lang['u2umsgempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
+        // needs to be fixed
+        if (empty($subject) || empty($message)) {
+            error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
-        if ($db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$self[username]' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
+        if ($db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
             error($lang['floodprotect_u2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
@@ -143,14 +149,17 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         }
     }
 
+    $subject = stripslashes($subject);
+    $message = stripslashes($message);
+
     if ($u2uid > 0) {
-        $query = $db->query("SELECT subject, msgfrom, message FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$self[username]'");
+        $query = $db->query("SELECT subject, msgfrom, message FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
         $quote = $db->fetch_array($query);
         if ($quote) {
             if (!isset($previewsubmit)) {
                 $prefixes = array($lang['textre'], $lang['textfwd']);
-                $subject = trim(stripslashes(str_replace($prefixes, '', $quote['subject'])));
-                $message = trim(stripslashes($quote['message']));
+                $subject = str_replace($prefixes, '', $quote['subject']);
+                $message = $quote['message'];
                 if ($forward == 'yes') {
                     $subject = $lang['textfwd'].' '.$subject;
                     $message = '[quote][i]'.$lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
@@ -165,11 +174,11 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (isset($previewsubmit)) {
-        $u2usubject = censor(stripslashes($subject));
-        $u2umessage = censor(stripslashes($message));
-        $u2umessage = postify($u2umessage, 'no', '', 'yes', 'no');
-        $username = htmlspecialchars($msgto);
+        $u2usubject = censor($subject);
+        $u2umessage = censor($message);
+        $u2umessage = postify($u2umessage, "no", "", "yes", "no");
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
+        $username = $msgto;
     }
 
     eval('$leftpane = "'.template('u2u_send').'";');
@@ -207,8 +216,8 @@ function u2u_view($u2uid, $folders) {
         $u2usubject = html_entity_decode(checkOutput(censor($u2u['subject'])));
         $u2umessage = html_entity_decode(checkOutput(postify($u2u['message'], 'no', '', 'yes', 'no')));
         $u2ufolder = $u2u['folder'];
-        $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
-        $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
+        $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
+        $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
         if ($u2u['type'] == 'draft') {
             $sendoptions = '<input type="radio" name="mod" value="send" /> '.$lang['textu2u'].'<br />';
             $delchecked = ' checked="checked"';
@@ -254,7 +263,7 @@ function u2u_print($u2uid, $eMail = false) {
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
-        $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
+        $u2udateline = "$u2udate $lang[textat] $u2utime";
         $u2usubject = html_entity_decode(stripslashes(checkOutput(censor($u2u['subject']))));
         $u2umessage = postify(html_entity_decode(stripslashes($u2u['message'])), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");;
         $u2ufolder = $u2u['folder'];
@@ -491,7 +500,7 @@ function u2u_display($folder, $folders) {
             } else {
                 $online = $lang['textoffline'];
             }
-            $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgfrom']).'" target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
+            $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'"target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
         } else if ($u2u['type'] == 'outgoing') {
             if ($u2u['msgto'] == $u2u['username'] || $u2u['msgto'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {
@@ -506,7 +515,7 @@ function u2u_display($folder, $folders) {
             } else {
                 $online = $lang['textoffline'];
             }
-            $u2usent = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($u2u['msgto']).'" target="_blank">'.$u2u['msgto'].'</a> ('.$online.')';
+            $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'"target="_blank">'.$u2u['msgto'].'</a> ('.$online.')';
         } else if ($u2u['type'] == 'draft') {
             $u2usent = $lang['textu2unotsent'];
         }

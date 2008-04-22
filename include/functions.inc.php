@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -94,12 +106,20 @@ function censor($txt, $ignorespaces=false) {
 
     if (is_array($censorcache)) {
         if (count($censorcache) > 0) {
+            $prevfind = '';
             foreach($censorcache as $find=>$replace) {
                 if ($ignorespaces === true) {
-                    $txt = str_replace($find, $replace, $txt);
+                    $txt = str_ireplace($find, $replace, $txt);
                 } else {
-                    $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
+                    if ($prevfind == '') {
+                        $prevfind = $find;
+                    }
+                    $txt = preg_replace("#(^|[^a-z])(".preg_quote($find)."|".preg_quote($prevfind).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
+                    $prevfind = $find;
                 }
+            }
+            if ($ignorespaces !== true) {
+                $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
             }
         }
     }
@@ -158,7 +178,7 @@ function fixUrl($matches) {
 }
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
-    global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $lang, $fontsize;
+    global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $fontsize;
 
     $message = checkOutput($message, $allowhtml, '', true);
     $message = censor($message, $ignorespaces);
@@ -212,147 +232,45 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             }
         }
 
-        $find = array(
-                0 => '[b]',
-                1 => '[/b]',
-                2 => '[i]',
-                3 => '[/i]',
-                4 => '[u]',
-                5 => '[/u]',
-                6 => '[marquee]',
-                7 => '[/marquee]',
-                8 => '[blink]',
-                9 => '[/blink]',
-                10 => '[strike]',
-                11 => '[/strike]',
-                12 => '[quote]',
-                13 => '[/quote]',
-                14 => '[code]',
-                15 => '[/code]',
-                16 => '[list]',
-                17 => '[/list]',
-                18 => '[list=1]',
-                19 => '[list=a]',
-                20 => '[list=A]',
-                21 => '[/list=1]',
-                22 => '[/list=a]',
-                23 => '[/list=A]',
-                24 => '[*]',
-                25 => '<br />'
-        );
-
-        $replace = array(
-                0 => '<strong>',
-                1 => '</strong>',
-                2 => '<em>',
-                3 => '</em>',
-                4 => '<u>',
-                5 => '</u>',
-                6 => '<marquee>',
-                7 => '</marquee>',
-                8 => '<blink>',
-                9 => '</blink>',
-                10 => '<strike>',
-                11 => '</strike>',
-                12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
-                13 => ' </td></tr></table><font class="mediumtxt">',
-                14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
-                15 => '</td></tr></table><font class="mediumtxt">',
-                16 => '<ul type="square">',
-                17 => '</ul>',
-                18 => '<ol type="1">',
-                19 => '<ol type="A">',
-                20 => '<ol type="A">',
-                21 => '</ol>',
-                22 => '</ol>',
-                23 => '</ol>',
-                24 => '<li />',
-                25 => '<br />'
-        );
-
-        if ($smiliesallow) {
-            $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
-            for($i = 0; $i < sizeof($messagearray); $i++) {
-                if (sizeof($messagearray) != 1) {
-                    if ($i == 0) {
-                        $messagearray[$i] = $messagearray[$i]."[code]";
-                        $messagearray[$i] = smile($messagearray[$i]);
-                    } else if ($i == sizeof($messagearray) - 1) {
-                        $messagearray[$i] = "[/code]".$messagearray[$i];
-                        $messagearray[$i] = smile($messagearray[$i]);
-                    } else if ($i % 2 == 0) {
-                        $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
-                        $messagearray[$i] = smile($messagearray[$i]);
+        $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
+        for($i = 0; $i < sizeof($messagearray); $i++) {
+            if (sizeof($messagearray) != 1) {
+                if ($i == 0) {
+                    $messagearray[$i] = $messagearray[$i]."[code]";
+                    if ($smiliesallow) {
+                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
+                    } else {
+                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
                     }
+                } else if ($i == sizeof($messagearray) - 1) {
+                    $messagearray[$i] = "[/code]".$messagearray[$i];
+                    if ($smiliesallow) {
+                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
+                    } else {
+                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
+                    }
+                } else if ($i % 2 == 0) {
+                    $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
+                    if ($smiliesallow) {
+                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
+                    } else {
+                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
+                    }
+                }
+            } else {
+                if ($smiliesallow) {
+                    $messagearray[0] = bbcode(smile($messagearray[0]), $allowimgcode);
                 } else {
-                    $messagearray[0] = smile($messagearray[0]);
+                    $messagearray[0] = bbcode($messagearray[0], $allowimgcode);
                 }
             }
-            $message = implode("", $messagearray);
         }
+        $message = implode("", $messagearray);
 
-        $message = str_replace($find, $replace, $message);
-
-        $patterns = array();
-        $replacements = array();
-
-        $patterns[] = "#\[color=([^\"'<>]*?)\](.*?)\[/color\]#Ssi";
-        $replacements[] = '<span style="color: $1;">$2</span>';
-        $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
-        $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';
-        $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
-        $replacements[] = '<span style="font-family: $1;">$2</span>';
-        $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
-        $replacements[] = '<div style="text-align: $1;">$2</div>';
-
-        if ($allowimgcode != 'no' && $allowimgcode != 'off') {
-            if (false == strpos($message, 'javascript:')) {
-                $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
-                $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
-                $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
-                $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
-                $patterns[] = "#\[flash=([0-9]*?){1}x([0-9]*?)\]([^\"'<>]*?)\[/flash\]#Ssi";
-                $replacements[] = '<object type="application/x-shockwave-flash" data="$3" width="$1" height="$2"><param name="movie" value="$3" /><param name="AllowScriptAccess" value="never" /></object>';
-            }
-        }
-
-        $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
-
-        $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
-        $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
-        $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
-        $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
-        $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
-        $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
-        $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
-        $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
-        $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
-        $replacements[] = '<a href="mailto:\1">\1</a>';
-        $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
-        $replacements[] = '<a href="mailto:\1\2">\3</a>';
-
-        $message = preg_replace($patterns, $replacements, $message);
         $message = addslashes($message);
     } else {
         if ($smiliesallow) {
-            $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
-            for($i = 0; $i < sizeof($messagearray); $i++) {
-                if (sizeof($messagearray) != 1) {
-                    if ($i == 0) {
-                        $messagearray[$i] = $messagearray[$i]."[code]";
-                        $messagearray[$i] = smile($messagearray[$i]);
-                    } else if ($i == sizeof($messagearray) - 1) {
-                        $messagearray[$i] = "[/code]".$messagearray[$i];
-                        $messagearray[$i] = smile($messagearray[$i]);
-                    } else if ($i % 2 == 0) {
-                        $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
-                        $messagearray[$i] = smile($messagearray[$i]);
-                    }
-                } else {
-                    $messagearray[0] = smile($messagearray[0]);
-                }
-            }
-            $message = implode("", $messagearray);
+            smile($message);
         }
     }
 
@@ -363,6 +281,108 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     }
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
     return $message;
+}
+
+function bbcode($message, $allowimgcode) {
+    global $lang;
+    
+    $find = array(
+            0 => '[b]',
+            1 => '[/b]',
+            2 => '[i]',
+            3 => '[/i]',
+            4 => '[u]',
+            5 => '[/u]',
+            6 => '[marquee]',
+            7 => '[/marquee]',
+            8 => '[blink]',
+            9 => '[/blink]',
+            10 => '[strike]',
+            11 => '[/strike]',
+            12 => '[quote]',
+            13 => '[/quote]',
+            14 => '[code]',
+            15 => '[/code]',
+            16 => '[list]',
+            17 => '[/list]',
+            18 => '[list=1]',
+            19 => '[list=a]',
+            20 => '[list=A]',
+            21 => '[/list=1]',
+            22 => '[/list=a]',
+            23 => '[/list=A]',
+            24 => '[*]',
+            25 => '<br />'
+    );
+
+    $replace = array(
+            0 => '<strong>',
+            1 => '</strong>',
+            2 => '<em>',
+            3 => '</em>',
+            4 => '<u>',
+            5 => '</u>',
+            6 => '<marquee>',
+            7 => '</marquee>',
+            8 => '<blink>',
+            9 => '</blink>',
+            10 => '<strike>',
+            11 => '</strike>',
+            12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
+            13 => ' </td></tr></table><font class="mediumtxt">',
+            14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
+            15 => '</td></tr></table><font class="mediumtxt">',
+            16 => '<ul type="square">',
+            17 => '</ul>',
+            18 => '<ol type="1">',
+            19 => '<ol type="A">',
+            20 => '<ol type="A">',
+            21 => '</ol>',
+            22 => '</ol>',
+            23 => '</ol>',
+            24 => '<li />',
+            25 => '<br />'
+    );
+
+    $message = str_replace($find, $replace, $message);
+
+    $patterns = array();
+    $replacements = array();
+
+    $patterns[] = "#\[color=([^\"'<>]*?)\](.*?)\[/color\]#Ssi";
+    $replacements[] = '<span style="color: $1;">$2</span>';
+    $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
+    $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';
+    $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
+    $replacements[] = '<span style="font-family: $1;">$2</span>';
+    $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
+    $replacements[] = '<div style="text-align: $1;">$2</div>';
+
+    if ($allowimgcode != 'no' && $allowimgcode != 'off') {
+        if (false == stripos($message, 'javascript:')) {
+            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
+            $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
+            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
+        }
+    }
+
+    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
+
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
+    $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
+    $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
+    $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
+    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
+    $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
+    $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
+    $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
+    $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
+    $replacements[] = '<a href="mailto:\1">\1</a>';
+    $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
+    $replacements[] = '<a href="mailto:\1\2">\3</a>';
+
+    return preg_replace($patterns, $replacements, $message);
 }
 
 function modcheck($status, $username, $mods) {
@@ -385,6 +405,45 @@ function modcheck($status, $username, $mods) {
     return $retval;
 }
 
+function privfcheck($private, $userlist) {
+    global $self, $xmbuser;
+
+    if (X_SADMIN) {
+        return true;
+    }
+
+    switch($private) {
+        case 4:
+            return false;
+            break;
+        case 3:
+            return X_STAFF;
+            break;
+        case 2:
+            return X_ADMIN;
+            break;
+        case 1:
+            if (trim($userlist) == '') {
+                return true;
+            }
+
+            $user = explode(',', $userlist);
+            $xuser = strtolower($xmbuser);
+            foreach($user as $usr) {
+                $usr = strtolower(trim($usr));
+                if ($usr != '' && $xuser == $usr) {
+                   return true;
+                }
+            }
+            return false;
+            break;
+        default:
+            return false;
+            break;
+    }
+    return false;
+}
+
 function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
@@ -396,7 +455,7 @@ function forum($forum, $template) {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
         if ($lastpost[1] != 'Anonymous' && $lastpost[1] != '') {
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         } else {
             $lastpost[1] = $lang['textanonymous'];
         }
@@ -424,13 +483,12 @@ function forum($forum, $template) {
     }
 
     $foruminfo = '';
-    $perms = checkForumPermissions($forum);
-    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($forum['private'], $forum['userlist'])) {
         if (isset($forum['moderator']) && $forum['moderator'] != '') {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
             for($num = 0; $num < count($moderators); $num++) {
-                $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($moderators[$num]).'">'.$moderators[$num].'</a>';
+                $forum['moderator'][] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
             }
             $forum['moderator'] = implode(', ', $forum['moderator']);
             $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
@@ -440,9 +498,8 @@ function forum($forum, $template) {
         if (count($index_subforums) > 0) {
             for($i=0; $i < count($index_subforums); $i++) {
                 $sub = $index_subforums[$i];
-                $subperms = checkForumPermissions($sub);
                 if ($sub['fup'] == $forum['fid']) {
-                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
+                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($sub['private'], $sub['userlist'])) {
                         $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.html_entity_decode(stripslashes($sub['name'])).'</a>';
                     }
                 }
@@ -655,6 +712,7 @@ function smcwcache() {
     return false;
 }
 
+/* checkInput() is deprecated */
 function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quotes=true) {
     $input = trim($input);
     if ($striptags == 'yes') {
@@ -670,18 +728,19 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
     }
 
     if ($word != '') {
-        $input = str_replace($word, "_".$word, $input);
+        $input = str_ireplace($word, "_".$word, $input);
     }
     return $input;
 }
 
+/* checkOutput() is deprecated */
 function checkOutput($output, $allowhtml='no', $word='', $allowEntities=false) {
     $output = trim($output);
     if ($allowhtml == 'yes' || $allowhtml == 'on') {
         $output = htmlspecialchars_decode($output);
     }
     if ($word != '') {
-        $output = str_replace($word, "_".$word, $output);
+        $output = str_ireplace($word, "_".$word, $output);
     }
 
     if ($allowEntities) {
@@ -764,6 +823,28 @@ function end_time() {
     return $footerstuff;
 }
 
+function pwverify($pass='', $url, $fid, $showHeader=false) {
+    global $self, $cookiepath, $cookiedomain, $lang;
+
+    if (X_SADMIN) {
+        return true;
+    }
+
+    $pwform = '';
+    if (trim($pass) != '' && $_COOKIE['fidpw'.$fid] != $pass) {
+        if ($_POST['pw'] != $pass) {
+            extract($GLOBALS);
+            eval('$pwform = "'.template('forumdisplay_password').'";');
+            error(((isset($_POST['pw'])) ? $lang['invalidforumpw'] : $lang['forumpwinfo']), $showHeader, '', $pwform, false, true, false, true);
+        } else {
+            put_cookie("fidpw$fid", $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
+            redirect($url, 0);
+        }
+        exit();
+    }
+    return true;
+}
+
 function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
         error('Tried to redirect to potentially insecure url.');
@@ -791,6 +872,89 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     return true;
 }
 
+function postperm(& $forums, $type) {
+    global $lang, $self, $whopost1, $whopost2;
+    static $cache;
+
+    if (!isset($forums['postperm'])) {
+        return false;
+    }
+
+    $pperm = explode('|', $forums['postperm']);
+    if (!isset($cache[$forums['fid']])) {
+        switch($pperm[0]) {
+            case 1:
+                $whopost1 = $lang['whocanpost11'];
+                break;
+            case 2:
+                $whopost1 = $lang['whocanpost12'];
+                break;
+            case 3:
+                $whopost1 = $lang['whocanpost13'];
+                break;
+            case 4:
+                $whopost1 = $lang['whocanpost14'];
+                break;
+        }
+
+        switch($pperm[1]) {
+            case 1:
+                $whopost2 = $lang['whocanpost21'];
+                break;
+            case 2:
+                $whopost2 = $lang['whocanpost22'];
+                break;
+            case 3:
+                $whopost2 = $lang['whocanpost23'];
+                break;
+            case 4:
+                $whopost2 = $lang['whocanpost24'];
+                break;
+        }
+        $cache[$forums['fid']] = true;
+    }
+
+    if (X_SADMIN) {
+        return true;
+    }
+
+    $perm = ($type == 'thread') ? $pperm[0] : $pperm[1];
+    switch($forums['private']) {
+        case 1:
+            $fplen = isset($forums['password']) ? strlen($forums['password']) : 0;
+            $fulen = isset($forums['userlist']) ? strlen($forums['userlist']) : 0;
+            if (($fplen > 1 || $fulen > 1) && privfcheck($forums['private'], $forums['userlist'])) {
+                return true;
+            }
+
+            if (!X_STAFF) {
+                if ($perm == 1) {
+                    return true;
+                }
+                break;
+            }
+        case 3:
+            if (!X_ADMIN) {
+                if ($perm == 1 || $perm == 3) {
+                    return true;
+                }
+                break;
+            }
+        case 2:
+            if ($perm < 4) {
+                return true;
+            }
+            break;
+        case 4:
+            return false;
+            break;
+        default:
+            return false;
+            break;
+    }
+    return false;
+}
+
 function get_extension($filename) {
     $a = explode('.', $filename);
     $count = count($a);
@@ -809,6 +973,7 @@ function get_attached_file($file, $attachstatus, $max_size=1000000) {
     $filesize = 0;
 
     if ($file['name'] != 'none' && !empty($file['name']) && $attachstatus != 'off' && is_uploaded_file($file['tmp_name'])) {
+        $file['name'] = trim($file['name']);
         if (!isValidFilename($file['name'])) {
             error($lang['invalidFilename'], false, '', '', false, false, false, false);
             return false;
@@ -820,9 +985,8 @@ function get_attached_file($file, $attachstatus, $max_size=1000000) {
             return false;
         } else {
             $attachment = addslashes(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
-            $filename = $file['name'];
-            $filetype = $file['type'];
-            $filesize = $file['size'];
+            $filename = addslashes($file['name']);
+            $filetype = addslashes(preg_replace('#[\r\n%]#', '', $file['type']));
 
             if ($filesize == 0) {
                 return false;
@@ -1341,50 +1505,71 @@ function month2text($num) {
 }
 
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
-    global $db, $self, $lang, $SETTINGS;
+    global $db, $self, $lang;
 
-    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+    $restrict = array();
+    switch($self['status']) {
+        case 'Member':
+            $restrict[] = "private != '3'";
+        case 'Moderator':
+        case 'Super Moderator':
+            $restrict[] = "private != '2'";
+        case 'Administrator':
+            $restrict[] = "userlist = ''";
+        case 'Super Administrator':
+            break;
+        default:
+            $restrict[] = "private != '3'";
+            $restrict[] = "private != '2'";
+            $restrict[] = "userlist = ''";
+            $restrict[] = "password = ''";
+            break;
+    }
+    $restrict = implode(' AND ', $restrict);
+
+    if ($restrict != '') {
+        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
+    } else {
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums ORDER BY displayorder");
+    }
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($query)) {
-        $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = html_entity_decode($forum['name']);
-            if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
-                if ($forum['password'] !== $fidpw) {
-                    continue;
-                }
-            }
-
-            switch($forum['type']) {
-                case 'group':
-                    $categories[] = $forum;
-                    break;
-                case 'sub':
-                    if (!isset($subforums[$forum['fup']])) {
-                        $subforums[$forum['fup']] = array();
-                    }
-                    $subforums[$forum['fup']][] = $forum;
-                    break;
-                case 'forum':
-                default:
-                    if ($forum['fup'] == 0) {
-                        $standAloneForums[] = $forum;
-                    } else {
-                        if (!isset($forums[$forum['fup']])) {
-                            $forums[$forum['fup']] = array();
-                        }
-                        $forums[$forum['fup']][] = $forum;
-                    }
-                    break;
+    while($forum = $db->fetch_array($sql)) {
+        $forum['name'] = html_entity_decode($forum['name']);
+        if (!X_SADMIN && $forum['password'] != '') {
+            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+            if ($forum['password'] !== $fidpw) {
+                continue;
             }
         }
+
+        switch($forum['type']) {
+            case 'group':
+                $categories[] = $forum;
+                break;
+            case 'sub':
+                if (!isset($subforums[$forum['fup']])) {
+                    $subforums[$forum['fup']] = array();
+                }
+                $subforums[$forum['fup']][] = $forum;
+                break;
+            case 'forum':
+            default:
+                if ($forum['fup'] == 0) {
+                    $standAloneForums[] = $forum;
+                } else {
+                    if (!isset($forums[$forum['fup']])) {
+                        $forums[$forum['fup']] = array();
+                    }
+                    $forums[$forum['fup']][] = $forum;
+                }
+                break;
+        }
     }
-    $db->free_result($query);
+    $db->free_result($sql);
 
     $forumselect = array();
     if (!$multiple) {
@@ -1444,50 +1629,71 @@ function readFileAsINI($filename) {
 }
 
 function forumJump() {
-    global $db, $self, $lang, $SETTINGS;
+    global $db, $self, $lang;
 
-    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+    $restrict = array();
+    switch($self['status']) {
+        case 'Member':
+            $restrict[] = "private != '3'";
+        case 'Moderator':
+        case 'Super Moderator':
+            $restrict[] = "private != '2'";
+        case 'Administrator':
+            $restrict[] = "userlist = ''";
+        case 'Super Administrator':
+            break;
+        default:
+            $restrict[] = "private != '3'";
+            $restrict[] = "private != '2'";
+            $restrict[] = "userlist = ''";
+            $restrict[] = "password = ''";
+            break;
+    }
+    $restrict = implode(' AND ', $restrict);
+
+    if ($restrict != '') {
+        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
+    } else {
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password, displayorder FROM ".X_PREFIX."forums ORDER BY displayorder");
+    }
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($query)) {
-        $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = html_entity_decode($forum['name']);
-            if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
-                if ($forum['password'] !== $fidpw) {
-                    continue;
-                }
-            }
-
-            switch($forum['type']) {
-                case 'group':
-                    $categories[] = $forum;
-                    break;
-                case 'sub':
-                    if (!isset($subforums[$forum['fup']])) {
-                        $subforums[$forum['fup']] = array();
-                    }
-                    $subforums[$forum['fup']][] = $forum;
-                    break;
-                case 'forum':
-                default:
-                    if ($forum['fup'] == 0) {
-                        $standAloneForums[] = $forum;
-                    } else {
-                        if (!isset($forums[$forum['fup']])) {
-                            $forums[$forum['fup']] = array();
-                        }
-                        $forums[$forum['fup']][] = $forum;
-                    }
-                    break;
+    while($forum = $db->fetch_array($sql)) {
+        $forum['name'] = html_entity_decode($forum['name']);
+        if (!X_SADMIN && $forum['password'] != '') {
+            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+            if ($forum['password'] !== $fidpw) {
+                continue;
             }
         }
+
+        switch($forum['type']) {
+            case 'group':
+                $categories[] = $forum;
+                break;
+            case 'sub':
+                if (!isset($subforums[$forum['fup']])) {
+                    $subforums[$forum['fup']] = array();
+                }
+                $subforums[$forum['fup']][] = $forum;
+                break;
+            case 'forum':
+            default:
+                if ($forum['fup'] == 0) {
+                    $standAloneForums[] = $forum;
+                } else {
+                    if (!isset($forums[$forum['fup']])) {
+                        $forums[$forum['fup']] = array();
+                    }
+                    $forums[$forum['fup']][] = $forum;
+                }
+                break;
+        }
     }
-    $db->free_result($query);
+    $db->free_result($sql);
 
     $forumselect = array();
 
@@ -1498,10 +1704,10 @@ function forumJump() {
     reset($forums);
 
     foreach($standAloneForums as $forum) {
-        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.html_entity_decode(stripslashes($forum['name'])).'</option>';
+        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
         if (isset($subforums[$forum['fid']])) {
             foreach($subforums[$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.html_entity_decode(stripslashes($sub['name'])).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
             }
         }
     }
@@ -1509,106 +1715,18 @@ function forumJump() {
     foreach($categories as $group) {
         if (isset($forums[$group['fid']])) {
             $forumselect[] = '<option value="0"></option>';
-            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
+            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.stripslashes($group['name']).'</option>';
             foreach($forums[$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.html_entity_decode(stripslashes($forum['name'])).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
                 if (isset($subforums[$forum['fid']])) {
                     foreach($subforums[$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.html_entity_decode(stripslashes($sub['name'])).'</option>';
+                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
                     }
                 }
             }
         }
     }
-
     $forumselect[] = '</select>';
     return implode("\n", $forumselect);
 }
-
-function checkForumPermissions($forum) {
-    // 1. Check Forum Permissions
-    global $self;
-    $status = array(
-        'Super Administrator'   => 1,
-        'Administrator'         => 2,
-        'Super Moderator'       => 4,
-        'Moderator'             => 8,
-        'Member'                => 16,
-        ''                      => 32);
-
-    // NewPoll,NewThread,NewReply,View,Userlist,Password
-    $ret = array(false, false, false, false, false, false);
-    $pp = explode(',', $forum['postperm']);
-    foreach($pp as $key=>$val) {
-        if(($val & $status[$self['status']]) == $status[$self['status']]) {
-            $ret[$key] = true;
-        }
-    }
-
-    // 2. Check for userlist
-    $userlist = trim($forum['userlist']);
-    $username = strtolower(trim($self['username']));
-
-    if(strlen($userlist) > 0) {
-        if (modcheck($self['status'], $username, $forum['moderator']) == "Moderator") {
-            $ret[X_PERMS_USERLIST] = true;
-        } else {
-            $users = explode(',', $userlist);
-            foreach($users as $user) {
-                if(strtolower(trim($user)) == $username) {
-                    $ret[X_PERMS_USERLIST] = true;
-                    break;
-                }
-            }
-        }
-    } else {
-        $ret[X_PERMS_USERLIST] = true;
-    }
-
-    // 3.Check for password
-    $password = trim($forum['password']);
-    if(strlen($password) > 0) {
-        if(isset($_COOKIE['forumPW']) && isset($_COOKIE['forumPW'][$forum['fid']]) && trim($_COOKIE['forumPW'][$forum['fid']]) == $password) {
-            $ret[X_PERMS_PASSWORD] = true;
-        } else {
-            $ret[X_PERMS_PASSWORD] = false;
-        }
-    } else {
-        $ret[X_PERMS_PASSWORD] = true;
-    }
-
-    return $ret;
-}
-
-function handlePasswordDialog($fid, $file, $args=false) {
-
-    extract($GLOBALS);
-    $pwform = '';
-
-    if(false == $args) {
-        $args = array();
-    }
-
-    $p = array('fid='.$fid);
-    foreach($args as $key=>$val) {
-        $p[] = urlencode($key).'='.urlencode($val);
-    }
-    $url = ROOT.$file.'?'.implode('&', $p);
-
-    if(isset($_POST['pw'])) {
-        $pass = $db->result($db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid"), 0);
-
-        if($_POST['pw'] == $pass) {
-            put_cookie('forumPW['.$fid.']', $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
-            redirect($url);
-        } else {
-            eval('$pwform = "'.template('forumdisplay_password').'";');
-            error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);
-        }
-    } else {
-        eval('$pwform = "'.template('forumdisplay_password').'";');
-        error($lang['forumpwinfo'], true, '', $pwform, false, true, false, true);
-    }
-}
-
 ?>

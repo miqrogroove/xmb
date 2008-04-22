@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP2 SP1 SP1
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -203,7 +215,7 @@ $lang['closemsgques'] = "Close topic on reply?";
 $lang['closethreadmsg'] = "Thank you, the topic has been closed/ opened. You are now being forwarded back to the thread list.";
 $lang['complete_threadprune'] = "Thank you, the topic has been pruned. You are now being forwarded back to the thread list";
 $lang['confirmDeletePosts'] = "You are about to delete all this user's posts. Are you sure you wish to continue?";
-$lang['confirmDeleteUser'] = "The following members will be deleted:";
+$lang['confirmDeleteUser'] = "By checking this checkbox, you mark this user to be deleted. If you are sure you wish to delete this user, press Ok, otherwise, press Cancel";
 $lang['coppaagree'] = "I Agree That I Am 13 or Above";
 $lang['coppastatus'] = "COPPA Compliancy Status:";
 $lang['copythread'] = "Copy Thread";
@@ -233,6 +245,7 @@ $lang['deletethread'] = "Delete Thread";
 $lang['deletethreadmsg'] = "Thank you, the topic has been deleted. You are now being forwarded back to the thread list.";
 $lang['desc'] = "Descending";
 $lang['developedby'] = "Developed By";
+$lang['disclaimer'] = "Notice!\\n\\nThe above tools have been working in test environments. However, we advise board owners that this should not be the only form of backup procedure. For alternative methods, please check the Support forums at http://www.xmbforum.com/.";
 $lang['dotfolders'] = "'dot' Folders:<br /><span class=\"smalltxt\">Do you want to show dots on folders for the users that have posted in them?</span>";
 $lang['doublee'] = "Allow duplicate mails?";
 $lang['dump_attachments'] = "Dump Attachments";
@@ -256,6 +269,7 @@ $lang['Enable_PHP_SQL'] = "Enable PHP/SQL Calculation";
 $lang['Enable_Queries'] = "Enable Queries";
 $lang['Enable_Server_Load'] = "Enable Server Load";
 $lang['error'] = "Error";
+$lang['error_chmod_attach_dir'] = "attachments directory (\"./attachments\") should be chmodded to 777 so XMB can write to it.";
 $lang['errormovingthreads'] = "You did not select target forum or subforum. Please go back and try again.";
 $lang['evalbestmember'] = '$lang["bestmember"] = "Member of the Day is <strong>$membesthtml</strong> with <strong>$bestmemberpost</strong> posts";';
 $lang['evalindexstats'] = '$lang["indexstats"] = "<strong>$threads</strong> topics / <strong>$posts</strong> posts / <strong>$members</strong> members";';
@@ -303,7 +317,6 @@ $lang['footer_options'] = 'Footer Options:';
 $lang['forgotpw'] = "Forgot password?";
 $lang['forumjumpselect'] = "Select A Forum";
 $lang['forumpruned'] = "Forum successfully pruned";
-$lang['forumpermissions'] = 'Forum Permissions:';
 $lang['forumpw'] = "Password:<br /><span class=\"smalltxt\">(leave blank for none)</span>";
 $lang['forumpwinfo'] = "This forum is password protected. To view this forum you need to enter the correct password below.";
 $lang['found'] = "Found";
@@ -333,11 +346,10 @@ $lang['insertdata'] = "Insert your Data";
 $lang['invalidforumpw'] = "The password you entered is invalid.";
 $lang['invalidip'] = "Invalid IP Address Format";
 $lang['invalidFilename'] = "Invalid Filename";
-$lang['invalidtid'] = "Thread cannot be merged.  Invalid Thread ID (tid)";
 $lang['invertselection'] = "Invert Selection";
 $lang['ipwarning'] = "<br /><strong>Warning!</strong> Your IP Address is on the list. You'll be permanently banned if you log out.";
 $lang['key'] = 'Key: ';
-$lang['last50today'] = "Last $onlinetodaycount Members Who Have Visited Today (if applicable)";
+$lang['last50today'] = "$onlinetodaycount Members Who Have Visited Today (if applicable)";
 $lang['lastactive'] = "Last active:";
 $lang['lastreply1'] = "on";
 $lang['lastsadmin'] = "You just tried to de-admin the last remaining Super Administrator. This is a dangerous thing to do. Once de-admin'd, it is not possible anymore to reset one's status back to Super Administrator";
@@ -400,7 +412,7 @@ $lang['no_buddies'] = "There are no addresses in your address book";
 $lang['no_poll'] = "This is not a poll!";
 $lang['no_templates'] = "templates.xmb was not found.";
 $lang['noadminsession'] = "No Administration Login Session Found.";
-$lang['noadminsession2'] = "Welcome to the administration control panel, currently running $bbname.";
+$lang['noadminsession2'] = "Welcome to the administration control panel for XMB 1.9, currently running $bbname.";
 $lang['noadminsession3'] = "Please enter your username and password which currently has administration status.";
 $lang['noadminsession4'] = "If you still have issues logging in, please contact the board <strong><a href=\"mailto:$adminemail?subject=Admin Login Failure At $bbname\">webmaster</a></strong>";
 $lang['noban'] = "Nothing";
@@ -532,7 +544,6 @@ $lang['renamefile'] = "&nbsp;Rename current file to:";
 $lang['repair'] = 'Repair Tables';
 $lang['replace'] = "Replace";
 $lang['replacedby'] = "Replace with";
-$lang['replies'] = 'Replies';
 $lang['replymsg'] = "Thank you, your post has been submitted. You are now being forwarded to your post.";
 $lang['reportmessage'] = "The following post has been reported by a user, please inspect it:";
 $lang['reportmsg'] = "Thank you, the post has been reported. You are now being forwarded back to the thread page";
@@ -720,7 +731,7 @@ $lang['textfaqans15'] = "Yes you can insert an attachment with any of your posts
 $lang['textfaqans16'] = "Smilies are the little faces to the right of the input for message. They display graphical faces instead of simply a <strong>:)</strong>.<br />Here is a list of current supported smilies:";
 $lang['textfaqans17'] = "You can create a poll by visiting the forum you want to post the poll in and click on Start Poll. The screen following after you click the button is just like a normal new thread page but has an extra box for Poll Answers. You should enter one answer per line.<br /><br />You can vote on polls in threads by visiting the thread with the poll in it and selecting the option you want to vote for, then clicking the submit button. You can only vote on a poll once, so once you vote, you cant change your mind.<br /><br />The Administrator could have disabled this option for each forum.";
 $lang['textfaqans19'] = "Most of the time the answer is no, but ask your Admin.";
-$lang['textfaqans2'] = "Yes. $bbname uses cookies to store your login information, last visit, and threads that you have visited. We do this to make it easier for you so you can see which posts contain new replies and so you do not have to enter your username and password when posting or other certain things.<br /><br />If you logout, your cookies will be cleared. To logout <a href=\"misc.php?action=logout\">click here</a>.";
+$lang['textfaqans2'] = "Yes. XMB uses cookies to store your login information, last visit, and threads that you have visited. We do this to make it easier for you so you can see which posts contain new replies and so you do not have to enter your username and password when posting or other certain things.<br /><br />If you logout, your cookies will be cleared. To logout <a href=\"misc.php?action=logout\">click here</a>.";
 $lang['textfaqans21'] = "You can logout by clicking Logout at the top of the page. When you logout the cookies that store your username and password will be removed and you will become a Guest or Anonymous user.";
 $lang['textfaqans3'] = "To add a signature to your posts you have to log into your <a href=\"memcp.php\">profile</a> and insert into the signature text box the signature you wish to use.<br /><br />BB Code and HTML maybe turned off or on. This can effect what you can insert into your signature.";
 $lang['textfaqans4'] = "Again in your <a href=\"memcp.php\">profile</a> there is a place for an 'Avatar' and avatar is the image under your name. Check with your Admin about the size of your avatar, it's usually considered common courtesy to use one under 150 pixels wide.";
@@ -773,7 +784,7 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "The query you used is not allowed.";
 $lang['textimgcode'] = "IMG Code";
 $lang['textimgcodeis'] = "[img] Code is";
-$lang['textimportsubmit'] = "Import Theme into $bbname";
+$lang['textimportsubmit'] = "Import Theme into XMB";
 $lang['textimporttheme'] = "Import Theme:";
 $lang['textinforum'] = "in forum:";
 $lang['textinthread'] = "In Thread:";
@@ -808,9 +819,9 @@ $lang['textmay'] = "May";
 $lang['textmem'] = "Member";
 $lang['textmemberlist'] = "Member List";
 $lang['textmembers'] = "Members";
-$lang['textmemberstoday'] = " members have visited the site today";
+$lang['textmemberstoday'] = " members have already visited the site today";
 $lang['textmembersupdate'] = "Members updated successfully!";
-$lang['textmembertoday'] = " member has visited the site today ";
+$lang['textmembertoday'] = " member has already visited the site today ";
 $lang['textmemliststatus'] = "Member List Status:";
 $lang['textmergethread'] = "Merge Thread";
 $lang['textmesperday'] = "messages per day";
@@ -894,7 +905,7 @@ $lang['textposton'] = "posted on";
 $lang['textpostread'] = "Posting &amp; Reading Messages";
 $lang['textpostreply'] = "Post Reply";
 $lang['textposts'] = "Posts:";
-$lang['textpowered'] = "Powered By XMB";
+$lang['textpowered'] = "powered by XMB";
 $lang['textppp'] = "Posts Per Page:";
 $lang['textpreview'] = "Preview Post";
 $lang['textpreviewu2u'] = "Preview U2U";
@@ -974,9 +985,9 @@ $lang['textsupermod'] = "Super Moderator";
 $lang['texttabletext'] = "Table Text Color:";
 $lang['texttext'] = "Text Color:";
 $lang['texttheme'] = "Theme:";
-$lang['textthemefile'] = "$bbname Theme File:<br /><span class=\"smalltxt\">(must be valid!)</span>";
-$lang['textthemeimportfail'] = "The theme could not be imported into $bbname.";
-$lang['textthemeimportsuccess'] = "The theme has successfully been imported into $bbname.";
+$lang['textthemefile'] = "XMB Theme File:<br /><span class=\"smalltxt\">(must be valid!)</span>";
+$lang['textthemeimportfail'] = "The theme could not be imported into XMB.";
+$lang['textthemeimportsuccess'] = "The theme has successfully been imported into XMB.";
 $lang['textthemename'] = "Theme Name:";
 $lang['texttime'] = "Time:";
 $lang['texttimeformat'] = "Time Format:";
@@ -1034,10 +1045,8 @@ $lang['textyourpwis'] = "This is an automatic e-mail. Your new login credentials
 $lang['theme_already_exists'] = "A theme with this name already exists!";
 $lang['themes'] = "Themes";
 $lang['themeupdate'] = "Themes updated successfully!";
-$lang['threads'] = 'Threads';
 $lang['tickercontents'] = "News In Newsticker:";
 $lang['tickername'] = "News &amp; Updates";
-$lang['tidnoexist'] = "Thread cannot be merged.  Thread ($othertid) does not exist";
 $lang['timemsg'] = "Processed in";
 $lang['timezone1'] = "(GMT -12:00) Eniwetok, Kwajalein";
 $lang['timezone10'] = "(GMT -3:30) Newfoundland";
@@ -1096,8 +1105,7 @@ $lang['u2uadmin_noperm'] = "You do not have permission to use this feature.";
 $lang['u2ublocked'] = "The would-be recipient of this U2U has blocked you, so you can't send this message.";
 $lang['u2udump'] = "Clear All U2Us";
 $lang['u2udump_confirm'] = 'Are you sure you want to Delete all u2u\'s?';
-$lang['u2uempty'] = 'The U2U you are trying to save is empty.';
-$lang['u2umsgempty'] = 'The U2U you are trying to send is empty.';
+$lang['u2uempty'] = 'The U2U you are trying to save is empty';
 $lang['u2unotloggedin'] = "You must be logged in or registered to use U2U";
 $lang['u2uquota'] = "U2U Quota:";
 $lang['u2ureachedquota'] = "You have reached the U2U quota limit. You must delete some u2us before you can send any";
@@ -1115,7 +1123,6 @@ $lang['userprofilemood'] = "Current Mood:";
 $lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
 $lang['viaemail'] = 'Via E-mail';
 $lang['viau2u'] = 'Via U2U';
-$lang['view'] = 'View';
 $lang['viewcompleteinbox'] = "View Complete Inbox";
 $lang['viewresults'] = "View Results";
 $lang['votemsg'] = "Thank you, your vote has been submitted. You are now being forwarded back to the thread";
@@ -1134,11 +1141,12 @@ $lang['whocanpost22'] = "Administrators can reply.";
 $lang['whocanpost23'] = "Administrators and Moderators can reply.";
 $lang['whocanpost24'] = "no replies are allowed.";
 $lang['whoodump_confirm'] = 'Are you sure you want to empty the whosonline?';
+$lang['whopostop1'] = "Who Can Post New Topics?";
+$lang['whopostop2'] = "Who Can Post Replies?";
 $lang['whosoneval'] = '$lang["whosonmsg"] = "There are currently $guestn, $membern and $hiddenn browsing $bbname";';
 $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index status:";
 $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
-$lang['xmb'] = "XMB";
 $lang['xmbgroup'] = "The XMB Group";
 ?>

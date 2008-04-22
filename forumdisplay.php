@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -54,27 +66,22 @@ if (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'su
 }
 
 $fup = array();
-if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
+if (isset($forum['type']) && $forum['type'] == 'sub') {
+    $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
     $fup = $db->fetch_array($query);
-
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+    $db->free_result($query);
+    if (!privfcheck($fup['private'], $fup['userlist'])) {
         error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
     }
 } else if (!isset($forum['type']) && $forum['type'] != 'forum') {
     error($notexist);
 }
 
-$perms = checkForumPermissions($forum);
-if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+$authorization = privfcheck($forum['private'], $forum['userlist']);
+if (!$authorization) {
     error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid, basename(__FILE__), $_GET);
 }
+pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav(html_entity_decode(stripslashes($forum['name'])));
@@ -102,16 +109,21 @@ if (count($fup) == 0) {
     }
 }
 
-if($perms[X_PERMS_POLL]) {
-    eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
-} else {
-    $newpolllink = '';
-}
-
-if($perms[X_PERMS_THREAD]) {
-    eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
-} else {
-    $newtopiclink = '';
+if (!$notexist) {
+    if (!postperm($forum, 'thread')) {
+        $newtopiclink = $newpolllink = '';
+    } else {
+        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
+            $newtopiclink = $newpolllink = '';
+        } else {
+            eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
+            if (isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
+                eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
+            } else {
+                $newpolllink = '';
+            }
+        }
+    }
 }
 
 $t_extension = get_extension($lang['toppedprefix']);
@@ -202,7 +214,7 @@ while($thread = $db->fetch_array($querytop)) {
     if ($thread['author'] == $lang['textanonymous']) {
         $authorlink = $thread['author'];
     } else {
-        $authorlink = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($thread['author']).'">'.$thread['author'].'</a>';
+        $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
     }
 
     $prefix = '';
@@ -211,7 +223,7 @@ while($thread = $db->fetch_array($querytop)) {
     $dalast = trim($lastpost[0]);
 
     if ($lastpost[1] != $lang['textanonymous']) {
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+        $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
     } else {
         $lastpost[1] = $lang['textanonymous'];
     }
@@ -227,9 +239,9 @@ while($thread = $db->fetch_array($querytop)) {
     $oldtopics = isset($oldtopics) ? $oldtopics : '';
 
     if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-        $folder = 'hot_red_folder.gif';
+        $folder = "hot_red_folder.gif";
     } else if ($lastvisit < $dalast && $oT === false) {
-        $folder = 'red_folder.gif';
+        $folder = "red_folder.gif";
     }
 
     if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {

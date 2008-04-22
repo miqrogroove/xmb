@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -89,7 +101,7 @@ if ($SETTINGS['index_stats'] == 'on') {
     }
     $db->free_result($query);
 
-    $memhtml = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
+    $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
     eval($lang['evalindexstats']);
     eval('$statsbar = "'.template('index_stats').'";');
 }
@@ -175,7 +187,7 @@ if ($gid == 0) {
                 $show_inv_key = true;
             }
 
-            $memtally[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($online['username']).'">'.$pre.''.$online['username'].''.$suff.'</a>';
+            $memtally[] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$pre.''.$online['username'].''.$suff.'</a>';
             $num++;
         }
 
@@ -194,24 +206,19 @@ if ($gid == 0) {
         if ($SETTINGS['onlinetoday_status'] == 'on') {
             $datecut = $onlinetime - (3600 * 24);
             if (X_ADMIN) {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
             } else {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC LIMIT 0, $onlinetodaycount");
             }
 
-            $todaymembersnum = $db->num_rows($query);
+            $todaymembersnum = 0;
             $todaymembers = array();
             $pre = $suff = '';
-            $x = 0;
             while($memberstoday = $db->fetch_array($query)) {
-                if ($x <= $onlinetodaycount) {
-                    $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
-                    $suff = '</span>';
-                    $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
-                    $x++;
-                } else {
-                    continue;
-                }
+                $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+                $suff = '</span>';
+                $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
+                ++$todaymembersnum;
             }
             $todaymembers = implode(', ', $todaymembers);
             $db->free_result($query);
@@ -237,8 +244,7 @@ if ($gid == 0) {
     $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on' AND f.fup='$gid') ORDER BY c.displayorder ASC, f.displayorder ASC");
 }
 
-$indexBarTop = $indexBar = $forumlist =  $spacer = '';
-$forumarray = array();
+$indexBarTop = $indexBar = $forumlist = $spacer = '';
 $catLessForums = $lastcat = 0;
 
 if ($SETTINGS['space_cats'] == 'on') {
@@ -261,19 +267,15 @@ if ($SETTINGS['catsonly'] != 'on') {
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
+        $query = $db->query("SELECT fid, fup, name, private, userlist FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
-            $subperms = checkForumPermissions($queryrow);
-            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] && $subperms[X_PERMS_USERLIST])) {
-                $index_subforums[] = $queryrow;
-            }
+            $index_subforums[] = $queryrow;
         }
         $db->free_result($query);
     }
 }
 
 while($thing = $db->fetch_array($fquery)) {
-
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = forum($thing, "index_forum");
     } else {
@@ -285,10 +287,6 @@ while($thing = $db->fetch_array($fquery)) {
     }
 
     if ($lastcat != $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || (!empty($cforum) && $SETTINGS['catsonly'] != 'on'))) {
-        if ($forumlist != '') {
-            $forumarray[] = $forumlist;
-            $forumlist = '';
-        }
         $lastcat = $thing['cat_fid'];
         $thing['cat_name'] = html_entity_decode($thing['cat_name']);
         eval('$forumlist .= "'.template('index_category').'";');
@@ -300,13 +298,9 @@ while($thing = $db->fetch_array($fquery)) {
     if (!empty($cforum)) {
         $forumlist .= $cforum;
     }
-
 }
 
-$forumarray[] = $forumlist;
-$forumlist = implode($spacer, $forumarray);
-
-if ($forumlist == '') {
+if (empty($forumlist)) {
     eval('$forumlist = "'.template('index_noforum').'";');
 }
 $db->free_result($fquery);

@@ -1,16 +1,28 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.8 Engage Final SP3
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -66,7 +78,7 @@ function makenav($current) {
     global $bordercolor, $tablewidth, $borderwidth, $tablespacing, $altbg1, $altbg2, $lang;
     ?>
     <table cellpadding="0" cellspacing="0" border="0" bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>" align="center"><tr><td>
-    <table cellpadding="4" cellspacing="<?php echo $borderwidth ?>" border="0" width="100%">
+    <table cellpadding="4" cellspacing="1" border="0" width="100%">
     <tr align="center" class="tablerow">
     <?php
     if ($current == '') {
@@ -411,23 +423,21 @@ if ($action == 'profile') {
         $day = formInt('day');
         $bday = iso8601_date($year, $month, $day);
         $newavatar = formVar('newavatar');
-        $newavatarcheck = formVar('newavatarcheck');
-        $avatar = $newavatar ? checkInput($newavatar, 'no', 'no', 'javascript', false) : '';
-        $avatar = checkInput($newavatar, 'no', 'no', 'php', false);
+        $avatar = $newavatar ? checkInput($newavatar, 'no', 'yes', 'javascript', false) : '';
         $newlocation = formVar('newlocation');
-        $location = $newlocation ? checkInput($newlocation, 'no', 'no', 'javascript', false) : '';
+        $location = $newlocation ? checkInput($newlocation, 'no', 'yes', 'javascript', false) : '';
         $newicq = formVar('newicq');
         $icq = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
         $newyahoo = formVar('newyahoo');
-        $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'no', 'javascript', false) : '';
+        $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'yes', 'javascript', false) : '';
         $newaim = formVar('newaim');
-        $aim = $newaim ? checkInput($newaim, 'no', 'no', 'javascript', false) : '';
+        $aim = $newaim ? checkInput($newaim, 'no', 'yes', 'javascript', false) : '';
         $newmsn = formVar('newmsn');
-        $msn = $newmsn ? checkInput($newmsn, 'no', 'no', 'javascript', false) : '';
+        $msn = $newmsn ? checkInput($newmsn, 'no', 'yes', 'javascript', false) : '';
         $newemail = formVar('newemail');
-        $email = $newemail ? checkInput($newemail, 'no', 'no', 'javascript', false) : '';
+        $email = $newemail ? checkInput($newemail, 'no', 'yes', 'javascript', false) : '';
         $newsite = formVar('newsite');
-        $site = $newsite ? checkInput($newsite, 'no', 'no', 'javascript', false) : '';
+        $site = $newsite ? checkInput($newsite, 'no', 'yes', 'javascript', false) : '';
         $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
         $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
         $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
@@ -445,7 +455,6 @@ if ($action == 'profile') {
         }
 
         $avatar = addslashes($avatar);
-        $newavatarcheck = addslashes($newavatarcheck);
         $location = addslashes($location);
         $yahoo = addslashes($yahoo);
         $aim = addslashes($aim);
@@ -456,16 +465,22 @@ if ($action == 'profile') {
         $mood = addslashes($mood);
         $sig = addslashes($sig);
 
-        if ($newavatarcheck == "no") {
-            $avatar = '';
+        $max_size = explode('x', $SETTINGS['max_avatar_size']);
+        if ($max_size[0] > 0 && $max_size[1] > 0 && ini_get('allow_url_fopen')) {
+            $size = @getimagesize($_POST['newavatar']);
+            if ($size === false ) {
+                $avatar = '';
+            } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+            }
         }
 
-        if ($newpassword != '' || $newpasswordcf != '' ) {
-            if ($newpassword != $newpasswordcf ) {
+        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '' ) {
+            if ($_POST['newpassword'] != $_POST['newpasswordcf'] ) {
                 error($lang['pwnomatch'], false);
             }
 
-            $newpassword = md5(trim($newpassword));
+            $newpassword = md5($_POST['newpassword']);
 
             $pwtxt = "password='$newpassword',";
 
@@ -517,7 +532,7 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -574,7 +589,7 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
-            $lastpost['1'] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost['1'] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -666,12 +681,7 @@ if ($action == 'profile') {
     if ($member['avatar'] == '') {
         $member['avatar'] = '';
     } else {
-        if (false !== ($pos = strpos($member['avatar'], ',')) && substr($member['avatar'], $pos-4, 4) == '.swf') {
-            $flashavatar = explode(',',$member['avatar']);
-            $member['avatar'] = '<object type="application/x-shockwave-flash" data="'.$flashavatar[0].'" width="'.$flashavatar[1].'" height="'.$flashavatar[2].'"><param name="movie" value="'.$flashavatar[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
-        } else {
-            $member['avatar'] = '<img src="'.$member['avatar'].'" border="0" alt="'.$lang['altavatar'].'" />';
-        }
+        $member['avatar'] = '<img src="'.$member['avatar'].'" border="0" alt="'.$lang['altavatar'].'" />';
     }
 
     if ($member['mood'] != '') {
@@ -721,7 +731,7 @@ if ($action == 'profile') {
 
         $lastpost = explode('|', $fav['lastpost']);
         $dalast = $lastpost[0];
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.rawurlencode($lastpost[1]).'">'.$lastpost[1].'</a>';
+        $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
         $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
