@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP2
+ * XMB 1.9.8 Engage Final SP3
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -44,7 +44,10 @@ class spelling {
 
         $charset = '';
         $this->language = $language;
-        $this->link = pspell_new($language, '', '', $charset, $mode);
+        @$this->link = pspell_new($language, '', '', $charset, $mode);
+        if ($this->link === FALSE) {
+            error('Failed to open the spelling dictionary for language "'.htmlspecialchars($language, ENT_QUOTES).'"');
+        }
         $this->mode = $mode;
         return true;
     }
