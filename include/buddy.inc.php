@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP2
+ * XMB 1.9.8 Engage Final SP3
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -37,7 +37,9 @@ function blistmsg($message, $redirect='', $exit=false) {
     if ($redirect != '') {
         redirect($redirect, 2);
     }
+    
     eval('echo stripslashes("'.template('buddylist_message').'");');
+    
     if ($exit) {
         exit();
     }
@@ -85,7 +87,6 @@ function buddy_edit() {
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
-
     $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'") or die($db->error());
     while($buddy = $db->fetch_array($q)) {
         eval('$buddys[] = "'.template('buddylist_edit_buddy').'";');

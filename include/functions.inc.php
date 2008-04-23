@@ -118,6 +118,7 @@ function censor($txt, $ignorespaces=false) {
                     $prevfind = $find;
                 }
             }
+            
             if ($ignorespaces !== true) {
                 $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
             }
@@ -194,33 +195,33 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
 
         $begin = array(
-                0 => '[b]',
-                1 => '[i]',
-                2 => '[u]',
-                3 => '[marquee]',
-                4 => '[blink]',
-                5 => '[strike]',
-                6 => '[quote]',
-                7 => '[code]',
-                8 => '[list]',
-                9 => '[list=1]',
-                10 => '[list=a]',
-                11 => '[list=A]',
+            0 => '[b]',
+            1 => '[i]',
+            2 => '[u]',
+            3 => '[marquee]',
+            4 => '[blink]',
+            5 => '[strike]',
+            6 => '[quote]',
+            7 => '[code]',
+            8 => '[list]',
+            9 => '[list=1]',
+            10 => '[list=a]',
+            11 => '[list=A]',
         );
 
         $end = array(
-                0 => '[/b]',
-                1 => '[/i]',
-                2 => '[/u]',
-                3 => '[/marquee]',
-                4 => '[/blink]',
-                5 => '[/strike]',
-                6 => '[/quote]',
-                7 => '[/code]',
-                8 => '[/list]',
-                9 => '[/list=1]',
-                10 => '[/list=a]',
-                11 => '[/list=A]',
+            0 => '[/b]',
+            1 => '[/i]',
+            2 => '[/u]',
+            3 => '[/marquee]',
+            4 => '[/blink]',
+            5 => '[/strike]',
+            6 => '[/quote]',
+            7 => '[/code]',
+            8 => '[/list]',
+            9 => '[/list=1]',
+            10 => '[/list=a]',
+            11 => '[/list=A]',
         );
 
         foreach($begin as $key=>$value) {
@@ -265,8 +266,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 }
             }
         }
+        
         $message = implode("", $messagearray);
-
         $message = addslashes($message);
     } else {
         if ($smiliesallow) {
@@ -279,7 +280,9 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = wordwrap($message, 150, "\n", 1);
         $message = preg_replace('#(\[/?.*)\n(.*\])#mi', '\\1\\2', $message);
     }
+    
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
+    
     return $message;
 }
 
@@ -287,61 +290,61 @@ function bbcode($message, $allowimgcode) {
     global $lang;
     
     $find = array(
-            0 => '[b]',
-            1 => '[/b]',
-            2 => '[i]',
-            3 => '[/i]',
-            4 => '[u]',
-            5 => '[/u]',
-            6 => '[marquee]',
-            7 => '[/marquee]',
-            8 => '[blink]',
-            9 => '[/blink]',
-            10 => '[strike]',
-            11 => '[/strike]',
-            12 => '[quote]',
-            13 => '[/quote]',
-            14 => '[code]',
-            15 => '[/code]',
-            16 => '[list]',
-            17 => '[/list]',
-            18 => '[list=1]',
-            19 => '[list=a]',
-            20 => '[list=A]',
-            21 => '[/list=1]',
-            22 => '[/list=a]',
-            23 => '[/list=A]',
-            24 => '[*]',
-            25 => '<br />'
+        0 => '[b]',
+        1 => '[/b]',
+        2 => '[i]',
+        3 => '[/i]',
+        4 => '[u]',
+        5 => '[/u]',
+        6 => '[marquee]',
+        7 => '[/marquee]',
+        8 => '[blink]',
+        9 => '[/blink]',
+        10 => '[strike]',
+        11 => '[/strike]',
+        12 => '[quote]',
+        13 => '[/quote]',
+        14 => '[code]',
+        15 => '[/code]',
+        16 => '[list]',
+        17 => '[/list]',
+        18 => '[list=1]',
+        19 => '[list=a]',
+        20 => '[list=A]',
+        21 => '[/list=1]',
+        22 => '[/list=a]',
+        23 => '[/list=A]',
+        24 => '[*]',
+        25 => '<br />'
     );
 
     $replace = array(
-            0 => '<strong>',
-            1 => '</strong>',
-            2 => '<em>',
-            3 => '</em>',
-            4 => '<u>',
-            5 => '</u>',
-            6 => '<marquee>',
-            7 => '</marquee>',
-            8 => '<blink>',
-            9 => '</blink>',
-            10 => '<strike>',
-            11 => '</strike>',
-            12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
-            13 => ' </td></tr></table><font class="mediumtxt">',
-            14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
-            15 => '</td></tr></table><font class="mediumtxt">',
-            16 => '<ul type="square">',
-            17 => '</ul>',
-            18 => '<ol type="1">',
-            19 => '<ol type="A">',
-            20 => '<ol type="A">',
-            21 => '</ol>',
-            22 => '</ol>',
-            23 => '</ol>',
-            24 => '<li />',
-            25 => '<br />'
+        0 => '<strong>',
+        1 => '</strong>',
+        2 => '<em>',
+        3 => '</em>',
+        4 => '<u>',
+        5 => '</u>',
+        6 => '<marquee>',
+        7 => '</marquee>',
+        8 => '<blink>',
+        9 => '</blink>',
+        10 => '<strike>',
+        11 => '</strike>',
+        12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
+        13 => ' </td></tr></table><font class="mediumtxt">',
+        14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
+        15 => '</td></tr></table><font class="mediumtxt">',
+        16 => '<ul type="square">',
+        17 => '</ul>',
+        18 => '<ol type="1">',
+        19 => '<ol type="A">',
+        20 => '<ol type="A">',
+        21 => '</ol>',
+        22 => '</ol>',
+        23 => '</ol>',
+        24 => '<li />',
+        25 => '<br />'
     );
 
     $message = str_replace($find, $replace, $message);
@@ -590,8 +593,7 @@ function smilieinsert() {
 
     $sms = array();
     $smilienum = 0;
-    $smilies = '';
-    $smilieinsert = '';
+    $smilies = $smilieinsert = '';
 
     if ($smileyinsert == 'on' && $smcols != '') {
         if ($smtotal == 0) {
@@ -634,8 +636,7 @@ function smilieinsert() {
 function updateforumcount($fid) {
     global $db;
 
-    $postcount = 0;
-    $threadcount = 0;
+    $postcount = $threadcount = 0;
 
     $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
     $postcount = $db->result($query, 0);
@@ -682,8 +683,7 @@ function smcwcache() {
     static $cached;
 
     if (!$cached) {
-        $smiliecache = array();
-        $censorcache = array();
+        $smiliecache = $censorcache = array();
 
         $query = $db->query("SELECT code, url FROM ".X_PREFIX."smilies WHERE type='smiley'");
         $smiliesnum = $db->num_rows($query);
@@ -714,6 +714,7 @@ function smcwcache() {
 
 /* checkInput() is deprecated */
 function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quotes=true) {
+    
     $input = trim($input);
     if ($striptags == 'yes') {
         $input = strip_tags($input);
@@ -735,6 +736,7 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
 
 /* checkOutput() is deprecated */
 function checkOutput($output, $allowhtml='no', $word='', $allowEntities=false) {
+    
     $output = trim($output);
     if ($allowhtml == 'yes' || $allowhtml == 'on') {
         $output = htmlspecialchars_decode($output);
@@ -819,7 +821,6 @@ function end_time() {
     } else {
         $footerstuff['querydump'] = '';
     }
-
     return $footerstuff;
 }
 
@@ -968,8 +969,7 @@ function get_extension($filename) {
 function get_attached_file($file, $attachstatus, $max_size=1000000) {
     global $lang, $filename, $filetype, $filesize;
 
-    $filename = '';
-    $filetype = '';
+    $filename = $filetype = '';
     $filesize = 0;
 
     if ($file['name'] != 'none' && !empty($file['name']) && $attachstatus != 'off' && is_uploaded_file($file['tmp_name'])) {
@@ -1147,8 +1147,7 @@ function array_keys2keys($array, $translator) {
 function mysql_syn_highlight($query) {
     global $tables, $tablepre;
 
-    $find = array();
-    $replace = array();
+    $find = $replace = array();
 
     foreach($tables as $name) {
         $find[] = $tablepre.$name;

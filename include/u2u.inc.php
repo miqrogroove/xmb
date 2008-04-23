@@ -190,8 +190,7 @@ function u2u_view($u2uid, $folders) {
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
     global $sendoptions, $u2uheader, $u2ufooter;
 
-    $delchecked = '';
-    $leftpane = '';
+    $delchecked = $leftpane = '';
 
     $u2uid = (int) $u2uid;
 
@@ -462,10 +461,7 @@ function u2u_display($folder, $folders) {
     global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
-    $u2usin = '';
-    $u2usout = '';
-    $u2usdraft = '';
-    $leftpane = '';
+    $u2usin = $u2usout = $u2usdraft = $leftpane = '';
 
     if (empty($folder)) {
         $folder = "Inbox";

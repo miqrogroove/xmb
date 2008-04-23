@@ -293,7 +293,8 @@ class Captcha {
 
 function GenerateCode() {
         global $db, $onlinetime;
-        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
+        
+        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.($onlinetime - 86400));
         // loop through and generate the code letter by letter
         for($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {

@@ -141,8 +141,7 @@ function isValidEmail($addr) {
             break;
         }
 
-        $user = '';
-        $domain = '';
+        $user = $domain = '';
         list($user, $domain) = split('@', $addr);
 
         // Check if the site has an MX record. We can't send unless there is.
@@ -195,7 +194,7 @@ function formVar($varname, $striptags = true, $quotes = false) {
         $retval = trim($_POST[$varname]);
         if ($striptags) {
             $retval = strip_tags($retval);
-            }
+        }
 
         if ($quotes) {
             $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -214,9 +213,11 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         } else {
             $retval = $_POST[$varname];
         }
+        
         if ($word != '') {
             $retval = str_ireplace($word, "_".$word, $retval);
         }
+        
         if ($htmlencode) {
             if ($quoteencode) {
                 $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -224,6 +225,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
                 $retval = htmlspecialchars($retval, ENT_NOQUOTES);
             }
         }
+        
         if ($dbescape) {
             $retval = dbstuff::escape($retval);
         }
@@ -257,9 +259,11 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     if (get_magic_quotes_gpc()) {
                         $theObject = stripslashes($theObject);
                     }
+                    
                     if ($word != '') {
                         $theObject = str_ireplace($word, "_".$word, $theObject);
                     }
+                    
                     if ($htmlencode) {
                         if ($quoteencode) {
                             $theObject = htmlspecialchars($theObject, ENT_QUOTES);
@@ -267,6 +271,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                             $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
                         }
                     }
+                    
                     if ($dbescape) {
                         $theObject = dbstuff::escape($theObject);
                     }
