@@ -40,13 +40,13 @@ if (!defined('IN_CODE')) {
 * Must be instantiated before first use.
 */
 class dbstuff {
-    var $querynum   = 0;
-    var $querylist  = array();
+    var $querynum = 0;
+    var $querylist = array();
     var $querytimes = array();
-    var $link       = '';
-    var $db         = '';
-    var $duration   = 0;
-    var $timer      = 0;
+    var $link = '';
+    var $db = '';
+    var $duration = 0;
+    var $timer = 0;
 
     function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
         $die = false;
