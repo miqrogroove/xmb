@@ -926,6 +926,9 @@ switch($action) {
             if (X_GUEST) {
                 $username = trim($username);
                 $password = md5(trim($password));
+            } else {
+                $username = $xmbuser;
+                $password = $xmbpw;
             }
 
             $q = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$username'");
