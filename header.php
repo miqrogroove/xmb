@@ -83,6 +83,7 @@ $filename = '';
 $filetype = '';
 $quickjump = '';
 $newu2umsg = '';
+$othertid = '';
 
 define('COMMENTOUTPUT', false);
 define('MAXATTACHSIZE', 256000);
@@ -107,7 +108,7 @@ if ($show_full_info) {
     $alpha = '';
     $beta = '';
     $gamma = 'Final';
-    $service_pack = ' SP2';
+    $service_pack = ' SP3';
     $versionbuild = 20071231;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
@@ -461,7 +462,7 @@ if (X_MEMBER) {
 define('X_SADMIN', $role['sadmin']);
 define('X_ADMIN', $role['admin']);
 define('X_SMOD', $role['smod']);
-define('X_MOD', $role['smod']);
+define('X_MOD', $role['mod']);
 define('X_STAFF', $role['staff']);
 
 // Get the required language file
