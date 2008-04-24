@@ -3310,8 +3310,6 @@ $bbcodescript
 $preview
 <form method="post" name="input" action="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$pid" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$self[username]" />
-<input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3399,8 +3397,6 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$self[username]" />
-<input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3459,8 +3455,6 @@ $suggestions
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid" enctype="multipart/form-data" >
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$self[username]" />
-<input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3553,8 +3547,6 @@ $suggestions
 $preview
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid" enctype="multipart/form-data">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<input type="hidden" name="username" value="$self[username]" />
-<input type="hidden" name="password" value="$xmbpw" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
