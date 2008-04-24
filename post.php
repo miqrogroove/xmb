@@ -858,14 +858,17 @@ switch($action) {
                 $postinfo = $db->fetch_array($query);
                 $db->free_result($query);
             }
-//update
+            
+            // update begin
             if (isset($postinfo['filesize'])) {
                 $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-                }
-                if (isset($postinfo['filename'])) {
+            }
+            
+            if (isset($postinfo['filename'])) {
                 $postinfo['filename'] = checkInput($postinfo['filename'], 'no', 'no', '', false);
-                }
-
+            }
+            // update end
+            
             $postinfo['subject'] = html_entity_decode($postinfo['subject']);
             $postinfo['message'] = html_entity_decode(stripslashes($postinfo['message']));
 
