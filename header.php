@@ -109,7 +109,7 @@ if ($show_full_info) {
     $beta = '';
     $gamma = 'Final';
     $service_pack = ' SP3';
-    $versionbuild = 20071231;
+    $versionbuild = 20080424;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
