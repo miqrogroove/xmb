@@ -744,7 +744,6 @@ if (X_MEMBER) {
 // create forum jump
 $quickjump = '';
 if ($SETTINGS['quickjump_status'] == 'on') {
-    $quickjump = base64_decode($quickjump);
     $quickjump = forumJump();
 }
 ?>
