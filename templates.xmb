@@ -1340,13 +1340,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" align="center"><tr>
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center"><tr>
 <td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
 <img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
@@ -1417,13 +1417,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="tablerow">
 <img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
@@ -1724,7 +1724,7 @@ $bbcodescript
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="1" cellpadding="6" width="100%">
+<table border="0" cellspacing="$borderwidth" cellpadding="6" width="100%">
 <tr>
 <td width="74%" $topbgcode>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
@@ -1754,7 +1754,7 @@ $bbcodescript
 </table>
 <table cellspacing="0" cellpadding="1" border="0" width="$tablewidth" align="center">
 <tr>
-<td><table width="100%" cellspacing="0" cellpadding="2" align="center">
+<td><table width="100%" cellspacing="0" cellpadding="$tablespace" align="center">
 <tr>
 <td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
 <td align="right">$quickjump</td>
@@ -1783,7 +1783,6 @@ $whosonline
 $statsbar
 
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
-$spacer
 <tr>
 <td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
 </tr>
@@ -1875,7 +1874,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
@@ -1955,7 +1954,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="2" class="category">
 <a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
@@ -1993,6 +1992,9 @@ $whosonlinetoday
 <td bgcolor="$altbg2" colspan="2" class="mediumtxt">
 $todaymembers&nbsp;
 </td>
+</tr>
+<tr>
+<td bgcolor="$altbg1" colspan="2" class="mediumtxt">$memontoday</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_coppa|#*XMB TEMPLATE*#|
@@ -3164,7 +3166,7 @@ $multipage
 <table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><strong><font color="$cattext">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
 </tr>
@@ -3599,7 +3601,7 @@ $suggestions
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="1" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texttopicreview]</strong></font></td>
 </tr>
@@ -3630,7 +3632,7 @@ $posts
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -3662,7 +3664,7 @@ $suggestions
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="1" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -4505,7 +4507,7 @@ $sendoptions
 
 |#*XMB TEMPLATE FILE*#|viewthread|#*XMB TEMPLATE*#|
 $poll
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="smalltxt"><a href="viewthread.php?fid=$fid&amp;tid=$tid&amp;action=printable">$lang[textprintver]</a> | <a href="memcp.php?action=subscriptions&amp;subadd=$tid">$lang[textsubscribe]</a> | <a href="memcp.php?action=favorites&amp;favadd=$tid">$lang[textaddfav]</a></td>
 <td class="post" align="right" valign="bottom">&nbsp;$newtopiclink$newpolllink$replylink</td>
@@ -4526,7 +4528,7 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
+<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
 <tr>
 <td class="post" align="right" style="padding-top: 3px">$newtopiclink$newpolllink$replylink</td>
 </tr>
@@ -4789,7 +4791,7 @@ $posts
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>
 <td><input type="hidden" name="subject" value="" />
-<table width="100%" border="0" cellpadding="$tablespace" cellspacing="1">
+<table width="100%" border="0" cellpadding="$tablespace" cellspacing="$borderwidth">
 <tr bgcolor="$altbg1">
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>
@@ -4802,7 +4804,7 @@ $captchapostcheck
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span><hr /></div><div align="center">
-$smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Window', 175, 250);">[$lang[moresmilies]]</a></div></td>
+$smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Window', 200, 250);">[$lang[moresmilies]]</a></div></td>
 <td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
 <td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
