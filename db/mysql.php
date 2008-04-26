@@ -150,7 +150,7 @@ class dbstuff {
                 }
             }
         } else {
-            return 'oops';
+            return 'MySQL has encountered an unknown error. To find out the exact problem, please set the DEBUG flag to true in config.php.';
         }
     }
 
