@@ -1012,13 +1012,11 @@ class Upgrade {
     }
 
     function createTempFields() {
-        $this->db->query("ALTER TABLE ".$this->tablepre."forums ADD `postperm_temp` varchar(11) NOT NULL default ''");
-        $q = $this->db->query("SELECT fid, postperm FROM ".$this->tablepre."forums");
-        while($f = $this->db->fetch_array($q)) {
-            if (strpos($f['postperm'], ',') !== false) {
-                $this->db->query("UPDATE ".$this->tablepre."forums SET postperm_temp='".$f['postperm']."', postperm='1' WHERE fid=".$f['fid']);
-            }
+        $q = $this->db->query("SHOW COLUMNS FROM ".$this->tablepre."threads LIKE 'pollopts_temp'");
+        if ($this->db->num_rows($q) != 0) {
+            $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
         }
+        $this->db->free_result($q);
 
         $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
         $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");

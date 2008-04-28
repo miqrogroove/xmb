@@ -1046,12 +1046,6 @@ switch($step) {
                     $err = true;
                 }
                 break;
-            case 'mysql4':
-                if (!defined('MYSQLI_NUM')) {
-                    show_result(X_INST_ERR);
-                    $err = true;
-                }
-                break;
             default:
                 show_result(X_INST_ERR);
                 error('Database Handler', 'Unknown handler provided', true);
@@ -1104,26 +1098,6 @@ switch($step) {
                 if ($mysqlver[0] <= 3 && $mysqlver[1] < 20) {
                     show_result(X_INST_ERR);
                     error('Version mismatch', 'XMB requires MySQL version 3.20 or higher to work properly.', true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                break;
-            case 'mysql4':
-                $link = new mysqli($dbhost, $dbuser, $dbpw, $dbname);
-                if (mysqli_connect_errno()) {
-                    show_result(X_INST_ERR);
-                    error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_errno().': '.mysqli_connect_error(), true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                $i = $link->server_info;
-                $link->close();
-                $mysqlver = explode('.', $i);
-                // min = 4.1
-                show_act('Checking Database Version');
-                if ($mysqlver[0] <= 4 && $mysqlver[1] < 10) {
-                    show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version 4.1 or higher to work properly with this database API. We recommend using the "mysql" API instead.', true);
                 } else {
                     show_result(X_INST_OK);
                 }
@@ -1207,13 +1181,14 @@ switch($step) {
         } else {
             show_result(X_INST_OK);
         }
-
+        
         show_act("Check and remove sid");
         $u->removeSid();
         show_result(X_INST_OK);
 
         show_act('Collecting data for data-restructuring');
         $u->fixBirthdays(0);
+        $u->fixForumPerms(0);
         show_result(X_INST_OK);
 
         $tablesCreated = array();
@@ -1252,10 +1227,6 @@ switch($step) {
         }
         show_result(X_INST_OK);
 
-        show_act('Fixing forum post permissions');
-        $u->fixForumPerms();
-        show_result(X_INST_OK);
-
         show_act('Restructure data (may take a long time)');
         foreach($tbl as $t) {
             $t = substr($t, strlen($u->tablepre));
@@ -1270,6 +1241,7 @@ switch($step) {
             $fromTable = $u->tablepre . $tbl;
             $tmpTable = $u->tablepre . $tbl . '_tmp';
 
+            $db->query("DROP TABLE IF EXISTS `$tmpTable`");
             $db->query("RENAME TABLE `$fromTable` TO `$tmpTable`");
             $db->query("DROP TABLE IF EXISTS `$fromTable`");
             $db->query($u->createTableQueryByTablename($tbl));
@@ -1281,6 +1253,10 @@ switch($step) {
 
         show_act('Fixing birthday values');
         $u->fixBirthdays(1);
+        show_result(X_INST_OK);
+
+        show_act('Fixing forum post permissions');
+        $u->fixForumPerms(1);
         show_result(X_INST_OK);
 
         show_act('Fixing missing posts per page values');
