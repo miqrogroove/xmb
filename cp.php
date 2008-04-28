@@ -72,6 +72,7 @@ if ($action == "settings") {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
+        $db->free_result($query);
 
         $onselect = $offselect = '';
         settingHTML('bbstatus', $onselect, $offselect);
@@ -1077,6 +1078,7 @@ if ($action == 'forum') {
         }
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
+        $db->free_result($query);
 
         if ($forum['allowhtml'] == "yes") {
             $checked2 = $cheHTML;
@@ -1466,6 +1468,7 @@ if ($action == "members") {
             <?php
         } else if ($members == "search") {
             ?>
+            <script language="javascript" type="text/javascript">var delmem = Array();</script>
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
@@ -1543,7 +1546,7 @@ if ($action == "members") {
                 }
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="confirmActionCheckbox('<?php echo $lang['confirmDeleteUser']?>', this, true, false);" value="<?php echo $member['uid']?>" /></td>
+                <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>" /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo $member['username']?>"><?php echo $member['username']?></a>
                 <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo $member['username']?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
                 </td>
@@ -1572,7 +1575,7 @@ if ($action == "members") {
             }
             ?>
             <tr>
-            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" onclick="return confirmUserDel('<?php echo $lang['confirmDeleteUser']?>');" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
             </tr>
             </table>
             </td>

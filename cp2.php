@@ -36,9 +36,9 @@ $action = getVar('action');
 
 if (X_ADMIN) {
     $download = formVar('download');
-    if ($action == "templates" && $download) {
+    if ($action == 'templates' && $download) {
         $code = '';
-        $templates  = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
+        $templates = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
         while($template = $db->fetch_array($templates)) {
             $template['template'] = trim($template['template']);
             $template['name'] = trim($template['name']);
@@ -359,7 +359,7 @@ if ($action == 'themes') {
         $keysql = implode(', ', $keysql);
         $valsql = implode(', ', $valsql);
 
-        $query = $db->query("SELECT count(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
+        $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
         if ($db->result($query, 0) > 0) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table>');
         }
@@ -406,6 +406,7 @@ if ($action == 'themes') {
     if ($single && $single != "submit" && $single != "anewtheme1") {
         $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single'");
         $themestuff = $db->fetch_array($query);
+        $db->free_result($query);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -614,8 +615,8 @@ if ($action == 'themes') {
         <td><?php echo $lang['smdir']?></td>
         <td><input type="text" name="smdirnew" value="images" /></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="<?php echo $single?>" /></td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="<?php echo $single?>" /></td>
         </tr>
         </table>
         </td>
@@ -1446,20 +1447,21 @@ if ($action == "templates") {
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name");
-        echo "<select name=\"tid\"><option value=\"default\">$lang[selecttemplate]</option>";
+        echo '<select name="tid"><option value="default">'.$lang['selecttemplate'].'</option>';
         while($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
-                echo "<option value=\"$template[id]\">$template[name]</option>\r\n";
+                echo '<option value="'.intval($template['id']).'">'.stripslashes($template['name']).'</option>\r\n';
             }
         }
-        echo "</select>&nbsp;&nbsp;";
+        echo '</select>&nbsp;&nbsp;';
+        $db->free_result($query);
         ?>
         </td>
         </tr>
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
-        <input type="submit" class="submit"name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
-        <input type="submit" class="submit"name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
+        <input type="submit" class="submit" name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
+        <input type="submit" class="submit" name="delete" value="<?php echo $lang['deletebutton']?>" />&nbsp;
         <input type="submit" class="submit" name="restore" value="<?php echo $lang['textrestoredeftemps']?>" />&nbsp;
         <input type="submit" class="submit" name="download" value="<?php echo $lang['textdownloadtemps']?>" />
         </td>
@@ -1519,8 +1521,10 @@ if ($action == "templates") {
             $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
             $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
         }
+
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesrestoredone]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesrestoredone'].'</td></tr>';
+        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('edit') && noSubmit('editsubmit')) {
@@ -1543,18 +1547,16 @@ if ($action == "templates") {
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id='$tid' ORDER BY name");
         $template = $db->fetch_array($query);
-        $template['template'] = stripslashes($template['template']);
-        $template['template'] = htmlspecialchars($template['template']);
+        $db->free_result($query);
         ?>
-        <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><?php echo $lang['templatename']?>&nbsp;<strong><?php echo $template['name']?></strong></td>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
+        <td><?php echo $lang['templatename']?>&nbsp;<strong><?php echo stripslashes($template['name'])?></strong></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
-        <textarea cols="100" rows="30" name="templatenew"><?php echo $template['template']?></textarea></td>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
+        <td><textarea cols="100" rows="30" name="templatenew"><?php echo stripslashes(htmlspecialchars($template['template']))?></textarea></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></strong></td>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
+        <td><input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></strong></td>
         </tr>
         </table>
         </td>
@@ -1572,11 +1574,11 @@ if ($action == "templates") {
         //Templates are double-slashed so that they can be eval'd as raw strings.
         $templatenew = $db->escape(getRequestVar('templatenew'));
 
-        if ($tid == "new") {
+        if ($tid == 'new') {
             if (!$namenew) {
                 error($lang['templateempty'], false, '</td></tr></table></td></tr></table><br />');
             } else {
-                $check = $db->query("SELECT name FROM ".X_PREFIX."templates WHERE name = '$namenew'");
+                $check = $db->query("SELECT name FROM ".X_PREFIX."templates WHERE name='$namenew'");
                 if ($db->num_rows($check) != 0) {
                     error($lang['templateexists'], false, '</td></tr></table></td></tr></table><br />');
                 } else {
@@ -1586,11 +1588,12 @@ if ($action == "templates") {
         } else {
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id='$tid'");
         }
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesupdate]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesupdate'].'</td></tr>';
+        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('delete')) {
-        if ($tid == "default") {
+        if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
         ?>
@@ -1604,11 +1607,11 @@ if ($action == "templates") {
         <tr>
         <td class="category"><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg1?>" class="ctrtablerow"><?php echo $lang['templatedelconfirm']?></td>
+        <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
+        <td><?php echo $lang['templatedelconfirm']?></td>
         </tr>
-        <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" class="submit" name="deletesubmit" value="<?php echo $lang['textyes']?>" /></td>
+        <tr bgcolor="<?php echo $altbg2?>" class="ctrtablerow">
+        <td><input type="submit" class="submit" name="deletesubmit" value="<?php echo $lang['textyes']?>" /></td>
         </tr>
         </table>
         </td>
@@ -1622,7 +1625,8 @@ if ($action == "templates") {
 
     if (onSubmit('deletesubmit')) {
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE id='$tid'");
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[templatesdelete]</td></tr>";
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
+        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('new')) {
@@ -1670,40 +1674,40 @@ if ($action == "attachments") {
         <tr>
         <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textsearch']?></font></strong></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwherename']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwherename']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="filename" size="30" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereauthor']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereauthor']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="author" size="40" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereforum']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwhereforum']?></td>
         <td bgcolor="<?php echo $altbg2?>"><?php echo $forumselect?></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizesmaller']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizesmaller']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizeless" size="20" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizegreater']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheresizegreater']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizemore" size="20" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountsmaller']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountsmaller']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountless" size="20" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountgreater']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredlcountgreater']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountmore" size="20" /></td>
         </tr>
-        <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredaysold']?></td>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['attachmanwheredaysold']?></td>
         <td bgcolor="<?php echo $altbg2?>"><input type="text" name="daysold" size="20" /></td>
         </tr>
-        <tr>
-        <td align="center" class="tablerow" bgcolor="<?php echo $altbg2?>" colspan="2"><input type="submit" name="searchsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input type="submit" name="searchsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
