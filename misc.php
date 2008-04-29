@@ -150,8 +150,8 @@ switch($action) {
                 } else {
                     $secure = formYesNo('secure');
                     if ($secure == 'yes') {
-                        put_cookie("xmbuser", $username);
-                        put_cookie("xmbpw", $password);
+                        put_cookie("xmbuser", $username, NULL, $cookiepath, $cookiedomain);
+                        put_cookie("xmbpw", $password, NULL, $cookiepath, $cookiedomain);
                     } else {
                         put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
                         put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
@@ -179,8 +179,6 @@ switch($action) {
         $currtime = $onlinetime - (86400*30);
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
 
-        put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-        put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
         put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
         put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
 
