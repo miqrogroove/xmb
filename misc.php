@@ -202,7 +202,7 @@ switch($action) {
 
         $srchfrom = intval(getRequestVar('srchfrom'));
         $srchtxt = addslashes(getRequestVar('srchtxt'));
-        $srchuname = addslashes(getRequestVar('srchuname'));
+        $srchuname = cdataOut(stripslashes(getRequestVar('srchuname')));
         $srchfid = formArray('srchfid');
         if (empty($srchfid)) {
             $srchfid[] = 'all';
@@ -225,15 +225,15 @@ switch($action) {
             eval('$search = "'.template('misc_search').'";');
             $misc = stripslashes($search);
         } else {
-            if (!$srchuname && !$srchtxt || (strlen($srchuname) < 3 && strlen($srchtxt) < 3)) {
+            if (strlen($srchuname) < 3 && strlen($srchtxt) < 3) {
                 error($lang['nosearchq']);
             }
 
-            if (!$srchuname || strlen($srchuname) < 3) {
+            if (strlen($srchuname) < 3) {
                 $srchuname = '';
             }
 
-            if (!$srchtxt || strlen($srchtxt) < 3) {
+            if (strlen($srchtxt) < 3) {
                 $srchtxt = '';
             }
 
@@ -261,8 +261,8 @@ switch($action) {
                 }
 
                 if ($srchuname != '') {
-                    $sql .= " AND p.author='".addslashes($srchuname)."'";
-                    $ext[] = 'srchuname='.$srchuname;
+                    $sql .= " AND p.author='".$db->escape($srchuname)."'";
+                    $ext[] = 'srchuname='.recodeOut($srchuname);
                 }
 
                 $all = false;
