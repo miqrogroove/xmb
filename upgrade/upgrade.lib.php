@@ -127,6 +127,8 @@ class Upgrade {
         unset($tbl[$ct-1]); // TYPE = MyISAM
         $cols = array();
         $indices = array();
+        $index = array();
+		$d = array();
         foreach($tbl as $line=>$data) {
             $data = trim($data);
             if (strpos($data, 'PRIMARY KEY') !== 0 && strpos($data, 'KEY') !== 0) {
