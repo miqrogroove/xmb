@@ -1402,7 +1402,7 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
 }
 
 function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
-    global $self, $SETTINGS, $timeoffset, $addtime;
+    global $self, $SETTINGS, $timeoffset, $addtime, $timecode;
 
     if ($timestamp === null) {
         $timestamp = time();
