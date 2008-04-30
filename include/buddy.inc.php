@@ -87,7 +87,7 @@ function buddy_edit() {
     global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
-    $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'") or die($db->error());
+    $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'");
     while($buddy = $db->fetch_array($q)) {
         eval('$buddys[] = "'.template('buddylist_edit_buddy').'";');
     }

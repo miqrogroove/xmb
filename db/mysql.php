@@ -49,26 +49,19 @@ class dbstuff {
     var $timer = 0;
 
     function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
-        $die = false;
 
         if ($pconnect) {
-            $this->link = @mysql_pconnect($dbhost, $dbuser, $dbpw) or ($die = true);
+            $this->link = @mysql_pconnect($dbhost, $dbuser, $dbpw);
         } else {
-            $this->link = @mysql_connect($dbhost, $dbuser, $dbpw) or ($die = true);
+            $this->link = @mysql_connect($dbhost, $dbuser, $dbpw);
         }
 
-        if ($die) {
+        if ( $this->link == false ) {
             echo '<h3>Database connection error!</h3>';
             echo 'A connection to the Database could not be established.<br />';
             echo 'Please check your username, password, database name and host.<br />';
             echo 'Also make sure <i>config.php</i> is rightly configured!<br /><br />';
-            if (defined('X_SADMIN') && X_SADMIN && defined('DEBUG') && DEBUG) {
-                $num = mysql_errno();
-                $msg = mysql_error();
-                echo 'When connecting, the database returned:<br />';
-                echo '<i><b>Error '.$num.': </b>'.$msg.'</i>';
-            }
-            exit();
+            $this->panic();
         }
 
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
@@ -138,20 +131,25 @@ class dbstuff {
         return mysql_field_name($query, $field);
     }
 
-    function implicitError($sql, $overwriteErrorPerms=false) {
-        if (($error = $this->error()) !== false) {
-            if ($overwriteErrorPerms) {
-                return $error;
-            } else {
-                if ((defined('X_SADMIN') && X_SADMIN && defined('DEBUG') && DEBUG) || (!defined('X_MEMBER') && !defined('X_GUEST'))) {
-                    return 'MySQL encountered the following error: '.$error."\n<br />".'In the following query: <em>'.$sql.'</em>';
-                } else {
-                    return 'MySQL has encountered an unknown error. To find out the exact problem, please set the DEBUG flag to true in config.php.';
-                }
-            }
-        } else {
-            return 'MySQL has encountered an unknown error. To find out the exact problem, please set the DEBUG flag to true in config.php.';
-        }
+    function panic($sql = '') {
+    	
+    	if ( X_SADMIN && DEBUG )
+    	{
+    		// Check that we actually made a connection
+			if ( $this->link == false ) {
+				$this->link = null;
+			}    		
+    		
+    		$error = mysql_error($this->link);
+    		$errno = mysql_error($this->link);
+    		
+			echo '<pre>MySQL encountered the following error: '.$error."(errno = ".$errno.")\n<br />".'In the following query: <em>'.$sql.'</em></pre>';
+    	}
+    	else
+    	{
+    		echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
+    	}
+    	exit;
     }
 
     function escape($rawstring) {
@@ -160,7 +158,10 @@ class dbstuff {
 
     function query($sql, $overwriteErrorPerms=false) {
         $this->start_timer();
-        $query = mysql_query($sql, $this->link) or die($this->implicitError($sql, $overwriteErrorPerms));
+        $query = mysql_query($sql, $this->link);
+		if ( $query == false ) {
+			$this->panic($sql);
+		}
         $this->querynum++;
         $this->querylist[] = $sql;
         $this->querytimes[] = $this->stop_timer();
@@ -169,7 +170,10 @@ class dbstuff {
 
     function unbuffered_query($sql) {
         $this->start_timer();
-        $query = mysql_unbuffered_query($sql, $this->link) or die(mysql_error());
+        $query = mysql_unbuffered_query($sql, $this->link);
+        if ( $query == false ) {
+        	$this->panic($sql);
+        }
         $this->querynum++;
         $this->querylist[] = $sql;
         $this->querytimes[] = $this->stop_timer();

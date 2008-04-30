@@ -67,7 +67,7 @@ switch($page) {
         loadtemplates('faq_messages_smilierow', 'faq_messages');
         $smilierows = NULL;
         nav($lang['textpostread']);
-        $querysmilie = $db->query("SELECT * FROM `" .X_PREFIX. "smilies` WHERE type = 'smiley'") or die($db->error());
+        $querysmilie = $db->query("SELECT * FROM `" .X_PREFIX. "smilies` WHERE type = 'smiley'");
         while($smilie = $db->fetch_array($querysmilie)) {
             eval('$smilierows .= "'.template('faq_messages_smilierow').'";');
         }
