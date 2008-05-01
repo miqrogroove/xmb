@@ -322,7 +322,7 @@ switch($action) {
         $mod->statuscheck($fid);
         if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
-                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=''$fid' AND tid='$tid'");
+                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
                 	$db->free_result($query);
                     error($lang['textnothread'], FALSE);
@@ -520,7 +520,7 @@ switch($action) {
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
                 $thatime = $onlinetime;
                 if (!$threadcreated) {
-                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
+                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$fid', '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
                     $newtid = $db->insert_id();
                     $threadcreated = true;
                 }
