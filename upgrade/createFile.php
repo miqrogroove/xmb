@@ -35,7 +35,7 @@ if (!X_SADMIN) {
 
 require 'upgrade.lib.php';
 
-$upgrade = new Upgrade(&$db, 'XMB_1_9_8.xmb', $tablepre);
+$upgrade = new Upgrade($db, 'XMB_1_9_8.xmb', $tablepre);
 $tables = $upgrade->getTablesByTablepre($tablepre);
 $upgrade->loadTables($tables);
 $new = $upgrade->createUpgradeFile();

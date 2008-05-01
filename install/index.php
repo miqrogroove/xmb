@@ -28,7 +28,7 @@
 
 define('ROOT', '../');
 define('X_VERSION', '1.9.8');
-define('X_VERSION_EXT', '1.9.8 Engage Final SP2');
+define('X_VERSION_EXT', '1.9.8 Engage Final SP3');
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
