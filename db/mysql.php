@@ -152,7 +152,7 @@ class dbstuff {
     	exit;
     }
 
-    function escape($rawstring) {
+    static function escape($rawstring) {
          return mysql_real_escape_string($rawstring);
     }
 
