@@ -4,7 +4,7 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
@@ -146,7 +146,7 @@ $css
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><strong><font color="$cattext">$lang[textbuddylist]</font></strong></td>
 </tr>
@@ -175,7 +175,7 @@ $buddys[offline]
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="ctrtablerow" bgcolor="$altbg1"><font class="mediumtxt"><a href="buddy.php?action=edit">$lang[editbuddylist]</a></font></td>
 </tr>
@@ -213,7 +213,7 @@ $css
 <td bgcolor="$bordercolor">
 <form method="post" action="buddy.php?action=delete">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[editbuddylist]</font></strong></td>
 </tr>
@@ -236,7 +236,7 @@ $buddys
 <td bgcolor="$bordercolor">
 <form method="post" action="buddy.php?action=add">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[addtoaddresses]</font></strong></td>
 </tr>
@@ -277,10 +277,10 @@ $css
 <title>$bbname - $lang[textpowered]</title>
 </head>
 <body text="$text">
-<table cellspacing="2" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="ctrtablerow" bgcolor="$altbg1"><font class="mediumtxt">$message$redirectjs</font></td>
 </tr>
@@ -304,7 +304,7 @@ $css
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header">$lang[textbuddylist]</td>
 </tr>
@@ -623,7 +623,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[error]</strong></font></td>
 </tr>
@@ -641,7 +641,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[noadminsession]</strong></font></td>
 </tr>
@@ -674,7 +674,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=usermaint"><font color="$cattext"><strong>$lang[textuserman]</strong></font></a></td>
 </tr>
@@ -698,7 +698,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=using"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></a></td>
 </tr>
@@ -723,7 +723,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><a href="./faq.php?page=messages"><font color="$cattext"><strong>$lang[textpostread]</strong></font></a></td>
 </tr>
@@ -750,7 +750,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textbbrules]</strong></font></td>
 </tr>
@@ -766,7 +766,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textpostread]</strong></font></td>
 </tr>
@@ -792,7 +792,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq11]</strong></font></td>
 </tr>
@@ -807,7 +807,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="2"></a> $lang[textfaq12]</strong></font></td>
 </tr>
@@ -822,7 +822,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="3"></a> $lang[textfaq13]</strong></font></td>
 </tr>
@@ -837,7 +837,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="4"></a> $lang[textfaq14]</strong></font></td>
 </tr>
@@ -852,7 +852,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="5"></a> $lang[textfaq15]</strong></font></td>
 </tr>
@@ -867,7 +867,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq17]</strong></font></td>
 </tr>
@@ -876,7 +876,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td width="25%">$lang[textsmiliecode]</td>
 <td width="75%">$lang[smiliepreview]</td>
@@ -896,7 +896,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq19]</strong></font></td>
 </tr>
@@ -911,7 +911,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="8"></a> $lang[textfaq18]</strong></font></td>
 </tr>
@@ -934,7 +934,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textuserman]</strong></font></td>
 </tr>
@@ -958,7 +958,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq1]</strong></font></td>
 </tr>
@@ -973,7 +973,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="2"></a>$lang[textfaq2]</strong></font></td>
 </tr>
@@ -988,7 +988,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="3"></a>$lang[textfaq3]</strong></font></td></tr>
 <tr>
@@ -1002,7 +1002,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="4"></a>$lang[textfaq4]</strong></font></td>
 </tr>
@@ -1017,7 +1017,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="5"></a>$lang[textfaq5]</strong></font></td>
 </tr>
@@ -1032,7 +1032,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a>$lang[textfaq6]</strong></font></td>
 </tr>
@@ -1048,7 +1048,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></td>
 </tr>
@@ -1073,7 +1073,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq7]</strong></font></td>
 </tr>
@@ -1088,7 +1088,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="2"></a>$lang[textfaq16]</strong></font></td>
 </tr>
@@ -1103,7 +1103,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="3"></a>$lang[textfaq8]</strong></font></td>
 </tr>
@@ -1118,7 +1118,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="4"></a>$lang[textfaq9]</strong></font></td>
 </tr>
@@ -1133,7 +1133,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="5"></a>$lang[textfaq10]</strong></font></td>
 </tr>
@@ -1148,7 +1148,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq20]</strong></font></td>
 </tr>
@@ -1163,7 +1163,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq21]</strong></font></td>
 </tr>
@@ -1175,7 +1175,7 @@ $smilierows
 <table cellspacing="0" cellpadding="0" border="0" width="50%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="2" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="2" width="100%">
 $rankrows
 </table>
 </td>
@@ -1199,7 +1199,7 @@ $rankrows
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textstats]</strong></font></td>
 </tr>
@@ -1258,7 +1258,7 @@ $lang[bestmember]
 
 |#*XMB TEMPLATE FILE*#|footer|#*XMB TEMPLATE*#|
 <br />
-<table cellspacing="$borderwidth" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
 <table width="100%" cellspacing="0" cellpadding="0">
@@ -1275,7 +1275,7 @@ $lang[bestmember]
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2">
 <font class="smalltxt">
@@ -1321,7 +1321,7 @@ $subforums
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header" align="center">
 <td width="4%">&nbsp;</td>
@@ -1340,13 +1340,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center"><tr>
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center"><tr>
 <td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
 <img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
@@ -1369,7 +1369,7 @@ $subforums
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header" align="center">
 <td width="4%"><a href="cp.php?action=forum&amp;fdetails=$forum[fid]"><img src="./images/admin/editforumsets.gif" border="0" alt="$lang[alteditsettings]" /></a></td>
@@ -1417,13 +1417,13 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center" style="margin-top: 3px">
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
 </tr>
 </table>
 <br />
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center">
 <tr>
 <td class="tablerow">
 <img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
@@ -1469,7 +1469,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textpassword]</td>
 <td bgcolor="$altbg2"><input type="password" name="pw" size="25" /> <br /></td>
@@ -1524,7 +1524,7 @@ $lang[sortby]
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforums|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" align="center">
 <tr class="header">
 <td width="4%">&nbsp;</td>
 <td width="58%">$lang[textforum]</td>
@@ -1724,7 +1724,7 @@ $bbcodescript
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="6" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="6" width="100%">
 <tr>
 <td width="74%" $topbgcode>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
@@ -1772,7 +1772,7 @@ $welcome
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%" align="center">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" align="center">
 $indexBarTop
 $forumlist
 </table>
@@ -1805,7 +1805,7 @@ $statsbar
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 
 |#*XMB TEMPLATE FILE*#|index_forum|#*XMB TEMPLATE*#|
 <tr>
@@ -1841,7 +1841,7 @@ $statsbar
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td align="left" class="category"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
 <td align="left" class="category"><font color="$cattext"><strong>$lang[key]</strong></font></td>
@@ -1874,7 +1874,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
@@ -1894,7 +1894,7 @@ window.onload = tickerstart;
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[welcomeunregnotify]</strong></font></td>
 </tr>
@@ -1925,7 +1925,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" bgcolor="$bordercolor" align="center">
 <tr>
 <td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="3"><table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="tablerow">
@@ -1954,7 +1954,7 @@ window.onload = tickerstart;
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="2" class="category">
 <a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
@@ -2003,7 +2003,7 @@ $todaymembers&nbsp;
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textcoppa]</strong></font></td>
 </tr>
@@ -2023,7 +2023,7 @@ $todaymembers&nbsp;
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textprofor] $member</strong></font></td>
 </tr>
@@ -2054,7 +2054,7 @@ $todaymembers&nbsp;
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otherinfo]</strong></font></td>
 </tr>
@@ -2111,7 +2111,7 @@ $emailblock
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otheroptions]</strong></font></td>
 </tr>
@@ -2135,7 +2135,7 @@ $emailblock
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[required]</strong></font></td>
 </tr>
@@ -2350,7 +2350,7 @@ $avatd
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[registerrulestitle]</strong></font></td>
 </tr>
@@ -2375,7 +2375,7 @@ $avatd
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textfavorites]</font></strong></td>
 </tr>
@@ -2419,7 +2419,7 @@ $favsbtn
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="tablerow">
 <td bgcolor="$altbg1">
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
@@ -2427,7 +2427,7 @@ $favsbtn
 <td align="center" colspan="2" style="padding-bottom: 3px"><font class="mediumtxt">$lang[usercpwelcome]</font></td>
 </tr>
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td colspan="6" class="category"><font color="$cattext">$lang[textbriefsummary] $self[username] - [$self[status]]</font></td>
 </tr>
@@ -2480,7 +2480,7 @@ $favsbtn
 <td valign="top">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[textbuddylist]</strong></font></td>
 </tr>
@@ -2509,7 +2509,7 @@ $buddys[offline]
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="4"><font color="$cattext"><strong>$lang[textlatestu2us]</strong></font></td>
 </tr>
@@ -2531,7 +2531,7 @@ $messages
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
@@ -2584,7 +2584,7 @@ $favs
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
@@ -2779,7 +2779,7 @@ $dayselect
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textsubscriptions]</font></strong></td>
 </tr>
@@ -2824,7 +2824,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext"><strong>$lang[message]</strong></font></td>
 </tr>
@@ -2840,7 +2840,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
@@ -2857,7 +2857,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
@@ -2876,7 +2876,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlogin]</strong></font></td>
 </tr>
@@ -2908,7 +2908,7 @@ $header
 |#*XMB TEMPLATE FILE*#|misc_login_incorrectdetails|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" colspan="2"><font color="$cattext"><strong>$lang[textlogin_incorrect]</strong></font></td>
 </tr>
@@ -2927,7 +2927,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlostpw]</strong></font></td>
 </tr>
@@ -2955,7 +2955,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
@@ -2976,7 +2976,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
@@ -3005,7 +3005,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
@@ -3026,7 +3026,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
@@ -3087,7 +3087,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="3">
 <font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
@@ -3110,7 +3110,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="4">
 <font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
@@ -3166,7 +3166,7 @@ $multipage
 <table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><strong><font color="$cattext">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
 </tr>
@@ -3188,7 +3188,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
@@ -3240,7 +3240,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
@@ -3315,7 +3315,7 @@ $preview
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpost]</strong></font></td>
 </tr>
@@ -3402,7 +3402,7 @@ $preview
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
@@ -3460,7 +3460,7 @@ $preview
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
@@ -3528,7 +3528,7 @@ $suggestions
 |#*XMB TEMPLATE FILE*#|post_preview|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpreview]</strong></font></td>
 </tr>
@@ -3551,7 +3551,7 @@ $preview
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostreply]</strong></font></td>
 </tr>
@@ -3601,7 +3601,7 @@ $suggestions
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texttopicreview]</strong></font></td>
 </tr>
@@ -3632,7 +3632,7 @@ $posts
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -3664,7 +3664,7 @@ $suggestions
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="tablerow" colspan="2" width="100%">
-<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0" width="100%" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" border="0" width="100%" align="center">
 <tr>
 <td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
@@ -3697,7 +3697,7 @@ $mistake
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
 </tr>
@@ -3757,7 +3757,7 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textbumpthread]</strong></font></td>
 </tr>
@@ -3780,7 +3780,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[copythread]:</strong></font></td>
 </tr>
@@ -3806,7 +3806,7 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textdeletethread]</strong></font></td>
 </tr>
@@ -3828,7 +3828,7 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textemptythread]</strong></font></td>
 </tr>
@@ -3851,7 +3851,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmergethread]</strong></font></td>
 </tr>
@@ -3878,7 +3878,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmovemethod1]</strong></font></td>
 </tr>
@@ -3913,7 +3913,7 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textclosethread]</strong></font></td>
 </tr>
@@ -3936,7 +3936,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
 </tr>
@@ -3958,7 +3958,7 @@ $multipage
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textsplitthread]</strong></font></td>
 </tr>
@@ -4001,7 +4001,7 @@ $post[message]
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textprunethread]</strong></font></td>
 </tr>
@@ -4034,7 +4034,7 @@ $posts
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class ="category" colspan="2"><font color="$cattext"><strong>$lang[texttopthread]</strong></font></td>
 </tr>
@@ -4059,7 +4059,7 @@ $u2uheader
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[textfolders]</font></strong></td>
 </tr>
@@ -4082,7 +4082,7 @@ $u2ufooter
 |#*XMB TEMPLATE FILE*#|u2u_drafts|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
-<td bgcolor="$bordercolor"><table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="5"><strong><font color="$cattext">$lang[textu2uprevsaved]</font></strong></td>
 </tr>
@@ -4111,7 +4111,7 @@ $u2usdraft
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><strong><font color="$cattext">$lang[folderlist]</font></strong></td>
 </tr>
@@ -4154,7 +4154,7 @@ $css
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="0" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="0" width="100%">
 <tr>
 <td>
 <table border="0" cellspacing="0" cellpadding="$tablespace" width="100%">
@@ -4180,7 +4180,7 @@ $css
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[ignorelist]</font></strong></td>
 </tr>
@@ -4201,7 +4201,7 @@ $css
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td colspan="5" class="category"><font color="$cattext">$lang[textu2uincoming]</font></td>
 </tr>
@@ -4226,7 +4226,7 @@ $u2ulist
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor" align="left">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="tablerow">
 <td bgcolor="$altbg2"><a href="u2u.php" onclick="setCheckboxes('u2u_main', true); return false;">$lang[checkall]</a> -
 <a href="u2u.php" onclick="setCheckboxes('u2u_main', false); return false;">$lang[uncheckall]</a> -
@@ -4256,7 +4256,7 @@ $u2uheader
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td width="100%" class="tablerow" bgcolor="$altbg1">$msg</td>
 </tr>
@@ -4271,7 +4271,7 @@ $u2uheader
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" align="center">
 <a href="u2u.php">$lang[textu2uinbox]</a> -
@@ -4293,7 +4293,7 @@ $u2ufooter
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="header">
 <td colspan="5" class="category"><strong><font color="$cattext">$lang[textu2uoutgoing]</font></strong></td>
 </tr>
@@ -4355,7 +4355,7 @@ $lang[textsent] $u2udateline</span>
 <table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="mediumtxt" bgcolor="$altbg1">
 <div align="center">$lang[uqinfo]</div>
@@ -4392,7 +4392,7 @@ $u2upreview
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td width="100%" colspan="2" class="category" align="center"><strong><font color="$cattext">$lang[textu2u]</font></strong></td>
 </tr>
@@ -4425,7 +4425,7 @@ $u2upreview
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" colspan="2">$lang[textsubject] $u2usubject</td>
 </tr>
@@ -4443,7 +4443,7 @@ $u2upreview
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="header" colspan="2">$lang[textsubject] $u2usubject</td>
 </tr>
@@ -4471,7 +4471,7 @@ $u2upreview
 </td>
 </tr>
 </table>
-<table cellspacing="2" cellpadding="2" border="0" align="center">
+<table cellspacing="{$THEME['borderwidth']}" cellpadding="2" border="0" align="center">
 <tr>
 <td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=$u2uid" target="_blank">$lang[textprintver]</a></td>
 </tr>
@@ -4481,7 +4481,7 @@ $u2upreview
 <td bgcolor="$bordercolor">
 <form method="post" action="u2u.php?action=modif">
 <input type="hidden" name="token" value="$oToken->newToken" />
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext">$lang[textu2uoptions]</font></td>
 </tr>
@@ -4507,7 +4507,7 @@ $sendoptions
 
 |#*XMB TEMPLATE FILE*#|viewthread|#*XMB TEMPLATE*#|
 $poll
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center">
 <tr>
 <td class="smalltxt"><a href="viewthread.php?fid=$fid&amp;tid=$tid&amp;action=printable">$lang[textprintver]</a> | <a href="memcp.php?action=subscriptions&amp;subadd=$tid">$lang[textsubscribe]</a> | <a href="memcp.php?action=favorites&amp;favadd=$tid">$lang[textaddfav]</a></td>
 <td class="post" align="right" valign="bottom">&nbsp;$newtopiclink$newpolllink$replylink</td>
@@ -4516,7 +4516,7 @@ $poll
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header">
 <td width="18%">$lang[textauthor] </td>
@@ -4528,7 +4528,7 @@ $multipage
 </td>
 </tr>
 </table>
-<table width="$tablewidth" cellspacing="$borderwidth" cellpadding="$tablespace" align="center">
+<table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center">
 <tr>
 <td class="post" align="right" style="padding-top: 3px">$newtopiclink$newpolllink$replylink</td>
 </tr>
@@ -4582,7 +4582,7 @@ $quickreply
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
 <td colspan="3"><font color="$cattext"><strong>$lang[textpoll] $thread[subject] $results</strong></font></td>
 </tr>
@@ -4791,7 +4791,7 @@ $posts
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>
 <td><input type="hidden" name="subject" value="" />
-<table width="100%" border="0" cellpadding="$tablespace" cellspacing="$borderwidth">
+<table width="100%" border="0" cellpadding="$tablespace" cellspacing="{$THEME['borderwidth']}">
 <tr bgcolor="$altbg1">
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>

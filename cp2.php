@@ -106,7 +106,7 @@ if ($action == 'restrictions') {
         <table align="center" border="0" cellspacing="0" cellpadding="0" width="80%">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><span class="smalltxt"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></span></td>
         <td><span class="smalltxt"><strong><font color="<?php echo $cattext?>"><?php echo $lang['restrictedname']?></font></strong></span></td>
@@ -236,7 +236,7 @@ if ($action == 'themes') {
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textthemename']?></font></strong></td>
@@ -319,7 +319,7 @@ if ($action == 'themes') {
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="header">
         <td colspan="2"><?php echo $lang['textimporttheme']?></td>
         </tr>
@@ -414,7 +414,7 @@ if ($action == 'themes') {
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['texthemename']?></td>
         <td colspan="2"><input type="text" name="namenew" value="<?php echo $themestuff['name']?>" /></td>
@@ -530,7 +530,7 @@ if ($action == 'themes') {
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['texthemename']?></td>
         <td><input type="text" name="namenew" /></td>
@@ -688,7 +688,7 @@ if ($action == "smilies") {
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" colspan="4" align="left"><font color="<?php echo $cattext?>"><strong><?php echo $lang['smilies']?></strong></font></td>
         </tr>
@@ -900,7 +900,7 @@ if ($action == 'censor') {
         <table cellspacing="0" cellpadding="0" border="0" width="450" align="center">
         <tr>
         <td style="background-color: <?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td width="4%" align="center"><font style="color: <?php echo $cattext?>"><strong><?php echo $lang['textdeleteques']?></strong></font></td>
         <td align="left"><font style="color: <?php echo $cattext?>"><strong><?php echo $lang['textcensorfind']?></strong></font></td>
@@ -975,7 +975,7 @@ if ($action == "ranks") {
         <table cellspacing="0" cellpadding="0" border="0" width="650" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
         <td class="category" align="left"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textcusstatus']?></font></strong></td>
@@ -1090,7 +1090,7 @@ if ($action == "newsletter") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textnewsletter']?></font></strong></td>
         </tr>
@@ -1218,7 +1218,7 @@ if ($action == "prune") {
         <table cellspacing="0" cellpadding="0" border="0" width="550">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%" style="vertical-align: top;">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%" style="vertical-align: top;">
         <tr>
         <td class="category" colspan="2">
         <strong>
@@ -1433,7 +1433,7 @@ if ($action == "templates") {
         <table cellspacing="0" cellpadding="0" border="0" width="80%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
@@ -1484,7 +1484,7 @@ if ($action == "templates") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
@@ -1540,7 +1540,7 @@ if ($action == "templates") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
@@ -1603,7 +1603,7 @@ if ($action == "templates") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category"><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
@@ -1637,7 +1637,7 @@ if ($action == "templates") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category"><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
@@ -1670,7 +1670,7 @@ if ($action == "attachments") {
         <form method="post" action="cp2.php?action=attachments">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textsearch']?></font></strong></td>
         </tr>
@@ -1736,7 +1736,7 @@ if ($action == "attachments") {
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" colspan="6"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textattachsearchresults']?></strong></font></td>
         </tr>
@@ -1862,7 +1862,7 @@ if ($action == "modlog") {
     <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
     <tr>
     <td bgcolor="<?php echo $bordercolor?>">
-    <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
     <td><strong><font color="<?php echo $cattext?>">Username:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Time:</font></strong></td>
@@ -1984,7 +1984,7 @@ if ($action == "cplog") {
     <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
     <tr>
     <td bgcolor="<?php echo $bordercolor?>">
-    <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
     <td><strong><font color="<?php echo $cattext?>">Username:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Time:</font></strong></td>

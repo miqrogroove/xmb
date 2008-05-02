@@ -375,7 +375,7 @@ switch($action) {
         <form method="post" action="cp.php?action=ipban">
         <table cellspacing="0" cellpadding="0" border="0" width="60%" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="header" colspan="3"><?php echo $lang['textgetip']?></td>
         </tr>

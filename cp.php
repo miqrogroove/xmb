@@ -407,7 +407,7 @@ if ($action == "settings") {
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
         </tr>
@@ -787,7 +787,7 @@ if ($action == 'rename') {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" colspan="2"><strong><font color="<?php echo $cattext?>"><?php echo $lang['admin_rename_txt']?></font></strong></td>
         </tr>
@@ -855,7 +855,7 @@ if ($action == 'forum') {
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
@@ -1057,7 +1057,7 @@ if ($action == 'forum') {
         <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textforumopts']?></strong></font></td>
         </tr>
@@ -1362,7 +1362,7 @@ if ($action == "mods") {
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textforum']?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textmoderator']?></font></strong></td>
@@ -1432,7 +1432,7 @@ if ($action == "members") {
             <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
-            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr>
             <td class="category" colspan="2"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textmembers']?></strong></font></td>
             </tr>
@@ -1475,7 +1475,7 @@ if ($action == "members") {
             <table cellspacing="0" cellpadding="0" border="0" width="91%" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
-            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr class="category">
             <td align="center" width="3%"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']?></font></strong></td>
@@ -1663,7 +1663,7 @@ if ($action == "ipban") {
         <form method="post" action="cp.php?action=ipban">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']?>:</font></strong></td>
@@ -1823,7 +1823,7 @@ if ($action == "upgrade") {
             <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
-            <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
             <?php
@@ -1849,7 +1849,7 @@ if ($action == "upgrade") {
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['upgradesuccess']?></td>
         </tr>
@@ -1869,7 +1869,7 @@ if ($action == "upgrade") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
         <td class="tablerow" bgcolor="<?php echo $altbg1?>" colspan="2"><strong><?php echo $lang['textupgrade']?></strong></td>
         </tr>
@@ -1979,7 +1979,7 @@ if ($action == "search") {
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td colspan=2><strong><font color="<?php echo $cattext?>"><?php echo $lang['insertdata']?>:</font></strong></td>
         </tr>

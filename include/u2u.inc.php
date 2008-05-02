@@ -31,7 +31,7 @@ if (!defined('IN_CODE')) {
 }
 
 function u2u_msg($msg, $redirect) {
-    global $u2uheader, $u2ufooter, $tablewidth, $bordercolor, $tablespace, $borderwidth, $altbg1;
+    global $u2uheader, $u2ufooter, $tablewidth, $bordercolor, $tablespace, $THEME, $altbg1;
 
     if (!empty($redirect)) {
         redirect($redirect);
@@ -99,7 +99,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
 function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $db, $self, $lang, $xmbuser, $SETTINGS, $del;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
-    global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
+    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
     $leftpane = '';
@@ -187,7 +187,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
 function u2u_view($u2uid, $folders) {
     global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken;
-    global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $cattext, $thewidth;
+    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
     global $sendoptions, $u2uheader, $u2ufooter;
 
     $delchecked = $leftpane = '';
@@ -442,7 +442,7 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 
 function u2u_ignore() {
     global $ignorelist, $ignoresubmit, $self, $lang, $db, $oToken;
-    global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
+    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
 
     $leftpane = '';
     if (isset($ignoresubmit) && isset($ignorelist)) {
@@ -458,7 +458,7 @@ function u2u_ignore() {
 
 function u2u_display($folder, $folders) {
     global $db, $self, $lang;
-    global $altbg1, $altbg2, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $thewidth;
+    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
     $u2usin = $u2usout = $u2usdraft = $leftpane = '';

@@ -31,7 +31,7 @@ if (!defined('IN_CODE')) {
 }
 
 function blistmsg($message, $redirect='', $exit=false) {
-    global $bordercolor, $tablewidth, $borderwidth, $tablespace, $altbg1, $css, $bbname, $lang;
+    global $bordercolor, $tablewidth, $THEME, $tablespace, $altbg1, $css, $bbname, $lang;
     global $charset, $text, $redirectjs;
 
     if ($redirect != '') {
@@ -84,7 +84,7 @@ function buddy_add($buddys) {
 
 function buddy_edit() {
     global $db, $lang, $xmbuser, $oToken;
-    global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
     $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'");
@@ -103,7 +103,7 @@ function buddy_edit() {
 
 function buddy_delete($delete) {
     global $db, $lang, $xmbuser, $oToken;
-    global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     foreach($delete as $key=>$buddy) {
         $buddy = addslashes(checkInput($buddy));
@@ -115,7 +115,7 @@ function buddy_delete($delete) {
 
 function buddy_display() {
     global $db, $lang, $xmbuser, $oToken;
-    global $charset, $css, $bbname, $text, $bordercolor, $borderwidth, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
     $buddys = array();
