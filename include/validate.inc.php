@@ -206,6 +206,8 @@ function formVar($varname, $striptags = true, $quotes = false) {
 }
 
 function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
+	global $db;
+	
     if (isset($_POST[$varname])) {
         $retval = $_POST[$varname];
         if (get_magic_quotes_gpc()) {
@@ -227,7 +229,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         }
         
         if ($dbescape) {
-            $retval = dbstuff::escape($retval);
+            $retval = $db->escape($retval);
         }
     } else {
         $retval = '';
@@ -236,6 +238,8 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
 }
 
 function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
+	global $db;
+	
     $arrayItems = array();
     // Convert a single or comma delimited list to an array
     if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
@@ -273,7 +277,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     }
                     
                     if ($dbescape) {
-                        $theObject = dbstuff::escape($theObject);
+                        $theObject = $db->escape($theObject);
                     }
                     break;
             }
