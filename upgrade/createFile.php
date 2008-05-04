@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'createFile.php');
+
 define('ROOT', '../');
 require ROOT.'header.php';
 

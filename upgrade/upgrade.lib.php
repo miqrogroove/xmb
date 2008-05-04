@@ -25,6 +25,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
+ 
+if (!defined('IN_CODE')) {
+    exit("Not allowed to run this file directly.");
+}
 
 class Upgrade {
     var $db;
@@ -999,7 +1003,7 @@ class Upgrade {
                 $name[] = trim($v);
             }
             $name = "'".implode("', '", $name)."'";
-            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN($name)");
+            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN ($name)");
             while($u = $this->db->fetch_array($query)) {
                 $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
             }
