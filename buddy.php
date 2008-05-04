@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'buddy.php');
+
 require 'header.php';
 require ROOT.'include/buddy.inc.php';
 
