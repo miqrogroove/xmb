@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'post.php');
+
 require 'header.php';
 
 function bbcodeinsert() {

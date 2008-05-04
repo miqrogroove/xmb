@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'stats.php');
+
 require 'header.php';
 
 nav($lang['altstats']);
@@ -109,7 +111,7 @@ if (X_SADMIN) {
     if ($fids == '') {
          $restrict = '(1=2)';
     } else {
-         $restrict = 'fid IN('.$fids.')';
+         $restrict = 'fid IN ('.$fids.')';
     }
 }
 

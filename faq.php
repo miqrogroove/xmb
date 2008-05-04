@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'faq.php');
+
 require 'header.php';
 
 $page = getVar('page');

@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'misc.php');
+
 require 'header.php';
 require ROOT.'include/online.inc.php';
 

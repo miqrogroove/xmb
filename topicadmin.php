@@ -25,6 +25,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
+ 
+define('X_SCRIPT', 'topicadmin.php');
 
 require 'header.php';
 require ROOT.'include/topicadmin.inc.php';

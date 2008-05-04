@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'viewthread.php');
+
 require 'header.php';
 
 validatePpp();

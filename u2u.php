@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'u2u.php');
+
 require 'header.php';
 require ROOT.'include/u2u.inc.php';
 

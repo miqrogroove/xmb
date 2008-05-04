@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'forumdisplay.php');
+
 require 'header.php';
 
 loadtemplates(

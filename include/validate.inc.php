@@ -427,6 +427,30 @@ function getRequestInt($varname) {
 }
 
 /**
+* Retrieve a COOKIE integer and sanitize it
+*
+* @param   string   $varname   name of the variable in $_COOKIE
+* @return   integer   the "safe" integer if the variable is available, zero otherwise
+*/
+function getCookieInt($varname) {
+	global $xmbuser;
+	
+    $retval = 0;
+    if (isset($_COOKIE[$varname])) {
+		if (is_numeric($_COOKIE[$varname])) {
+        	$retval = intval($_COOKIE[$varname]);
+    	} else {
+    		$auditaction = addslashes("$onlineip|#|ATTACK: Non-numeric cookie value.");
+			audit($xmbuser, $auditaction, 0, 0);
+        	exit("Attack logged.");
+    	}
+    } 
+    
+    return $retval;
+}
+
+
+/**
 * Retrieve a REQUEST variable
 *
 * @param   string   $varname   name of the variable in $_REQUEST

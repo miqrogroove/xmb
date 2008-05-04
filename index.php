@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'index.php');
+
 require 'header.php';
 
 loadtemplates(

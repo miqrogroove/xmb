@@ -28,6 +28,10 @@
 
 error_reporting(E_ALL&~E_NOTICE);
 
+if (!defined('X_SCRIPT')) {
+    exit("Not allowed to run this file directly.");
+}
+
 define('IN_CODE', true);
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -107,9 +111,9 @@ $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
-    $gamma = 'Final';
+    $gamma = 'RC1';
     $service_pack = ' SP3';
-    $versionbuild = 20080424;
+    $versionbuild = 20080504;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -298,18 +302,21 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     $cookiepath = $array['path'];
 }
 
-// Set cookies
-put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain);
+// Update last visit cookies
 
-if (isset($xmblvb)) {
-    $thetime = $xmblvb;
-} else if (isset($xmblva)) {
-    $thetime = $xmblva;
+$xmblva = getCookieInt('xmblva'); // Last visit 
+$xmblvb = getCookieInt('xmblvb'); // Duration of this visit (considered to be up to 600 seconds)
+
+if ($xmblvb > 0) {
+    $thetime = $xmblvb;		// lvb will expire in 600 seconds, so if it's there, we're in a current session
+} else if ($xmblva > 0) {
+    $thetime = $xmblva;		// Not currently logged in, so let's get the time from the last visit
 } else {
-    $thetime = $onlinetime;
+    $thetime = $onlinetime;	// no cookie at all, so this is your first visit
 }
 
-put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain);
+put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
+put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb = 
 
 $lastvisit = $thetime;
 $lastvisit2 = $lastvisit - 540;
@@ -706,22 +713,30 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
-    $newu2umsg = '';
-    eval('$css = "'.template('css').'";');
-    message(nl2br(stripslashes($bboffreason)));
+if ( $SETTINGS['bbstatus'] == 'off' ) {
+	if ( !X_ADMIN ) {
+	    $newu2umsg = '';
+	    eval('$css = "'.template('css').'";');
+	    message(nl2br(stripslashes($bboffreason)));
+	}
 }
 
-// If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($SETTINGS['regviewonly'] == 'on') {
-    if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($SETTINGS['coppa'] == 'on') {
-            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-        } else {
-            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-        }
-        eval('$css = "'.template('css').'";');
-        message($message);
+// If the board is set to 'reg-only' use, and the user is a guest, force them to login first
+if ( X_GUEST && $SETTINGS['regviewonly'] == 'on' ) {
+	$cont = false;
+	$allowed_actions = array('reg', 'login', 'lostpw', 'coppa', 'captchaimage');
+	if ( defined('X_SCRIPT') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php') && in_array($action, $allowed_actions) ) {
+			$cont = true;
+    }
+    
+    if ( $cont == false ) {
+    	if ($SETTINGS['coppa'] == 'on') {
+        	$message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+    	} else {
+        	$message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+    	}
+    	eval('$css = "'.template('css').'";');
+    	message($message);
     }
 }
 

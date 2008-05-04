@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'editprofile.php');
+
 require 'header.php';
 
 loadtemplates(
