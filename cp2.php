@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'cp2.php');
+
 require 'header.php';
 require ROOT.'include/admin.inc.php';
 
@@ -1410,9 +1412,9 @@ if ($action == "prune") {
                     $tids[] = $t['tid'];
                 }
                 $tids = implode(',', $tids);
-                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN($tids)");
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN($tids)");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid IN($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid IN ($tids)");
             }
         } else {
             $db->query("TRUNCATE TABLE ".X_PREFIX."threads");
