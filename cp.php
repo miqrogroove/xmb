@@ -26,6 +26,8 @@
  *
  **/
 
+define('X_SCRIPT', 'cp.php');
+
 require 'header.php';
 require ROOT.'include/admin.inc.php';
 
