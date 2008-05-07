@@ -53,7 +53,6 @@ if (is_array($_tid)) {
 } else {
     $tid = (int) $_tid;
 }
-$kill = false;
 
 loadtemplates(
 'topicadmin_delete',
@@ -89,7 +88,8 @@ $forums = $db->fetch_array($query);
 $db->free_result($query);
 $forums['name'] = stripslashes($forums['name']);
 
-if ($fid == 0) {
+$kill = false;
+if ($fid == 0 Or !X_MEMBER) {
     $kill = true;
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name'].'</a>'));
@@ -825,47 +825,33 @@ switch($action) {
             eval('echo stripslashes("'.template('topicadmin_report').'");');
         } else {
             $tid = intval($tid);
+            $pid = getInt('pid', 'p');
             $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
             $postcount = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
             $db->free_result($query);
             $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
             $mods = explode(", ", $db->result($query, 0));
             $db->free_result($query);
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
-            while($usr = $db->fetch_array($query)) {
-                $mods[] = $usr['username'];
-            }
-            $db->free_result($query);
-            $sent = 0;
-            $time = $onlinetime;
-            foreach($mods as $key=>$mod) {
-                $mod = trim($mod);
-                $q = $db->query("SELECT ppp FROM ".X_PREFIX."members WHERE username='$mod'");
-                if ($db->num_rows($q) == 0) {
-                    continue;
-                }
-                $db->free_result($q);
-                $page = quickpage($postcount, $db->result($q, 0));
+
+            $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
+            while($modusr = $db->fetch_array($modquery)) {
+                $mod = $db->escape($modusr['username']);
+                $page = quickpage($postcount, $modusr['ppp']);
 
                 $posturl = $SETTINGS['boardurl']."viewthread.php?tid=$tid&page=$page#pid$pid";
-                $reason = formVar('reason');
+                $reason = postedVar('reason');
                 $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
 
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$self[username]', 'incoming', '$mod', 'Inbox', '$lang[reportsubject]', '$message', ".$db->time($time).", 'no', 'yes')");
-                $sent++;
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$xmbuser', 'incoming', '$mod', 'Inbox', '{$lang['reportsubject']}', '$message', ".$db->time($onlinetime).", 'no', 'yes')");
             }
+            $db->free_result($modquery);
 
-            $page = quickpage($postcount, $self['tpp']);
+            $page = quickpage($postcount, $tpp);
             message($lang['reportmsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
         }
         break;
 
     case 'votepoll':
-        // Are we logged in? Only members can vote in polls (otherwise vote stuffing is trivial)
-        if (!X_MEMBER) {
-            error($lang['notloggedin'], false);
-        }
-
         // User voted in poll related to thread $tid. The vote option is contained in $postopnum
         $postopnum = formInt('postopnum');
         if ($postopnum === 0) {
@@ -873,13 +859,14 @@ switch($action) {
         }
 
         // Does a poll exist for this thread?
-        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
+        $tid = intval($tid);
+        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
         if ($query === false) {
             error($lang['pollvotenotselected'], false);
         }
 
         $vote_id = $db->fetch_array($query);
-        $vote_id = (int) $vote_id['vote_id'];
+        $vote_id = $vote_id['vote_id'];
         $db->free_result($query);
 
         // does the poll option exist?
@@ -899,8 +886,8 @@ switch($action) {
         }
 
         // Okay, the user is about to vote
-        $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ('$vote_id', '$self[uid]', '".encode_ip($onlineip)."')");
-        $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id='$vote_id' AND vote_option_id='$postopnum'");
+        $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ($vote_id, {$self['uid']}, '".encode_ip($onlineip)."')");
+        $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
 
         if ($tid > 0) {
             message($lang['votemsg'], false, '', '', 'viewthread.php?tid='.$tid, true, false, true);

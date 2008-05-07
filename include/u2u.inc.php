@@ -59,7 +59,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
 }
 
 function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
-    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $del, $oToken;
+    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $del, $oToken, $xmbuser;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
@@ -69,21 +69,22 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
             $username = $rcpt['username'];
-            db_u2u_insert($username, $self['username'], 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
+            db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
             if ($self['saveogu2u'] == 'yes') {
-                db_u2u_insert($username, $self['username'], 'outgoing', $self['username'], 'Outbox', $subject, $message, 'no', 'yes');
+                db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');
             }
 
             $u2uid = (int) $u2uid;
             if ($del == 'yes' && $u2uid > 0){
-                   $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$self[username]'");
+                   $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
             }
 
             if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
                 $lastvisitcheck = $onlinetime - 600;
                 if ($lastvisitcheck > $rcpt['lastvisit']) {
                     $u2uurl = $SETTINGS['boardurl'] . 'u2u.php';
-                    altMail($rcpt['email'], "$lang[textnewu2uemail]", "$self[username] $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
+                    $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+                    altMail($rcpt['email'], "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
                 }
             }
         } else {
@@ -186,7 +187,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 }
 
 function u2u_view($u2uid, $folders) {
-    global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken;
+    global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken, $xmbuser;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
     global $sendoptions, $u2uheader, $u2ufooter;
 
@@ -199,11 +200,11 @@ function u2u_view($u2uid, $folders) {
         return;
     }
 
-    $query = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$self[username]'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     $u2u = $db->fetch_array($query);
     if ($u2u) {
         if ($u2u['type'] == 'incoming') {
-            $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$self[username]')");
+            $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$xmbuser')");
         } else if ($u2u['type'] == 'draft') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
         }
@@ -212,8 +213,8 @@ function u2u_view($u2uid, $folders) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = html_entity_decode(checkOutput(censor($u2u['subject'])));
-        $u2umessage = html_entity_decode(checkOutput(postify($u2u['message'], 'no', '', 'yes', 'no')));
+        $u2usubject = censor($u2u['subject']);
+        $u2umessage = postify($u2u['message'], 'no', '', 'yes', 'no');
         $u2ufolder = $u2u['folder'];
         $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
@@ -245,7 +246,7 @@ function u2u_view($u2uid, $folders) {
 }
 
 function u2u_print($u2uid, $eMail = false) {
-    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken;
+    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken, $xmbuser;
     $mailHeader = $mailFooter = '';
 
     $u2uid = (int) $u2uid;
@@ -255,7 +256,7 @@ function u2u_print($u2uid, $eMail = false) {
         return;
     }
 
-    $query = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$self[username]'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     $u2u = $db->fetch_array($query);
     $db->free_result($query);
     if ($u2u) {
@@ -263,8 +264,8 @@ function u2u_print($u2uid, $eMail = false) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";
-        $u2usubject = html_entity_decode(stripslashes(checkOutput(censor($u2u['subject']))));
-        $u2umessage = postify(html_entity_decode(stripslashes($u2u['message'])), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");;
+        $u2usubject = censor($u2u['subject']);
+        $u2umessage = postify($u2u['message'], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
         $u2ufolder = $u2u['folder'];
         $u2ufrom = $u2u['msgfrom'];
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : $u2u['msgto'];
@@ -285,7 +286,7 @@ function u2u_print($u2uid, $eMail = false) {
 }
 
 function u2u_delete($u2uid, $folder) {
-    global $db, $self, $lang;
+    global $db, $self, $lang, $xmbuser;
     global $u2uheader, $u2ufooter, $oToken;
 
     $u2uid = (int) $u2uid;
@@ -296,15 +297,15 @@ function u2u_delete($u2uid, $folder) {
     }
 
     if ($folder == "Trash") {
-        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$self[username]'");
+        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     } else {
-        $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$self[username]'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     }
     u2u_msg($lang['imdeletedmsg'], 'u2u.php?folder='.$folder);
 }
 
 function u2u_mod_delete($folder, $u2u_select) {
-    global $db, $self, $lang, $oToken;
+    global $db, $self, $lang, $oToken, $xmbuser;
 
     $in = '';
     foreach($u2u_select as $value) {
@@ -313,15 +314,15 @@ function u2u_mod_delete($folder, $u2u_select) {
     }
 
     if ($folder == "Trash") {
-        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE u2uid IN($in) AND owner='$self[username]'");
+        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE u2uid IN($in) AND owner='$xmbuser'");
     } else {
-        $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid IN($in) AND owner='$self[username]'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid IN($in) AND owner='$xmbuser'");
     }
     u2u_msg($lang['imdeletedmsg'], "u2u.php?folder=$folder");
 }
 
 function u2u_move($u2uid, $tofolder) {
-    global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder, $oToken;
+    global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder, $oToken, $xmbuser;
 
     $u2uid = (int) $u2uid;
 
@@ -336,13 +337,13 @@ function u2u_move($u2uid, $tofolder) {
         if (!(in_array($tofolder, $folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') || ($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) || ($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) || ($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
             error($lang['textcantmove'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         }
-        $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid='$u2uid' AND owner='$self[username]'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
         u2u_msg($lang['textmovesucc'], "u2u.php?folder=$folder");
     }
 }
 
 function u2u_mod_move($tofolder, $u2u_select) {
-    global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder;
+    global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder, $xmbuser;
 
     $in = '';
     foreach($u2u_select as $value) {
@@ -359,12 +360,12 @@ function u2u_mod_move($tofolder, $u2u_select) {
         error($lang['textcantmove'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
         return;
     }
-    $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid IN($in) AND owner='$self[username]'");
+    $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid IN($in) AND owner='$xmbuser'");
     u2u_msg($lang['textmovesucc'], "u2u.php?folder=$folder");
 }
 
 function u2u_markUnread($u2uid, $folder, $type) {
-    global $db, $self, $lang, $u2uheader, $u2ufooter, $oToken;
+    global $db, $self, $lang, $u2uheader, $u2ufooter, $oToken, $xmbuser;
 
     $u2uid = (int) $u2uid;
 
@@ -381,12 +382,12 @@ function u2u_markUnread($u2uid, $folder, $type) {
     if ($type == 'outgoing') {
         error($lang['textnomur'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
     }
-    $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid=$u2uid AND owner='$self[username]'");
+    $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid=$u2uid AND owner='$xmbuser'");
     u2u_msg($lang['textmarkedunread'], "u2u.php?folder=$folder");
 }
 
 function u2u_mod_markUnread($folder, $u2u_select) {
-    global $db, $lang, $u2uheader, $u2ufooter, $self, $oToken;
+    global $db, $lang, $u2uheader, $u2ufooter, $self, $oToken, $xmbuser;
 
     if (empty($folder)) {
         error($lang['textnofolder'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
@@ -412,12 +413,12 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     if (empty($in)) {
         error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
     }
-    $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid IN($in) AND owner='$self[username]'");
+    $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid IN($in) AND owner='$xmbuser'");
     u2u_msg($lang['textmarkedunread'], "u2u.php?folder=$folder");
 }
 
 function u2u_folderSubmit($u2ufolders, $folders) {
-    global $db, $lang, $self, $farray, $oToken;
+    global $db, $lang, $self, $farray, $oToken, $xmbuser;
 
     $error = '';
 
@@ -436,18 +437,18 @@ function u2u_folderSubmit($u2ufolders, $folders) {
         }
     }
     $u2ufolders = checkInput(implode(', ', $newfolders));
-    $db->query("UPDATE ".X_PREFIX."members SET u2ufolders='$u2ufolders' WHERE username='$self[username]'");
+    $db->query("UPDATE ".X_PREFIX."members SET u2ufolders='$u2ufolders' WHERE username='$xmbuser'");
     u2u_msg($lang['foldersupdate'].$error, "u2u.php?folder=Inbox");
 }
 
 function u2u_ignore() {
-    global $ignorelist, $ignoresubmit, $self, $lang, $db, $oToken;
+    global $ignorelist, $ignoresubmit, $self, $lang, $db, $oToken, $xmbuser;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
 
     $leftpane = '';
     if (isset($ignoresubmit) && isset($ignorelist)) {
         $self['ignoreu2u'] = htmlspecialchars(checkInput($ignorelist));
-        $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$self[username]'");
+        $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
         u2u_msg($lang['ignoreupdate'], "u2u.php?action=ignore");
     } else {
         $self['ignoreu2u'] = checkOutput($self['ignoreu2u']);
@@ -457,7 +458,7 @@ function u2u_ignore() {
 }
 
 function u2u_display($folder, $folders) {
-    global $db, $self, $lang;
+    global $db, $self, $lang, $xmbuser;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
@@ -467,7 +468,7 @@ function u2u_display($folder, $folders) {
         $folder = "Inbox";
     }
 
-    $query = $db->query("SELECT u.*, w.username, w.invisible FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."whosonline w ON (u.msgto=w.username OR u.msgfrom=w.username) AND w.username!='$self[username]' WHERE u.folder='$folder' AND u.owner='$self[username]' ORDER BY dateline DESC");
+    $query = $db->query("SELECT u.*, w.username, w.invisible FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."whosonline w ON (u.msgto=w.username OR u.msgfrom=w.username) AND w.username!='$xmbuser' WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
     while($u2u = $db->fetch_array($query)) {
         if ($u2u['readstatus'] == 'yes') {
             $u2ureadstatus = $lang['textread'];
@@ -477,11 +478,9 @@ function u2u_display($folder, $folders) {
 
         if (empty($u2u['subject'])) {
             $u2u['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
-        } else {
-            $u2u['subject'] = html_entity_decode($u2u['subject']);
         }
 
-        $u2usubject = checkOutput(censor($u2u['subject']));
+        $u2usubject = censor($u2u['subject']);
         if ($u2u['type'] == 'incoming') {
             if ($u2u['msgfrom'] == $u2u['username'] || $u2u['msgfrom'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {
@@ -579,7 +578,7 @@ function u2u_display($folder, $folders) {
 }
 
 function u2u_folderList() {
-    global $db, $self, $lang, $altbg1, $oToken;
+    global $db, $self, $lang, $altbg1, $oToken, $xmbuser;
     global $folder, $folderlist, $folders, $farray; // <--- these are modified in here
 
     $u2ucount = 0;
@@ -590,7 +589,7 @@ function u2u_folderList() {
     sort($folders);
     $folders = array_merge(array('Inbox' => $lang['textu2uinbox'], 'Outbox' => $lang['textu2uoutbox']), $folders, array('Drafts' => $lang['textu2udrafts'], 'Trash' => $lang['textu2utrash']));
 
-    $query = $db->query("SELECT folder, count(u2uid) as count FROM ".X_PREFIX."u2u WHERE owner='$self[username]' GROUP BY folder ORDER BY folder ASC");
+    $query = $db->query("SELECT folder, count(u2uid) as count FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' GROUP BY folder ORDER BY folder ASC");
     $flist = array();
     while($flist = $db->fetch_array($query)) {
         $farray[$flist['folder']] = $flist['count'];

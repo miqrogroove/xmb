@@ -35,7 +35,6 @@ class mod {
         global $self, $xmbuser, $xmbpw, $lang, $action, $oToken;
 
         if (!X_STAFF && $action != 'votepoll' && $action != 'report') {
-            extract($GLOBALS);
             error($lang['notpermitted'], false);
         }
     }
@@ -52,7 +51,6 @@ class mod {
         }
 
         if ($status1 != 'Moderator') {
-            extract($GLOBALS);
             error($lang['textnoaction'], false);
         }
     }
