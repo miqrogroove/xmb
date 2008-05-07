@@ -153,7 +153,7 @@ class dbstuff {
     }
 
     function escape($rawstring) {
-         return mysql_real_escape_string($rawstring);
+        return mysql_real_escape_string($rawstring, $this->link);
     }
 
     function query($sql, $overwriteErrorPerms=false) {

@@ -227,7 +227,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         }
         
         if ($dbescape) {
-            $retval = dbstuff::escape($retval);
+            $retval = $GLOBALS['db']->escape($retval);
         }
     } else {
         $retval = '';
@@ -273,7 +273,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     }
                     
                     if ($dbescape) {
-                        $theObject = dbstuff::escape($theObject);
+                        $theObject = $GLOBALS['db']->escape($theObject);
                     }
                     break;
             }
