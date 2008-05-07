@@ -206,8 +206,6 @@ function formVar($varname, $striptags = true, $quotes = false) {
 }
 
 function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
-	global $db;
-	
     if (isset($_POST[$varname])) {
         $retval = $_POST[$varname];
         if (get_magic_quotes_gpc()) {
@@ -229,7 +227,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         }
         
         if ($dbescape) {
-            $retval = $db->escape($retval);
+            $retval = dbstuff::escape($retval);
         }
     } else {
         $retval = '';
@@ -238,8 +236,6 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
 }
 
 function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
-	global $db;
-	
     $arrayItems = array();
     // Convert a single or comma delimited list to an array
     if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
@@ -277,7 +273,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     }
                     
                     if ($dbescape) {
-                        $theObject = $db->escape($theObject);
+                        $theObject = dbstuff::escape($theObject);
                     }
                     break;
             }
@@ -425,30 +421,6 @@ function getRequestInt($varname) {
     }
     return $retval;
 }
-
-/**
-* Retrieve a COOKIE integer and sanitize it
-*
-* @param   string   $varname   name of the variable in $_COOKIE
-* @return   integer   the "safe" integer if the variable is available, zero otherwise
-*/
-function getCookieInt($varname) {
-	global $xmbuser;
-	
-    $retval = 0;
-    if (isset($_COOKIE[$varname])) {
-		if (is_numeric($_COOKIE[$varname])) {
-        	$retval = intval($_COOKIE[$varname]);
-    	} else {
-    		$auditaction = addslashes("$onlineip|#|ATTACK: Non-numeric cookie value.");
-			audit($xmbuser, $auditaction, 0, 0);
-        	exit("Attack logged.");
-    	}
-    } 
-    
-    return $retval;
-}
-
 
 /**
 * Retrieve a REQUEST variable

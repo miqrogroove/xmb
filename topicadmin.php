@@ -204,7 +204,7 @@ switch($action) {
 
     case 'close':
         $mod->statuscheck($fid);
-        $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+        $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
         $closed = $db->result($query, 0);
         $db->free_result($query);
 
@@ -324,7 +324,7 @@ switch($action) {
         $mod->statuscheck($fid);
         if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
-                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
                 	$db->free_result($query);
                     error($lang['textnothread'], FALSE);
@@ -342,7 +342,7 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid='$fid' AND tid='$tid'");
+                $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
                 	$db->free_result($query);
                     error($lang['textnothread'], FALSE);
@@ -433,9 +433,7 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-            	$query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 1");
-                $pid = $db->result($query, 0);
-                $db->free_result($query);
+                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 1"), 0);
                 $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid='$tid' AND fid='$fid'");
                 $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid='$fid'");
 
@@ -454,9 +452,7 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-            	$query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC LIMIT 1");
-                $pid = $db->result($query, 0);
-                $db->free_result($query);
+                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC LIMIT 1"), 0);
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid!='$pid'");
                 while($result = $db->fetch_array($query)) {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
@@ -522,7 +518,7 @@ switch($action) {
                 $move = isset($_POST[$move]) ? $_POST[$move] : '';
                 $thatime = $onlinetime;
                 if (!$threadcreated) {
-                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$fid', '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
+                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
                     $newtid = $db->insert_id();
                     $threadcreated = true;
                 }
@@ -565,8 +561,6 @@ switch($action) {
 
     case 'merge':
         $mod->statuscheck($fid);
-        $tid = intval($tid);
-        $othertid = intval($othertid);
         if (noSubmit('mergesubmit')) {
             eval('echo stripslashes("'.template('topicadmin_merge').'");');
         } else {
@@ -706,7 +700,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
 
             if (isset($forums['type']) && $forums['type'] == 'sub') {
-                $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid='$fid' LIMIT 1");
+                $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid=$fid LIMIT 1");
                 $fup = $db->fetch_array($query);
                 $db->free_result($query);
                 updateforumcount($fid);
@@ -819,16 +813,14 @@ switch($action) {
         if (noSubmit('reportsubmit')) {
             eval('echo stripslashes("'.template('topicadmin_report').'");');
         } else {
-        	$query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-            $postcount = $db->result($query, 0);
-            $db->free_result($query);
+            $postcount = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'"), 0);
             $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
             $mods = explode(", ", $db->result($query, 0));
             $db->free_result($query);
             $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
             while($usr = $db->fetch_array($query)) {
                 $mods[] = $usr['username'];
-            }            
+            }
             $db->free_result($query);
             $sent = 0;
             $time = $onlinetime;
@@ -884,9 +876,7 @@ switch($action) {
         $db->free_result($vote_result); 
 
         // Has the user voted on this poll before?
-        $query = $db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'");
-        $voted = $db->result($query, 0);
-        $db->free_result($query);
+        $voted = $db->result($db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'"), 0);
         if ($voted === 1) {
             error($lang['alreadyvoted'], false);
         }

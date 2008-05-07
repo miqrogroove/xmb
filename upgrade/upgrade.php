@@ -1188,7 +1188,6 @@ switch($step) {
 
         show_act('Collecting data for data-restructuring');
         $u->fixBirthdays(0);
-        $u->fixForumPerms(0);
         show_result(X_INST_OK);
 
         $tablesCreated = array();
@@ -1227,6 +1226,10 @@ switch($step) {
         }
         show_result(X_INST_OK);
 
+        show_act('Fixing forum post permissions');
+        $u->fixForumPerms();
+        show_result(X_INST_OK);
+
         show_act('Restructure data (may take a long time)');
         foreach($tbl as $t) {
             $t = substr($t, strlen($u->tablepre));
@@ -1241,7 +1244,6 @@ switch($step) {
             $fromTable = $u->tablepre . $tbl;
             $tmpTable = $u->tablepre . $tbl . '_tmp';
 
-            $db->query("DROP TABLE IF EXISTS `$tmpTable`");
             $db->query("RENAME TABLE `$fromTable` TO `$tmpTable`");
             $db->query("DROP TABLE IF EXISTS `$fromTable`");
             $db->query($u->createTableQueryByTablename($tbl));
@@ -1253,10 +1255,6 @@ switch($step) {
 
         show_act('Fixing birthday values');
         $u->fixBirthdays(1);
-        show_result(X_INST_OK);
-
-        show_act('Fixing forum post permissions');
-        $u->fixForumPerms(1);
         show_result(X_INST_OK);
 
         show_act('Fixing missing posts per page values');

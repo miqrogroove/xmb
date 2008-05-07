@@ -375,8 +375,8 @@ if ($action == 'profile') {
                 $auditaction = substr($auditaction, $aapos + 1);
             }
             $auditaction = addslashes("$onlineip|#|$auditaction");
-            audit($xmbuser, $auditaction, 0, 0, "ATTACK: Potential XSS exploit using newemail");
-            exit("Attack logged.");
+            audit($xmbuser, $auditaction, 0, 0, "Potential XSS exploit using newemail");
+            die("Hack atttempt recorded in audit logs.");
         }
 
         $newpassword = formVar('newpassword');
@@ -388,8 +388,8 @@ if ($action == 'profile') {
                 $auditaction = substr($auditaction, $aapos + 1);
             }
             $auditaction = addslashes("$onlineip|#|$auditaction");
-            audit($xmbuser, $auditaction, 0, 0, "ATTACK: Potential XSS exploit using newpassword");
-            exit("Attack logged.");
+            audit($xmbuser, $auditaction, 0, 0, "Potential XSS exploit using newpassword");
+            die("Hack atttempt recorded in audit logs.");
         }
 
         $langfilenew = formVar('langfilenew');

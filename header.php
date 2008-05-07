@@ -28,10 +28,6 @@
 
 error_reporting(E_ALL&~E_NOTICE);
 
-if (!defined('X_SCRIPT')) {
-    exit("Not allowed to run this file directly.");
-}
-
 define('IN_CODE', true);
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -146,7 +142,7 @@ if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_
 
 // Fix provided by whinpo :)
 // Browser incompatability regarding insertion.
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && !defined('IS_IE')) {
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
     define('IS_IE', true);
     $browser = 'ie';
 }
@@ -226,6 +222,15 @@ if ($ipcheck == 'on') {
     }
 }
 
+// Checks for various variables in the URL, if any of them is found, script is halted
+$url_check = Array('status=', 'xmbuser=', 'xmbpw=', '<script');
+$url = urldecode($url);
+foreach($url_check as $name) {
+    if (strpos(strtolower($url), $name)) {
+        exit();
+    }
+}
+
 // Load Objects, and such
 $tables = array(
     'attachments',
@@ -262,22 +267,6 @@ define('X_PREFIX', $tablepre);
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 
-// Checks for various variables in the URL, if any of them is found, script is halted
-$url_check = Array('status=', 'xmbuser=', 'xmbpw=', '<script');
-$url = urldecode($url);
-foreach($url_check as $name) {
-    if (strpos(strtolower($url), $name)) {
-    	$auditaction = $_SERVER['REQUEST_URI'];
-		$aapos = strpos($auditaction, "?");
-		if ($aapos !== false) {
-		    $auditaction = substr($auditaction, $aapos + 1);
-		}
-		$auditaction = addslashes("$onlineip|#|ATTACK: $auditaction");
-		audit($xmbuser, $auditaction, 0, 0);
-        exit("Attack logged.");
-    }
-}
-
 // Load a few constants
 define('XMB_VERSION', $versiongeneral);
 define('XMB_BUILD', $versionbuild);
@@ -304,13 +293,10 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
 
 // Update last visit cookies
 
-$xmblva = getCookieInt('xmblva'); // Last visit 
-$xmblvb = getCookieInt('xmblvb'); // Duration of this visit (considered to be up to 600 seconds)
-
-if ($xmblvb > 0) {
-    $thetime = $xmblvb;		// lvb will expire in 600 seconds, so if it's there, we're in a current session
-} else if ($xmblva > 0) {
-    $thetime = $xmblva;		// Not currently logged in, so let's get the time from the last visit
+if (isset($xmblvb)) {
+    $thetime = $xmblvb;
+} else if (isset($xmblva)) {
+    $thetime = $xmblva;
 } else {
     $thetime = $onlinetime;	// no cookie at all, so this is your first visit
 }
@@ -351,12 +337,11 @@ if ($onlinetodaycount < 5) {
 
 // Get the user-vars, and make them semi-global
 $xmbuser = '';
-$xmbpw = '';
 if (isset($_COOKIE['xmbuser'])) {
     $xmbuserinput = $db->escape($_COOKIE['xmbuser']);
-    $xmbpw = $db->escape($_COOKIE['xmbpw']);
 } else {
     $xmbuserinput = '';
+    $xmbpw = '';
     $self['status'] = '';
 }
 
@@ -713,30 +698,22 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ( $SETTINGS['bbstatus'] == 'off' ) {
-	if ( !X_ADMIN ) {
-	    $newu2umsg = '';
-	    eval('$css = "'.template('css').'";');
-	    message(nl2br(stripslashes($bboffreason)));
-	}
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
+    $newu2umsg = '';
+    eval('$css = "'.template('css').'";');
+    message(nl2br(stripslashes($bboffreason)));
 }
 
-// If the board is set to 'reg-only' use, and the user is a guest, force them to login first
-if ( X_GUEST && $SETTINGS['regviewonly'] == 'on' ) {
-	$cont = false;
-	$allowed_actions = array('reg', 'login', 'lostpw', 'coppa', 'captchaimage');
-	if ( defined('X_SCRIPT') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php') && in_array($action, $allowed_actions) ) {
-			$cont = true;
-    }
-    
-    if ( $cont == false ) {
-    	if ($SETTINGS['coppa'] == 'on') {
-        	$message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-    	} else {
-        	$message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-    	}
-    	eval('$css = "'.template('css').'";');
-    	message($message);
+// If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
+if ($SETTINGS['regviewonly'] == 'on') {
+    if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
+        if ($SETTINGS['coppa'] == 'on') {
+            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+        } else {
+            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+        }
+        eval('$css = "'.template('css').'";');
+        message($message);
     }
 }
 
