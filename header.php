@@ -293,16 +293,19 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
 
 // Update last visit cookies
 
-if (isset($xmblvb)) {
-    $thetime = $xmblvb;
-} else if (isset($xmblva)) {
-    $thetime = $xmblva;
+$xmblva = getInt('xmblva', 'c'); // Last visit
+$xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
+
+if ($xmblvb > 0) {
+    $thetime = $xmblvb;		// lvb will expire in 600 seconds, so if it's there, we're in a current session
+} else if ($xmblva > 0) {
+    $thetime = $xmblva;		// Not currently logged in, so let's get the time from the last visit
 } else {
     $thetime = $onlinetime;	// no cookie at all, so this is your first visit
 }
 
 put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb = 
+put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb =
 
 $lastvisit = $thetime;
 $lastvisit2 = $lastvisit - 540;
@@ -698,20 +701,15 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && false === strpos($url, 'misc.php') && false === strpos($url, 'member.php')) {
-    $newu2umsg = '';
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php') {
     eval('$css = "'.template('css').'";');
     message(nl2br(stripslashes($bboffreason)));
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
-if ($SETTINGS['regviewonly'] == 'on') {
-    if (X_GUEST && $action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') {
-        if ($SETTINGS['coppa'] == 'on') {
-            $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-        } else {
-            $message = $lang['reggedonly'].' <a href="member.php?action=reg">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-        }
+if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
+    if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
+        $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         eval('$css = "'.template('css').'";');
         message($message);
     }

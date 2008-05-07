@@ -395,15 +395,44 @@ function getVar($varname, $striptags = true, $quotes = true) {
 }
 
 /**
-* Retrieve a GET integer and sanitize it
+* Retrieve a gpc integer and sanitize it
 *
-* @param   string   $varname   name of the variable in $_GET
+* @param   string   $varname   name of the variable in a superglobal array such as $_GET
+* @param   string   $sourcearray   abbreviation of the superglobal name, g for $_GET by default
 * @return   integer   the "safe" integer if the variable is available, zero otherwise
 */
-function getInt($varname) {
+function getInt($varname, $sourcearray='g') {
     $retval = 0;
-    if (isset($_GET[$varname]) && is_numeric($_GET[$varname])) {
-        $retval = (int) $_GET[$varname];
+    $foundvar = FALSE;
+    switch ($sourcearray) {
+        case 'g':
+            if (isset($_GET[$varname])) {
+                $retval = $_GET[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'p':
+            if (isset($_POST[$varname])) {
+                $retval = $_POST[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'c':
+            if (isset($_COOKIE[$varname])) {
+                $retval = $_COOKIE[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'r':
+        default:
+            if (isset($_REQUEST[$varname])) {
+                $retval = $_REQUEST[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+    }
+    if ($foundvar And is_numeric($retval)) {
+        $retval = intval($retval);
     }
     return $retval;
 }
@@ -485,20 +514,6 @@ function getFormArrayInt($varname, $doCount = true) {
 
     foreach($retval as $bits => $value) {
         $value = intval($value);
-    }
-    return $retval;
-}
-
-/**
-* Sanitizes a integer
-*
-* @param   string   $varname   name of the variable
-* @return   integer   the "safe" integer if available, zero otherwise
-*/
-function valInt($varname) {
-    $retval = 0;
-    if (isset($varname) && is_numeric($varname)) {
-        $retval = (int) $varname;
     }
     return $retval;
 }
