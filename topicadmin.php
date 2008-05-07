@@ -433,11 +433,16 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 1"), 0);
-                $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid='$tid' AND fid='$fid'");
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid='$fid'");
+                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1");
+                if ($db->num_rows($query) == 1) {
+                    $pid = $db->result($query, 0);
 
-                $mod->log($xmbuser, $action, $fid, $tid);
+                    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid=$fid");
+
+                    $mod->log($xmbuser, $action, $fid, $tid);
+                }
+                $db->free_result($query);
             }
 
             message($lang['bumpthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
@@ -452,18 +457,23 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $pid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC LIMIT 1"), 0);
-                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid!='$pid'");
-                while($result = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
+                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1");
+                if ($db->num_rows($query) == 1) {
+                    $pid = $db->result($query, 0);
+                    $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
+                    while ($result = $db->fetch_array($query)) {
+                        $dbauthor = $db->escape($result['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
+                    }
+                    $db->free_result($query);
+
+                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
+                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=$tid");
+
+                    updatethreadcount($tid); //Also updates lastpost
+                    $mod->log($xmbuser, $action, $fid, $tid);
                 }
                 $db->free_result($query);
-
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid!='$pid'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-
-                updatethreadcount($tid);
-                $mod->log($xmbuser, $action, $fid, $tid);
             }
             if (isset($forums['type']) && $forums['type'] == 'sub') {
                 updateforumcount($fup['fup']);
@@ -814,8 +824,11 @@ switch($action) {
         if (noSubmit('reportsubmit')) {
             eval('echo stripslashes("'.template('topicadmin_report').'");');
         } else {
-            $postcount = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'"), 0);
-            $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
+            $tid = intval($tid);
+            $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+            $postcount = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+            $db->free_result($query);
+            $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
             $mods = explode(", ", $db->result($query, 0));
             $db->free_result($query);
             $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
@@ -870,14 +883,17 @@ switch($action) {
         $db->free_result($query);
 
         // does the poll option exist?
-        $vote_result = $db->result($db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id' AND vote_option_id='$postopnum'"), 0);
+        $query = $db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
+        $vote_result = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+        $db->free_result($query);
         if ($vote_result != 1) {
             error($lang['pollvotenotselected'], false);
         }
-        $db->free_result($vote_result); 
 
         // Has the user voted on this poll before?
-        $voted = $db->result($db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id='$self[uid]'"), 0);
+        $query = $db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id AND vote_user_id={$self['uid']}");
+        $voted = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+        $db->free_result($query);
         if ($voted === 1) {
             error($lang['alreadyvoted'], false);
         }
