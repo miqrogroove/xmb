@@ -561,6 +561,7 @@ switch($action) {
 
     case 'merge':
         $mod->statuscheck($fid);
+        $tid = intval($tid);
         if (noSubmit('mergesubmit')) {
             eval('echo stripslashes("'.template('topicadmin_merge').'");');
         } else {
