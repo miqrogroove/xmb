@@ -142,7 +142,7 @@ if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_
 
 // Fix provided by whinpo :)
 // Browser incompatability regarding insertion.
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && !defined('IS_IE')) {
     define('IS_IE', true);
     $browser = 'ie';
 }
