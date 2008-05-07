@@ -222,15 +222,6 @@ if ($ipcheck == 'on') {
     }
 }
 
-// Checks for various variables in the URL, if any of them is found, script is halted
-$url_check = Array('status=', 'xmbuser=', 'xmbpw=', '<script');
-$url = urldecode($url);
-foreach($url_check as $name) {
-    if (strpos(strtolower($url), $name)) {
-        exit();
-    }
-}
-
 // Load Objects, and such
 $tables = array(
     'attachments',
@@ -266,6 +257,21 @@ define('X_PREFIX', $tablepre);
 
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
+
+// Checks for various variables in the URL, if any of them is found, script is halted
+$url_check = Array('status=', 'xmbuser=', 'xmbpw=', '%3cscript');
+foreach($url_check as $name) {
+    if (strpos(strtolower($url), $name)) {
+    	$auditaction = $_SERVER['REQUEST_URI'];
+		$aapos = strpos($auditaction, "?");
+		if ($aapos !== false) {
+		    $auditaction = substr($auditaction, $aapos + 1);
+		}
+		$auditaction = $db->escape("$onlineip|#|ATTACK: $auditaction");
+		audit($xmbuser, $auditaction, 0, 0);
+        exit("Attack logged.");
+    }
+}
 
 // Load a few constants
 define('XMB_VERSION', $versiongeneral);
