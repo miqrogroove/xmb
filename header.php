@@ -346,11 +346,13 @@ if ($onlinetodaycount < 5) {
 
 // Get the user-vars, and make them semi-global
 $xmbuser = '';
-if (isset($_COOKIE['xmbuser'])) {
+$xmbpw = '';
+if (isset($_COOKIE['xmbuser']) And isset($_COOKIE['xmbpw'])) {
     $xmbuserinput = $db->escape($_COOKIE['xmbuser']);
+    $xmbpwinput = $_COOKIE['xmbpw'];
 } else {
     $xmbuserinput = '';
-    $xmbpw = '';
+    $xmbpwinput = '';
     $self['status'] = '';
 }
 
@@ -358,12 +360,14 @@ $q = false;
 if ($xmbuserinput != '') {
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
     $userrec = $db->fetch_array($query);
-    if ($db->num_rows($query) == 1 && $userrec['password'] == $xmbpw) {
+    if ($db->num_rows($query) == 1 && $userrec['password'] == $xmbpwinput) {
         $q = true;
         $xmbuser = $db->escape($userrec['username']);
+        $xmbpw = $xmbpwinput;
     }
     $db->free_result($query);
 }
+unset($xmbuserinput, $xmbpwinput);
 
 if ($q) {
     foreach($userrec as $key => $val) {
