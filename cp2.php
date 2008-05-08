@@ -1360,8 +1360,8 @@ if ($action == "prune") {
                 error($lang['nopruneforums'], false, '</td></tr></table></td></tr></table><br />');
         }
 
+        $sign = '';
         if (isset($pruneBy['posts']['check']) && $pruneBy['posts']['check'] == 1) {
-            $sign = '';
             switch($pruneBy['posts']['type']) {
                 case 'less':
                     $sign = '<';
@@ -1378,7 +1378,6 @@ if ($action == "prune") {
         }
 
         if (isset($pruneBy['date']['check']) && $pruneBy['date']['check'] == 1) {
-            $sign = '';
             switch($pruneBy['date']['type']) {
                 case 'less':
                     $queryWhere[] = 'lastpost >= '.(time()-(24*3600*$pruneBy['date']['date']));
@@ -1391,6 +1390,8 @@ if ($action == "prune") {
                     $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneBy['date']['date']));
                     break;
             }
+        } elseif ($sign == '') {
+            $queryWhere[] = '1=0'; //Neither 'prune by' option was set, prune should abort.
         }
 
         if (!isset($pruneType['closed']) || $pruneType['closed'] != 1) {
