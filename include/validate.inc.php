@@ -505,15 +505,17 @@ function getFormArrayInt($varname, $doCount = true) {
         return false;
     }
 
-    $retval = $_POST[$varname];
+    $retval = array();
+    $formval = $_POST[$varname];
+
     if ($doCount) {
         if (count($retval) == 1) {
             $retval = array($retval);
         }
     }
 
-    foreach($retval as $bits => $value) {
-        $value = intval($value);
+    foreach($formval as $value) {
+        $retval[] = intval($value);
     }
     return $retval;
 }
