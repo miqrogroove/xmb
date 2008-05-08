@@ -962,9 +962,10 @@ class Upgrade {
 
             $postperm = explode(',', $forum['postperm_temp']);
             $guestposting = 'off';
+            $pollstatus = 'on';
             $perms = array(0, 0, 0, 0);
 
-            for($i=1; $i<4; $i++) {
+            for($i=0; $i<4; $i++) {
                 if ($postperm[$i] >= 32) { // Means everyone inc guests
                     $perms[$i] = 1;
                     if ($i == 1) { // Only when guests allowed to start threads.
@@ -978,10 +979,13 @@ class Upgrade {
                     $perms[$i] = 2;
                 } else if ($postperm[$i] == 0) { // Means  no one
                     $perms[$i] = 4;
+                    if ($i == 0) { // Only when polls totally disabled
+                        $pollstatus = 'off';
+                    }
                 }
             }
 
-            $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".$perms[1]."|".$perms[2]."', private='".$perms[3]."', guestposting='$guestposting', pollstatus='on' WHERE fid=".$forum['fid']);
+            $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".$perms[1]."|".$perms[2]."', private='".$perms[3]."', guestposting='$guestposting', pollstatus='$pollstatus' WHERE fid=".$forum['fid']);
         }
         $this->db->query("ALTER TABLE ".$this->tablepre."forums DROP `postperm_temp`");
     }

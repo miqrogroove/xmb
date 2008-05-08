@@ -427,6 +427,8 @@ function GenerateCode() {
 
             // free memory used to create background image
             imagedestroy($oBackgroundImage);
+        } elseif ($this->bUseColor) {
+            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
         } else {
             // create new image
             $this->oImage = imagecreate($this->iWidth, $this->iHeight);
@@ -436,7 +438,12 @@ function GenerateCode() {
         $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
         $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
         $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
-        imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+        $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+        
+        if ($this->bUseColor And empty($this->aBackgroundImages)) {
+            imagefill($this->oImage, 0, 0, $bgcolor);
+        }
+
         $this->DrawDots();
         $this->DrawLines();
         $this->RetrieveCode($imghash);
