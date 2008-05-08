@@ -643,7 +643,7 @@ if ($action == "settings") {
         }
 
         $maxAttachSize = formInt('maxAttachSize');
-        $def_tz_new = formInt('def_tz_new');
+        $def_tz_new = isset($_POST['def_tz_new']) && is_numeric($_POST['def_tz_new']) ? $_POST['def_tz_new'] : 0;
         $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : 0;
         $sigbbcodenew = formOnOff('sigbbcodenew');
         $sightmlnew = formOnOff('sightmlnew');

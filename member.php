@@ -468,7 +468,7 @@ switch($action) {
 
             $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
-            $timeoffset1 = formInt('timeoffset1');
+            $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
             $thememem = formInt('thememem');
             $tpp = formInt('tpp');
             $ppp = formInt('ppp');

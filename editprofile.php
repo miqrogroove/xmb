@@ -192,7 +192,7 @@ if (noSubmit('editsubmit')) {
         $langfilenew = basename($fileNameHash);
     }
 
-    $timeoffset1 = formInt('timeoffset1');
+    $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
     $thememem = formInt('thememem');
     $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
     $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
