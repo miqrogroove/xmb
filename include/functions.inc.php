@@ -26,10 +26,6 @@
  *
  **/
 
-if (!defined('IN_CODE')) {
-    exit("Not allowed to run this file directly.");
-}
-
 function nav($add=false, $raquo=true) {
     global $navigation;
 
