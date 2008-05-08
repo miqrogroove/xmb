@@ -47,7 +47,7 @@ if (!X_SADMIN) {
     error($lang['superadminonly'], false);
 }
 
-$user = getVar('user');
+$user = postedVar('user', '', TRUE, TRUE, FALSE, 'g');
 
 $userid = $db->fetch_array($db->query("SELECT uid FROM ".X_PREFIX."members WHERE username='$user'"));
 if (empty($userid['uid'])) {
@@ -55,7 +55,7 @@ if (empty($userid['uid'])) {
 }
 
 if (noSubmit('editsubmit')) {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='".rawurldecode($user)."'");
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
     $member = $db->fetch_array($query);
 
     $checked = '';

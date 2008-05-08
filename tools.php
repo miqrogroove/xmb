@@ -55,7 +55,7 @@ audit($xmbuser, $auditaction, 0, 0);
 
 displayAdminPanel();
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 switch($action) {
     case 'fixftotals':

@@ -49,7 +49,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'reg':
         nav($lang['textregister']);
@@ -564,8 +564,8 @@ switch($action) {
         break;
 
     case 'viewpro':
-        $member = getVar('member');
-        if (!$member) {
+        $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
+        if ($member == '') {
             error($lang['nomember']);
         } else {
             $memberinfo = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'"));

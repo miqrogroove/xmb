@@ -59,8 +59,8 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$action = getVar('action');
-$sendmode = (isset($action) && $action == 'send') ? "true" : "false";
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+$sendmode = ($action == 'send') ? "true" : "false";
 
 eval('$u2uheader = "'.template('u2u_header').'";');
 eval('$u2ufooter = "'.template('u2u_footer').'";');
@@ -70,16 +70,16 @@ if (X_GUEST) {
     exit;
 }
 
-$folder = formVar('folder');
-if (!$folder) {
-    $folder = getVar('folder');
+$folder = postedVar('folder', '', TRUE, TRUE, TRUE);
+if ($folder == '') {
+    $folder = postedVar('folder', '', TRUE, TRUE, TRUE, 'g');
 }
 
 $folderlist = '';
 $folders = '';
 $farray = array();
-if ($folder && (!$action || $action == 'mod' || $action == 'view')) {
-    $folder = checkInput($folder, true);
+if ($folder != '' && ($action == '' || $action == 'mod' || $action == 'view')) {
+    //$folder = checkInput($folder, true);
 } else {
     $folder = 'Inbox';
 }

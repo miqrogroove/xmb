@@ -205,19 +205,44 @@ function formVar($varname, $striptags = true, $quotes = false) {
     return $retval;
 }
 
-function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
-    if (isset($_POST[$varname])) {
-        $retval = $_POST[$varname];
+// postedVar is an all-purpose function for retrieving and sanitizing user input.
+// This is the preferred function as of version 1.9.8 SP3.
+function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE, $sourcearray='p') {
+    $foundvar = FALSE;
+    switch ($sourcearray) {
+        case 'p':
+            if (isset($_POST[$varname])) {
+                $retval = $_POST[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'g':
+            if (isset($_GET[$varname])) {
+                $retval = $_GET[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'c':
+            if (isset($_COOKIE[$varname])) {
+                $retval = $_COOKIE[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+        case 'r':
+        default:
+            if (isset($_REQUEST[$varname])) {
+                $retval = $_REQUEST[$varname];
+                $foundvar = TRUE;
+            }
+            break;
+    }
+    if ($foundvar) {
         if (get_magic_quotes_gpc()) {
-            $retval = stripslashes($_POST[$varname]);
-        } else {
-            $retval = $_POST[$varname];
+            $retval = stripslashes($retval);
         }
-        
         if ($word != '') {
             $retval = str_ireplace($word, "_".$word, $retval);
         }
-        
         if ($htmlencode) {
             if ($quoteencode) {
                 $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -225,7 +250,6 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
                 $retval = htmlspecialchars($retval, ENT_NOQUOTES);
             }
         }
-        
         if ($dbescape) {
             $retval = $GLOBALS['db']->escape($retval);
         }
@@ -368,30 +392,6 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
         }
     }
     return $arrayItems;
-}
-
-/**
-* Retrieve a GET variable and sanitize it
-*
-* @param   string   $varname   name of the variable in $_GET
-* @param   boolean   $striptags   do a striptags to remove HTML tags
-* @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
-* @return   string   the "safe" string if the variable is available, empty otherwise
-*/
-/* getVar() is deprecated */
-function getVar($varname, $striptags = true, $quotes = true) {
-    $retval = '';
-    if (isset($_GET[$varname]) && $_GET[$varname] !== '') {
-        $retval = urldecode(trim($_GET[$varname]));
-        if ($striptags) {
-            $retval = strip_tags($retval);
-        }
-
-        if ($quotes) {
-            $retval = htmlspecialchars($retval, ENT_QUOTES);
-        }
-    }
-    return $retval;
 }
 
 /**

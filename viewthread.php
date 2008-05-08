@@ -36,8 +36,8 @@ $pid = getInt('pid');
 $tid = getInt('tid');
 $fid = getInt('fid');
 $page = getInt('page');
-$goto = getVar('goto');
-$action = getVar('action');
+$goto = postedVar('goto', '', FALSE, FALSE, FALSE, 'g');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if ($goto == 'lastpost') {
     if ($pid > 0) {
@@ -250,7 +250,7 @@ $replylink = $quickreply = '';
 
 $status1 = modcheck($self['status'], $xmbuser, $forum['moderator']);
 
-if (!$action) {
+if ($action == '') {
     if (X_MEMBER && $self['sig'] != '') {
         $usesig = true;
     }

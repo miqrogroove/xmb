@@ -60,8 +60,6 @@ function buddy_add($buddys) {
         if (empty($buddy) || (strlen(trim($buddy)) == 0)) {
             blistmsg($lang['nobuddyselected'], '', true);
         } else {
-            $buddy = addslashes(checkInput($buddy));
-
             if ($buddy == $xmbuser) {
                 blistmsg($lang['buddywarnaddself']);
             }
@@ -106,7 +104,6 @@ function buddy_delete($delete) {
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     foreach($delete as $key=>$buddy) {
-        $buddy = addslashes(checkInput($buddy));
         $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
     }
 

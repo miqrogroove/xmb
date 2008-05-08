@@ -56,7 +56,7 @@ audit($xmbuser, $auditaction, 0, 0);
 
 displayAdminPanel();
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if ($action == "settings") {
     if (noSubmit('settingsubmit')) {
@@ -1424,7 +1424,7 @@ if ($action == "mods") {
 }
 
 if ($action == "members") {
-    $members = getVar('members');
+    $members = postedVar('members', '', FALSE, FALSE, FALSE, 'g');
     if (noSubmit('membersubmit')) {
         if (!$members) {
             ?>
@@ -1772,7 +1772,7 @@ if ($action == "ipban") {
 }
 
 if ($action == "deleteposts") {
-    $member = getVar('member');
+    $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
     $queryd = $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
     $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
     while($threads = $db->fetch_array($queryt)) {

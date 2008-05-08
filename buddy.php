@@ -47,12 +47,12 @@ if (X_GUEST) {
     error($lang['u2unotloggedin']);
 }
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'add':
-        $buddys = getVar('buddys');
+        $buddys = postedVar('buddys', '', TRUE, TRUE, FALSE, 'g');
         if (empty($buddys)) {
-            $buddys = formArray('buddys');
+            $buddys = postedArray('buddys');
         }
         buddy_add($buddys);
         break;
@@ -60,7 +60,7 @@ switch($action) {
         buddy_edit();
         break;
     case 'delete':
-        $delete = formArray('delete');
+        $delete = postedArray('delete');
         if ($delete) {
             buddy_delete($delete);
         } else {

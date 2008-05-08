@@ -57,7 +57,7 @@ eval('$css = "'.template('css').'";');
 
 $favs = $buddys = NULL;
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'profile':
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');

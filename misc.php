@@ -67,7 +67,7 @@ loadtemplates(
 smcwcache();
 eval('$css = "'.template('css').'";');
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'login':
         nav($lang['textlogin']);
@@ -619,8 +619,8 @@ switch($action) {
         break;
 
     case 'list':
-        $order = getVar('order');
-        $desc = getVar('desc');
+        $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
+        $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
         $page = getInt('page');
         $srchmem = postedVar('srchmem', '', TRUE, FALSE);
         $srchemail = postedVar('srchemail');
@@ -634,7 +634,7 @@ switch($action) {
             exit();
         }
 
-        if (!$desc || strtolower($desc) != 'desc') {
+        if (strtolower($desc) != 'desc') {
             $desc = 'asc';
         }
 
@@ -647,7 +647,7 @@ switch($action) {
             $page = 1;
         }
 
-        if (!$order || ($order != 'username' && $order != 'postnum' && $order != 'status')) {
+        if ($order != 'username' && $order != 'postnum' && $order != 'status') {
             $orderby = "uid";
             $order = 'uid';
         } else if ($order == 'status') {
@@ -791,7 +791,7 @@ switch($action) {
     case 'captchaimage':
         require ROOT.'include/captcha.inc.php';
         $oPhpCaptcha = new Captcha(250, 50);
-        $imagehash = getVar('imagehash');
+        $imagehash = postedVar('imagehash', '', FALSE, TRUE, FALSE, 'g');
         $oPhpCaptcha->Create($imagehash);
         exit();
         break;

@@ -30,7 +30,7 @@ define('X_SCRIPT', 'faq.php');
 
 require 'header.php';
 
-$page = getVar('page');
+$page = postedVar('page', '', FALSE, FALSE, FALSE, 'g');
 
 if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
     loadtemplates('misc_feature_notavailable');

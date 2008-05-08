@@ -107,9 +107,9 @@ $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
-    $gamma = 'RC1';
+    $gamma = 'RC2';
     $service_pack = ' SP3';
-    $versionbuild = 20080504;
+    $versionbuild = 20080507;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';

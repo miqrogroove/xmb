@@ -34,7 +34,7 @@ require ROOT.'include/admin.inc.php';
 loadtemplates('error_nologinsession');
 eval('$css = "'.template('css').'";');
 
-$action = getVar('action');
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if (X_ADMIN) {
     $download = formVar('download');
@@ -59,7 +59,7 @@ if (X_ADMIN) {
         exit();
     }
 
-    $download = getVar('download');
+    $download = getInt('download');
     if ($action == "themes" && $download) {
         $contents = array();
         $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$download'");
@@ -227,10 +227,12 @@ if ($action == 'restrictions') {
 }
 
 if ($action == 'themes') {
-    $single = getVar('single');
-    $newtheme = formVar('newtheme');
+    $single = '';
+    $single_str = postedVar('single', '', FALSE, FALSE, FALSE, 'g');
+    $single_int = getInt('single');
+    $newtheme = postedVar('newtheme', '', FALSE, FALSE, FALSE, 'g');
 
-    if (noSubmit('themesubmit') && !$single && noSubmit('importsubmit')) {
+    if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -405,8 +407,8 @@ if ($action == 'themes') {
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
 
-    if ($single && $single != "submit" && $single != "anewtheme1") {
-        $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single'");
+    if ($single_int > 0) {
+        $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single_int'");
         $themestuff = $db->fetch_array($query);
         $db->free_result($query);
         ?>
@@ -514,7 +516,7 @@ if ($action == 'themes') {
         <td colspan="2"><input type="text"  value="<?php echo $themestuff['smdir']?>" name="smdirnew" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="3"><input type="submit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="orig" value="<?php echo $single?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="3"><input type="submit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="orig" value="<?php echo $single_int?>" /></td>
         </tr>
         </table>
         </td>
@@ -524,7 +526,7 @@ if ($action == 'themes') {
         </td>
         </tr>
         <?php
-    } else if ($single && $single == "anewtheme1") {
+    } else if ($single_str == "anewtheme1") {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -618,7 +620,7 @@ if ($action == 'themes') {
         <td><input type="text" name="smdirnew" value="images" /></td>
         </tr>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="<?php echo $single?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="true" /></td>
         </tr>
         </table>
         </td>
@@ -628,7 +630,7 @@ if ($action == 'themes') {
         </td>
         </tr>
         <?php
-    } else if ($single && $single == "submit" && !$newtheme) {
+    } else if ($single_str == "submit" && !$newtheme) {
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -653,7 +655,7 @@ if ($action == 'themes') {
 
         $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
-    } else if ($single && $single == "submit" && $newtheme) {
+    } else if ($single_str == "submit" && $newtheme) {
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -1547,7 +1549,7 @@ if ($action == "templates") {
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['templates']?></font></strong></td>
         </tr>
         <?php
-        $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id='$tid' ORDER BY name");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id=$tid ORDER BY name");
         $template = $db->fetch_array($query);
         $db->free_result($query);
         ?>
@@ -1571,7 +1573,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('editsubmit')) {
-        $tid = getVar('tid');
+        $tid = postedVar('tid', '', FALSE, FALSE, FALSE, 'g');
         $namenew = postedVar('namenew');
         //Templates are double-slashed so that they can be eval'd as raw strings.
         $templatenew = $db->escape(getRequestVar('templatenew'));
@@ -1588,7 +1590,8 @@ if ($action == "templates") {
                 }
             }
         } else {
-            $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id='$tid'");
+            $tid = getInt('tid');
+            $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id=$tid");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesupdate'].'</td></tr>';
         redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
@@ -1598,6 +1601,7 @@ if ($action == "templates") {
         if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
+        $tid = getInt('tid', 'r');
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1626,7 +1630,8 @@ if ($action == "templates") {
     }
 
     if (onSubmit('deletesubmit')) {
-        $db->query("DELETE FROM ".X_PREFIX."templates WHERE id='$tid'");
+        $tid = getInt('tid', 'r');
+        $db->query("DELETE FROM ".X_PREFIX."templates WHERE id=$tid");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
         redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
