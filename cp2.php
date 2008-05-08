@@ -1240,7 +1240,7 @@ if ($action == "prune") {
         <table>
         <tr>
         <td>
-        <input type="checkbox" name="pruneBy[date][check]" value="1" />
+        <input type="checkbox" name="pruneBy[date][check]" value="1" checked="checked" />
         </td>
         <td>
         <select name="pruneBy[date][type]">
@@ -1248,7 +1248,7 @@ if ($action == "prune") {
         <option value="is"><?php echo $lang['pruneexactly']?></option>
         <option value="less"><?php echo $lang['prunelessthan']?></option>
         </select>
-        <input type="text" name="pruneBy[date][date]" value="10" /> <?php echo $lang['daysold']?>
+        <input type="text" name="pruneBy[date][date]" value="100" /> <?php echo $lang['daysold']?>
         </td>
         </tr>
         <tr>
@@ -1275,7 +1275,7 @@ if ($action == "prune") {
         <table>
         <tr>
         <td>
-        <input type="radio" name="pruneFrom" value="all" checked="checked" />
+        <input type="radio" name="pruneFrom" value="all" />
         </td>
         <td>
         <?php echo $lang['textallforumsandsubs']?>
@@ -1291,7 +1291,7 @@ if ($action == "prune") {
         </tr>
         <tr>
         <td>
-        <input type="radio" name="pruneFrom" value="fid" />
+        <input type="radio" name="pruneFrom" value="fid" checked="checked" />
         </td>
         <td>
         <?php echo $lang['prunefids']?> <input type="text" name="pruneFromFid" /> <span class="smalltxt">(<?php echo $lang['seperatebycomma']?>)</span>
