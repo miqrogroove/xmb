@@ -105,7 +105,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
-    $username = attrOut($_GET['username'], 'javascript'); //username is the param from u2u links on profiles.
+    $username = postedVar('username', 'javascript', TRUE, FALSE, TRUE, 'g'); //username is the param from u2u links on profiles.
 
     if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
         error($lang['textbanfromu2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
