@@ -361,7 +361,8 @@ switch($action) {
                 $password = '';
                 $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                 mt_srand((double)microtime() * 1000000);
-                for($get = strlen($chars); $i < 8; $i++) {
+                $get = strlen($chars) - 1;
+                for($i = 0; $i < 8; $i++) {
                     $password .= $chars[mt_rand(0, $get)];
                 }
                 $password2 = $password;

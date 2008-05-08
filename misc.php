@@ -492,8 +492,8 @@ switch($action) {
             $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
             $newpass = '';
             mt_srand((double)microtime() * 1000000);
-            $max = mt_rand(8, 12);
-            for ($get=strlen($chars), $i=0; $i < $max; $i++) {
+            $get = strlen($chars) - 1;
+            for ($i = 0; $i < 13; $i++) {
                 $newpass .= $chars[mt_rand(0, $get)];
             }
             $newmd5pass = md5($newpass);
