@@ -967,7 +967,9 @@ class Upgrade {
             for($i=1; $i<4; $i++) {
                 if ($postperm[$i] >= 32) { // Means everyone inc guests
                     $perms[$i] = 1;
-                    $guestposting = 'on';
+                    if ($i == 1) { // Only when guests allowed to start threads.
+                        $guestposting = 'on';
+                    }
                 } else if ($postperm[$i] >= 16 && $postperm[$i] <= 31) { // All but guests. if guests can post assume everyone can
                     $perms[$i] = 1;
                 } else if ($postperm[$i] >= 4 && $postperm[$i] <= 15) { // Mods & Admins only
