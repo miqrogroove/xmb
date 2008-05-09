@@ -118,7 +118,7 @@ function censor($txt, $ignorespaces=false) {
                     $prevfind = $find;
                 }
             }
-            
+
             if ($ignorespaces !== true) {
                 $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
             }
@@ -266,7 +266,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 }
             }
         }
-        
+
         $message = implode("", $messagearray);
         $message = addslashes($message);
     } else {
@@ -280,15 +280,15 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = wordwrap($message, 150, "\n", 1);
         $message = preg_replace('#(\[/?.*)\n(.*\])#mi', '\\1\\2', $message);
     }
-    
+
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
-    
+
     return $message;
 }
 
 function bbcode($message, $allowimgcode) {
     global $lang;
-    
+
     $find = array(
         0 => '[b]',
         1 => '[/b]',
@@ -714,7 +714,7 @@ function smcwcache() {
 
 /* checkInput() is deprecated */
 function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quotes=true) {
-    
+
     $input = trim($input);
     if ($striptags == 'yes') {
         $input = strip_tags($input);
@@ -736,7 +736,7 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
 
 /* checkOutput() is deprecated */
 function checkOutput($output, $allowhtml='no', $word='', $allowEntities=false) {
-    
+
     $output = trim($output);
     if ($allowhtml == 'yes' || $allowhtml == 'on') {
         $output = htmlspecialchars_decode($output);
@@ -1529,7 +1529,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     if ($restrict != '') {
         $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
     } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums ORDER BY displayorder");
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums WHERE status='on' ORDER BY displayorder");
     }
 
     $standAloneForums = array();
@@ -1653,7 +1653,7 @@ function forumJump() {
     if ($restrict != '') {
         $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
     } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password, displayorder FROM ".X_PREFIX."forums ORDER BY displayorder");
+        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE status='on' ORDER BY displayorder");
     }
 
     $standAloneForums = array();
