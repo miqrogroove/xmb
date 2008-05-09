@@ -79,7 +79,7 @@ if ($tid) {
     if ($db->num_rows($query) == 1) {
         $thread = $db->fetch_array($query);
         $db->free_result($query);
-        $threadname = html_entity_decode(stripslashes(htmlspecialchars($thread['subject'])));
+        $threadname = stripslashes($thread['subject']);
         $fid = (int) $thread['fid'];
     } else {
         error($lang['textnothread']);
@@ -586,7 +586,8 @@ switch($action) {
 
                     $topicpages = quickpage($posts, $subs['ppp']);
                     $threadurl = $SETTINGS['boardurl'] . 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
-                    altMail($subs['email'], $lang['textsubsubject'].' '.$threadname, $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
+                    $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
+                    altMail($subs['email'], $lang['textsubsubject'].' '.$rawsubject, $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
                 }
                 $db->free_result($subquery);
 
@@ -837,7 +838,7 @@ switch($action) {
         break;
 
     case 'edit':
-        nav('<a href="viewthread.php?tid='.$tid.'">'.html_entity_decode($threadname).'</a>');
+        nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['texteditpost']);
 
         if (!isset($editsubmit)) {

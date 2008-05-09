@@ -500,7 +500,8 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
 
-            altMail($member['email'], '['.$bbname.'] '.$lang['textyourpw'], $lang['textyourpwis']."\n\n".$member['username']."\n".$newpass, "From: ".$bbname." <".$adminemail.">");
+            $emailuname = htmlspecialchars_decode($member['username'], ENT_QUOTES);
+            altMail($member['email'], '['.$bbname.'] '.$lang['textyourpw'], $lang['textyourpwis']."\n\n".$emailuname."\n".$newpass, "From: ".$bbname." <".$adminemail.">");
 
             $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
             $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';
