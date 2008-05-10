@@ -189,7 +189,7 @@ if ($gid == 0) {
                 $show_inv_key = true;
             }
 
-            $memtally[] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$pre.''.$online['username'].''.$suff.'</a>';
+            $memtally[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$pre.''.$online['username'].''.$suff.'</a>';
             $num++;
         }
 
