@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10
+ * XMB 1.9.10 Karl
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -132,15 +132,16 @@ class dbstuff {
     }
 
     function panic($sql = '') {
-    	
-    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
-    		// Check that we actually made a connection
-			if ( $this->link == false ) {
-				$this->link = null;
-			}    		
-    		
-    		$error = mysql_error($this->link);
-    		$errno = mysql_errno($this->link);
+
+        if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+            // Check that we actually made a connection
+            if ($this->link === FALSE) {
+                $error = mysql_error();
+                $errno = mysql_errno();
+            } else {
+                $error = mysql_error($this->link);
+                $errno = mysql_errno($this->link);
+            }
     		
 			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
         } else {

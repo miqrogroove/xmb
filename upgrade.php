@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10
+ * XMB 1.9.10 Karl
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -65,8 +65,8 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <li>BACKUP YOUR DATABASE - This script cannot be undone!
 <li>Confirm your forum database account is granted ALTER and LOCK privileges.
 <li>Disable your forums using the Board Status setting.
-<li>Upload the XMB 1.9.10 php and javascript files, and confirm they work by hitting the forum front page.
-<li>Run this script one time to complete your database upgrade.
+<li>Upload the XMB 1.9.10 files.
+<li>Upload and run this script to complete your database upgrade.
 <li>Go to the Administration Panel to edit your Forum permissions.
 <li>Enable your forums using the Board Status setting.
 <li>Deny ALTER and LOCK privileges to the forum database account. (Optional, recommended)
@@ -225,6 +225,16 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query('UNLOCK TABLES');
     flush();
 
+    echo 'Checking for new themes...';
+    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='Oxygen XMB'");
+    if ($db->num_rows($query) == 0 And is_dir('images/oxygen')) {
+        echo 'Adding Oxygen as the new default theme...<br />';
+        $db->query("INSERT INTO ".X_PREFIX."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF')");
+        $newTheme = $db->insert_id();
+        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
+    }
+    $db->free_result($query);
+
     echo 'Deleting the upgrade.php file...<br />';
     unlink('upgrade.php');
 
@@ -337,5 +347,4 @@ function fixForumPerms($v) {
             break;
     }
 }
-
 ?>

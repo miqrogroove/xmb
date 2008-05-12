@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10
+ * XMB 1.9.10 Karl
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -112,14 +112,14 @@ if (DEBUG) {
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
 +$versionshort = 'XMB 1.9.10';
-+$versiongeneral = 'XMB 1.9.10';
++$versiongeneral = 'XMB 1.9.10 Karl';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
-    $beta = '';
+    $beta = ' Beta 1';
     $gamma = '';
     $service_pack = '';
-    $versionbuild = 20080421;
+    $versionbuild = 20080512;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
