@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -536,7 +536,7 @@ if ($action == "settings") {
         printsetting2($lang['max_avatar_size_h'], 'max_avatar_size_h_new', $max_avatar_sizes[1], 4);
         printsetting1($lang['what_tickerstatus'], 'tickerstatusnew', $tickerstatuson, $tickerstatusoff);
         printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
-        printsetting4($lang['tickercontents'], 'tickercontentsnew', stripslashes($SETTINGS['tickercontents']), 5, 50);
+        printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
         ?>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
@@ -649,7 +649,9 @@ if ($action == "settings") {
         $sightmlnew = formOnOff('sightmlnew');
         $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
         $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
+        $tickerstatusnew = formOnOff('tickerstatusnew');
         $tickerdelaynew = formInt('tickerdelaynew');
+        $tickercontentsnew = postedVar('tickercontentsnew');
         $maxDayReg = formInt('maxDayReg');
         $captchanew = formOnOff('captchanew');
         $captcharegnew = formOnOff('captcharegnew');
@@ -878,8 +880,20 @@ if ($action == 'forum') {
             <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
             &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
             <?php
-            foreach($groups as $moveforum) {
+            if (!isset($subs[$forum['fid']])) { //Ungrouped forum options.
+                foreach($forums[0] as $moveforum) {
+                    if ($moveforum['fid'] != $forum['fid']) {
+                        echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                    }
+                }
+            }
+            foreach($groups as $moveforum) { //Groups and grouped forum options.
                 echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
+                if (!isset($subs[$forum['fid']])) {
+                    foreach($forums[$moveforum['fid']] as $moveforum) {
+                        echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                    }
+                }
             }
             ?>
             </select>
@@ -901,13 +915,20 @@ if ($action == 'forum') {
                     &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $subforum['fid']?>" size="2" value="<?php echo $subforum['displayorder']?>" />
                     &nbsp; <select name="status<?php echo $subforum['fid']?>">
                     <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
-                    &nbsp; <select name="moveto<?php echo $subforum['fid']?>">
+                    &nbsp; <select name="moveto<?php echo $subforum['fid']?>"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
                     <?php
-                    foreach($forumlist as $moveforum) {
-                        if ($subforum['fup'] == $moveforum['fid']) {
-                            echo '<option value="'.$moveforum['fid'].'" selected="selected">'.stripslashes($moveforum['name']).'</option>';
+                    foreach($forums[0] as $moveforum) { //Ungrouped forum options.
+                        if ($moveforum['fid'] == $subforum['fup']) {
+                            $curgroup = $selHTML;
                         } else {
-                            echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
+                            $curgroup = '';
+                        }
+                        echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                    }
+                    foreach($groups as $moveforum) { //Groups and grouped forum options.
+                        echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
+                        foreach($forums[$moveforum['fid']] as $moveforum) {
+                            echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                         }
                     }
                     ?>
@@ -956,13 +977,25 @@ if ($action == 'forum') {
                     <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
                     &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="">-<?php echo $lang['textnone']?>-</option>
                     <?php
-                    foreach($groups as $moveforum) {
+                    if (!isset($subs[$forum['fid']])) { //Ungrouped forum options.
+                        foreach($forums[0] as $moveforum) {
+                            echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                        }
+                    }
+                    foreach($groups as $moveforum) { //Groups and grouped forum options.
                         if ($moveforum['fid'] == $forum['fup']) {
                             $curgroup = $selHTML;
                         } else {
                             $curgroup = '';
                         }
                         echo '<option value="'.$moveforum['fid'].'" '.$curgroup.'>'.stripslashes($moveforum['name']).'</option>';
+                        if (!isset($subs[$forum['fid']])) {
+                            foreach($forums[$moveforum['fid']] as $moveforum) {
+                                if ($moveforum['fid'] != $forum['fid']) {
+                                    echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                                }
+                            }
+                        }
                     }
                     ?>
                     </select>
@@ -984,13 +1017,20 @@ if ($action == 'forum') {
                             &nbsp; <?php echo $lang['textorder']?> <input type="text" name="displayorder<?php echo $forum['fid']?>" size="2" value="<?php echo $forum['displayorder']?>" />
                             &nbsp; <select name="status<?php echo $forum['fid']?>">
                             <option value="on" <?php echo $on?>><?php echo $lang['texton']?></option><option value="off" <?php echo $off?>><?php echo $lang['textoff']?></option></select>
-                            &nbsp; <select name="moveto<?php echo $forum['fid']?>">
+                            &nbsp; <select name="moveto<?php echo $forum['fid']?>"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
                             <?php
-                            foreach($forumlist as $moveforum) {
-                                if ($moveforum['fid'] == $forum['fup']) {
-                                    echo '<option value="'.$moveforum['fid'].'" selected="selected">'.html_entity_decode(stripslashes($moveforum['name'])).'</option>';
-                                } else {
-                                    echo '<option value="'.$moveforum['fid'].'">'.html_entity_decode(stripslashes($moveforum['name'])).'</option>';
+                            foreach($forums[0] as $moveforum) { //Ungrouped forum options.
+                                echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                            }
+                            foreach($groups as $moveforum) { //Groups and grouped forum options.
+                                echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
+                                foreach($forums[$moveforum['fid']] as $moveforum) {
+                                    if ($moveforum['fid'] == $forum['fup']) {
+                                        $curgroup = $selHTML;
+                                    } else {
+                                        $curgroup = '';
+                                    }
+                                    echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                                 }
                             }
                             ?>
@@ -1081,7 +1121,7 @@ if ($action == 'forum') {
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
         $db->free_result($query);
-
+        
         if ($forum['allowhtml'] == "yes") {
             $checked2 = $cheHTML;
         } else {
@@ -1112,53 +1152,6 @@ if ($action == 'forum') {
             $checked6 = '';
         }
 
-        if ($forum['pollstatus'] == "on") {
-            $checked7 = $cheHTML;
-        } else {
-            $checked7 = '';
-        }
-
-        if ($forum['guestposting'] == "on") {
-            $checked8 = $cheHTML;
-        } else {
-            $checked8 = '';
-        }
-
-        $pperm = explode('|', $forum['postperm']);
-
-        $type11 = $type12 = $type13 = $type14 = '';
-        if ($pperm[0] == 2) {
-            $type12 = $selHTML;
-        } else if ($pperm['0'] == 3) {
-            $type13 = $selHTML;
-        } else if ($pperm[0] == 4) {
-            $type14 = $selHTML;
-        } else if ($pperm[0] == 1) {
-            $type11 = $selHTML;
-        }
-
-        $type21 = $type22 = $type23 = $type24 = '';
-        if ($pperm[1] == 2) {
-            $type22 = $selHTML;
-        } else if ($pperm[1] == 3) {
-            $type23 = $selHTML;
-        } else if ($pperm[1] == 4) {
-            $type24 = $selHTML;
-        } else if ($pperm[1] == 1) {
-            $type21 = $selHTML;
-        }
-
-        $type31 = $type32 = $type33 = $type34 = '';
-        if ($forum['private'] == 2) {
-            $type32 = $selHTML;
-        } else if ($forum['private'] == 3) {
-            $type33 = $selHTML;
-        } else if ($forum['private'] == 4) {
-            $type34 = $selHTML;
-        } else if ($forum['private'] == 1) {
-            $type31 = $selHTML;
-        }
-
         $forum['name'] = stripslashes($forum['name']);
         $forum['description'] = stripslashes($forum['description']);
         ?>
@@ -1178,44 +1171,54 @@ if ($action == 'forum') {
         <input type="checkbox" name="allowbbcodenew" value="yes" <?php echo $checked4?> /><?php echo $lang['textbbcode']?><br />
         <input type="checkbox" name="allowimgcodenew" value="yes" <?php echo $checked5?> /><?php echo $lang['textimgcode']?><br />
         <input type="checkbox" name="attachstatusnew" value="on" <?php echo $checked6?> /><?php echo $lang['attachments']?><br />
-        <input type="checkbox" name="pollstatusnew" value="on" <?php echo $checked7?> /><?php echo $lang['polls']?><br />
-        <input type="checkbox" name="guestpostingnew" value="on" <?php echo $checked8?> /><?php echo $lang['textanonymousposting']?><br />
         </td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['texttheme']?></td>
         <td bgcolor="<?php echo $altbg2?>"><?php echo $themelist?></td>
         </tr>
+
         <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop1']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="postperm1">
-        <option value="1" <?php echo $type11?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type12?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type13?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type14?>><?php echo $lang['textpermission41']?>
-        </select>
-        </td>
+        <td style="background-color: <?php echo $THEME['altbg1']?>"><?php echo $lang['forumpermissions']?></td>
+        <td style="background-color: <?php echo $THEME['altbg2']?>"><table style="width: 100%; text-align: center;">
+        <?php
+        $perms = explode(',', $forum['postperm']);
+        $statusList = array(
+            'Super Administrator'   => 1,
+            'Administrator'         => 2,
+            'Super Moderator'       => 4,
+            'Moderator'             => 8,
+            'Member'                => 16,
+            'guest'                 => 32);
+         ?>
+        <tr>
+            <td class="tablerow" style="width: 25ex;">&nbsp;</td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['polls'];   ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['threads']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['replies']; ?></td>
+            <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['view'];    ?></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whopostop2']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="postperm2">
-        <option value="1" <?php echo $type21?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type22?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type23?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type24?>><?php echo $lang['textpermission41']?>
-        </select>
-        </td>
+        <?php
+        foreach($statusList as $key=>$val) {
+            if(!X_SADMIN and $key == 'Super Administrator') {
+                $disabled = 'disabled="disabled"';
+            } else {
+                $disabled = '';
+            }
+            ?>
+            <tr class="tablerow">
+                <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: right;"><?php echo ucwords($key);?></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[0][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_POLL]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[1][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_THREAD]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[2][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_REPLY]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[3][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_VIEW]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+            </tr>
+            <?php
+        }
+        ?>
+        </table></td>
         </tr>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['whoview']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><select name="privatenew">
-        <option value="1" <?php echo $type31?>><?php echo $lang['textpermission1']?>
-        <option value="2" <?php echo $type32?>><?php echo $lang['textpermission2']?>
-        <option value="3" <?php echo $type33?>><?php echo $lang['textpermission3']?>
-        <option value="4" <?php echo $type34?>><?php echo $lang['textpermission42']?>
-        </select>
-        </td>
-        </tr>
+
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textuserlist']?></td>
         <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="userlistnew"><?php echo $forum['userlist']?></textarea></td>
@@ -1240,7 +1243,7 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if (onSubmit('forumsubmit') && !$fdetails) {
-        $queryforum = $db->query("SELECT fid, type FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
+        $queryforum = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
@@ -1265,7 +1268,32 @@ if ($action == 'forum') {
                 }
                 $db->free_result($querythread);
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='$self[status]', fup=".$moveto." WHERE fid='".$forum['fid']."'");
+            $settype = '';
+            if ($forum['fup'] != $moveto And $moveto != $forum['fid'] And $forum['type'] != 'group') { //Forum is being moved
+                if ($moveto == 0) {
+                    $settype = ", type='forum', fup=0";
+                } else {
+                    $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
+                    if ($frow = $db->fetch_array($query)) {
+                        if ($frow['type'] == 'group') {
+                            $settype = ", type='forum', fup=$moveto";
+                        } elseif ($frow['type'] == 'forum') {
+                            if ($forum['type'] == 'sub') {
+                                $settype = ", fup=$moveto";
+                            } elseif ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
+                                $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
+                                $frow = $db->fetch_array($query2);
+                                $db->free_result($query2);
+                                if ($frow['subcount'] == 0) {
+                                    $settype = ", type='sub', fup=$moveto";
+                                }
+                            }
+                        }
+                    }
+                    $db->free_result($query);
+                }
+            }
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='$self[status]'$settype WHERE fid='".$forum['fid']."'");
         }
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
@@ -1285,12 +1313,12 @@ if ($action == 'forum') {
             $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
 
-        $newgname = formVar('newgname');
-        $newfname = formVar('newfname');
-        $newsubname = formVar('newsubname');
-        $newgorder = formVar('newgorder');
-        $newforder = formVar('newforder');
-        $newsuborder = formVar('newsuborder');
+        $newgname = postedVar('newgname', 'javascript', TRUE, TRUE, TRUE);
+        $newfname = postedVar('newfname', 'javascript', TRUE, TRUE, TRUE);
+        $newsubname = postedVar('newsubname', 'javascript', TRUE, TRUE, TRUE);
+        $newgorder = formInt('newgorder');
+        $newforder = formInt('newforder');
+        $newsuborder = formInt('newsuborder');
         $newgstatus = formOnOff('newgstatus');
         $newfstatus = formOnOff('newfstatus');
         $newsubstatus = formOnOff('newsubstatus');
@@ -1299,36 +1327,52 @@ if ($action == 'forum') {
 
         if ($newfname != $lang['textnewforum']) {
             $newfname = addslashes($newfname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('forum', '$newfname', '$newfstatus', '', '', ".(int)$newforder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newffup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
         if ($newgname != $lang['textnewgroup']) {
             $newgname = addslashes($newgname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('group', '$newgname', '$newgstatus', '', '', ".(int)$newgorder.", '', '', '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
         if ($newsubname != $lang['textnewsubf']) {
             $newsubname = addslashes($newsubname);
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, private, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, pollstatus, password, guestposting) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', ".(int)$newsuborder.", '1', '', 'no', 'yes', 'yes', '', 0, 0, 0, ".(int)$newsubfup.", '1|1', 'yes', 'on', 'on', '', 'off')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
-        $namenew = addslashes(formVar('namenew', false));
-        $descnew = addslashes(formVar('descnew', false));
+        $namenew = postedVar('namenew', 'javascript', TRUE, TRUE, TRUE);
+        $descnew = postedVar('descnew', 'javascript', TRUE, TRUE, TRUE);
         $allowhtmlnew = formYesNo('allowhtmlnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
         $attachstatusnew = formOnOff('attachstatusnew');
-        $pollstatusnew = formOnOff('pollstatusnew');
-        $guestpostingnew = formOnOff('guestpostingnew');
         $themeforumnew = formInt('themeforumnew');
-        $postperm1 = formInt('postperm1');
-        $postperm2 = formInt('postperm2');
-        $privatenew = formInt('privatenew');
-        $userlistnew = addslashes(formVar('userlistnew'));
-        $passwordnew = postedVar('passwordnew', '', FALSE);
+        $userlistnew = postedVar('userlistnew', 'javascript');
+        $passwordnew = postedVar('passwordnew', 'javascript');
         $delete = formInt('delete');
+
+        if(!X_SADMIN) {
+            $overrule = array(0,0,0,0);
+            $forum = $db->fetch_array($db->query("SELECT postperm FROM ".X_PREFIX."forums WHERE fid=$fdetails"));
+            $parts = explode(',', $forum['postperm']);
+            foreach($parts as $p=>$v) {
+                if($v & 1 == 1) {
+                    // super admin status set
+                    $overrule[$p] = 1;
+                }
+            }
+        } else {
+            $overrule = array(0,0,0,0);
+        }
+
+        $perms = array(0,0,0,0);
+        foreach($permsNew as $key=>$val) {
+            $perms[$key] = array_sum($val);
+            $perms[$key] |= $overrule[$key];
+        }
+        $perms = implode(',', $perms);
 
         $db->query("UPDATE ".X_PREFIX."forums SET
             name='$namenew',
@@ -1338,13 +1382,10 @@ if ($action == 'forum') {
             allowbbcode='$allowbbcodenew',
             theme='$themeforumnew',
             userlist='$userlistnew',
-            private='$privatenew',
-            postperm='$postperm1|$postperm2',
+            postperm='$perms',
             allowimgcode='$allowimgcodenew',
             attachstatus='$attachstatusnew',
-            pollstatus='$pollstatusnew',
-            password='$passwordnew',
-            guestposting='$guestpostingnew'
+            password='$passwordnew'
             WHERE fid='$fdetails'"
         );
 
@@ -1549,8 +1590,8 @@ if ($action == "members") {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>" /></td>
-                <td><a href="member.php?action=viewpro&amp;member=<?php echo $member['username']?>"><?php echo $member['username']?></a>
-                <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo $member['username']?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
+                <td><a href="member.php?action=viewpro&amp;member=<?php echo recodeOut($member['username']);?>"><?php echo $member['username']?></a>
+                <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo recodeJavaOut($member['username'])?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
                 </td>
                 <td><input type="text" size="12" name="pw<?php echo $member['uid']?>"></td>
                 <td><input type="text" size="3" name="postnum<?php echo $member['uid']?>" value="<?php echo $member['postnum']?>"></td>
@@ -1718,11 +1759,11 @@ if ($action == "ipban") {
         <?php
     } else {
         $newip = array();
-        $newip[] = trim(formInt('newip1'));
-        $newip[] = trim(formInt('newip2'));
-        $newip[] = trim(formInt('newip3'));
-        $newip[] = trim(formInt('newip4'));
-        $delete = formArray('delete');
+        $newip[] = (is_numeric(postedVar('newip1')) Or postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
+        $newip[] = (is_numeric(postedVar('newip2')) Or postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
+        $newip[] = (is_numeric(postedVar('newip3')) Or postedVar('newip3') == '*') ? trim(postedVar('newip3')) : '0' ;
+        $newip[] = (is_numeric(postedVar('newip4')) Or postedVar('newip4') == '*') ? trim(postedVar('newip4')) : '0' ;
+        $delete = postedArray('delete', 'int');
 
         if ($delete) {
             $dels = array();
@@ -1739,13 +1780,13 @@ if ($action == "ipban") {
         }
         $self['status'] = $lang['textipupdate'];
 
-        if ($newip[1] != '0' && $newip[1] != '0' && $newip[2] != '0' && $newip[3] != '0') {
+        if ($newip[0] != '0' || $newip[1] != '0' || $newip[2] != '0' || $newip[3] != '0') {
             $invalid = 0;
             for($i=0; $i<=3 && !$invalid; ++$i) {
                 if ($newip[$i] == "*") {
                     $ip[$i+1] = -1;
-                } else if (preg_match("#^[0-9]+$#", $newip[$i])) {
-                    $ip[$i+1] = $newip[$i];
+                } else if (intval($newip[$i]) >=0 And intval($newip[$i]) <= 255) {
+                    $ip[$i+1] = intval($newip[$i]);
                 } else {
                     $invalid = 1;
                 }
@@ -1773,14 +1814,17 @@ if ($action == "ipban") {
 
 if ($action == "deleteposts") {
     $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
-    $queryd = $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
-    $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
-    while($threads = $db->fetch_array($queryt)) {
-        $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
-        $replynum = $db->result($query, 0);
-        $replynum--;
-        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$threads[tid]'");
-        $db->query("DELETE FROM ".X_PREFIX."threads WHERE author='$member'");
+    $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
+    $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
+    $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
+    while($threads = $db->fetch_array($countquery)) {
+        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
+    }
+    $countquery = $db->query("SELECT t.tid, COUNT(p.pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts AS p USING (tid) WHERE t.author='$member' GROUP BY t.tid");
+    while($threads = $db->fetch_array($countquery)) {
+        if ($threads['postcount'] == 0) { //This will also delete thread redirectors where the redirect's author is $member
+            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='{$threads['tid']}'");
+        }
     }
 }
 
@@ -1790,7 +1834,7 @@ if ($action == "upgrade") {
     }
 
     if (onSubmit('upgradesubmit')) {
-        $upgrade = formVar('upgrade');
+        $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
             $add = get_attached_file($_FILES['sql_file'], 'on');
             if ($add !== false) {
@@ -1810,7 +1854,6 @@ if ($action == "upgrade") {
         echo '</table></td></tr></table>';
 
         for($num=0;$num<$count;$num++) {
-            $explode[$num] = stripslashes($explode[$num]);
             if ($allow_spec_q !== true) {
                 if (strtoupper(substr(trim($explode[$num]), 0, 3)) == 'USE' || strtoupper(substr(trim($explode[$num]), 0, 14)) == 'SHOW DATABASES') {
                     error($lang['textillegalquery'], false, '</td></tr></table></td></tr></table><br />');
@@ -1818,33 +1861,34 @@ if ($action == "upgrade") {
             }
 
             if ($explode[$num] != '') {
-                $query = $db->query($explode[$num], true);
+                $query = $db->query($explode[$num]." -- Injected by $xmbuser using cp.php", true);
+
+                echo '<br />';
+                ?>
+                <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
+                <tr>
+                <td bgcolor="<?php echo $bordercolor?>">
+                <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+                <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+                <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
+                <?php
+                $xn = strtoupper($explode[$num]);
+                if (strpos($xn, 'SELECT') !== false || strpos($xn, 'SHOW') !== false || strpos($xn, 'EXPLAIN') !== false || strpos($xn, 'DESCRIBE') !== false) {
+                    dump_query($query, true);
+                } else {
+                    $selq=false;
+                }
+                ?>
+                </td>
+                </tr>
+                </td>
+                </tr>
+                </table>
+                </td>
+                </tr>
+                </table>
+                <?php
             }
-            echo '<br />';
-            ?>
-            <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
-            <tr>
-            <td bgcolor="<?php echo $bordercolor?>">
-            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
-            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
-            <?php
-            $xn = strtoupper($explode[$num]);
-            if (strpos($xn, 'SELECT') !== false || strpos($xn, 'SHOW') !== false || strpos($xn, 'EXPLAIN') !== false || strpos($xn, 'DESCRIBE') !== false) {
-                dump_query($query, true);
-            } else {
-                $selq=false;
-            }
-            ?>
-            </td>
-            </tr>
-            </td>
-            </tr>
-            </table>
-            </td>
-            </tr>
-            </table>
-            <?php
         }
         ?>
         <br />

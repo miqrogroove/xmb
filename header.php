@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,6 +26,10 @@
  *
  **/
 
+if (!defined('X_SCRIPT')) {
+    exit("Not allowed to run this file directly.");
+}
+
 error_reporting(E_ALL&~E_NOTICE);
 
 define('IN_CODE', true);
@@ -35,6 +39,13 @@ define('X_SET_HEADER', 1);
 define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
+
+define('X_PERMS_POLL',      0);
+define('X_PERMS_THREAD',    1);
+define('X_PERMS_REPLY',     2);
+define('X_PERMS_VIEW',      3);
+define('X_PERMS_USERLIST',  4);
+define('X_PERMS_PASSWORD',  5);
 
 if (!defined('ROOT')) {
     define('ROOT', './');
@@ -64,7 +75,6 @@ $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
 $bbcodescript = '';
 $threadSubject = '';
-$self = array();
 $user = (isset($user)) ? $user : '';
 $SETTINGS = array();
 $THEME = array();
@@ -101,15 +111,15 @@ if (DEBUG) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-$versionshort = 'XMB 1.9.8';
-$versiongeneral = 'XMB 1.9.8 Engage';
++$versionshort = 'XMB 1.9.10';
++$versiongeneral = 'XMB 1.9.10';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
     $beta = '';
     $gamma = '';
-    $service_pack = ' SP3';
-    $versionbuild = 20080509;
+    $service_pack = '';
+    $versionbuild = 20080421;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -125,6 +135,9 @@ if ($show_full_info) {
 // this allows the use of various nice new features in eg mozilla
 // while others are available via IE and/or opera
 $browser = 'opera'; // default to opera for now
+if (!isset($_SERVER['HTTP_USER_AGENT'])) {
+    $_SERVER['HTTP_USER_AGENT'] = '';
+}
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
     define('IS_MOZILLA', true);
     $browser = 'mozilla';
@@ -135,14 +148,7 @@ if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
     $browser = 'opera';
 }
 
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
-    define('IS_IE', true);
-    $browser = 'ie';
-}
-
-// Fix provided by whinpo :)
-// Browser incompatability regarding insertion.
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') && !defined('IS_IE')) {
+if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
     define('IS_IE', true);
     $browser = 'ie';
 }
@@ -183,7 +189,7 @@ if ($action != 'attachment' && !($action == 'templates' && isset($download)) && 
 }
 
 // Security checks
-if (file_exists('./install/') && !@unlink('./install/')) {
+if (file_exists('./install/') && !@rmdir('./install/')) {
     exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server, but could not be removed. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
 }
 
@@ -195,12 +201,18 @@ if (file_exists('./fixhack.php') && !@unlink('./fixhack.php')) {
     exit('<h1>Error:</h1><br />The hack repair tool ("./fixhack.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
-if (file_exists('./Upgrade/') && !@unlink('./Upgrade/')) {
+if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/')) {
+    exit('<h1>Error:</h1><br />The upgrade tool ("./Upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+}
+
+if (file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 
-if (file_exists('./upgrade/') && !@unlink('./upgrade/')) {
-    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
+    if (!@unlink('./upgrade.php')) {
+        exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+    }
 }
 
 // Checks the format of the URL, blocks if necessary....
@@ -345,38 +357,12 @@ if ($onlinetodaycount < 5) {
 }
 
 // Get the user-vars, and make them semi-global
-$xmbuser = '';
-$xmbpw = '';
-if (isset($_COOKIE['xmbuser']) And isset($_COOKIE['xmbpw'])) {
-    $xmbuserinput = $db->escape($_COOKIE['xmbuser']);
-    $xmbpwinput = $_COOKIE['xmbpw'];
-} else {
-    $xmbuserinput = '';
-    $xmbpwinput = '';
-    $self['status'] = '';
-}
 
-$q = false;
-if ($xmbuserinput != '') {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
-    $userrec = $db->fetch_array($query);
-    if ($db->num_rows($query) == 1 && $userrec['password'] == $xmbpwinput) {
-        $q = true;
-        $xmbuser = $db->escape($userrec['username']);
-        $xmbpw = $xmbpwinput;
-    }
-    $db->free_result($query);
-}
-unset($xmbuserinput, $xmbpwinput);
+elevateUser(postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c'), postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'));
 
-if ($q) {
-    foreach($userrec as $key => $val) {
-        $self[$key] = $val;
-    }
 
-    define('X_MEMBER', true);
-    define('X_GUEST', false);
-
+if (X_MEMBER) {
+    $langfile = ($self['langfile'] == "" || !file_exists("lang/{$self['langfile']}.lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
     $timeoffset = $self['timeoffset'];
     $themeuser = $self['theme'];
     $status = $self['status'];
@@ -387,17 +373,9 @@ if ($q) {
     $sig = $self['sig'];
     $invisible = $self['invisible'];
     $time = $onlinetime;
-    $langfile = ($self['langfile'] == "" || !file_exists("lang/$self[langfile].lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
-
-    if (!empty($theme)) {
-        $themeuser = $self['theme'];
-    }
-
     $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
 } else {
-    define('X_MEMBER', false);
-    define('X_GUEST', true);
-
+    $langfile = $SETTINGS['langfile'];
     $timeoffset = $SETTINGS['def_tz'];
     $themeuser = '';
     $status = 'member';
@@ -408,9 +386,10 @@ if ($q) {
     $sig = '';
     $invisible = 0;
     $time = $onlinetime;
-    $langfile = $SETTINGS['langfile'];
     $self['ban'] = '';
     $self['sig'] = '';
+    $self['status'] = '';
+    $self['username'] = '';
 }
 
 if ($memtime == '') {
@@ -427,58 +406,7 @@ if ($memtime == '') {
     }
 }
 
-$role = array();
-$role['sadmin'] = false;
-$role['admin'] = false;
-$role['smod'] = false;
-$role['mod'] = false;
-$role['staff'] = false;
-if (X_MEMBER) {
-    switch($self['status']) {
-        case 'Super Administrator':
-            $role['sadmin'] = true;
-            $role['admin'] = true;
-            $role['smod'] = true;
-            $role['mod'] = true;
-            $role['staff'] = true;
-            break;
-        case 'Administrator':
-            $role['sadmin'] = false;
-            $role['admin'] = true;
-            $role['smod'] = true;
-            $role['mod'] = true;
-            $role['staff'] = true;
-            break;
-        case 'Super Moderator':
-            $role['sadmin'] = false;
-            $role['admin'] = false;
-            $role['smod'] = true;
-            $role['mod'] = true;
-            $role['staff'] = true;
-            break;
-        case 'Moderator':
-            $role['sadmin'] = false;
-            $role['admin'] = false;
-            $role['smod'] = false;
-            $role['mod'] = true;
-            $role['staff'] = true;
-            break;
-        default:
-            $role['sadmin'] = false;
-            $role['admin'] = false;
-            $role['smod'] = false;
-            $role['mod'] = false;
-            $role['staff'] = false;
-            break;
-    }
-}
-define('X_SADMIN', $role['sadmin']);
-define('X_ADMIN', $role['admin']);
-define('X_SMOD', $role['smod']);
-define('X_MOD', $role['mod']);
-define('X_STAFF', $role['staff']);
-
-// Get the required language file
+// Load a language file
 if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
     require ROOT.'lang/'.$langfile.'.lang.php';
 } else {
@@ -497,7 +425,7 @@ if (X_MEMBER) {
     $memcp = '<a href="memcp.php">'.$lang['textusercp'].'</a>';
     $onlineuser = $xmbuser;
     $cplink = '';
-    $u2ulink = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[banu2u]</a> - ";
+    $u2ulink = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['banu2u']}</a> - ";
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
     }
@@ -521,16 +449,11 @@ $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'Y
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && is_numeric($tid) && $action != 'templates') {
-    $query = $db->query("SELECT f.fid, f.theme, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE f.fid=t.fid AND t.tid=$tid");
+    $query = $db->query("SELECT f.fid, f.theme FROM ".X_PREFIX."forums f RIGHT JOIN ".X_PREFIX."threads t USING (fid) WHERE t.tid=$tid");
     $locate = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
-    if ($SETTINGS['subject_in_title'] == 'on' && $locate['subject']) {
-        $threadSubject = '- '.html_entity_decode(stripslashes(htmlspecialchars($locate['subject'])));
-    } else {
-        $threadSubject = '';
-    }
  } else if (isset($fid) && is_numeric($fid)) {
     $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($q) === 1) {
@@ -541,7 +464,7 @@ if (isset($tid) && is_numeric($tid) && $action != 'templates') {
     }
 }
 
-$wollocation = addslashes($url);
+$wollocation = $db->escape($url);
 $newtime = $onlinetime - 600;
 
 // clear out old entries and guests
@@ -629,7 +552,7 @@ if (isset($lastvisit) && X_MEMBER) {
     $lasttime = gmdate($timecode, $theTime);
     $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
-    $lastvisittext = $lang['lastactive'].' '.$lang['textnever'];
+    $lastvisittext = '';
 }
 
 // Checks for various settings
@@ -729,11 +652,11 @@ if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
 $ips = explode(".", $onlineip);
 // also disable 'ban all'-possibility
 $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
-$result = $db->fetch_array($query);
+$result = $db->num_rows($query);
 $db->free_result($query);
 
 // don't *ever* ban a (super-)admin!
-if (!X_ADMIN && ($self['status'] == 'Banned' || $result)) {
+if (!X_ADMIN && ($self['status'] == 'Banned' || $result > 0)) {
     eval('$css = "'.template('css').'";');
     error($lang['bannedmessage']);
 }
@@ -744,7 +667,7 @@ if (X_MEMBER) {
     $query = $db->query("SELECT COUNT(readstatus) FROM ".X_PREFIX."u2u WHERE owner='$self[username]' AND folder='Inbox' AND readstatus='no'");
     $newu2unum = $db->result($query, 0);
     if ($newu2unum > 0) {
-        $newu2umsg = "<a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">$lang[newu2u1] $newu2unum $lang[newu2u2]</a>";
+        $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
     }
     $db->free_result($query);
 }

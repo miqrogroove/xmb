@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -51,72 +51,32 @@ if ($SETTINGS['todaysposts'] == 'off') {
 $daysold = (isset($daysold) && is_numeric($daysold) ? (int) $daysold : 1);
 $srchfrom = $onlinetime - (86400 * $daysold);
 
-$modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
-$restrict = array("(password='')");
-switch($self['status']) {
-    case 'Member':
-        $restrict[] = 'private = 1';
-        $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))( )*$modXmbuser( )*((,)|$)')";
-        break;
-    case 'Moderator':
-    case 'Super Moderator':
-        $restrict[] = '(private = 1 OR private = 3)';
-        $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))( )*$modXmbuser( )*((,)|$)'), 1, 0), 1))";
-        break;
-    case 'Administrator':
-        $restrict[] = '(private > 0 AND private < 4)';
-        $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))( )*$modXmbuser( )*((,)|$)'), 1, 0), 1))";
-        break;
-    case 'Super Administrator':
-        break;
-    default:
-        $restrict[] = '(private=1)';
-        $restrict[] = "(userlist='')";
-        break;
-}
-$restrict = implode(' AND ', $restrict);
-
 $fids = array();
 $tids = array();
 $fup = array();
+
 if (X_SADMIN) {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status='on'");
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
     while($f = $db->fetch_array($q)) {
         $fids[] = $f['fid'];
     }
-    $db->free_result($q);
 } else {
-    $q = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE status='on' AND $restrict");
-    while($f = $db->fetch_array($q)) {
-        if (isset($f['type']) && $f['type'] == 'sub') {
-            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$f[fup]'");
-            $fup = $db->fetch_array($query);
-            if (privfcheck($fup['private'], $fup['userlist'])) {
-                $fids[] = $f['fid'];
-            }
-            $db->free_result($query);
-        } else {
-            $fids[] = $f['fid'];
-        }
-    }
-    $db->free_result($q);
+    $fCache = array();
+    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+    while($forum = $db->fetch_array($q)) {
+        $perms = checkForumPermissions($forum);
+        $fCache[$forum['fid']] = $perms;
 
-    if (X_MEMBER) {
-        // let's add fids for passworded forums that the user can access
-        $r2 = array();
-        foreach($_COOKIE as $key=>$val) {
-            if (preg_match('#^fidpw([0-9]+)$#', $key, $fetch)) {
-                $r2[] = '(fid="' . $fetch[1] . '" AND password="'.addslashes($val).'")';
+        if($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST] && $perms[X_PERMS_PASSWORD]) {
+            if($forum['type'] == 'sub') {
+                // also check above forum!
+                $parentP = $fCache[$forum['fup']];
+                if($parentP[X_PERMS_VIEW] && $parentP[X_PERMS_USERLIST] && $parentP[X_PERMS_PASSWORD]) {
+                    $fids[] = $forum['fid'];
+                }
+            } else {
+                $fids[] = $forum['fid'];
             }
-        }
-
-        if (count($r2) > 0) {
-            $r = implode(' OR ', $r2);
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
-            while($f = $db->fetch_array($q)) {
-                $fids[] = $f['fid'];
-            }
-            $db->free_result($q);
         }
     }
 }

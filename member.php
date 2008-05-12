@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -136,6 +136,7 @@ switch($action) {
                 }
                 $themelist[] = '</select>';
                 $themelist = implode("\n", $themelist);
+                $db->free_result($query);
 
                 $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
@@ -498,6 +499,7 @@ switch($action) {
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '', '', '$self[status]', '', '', '', '$showemail', '$timeoffset1', '', '', '', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '', '', '$dateformatnew', '', 0, '', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u')");
             } else {
                 $avatar = postedVar('avatar', 'javascript', TRUE, TRUE, TRUE);
+                $avatarcheck = postedVar('newavatarcheck');
                 $location = postedVar('location', 'javascript', TRUE, TRUE, TRUE);
                 $icq = postedVar('icq', '', FALSE, FALSE);
                 $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
@@ -510,13 +512,17 @@ switch($action) {
                 $sig = postedVar('sig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
                 $max_size = explode('x', $SETTINGS['max_avatar_size']);
-                if ($max_size[0] > 0 && $max_size[1] > 0 && ini_get('allow_url_fopen')) {
-                    $size = @getimagesize($_POST['avatar']);
-                    if ($size === false ) {
-                        $avatar = '';
-                    } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
-                        error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                if (ini_get('allow_url_fopen')) {
+                    if ($max_size[0] > 0 && $max_size[1] > 0) {
+                        $size = @getimagesize($_POST['avatar']);
+                        if ($size === false ) {
+                            $avatar = '';
+                        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                            error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                        }
                     }
+                } elseif ($newavatarcheck == "no") {
+                    $avatar = '';
                 }
 
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]', '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u')");
@@ -550,7 +556,7 @@ switch($action) {
 
             if ($SETTINGS['emailcheck'] == 'on') {
                 $username = $_POST['username'];
-                altMail($email, $lang['textyourpw'], $lang['textyourpwis']." \n\n$username\n$password2", "From: $bbname <$adminemail>");
+                altMail($email, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", "From: $bbname <$adminemail>");
             } else {
                 $username = postedVar('username', '', TRUE, FALSE);
                 $currtime = $onlinetime + (86400*30);
@@ -698,56 +704,49 @@ switch($action) {
                     $memberinfo['bday'] = gmdate($dateformat, gmmktime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)));
                 }
 
-                $modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
-                $restrict = array("(password='')");
-                switch($self['status']) {
-                    case 'Member':
-                        $restrict[] = 'private = 1';
-                        $restrict[] = "(userlist = '' OR userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
+                // Forum most active in
+                $found = false;
+                $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
+                while($f = $db->fetch_array($query)) {
+                    $pp = checkForumPermissions($f);
+                    if($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
+                        $forum = $f;
+                        $found = true;
                         break;
-                    case 'Moderator':
-                    case 'Super Moderator':
-                        $restrict[] = '(private = 1 OR private = 3)';
-                        $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
-                        break;
-                    case 'Administrator':
-                        $restrict[] = '(private > 0 AND private < 4)';
-                        $restrict[] = "(if ((private=1 AND userlist != ''), if ((userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
-                        break;
-                    case 'Super Administrator':
-                        break;
-                    default:
-                        $restrict[] = '(private=1)';
-                        $restrict[] = "(userlist='')";
-                        break;
+                    }
                 }
-                $restrict = implode(' AND ', $restrict);
 
-                $query = $db->query("SELECT f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' GROUP BY p.fid ORDER BY posts DESC LIMIT 1");
-                $forum = $db->fetch_array($query);
-                $db->free_result($query);
-
-                if (!($forum['posts'] > 0)) {
+                if (!$found || $forum['posts'] < 1) {
                     $topforum = $lang['textnopostsyet'];
-                } else if ($memberinfo['postnum'] <= 0) {
+                } elseif($memberinfo['postnum'] <= 0) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
-                    $forum['fid'] = intval($forum['fid']);
-                    $topforum = "<a href=\"forumdisplay.php?fid=$forum[fid]\">".html_entity_decode($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% of total posts]";
+                    $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
                 }
 
-                $query = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid FROM (".X_PREFIX."posts p, ".X_PREFIX."threads t) LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE $restrict AND p.author='$member' AND p.tid=t.tid ORDER BY p.dateline DESC LIMIT 1");
-                if ($post = $db->fetch_array($query)) {
-                    $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1;
+                // Last post
+                $lpfound = false;
+                $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
+                while($post = $db->fetch_array($pq)) {
+                    $pp = checkForumPermissions($post);
+                    if(!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
+                        continue;
+                    }
+                    $lpfound = true;
+                    $posts = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1; // +1 is faster than doing <= !
                     validatePpp();
+
                     $page = quickpage($posts, $ppp);
+
                     $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
                     $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+
                     $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
                     $post['subject'] = censor($post['subject']);
-                    $lastpost = '<a href="viewthread.php?tid='.intval($post['tid']).'&amp;page='.$page.'#pid'.intval($post['pid']).'">'.html_entity_decode($post['subject']).'</a> ('.$lastposttext.')';
-                    $db->free_result($query);
-                } else {
+                    $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
+                    break;
+                }
+                if(!$lpfound) {
                     $lastpost = $lang['textnopostsyet'];
                 }
 

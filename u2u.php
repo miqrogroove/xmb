@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -70,9 +70,9 @@ if (X_GUEST) {
     exit;
 }
 
-$folder = postedVar('folder', '', TRUE, TRUE, TRUE);
+$folder = postedVar('folder', '', TRUE, FALSE, TRUE);
 if ($folder == '') {
-    $folder = postedVar('folder', '', TRUE, TRUE, TRUE, 'g');
+    $folder = postedVar('folder', '', TRUE, FALSE, TRUE, 'g');
 }
 
 $folderlist = '';
@@ -84,7 +84,7 @@ if ($folder != '' && ($action == '' || $action == 'mod' || $action == 'view')) {
     $folder = 'Inbox';
 }
 
-$u2ucount = u2u_folderList();
+$u2ucount = u2u_folderList(); //Sets several global vars
 $u2uid = getInt('u2uid');
 if (!$u2uid) {
     $u2uid = postedVar('u2uid');
@@ -151,10 +151,11 @@ switch($action) {
         $move = formVar('move');
         $tofolder = formVar('tofolder');
         $markunread = formVar('markunread');
+        $folder_url = recodeOut($folder);
         switch($modaction) {
             case 'delete':
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
                 }
                 u2u_mod_delete($folder, $u2u_select);
                 break;
@@ -164,19 +165,19 @@ switch($action) {
                 }
 
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
                     return;
                 }
                 u2u_mod_move($tofolder, $u2u_select);
                 break;
             case 'markunread':
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
                 }
                 u2u_mod_markUnread($folder, $u2u_select);
                 break;
             default:
-                error($lang['testnothingchos'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder", true, false, false);
+                error($lang['testnothingchos'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
                 break;
         }
         break;
@@ -194,10 +195,9 @@ switch($action) {
         break;
     case 'folders':
         if (onSubmit('folderssubmit')) {
-            $u2ufolders = formVar('u2ufolders');
+            $u2ufolders = postedVar('u2ufolders', 'javascript', TRUE, FALSE, TRUE);
             u2u_folderSubmit($u2ufolders, $folders);
         } else {
-            $self['u2ufolders'] = checkOutput($self['u2ufolders']);
             eval('$leftpane = "'.template('u2u_folders').'";');
         }
         break;

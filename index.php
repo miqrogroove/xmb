@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -57,8 +57,8 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         if (strlen(trim($news[$i])) == 0) {
             continue;
         }
-        $news[$i] = postify($news[$i], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'yes', 'no');
-        $news[$i] = str_replace('\"', '"', addslashes($news[$i]));
+        
+        $news[$i] = str_replace('\"', '"', postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'yes', 'no'));
         $contents .= "\tcontents[$i]='$news[$i]';\n";
     }
     eval('$ticker = "'.template('index_ticker').'";');
@@ -70,7 +70,7 @@ if ($gid) {
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
-    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' LIMIT 1");
+    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' AND status='on' LIMIT 1");
     $cat = $db->fetch_array($query);
     $db->free_result($query);
     nav(html_entity_decode(stripslashes($cat['name'])));
@@ -242,7 +242,7 @@ if ($gid == 0) {
     }
 
     if ($SETTINGS['catsonly'] == 'on') {
-        $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder ASC");
+        $fquery = $db->query("SELECT name as cat_name, fid as cat_fid FROM ".X_PREFIX."forums WHERE type='group' AND status='on' ORDER BY displayorder ASC");
     } else {
         $fquery = $db->query("SELECT f.*, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup=c.fid) WHERE (c.type='group' AND f.type='forum' AND c.status='on' AND f.status='on') OR (f.type='forum' AND f.fup='' AND f.status='on') ORDER BY c.displayorder ASC, f.displayorder ASC");
     }
@@ -275,9 +275,12 @@ if ($SETTINGS['catsonly'] != 'on') {
 if ($SETTINGS['showsubforums'] == 'on') {
     $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $query = $db->query("SELECT fid, fup, name, private, userlist FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
-            $index_subforums[] = $queryrow;
+            $subperms = checkForumPermissions($queryrow);
+            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] && $subperms[X_PERMS_USERLIST])) {
+                $index_subforums[] = $queryrow;
+            }
         }
         $db->free_result($query);
     }
@@ -329,5 +332,5 @@ if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
 eval('$index = "'.template('index').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo stripslashes($index.$footer);
+echo $index.$footer;
 ?>

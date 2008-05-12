@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -40,13 +40,13 @@ if (!defined('IN_CODE')) {
 * Must be instantiated before first use.
 */
 class dbstuff {
-    var $querynum = 0;
-    var $querylist = array();
+    var $querynum   = 0;
+    var $querylist  = array();
     var $querytimes = array();
-    var $link = '';
-    var $db = '';
-    var $duration = 0;
-    var $timer = 0;
+    var $link       = '';
+    var $db         = '';
+    var $duration   = 0;
+    var $timer      = 0;
 
     function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
 
@@ -133,20 +133,17 @@ class dbstuff {
 
     function panic($sql = '') {
     	
-    	if ( X_SADMIN && DEBUG )
-    	{
+    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
     		// Check that we actually made a connection
 			if ( $this->link == false ) {
 				$this->link = null;
 			}    		
     		
     		$error = mysql_error($this->link);
-    		$errno = mysql_error($this->link);
+    		$errno = mysql_errno($this->link);
     		
-			echo '<pre>MySQL encountered the following error: '.$error."(errno = ".$errno.")\n<br />".'In the following query: <em>'.$sql.'</em></pre>';
-    	}
-    	else
-    	{
+			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+        } else {
     		echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
     	}
     	exit;

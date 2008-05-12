@@ -1,28 +1,16 @@
 <?php
 /**
- * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
- * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
- * http://www.xmbforum.com
+ * Developed by the XMB Group Copyright (c) 2001-2008
+ * Sponsored by iEntry Inc. Copyright (c) 2007
  *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
+ * http://xmbgroup.com , http://ientry.com
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This software is released under the GPL License, you should
+ * have received a copy of this license with the download of this
+ * software. If not, you can obtain a copy by visiting the GNU
+ * General Public License website <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -315,6 +303,7 @@ $lang['footer_options'] = 'Footer Options:';
 $lang['forgotpw'] = "Forgot password?";
 $lang['forumjumpselect'] = "Select A Forum";
 $lang['forumpruned'] = "Forum successfully pruned";
+$lang['forumpermissions'] = 'Forum Permissions:';
 $lang['forumpw'] = "Password:<br /><span class=\"smalltxt\">(leave blank for none)</span>";
 $lang['forumpwinfo'] = "This forum is password protected. To view this forum you need to enter the correct password below.";
 $lang['found'] = "Found";
@@ -736,10 +725,10 @@ $lang['textfaqans21'] = "You can logout by clicking Logout at the top of the pag
 $lang['textfaqans3'] = "To add a signature to your posts you have to log into your <a href=\"memcp.php\">profile</a> and insert into the signature text box the signature you wish to use.<br /><br />BB Code and HTML maybe turned off or on. This can effect what you can insert into your signature.";
 $lang['textfaqans4'] = "Again in your <a href=\"memcp.php\">profile</a> there is a place for an 'Avatar' and avatar is the image under your name. Check with your Admin about the size of your avatar, it's usually considered common courtesy to use one under 150 pixels wide.";
 $lang['textfaqans5'] = "If you have forgotten your password, do not worry. Head over to the <a href=\"misc.php?action=lostpw\">lost password section</a> and fill in the form and your password will be e-mailed to you.";
-$lang['textfaqans6'] = "U2U means User to User. It is a simple messaging client that you can use to send messages to fellow members on this board. You can check your U2U inbox by <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">clicking here</a> or going to your <a href=\"memcp.php\">profile</a>.<br /><br />The board administrator might have disabled this function for certain users.";
+$lang['textfaqans6'] = "U2U means User to User. It is a simple messaging client that you can use to send messages to fellow members on this board. You can check your U2U inbox by <a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">clicking here</a> or going to your <a href=\"memcp.php\">profile</a>.<br /><br />The board administrator might have disabled this function for certain users.";
 $lang['textfaqans7'] = "There is a button that says 'Login' in the menu at the top, clicking this button will take you to the login page, where you can login. Here you simply input your username, and your password, click the login button, and that's it!";
 $lang['textfaqans8'] = "By clicking on the 'Search' button in the menu. Then inputting what you wish to search for, you can restrict where you search with the drop down lists.";
-$lang['textfaqans9'] = "First click on the <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">U2U</a> button in the menu, another smaller window will pop-up, from there you can access the 'Send a U2U' screen, by clicking on it at the top. Place the users name in the 'To' field, and then insert a subject and a message and click 'Send'. ";
+$lang['textfaqans9'] = "First click on the <a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">U2U</a> button in the menu, another smaller window will pop-up, from there you can access the 'Send a U2U' screen, by clicking on it at the top. Place the users name in the 'To' field, and then insert a subject and a message and click 'Send'. ";
 $lang['textfaqextra'] = "Extra";
 $lang['textfaqstatus'] = "FAQ Status:";
 $lang['textfavorites'] = "Favorites";
@@ -1145,8 +1134,6 @@ $lang['whocanpost22'] = "Administrators can reply.";
 $lang['whocanpost23'] = "Administrators and Moderators can reply.";
 $lang['whocanpost24'] = "no replies are allowed.";
 $lang['whoodump_confirm'] = 'Are you sure you want to empty the whosonline?';
-$lang['whopostop1'] = "Who Can Post New Topics?";
-$lang['whopostop2'] = "Who Can Post Replies?";
 $lang['whosoneval'] = '$lang["whosonmsg"] = "There are currently $guestn, $membern and $hiddenn browsing $bbname";';
 $lang['whosonline'] = "Who's Online";
 $lang['whosonline_on'] = "Who's online in index status:";

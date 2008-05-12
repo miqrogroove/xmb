@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -25,6 +25,155 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
+
+if (!defined('IN_CODE')) {
+    exit("Not allowed to run this file directly.");
+}
+
+//loginUser() is responsible for accepting credentials for new sessions.
+//$xmbuserinput must be html escaped & db escaped username input.
+//$xmbpwinput must be raw password hash input.
+function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FALSE) {
+    global $server, $self, $onlineip, $misc, $onlinetime, $db, $cookiepath, $cookiedomain;
+
+    if (elevateUser($xmbuserinput, $xmbpwinput)) {
+        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
+        $currtime = $onlinetime + (86400*30);
+
+        $dbname = $db->escape($self['username']);
+
+        if ($invisible) {
+            $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
+        } else {
+            $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
+        }
+
+        if ($server == 'Mic') {
+            $misc = '<script>
+                function put_cookie(name, value, expires, path, domain, secure) {
+                    var curCookie = name + "=" + escape(value) +
+                    ((expires) ? "; expires=" + expires.toGMTString() : "") +
+                    ((path) ? "; path=" + path : "") +
+                    ((domain) ? "; domain=" + domain : "") +
+                    ((secure) ? "; secure" : "");
+                    document.cookie = curCookie;
+                }
+
+                var now = new Date();
+                now.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+
+                put_cookie("xmbuser", "'.$self['username'].'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
+                put_cookie("xmbpw", "'.$xmbpwinput.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
+            </script>';
+        } else {
+            if ($tempcookie) {
+                put_cookie("xmbuser", $self['username'], NULL, $cookiepath, $cookiedomain);
+                put_cookie("xmbpw", $xmbpwinput, NULL, $cookiepath, $cookiedomain);
+            } else {
+                put_cookie("xmbuser", $self['username'], $currtime, $cookiepath, $cookiedomain);
+                put_cookie("xmbpw", $xmbpwinput, $currtime, $cookiepath, $cookiedomain);
+            }
+            $misc = '';
+        }
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+//elevateUser() is responsible for authenticating established sessions and setting up session variables.
+//$xmbuserinput must be html escaped & db escaped username input.
+//$xmbpwinput must be raw password hash input.
+function elevateUser($xmbuserinput, $xmbpwinput) {
+    global $xmbuser, $xmbpw, $self, $lang, $db, $charset, $SETTINGS, $onlineip;
+
+    $xmbuser = '';
+    $xmbpw = '';
+    $self = array();
+
+    //Usernames are historically html encoded in the XMB database, as well as in cookies.
+    //$xmbuser is often used as a raw value in queries and should be sql escaped.
+    //$self['username'] is a good alternative for future template use.
+    //$xmbpw was historically abused and will no longer contain a value.
+
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
+    if ($db->num_rows($query) == 1) {
+        $self = $db->fetch_array($query); //The self array will remain available, global.
+        if ($self['password'] == $xmbpwinput) {
+            $xmbuser = $db->escape($self['username']);
+        }
+        $self['password'] = '';
+    }
+    $db->free_result($query);
+    $xmbuserinput = '';
+    $xmbpwinput = '';
+
+    //Database routine complete.  Now set the role constants.
+
+    if ($xmbuser == '') {
+        $self = array();
+        $role['sadmin'] = false;
+        $role['admin'] = false;
+        $role['smod'] = false;
+        $role['mod'] = false;
+        $role['staff'] = false;
+        if (!defined('X_GUEST')) {
+            define('X_MEMBER', false);
+            define('X_GUEST', true);
+        }
+    } else {
+        if (!defined('X_GUEST')) {
+            define('X_MEMBER', true);
+            define('X_GUEST', false);
+        }
+        switch($self['status']) {
+            case 'Super Administrator':
+                $role['sadmin'] = true;
+                $role['admin'] = true;
+                $role['smod'] = true;
+                $role['mod'] = true;
+                $role['staff'] = true;
+                break;
+            case 'Administrator':
+                $role['sadmin'] = false;
+                $role['admin'] = true;
+                $role['smod'] = true;
+                $role['mod'] = true;
+                $role['staff'] = true;
+                break;
+            case 'Super Moderator':
+                $role['sadmin'] = false;
+                $role['admin'] = false;
+                $role['smod'] = true;
+                $role['mod'] = true;
+                $role['staff'] = true;
+                break;
+            case 'Moderator':
+                $role['sadmin'] = false;
+                $role['admin'] = false;
+                $role['smod'] = false;
+                $role['mod'] = true;
+                $role['staff'] = true;
+                break;
+            default:
+                $role['sadmin'] = false;
+                $role['admin'] = false;
+                $role['smod'] = false;
+                $role['mod'] = false;
+                $role['staff'] = false;
+                break;
+        }
+    }
+    if (!defined('X_STAFF')) {
+        define('X_SADMIN', $role['sadmin']);
+        define('X_ADMIN', $role['admin']);
+        define('X_SMOD', $role['smod']);
+        define('X_MOD', $role['mod']);
+        define('X_STAFF', $role['staff']);
+    }
+
+    return ($xmbuser != '');
+}
 
 function nav($add=false, $raquo=true) {
     global $navigation;
@@ -104,6 +253,7 @@ function loadtemplates() {
 function censor($txt, $ignorespaces=false) {
     global $censorcache;
 
+    $ignorespaces = TRUE;
     if (is_array($censorcache)) {
         if (count($censorcache) > 0) {
             $prevfind = '';
@@ -118,7 +268,6 @@ function censor($txt, $ignorespaces=false) {
                     $prevfind = $find;
                 }
             }
-
             if ($ignorespaces !== true) {
                 $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
             }
@@ -266,7 +415,6 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 }
             }
         }
-
         $message = implode("", $messagearray);
         $message = addslashes($message);
     } else {
@@ -280,15 +428,13 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = wordwrap($message, 150, "\n", 1);
         $message = preg_replace('#(\[/?.*)\n(.*\])#mi', '\\1\\2', $message);
     }
-
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
-
     return $message;
 }
 
 function bbcode($message, $allowimgcode) {
     global $lang;
-
+    
     $find = array(
         0 => '[b]',
         1 => '[/b]',
@@ -388,14 +534,12 @@ function bbcode($message, $allowimgcode) {
     return preg_replace($patterns, $replacements, $message);
 }
 
-function modcheck($status, $username, $mods) {
-
-    if (X_ADMIN || in_array($status, array('Super Moderator'))) {
-        return 'Moderator';
-    }
+function modcheck($username, $mods) {
 
     $retval = '';
-    if ($status == 'Moderator') {
+    if (X_SMOD) {
+        $retval = 'Moderator';
+    } elseif (X_MOD) {
         $username = strtoupper($username);
         $mods = explode(',', $mods);
         foreach($mods as $key=>$moderator) {
@@ -408,43 +552,31 @@ function modcheck($status, $username, $mods) {
     return $retval;
 }
 
-function privfcheck($private, $userlist) {
-    global $self, $xmbuser;
+function modcheckPost($username, $mods, $origstatus) {
+    global $SETTINGS;
+    $retval = modcheck($username, $mods);
 
-    if (X_SADMIN) {
-        return true;
-    }
-
-    switch($private) {
-        case 4:
-            return false;
-            break;
-        case 3:
-            return X_STAFF;
-            break;
-        case 2:
-            return X_ADMIN;
-            break;
-        case 1:
-            if (trim($userlist) == '') {
-                return true;
-            }
-
-            $user = explode(',', $userlist);
-            $xuser = strtolower($xmbuser);
-            foreach($user as $usr) {
-                $usr = strtolower(trim($usr));
-                if ($usr != '' && $xuser == $usr) {
-                   return true;
+    if ($retval != '' And $SETTINGS['allowrankedit'] != 'off') {
+        switch($origstatus) {
+            case 'Super Administrator':
+                if (!X_SADMIN) {
+                    $retval = '';
                 }
-            }
-            return false;
-            break;
-        default:
-            return false;
-            break;
+                break;
+            case 'Administrator':
+                if (!X_ADMIN) {
+                    $retval = '';
+                }
+                break;
+            case 'Super Moderator':
+                if (!X_SMOD) {
+                    $retval = '';
+                }
+                break;
+            //If member does not have X_MOD then modcheck() returned a null string.  No reason to continue testing.
+        }
     }
-    return false;
+    return $retval;
 }
 
 function forum($forum, $template) {
@@ -486,7 +618,8 @@ function forum($forum, $template) {
     }
 
     $foruminfo = '';
-    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($forum['private'], $forum['userlist'])) {
+    $perms = checkForumPermissions($forum);
+    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
         if (isset($forum['moderator']) && $forum['moderator'] != '') {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
@@ -501,8 +634,9 @@ function forum($forum, $template) {
         if (count($index_subforums) > 0) {
             for($i=0; $i < count($index_subforums); $i++) {
                 $sub = $index_subforums[$i];
+                $subperms = checkForumPermissions($sub);
                 if ($sub['fup'] == $forum['fid']) {
-                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || privfcheck($sub['private'], $sub['userlist'])) {
+                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
                         $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.html_entity_decode(stripslashes($sub['name'])).'</a>';
                     }
                 }
@@ -593,7 +727,8 @@ function smilieinsert() {
 
     $sms = array();
     $smilienum = 0;
-    $smilies = $smilieinsert = '';
+    $smilies = '';
+    $smilieinsert = '';
 
     if ($smileyinsert == 'on' && $smcols != '') {
         if ($smtotal == 0) {
@@ -606,6 +741,7 @@ function smilieinsert() {
             while($smilie = $db->fetch_array($querysmilie)) {
                 eval('$sms[] = "'.template('functions_smilieinsert_smilie').'";');
             }
+            $db->free_result($querysmilie);
 
             $smilies = '<tr>';
             for($i=0;$i<count($sms);$i++) {
@@ -636,7 +772,8 @@ function smilieinsert() {
 function updateforumcount($fid) {
     global $db;
 
-    $postcount = $threadcount = 0;
+    $postcount = 0;
+    $threadcount = 0;
 
     $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
     $postcount = $db->result($query, 0);
@@ -683,7 +820,8 @@ function smcwcache() {
     static $cached;
 
     if (!$cached) {
-        $smiliecache = $censorcache = array();
+        $smiliecache = array();
+        $censorcache = array();
 
         $query = $db->query("SELECT code, url FROM ".X_PREFIX."smilies WHERE type='smiley'");
         $smiliesnum = $db->num_rows($query);
@@ -714,7 +852,6 @@ function smcwcache() {
 
 /* checkInput() is deprecated */
 function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quotes=true) {
-
     $input = trim($input);
     if ($striptags == 'yes') {
         $input = strip_tags($input);
@@ -736,7 +873,6 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
 
 /* checkOutput() is deprecated */
 function checkOutput($output, $allowhtml='no', $word='', $allowEntities=false) {
-
     $output = trim($output);
     if ($allowhtml == 'yes' || $allowhtml == 'on') {
         $output = htmlspecialchars_decode($output);
@@ -821,29 +957,8 @@ function end_time() {
     } else {
         $footerstuff['querydump'] = '';
     }
+
     return $footerstuff;
-}
-
-function pwverify($pass='', $url, $fid, $showHeader=false) {
-    global $self, $cookiepath, $cookiedomain, $lang;
-
-    if (X_SADMIN) {
-        return true;
-    }
-
-    $pwform = '';
-    if (trim($pass) != '' && $_COOKIE['fidpw'.$fid] != $pass) {
-        if ($_POST['pw'] != $pass) {
-            extract($GLOBALS);
-            eval('$pwform = "'.template('forumdisplay_password').'";');
-            error(((isset($_POST['pw'])) ? $lang['invalidforumpw'] : $lang['forumpwinfo']), $showHeader, '', $pwform, false, true, false, true);
-        } else {
-            put_cookie("fidpw$fid", $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
-            redirect($url, 0);
-        }
-        exit();
-    }
-    return true;
 }
 
 function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
@@ -873,89 +988,6 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     return true;
 }
 
-function postperm(& $forums, $type) {
-    global $lang, $self, $whopost1, $whopost2;
-    static $cache;
-
-    if (!isset($forums['postperm'])) {
-        return false;
-    }
-
-    $pperm = explode('|', $forums['postperm']);
-    if (!isset($cache[$forums['fid']])) {
-        switch($pperm[0]) {
-            case 1:
-                $whopost1 = $lang['whocanpost11'];
-                break;
-            case 2:
-                $whopost1 = $lang['whocanpost12'];
-                break;
-            case 3:
-                $whopost1 = $lang['whocanpost13'];
-                break;
-            case 4:
-                $whopost1 = $lang['whocanpost14'];
-                break;
-        }
-
-        switch($pperm[1]) {
-            case 1:
-                $whopost2 = $lang['whocanpost21'];
-                break;
-            case 2:
-                $whopost2 = $lang['whocanpost22'];
-                break;
-            case 3:
-                $whopost2 = $lang['whocanpost23'];
-                break;
-            case 4:
-                $whopost2 = $lang['whocanpost24'];
-                break;
-        }
-        $cache[$forums['fid']] = true;
-    }
-
-    if (X_SADMIN) {
-        return true;
-    }
-
-    $perm = ($type == 'thread') ? $pperm[0] : $pperm[1];
-    switch($forums['private']) {
-        case 1:
-            $fplen = isset($forums['password']) ? strlen($forums['password']) : 0;
-            $fulen = isset($forums['userlist']) ? strlen($forums['userlist']) : 0;
-            if (($fplen > 1 || $fulen > 1) && privfcheck($forums['private'], $forums['userlist'])) {
-                return true;
-            }
-
-            if (!X_STAFF) {
-                if ($perm == 1) {
-                    return true;
-                }
-                break;
-            }
-        case 3:
-            if (!X_ADMIN) {
-                if ($perm == 1 || $perm == 3) {
-                    return true;
-                }
-                break;
-            }
-        case 2:
-            if ($perm < 4) {
-                return true;
-            }
-            break;
-        case 4:
-            return false;
-            break;
-        default:
-            return false;
-            break;
-    }
-    return false;
-}
-
 function get_extension($filename) {
     $a = explode('.', $filename);
     $count = count($a);
@@ -969,7 +1001,8 @@ function get_extension($filename) {
 function get_attached_file($file, $attachstatus, $max_size=1000000) {
     global $lang, $filename, $filetype, $filesize;
 
-    $filename = $filetype = '';
+    $filename = '';
+    $filetype = '';
     $filesize = 0;
 
     if ($file['name'] != 'none' && !empty($file['name']) && $attachstatus != 'off' && is_uploaded_file($file['tmp_name'])) {
@@ -1147,7 +1180,8 @@ function array_keys2keys($array, $translator) {
 function mysql_syn_highlight($query) {
     global $tables, $tablepre;
 
-    $find = $replace = array();
+    $find = array();
+    $replace = array();
 
     foreach($tables as $name) {
         $find[] = $tablepre.$name;
@@ -1403,7 +1437,7 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
 
 function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
     global $self, $SETTINGS, $timeoffset, $addtime, $timecode;
-
+    
     if ($timestamp === null) {
         $timestamp = time();
     }
@@ -1504,71 +1538,50 @@ function month2text($num) {
 }
 
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
-    global $db, $self, $lang;
+    global $db, $self, $lang, $SETTINGS;
 
-    $restrict = array();
-    switch($self['status']) {
-        case 'Member':
-            $restrict[] = "private != '3'";
-        case 'Moderator':
-        case 'Super Moderator':
-            $restrict[] = "private != '2'";
-        case 'Administrator':
-            $restrict[] = "userlist = ''";
-        case 'Super Administrator':
-            break;
-        default:
-            $restrict[] = "private != '3'";
-            $restrict[] = "private != '2'";
-            $restrict[] = "userlist = ''";
-            $restrict[] = "password = ''";
-            break;
-    }
-    $restrict = implode(' AND ', $restrict);
-
-    if ($restrict != '') {
-        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
-    } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password FROM ".X_PREFIX."forums WHERE status='on' ORDER BY displayorder");
-    }
+    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($sql)) {
-        $forum['name'] = html_entity_decode($forum['name']);
-        if (!X_SADMIN && $forum['password'] != '') {
-            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
-            if ($forum['password'] !== $fidpw) {
-                continue;
+    while($forum = $db->fetch_array($query)) {
+        $perms = checkForumPermissions($forum);
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+            $forum['name'] = html_entity_decode($forum['name']);
+            if (!X_SADMIN && $forum['password'] != '') {
+                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+                if ($forum['password'] !== $fidpw) {
+                    continue;
+                }
+            }
+
+            switch($forum['type']) {
+                case 'group':
+                    $categories[] = $forum;
+                    break;
+                case 'sub':
+                    if (!isset($subforums[$forum['fup']])) {
+                        $subforums[$forum['fup']] = array();
+                    }
+                    $subforums[$forum['fup']][] = $forum;
+                    break;
+                case 'forum':
+                default:
+                    if ($forum['fup'] == 0) {
+                        $standAloneForums[] = $forum;
+                    } else {
+                        if (!isset($forums[$forum['fup']])) {
+                            $forums[$forum['fup']] = array();
+                        }
+                        $forums[$forum['fup']][] = $forum;
+                    }
+                    break;
             }
         }
-
-        switch($forum['type']) {
-            case 'group':
-                $categories[] = $forum;
-                break;
-            case 'sub':
-                if (!isset($subforums[$forum['fup']])) {
-                    $subforums[$forum['fup']] = array();
-                }
-                $subforums[$forum['fup']][] = $forum;
-                break;
-            case 'forum':
-            default:
-                if ($forum['fup'] == 0) {
-                    $standAloneForums[] = $forum;
-                } else {
-                    if (!isset($forums[$forum['fup']])) {
-                        $forums[$forum['fup']] = array();
-                    }
-                    $forums[$forum['fup']][] = $forum;
-                }
-                break;
-        }
     }
-    $db->free_result($sql);
+    $db->free_result($query);
 
     $forumselect = array();
     if (!$multiple) {
@@ -1628,71 +1641,50 @@ function readFileAsINI($filename) {
 }
 
 function forumJump() {
-    global $db, $self, $lang;
+    global $db, $self, $lang, $SETTINGS;
 
-    $restrict = array();
-    switch($self['status']) {
-        case 'Member':
-            $restrict[] = "private != '3'";
-        case 'Moderator':
-        case 'Super Moderator':
-            $restrict[] = "private != '2'";
-        case 'Administrator':
-            $restrict[] = "userlist = ''";
-        case 'Super Administrator':
-            break;
-        default:
-            $restrict[] = "private != '3'";
-            $restrict[] = "private != '2'";
-            $restrict[] = "userlist = ''";
-            $restrict[] = "password = ''";
-            break;
-    }
-    $restrict = implode(' AND ', $restrict);
-
-    if ($restrict != '') {
-        $sql = $db->query("SELECT fid, type, name, fup, status, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE $restrict AND status='on' ORDER BY displayorder");
-    } else {
-        $sql = $db->query("SELECT fid, type, name, fup, private, userlist, password, displayorder FROM ".X_PREFIX."forums WHERE status='on' ORDER BY displayorder");
-    }
+    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($sql)) {
-        $forum['name'] = html_entity_decode($forum['name']);
-        if (!X_SADMIN && $forum['password'] != '') {
-            $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
-            if ($forum['password'] !== $fidpw) {
-                continue;
+    while($forum = $db->fetch_array($query)) {
+        $perms = checkForumPermissions($forum);
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+            $forum['name'] = html_entity_decode($forum['name']);
+            if (!X_SADMIN && $forum['password'] != '') {
+                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+                if ($forum['password'] !== $fidpw) {
+                    continue;
+                }
+            }
+
+            switch($forum['type']) {
+                case 'group':
+                    $categories[] = $forum;
+                    break;
+                case 'sub':
+                    if (!isset($subforums[$forum['fup']])) {
+                        $subforums[$forum['fup']] = array();
+                    }
+                    $subforums[$forum['fup']][] = $forum;
+                    break;
+                case 'forum':
+                default:
+                    if ($forum['fup'] == 0) {
+                        $standAloneForums[] = $forum;
+                    } else {
+                        if (!isset($forums[$forum['fup']])) {
+                            $forums[$forum['fup']] = array();
+                        }
+                        $forums[$forum['fup']][] = $forum;
+                    }
+                    break;
             }
         }
-
-        switch($forum['type']) {
-            case 'group':
-                $categories[] = $forum;
-                break;
-            case 'sub':
-                if (!isset($subforums[$forum['fup']])) {
-                    $subforums[$forum['fup']] = array();
-                }
-                $subforums[$forum['fup']][] = $forum;
-                break;
-            case 'forum':
-            default:
-                if ($forum['fup'] == 0) {
-                    $standAloneForums[] = $forum;
-                } else {
-                    if (!isset($forums[$forum['fup']])) {
-                        $forums[$forum['fup']] = array();
-                    }
-                    $forums[$forum['fup']][] = $forum;
-                }
-                break;
-        }
     }
-    $db->free_result($sql);
+    $db->free_result($query);
 
     $forumselect = array();
 
@@ -1727,5 +1719,90 @@ function forumJump() {
     }
     $forumselect[] = '</select>';
     return implode("\n", $forumselect);
+}
+
+function checkForumPermissions($forum) {
+    // 1. Check Forum Permissions
+    global $self;
+    $status = array(
+        'Super Administrator' => 1,
+        'Administrator'       => 2,
+        'Super Moderator'     => 4,
+        'Moderator'           => 8,
+        'Member'              => 16,
+        ''                    => 32);
+
+    // NewPoll,NewThread,NewReply,View,Userlist,Password
+    $ret = array(false, false, false, false, false, false);
+    $pp = explode(',', $forum['postperm']);
+    foreach($pp as $key=>$val) {
+        if (($val & $status[$self['status']]) == $status[$self['status']]) {
+            $ret[$key] = true;
+        }
+    }
+
+    // 2. Check for userlist
+    $userlist = trim($forum['userlist']);
+
+    if (strlen($userlist) > 0) {
+        if (modcheck($self['username'], $forum['moderator']) == "Moderator") {
+            $ret[X_PERMS_USERLIST] = true;
+        } else {
+            $users = explode(',', $userlist);
+            foreach($users as $user) {
+                if (strtolower(trim($user)) == strtolower($self['username'])) {
+                    $ret[X_PERMS_USERLIST] = true;
+                    break;
+                }
+            }
+        }
+    } else {
+        $ret[X_PERMS_USERLIST] = true;
+    }
+
+    // 3.Check for password
+    $password = trim($forum['password']);
+    if (strlen($password) > 0) {
+        if (isset($_COOKIE['forumPW']) && isset($_COOKIE['forumPW'][$forum['fid']]) && trim($_COOKIE['forumPW'][$forum['fid']]) == $password) {
+            $ret[X_PERMS_PASSWORD] = true;
+        } else {
+            $ret[X_PERMS_PASSWORD] = false;
+        }
+    } else {
+        $ret[X_PERMS_PASSWORD] = true;
+    }
+
+    return $ret;
+}
+
+function handlePasswordDialog($fid, $file, $args=false) {
+
+    extract($GLOBALS);
+    $pwform = '';
+
+    if (false == $args) {
+        $args = array();
+    }
+
+    $p = array('fid='.$fid);
+    foreach($args as $key=>$val) {
+        $p[] = urlencode($key).'='.urlencode($val);
+    }
+    $url = ROOT.$file.'?'.implode('&', $p);
+
+    if (isset($_POST['pw'])) {
+        $pass = $db->result($db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid"), 0);
+
+        if ($_POST['pw'] == $pass) {
+            put_cookie('forumPW['.$fid.']', $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
+            redirect($url);
+        } else {
+            eval('$pwform = "'.template('forumdisplay_password').'";');
+            error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);
+        }
+    } else {
+        eval('$pwform = "'.template('forumdisplay_password').'";');
+        error($lang['forumpwinfo'], true, '', $pwform, false, true, false, true);
+    }
 }
 ?>

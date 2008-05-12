@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1050,7 +1050,7 @@ if ($action == "ranks") {
         $newtitle = postedVar('newtitle');
         $newposts = formInt('newposts');
         $newstars = formInt('newstars');
-        $newallowavatars = formOnOff('newallowavatars');
+        $newallowavatars = formYesNo('newallowavatars');
         $newavaurl = postedVar('newavaurl');
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");

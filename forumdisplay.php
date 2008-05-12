@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -63,27 +63,33 @@ $forum = $db->fetch_array($query);
 $db->free_result($query);
 
 $notexist = false;
-if (!isset($forum['type']) && $forum['type'] != 'forum' && $forum['type'] != 'sub' || $fid == 0) {
+if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $fid == 0 || $forum['status'] != 'on') {
     $notexist = $lang['textnoforum'];
 }
 
 $fup = array();
-if (isset($forum['type']) && $forum['type'] == 'sub') {
-    $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$forum[fup]'");
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
-    if (!privfcheck($fup['private'], $fup['userlist'])) {
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
     }
 } else if (!isset($forum['type']) && $forum['type'] != 'forum') {
     error($notexist);
 }
 
-$authorization = privfcheck($forum['private'], $forum['userlist']);
-if (!$authorization) {
+$perms = checkForumPermissions($forum);
+if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid, basename(__FILE__), $_GET);
 }
-pwverify($forum['password'], 'forumdisplay.php?fid='.$fid, $fid, true);
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav(html_entity_decode(stripslashes($forum['name'])));
@@ -111,21 +117,16 @@ if (count($fup) == 0) {
     }
 }
 
-if (!$notexist) {
-    if (!postperm($forum, 'thread')) {
-        $newtopiclink = $newpolllink = '';
-    } else {
-        if (X_GUEST && isset($forum['guestposting']) && $forum['guestposting'] != 'on') {
-            $newtopiclink = $newpolllink = '';
-        } else {
-            eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
-            if (isset($forum['pollstatus']) && $forum['pollstatus'] != 'off') {
-                eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
-            } else {
-                $newpolllink = '';
-            }
-        }
-    }
+if($perms[X_PERMS_POLL]) {
+    eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
+} else {
+    $newpolllink = '';
+}
+
+if($perms[X_PERMS_THREAD]) {
+    eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
+} else {
+    $newtopiclink = '';
 }
 
 $t_extension = get_extension($lang['toppedprefix']);
@@ -174,13 +175,7 @@ if (strtolower($ascdesc) != 'asc') {
 
 $forumdisplay_thread = 'forumdisplay_thread';
 
-if (X_STAFF && $self['status'] != 'Moderator') {
-    $status1 = 'Moderator';
-} else if ($self['status'] == 'Moderator') {
-    $status1 = modcheck($self['status'], $xmbuser, $forum['moderator']);
-} else {
-    $status1 = '';
-}
+$status1 = modcheck($self['username'], $forum['moderator']);
 
 if ($status1 == 'Moderator') {
     $forumdisplay_thread = 'forumdisplay_thread_admin';
@@ -354,14 +349,14 @@ $mpurl = 'forumdisplay.php?fid='.$fid;
 if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
     $multipage = '';
 } else {
-    if (X_ADMIN || $status1 == 'Moderator') {
+    if ($status1 == 'Moderator') {
         eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
     } else {
         eval('$multipage = "'.template('forumdisplay_multipage').'";');
     }
 }
 
-if (X_ADMIN || $status1 == 'Moderator') {
+if ($status1 == 'Moderator') {
     eval('echo stripslashes("'.template('forumdisplay_admin').'");');
 } else {
     eval('echo stripslashes("'.template('forumdisplay').'");');

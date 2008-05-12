@@ -50,4 +50,31 @@ function icon(theicon) {
     AddText('', '', theicon, messageElement)
 }
 
+function avatarCheck(input, max_size) {
+    var image = new Image();
+    image.onload = function() {
+        var avatarCheck = document.getElementById('avatarCheck');
+        var isValid = document.getElementById('newavatarcheck');
+        max_size = max_size.split("x");
+
+        if (input.value == "") {
+            avatarCheck.innerHTML = "";
+            isValid.value = "no";
+        } else if (image.width == 0 || image.height == 0) {
+            isValid.value = "no";
+            avatarCheck.style.color = "#ff0000";
+            avatarCheck.innerHTML = "Invalid: Invalid Image";
+        } else if ((image.width > max_size[0] && max_size[0] != 0) || (image.height > max_size[1] && max_size[1] != 0)) {
+            isValid.value = "no";
+            avatarCheck.style.color = "#ff0000";
+            avatarCheck.innerHTML = "Invalid: Image Too Large (Max Size = " + max_size[0] + "x" + max_size[1] + ")";
+        } else {
+            avatarCheck.style.color = "#00ff00";
+            isValid.value = "yes";
+            avatarCheck.innerHTML = "Valid Image";
+        }
+    }
+    image.src = input.value;
+}
+
 self.name = 'mainwindow';

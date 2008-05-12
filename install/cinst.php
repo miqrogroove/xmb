@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -225,7 +225,6 @@ $db->query("CREATE TABLE ".$tablepre."forums (
       `lastpost` varchar(54) NOT NULL default '',
       `moderator` varchar(100) NOT NULL default '',
       `displayorder` smallint(6) NOT NULL default 0,
-      `private` varchar(30) default '1',
       `description` text,
       `allowhtml` char(3) NOT NULL default '',
       `allowsmilies` char(3) NOT NULL default '',
@@ -235,17 +234,14 @@ $db->query("CREATE TABLE ".$tablepre."forums (
       `posts` int(10) NOT NULL default 0,
       `threads` int(10) NOT NULL default 0,
       `fup` smallint(6) NOT NULL default 0,
-      `postperm` char(3) NOT NULL default '',
+      `postperm` varchar(11) NOT NULL default '0,0,0,0',
       `allowimgcode` char(3) NOT NULL default '',
       `attachstatus` varchar(15) NOT NULL default '',
-      `pollstatus` varchar(15) NOT NULL default '',
       `password` varchar(32) NOT NULL default '',
-      `guestposting` char(3) NOT NULL default '',
       PRIMARY KEY  (`fid`),
       KEY `fup` (`fup`),
       KEY `type` (`type`),
       KEY `displayorder` (`displayorder`),
-      KEY `private` (`private`),
       KEY `status` (`status`)
    ) TYPE=MyISAM
 ");
@@ -678,7 +674,7 @@ $db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `pa
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."forums");
-$db->query("INSERT INTO ".$tablepre."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, '1', 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'no', 'yes', 'yes', '', 0, 0, 0, 0, '1|1', 'yes', 'on', 'on', '', 'off');");
+$db->query("INSERT INTO ".$tablepre."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'no', 'yes', 'yes', '', 0, 0, 0, 0, '31,31,31,63', 'yes', 'on', '');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."ranks");
@@ -758,7 +754,7 @@ $db->query("DELETE FROM ".$tablepre."templates WHERE name=''");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."themes");
-$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('XMB Engage', '#cdcecf', '#aebbcf', '#91a9cf', '#000000', '#2E3E55', '#5472a4', '#FFFFFF', 'topbg.gif', 'catbg.gif', '#000000', '#000000', '1px', '90%', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.gif', 'images/engage', 'images/smilies', '#FFFFFF');");
+$db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."words");

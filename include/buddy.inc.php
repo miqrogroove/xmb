@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -119,6 +119,7 @@ function buddy_display() {
     $buddys['offline'] = '';
     $buddys['online'] = '';
     while($buddy = $db->fetch_array($q)) {
+        $recodename = recodeOut($buddy['buddyname']);
         if ($buddy['username'] != '') {
             if ($buddy['invisible'] == 1) {
                 if (!X_ADMIN) {

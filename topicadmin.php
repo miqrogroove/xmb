@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -25,7 +25,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
- 
+
 define('X_SCRIPT', 'topicadmin.php');
 
 require 'header.php';
@@ -63,12 +63,10 @@ loadtemplates(
 'topicadmin_split_row',
 'topicadmin_split',
 'topicadmin_merge',
-'topicadmin_report',
 'topicadmin_empty',
 'topicadmin_threadprune_row',
 'topicadmin_threadprune',
-'topicadmin_copy',
-'misc_feature_notavailable'
+'topicadmin_copy'
 );
 
 eval('$css = "'.template('css').'";');
@@ -77,19 +75,19 @@ if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = html_entity_decode(stripslashes($thread['subject']));
-    $fid = $thread['fid'];
+    $threadname = censor(stripslashes($thread['subject']));
+    $fid = (int)$thread['fid'];
 } else {
-    $threadSubject = '';
+    $threadname = '';
 }
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid' AND status='on'");
 $forums = $db->fetch_array($query);
 $db->free_result($query);
 $forums['name'] = stripslashes($forums['name']);
 
 $kill = false;
-if ($fid == 0 Or !X_MEMBER) {
+if ($fid == 0 Or !X_STAFF) {
     $kill = true;
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name'].'</a>'));
@@ -103,7 +101,7 @@ if ($fid == 0 Or !X_MEMBER) {
     $fup['name'] = stripslashes($fup['name']);
     nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode($fup['name']).'</a>');
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name']).'</a>');
-    if (isset($threadname)) {
+    if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
 } else {
@@ -138,9 +136,6 @@ switch($action) {
     case 'bump':
         nav($lang['textbumpthread']);
         break;
-    case 'report':
-        nav($lang['textreportpost']);
-        break;
     case 'split':
         nav($lang['textsplitthread']);
         break;
@@ -153,25 +148,26 @@ switch($action) {
     case 'empty':
         nav($lang['textemptythread']);
         break;
-    case 'votepoll':
-        nav($lang['textvote']);
-        break;
     default:
         $kill = true;
         break;
 }
 
+$mod = new mod();
+$kill &= !$mod->statuscheck($fid);
+
 if ($kill) {
     error($lang['notpermitted']);
 }
 
-eval('echo "'.template('header').'";');
+if ($SETTINGS['subject_in_title'] == 'on') {
+    $threadSubject = '- '.$threadname;
+}
 
-$mod = new mod();
+eval('echo "'.template('header').'";');
 
 switch($action) {
     case 'delete':
-        $mod->statuscheck($fid);
         if (noSubmit('deletesubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_delete').'");');
@@ -203,7 +199,6 @@ switch($action) {
         break;
 
     case 'close':
-        $mod->statuscheck($fid);
         $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
         $closed = $db->result($query, 0);
         $db->free_result($query);
@@ -230,7 +225,6 @@ switch($action) {
         break;
 
     case 'f_close':
-        $mod->statuscheck($fid);
         if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_openclose').'");');
@@ -246,7 +240,6 @@ switch($action) {
         break;
 
     case 'f_open':
-        $mod->statuscheck($fid);
         if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $lang['textclosethread'] = $lang['textopenthread'];
@@ -263,7 +256,6 @@ switch($action) {
         break;
 
     case 'move':
-        $mod->statuscheck($fid);
         if (noSubmit('movesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('moveto', false, false, $fid);
@@ -291,7 +283,7 @@ switch($action) {
                         $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
                         $info = $db->fetch_array($query);
                         $db->free_result($query);
-
+                        
                         $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$info[fid]', '$info[subject]', '', '$info[lastpost]', 0, 0, '$info[author]', 'moved|$info[tid]', '$info[topped]')");
                         $ntid = $db->insert_id();
 
@@ -321,7 +313,6 @@ switch($action) {
         break;
 
     case 'top':
-        $mod->statuscheck($fid);
         if (noSubmit('topsubmit')) {
             if (!is_array($tid)) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
@@ -365,7 +356,6 @@ switch($action) {
         break;
 
     case 'getip':
-        $mod->statuscheck($fid);
         if ($pid) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE pid='$pid'");
         } else {
@@ -388,7 +378,7 @@ switch($action) {
             $ip = explode('.', $ipinfo['useip']);
             $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
             $result = $db->fetch_array($query);
-			$db->free_result($query);
+            $db->free_result($query);
             if ($result) {
                 $buttontext = $lang['textunbanip'];
                 for ($i=1; $i<=4; ++$i) {
@@ -426,7 +416,6 @@ switch($action) {
         break;
 
     case 'bump':
-        $mod->statuscheck($fid);
         if (noSubmit('bumpsubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_bump').'");');
@@ -450,7 +439,6 @@ switch($action) {
         break;
 
     case 'empty':
-        $mod->statuscheck($fid);
         if (noSubmit('emptysubmit')) {
             $tid = $mod->create_tid_string($tid);
             eval('echo stripslashes("'.template('topicadmin_empty').'");');
@@ -485,11 +473,10 @@ switch($action) {
         break;
 
     case 'split':
-        $mod->statuscheck($fid);
         if (noSubmit('splitsubmit')) {
             $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
             $replies = $db->result($query, 0);
-			$db->free_result($query);
+            $db->free_result($query);
             if ($replies == 0) {
                 error($lang['cantsplit'], false);
             }
@@ -570,7 +557,6 @@ switch($action) {
         break;
 
     case 'merge':
-        $mod->statuscheck($fid);
         $tid = intval($tid);
         if (noSubmit('mergesubmit')) {
             eval('echo stripslashes("'.template('topicadmin_merge').'");');
@@ -584,7 +570,7 @@ switch($action) {
             $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid='$othertid'");
 
             if ($db->num_rows($queryadd1) == 0) {
-            	$db->free_result($queryadd1);
+                $db->free_result($queryadd1);
                 error($lang['tidnoexist'], false);
             }
             $replyadd = $db->result($queryadd1, 0, 'replies');
@@ -593,7 +579,7 @@ switch($action) {
 
             $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
             $replyadd2 = $db->result($queryadd2, 0);
-			$db->free_result($queryadd2);
+            $db->free_result($queryadd2);
             $replyadd++;
             $replyadd = $replyadd + $replyadd2;
 
@@ -610,7 +596,7 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."favorites SET tid='$tid' WHERE tid='$othertid'");
             }
             $db->free_result($query);
-
+            
             $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid='$tid' OR tid='$othertid' ORDER BY pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);
             $db->free_result($query);
@@ -626,7 +612,6 @@ switch($action) {
         break;
 
     case 'threadprune':
-        $mod->statuscheck($fid);
         if (noSubmit('threadprunesubmit')) {
             $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
             $replies = $db->result($query, 0);
@@ -727,7 +712,6 @@ switch($action) {
         break;
 
     case 'copy':
-        $mod->statuscheck($fid);
         if (noSubmit('copysubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('newfid', false, false);
@@ -737,7 +721,11 @@ switch($action) {
                 error($lang['privforummsg'], false);
             }
 
-            $mod->statuscheck($newfid);
+            $newfid = getRequestInt('newfid');
+            if (!$mod->statuscheck($newfid)) {
+                error($lang['notpermitted'], false);
+            }
+            
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'"));
@@ -775,7 +763,7 @@ switch($action) {
                 $values  = "'".implode("', '", $vals)."'";
 
                 $db->query("INSERT INTO ".X_PREFIX."threads ($columns) VALUES ($values)");
-
+                
                 $newtid = $db->insert_id();
                 $cols = array();
                 $vals = array();
@@ -810,89 +798,6 @@ switch($action) {
             }
 
             message($lang['copythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
-        }
-        break;
-
-    case 'report':
-        if ($SETTINGS['reportpost'] == 'off') {
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit;
-        }
-
-        if (noSubmit('reportsubmit')) {
-            eval('echo stripslashes("'.template('topicadmin_report').'");');
-        } else {
-            $tid = intval($tid);
-            $pid = getInt('pid', 'p');
-            $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
-            $postcount = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
-            $db->free_result($query);
-            $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid=$fid");
-            $mods = explode(", ", $db->result($query, 0));
-            $db->free_result($query);
-
-            $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
-            while($modusr = $db->fetch_array($modquery)) {
-                $mod = $db->escape($modusr['username']);
-                $page = quickpage($postcount, $modusr['ppp']);
-
-                $posturl = $SETTINGS['boardurl']."viewthread.php?tid=$tid&page=$page#pid$pid";
-                $reason = postedVar('reason');
-                $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
-
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$xmbuser', 'incoming', '$mod', 'Inbox', '{$lang['reportsubject']}', '$message', ".$db->time($onlinetime).", 'no', 'yes')");
-            }
-            $db->free_result($modquery);
-
-            $page = quickpage($postcount, $tpp);
-            message($lang['reportmsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
-        }
-        break;
-
-    case 'votepoll':
-        // User voted in poll related to thread $tid. The vote option is contained in $postopnum
-        $postopnum = formInt('postopnum');
-        if ($postopnum === 0) {
-            error($lang['pollvotenotselected'], false);
-        }
-
-        // Does a poll exist for this thread?
-        $tid = intval($tid);
-        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
-        if ($query === false) {
-            error($lang['pollvotenotselected'], false);
-        }
-
-        $vote_id = $db->fetch_array($query);
-        $vote_id = $vote_id['vote_id'];
-        $db->free_result($query);
-
-        // does the poll option exist?
-        $query = $db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
-        $vote_result = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
-        $db->free_result($query);
-        if ($vote_result != 1) {
-            error($lang['pollvotenotselected'], false);
-        }
-
-        // Has the user voted on this poll before?
-        $query = $db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id AND vote_user_id={$self['uid']}");
-        $voted = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
-        $db->free_result($query);
-        if ($voted === 1) {
-            error($lang['alreadyvoted'], false);
-        }
-
-        // Okay, the user is about to vote
-        $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ($vote_id, {$self['uid']}, '".encode_ip($onlineip)."')");
-        $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
-
-        if ($tid > 0) {
-            message($lang['votemsg'], false, '', '', 'viewthread.php?tid='.$tid, true, false, true);
-        } else {
-            message($lang['votemsg'], false, '', '', 'index.php', true, false, true);
         }
         break;
 }

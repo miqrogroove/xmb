@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -31,28 +31,13 @@ if (!defined('IN_CODE')) {
 }
 
 class mod {
-    function mod() {
-        global $self, $xmbuser, $xmbpw, $lang, $action, $oToken;
-
-        if (!X_STAFF && $action != 'votepoll' && $action != 'report') {
-            error($lang['notpermitted'], false);
-        }
-    }
-
     function statuscheck($fid) {
-        global $self, $xmbuser, $lang, $db, $oToken;
+        global $self, $db;
 
         $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
         $mods = $db->result($query, 0);
-        $status1 = modcheck($self['status'], $xmbuser, $mods);
 
-        if (X_SMOD || X_ADMIN) {
-            $status1 = 'Moderator';
-        }
-
-        if ($status1 != 'Moderator') {
-            error($lang['textnoaction'], false);
-        }
+        return (modcheck($self['username'], $mods) == 'Moderator');
     }
 
     function log($user='', $action, $fid, $tid, $reason='') {

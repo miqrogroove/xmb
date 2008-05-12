@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -33,7 +33,7 @@ if (!defined('IN_CODE')) {
 /**
 * CSRF protection class. Call this to obtain and test a page token.
 *
-* In XMB 1.9.8, each user has a single token per page no matter which destination
+* From XMB 1.9.8, each user has a single token per page no matter which destination
 * action. These should be used for all actions. XMB 2.0 will extend this to include
 * unique tokens per action, making it much harder for attackers to spoof any particular
 * action.
@@ -141,7 +141,8 @@ function isValidEmail($addr) {
             break;
         }
 
-        $user = $domain = '';
+        $user = '';
+        $domain = '';
         list($user, $domain) = split('@', $addr);
 
         // Check if the site has an MX record. We can't send unless there is.
@@ -194,7 +195,7 @@ function formVar($varname, $striptags = true, $quotes = false) {
         $retval = trim($_POST[$varname]);
         if ($striptags) {
             $retval = strip_tags($retval);
-        }
+            }
 
         if ($quotes) {
             $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -283,11 +284,9 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     if (get_magic_quotes_gpc()) {
                         $theObject = stripslashes($theObject);
                     }
-                    
                     if ($word != '') {
                         $theObject = str_ireplace($word, "_".$word, $theObject);
                     }
-                    
                     if ($htmlencode) {
                         if ($quoteencode) {
                             $theObject = htmlspecialchars($theObject, ENT_QUOTES);
@@ -295,7 +294,6 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                             $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
                         }
                     }
-                    
                     if ($dbescape) {
                         $theObject = $GLOBALS['db']->escape($theObject);
                     }
@@ -309,6 +307,10 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
 
 function recodeOut($rawstring) {
     return rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES));
+}
+
+function recodeJavaOut($rawstring) {
+    return rawurlencode(rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES)));
 }
 
 function cdataOut($rawstring) {

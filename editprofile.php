@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -125,9 +125,9 @@ if (noSubmit('editsubmit')) {
     $dayselect[] = '<option value="">&nbsp;</option>';
     for($num = 1; $num <= 31; $num++) {
         if ($day == $num) {
-            $dayselect[] = '<option value='.$num.'" '.$selHTML.'>'.$num.'</option>';
+            $dayselect[] = '<option value="'.$num.'" '.$selHTML.'>'.$num.'</option>';
         } else {
-            $dayselect[] = '<option value='.$num.'">'.$num.'</option>';
+            $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
         }
     }
     $dayselect[] = '</select>';
@@ -216,6 +216,7 @@ if (noSubmit('editsubmit')) {
     $month = formInt('month');
     $day = formInt('day');
     $bday = iso8601_date($year, $month, $day);
+    $newavatarcheck = formVar('newavatarcheck');
     $newavatar = formVar('newavatar');
     $avatar = $newavatar ? checkInput($newavatar, 'no', 'yes', 'javascript', false) : '';
     $newlocation = formVar('newlocation');
@@ -237,6 +238,7 @@ if (noSubmit('editsubmit')) {
     $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
 
     $avatar = addslashes($avatar);
+    $newavatarcheck = addslashes($newavatarcheck);
     $location = addslashes($location);
     $yahoo = addslashes($yahoo);
     $aim = addslashes($aim);
@@ -248,13 +250,17 @@ if (noSubmit('editsubmit')) {
     $sig = addslashes($sig);
 
     $max_size = explode('x', $SETTINGS['max_avatar_size']);
-    if ($max_size[0] > 0 && $max_size[1] > 0 && ini_get('allow_url_fopen')) {
-        $size = @getimagesize($_POST['newavatar']);
-        if ($size === false) {
-            $avatar = '';
-        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
-            error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+    if (ini_get('allow_url_fopen')) {
+        if ($max_size[0] > 0 && $max_size[1] > 0) {
+            $size = @getimagesize($_POST['newavatar']);
+            if ($size === false) {
+                $avatar = '';
+            } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+            }
         }
+    } elseif ($newavatarcheck == "no") {
+        $avatar = '';
     }
 
     $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$user'");

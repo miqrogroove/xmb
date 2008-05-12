@@ -14,7 +14,7 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://www.network-tools.com/default.asp?prog=validate&amp;Netnic=whois.arin.net&amp;host=$member[email]" target="_blank">$lang[adminverifyemail]</a></td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://network-tools.com/default.asp?prog=validate&amp;host=$member[email]" target="_blank">$lang[adminverifyemail]</a></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
@@ -119,7 +119,7 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://www.nwtools.com/default.asp?prog=network&host=$member[regip]" target="_blank">$member[regip]</a></td>
+<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://network-tools.com/default.asp?prog=whois&host=$member[regip]" target="_blank">$member[regip]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprosearch]</td>
@@ -188,13 +188,13 @@ $buddys[offline]
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_offline|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
+<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
 <td bgcolor="$altbg1">$lang[textoffline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_online|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%">$buddy[buddyname]</td>
+<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
 <td bgcolor="$altbg1">$buddystatus</td>
 </tr>
 
@@ -277,7 +277,7 @@ $css
 <title>$bbname - $lang[textpowered]</title>
 </head>
 <body text="$text">
-<table cellspacing="{$THEME['borderwidth']}" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="2" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -1937,8 +1937,8 @@ window.onload = tickerstart;
 </tr>
 <tr class="ctrtablerow" bgcolor="$altbg2">
 <td width="33%"><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
-<td width="33%"><a href="#" onclick="Popup('u2u.php','Window', 700, 450);"><strong>$lang[textu2umessenger]</strong></a></td>
-<td width="33%"><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);"><strong>$lang[launchbuddylist]</strong></a></td>
+<td width="33%"><a href="u2u.php" onclick="Popup(this.href,'Window', 700, 450); return false;"><strong>{$lang['textu2umessenger']}</strong></a></td>
+<td width="33%"><a href="buddy.php" onclick="Popup(this.href, 'Window', 450, 400); return false;"><strong>{$lang['launchbuddylist']}</strong></a></td>
 </tr>
 </table>
 </td>
@@ -2029,7 +2029,7 @@ $todaymembers&nbsp;
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2">$memberinfo[username] <small>(<a href="#" onclick="Popup('u2u.php?action=send&amp;username=$encodeuser', 'Window', 700, 450);">$lang[textu2u]</a>)&nbsp;&nbsp;(<a href="javascript:Popup('buddy.php?action=add&amp;buddys=$memberinfo[username]', 'Window', 450, 400);">$lang[addtobuddies]</a>)</small></td>
+<td bgcolor="$altbg2">{$memberinfo['username']} <small>(<a href="u2u.php?action=send&amp;username=$encodeuser" onclick="Popup(this.href, 'Window', 700, 450); return false;">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href="buddy.php?action=add&amp;buddys=$encodeuser" onclick="Popup(this.href, 'Window', 450, 400); return false;">{$lang['addtobuddies']}</a>)</small></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textregistered]</td>
@@ -2065,7 +2065,7 @@ $emailblock
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textaim]</td>
-<td bgcolor="$altbg2"><a href="aim:goim?screenname={$memberinfo['aimrecode']}&amp;message=Hi+{$memberinfo['aimrecode']}.+Are+you+there+I+got+your+aim+name+from+a+mess age+board.">{$memberinfo['aim']}</a></td>
+<td bgcolor="$altbg2"><a href="aim:goim?screenname={$memberinfo['aimrecode']}&amp;message=Hi+{$memberinfo['aimrecode']}.+Are+you+there+I+got+your+aim+name+from+a+message+board.">{$memberinfo['aim']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[texticq]</td>
@@ -2077,7 +2077,7 @@ $emailblock
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textmsn]</td>
-<td bgcolor="$altbg2"><a href="http://members.msn.com/{$memberinfo['msnrecode']}"target="_blank">{$memberinfo['msn']}</a></td>
+<td bgcolor="$altbg2"><a href="http://members.msn.com/{$memberinfo['msnrecode']}" target="_blank">{$memberinfo['msn']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textlocation]</td>
@@ -2279,8 +2279,12 @@ $captcharegcheck
 
 |#*XMB TEMPLATE FILE*#|member_reg_avatarurl|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2"><input type="text" name="avatar" size="25" /></td>
+<td bgcolor="$altbg1" width="22%">$lang[textavatarurl]</td>
+<td bgcolor="$altbg2">
+<input type="hidden" name="newavatarcheck" id="newavatarcheck" value="no" />
+<input type="text" name="newavatar" size="25" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<p id="avatarCheck" style="display: inline;"></p>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_captcha|#*XMB TEMPLATE*#|
@@ -2498,7 +2502,7 @@ $buddys[offline]
 </td>
 </tr>
 <tr>
-<td class="ctrtablerow" bgcolor="$altbg2"><strong><a href="#" onclick="Popup('buddy.php', 'Window', 450, 400);">$lang[launchbuddylist]</a></strong></td>
+<td class="ctrtablerow" bgcolor="$altbg2"><strong><a href="buddy.php" onclick="Popup(this.href, 'Window', 450, 400); return false;">{$lang['launchbuddylist']}</a></strong></td>
 </tr>
 </table>
 </td>
@@ -2521,7 +2525,7 @@ $buddys[offline]
 </tr>
 $messages
 <tr>
-<td colspan="4" class="header" valign="top"><a href="#" onclick ="Popup('u2u.php','Window', 700, 450);">[$lang[viewcompleteinbox]]</a></td>
+<td colspan="4" class="header" valign="top"><a href="u2u.php" onclick="Popup(this.href,'Window', 700, 450); return false;">{$lang['viewcompleteinbox']}</a></td>
 </tr>
 </table>
 </td>
@@ -2572,7 +2576,7 @@ $favs
 
 |#*XMB TEMPLATE FILE*#|memcp_home_u2u_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg2"><a href="#" onclick="Popup('u2u.php?action=view&amp;u2uid=$message[u2uid]', 'Window', 700, 450);">$message[subject]</a></td>
+<td bgcolor="$altbg2"><a href="u2u.php?action=view&amp;u2uid={$message['u2uid']}" onclick="Popup(this.href, 'Window', 700, 450); return false;">{$message['subject']}</a></td>
 <td bgcolor="$altbg1">$message[msgfrom]</td>
 <td bgcolor="$altbg2">$senton</td>
 <td bgcolor="$altbg2">$read</td>
@@ -2770,7 +2774,11 @@ $dayselect
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarurl|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textavatarurl]</td>
-<td bgcolor="$altbg2"><input type="text" name="newavatar" size="25" value="$member[avatar]" /></td>
+<td bgcolor="$altbg2">
+<input type="hidden" name="newavatarcheck" id="newavatarcheck" value="yes" />
+<input type="text" name="newavatar" size="25" value="$member[avatar]" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<p id="avatarCheck" style="display: inline;"></p>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
@@ -3153,9 +3161,9 @@ $multipage
 <td align="center" width="10%">$onlinetime</td>
 <td>$online[location]</td>
 <td align="center">
-<a href="http://www.nwtools.com/default.asp?prog=network&host=$online[ip]" target="_blank" />W</a>
-<a href="http://www.nwtools.com/default.asp?prog=trace&host=$online[ip]" target="_blank" />T</a>
-<a href="http://www.nwtools.com/default.asp?prog=lookup&host=$online[ip]" target="_blank">L</a>
+<a href="http://network-tools.com/default.asp?prog=whois&host=$online[ip]" target="_blank" />W</a>
+<a href="http://network-tools.com/default.asp?prog=trace&host=$online[ip]" target="_blank" />T</a>
+<a href="http://network-tools.com/default.asp?prog=lookup&host=$online[ip]" target="_blank">L</a>
 <a href="http://www.networldmap.com/TryIt.htm?GetLocation&amp;Template=demo.htm&amp;ipaddress=$online[ip]" target="_blank">M</a> $online[ip]</a></td>
 </tr>
 
@@ -3209,12 +3217,12 @@ $multipage
 <td bgcolor="$altbg2">
 <select name="srchfrom">
 <option value="86400">$lang[day1]</option>
-<option value="604800" $selHTML>$lang[aweek]</option>
+<option value="604800">$lang[aweek]</option>
 <option value="2592000">$lang[month1]</option>
 <option value="7948800">$lang[month3]</option>
 <option value="15897600">$lang[month6]</option>
 <option value="31536000">$lang[lastyear]</option>
-<option value="0">$lang[beginning]</option>
+<option value="0" $selHTML>$lang[beginning]</option>
 </select>
 </td>
 </tr>
@@ -3406,10 +3414,6 @@ $preview
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2 $guestpostingmsg</span></td>
-</tr>
 $loggedin
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textsubject]</td>
@@ -3463,15 +3467,6 @@ $preview
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2">
-<span class="smalltxt">
-$whopost1 $lang[and] $whopost2 <br />
-$guestpostingmsg
-</span>
-</td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3554,10 +3549,6 @@ $preview
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostreply]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[whocanpost]</td>
-<td bgcolor="$altbg2"><span class="smalltxt">$whopost1 $lang[and] $whopost2$guestpostingmsg</span></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3923,29 +3914,6 @@ $multipage
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="tid" value="$tid" /><input type="submit" class="submit" name="closesubmit" value="$lang[textclosethread]" /></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</form>
-
-|#*XMB TEMPLATE FILE*#|topicadmin_report|#*XMB TEMPLATE*#|
-<form method="post" name="input" action="topicadmin.php?action=report">
-<input type="hidden" name="token" value="$oToken->newToken" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
-<tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" valign="top" width="19%">$lang[textreason]</td>
-<td bgcolor="$altbg2"><textarea rows="9" cols="45" name="reason"></textarea>
-</tr>
-<tr>
-<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="tid" value="$tid" /><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="pid" value="$pid" /><input type="submit" class="submit" name="reportsubmit" value="$lang[textreportpost]" /></td>
 </tr>
 </table>
 </td>
@@ -4471,7 +4439,7 @@ $u2upreview
 </td>
 </tr>
 </table>
-<table cellspacing="{$THEME['borderwidth']}" cellpadding="2" border="0" align="center">
+<table cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
 <td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=$u2uid" target="_blank">$lang[textprintver]</a></td>
 </tr>
@@ -4577,7 +4545,7 @@ $quickreply
 <a href="post.php?action=newthread&amp;fid=$fid"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll|#*XMB TEMPLATE*#|
-<form method="post" name="poll" action="topicadmin.php?action=votepoll&amp;fid=$fid&amp;tid=$tid">
+<form method="post" name="poll" action="vtmisc.php?action=votepoll&amp;fid=$fid&amp;tid=$tid">
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -4617,7 +4585,7 @@ $buttoncode
 |#*XMB TEMPLATE FILE*#|viewthread_post|#*XMB TEMPLATE*#|
 <tr bgcolor="$thisbg">
 <td rowspan="3" valign="top" class="tablerow" style="width: 18%;">
-<font class="mediumtxt"><strong>$post[author]</strong></font>
+<a href="./member.php?action=viewpro&member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
 <br />
 <div class="smalltxt"><a name="pid$post[pid]"></a>
 $showtitle
@@ -4714,7 +4682,7 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 <a href="member.php?action=viewpro&amp;member=$encodename"><img src="$imgdir/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_report|#*XMB TEMPLATE*#|
-<a href="topicadmin.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
+<a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_repquote|#*XMB TEMPLATE*#|
 <a href="post.php?action=reply&amp;fid=$fid&amp;tid=$tid&amp;repquote=$post[pid]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
@@ -4734,7 +4702,7 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 <a href="$post[site]" target="_blank"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_u2u|#*XMB TEMPLATE*#|
-<a href="#pid$post[pid]" onclick="Popup('u2u.php?action=send&amp;username=$encodename', 'Window', 700, 500);"><img src="$imgdir/u2u.gif" border="0" alt="$lang[altu2umember]" /></a>
+<a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_yahoo|#*XMB TEMPLATE*#|
 <a href="http://profiles.yahoo.com/$post[yahoo]" target="_blank"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
@@ -4796,15 +4764,12 @@ $posts
 <td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>
 $captchapostcheck
-<tr bgcolor="$altbg1" class="quickreply">
-<td colspan="3" class="tablerow"><div align="left"><strong>&nbsp;&raquo;</strong>&nbsp;$whopost2</div></td>
-</tr>
 <tr class="quickreply">
 <td width="8%" height="101" bgcolor="$altbg1" class="tablerow"> <div align="left"><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span><hr /></div><div align="center">
-$smilies<br /><a href="#qreply" onclick="Popup('misc.php?action=smilies', 'Window', 200, 250);">[$lang[moresmilies]]</a></div></td>
+$smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 200, 250); return false;">{$lang['moresmilies']}</a></div></td>
 <td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
 <td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
@@ -4848,5 +4813,28 @@ $lang[verificationnote]
 
 |#*XMB TEMPLATE FILE*#|viewthread_reply|#*XMB TEMPLATE*#|
 <a href="./post.php?action=reply&amp;fid=$fid&amp;tid=$tid"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
+
+|#*XMB TEMPLATE FILE*#|vtmisc_report|#*XMB TEMPLATE*#|
+<form method="post" name="input" action="vtmisc.php?action=report">
+<input type="hidden" name="token" value="$oToken->newToken" />
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" valign="top" width="19%">$lang[textreason]</td>
+<td bgcolor="$altbg2"><textarea rows="9" cols="45" name="reason"></textarea>
+</tr>
+<tr>
+<td colspan="2" class="ctrtablerow" bgcolor="$altbg2"><input type="hidden" name="tid" value="$tid" /><input type="hidden" name="fid" value="$fid" /><input type="hidden" name="pid" value="$pid" /><input type="submit" class="submit" name="reportsubmit" value="$lang[textreportpost]" /></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
 
 |#*XMB TEMPLATE FILE*#|

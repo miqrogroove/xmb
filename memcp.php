@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -107,8 +107,8 @@ function makenav($current) {
         echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
     }
 
-    echo "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">" .$lang['textu2umessenger']. "</a></td>";
-    echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"#\" onclick=\"Popup('buddy.php?', 'Window', 450, 400);\">" .$lang['textbuddylist']. "</a></td>";
+    echo "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" .$lang['textu2umessenger']. "</a></td>";
+    echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"buddy.php\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">" .$lang['textbuddylist']. "</a></td>";
     echo "<td bgcolor=\"$altbg2\" width=\"10%\" class=\"ctrtablerow\"><a href=\"faq.php\">" .$lang['helpbar']. "</a></td>";
     ?>
     </tr>
@@ -425,6 +425,7 @@ if ($action == 'profile') {
         $day = formInt('day');
         $bday = iso8601_date($year, $month, $day);
         $newavatar = formVar('newavatar');
+        $newavatarcheck = formVar('newavatarcheck');
         $avatar = $newavatar ? checkInput($newavatar, 'no', 'yes', 'javascript', false) : '';
         $newlocation = formVar('newlocation');
         $location = $newlocation ? checkInput($newlocation, 'no', 'yes', 'javascript', false) : '';
@@ -457,6 +458,7 @@ if ($action == 'profile') {
         }
 
         $avatar = addslashes($avatar);
+        $newavatarcheck = addslashes($newavatarcheck);
         $location = addslashes($location);
         $yahoo = addslashes($yahoo);
         $aim = addslashes($aim);
@@ -468,13 +470,17 @@ if ($action == 'profile') {
         $sig = addslashes($sig);
 
         $max_size = explode('x', $SETTINGS['max_avatar_size']);
-        if ($max_size[0] > 0 && $max_size[1] > 0 && ini_get('allow_url_fopen')) {
-            $size = @getimagesize($_POST['newavatar']);
-            if ($size === false ) {
-                $avatar = '';
-            } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
-                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+        if (ini_get('allow_url_fopen')) {
+            if ($max_size[0] > 0 && $max_size[1] > 0) {
+                $size = @getimagesize($_POST['newavatar']);
+                if ($size === false ) {
+                    $avatar = '';
+                } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+                    error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+                }
             }
+        } elseif ($newavatarcheck == "no") {
+            $avatar = '';
         }
 
         if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '' ) {
@@ -647,6 +653,7 @@ if ($action == 'profile') {
     $buddys['online'] = '';
     if (X_ADMIN) {
         while($buddy = $db->fetch_array($q)) {
+            $recodename = recodeOut($buddy['buddyname']);
             if (strlen($buddy['username']) > 0) {
                 if ($buddy['invisible'] == 1) {
                    $buddystatus = $lang['hidden'];

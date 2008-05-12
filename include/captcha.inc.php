@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -293,8 +293,7 @@ class Captcha {
 
 function GenerateCode() {
         global $db, $onlinetime;
-        
-        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.($onlinetime - 86400));
+        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
         // loop through and generate the code letter by letter
         for($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {
@@ -439,7 +438,7 @@ function GenerateCode() {
         $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
         $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
         $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-        
+
         if ($this->bUseColor And empty($this->aBackgroundImages)) {
             imagefill($this->oImage, 0, 0, $bgcolor);
         }

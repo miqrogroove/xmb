@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -44,76 +44,34 @@ if ($SETTINGS['stats'] == 'off') {
     error($lang['fnasorry3'], false);
 }
 
-$modXmbuser = str_replace(array('*', '.', '+'), array('\*', '\.', '\+'), $xmbuser);
-$restrict = array("(f.password='')");
-switch($self['status']) {
-    case 'Member':
-        $restrict[] = 'f.private = 1';
-        $restrict[] = "(f.userlist = '' OR f.userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)')";
-        break;
-    case 'Moderator':
-    case 'Super Moderator':
-        $restrict[] = '(f.private = 1 OR f.private = 3)';
-        $restrict[] = "(if ((f.private=1 AND f.userlist != ''), if ((f.userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
-        break;
-    case 'Administrator':
-        $restrict[] = '(f.private > 0 AND f.private < 4)';
-        $restrict[] = "(if ((f.private=1 AND f.userlist != ''), if ((f.userlist REGEXP '(^|(,))([:space:])*$modXmbuser([:space:])*((,)|$)'), 1, 0), 1))";
-        break;
-    case 'Super Administrator':
-        break;
-    default:
-        $restrict[] = '(f.private=1)';
-        $restrict[] = "(f.userlist='')";
-        break;
-}
-
-$fids = array();
-if (!X_SADMIN) {
-    $q = $db->query("SELECT fid, fup, type FROM ".X_PREFIX."forums f WHERE f.status='on' AND ".implode(' AND ', $restrict));
-    while($f = $db->fetch_array($q)) {
-        if (isset($f['type']) && $f['type'] == 'sub') {
-            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$f[fup]'");
-            $fup = $db->fetch_array($query);
-            if (privfcheck($fup['private'], $fup['userlist'])) {
-                $fids[] = $f['fid'];
-            }
-            $db->free_result($query);
-        } else {
-            $fids[] = $f['fid'];
-        }
-    }
-    $db->free_result($q);
-
-    if (X_MEMBER) {
-        $r2 = array();
-        foreach($_COOKIE as $key=>$val) {
-            if (preg_match('#^fidpw([0-9]+)$#', $key, $fetch)) {
-                $r2[] = '(fid="'.$fetch[1].'" AND password="'.addslashes($val).'")';
-            }
-        }
-
-        if (count($r2) > 0) {
-            $r = implode(' OR ', $r2);
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE $r");
-            while($f = $db->fetch_array($q)) {
-                $fids[] = $f['fid'];
-            }
-            $db->free_result($q);
-        }
-    }
-}
-
 if (X_SADMIN) {
-    $restrict = '(1=1)';
+    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
+    while($f = $db->fetch_array($q)) {
+        $fids[] = $f['fid'];
+    }
 } else {
-    $fids = implode(',', $fids);
-    if ($fids == '') {
-         $restrict = '(1=2)';
-    } else {
-         $restrict = 'fid IN ('.$fids.')';
+    $fCache = array();
+    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+    while($forum = $db->fetch_array($q)) {
+        $perms = checkForumPermissions($forum);
+        $fCache[$forum['fid']] = $perms;
+
+        if($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST] && $perms[X_PERMS_PASSWORD]) {
+            if($forum['type'] == 'sub') {
+                // also check above forum!
+                $parentP = $fCache[$forum['fup']];
+                if($parentP[X_PERMS_VIEW] && $parentP[X_PERMS_USERLIST] && $parentP[X_PERMS_PASSWORD]) {
+                    $fids[] = $forum['fid'];
+                }
+            } else {
+                $fids[] = $forum['fid'];
+            }
+        }
     }
 }
+
+$fids = implode(',', $fids);
+$restrict = ' fid IN ('.$fids.')';
 
 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
@@ -220,7 +178,7 @@ $latest = implode('<br />', $latest);
 $db->free_result($query);
 
 // Get most popular forum
-$query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND type='sub' OR type='forum' ORDER BY posts DESC LIMIT 0, 1");
+$query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
 $pop = $db->fetch_array($query);
 $popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.stripslashes(html_entity_decode($pop['name'])).'</strong></a>';
 $db->free_result($query);

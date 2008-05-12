@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -125,4 +125,12 @@ if (!defined('IN_CODE')) {
     / Comment first line and uncomment second line to use debug mode (1.9+ only). Only one define can be
     / active as define is immutable once set.
     */
+    //
+    /*
+    / To allow everyone to see debug errors (in the case of registration errors or the like), comment first
+    / line and uncomment second line.  DEBUG queries will not be shown.
+    / ****  DEBUG MUST BE SET TO TRUE  ****
+    */
+    define('DEBUG_ALL', false);
+    // define('DEBUG_ALL', true);
 ?>

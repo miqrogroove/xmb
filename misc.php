@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -114,53 +114,10 @@ switch($action) {
             eval('$misc = "'.template('misc_login').'";');
             $misc = stripslashes($misc);
         } else {
-            $password = md5($_POST['password']);
-            $usernameinput = postedVar('username');
-            $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$usernameinput' AND password='$password'");
-            if ($query && $db->num_rows($query) == 1) {
-                $member = $db->fetch_array($query);
-                $db->free_result($query);
-                $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
-                $currtime = $onlinetime + (86400*30);
-                $username = $member['username'];
-
-                if (formInt('hide')) {
-                    $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$usernameinput'");
-                } else {
-                    $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$usernameinput'");
-                }
-
-                if ($server == 'Mic') {
-                    $misc = '<script>
-                        function put_cookie(name, value, expires, path, domain, secure) {
-                            var curCookie = name + "=" + escape(value) +
-                            ((expires) ? "; expires=" + expires.toGMTString() : "") +
-                            ((path) ? "; path=" + path : "") +
-                            ((domain) ? "; domain=" + domain : "") +
-                            ((secure) ? "; secure" : "");
-                            document.cookie = curCookie;
-                        }
-
-                        var now = new Date();
-                        now.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-
-                        put_cookie("xmbuser", "'.$username.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-                        put_cookie("xmbpw", "'.$password.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-
-                        window.location="index.php";
-                    </script>';
-                } else {
-                    $secure = formYesNo('secure');
-                    if ($secure == 'yes') {
-                        put_cookie("xmbuser", $username, NULL, $cookiepath, $cookiedomain);
-                        put_cookie("xmbpw", $password, NULL, $cookiepath, $cookiedomain);
-                    } else {
-                        put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-                        put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
-                    }
-
+            $password = '';
+            if (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
+                if ($server != 'Mic') {
                     redirect('index.php', 0);
-                    $misc = '';
                 }
             } else {
                 eval('echo "'.template('header').'";');
@@ -194,132 +151,260 @@ switch($action) {
         break;
 
     case 'search':
-        if ($SETTINGS['searchstatus'] == 'off') {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
+            if ($SETTINGS['searchstatus'] != "on") {
+                eval("echo (\"".template('header')."\");");
 
-        $srchfrom = intval(getRequestVar('srchfrom'));
-        $srchtxt = addslashes(getRequestVar('srchtxt'));
-        $srchuname = cdataOut(stripslashes(getRequestVar('srchuname')));
-        $srchfid = getRequestInt('srchfid');
-        if (empty($srchfid)) {
-            $srchfid = 'all';
-        }
+                eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
+                $featureoff = stripslashes($featureoff);
+                echo $featureoff;
+                end_time();
 
-        $filter_distinct = getRequestVar('filter_distinct');
-        $filter_distinct = valYesNo($filter_distinct);
-
-        $page = getInt('page');
-        if ($page < 1) {
-            $page = 1;
-        }
-
-        validatePpp();
-
-        $searchresults = '';
-
-        if (noSubmit('searchsubmit')) {
-            $forumselect = forumList('srchfid', FALSE, TRUE);
-            eval('$search = "'.template('misc_search').'";');
-            $misc = stripslashes($search);
-        } else {
-            if (strlen($srchuname) < 3 && strlen($srchtxt) < 3) {
-                error($lang['nosearchq']);
+                eval("echo (\"".template('footer')."\");");
+                exit();
             }
 
-            if (strlen($srchuname) < 3) {
-                $srchuname = '';
-            }
-
-            if (strlen($srchtxt) < 3) {
-                $srchtxt = '';
-            }
-
-            if (onSubmit('searchsubmit')) {
-                $offset = ($page-1) * $ppp;
-                $start = $offset;
-                $end = $ppp;
-
-                $sql = "SELECT p.*, t.tid AS ttid, t.subject AS tsubject, f.fup AS fup, f.type AS type, f.fid, f.private AS fprivate, f.userlist AS fuserlist, f.password AS password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE p.tid=t.tid";
-
-                if ($srchfrom == 0) {
-                    $srchfrom = $onlinetime;
-                    $srchfromold = 0;
+            if (!isset($searchsubmit) && !isset($page)) {
+                $fids = array();
+                if (X_SADMIN) {
+                    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
+                    while($f = $db->fetch_array($q)) {
+                        $fids[] = $f['fid'];
+                    }
                 } else {
-                    $srchfromold = $srchfrom;
-                }
+                    $fCache = array();
+                    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+                    while($forum = $db->fetch_array($q)) {
+                        $perms = checkForumPermissions($forum);
+                        $fCache[$forum['fid']] = $perms;
 
-                $ext = array();
-
-                $srchfrom = $onlinetime - (int) $srchfrom;
-                if ($srchtxt) {
-                    $srchtxtsq = addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchtxt));
-                    $sql .= " AND (p.message LIKE '%$srchtxtsq%' OR p.subject LIKE '%$srchtxtsq%' OR t.subject LIKE '%$srchtxtsq')";
-                    $ext[] = 'srchtxt='.$srchtxt;
-                }
-
-                if ($srchuname != '') {
-                    $sql .= " AND p.author='".$db->escape($srchuname)."'";
-                    $ext[] = 'srchuname='.recodeOut($srchuname);
-                }
-
-                if ($srchfid != "all" && $srchfid != "") {
-                    $sql .= " AND p.fid='".(int)$srchfid."'";
-                    $ext[] = 'srchfid='.((int) $srchfid);
-                }
-
-                if ($srchfrom) {
-                    $sql .= " AND p.dateline >= '$srchfrom'";
-                    $ext[] = 'srchfrom'.((int)$srchfromold);
-                }
-
-                $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start,$end";
-                $pagenum = $page + 1;
-
-                $querysrch = $db->query($sql);
-                $results = $db->num_rows($querysrch);
-
-                if ($srchuname) {
-                    $srchtxt = '\0';
-                }
-
-                if ($filter_distinct == 'yes') {
-                    $temparray = array();
-                    $searchresults = '';
-                    while($post = $db->fetch_array($querysrch)) {
-                        $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
-                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
-                        if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
-                            continue;
-                        }
-
-                        if (isset($post['type']) && $post['type'] == 'sub') {
-                            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$post[fup]'");
-                            $fup = $db->fetch_array($query);
-                            if (!privfcheck($fup['private'], $fup['userlist'])) {
-                                continue;
-                            }
-                            $db->free_result($query);
-                        }
-
-                        if ($authorization) {
-                            if (!array_key_exists($post['ttid'], $temparray)) {
-                                $tid = $post['ttid'];
-                                $temparray[$tid] = true;
-
-                                if ($post['status'] == 'Banned') {
-                                    $post['message'] = $lang['bannedpostmsg'];
+                        if($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST] && $perms[X_PERMS_PASSWORD]) {
+                            if($forum['type'] == 'sub') {
+                                // also check above forum!
+                                $parentP = $fCache[$forum['fup']];
+                                if($parentP[X_PERMS_VIEW] && $parentP[X_PERMS_USERLIST] && $parentP[X_PERMS_PASSWORD]) {
+                                    $fids[] = $forum['fid'];
                                 }
+                            } else {
+                                $fids[] = $forum['fid'];
+                            }
+                        }
+                    }
+                }
 
+                if(count($fids) == 0) {
+                    $forumselect = '<select name="srchfid"></select>';
+                } else {
+                    $fids = implode(',', $fids);
+                    $restrict = ' fid IN('.$fids.')';
+
+                    $forumselect = "<select name=\"srchfid\">\n";
+                    $forumselect .= '<option value="all">'.$lang['textallforumsandsubs']."</option>\n";
+
+                    $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='' AND type='forum' ORDER BY displayorder");
+
+                    while ($forum = $db->fetch_array($queryfor)) {
+                        $forumselect .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
+                        $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
+
+                        while ($sub = $db->fetch_array($querysub)) {
+                            $forumselect .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
+                        }
+
+                        $forumselect .= "<option value=\"\" disabled=\"disabled\">&nbsp;</option>";
+                    }
+
+                    $querygrp = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder");
+                    while ($group = $db->fetch_array($querygrp)) {
+                        $forumselect2 = "<option value=\"$group[fid]\"disabled=\"disabled\">$group[name]</option>";
+
+                        $forumselect3 = '';
+                        $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$group[fid]' AND type='forum' ORDER BY displayorder");
+                        while ($forum = $db->fetch_array($queryfor)) {
+                            $forumselect3 .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
+
+                            $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
+                            while ($sub = $db->fetch_array($querysub)) {
+                                $forumselect3 .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
+                            }
+                        }
+                        if($forumselect3 !== '') {
+                            $forumselect .= $forumselect2.$forumselect3;
+                        }
+
+                        $forumselect .= "<option value=\"\" disabled=\"disabled\">&nbsp;</option>";
+                    }
+
+                    $forumselect .= "</select>";
+                }
+
+                eval("\$search = \"".template("misc_search")."\";");
+                $misc = stripslashes($search);
+
+            } else {
+                if (!isset($filter_distinct) || $filter_distinct != 'yes') {
+                    $filter_distinct = '';
+                }
+                $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'r');
+                $srchunameurl = rawurlencode(postedVar('srchuname', '', TRUE, FALSE, FALSE, 'r'));
+                if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
+                    error($lang['nosearchq']);
+                }
+
+                if (strlen($srchuname) < 3 ) {
+                    $srchuname = '';
+                }
+
+                if (empty($srchtxt)) {
+                    $srchtxt = '';
+                }
+
+                if ($searchsubmit || $page ) {
+                    validatePpp();
+
+                    $searchresults = '';
+
+                    if (!isset($page)) {
+                        $page = 1;
+                        $offset = 0;
+                        $start = 0;
+                    } else {
+                        if ( $page < 1 ) {
+                            $page = 1;
+                        }
+                        $offset = ($page-1) * ($ppp);
+                        $start = $offset;
+                    }
+
+                    $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+
+                    if (!isset($srchfrom) Or $srchfrom == 0) {
+                        $srchfrom = time();
+                        $srchfromold = 0;
+                    } else {
+                        $srchfromold = $srchfrom;
+                    }
+                    $ext = array();
+
+                    $srchfrom = time() - (int) $srchfrom;
+                    if (!empty($srchtxt)) {
+                        $srchtxtsq = addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchtxt));
+                        $srchtxtsq = explode(' ', $srchtxtsq);
+                        $sql .= ' AND (';
+                        foreach ($srchtxtsq as $stxt) {
+                            $sqlsrch[] = " p.message LIKE '%$stxt%' OR p.subject LIKE '%$stxt%' OR t.subject LIKE '%$stxt%'";
+                        }
+                        $sql .= implode(' OR ', $sqlsrch);
+                        $sql .= ')';
+                        $ext[] = 'srchtxt='.$srchtxt;
+                    }
+                    if ($srchuname != "") {
+                        $sql .= " AND p.author='$srchuname'";
+                        $ext[] = 'srchuname='.$srchunameurl;
+                    }
+                    if (isset($srchfid)) {
+                        if ($srchfid != "all" && $srchfid != "") {
+                            $sql .= " AND p.fid='".(int)$srchfid."'";
+                            $ext[] = 'srchfid='.((int) $srchfid);
+                        }
+                    }
+                    if ($srchfrom) {
+                        $sql .= " AND p.dateline >= '$srchfrom'";
+                        $ext[] = 'srchfrom='.((int) $srchfromold);
+                    }
+                    $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start, $ppp";
+                    if (!isset($page) || $page < 1) {
+                        $pagenum = 2;
+                    } else {
+                        $pagenum = $page+1;
+                    }
+                    $querysrch = $db->query($sql);
+                    $results = 0;
+                    $results = $db->num_rows($querysrch);
+
+                    if ($srchuname != '') {
+                        $srchtxt = '\0';
+                    }
+
+                    if (isset($filter_distinct) && $filter_distinct == 'yes') {
+                        $temparray = array();
+                        $searchresults = '';
+
+                        $forumCache = array();
+                        while ($post = $db->fetch_array($querysrch)) {
+                            $forumPerms = array();
+
+                            if(isset($forumCache[$post['fid']])) {
+                                $forumPerms = $forumCache[$post['fid']];
+                            } else {
+                                $forumPerms = checkForumPermissions($post);
+                                $forumCache[$post['fid']] = $forumPerms;
+                            }
+
+                            if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
+                                if (!array_key_exists($post['ttid'], $temparray)) {
+                                    $tid = $post['ttid'];
+                                    $temparray[$tid] = true;
+                                    $message = $post['message'];
+
+                                    $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
+                                    $position = strpos($message, $srchtxt, 0);
+                                    $show_num = 100;
+                                    $msg_leng = strlen($message);
+
+                                    if ($position <= $show_num) {
+                                        $min = 0;
+                                        $add_pre = '';
+                                    } else {
+                                        $min = $position - $show_num;
+                                        $add_pre = '...';
+                                    }
+
+                                    if (($msg_leng - $position) <= $show_num) {
+                                        $max = $msg_leng;
+                                        $add_post = '';
+                                    } else {
+                                            $max = $position + $show_num;
+                                        $add_post = '...';
+                                    }
+
+                                    $show = substr($message, $min, $max);
+                                    $show = str_replace($srchtxt, '<b><i>'.$srchtxt.'</i></b>', $show);
+                                    $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
+
+                                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+
+                                    $poston = $date.' '.$lang['textat'].' '.$time;
+                                    $postby = $post['author'];
+
+                                    $post['tsubject'] = stripslashes(censor($post['tsubject']));
+                                    if (trim($post['subject']) == '') {
+                                        $post['subject'] = $post['tsubject'];
+                                    }
+
+                                    $post['subject'] = censor($post['subject']);
+                                    eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
+                                }
+                            }
+                        }
+                    } else {
+                        $forumCache = array();
+                        while ($post = $db->fetch_array($querysrch)) {
+                            $forumPerms = array();
+
+                            if(isset($forumCache[$post['fid']])) {
+                                $forumPerms = $forumCache[$post['fid']];
+                            } else {
+                                $forumPerms = checkForumPermissions($post);
+                                $forumCache[$post['fid']] = $forumPerms;
+                            }
+
+                            if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
+                                $tid = $post['ttid'];
                                 $message = $post['message'];
 
                                 $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
                                 $position = strpos($message, $srchtxt, 0);
-
                                 $show_num = 100;
                                 $msg_leng = strlen($message);
 
@@ -340,125 +425,39 @@ switch($action) {
                                 }
 
                                 $show = substr($message, $min, $max);
-                                $show = preg_replace("/($srchtxt)/i", '<strong><em>\\0</em></strong>', $show);
+                                $show = str_replace($srchtxt, '<b><i>'.$srchtxt.'</i></b>', $show);
                                 $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
 
                                 $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
                                 $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+
                                 $poston = $date.' '.$lang['textat'].' '.$time;
                                 $postby = $post['author'];
 
-                                $post['tsubject'] = html_entity_decode(stripslashes(censor($post['tsubject'])));
+                                $post['tsubject'] = stripslashes(censor($post['tsubject']));
                                 if (trim($post['subject']) == '') {
                                     $post['subject'] = $post['tsubject'];
                                 } else {
-                                    $post['subject'] = html_entity_decode($post['subject']);
+                                    $post['tsubject'] = $post['subject'];
                                 }
 
-                                $post['subject'] = censor($post['subject']);
-
-                                if ($post['posts'] > $ppp) {
-                                    $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
-                                    $page = ceil(($pbefore+1)/$ppp);
-                                } else {
-                                    $page = 1;
-                                }
-                                eval('$searchresults .= "'.template('misc_search_results_row').'";');
+                                eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
                             }
                         }
                     }
-                    $db->free_result($querysrch);
-                } else {
-                    while($post = $db->fetch_array($querysrch)) {
-                        $fidpw = isset($_COOKIE['fidpw'.$post['fid']]) ? $_COOKIE['fidpw'.$post['fid']] : '';
-                        $authorization = privfcheck($post['fprivate'], $post['fuserlist']);
-
-                        if (($post['password'] != '' && $post['password'] != $fidpw) && !X_SADMIN) {
-                            continue;
-                        }
-
-                        if (isset($post['type']) && $post['type'] == 'sub') {
-                            $query = $db->query("SELECT private, userlist, name, fid FROM ".X_PREFIX."forums WHERE fid='$post[fup]'");
-                            $fup = $db->fetch_array($query);
-                            if (!privfcheck($fup['private'], $fup['userlist'])) {
-                                continue;
-                            }
-                            $db->free_result($query);
-                        }
-
-                        if ($authorization) {
-                            $tid = $post['ttid'];
-                            if ($post['status'] == 'Banned') {
-                                $post['message'] = $lang['bannedpostmsg'];
-                            }
-
-                            $message = $post['message'];
-
-                            $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
-
-                            $position = 0;
-                            if (!empty($srchtxt)) {
-                                $position = strpos($message, $srchtxt, 0);
-                            }
-
-                            $show_num = 100;
-                            $msg_leng = strlen($message);
-
-                            if ($position <= $show_num) {
-                                $min = 0;
-                                $add_pre = '';
-                            } else {
-                                $min = $position - $show_num;
-                                $add_pre = '...';
-                            }
-
-                            if (($msg_leng - $position) <= $show_num) {
-                                $max = $msg_leng;
-                                $add_post = '';
-                            } else {
-                                $max = $position + $show_num;
-                                $add_post = '...';
-                            }
-
-                            $show = substr($message, $min, $max);
-                            $show = preg_replace("/($srchtxt)/i", '<strong><em>\\0</em></strong>', $show);
-                            $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
-
-                            $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                            $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                            $poston = $date.' '.$lang['textat'].' '.$time;
-                            $postby = $post['author'];
-
-                            $post['tsubject'] = stripslashes(censor($post['tsubject']));
-                            if (trim($post['subject']) == '') {
-                                $post['subject'] = html_entity_decode($post['tsubject']);
-                            } else {
-                                $post['tsubject'] = html_entity_decode($post['subject']);
-                            }
-
-                            if ($post['posts'] > $ppp) {
-                                $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = '".$post['ttid']."' AND pid < '".$post['pid']."'"), 0);
-                                $page = ceil(($pbefore+1)/$ppp);
-                            } else {
-                                $page = 1;
-                            }
-                            eval('$searchresults .= "'.template('misc_search_results_row').'";');
-                        }
-                    }
-                    $db->free_result($querysrch);
                 }
+                if ($results == 0) {
+                    eval("\$searchresults = \"".template("misc_search_results_none")."\";");
+                } elseif ($results == $ppp) {
+                    // create a string containing the stuff to search for
+                    $ext = htmlspecialchars(implode('&', $ext));
+                    eval("\$nextlink = \"".template("misc_search_nextlink")."\";");
+                }
+
+                eval("\$search = \"".template("misc_search_results")."\";");
+                $misc = stripslashes($search);
             }
 
-            if ($results == 0) {
-                eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } else if ($results == $ppp) {
-                $ext = htmlspecialchars(implode('&', $ext));
-                eval('$nextlink = "'.template('misc_search_nextlink').'";');
-            }
-
-            eval('$search = "'.template('misc_search_results').'";');
-            $misc = stripslashes($search);
-        }
         break;
 
     case 'lostpw':
@@ -501,7 +500,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
 
             $emailuname = htmlspecialchars_decode($member['username'], ENT_QUOTES);
-            altMail($member['email'], '['.$bbname.'] '.$lang['textyourpw'], $lang['textyourpwis']."\n\n".$emailuname."\n".$newpass, "From: ".$bbname." <".$adminemail.">");
+            altMail($member['email'], '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $emailuname\n{$lang['textpassword']} $newpass", "From: $bbname <$adminemail>");
 
             $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
             $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';

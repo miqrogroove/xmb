@@ -117,15 +117,17 @@ function email() {
             }
         } else {
             text = prompt(bbcode_prompt_email_email, 'user@example.com');
-            while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
-                text = prompt(bbcode_prompt_email_error, text);
-            }
+            if (text != null) {
+                while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
+                    text = prompt(bbcode_prompt_email_error, text);
+                }
 
-            desc = prompt(bbcode_prompt_link_desc, '');
-            if (desc.length == 0) {
-                AddText('[email]', '[/email]', text, messageElement);
-            } else {
-                AddText('[email='+text+']', '[/email]', desc, messageElement);
+                desc = prompt(bbcode_prompt_link_desc, '');
+                if (desc.length == 0) {
+                    AddText('[email]', '[/email]', text, messageElement);
+                } else {
+                    AddText('[email='+text+']', '[/email]', desc, messageElement);
+                }
             }
         }
     }
@@ -206,7 +208,9 @@ function bold() {
             }
         } else {
             text = prompt(bbcode_prompt_bold, 'Text');
-            AddText('[b]', '[/b]', text, messageElement);
+            if (text != null) {
+                AddText('[b]', '[/b]', text, messageElement);
+            }
         }
     }
 }
@@ -230,7 +234,9 @@ function italicize() {
             }
         } else {
             text = prompt(bbcode_prompt_italic, 'Text');
-            AddText('[i]', '[/i]', text, messageElement);
+            if (text != null) {
+                AddText('[i]', '[/i]', text, messageElement);
+            }
         }
     }
 }
@@ -254,7 +260,9 @@ function underline() {
             }
         } else {
             text = prompt(bbcode_prompt_underline, 'Text');
-            AddText('[u]', '[/u]', text, messageElement);
+            if (text != null) {
+                AddText('[u]', '[/u]', text, messageElement);
+            }
         }
     }
 }
@@ -278,7 +286,9 @@ function center() {
             }
         } else {
             text = prompt(bbcode_prompt_center, 'Text');
-            AddText('[align=center]', '[/align]', text, messageElement);
+            if (text != null) {
+                AddText('[align=center]', '[/align]', text, messageElement);
+            }
         }
     }
 }
@@ -302,7 +312,9 @@ function image() {
             }
         } else {
             text = prompt(bbcode_prompt_image, 'http://www.example.com/image.jpg');
-            AddText('[img]', '[/img]', text, messageElement);
+            if (text != null) {
+                AddText('[img]', '[/img]', text, messageElement);
+            }
         }
     }
 }
@@ -326,7 +338,9 @@ function quote() {
             }
         } else {
             text = prompt(bbcode_prompt_quote, 'lorem ipsum');
-            AddText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", text, messageElement);
+            if (text != null) {
+                AddText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", text, messageElement);
+            }
         }
     }
 }
@@ -350,7 +364,9 @@ function code() {
             }
         } else {
             text = prompt(bbcode_prompt_code, 'lorem ipsum');
-            AddText("\r\n"+'[code]', '[/code]'+"\r\n", text, messageElement);
+            if (text != null) {
+                AddText("\r\n"+'[code]', '[/code]'+"\r\n", text, messageElement);
+            }
         }
     }
 }
@@ -420,15 +436,17 @@ function hyperlink() {
                 }
             } else {
                 var url = prompt(bbcode_prompt_link_url, 'http://www.example.com');
-                while(url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
-                    url = prompt(bbcode_prompt_link_url_error, url);
-                }
+                if (url != null) {
+                    while(url.length == 0 || url.match(URL_REGEXP_GOES_HERE) == null) {
+                        url = prompt(bbcode_prompt_link_url_error, url);
+                    }
 
-                var desc = prompt(bbcode_prompt_link_desc, fetchSelection(messageElement));
-                if (desc == fetchSelection(messageElement)) {
-                    wrapText('[url='+url+']', '[/url]', messageElement);
-                } else {
-                    AddText('[url='+url+']', '[/url]', desc, messageElement);
+                    var desc = prompt(bbcode_prompt_link_desc, fetchSelection(messageElement));
+                    if (desc == fetchSelection(messageElement)) {
+                        wrapText('[url='+url+']', '[/url]', messageElement);
+                    } else {
+                        AddText('[url='+url+']', '[/url]', desc, messageElement);
+                    }
                 }
             }
         } else {
@@ -505,18 +523,20 @@ function list() {
         } else {
             var returnStr = '';
             var type      = prompt(bbcode_prompt_list_start, '');
-            var cType     = type.toLowerCase();
-            while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
-                type = prompt(bbcode_prompt_list_error, type);
-                var cType = type.toLowerCase();
-            }
-            var endStr = '[list'+((type == '' || type == null) ? ']' : '='+type+']');
+            if (type != null) {
+                var cType     = type.toLowerCase();
+                while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
+                    type = prompt(bbcode_prompt_list_error, type);
+                    var cType = type.toLowerCase();
+                }
+                var endStr = '[list'+((type == '' || type == null) ? ']' : '='+type+']');
 
-            while('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
-                endStr += '[*]'+returnStr+"\r\n";
+                while('' != (returnStr = prompt(bbcode_prompt_list_end, ''))) {
+                    endStr += '[*]'+returnStr+"\r\n";
+                }
+                endStr += '[/list'+((type == '' || type == null) ? ']' : '='+type+']');
+                AddText('', '', endStr, messageElement);
             }
-            endStr += '[/list'+((type == '' || type == null) ? ']' : '='+type+']');
-            AddText('', '', endStr, messageElement);
         }
     }
 }
