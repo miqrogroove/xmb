@@ -63,6 +63,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <h2>Instructions</h2>
 <ol>
 <li>BACKUP YOUR DATABASE - This script cannot be undone!
+<li>Copy your config.php settings into the new file.
 <li>Confirm your forum database account is granted ALTER and LOCK privileges.
 <li>Disable your forums using the Board Status setting.
 <li>Upload the XMB 1.9.10 files.
