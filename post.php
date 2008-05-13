@@ -134,15 +134,15 @@ if (X_GUEST) {
 validatePpp();
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.stripslashes($forum['name']).'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
 } else {
     if (!isset($forum['fup']) || !is_numeric($forum['fup'])) {
         error($lang['textnoforum']);
     } else {
         $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
         $fup = $db->fetch_array($query);
-        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.stripslashes($fup['name']).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.stripslashes($forum['name']).'</a>');
+        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
     }
 }
 

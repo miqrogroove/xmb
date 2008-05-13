@@ -40,7 +40,7 @@ eval('echo "'.template('header').'";');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
 
 if (!X_ADMIN) {
-    eval('echo stripslashes("'.template('error_nologinsession').'");');
+    eval('echo "'.template('error_nologinsession').'";');
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
@@ -414,17 +414,17 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
         </tr>
         <?php
-        printsetting2($lang['textsitename'], 'sitenamenew', stripslashes($SETTINGS['sitename']), 50);
-        printsetting2($lang['bbname'], 'bbnamenew', stripslashes($SETTINGS['bbname']), 50);
-        printsetting2($lang['textsiteurl'], 'siteurlnew', stripslashes($SETTINGS['siteurl']), 50);
-        printsetting2($lang['textboardurl'], 'boardurlnew', stripslashes($SETTINGS['boardurl']), 50);
-        printsetting2($lang['adminemail'], 'adminemailnew', stripslashes($SETTINGS['adminemail']), 50);
+        printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
+        printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
+        printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
+        printsetting2($lang['textboardurl'], 'boardurlnew', $SETTINGS['boardurl'], 50);
+        printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 50);
         printsetting1($lang['textbbrules'], 'bbrulesnew', $ruleson, $rulesoff);
         ?>
         <?php
-        printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', stripslashes($SETTINGS['bbrulestxt']), 5, 50);
+        printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', $SETTINGS['bbrulestxt'], 5, 50);
         printsetting1($lang['textbstatus'], 'bbstatusnew', $onselect, $offselect);
-        printsetting4($lang['textbboffreason'], 'bboffreasonnew', stripslashes($SETTINGS['bboffreason']), 5, 50);
+        printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
         printsetting1($lang['gzipcompression'], 'gzipcompressnew', $gzipcompresson, $gzipcompressoff);
         ?>
         <tr class="tablerow">
@@ -830,14 +830,14 @@ if ($action == 'forum') {
         while($selForums = $db->fetch_array($query)) {
             if ($selForums['type'] == 'group') {
                 $groups[$i]['fid'] = $selForums['fid'];
-                $groups[$i]['name'] = htmlspecialchars_decode($selForums['name']);
+                $groups[$i]['name'] = $selForums['name'];
                 $groups[$i]['displayorder'] = $selForums['displayorder'];
                 $groups[$i]['status'] = $selForums['status'];
                 $groups[$i]['fup'] = $selForums['fup'];
             } else if ($selForums['type'] == 'forum') {
                 $id = (empty($selForums['fup'])) ? 0 : $selForums['fup'];
                 $forums[$id][$i]['fid'] = $selForums['fid'];
-                $forums[$id][$i]['name'] = htmlspecialchars_decode($selForums['name']);
+                $forums[$id][$i]['name'] = $selForums['name'];
                 $forums[$id][$i]['displayorder'] = $selForums['displayorder'];
                 $forums[$id][$i]['status'] = $selForums['status'];
                 $forums[$id][$i]['fup'] = $selForums['fup'];
@@ -845,7 +845,7 @@ if ($action == 'forum') {
                 $forumlist[$i]['name'] = $selForums['name'];
             } else if ($selForums['type'] == 'sub') {
                 $subs[$selForums['fup']][$i]['fid'] = $selForums['fid'];
-                $subs[$selForums['fup']][$i]['name'] = htmlspecialchars_decode($selForums['name']);
+                $subs[$selForums['fup']][$i]['name'] = $selForums['name'];
                 $subs[$selForums['fup']][$i]['displayorder'] = $selForums['displayorder'];
                 $subs[$selForums['fup']][$i]['status'] = $selForums['status'];
                 $subs[$selForums['fup']][$i]['fup'] = $selForums['fup'];
@@ -989,7 +989,7 @@ if ($action == 'forum') {
                             $curgroup = '';
                         }
                         echo '<option value="'.$moveforum['fid'].'" '.$curgroup.'>'.stripslashes($moveforum['name']).'</option>';
-                        if (!isset($subs[$forum['fid']])) {
+                        if (!isset($subs[$forum['fid']]) And isset($forums[$moveforum['fid']])) {
                             foreach($forums[$moveforum['fid']] as $moveforum) {
                                 if ($moveforum['fid'] != $forum['fid']) {
                                     echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
@@ -1024,13 +1024,15 @@ if ($action == 'forum') {
                             }
                             foreach($groups as $moveforum) { //Groups and grouped forum options.
                                 echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
-                                foreach($forums[$moveforum['fid']] as $moveforum) {
-                                    if ($moveforum['fid'] == $forum['fup']) {
-                                        $curgroup = $selHTML;
-                                    } else {
-                                        $curgroup = '';
+                                if (isset($forums[$moveforum['fid']])) {
+                                    foreach($forums[$moveforum['fid']] as $moveforum) {
+                                        if ($moveforum['fid'] == $forum['fup']) {
+                                            $curgroup = $selHTML;
+                                        } else {
+                                            $curgroup = '';
+                                        }
+                                        echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                                     }
-                                    echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                                 }
                             }
                             ?>
@@ -1248,7 +1250,7 @@ if ($action == 'forum') {
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
             $self['status'] = formOnOff('status'.$forum['fid']);
-            $name = postedVar('name'.$forum['fid']);
+            $name = addslashes(htmlspecialchars(postedVar('name'.$forum['fid'], 'javascript', FALSE), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
             $delete = formInt('delete'.$forum['fid']);
             $moveto = formInt('moveto'.$forum['fid']);
 
@@ -1298,7 +1300,7 @@ if ($action == 'forum') {
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while($group = $db->fetch_array($querygroup)) {
-            $name = formVar('name'.$group['fid']);
+            $name = addslashes(htmlspecialchars(postedVar('name'.$group['fid'], 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
             $displayorder = formInt('displayorder'.$group['fid']);
             $self['status'] = formOnOff('status'.$group['fid']);
             $delete = formVar('delete'.$group['fid']);
@@ -1313,9 +1315,9 @@ if ($action == 'forum') {
             $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
 
-        $newgname = postedVar('newgname', 'javascript', TRUE, TRUE, TRUE);
-        $newfname = postedVar('newfname', 'javascript', TRUE, TRUE, TRUE);
-        $newsubname = postedVar('newsubname', 'javascript', TRUE, TRUE, TRUE);
+        $newgname = addslashes(htmlspecialchars(postedVar('newgname', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $newfname = addslashes(htmlspecialchars(postedVar('newfname', 'javascript', FALSE), ENT_COMPAT));
+        $newsubname = addslashes(htmlspecialchars(postedVar('newsubname', 'javascript', FALSE), ENT_COMPAT));
         $newgorder = formInt('newgorder');
         $newforder = formInt('newforder');
         $newsuborder = formInt('newsuborder');
@@ -1325,24 +1327,21 @@ if ($action == 'forum') {
         $newffup = formInt('newffup');
         $newsubfup = formInt('newsubfup');
 
-        if ($newfname != $lang['textnewforum']) {
-            $newfname = addslashes($newfname);
+        if ($newfname != $lang['textnewforum'] And $newfname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
-        if ($newgname != $lang['textnewgroup']) {
-            $newgname = addslashes($newgname);
+        if ($newgname != $lang['textnewgroup'] And $newgname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
-        if ($newsubname != $lang['textnewsubf']) {
-            $newsubname = addslashes($newsubname);
+        if ($newsubname != $lang['textnewsubf'] And $newsubname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
-        $namenew = postedVar('namenew', 'javascript', TRUE, TRUE, TRUE);
-        $descnew = postedVar('descnew', 'javascript', TRUE, TRUE, TRUE);
+        $namenew = addslashes(htmlspecialchars(postedVar('namenew', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $descnew = postedVar('descnew');
         $allowhtmlnew = formYesNo('allowhtmlnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');

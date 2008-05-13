@@ -304,7 +304,7 @@ while($thing = $db->fetch_array($fquery)) {
             $forumlist = '';
         }
         $lastcat = $thing['cat_fid'];
-        $thing['cat_name'] = html_entity_decode($thing['cat_name']);
+        $thing['cat_name'] = html_entity_decode(stripslashes($thing['cat_name']));
         eval('$forumlist .= "'.template('index_category').'";');
         if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
             $forumlist .= $indexBar;

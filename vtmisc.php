@@ -109,7 +109,7 @@ if ($action == 'report') {
     }
 
     if (noSubmit('reportsubmit')) {
-        eval('echo stripslashes("'.template('vtmisc_report').'");');
+        eval('echo "'.template('vtmisc_report').'";');
     } else {
         $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $postcount = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
@@ -121,10 +121,11 @@ if ($action == 'report') {
             $page = quickpage($postcount, $modusr['ppp']);
 
             $posturl = $SETTINGS['boardurl']."viewthread.php?tid=$tid&page=$page#pid$pid";
-            $reason = postedVar('reason');
+            $reason = postedVar('reason', '', TRUE, FALSE);
             $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
-
-            $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$xmbuser', 'incoming', '$mod', 'Inbox', '{$lang['reportsubject']}', '$message', ".$db->time($onlinetime).", 'no', 'yes')");
+            $message = $db->escape(addslashes($message)); //Messages are historically double-slashed.
+            $subject = $db->escape(addslashes($lang['reportsubject']));
+            $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$xmbuser', 'incoming', '$mod', 'Inbox', '$subject', '$message', ".$db->time($onlinetime).", 'no', 'yes')");
         }
         $db->free_result($modquery);
 

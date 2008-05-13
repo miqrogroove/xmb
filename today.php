@@ -206,7 +206,6 @@ if ($results == 0) {
 
         $thread['subject'] = checkOutput($thread['subject'], 'no', '', true);
         $thread['subject'] = censor($thread['subject']);
-        $thread['subject'] = addslashes($thread['subject']);
         $thread['name'] = html_entity_decode($thread['name']);
         eval('$today_row[] = "'.template('today_row').'";');
     }
@@ -214,7 +213,7 @@ if ($results == 0) {
     $db->free_result($query);
 }
 
-eval('echo stripslashes("'.template('today').'");');
+eval('echo "'.template('today').'";');
 
 end_time();
 eval('echo "'.template('footer').'";');

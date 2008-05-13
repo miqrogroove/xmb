@@ -83,7 +83,7 @@ eval('echo "'.template('header').'";');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
 
 if (!X_ADMIN) {
-    eval('echo stripslashes("'.template('error_nologinsession').'");');
+    eval('echo "'.template('error_nologinsession').'";');
     end_time();
     eval('echo "'.template('footer').'";');
     exit();

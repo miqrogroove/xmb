@@ -175,7 +175,7 @@ if (noSubmit('editsubmit')) {
 
     $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
 
-    eval('echo stripslashes("'.template('admintool_editprofile').'");');
+    eval('echo "'.template('admintool_editprofile').'";');
 } else {
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
     $member = $db->fetch_array($query);
