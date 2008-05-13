@@ -103,6 +103,8 @@ if ($fid == 0 || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $foru
     error($lang['textnoforum']);
 }
 
+smcwcache();
+
 if ($tid > 0) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     if ($db->num_rows($query) != 1) {
@@ -110,7 +112,7 @@ if ($tid > 0) {
     }
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = stripslashes($thread['subject']);
+    $threadname = censor(stripslashes($thread['subject']));
 } else {
     $thread = array();
     $threadname = '';
@@ -128,8 +130,6 @@ if (X_GUEST) {
 } else {
     $username = $xmbuser;
 }
-
-smcwcache();
 
 validatePpp();
 
@@ -377,11 +377,7 @@ if (isset($previewpost)) {
     $dissubject = $subject;
     $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
-    if ($pid > 0) {
-        eval('$preview = stripslashes("'.template('post_preview').'");');
-    } else {
-        eval('$preview = "'.template('post_preview').'";');
-    }
+    eval('$preview = "'.template('post_preview').'";');
 }
 
 switch($action) {
@@ -447,7 +443,7 @@ switch($action) {
                         $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
                     }
 
-                    $post['message'] = postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                    $post['message'] = postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                     eval('$posts .= "'.template('post_reply_review_post').'";');
                     if ($thisbg == $altbg2) {
                         $thisbg = $altbg1;
@@ -463,7 +459,7 @@ switch($action) {
             if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
                 eval('$attachfile = "'.template('post_attachmentbox').'";');
             }
-            eval('echo stripslashes("'.template('post_reply').'");');
+            eval('echo "'.template('post_reply').'";');
         } else {
             if (strlen(postedVar('subject')) == 0 And strlen($messageinput) == 0) {
                 error($lang['postnothing']);
@@ -627,9 +623,9 @@ switch($action) {
                 if (!isset($pollanswers)){
                     $pollanswers = '';
                 }
-                eval('echo stripslashes("'.template('post_newpoll').'");');
+                eval('echo "'.template('post_newpoll').'";');
             } else {
-                eval('echo stripslashes("'.template('post_newthread').'");');
+                eval('echo "'.template('post_newthread').'";');
             }
         } else {
             if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0)) {
@@ -847,16 +843,8 @@ switch($action) {
             }
             $db->free_result($querysmilie);
 
-            if (!X_SADMIN) {
-                $postinfo['subject'] = censor($postinfo['subject']);
-            }
-
-            $message = $postinfo['message'];
-            $subject = $postinfo['subject'];
-
-            if (isset($previewpost)) {
-                $message = censor($message);
-            }
+            $postinfo['message'] = censor($postinfo['message']);
+            $postinfo['subject'] = censor($postinfo['subject']);
 
             if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
                 eval('$attachment = "'.template('post_edit_attachment').'";');

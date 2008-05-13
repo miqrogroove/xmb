@@ -112,7 +112,6 @@ switch($action) {
 
         if (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
-            $misc = stripslashes($misc);
         } else {
             $password = '';
             if (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
@@ -155,7 +154,6 @@ switch($action) {
                 eval("echo (\"".template('header')."\");");
 
                 eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
-                $featureoff = stripslashes($featureoff);
                 echo $featureoff;
                 end_time();
 
@@ -238,7 +236,7 @@ switch($action) {
                 }
 
                 eval("\$search = \"".template("misc_search")."\";");
-                $misc = stripslashes($search);
+                $misc = $search;
 
             } else {
                 if (!isset($filter_distinct) || $filter_distinct != 'yes') {
@@ -344,7 +342,7 @@ switch($action) {
                                 if (!array_key_exists($post['ttid'], $temparray)) {
                                     $tid = $post['ttid'];
                                     $temparray[$tid] = true;
-                                    $message = $post['message'];
+                                    $message = stripslashes($post['message']);
 
                                     $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
                                     $position = strpos($message, $srchtxt, 0);
@@ -401,7 +399,7 @@ switch($action) {
 
                             if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
                                 $tid = $post['ttid'];
-                                $message = $post['message'];
+                                $message = stripslashes($post['message']);
 
                                 $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
                                 $position = strpos($message, $srchtxt, 0);
@@ -455,7 +453,7 @@ switch($action) {
                 }
 
                 eval("\$search = \"".template("misc_search_results")."\";");
-                $misc = stripslashes($search);
+                $misc = $search;
             }
 
         break;
@@ -471,7 +469,6 @@ switch($action) {
 
         if (noSubmit('lostpwsubmit')) {
             eval('$misc = "'.template('misc_lostpw').'";');
-            $misc = stripslashes($misc);
         } else {
             $username = postedVar('username');
             $email = postedVar('email');
@@ -578,7 +575,6 @@ switch($action) {
             eval('$misc = "'.template('misc_online').'";');
         }
 
-        $misc = stripslashes($misc);
         break;
 
     case 'onlinetoday':
@@ -615,7 +611,6 @@ switch($action) {
             $memontoday = $todaymembersnum.$lang['textmemberstoday'];
         }
         eval('$misc = "'.template('misc_online_today').'";');
-        $misc = stripslashes($misc);
         break;
 
     case 'list':
@@ -771,7 +766,7 @@ switch($action) {
             $ascdesc = $lang['desc'];
         }
         eval('$memlist = "'.template($misc_mlist_template).'";');
-        $misc = stripslashes($memlist);
+        $misc = $memlist;
         break;
 
     case 'smilies':
@@ -804,5 +799,5 @@ switch($action) {
 eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo stripslashes($header.$misc.$footer);
+echo $header.$misc.$footer;
 ?>

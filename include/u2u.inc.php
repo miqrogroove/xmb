@@ -63,14 +63,14 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
 
-    $query = $db->query("SELECT username, email, lastvisit, ignoreu2u, emailonu2u, status FROM ".X_PREFIX."members WHERE username='" . trim($msgto) . "'");
+    $query = $db->query("SELECT username, email, lastvisit, ignoreu2u, emailonu2u, status FROM ".X_PREFIX."members WHERE username='$msgto'");
     if ($rcpt = $db->fetch_array($query)) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
             $username = $rcpt['username'];
-            db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', addslashes($subject), addslashes($message), 'no', 'yes');  //message and subject were historically double-slashed
+            db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
             if ($self['saveogu2u'] == 'yes') {
-                db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', addslashes($subject), addslashes($message), 'no', 'yes');
+                db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');
             }
 
             $u2uid = (int) $u2uid;
@@ -102,6 +102,10 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
     global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
 
+    $dbsubject = $db->escape(addslashes($subject)); //message and subject were historically double-slashed
+    $dbmessage = $db->escape(addslashes($message));
+    $dbto = $db->escape($msgto);
+
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
     $username = postedVar('username', 'javascript', TRUE, FALSE, TRUE, 'g'); //username is the param from u2u links on profiles.
@@ -116,19 +120,19 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     if (onSubmit('savesubmit')) {
         // fixed by John Briggs
-        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
+        $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
 
         if (empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
-        db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', addslashes($subject), addslashes($message), 'yes', 'no');    //message and subject were historically double-slashed
+        db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', $dbsubject, $dbmessage, 'yes', 'no');
         u2u_msg($lang['imsavedmsg'], 'u2u.php?folder=Drafts');
     }
 
     if (onSubmit('sendsubmit')) {
         $errors = '';
         // fixed by John Briggs
-        $subject = (empty($subject) ? $lang['textnosub'] : $subject);
+        $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
 
         // fixed lang variable use by John Briggs
         if (empty($message)) {
@@ -142,9 +146,9 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         $u2uid = (int) $_POST['u2uid'];
 
         if (strstr($msgto, ',') && X_STAFF) {
-            $errors = u2u_send_multi_recp($msgto, $subject, $message, $u2uid);
+            $errors = u2u_send_multi_recp($dbto, $dbsubject, $dbmessage, $u2uid);
         } else {
-            $errors = u2u_send_recp($msgto, $subject, $message, $u2uid);
+            $errors = u2u_send_recp($dbto, $dbsubject, $dbmessage, $u2uid);
         }
 
         if (empty($errors)) {
@@ -161,7 +165,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
             if (!isset($previewsubmit)) {
                 $prefixes = array($lang['textre'], $lang['textfwd']);
                 $subject = str_replace($prefixes, '', $quote['subject']);
-                $message = $quote['message'];
+                $message = censor(stripslashes($quote['message']));  //message and subject were historically double-slashed
                 if ($forward == 'yes') {
                     $subject = $lang['textfwd'].' '.$subject;
                     $message = '[quote][i]'.$lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
@@ -176,8 +180,10 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (isset($previewsubmit)) {
-        $u2usubject = censor($subject);
-        $u2umessage = postify($u2umessage, "no", "", "yes", "no");
+        $subject = censor($subject);
+        $u2usubject = $subject;
+        $u2umessage = postify($message, "no", "", "yes", "no");
+        $message = censor($message);
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
         $username = $msgto;
     }
@@ -214,8 +220,8 @@ function u2u_view($u2uid, $folders) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = censor($u2u['subject']);
-        $u2umessage = postify($u2u['message'], 'no', '', 'yes', 'no');
+        $u2usubject = censor(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
+        $u2umessage = postify(stripslashes($u2u['message']), 'no', '', 'yes', 'no');
         $u2ufolder = $u2u['folder'];
         $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
@@ -265,8 +271,8 @@ function u2u_print($u2uid, $eMail = false) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = censor($u2u['subject']);
-        $u2umessage = postify($u2u['message'], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
+        $u2usubject = censor(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
+        $u2umessage = postify(stripslashes($u2u['message']), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
         $u2ufolder = $u2u['folder'];
         $u2ufrom = $u2u['msgfrom'];
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : $u2u['msgto'];
@@ -493,7 +499,7 @@ function u2u_display($folder, $folders) {
             $u2u['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
 
-        $u2usubject = censor($u2u['subject']);
+        $u2usubject = censor(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
         if ($u2u['type'] == 'incoming') {
             if ($u2u['msgfrom'] == $u2u['username'] || $u2u['msgfrom'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {

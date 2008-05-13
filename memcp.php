@@ -352,7 +352,7 @@ if ($action == 'profile') {
         }
 
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
-        eval('echo stripslashes("'.template('memcp_profile').'");');
+        eval('echo "'.template('memcp_profile').'";');
     }
 
     if (onSubmit('editsubmit')) {
@@ -565,7 +565,7 @@ if ($action == 'profile') {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
         $db->free_result($query);
-        eval('echo stripslashes("'.template('memcp_favs').'");');
+        eval('echo "'.template('memcp_favs').'";');
     }
 
     if (!$favadd && onSubmit('favsubmit')) {
@@ -621,7 +621,7 @@ if ($action == 'profile') {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
         $db->free_result($query);
-        eval('echo stripslashes("'.template('memcp_subscriptions').'");');
+        eval('echo "'.template('memcp_subscriptions').'";');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
@@ -758,7 +758,7 @@ if ($action == 'profile') {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
     $db->free_result($query2);
-    eval('echo stripslashes("'.template('memcp_home').'");');
+    eval('echo "'.template('memcp_home').'";');
 }
 
 end_time();

@@ -170,7 +170,7 @@ switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
             $tid = $mod->create_tid_string($tid);
-            eval('echo stripslashes("'.template('topicadmin_delete').'");');
+            eval('echo "'.template('topicadmin_delete').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -209,7 +209,7 @@ switch($action) {
             } else if ($closed == '') {
                 $lang['textclosethread'] = $lang['textclosethread'];
             }
-            eval('echo stripslashes("'.template('topicadmin_openclose').'");');
+            eval('echo "'.template('topicadmin_openclose').'";');
         } else {
             if ($closed == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
@@ -227,7 +227,7 @@ switch($action) {
     case 'f_close':
         if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
-            eval('echo stripslashes("'.template('topicadmin_openclose').'");');
+            eval('echo "'.template('topicadmin_openclose').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -243,7 +243,7 @@ switch($action) {
         if (noSubmit('closesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $lang['textclosethread'] = $lang['textopenthread'];
-            eval('echo stripslashes("'.template('topicadmin_openclose').'");');
+            eval('echo "'.template('topicadmin_openclose').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -259,7 +259,7 @@ switch($action) {
         if (noSubmit('movesubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('moveto', false, false, $fid);
-            eval('echo stripslashes("'.template('topicadmin_move').'");');
+            eval('echo "'.template('topicadmin_move').'";');
         } else {
             $moveto = formInt('moveto');
             if ($moveto) {
@@ -329,7 +329,7 @@ switch($action) {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
             $tid = $mod->create_tid_string($tid);
-            eval('echo stripslashes("'.template('topicadmin_topuntop').'");');
+            eval('echo "'.template('topicadmin_topuntop').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -418,7 +418,7 @@ switch($action) {
     case 'bump':
         if (noSubmit('bumpsubmit')) {
             $tid = $mod->create_tid_string($tid);
-            eval('echo stripslashes("'.template('topicadmin_bump').'");');
+            eval('echo "'.template('topicadmin_bump').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -441,7 +441,7 @@ switch($action) {
     case 'empty':
         if (noSubmit('emptysubmit')) {
             $tid = $mod->create_tid_string($tid);
-            eval('echo stripslashes("'.template('topicadmin_empty').'");');
+            eval('echo "'.template('topicadmin_empty').'";');
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
@@ -491,7 +491,7 @@ switch($action) {
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
-            eval('echo stripslashes("'.template('topicadmin_split').'");');
+            eval('echo "'.template('topicadmin_split').'";');
         } else {
             $subject = formVar('subject');
             if ($subject == '') {
@@ -559,7 +559,7 @@ switch($action) {
     case 'merge':
         $tid = intval($tid);
         if (noSubmit('mergesubmit')) {
-            eval('echo stripslashes("'.template('topicadmin_merge').'");');
+            eval('echo "'.template('topicadmin_merge').'";');
         } else {
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
@@ -651,7 +651,7 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            eval('echo stripslashes("'.template('topicadmin_threadprune').'");');
+            eval('echo "'.template('topicadmin_threadprune').'";');
         } else {
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
@@ -715,7 +715,7 @@ switch($action) {
         if (noSubmit('copysubmit')) {
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('newfid', false, false);
-            eval('echo stripslashes("'.template('topicadmin_copy').'");');
+            eval('echo "'.template('topicadmin_copy').'";');
         } else {
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);

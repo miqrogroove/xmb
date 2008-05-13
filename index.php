@@ -58,7 +58,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
             continue;
         }
         
-        $news[$i] = str_replace('\"', '"', postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'yes', 'no'));
+        $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'yes', 'no')));
         $contents .= "\tcontents[$i]='$news[$i]';\n";
     }
     eval('$ticker = "'.template('index_ticker').'";');

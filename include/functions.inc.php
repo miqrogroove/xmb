@@ -337,10 +337,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     $smiliesallow = ($allowsmilies == 'yes' || $allowsmilies == 'on') ? (($smileyoff != 'off' && $smileyoff != 'yes') ? true : false) : false;
 
     if ($bballow) {
-        $message = stripslashes($message);
-
         if ($ismood == 'yes') {
-            $message = str_replace(array('[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]'), '', $message);
+            $message = str_replace(array('[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
         }
 
         $begin = array(
@@ -416,7 +414,6 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             }
         }
         $message = implode("", $messagearray);
-        $message = addslashes($message);
     } else {
         if ($smiliesallow) {
             smile($message);

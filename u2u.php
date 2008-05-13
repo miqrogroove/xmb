@@ -182,9 +182,9 @@ switch($action) {
         }
         break;
     case 'send':
-        $msgto = postedVar('msgto', 'javascript', TRUE, TRUE, TRUE);
-        $subject = postedVar('subject', 'javascript', TRUE, TRUE, TRUE);
-        $message = postedVar('message');
+        $msgto = postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
+        $subject = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+        $message = postedVar('message', '', TRUE, FALSE);
         $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
         break;
     case 'view':
@@ -229,5 +229,5 @@ if (!X_STAFF) {
 }
 eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
 $tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
-eval('echo stripslashes("'.template($tu2u).'");');
+eval('echo "'.template($tu2u).'";');
 ?>

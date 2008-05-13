@@ -83,7 +83,7 @@ switch($action) {
             redirect('member.php?action=reg', 0);
         } else {
             eval('echo "'.template('header').'";');
-            eval('echo stripslashes("'.template('member_coppa').'");');
+            eval('echo "'.template('member_coppa').'";');
         }
         break;
 
@@ -121,8 +121,8 @@ switch($action) {
         if (noSubmit('regsubmit')) {
             eval('echo "'.template('header').'";');
             if ($SETTINGS['bbrules'] == 'on' && noSubmit('rulesubmit')) {
-                $SETTINGS['bbrulestxt'] = nl2br(stripslashes(stripslashes($SETTINGS['bbrulestxt'])));
-                eval('echo stripslashes("'.template('member_reg_rules').'");');
+                $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
+                eval('echo "'.template('member_reg_rules').'";');
             } else {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
                 eval($lang['evaloffset']);
@@ -318,7 +318,7 @@ switch($action) {
                         eval('$captcharegcheck = "'.template('member_reg_captcha').'";');
                     }
                 }
-                eval('echo stripslashes("'.template('member_reg').'");');
+                eval('echo "'.template('member_reg').'";');
             }
         } else {
             if ($_POST['username'] != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $_POST['username'])) {
@@ -667,7 +667,7 @@ switch($action) {
                     $percent = round($percent, 2);
                 }
 
-                $memberinfo['bio'] = stripslashes(censor($memberinfo['bio']));
+                $memberinfo['bio'] = censor($memberinfo['bio']);
                 $memberinfo['bio'] = nl2br($memberinfo['bio']);
                 $encodeuser = recodeOut($memberinfo['username']);
 
@@ -751,7 +751,7 @@ switch($action) {
                 }
 
                 $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
-                eval('echo stripslashes("'.template('member_profile').'");');
+                eval('echo "'.template('member_profile').'";');
             }
         }
         break;

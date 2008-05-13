@@ -159,8 +159,7 @@ if (strpos($thread['closed'], '|') !== false) {
     }
 }
 
-$thread['subject'] = shortenString($thread['subject'], 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-$thread['subject'] = censor($thread['subject']);
+$thread['subject'] = shortenString(censor(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
 $thislast = explode('|', $thread['lastpost']);
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
@@ -205,17 +204,17 @@ if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.stripslashes($thread['subject']);
+    $threadSubject = '- '.$thread['subject'];
 }
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
-    nav(stripslashes($thread['subject']));
+    nav($thread['subject']);
 } else {
     if (isset($forum['type']) && $forum['type'] == 'sub') {
         nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
         nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
-        nav(stripslashes($thread['subject']));
+        nav($thread['subject']);
     }
 }
 
@@ -599,7 +598,7 @@ if ($action == '') {
         }
 
         if ($post['subject'] != '') {
-            $post['subject'] = censor($post['subject']).'<br />';
+            $post['subject'] = censor(stripslashes($post['subject'])).'<br />';
             $post['subject'] = checkOutput($post['subject'], 'no', '', true);
         }
 
@@ -610,7 +609,7 @@ if ($action == '') {
 
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
-        $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
         if ($post['filename'] != '' && $forum['attachstatus'] != 'off') {
                 $post['filename'] = checkInput($post['filename'], 'no', 'no', '', false);
@@ -666,7 +665,7 @@ if ($action == '') {
     if ('Moderator' == $status1) {
         eval('$modoptions = "'.template('viewthread_modoptions').'";');
     }
-    eval('echo stripslashes("'.template('viewthread').'");');
+    eval('echo "'.template('viewthread').'";');
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
@@ -702,10 +701,9 @@ if ($action == '') {
         $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
         $time = gmdate($timecode, $post['dateline'] + $tmoffset);
         $poston = "$date $lang[textat] $time";
-        $post['message'] = stripslashes($post['message']);
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
-        $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
         eval('$posts .= "'.template('viewthread_printable_row').'";');
     }
     $db->free_result($querypost);
