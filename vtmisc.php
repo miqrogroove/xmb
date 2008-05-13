@@ -48,7 +48,7 @@ $pid = -1;
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g'); //Forms did not include the action
 if ($action == 'report') {
     $pid = getRequestInt('pid');
-    $query = $db->query("SELECT f.*, t.tid, t.subject FROM ".X_PREFIX."posts AS p LEFT JOIN (".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid)) USING (tid) WHERE p.pid=$pid");
+    $query = $db->query("SELECT f.*, t.tid, t.subject FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) LEFT JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid WHERE p.pid=$pid");
     if ($db->num_rows($query) != 1) {
         error($lang['textnothread']);
     }

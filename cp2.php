@@ -1799,7 +1799,7 @@ if ($action == "attachments") {
             $orderby = ' ORDER BY a.downloads DESC ';
         }
 
-        $query = $db->query("SELECT a.aid, a.pid, a.filename, LENGTH(a.attachment) AS rowsize, a.downloads, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a LEFT JOIN (".X_PREFIX."posts p LEFT JOIN (".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f USING (fid)) USING (tid)) USING (pid) WHERE 1=1 $restriction $orderby");
+        $query = $db->query("SELECT a.aid, a.pid, a.filename, LENGTH(a.attachment) AS rowsize, a.downloads, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a LEFT JOIN ".X_PREFIX."posts p USING (pid) LEFT JOIN ".X_PREFIX."threads t ON t.tid=p.tid LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE 1=1 $restriction $orderby");
         while($attachment = $db->fetch_array($query)) {
             $attachsize = $attachment['rowsize'];
             if ($attachsize >= 1073741824) {
