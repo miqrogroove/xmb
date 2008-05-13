@@ -69,7 +69,7 @@ $pid = -1;
 $repquote = -1;
 if ($action == 'edit') {
     $pid = getRequestInt('pid');
-    $query = $db->query("SELECT f.*, t.tid FROM ".X_PREFIX."posts AS p LEFT JOIN (".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid)) ON t.tid=p.tid WHERE p.pid=$pid");
+    $query = $db->query("SELECT f.*, t.tid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) LEFT JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid WHERE p.pid=$pid");
     if ($db->num_rows($query) != 1) {
         error($lang['textnothread']);
     }
