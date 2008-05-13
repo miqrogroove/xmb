@@ -43,10 +43,7 @@ function u2u_msg($msg, $redirect) {
 }
 
 function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent) {
-    global $db, $onlinetime, $oToken;
-
-    $subject = censor($subject);
-    $message = censor($message);
+    global $db, $onlinetime;
     $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
 
@@ -71,9 +68,9 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
             $username = $rcpt['username'];
-            db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
+            db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', addslashes($subject), addslashes($message), 'no', 'yes');  //message and subject were historically double-slashed
             if ($self['saveogu2u'] == 'yes') {
-                db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');
+                db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', addslashes($subject), addslashes($message), 'no', 'yes');
             }
 
             $u2uid = (int) $u2uid;
@@ -124,7 +121,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         if (empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
-        db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', $subject, $message, 'yes', 'no');
+        db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', addslashes($subject), addslashes($message), 'yes', 'no');    //message and subject were historically double-slashed
         u2u_msg($lang['imsavedmsg'], 'u2u.php?folder=Drafts');
     }
 
@@ -157,9 +154,6 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         }
     }
 
-    $subject = stripslashes($subject);
-    $message = stripslashes($message);
-
     if ($u2uid > 0) {
         $query = $db->query("SELECT subject, msgfrom, message FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
         $quote = $db->fetch_array($query);
@@ -183,7 +177,6 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     if (isset($previewsubmit)) {
         $u2usubject = censor($subject);
-        $u2umessage = censor($message);
         $u2umessage = postify($u2umessage, "no", "", "yes", "no");
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
         $username = $msgto;
