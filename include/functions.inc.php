@@ -580,7 +580,7 @@ function forum($forum, $template) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
 
-    $forum['name'] = html_entity_decode($forum['name']);
+    $forum['name'] = fnameOut($forum['name']);
     $forum['description'] = html_entity_decode($forum['description']);
 
     if (isset($forum['moderator']) && $forum['lastpost'] != '') {
@@ -634,7 +634,7 @@ function forum($forum, $template) {
                 $subperms = checkForumPermissions($sub);
                 if ($sub['fup'] == $forum['fid']) {
                     if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
-                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.html_entity_decode(stripslashes($sub['name'])).'</a>';
+                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
                     }
                 }
             }
@@ -646,7 +646,7 @@ function forum($forum, $template) {
         } else {
             $subforums = '';
         }
-        eval('$foruminfo = stripslashes("'.template($template).'");');
+        eval('$foruminfo = "'.template($template).'";');
     }
     $dalast = '';
     return $foruminfo;
@@ -1546,7 +1546,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     while($forum = $db->fetch_array($query)) {
         $perms = checkForumPermissions($forum);
         if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = html_entity_decode($forum['name']);
+            $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
                 $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
                 if ($forum['password'] !== $fidpw) {
@@ -1597,10 +1597,10 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     reset($forums);
 
     foreach($standAloneForums as $forum) {
-        $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+        $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.$forum['name'].'</option>';
         if (isset($subforums[$forum['fid']])) {
             foreach($subforums[$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
             }
         }
     }
@@ -1608,12 +1608,12 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     $forumselect[] = '<option value="0" disabled="disabled">&nbsp;</option>';
     foreach($categories as $group) {
         if (isset($forums[$group['fid']]) && count($forums[$group['fid']]) > 0) {
-            $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.stripslashes($group['name']).'</option>';
+            $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.$group['name'].'</option>';
             foreach($forums[$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+                $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.$forum['name'].'</option>';
                 if (isset($subforums[$forum['fid']])) {
                     foreach($subforums[$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                        $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
                     }
                 }
             }
@@ -1649,7 +1649,7 @@ function forumJump() {
     while($forum = $db->fetch_array($query)) {
         $perms = checkForumPermissions($forum);
         if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = html_entity_decode($forum['name']);
+            $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
                 $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
                 if ($forum['password'] !== $fidpw) {
@@ -1692,10 +1692,10 @@ function forumJump() {
     reset($forums);
 
     foreach($standAloneForums as $forum) {
-        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.$forum['name'].'</option>';
         if (isset($subforums[$forum['fid']])) {
             foreach($subforums[$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
             }
         }
     }
@@ -1703,12 +1703,12 @@ function forumJump() {
     foreach($categories as $group) {
         if (isset($forums[$group['fid']])) {
             $forumselect[] = '<option value="0"></option>';
-            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.stripslashes($group['name']).'</option>';
+            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.$group['name'].'</option>';
             foreach($forums[$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.stripslashes($forum['name']).'</option>';
+                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.$forum['name'].'</option>';
                 if (isset($subforums[$forum['fid']])) {
                     foreach($subforums[$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.stripslashes($sub['name']).'</option>';
+                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
                     }
                 }
             }

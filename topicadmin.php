@@ -84,13 +84,12 @@ if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
 $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid' AND status='on'");
 $forums = $db->fetch_array($query);
 $db->free_result($query);
-$forums['name'] = stripslashes($forums['name']);
 
 $kill = false;
 if ($fid == 0 Or !X_STAFF) {
     $kill = true;
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name'].'</a>'));
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name'].'</a>'));
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }
@@ -98,9 +97,8 @@ if ($fid == 0 Or !X_STAFF) {
     $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
-    $fup['name'] = stripslashes($fup['name']);
-    nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode($fup['name']).'</a>');
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode($forums['name']).'</a>');
+    nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
     if (isset($thread['subject'])) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
     }

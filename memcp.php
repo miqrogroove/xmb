@@ -536,7 +536,7 @@ if ($action == 'profile') {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
             $db->free_result($query2);
-            $forum['name'] = html_entity_decode($forum['name']);
+            $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
@@ -544,7 +544,7 @@ if ($action == 'profile') {
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-            $fav['subject'] = stripslashes(censor($fav['subject']));
+            $fav['subject'] = censor(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
                 $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
@@ -593,7 +593,7 @@ if ($action == 'profile') {
             $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
             $forum = $db->fetch_array($query2);
             $db->free_result($query2);
-            $forum['name'] = html_entity_decode($forum['name']);
+            $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
@@ -709,7 +709,7 @@ if ($action == 'profile') {
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
-        $message['subject'] = html_entity_decode($message['subject']);
+        $message['subject'] = censor(stripslashes($message['subject']));
         if ($message['subject'] == '') {
             $message['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
@@ -719,7 +719,6 @@ if ($action == 'profile') {
         } else {
             $read = $lang['textunread'];
         }
-        $message['subject'] = stripslashes(censor($message['subject']));
         eval('$messages .= "'.template('memcp_home_u2u_row').'";');
     }
 
@@ -736,7 +735,7 @@ if ($action == 'profile') {
         $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
         $forum = $db->fetch_array($query);
         $db->free_result($query);
-        $forum['name'] = html_entity_decode($forum['name']);
+        $forum['name'] = fnameOut($forum['name']);
 
         $lastpost = explode('|', $fav['lastpost']);
         $dalast = $lastpost[0];

@@ -137,8 +137,8 @@ if ($results == 0) {
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
-        $thread['subject'] = shortenString(stripslashes($thread['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-        $thread['name'] = stripslashes($thread['name']);
+        $thread['subject'] = shortenString(censor(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+        $thread['name'] = fnameOut($thread['name']);
 
         if ($thread['author'] == $lang['textanonymous']) {
             $authorlink = $thread['author'];
@@ -204,9 +204,6 @@ if ($results == 0) {
             $pagelinks = $multipage2 = '';
         }
 
-        $thread['subject'] = checkOutput($thread['subject'], 'no', '', true);
-        $thread['subject'] = censor($thread['subject']);
-        $thread['name'] = html_entity_decode($thread['name']);
         eval('$today_row[] = "'.template('today_row').'";');
     }
     $rows = implode("\n", $today_row);

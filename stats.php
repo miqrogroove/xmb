@@ -144,9 +144,8 @@ $mapercent  = number_format(($membersact*100/$members), 2).'%';
 $viewmost = array();
 $query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
 while($views = $db->fetch_array($query)) {
-    $views['subject'] = shortenString(stripslashes($views['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-    $views['subject'] = censor(checkOutput($views['subject'], 'no', '', true));
-    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.html_entity_decode($views['subject']).'</a> ('.$views['views'].')';
+    $views['subject'] = shortenString(censor(stripslashes($views['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.$views['subject'].'</a> ('.$views['views'].')';
 }
 $viewmost = implode('<br />', $viewmost);
 $db->free_result($query);
@@ -155,9 +154,8 @@ $db->free_result($query);
 $replymost = array();
 $query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
 while($reply = $db->fetch_array($query)) {
-    $reply['subject'] = shortenString(stripslashes($reply['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-    $reply['subject'] = censor(checkOutput($reply['subject'], 'no', '', true));
-    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.html_entity_decode($reply['subject']).'</a> ('.$reply['replies'].')';
+    $reply['subject'] = shortenString(censor(stripslashes($reply['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.$reply['subject'].'</a> ('.$reply['replies'].')';
 }
 $replymost = implode('<br />', $replymost);
 $db->free_result($query);
@@ -170,9 +168,8 @@ while($last = $db->fetch_array($query)) {
     $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
     $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
-    $last['subject'] = shortenString(stripslashes($last['subject']), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-    $last['subject'] = censor(checkOutput($last['subject'], 'no', '', true));
-    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.html_entity_decode($last['subject']).'</a> ('.$thislast.')';
+    $last['subject'] = shortenString(censor(stripslashes($last['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last['subject'].'</a> ('.$thislast.')';
 }
 $latest = implode('<br />', $latest);
 $db->free_result($query);
@@ -180,7 +177,7 @@ $db->free_result($query);
 // Get most popular forum
 $query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
 $pop = $db->fetch_array($query);
-$popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.stripslashes(html_entity_decode($pop['name'])).'</strong></a>';
+$popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.fnameOut($pop['name']).'</strong></a>';
 $db->free_result($query);
 
 // Get amount of posts per day

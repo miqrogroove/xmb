@@ -325,6 +325,13 @@ function attrOut($rawstring, $word='') { //Never safe for STYLE attributes.
     return htmlspecialchars($retval, ENT_QUOTES);
 }
 
+// fnameOut is intended to take the raw db value of a forum's name and convert it to the standard HTML version used throughout XMB.
+//   This function must not be used for any other purpose.
+//   Forum names historically used double-slashed db values and default (ENT_COMPAT) quote decoding.
+function fnameOut($rawstring) {
+    return htmlspecialchars_decode(stripslashes($rawstring), ENT_COMPAT);
+}
+
 if (!function_exists('stripos')) {
     function stripos($haystack, $needle, $offset = 0) {
         return strpos(strtolower($haystack), strtolower($needle), $offset);

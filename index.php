@@ -73,7 +73,7 @@ if ($gid) {
     $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' AND status='on' LIMIT 1");
     $cat = $db->fetch_array($query);
     $db->free_result($query);
-    nav(html_entity_decode(stripslashes($cat['name'])));
+    nav(fnameOut($cat['name']));
 } else {
     $gid = 0;
 }
@@ -304,7 +304,7 @@ while($thing = $db->fetch_array($fquery)) {
             $forumlist = '';
         }
         $lastcat = $thing['cat_fid'];
-        $thing['cat_name'] = html_entity_decode(stripslashes($thing['cat_name']));
+        $thing['cat_name'] = fnameOut($thing['cat_name']);
         eval('$forumlist .= "'.template('index_category').'";');
         if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
             $forumlist .= $indexBar;

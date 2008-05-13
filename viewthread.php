@@ -208,12 +208,12 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 }
 
 if (isset($forum['type']) && $forum['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
+    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
     nav($thread['subject']);
 } else {
     if (isset($forum['type']) && $forum['type'] == 'sub') {
-        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.html_entity_decode(stripslashes($fup['name'])).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.html_entity_decode(stripslashes($forum['name'])).'</a>');
+        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
+        nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
         nav($thread['subject']);
     }
 }

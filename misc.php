@@ -201,11 +201,11 @@ switch($action) {
                     $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='' AND type='forum' ORDER BY displayorder");
 
                     while ($forum = $db->fetch_array($queryfor)) {
-                        $forumselect .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
+                        $forumselect .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; ".fnameOut($forum['name'])."</option>";
                         $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
 
                         while ($sub = $db->fetch_array($querysub)) {
-                            $forumselect .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
+                            $forumselect .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; ".fnameOut($sub['name'])."</option>";
                         }
 
                         $forumselect .= "<option value=\"\" disabled=\"disabled\">&nbsp;</option>";
@@ -213,16 +213,16 @@ switch($action) {
 
                     $querygrp = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE type='group' ORDER BY displayorder");
                     while ($group = $db->fetch_array($querygrp)) {
-                        $forumselect2 = "<option value=\"$group[fid]\"disabled=\"disabled\">$group[name]</option>";
+                        $forumselect2 = "<option value=\"$group[fid]\"disabled=\"disabled\">".fnameOut($group['name'])."</option>";
 
                         $forumselect3 = '';
                         $queryfor = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$group[fid]' AND type='forum' ORDER BY displayorder");
                         while ($forum = $db->fetch_array($queryfor)) {
-                            $forumselect3 .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
+                            $forumselect3 .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; ".fnameOut($forum['name'])."</option>";
 
                             $querysub = $db->query("SELECT fid, name FROM ".X_PREFIX."forums WHERE $restrict AND fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
                             while ($sub = $db->fetch_array($querysub)) {
-                                $forumselect3 .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
+                                $forumselect3 .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; ".fnameOut($sub['name'])."</option>";
                             }
                         }
                         if($forumselect3 !== '') {

@@ -1063,7 +1063,7 @@ if ($action == 'forum') {
         &nbsp; <select name="newffup"><option value="" selected="selected">-<?php echo $lang['textnone']?>-</option>
         <?php
         foreach($groups as $group) {
-            echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
+            echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
         }
         ?>
         </select>
@@ -1076,7 +1076,7 @@ if ($action == 'forum') {
         &nbsp; <select name="newsubfup">
         <?php
         foreach($forumlist as $group) {
-            echo '<option value="'.$group['fid'].'">'.html_entity_decode(stripslashes($group['name'])).'</option>';
+            echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
         }
         ?>
         </select>
@@ -1155,15 +1155,14 @@ if ($action == 'forum') {
         }
 
         $forum['name'] = stripslashes($forum['name']);
-        $forum['description'] = stripslashes($forum['description']);
         ?>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textforumname']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="namenew" value="<?php echo htmlspecialchars_decode($forum['name'])?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="namenew" value="<?php echo $forum['name']; ?>" /></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdesc']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo htmlspecialchars_decode($forum['description'])?></textarea></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo $forum['description']; ?></textarea></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>" valign="top"><?php echo $lang['textallow']?></td>
@@ -1417,13 +1416,13 @@ if ($action == "mods") {
                 $oldfid = $forum['cat_fid']
                 ?>
                 <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
-                <td colspan="2"><strong><?php echo html_entity_decode(stripslashes($forum['cat_name']))?></strong></td>
+                <td colspan="2"><strong><?php echo fnameOut($forum['cat_name'])?></strong></td>
                 </tr>
                 <?php
             }
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td><?php echo html_entity_decode(stripslashes($forum['name']))?></td>
+            <td><?php echo fnameOut($forum['name'])?></td>
             <td><input type="text" name="mod[<?php echo $forum['fid']?>]"" value="<?php echo $forum['moderator']?>" /></td>
             </tr>
             <?php
@@ -1431,7 +1430,7 @@ if ($action == "mods") {
             while($sub = $db->fetch_array($querys)) {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo html_entity_decode(stripslashes($sub['name']))?></em></td>
+                <td><?php echo $lang['4spaces']?><?php echo $lang['4spaces']?><em><?php echo fnameOut($sub['name'])?></em></td>
                 <td><input type="text" name="mod[<?php echo $sub['fid']?>]"" value="<?php echo $sub['moderator']?>" /></td>
                 </tr>
                 <?php
@@ -2011,7 +2010,7 @@ if ($action == "search") {
             <strong><?php echo ($num+1)?>.</strong>
             </td>
             <td align="left" width="95%" bgcolor="<?php echo $altbg1?>">
-            <?php echo html_entity_decode(stripslashes($val))?>
+            <?php echo stripslashes($val); ?>
             </td>
             </tr>
             <?php
