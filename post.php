@@ -372,119 +372,72 @@ switch($action) {
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$threadname;
         }
+        eval('echo "'.template('header').'";');
+
+        $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
         //Check all replying permissions for this $tid.
         if (!X_SADMIN And $thread['closed'] != '') {
-            error($lang['closedmsg']);
+            if ($replyvalid) {
+                softerror($lang['closedmsg']);
+            } else {
+                error($lang['closedmsg']);
+            }
+            $replyvalid = FALSE;
         }
 
-        if (!isset($replysubmit) || !$replysubmit) {
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                if ($Captcha->bCompatible !== false) {
-                    $imghash = $Captcha->GenerateCode();
-                    eval('$captchapostcheck = "'.template('post_captcha').'";');
-                }
-            }
-
-            $posts = '';
-            eval('echo "'.template('header').'";');
-
-            if (X_STAFF) {
-                $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
-            } else {
-                $closeoption = '';
-            }
-
-            if (isset($repquote) && ($repquote = (int) $repquote)) {
-                $query = $db->query("SELECT p.message, p.fid, p.author, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
-                $thaquote = $db->fetch_array($query);
-                $db->free_result($query);
-                $quotefid = $thaquote['fid'];
-
-                $quoteperms = checkForumPermissions($thaquote);
-                if(!$quoteperms[X_PERMS_VIEW] || !$quoteperms[X_PERMS_USERLIST]) {
-                    error($lang['privforummsg'], false);
-                }
-                $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".censor(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
-            }
-
-            $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-            $replynum = $db->result($querytop, 0);
-            if ($replynum >= $ppp) {
-                $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
-                eval($lang['evaltrevlt']);
-                eval('$posts .= "'.template('post_reply_review_toolong').'";');
-            } else {
-                $thisbg = $altbg1;
-                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC");
-                while($post = $db->fetch_array($query)) {
-                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-
-                    if ($post['icon'] != '') {
-                        $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$lang['altpostmood'].'" border="0" />';
-                    } else {
-                        $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
-                    }
-
-                    $post['message'] = postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-                    eval('$posts .= "'.template('post_reply_review_post').'";');
-                    if ($thisbg == $altbg2) {
-                        $thisbg = $altbg1;
-                    } else {
-                        $thisbg = $altbg2;
-                    }
-                }
-                $db->free_result($query);
-            }
-            $db->free_result($querytop);
-
-            $attachfile = '';
-            if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
-                eval('$attachfile = "'.template('post_attachmentbox').'";');
-            }
-            eval('echo "'.template('post_reply').'";');
-        } else {
-            if (strlen(postedVar('subject')) == 0 And strlen($messageinput) == 0) {
-                error($lang['postnothing']);
-            }
-
-            if (X_GUEST And strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+        if ($replyvalid) {
+            if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (loginUser(postedVar('username'), md5($_POST['password']))) {
-                    $username = $xmbuser;
-                } else {
-                    error($lang['textpw1']);
-                }
-            }
-
-            if ($self['status'] == "Banned") {
-                error($lang['bannedmessage']);
-            }
-
-            if ($self['ban'] == 'posts' || $self['ban'] == 'both') {
-                error($lang['textbanfrompost']);
-            }
-
-            if ($username == 'Anonymous' && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                if ($Captcha->bCompatible !== false) {
-                    $imghash = addslashes($imghash);
-                    $imgcode = addslashes($imgcode);
-                    if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                        error($lang['captchaimageinvalid']);
+                if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+                    if (loginUser(postedVar('username'), md5($_POST['password']))) {
+                        if ($self['status'] == "Banned") {
+                            softerror($lang['bannedmessage']);
+                            $replyvalid = FALSE;
+                        } elseif ($self['ban'] == "posts" || $self['ban'] == "both") {
+                            softerror($lang['textbanfrompost']);
+                            $replyvalid = FALSE;
+                        } else {
+                            $username = $xmbuser;
+                        }
+                    } else {
+                        softerror($lang['textpw1']);
+                        $replyvalid = FALSE;
+                    }
+                } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                    if ($Captcha->bCompatible !== false) {
+                        $imghash = addslashes($imghash);
+                        $imgcode = addslashes($imgcode);
+                        if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
+                            softerror($lang['captchaimageinvalid']);
+                            $replyvalid = FALSE;
+                        }
                     }
                 }
             }
-
+        }
+        if ($replyvalid) {
+            $attachedfile = FALSE;
+            if (isset($_FILES['attach'])) {
+                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
+            }
+            if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0) && $attachedfile === FALSE) {
+                softerror($lang['postnothing']);
+                $replyvalid = FALSE;
+            }
+        }
+        if ($replyvalid) {
             if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-                if (!$db->result($query, 0)) {
-                    $db->free_result($query);
-                    exit();
+                if ($db->num_rows($query) == 0) {
+                    $posticon = '';
+                    softerror($lang['error']);
+                    $replyvalid = FALSE;
                 }
+                $db->free_result($query);
             }
-
+        }
+        if ($replyvalid) {
             $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
             $for = $db->fetch_array($query);
             $db->free_result($query);
@@ -495,10 +448,12 @@ switch($action) {
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
-                    error($lang['floodprotect'].' '.$floodlink.' '.$lang['tocont']);
+                    softerror($lang['floodprotect'].' '.$floodlink.' '.$lang['tocont']);
+                    $replyvalid = FALSE;
                 }
             }
-
+        }
+        if ($replyvalid) {
             if ($usesig != "yes") {
                 $usesig = "no";
             }
@@ -558,16 +513,81 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            eval('echo "'.template('header').'";');
-
-            if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+            if ($attachedfile != FALSE) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
-
 
             $topicpages = quickpage($posts, $ppp);
             message($lang['replymsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         }
+
+        if (!$replyvalid) {
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                if ($Captcha->bCompatible !== false) {
+                    $imghash = $Captcha->GenerateCode();
+                    eval('$captchapostcheck = "'.template('post_captcha').'";');
+                }
+            }
+
+            $posts = '';
+
+            if (X_STAFF) {
+                $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
+            } else {
+                $closeoption = '';
+            }
+
+            if (isset($repquote) && ($repquote = (int) $repquote)) {
+                $query = $db->query("SELECT p.message, p.fid, p.author, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
+                $thaquote = $db->fetch_array($query);
+                $db->free_result($query);
+                $quotefid = $thaquote['fid'];
+
+                $quoteperms = checkForumPermissions($thaquote);
+                if($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_USERLIST]) {
+                    $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".censor(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
+                }
+            }
+
+            $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+            $replynum = $db->result($querytop, 0);
+            if ($replynum >= $ppp) {
+                $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
+                eval($lang['evaltrevlt']);
+                eval('$posts .= "'.template('post_reply_review_toolong').'";');
+            } else {
+                $thisbg = $altbg1;
+                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC");
+                while($post = $db->fetch_array($query)) {
+                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+
+                    if ($post['icon'] != '') {
+                        $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$lang['altpostmood'].'" border="0" />';
+                    } else {
+                        $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
+                    }
+
+                    $post['message'] = postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                    eval('$posts .= "'.template('post_reply_review_post').'";');
+                    if ($thisbg == $altbg2) {
+                        $thisbg = $altbg1;
+                    } else {
+                        $thisbg = $altbg2;
+                    }
+                }
+                $db->free_result($query);
+            }
+            $db->free_result($querytop);
+
+            $attachfile = '';
+            if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
+                eval('$attachfile = "'.template('post_attachmentbox').'";');
+            }
+            eval('echo "'.template('post_reply').'";');
+        }
+
         break;
 
     case 'newthread':
@@ -624,6 +644,17 @@ switch($action) {
             }
         }
         if ($topicvalid) {
+            if ($posticon != '') {
+                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
+                if ($db->num_rows($query) == 0) {
+                    $posticon = '';
+                    softerror($lang['error']);
+                    $topicvalid = FALSE;
+                }
+                $db->free_result($query);
+            }
+        }
+        if ($topicvalid) {
             $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
             $for = $db->fetch_array($query);
             $db->free_result($query);
@@ -635,16 +666,6 @@ switch($action) {
                     softerror($lang['floodprotect']);
                     $topicvalid = FALSE;
                 }
-            }
-        }
-        if ($topicvalid) {
-            if ($posticon != '') {
-                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-                if ($db->num_rows($query) == 0) {
-                    softerror($lang['error']);
-                    $topicvalid = FALSE;
-                }
-                $db->free_result($query);
             }
         }
         if ($topicvalid) {
@@ -772,6 +793,9 @@ switch($action) {
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$threadname;
         }
+        eval('echo "'.template('header').'";');
+
+        $editvalid = onSubmit('editsubmit'); // This new flag will indicate a message was submitted and successful.
 
         //Check all editing permissions for this $pid.  Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
         $query = $db->query("SELECT p.author as author, m.status as status, p.subject as subject FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON p.author=m.username WHERE pid=$pid");
@@ -781,100 +805,37 @@ switch($action) {
         $status1 = modcheckPost($self['username'], $forum['moderator'], $orig['status']);
 
         if ($status1 != 'Moderator' And ($self['username'] != $orig['author'] Or $thread['closed'] != '')) {
-            error($lang['noedit']);
+            if ($editvalid) {
+                softerrorerror($lang['noedit']);
+            } else {
+                error($lang['noedit']);
+            }
+            $editvalid = FALSE;
         }
 
-        if (!isset($editsubmit)) {
-            eval('echo "'.template('header').'";');
-
-            $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
-            if (isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
-                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon);
-                $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid='$pid' AND tid='$tid'");
-                if ($db->num_rows($query) > 0) {
-                    $postinfo = array_merge($postinfo, $db->fetch_array($query));
-                }
-                $db->free_result($query);
-            } else {
-                $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid=p.pid) WHERE p.pid='$pid' AND p.tid='$tid' AND p.fid=".$forum['fid']);
-                $postinfo = $db->fetch_array($query);
-                $db->free_result($query);
-                $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
-                $postinfo['subject'] = stripslashes($postinfo['subject']);
-            }
-//update
-            if (isset($postinfo['filesize'])) {
-                $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-            }
-            if (isset($postinfo['filename'])) {
-                $postinfo['filename'] = checkInput($postinfo['filename'], 'no', 'no', '', false);
-            }
-
-            if ($postinfo['bbcodeoff'] == 'yes') {
-                $offcheck1 = $cheHTML;
-            } else {
-                $offcheck1 = '';
-            }
-
-            if ($postinfo['smileyoff'] == 'yes') {
-                $offcheck2 = $cheHTML;
-            } else {
-                $offcheck2 = '';
-            }
-
-            if ($postinfo['usesig'] == 'yes') {
-                $offcheck3 = $cheHTML;
-            } else {
-                $offcheck3 = '';
-            }
-
-            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
-            while($smilie = $db->fetch_array($querysmilie)) {
-                if ($postinfo['icon'] == $smilie['url']) {
-                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" checked=\"checked\"/><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
-                } else {
-                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" /><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
-                }
-                $listed_icons += 1;
-                if ($listed_icons == 9) {
-                    $icons .= '<br />';
-                    $listed_icons = 0;
-                }
-            }
-            $db->free_result($querysmilie);
-
-            $postinfo['message'] = censor($postinfo['message']);
-            $postinfo['subject'] = censor($postinfo['subject']);
-
-            if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
-                eval('$attachment = "'.template('post_edit_attachment').'";');
-            } else {
-                $attachment = $attachfile;
-            }
-            eval('echo "'.template('post_edit').'";');
-        } else {
-            if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                error($lang['textbanfrompost']);
-            }
-
+        if ($editvalid) {
             if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-                if (!$db->result($query, 0)) {
-                    $db->free_result($query);
-                    exit();
+                if ($db->num_rows($query) == 0) {
+                    $posticon = '';
+                    softerror($lang['error']);
+                    $editvalid = FALSE;
                 }
+                $db->free_result($query);
             }
-
+        }
+        if ($editvalid) {
             $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline LIMIT 1");
             $isfirstpost = $db->fetch_array($query);
             $db->free_result($query);
 
             if ((strlen(postedVar('subject')) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
-                error($lang['textnosubject']);
+                softerror($lang['textnosubject']);
+                $editvalid = FALSE;
             }
-
+        }
+        if ($editvalid) {
             $threaddelete = 'no';
-            eval('echo "'.template('header').'";');
 
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             if ($isfirstpost['pid'] == $pid && !(isset($delete) && $delete == 'yes')) {
@@ -957,6 +918,75 @@ switch($action) {
                 message($lang['editpostmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
             }
         }
+
+        if (!$editvalid) {
+            $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+            if (onSubmit('editsubmit') || isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
+                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon);
+                $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid='$pid' AND tid='$tid'");
+                if ($db->num_rows($query) > 0) {
+                    $postinfo = array_merge($postinfo, $db->fetch_array($query));
+                }
+                $db->free_result($query);
+            } else {
+                $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid=p.pid) WHERE p.pid='$pid' AND p.tid='$tid' AND p.fid=".$forum['fid']);
+                $postinfo = $db->fetch_array($query);
+                $db->free_result($query);
+                $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
+                $postinfo['subject'] = stripslashes($postinfo['subject']);
+            }
+//update
+            if (isset($postinfo['filesize'])) {
+                $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
+            }
+            if (isset($postinfo['filename'])) {
+                $postinfo['filename'] = checkInput($postinfo['filename'], 'no', 'no', '', false);
+            }
+
+            if ($postinfo['bbcodeoff'] == 'yes') {
+                $offcheck1 = $cheHTML;
+            } else {
+                $offcheck1 = '';
+            }
+
+            if ($postinfo['smileyoff'] == 'yes') {
+                $offcheck2 = $cheHTML;
+            } else {
+                $offcheck2 = '';
+            }
+
+            if ($postinfo['usesig'] == 'yes') {
+                $offcheck3 = $cheHTML;
+            } else {
+                $offcheck3 = '';
+            }
+
+            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
+            while($smilie = $db->fetch_array($querysmilie)) {
+                if ($postinfo['icon'] == $smilie['url']) {
+                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" checked=\"checked\"/><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
+                } else {
+                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" /><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
+                }
+                $listed_icons += 1;
+                if ($listed_icons == 9) {
+                    $icons .= '<br />';
+                    $listed_icons = 0;
+                }
+            }
+            $db->free_result($querysmilie);
+
+            $postinfo['message'] = censor($postinfo['message']);
+            $postinfo['subject'] = censor($postinfo['subject']);
+
+            if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
+                eval('$attachment = "'.template('post_edit_attachment').'";');
+            } else {
+                $attachment = $attachfile;
+            }
+            eval('echo "'.template('post_edit').'";');
+        }
+        
         break;
 
     default:
