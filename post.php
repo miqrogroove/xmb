@@ -292,7 +292,8 @@ if (isset($poll)) {
     $poll = '';
 }
 
-if (!empty($posticon)) {
+$posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
+if ($posticon != '') {
     $thread['icon'] = (file_exists($smdir.'/'.$posticon)) ? "<img src=\"$smdir/$posticon\" />" : '';
     $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
 } else {
@@ -343,22 +344,6 @@ if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_submit2 = '';
     $spelling_lang = '';
     $suggestions = '';
-}
-
-if (isset($topicsubmit)) {
-    if (strlen(postedVar('subject')) == 0) {
-        $preview = error($lang['textnosubject'], false, '', '<br /><br />', false, false, true, false);
-        $error = true;
-        unset($topicsubmit);
-        if (isset($previewpost)) {
-            unset($previewpost);
-        }
-    } else {
-        $preview = '';
-        $error = false;
-    }
-} else {
-    $error = false;
 }
 
 $bbcodeinsert = bbcodeinsert();
@@ -492,14 +477,12 @@ switch($action) {
                 }
             }
 
-            if (isset($posticon) && $posticon != "") {
+            if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if (!$db->result($query, 0)) {
                     $db->free_result($query);
                     exit();
                 }
-            } else {
-                $posticon = '';
             }
 
             $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
@@ -596,69 +579,51 @@ switch($action) {
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$dissubject;
         }
+        eval('echo "'.template('header').'";');
 
-        if (!isset($topicsubmit) || !$topicsubmit) {
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                if ($Captcha->bCompatible !== false) {
-                    $imghash = $Captcha->GenerateCode();
-                    eval('$captchapostcheck = "'.template('post_captcha').'";');
-                }
-            }
+        $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
-            eval('echo "'.template('header').'";');
-
-            if (X_STAFF) {
-                $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
-                $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
-            } else {
-                $topoption = '';
-                $closeoption = '';
-            }
-
-            if (!isset($spelling_submit2)) {
-                $spelling_submit2 = '';
-            }
-
-            if (isset($poll) && $poll == 'yes' && $perms[X_PERMS_POLL]) {
-                if (!isset($pollanswers)){
-                    $pollanswers = '';
-                }
-                eval('echo "'.template('post_newpoll').'";');
-            } else {
-                eval('echo "'.template('post_newthread').'";');
-            }
-        } else {
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0)) {
-                error($lang['postnothing']);
-            }
-
-            if (X_GUEST And strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+        if ($topicvalid) {
+            if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (loginUser(postedVar('username'), md5($_POST['password']))) {
-                    $username = $xmbuser;
-                } else {
-                    error($lang['textpw1']);
-                }
-            }
-
-            if ($self['status'] == "Banned") {
-                error($lang['bannedmessage']);
-            }
-
-            if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                error($lang['textbanfrompost']);
-            }
-
-            if ($username == 'Anonymous' && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                if ($Captcha->bCompatible !== false) {
-                    $imghash = addslashes($imghash);
-                    $imgcode = addslashes($imgcode);
-                    if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                        error($lang['captchaimageinvalid']);
+                if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+                    if (loginUser(postedVar('username'), md5($_POST['password']))) {
+                        if ($self['status'] == "Banned") {
+                            softerror($lang['bannedmessage']);
+                            $topicvalid = FALSE;
+                        } elseif ($self['ban'] == "posts" || $self['ban'] == "both") {
+                            softerror($lang['textbanfrompost']);
+                            $topicvalid = FALSE;
+                        } else {
+                            $username = $xmbuser;
+                        }
+                    } else {
+                        softerror($lang['textpw1']);
+                        $topicvalid = FALSE;
+                    }
+                } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                    if ($Captcha->bCompatible !== false) {
+                        $imghash = addslashes($imghash);
+                        $imgcode = addslashes($imgcode);
+                        if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
+                            softerror($lang['captchaimageinvalid']);
+                            $topicvalid = FALSE;
+                        }
                     }
                 }
             }
-
+        }
+        if ($topicvalid) {
+            $attachedfile = FALSE;
+            if (isset($_FILES['attach'])) {
+                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
+            }
+            if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0) && $attachedfile === FALSE) {
+                softerror($lang['postnothing']);
+                $topicvalid = FALSE;
+            }
+        }
+        if ($topicvalid) {
             $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
             $for = $db->fetch_array($query);
             $db->free_result($query);
@@ -667,20 +632,34 @@ switch($action) {
                 $lastpost = explode('|', $for['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
-                    error($lang['floodprotect'].' '.$floodlink.' '.$lang['tocont']);
+                    softerror($lang['floodprotect']);
+                    $topicvalid = FALSE;
                 }
             }
-
-            if (isset($posticon) && $posticon != '') {
+        }
+        if ($topicvalid) {
+            if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
-                if (!$db->result($query, 0)) {
-                    $db->free_result($query);
-                    exit();
+                if ($db->num_rows($query) == 0) {
+                    softerror($lang['error']);
+                    $topicvalid = FALSE;
                 }
-            } else {
-                $posticon = '';
+                $db->free_result($query);
             }
+        }
+        if ($topicvalid) {
+            $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
+            if (X_MEMBER && $pollanswers != '' && $perms[X_PERMS_POLL]) {
+                $pollopts = explode("\n", $pollanswers);
+                $pnumnum = count($pollopts);
 
+                if ($pnumnum < 2) {
+                    softerror($lang['too_few_pollopts']);
+                    $topicvalid = FALSE;
+                }
+            }
+        }
+        if ($topicvalid) {
             $thatime = $onlinetime;
 
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
@@ -699,15 +678,7 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid='$fid'");
 
-            if (X_MEMBER && isset($pollanswers) && $perms[X_PERMS_POLL]) {
-                $pollanswers = checkInput($pollanswers);
-                $pollopts = explode("\n", $pollanswers);
-                $pnumnum = count($pollopts);
-
-                if ($pnumnum < 2) {
-                    error($lang['too_few_pollopts']);
-                }
-
+            if (X_MEMBER && $pollanswers != '' && $perms[X_PERMS_POLL]) {
                 $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
                 if ($query) {
                     $vote_id = $db->fetch_array($query);
@@ -725,7 +696,7 @@ switch($action) {
                 $vote_id =  $db->insert_id();
                 $i = 1;
                 foreach($pollopts as $p) {
-                    $p = addslashes($p);
+                    $p = $db->escape($p);
                     $db->query("INSERT INTO ".X_PREFIX."vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ($vote_id, $i, '$p', 0)");
                     $i++;
                 }
@@ -751,9 +722,7 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
-            eval('echo "'.template('header').'";');
-
-            if (isset($_FILES['attach']) && ($attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
+            if ($attachedfile !== FALSE) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
 
@@ -764,6 +733,37 @@ switch($action) {
             $topicpages = quickpage($posts, $ppp);
             message($lang['postmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         }
+
+        if (!$topicvalid) {
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                if ($Captcha->bCompatible !== false) {
+                    $imghash = $Captcha->GenerateCode();
+                    eval('$captchapostcheck = "'.template('post_captcha').'";');
+                }
+            }
+
+            if (X_STAFF) {
+                $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
+                $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
+            } else {
+                $topoption = '';
+                $closeoption = '';
+            }
+
+            if (!isset($spelling_submit2)) {
+                $spelling_submit2 = '';
+            }
+
+            if (isset($poll) && $poll == 'yes' && $perms[X_PERMS_POLL]) {
+                if (!isset($pollanswers)){
+                    $pollanswers = '';
+                }
+                eval('echo "'.template('post_newpoll').'";');
+            } else {
+                eval('echo "'.template('post_newthread').'";');
+            }
+        }
+
         break;
 
     case 'edit':
@@ -857,14 +857,12 @@ switch($action) {
                 error($lang['textbanfrompost']);
             }
 
-            if (isset($posticon) && $posticon != "") {
+            if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if (!$db->result($query, 0)) {
                     $db->free_result($query);
                     exit();
                 }
-            } else {
-                $posticon = '';
             }
 
             $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline LIMIT 1");
@@ -874,8 +872,6 @@ switch($action) {
             if ((strlen(postedVar('subject')) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
                 error($lang['textnosubject']);
             }
-
-            $posticon = htmlspecialchars($posticon);
 
             $threaddelete = 'no';
             eval('echo "'.template('header').'";');
@@ -979,6 +975,10 @@ function bbcodeinsert() {
         eval('$bbcode = "'.template('functions_bbcodeinsert').'";');
     }
     return $bbcode;
+}
+
+function softerror($msg) {
+    error($msg, FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
 }
 
 ?>
