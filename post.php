@@ -157,7 +157,6 @@ if ($action != 'edit') {
     $captchapostcheck = '';
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
         require ROOT.'include/captcha.inc.php';
-        $Captcha = new Captcha(250, 50);
     }
 
     $querysmilie = $db->query("SELECT url, code FROM ".X_PREFIX."smilies WHERE type='picon'");
@@ -405,6 +404,7 @@ switch($action) {
                         $replyvalid = FALSE;
                     }
                 } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                    $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = addslashes($imghash);
                         $imgcode = addslashes($imgcode);
@@ -413,6 +413,7 @@ switch($action) {
                             $replyvalid = FALSE;
                         }
                     }
+                    unset($Captcha);
                 }
             }
         }
@@ -523,10 +524,12 @@ switch($action) {
 
         if (!$replyvalid) {
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
                     eval('$captchapostcheck = "'.template('post_captcha').'";');
                 }
+                unset($Captcha);
             }
 
             $posts = '';
@@ -622,6 +625,7 @@ switch($action) {
                         $topicvalid = FALSE;
                     }
                 } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                    $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = addslashes($imghash);
                         $imgcode = addslashes($imgcode);
@@ -630,6 +634,7 @@ switch($action) {
                             $topicvalid = FALSE;
                         }
                     }
+                    unset($Captcha);
                 }
             }
         }
@@ -757,10 +762,12 @@ switch($action) {
 
         if (!$topicvalid) {
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
                     eval('$captchapostcheck = "'.template('post_captcha').'";');
                 }
+                unset($Captcha);
             }
 
             if (X_STAFF) {
