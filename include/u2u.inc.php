@@ -195,7 +195,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 function u2u_view($u2uid, $folders) {
     global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken, $xmbuser;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
-    global $sendoptions, $u2uheader, $u2ufooter;
+    global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
 
     $delchecked = '';
     $leftpane = '';
@@ -213,16 +213,16 @@ function u2u_view($u2uid, $folders) {
         $u2uavatar = '';
         if ($u2u['type'] == 'incoming') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$xmbuser')");
-            if ($u2u['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' And $u2u['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$u2u['avatar'].'" />';
             }
         } else if ($u2u['type'] == 'draft') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
-            if ($self['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' And $self['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
             }
         } else {
-            if ($self['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' And $self['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
             }
         }

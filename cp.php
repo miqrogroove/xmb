@@ -627,7 +627,10 @@ if ($action == "settings") {
         $emailchecknew = formOnOff('emailchecknew');
         $floodctrlnew = formInt('floodctrlnew');
         $u2uquotanew = formInt('u2uquotanew');
-        $avastatusnew = formOnOff('avastatusnew');
+        $avastatusnew = postedVar('avastatusnew');
+        if ($avastatusnew != 'on' And $avastatusnew != 'list') {
+            $avastatusnew = 'off';
+        }
         $resetSigNew = formOnOff('resetSigNew');
         $doubleenew = formOnOff('doubleenew');
         $pruneusersnew = formInt('pruneusersnew');
