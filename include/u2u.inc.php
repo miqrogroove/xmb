@@ -207,13 +207,24 @@ function u2u_view($u2uid, $folders) {
         return;
     }
 
-    $query = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
+    $query = $db->query("SELECT u.*, m.avatar FROM ".X_PREFIX."u2u AS u LEFT JOIN ".X_PREFIX."members AS m ON u.msgfrom=m.username WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     $u2u = $db->fetch_array($query);
     if ($u2u) {
+        $u2uavatar = '';
         if ($u2u['type'] == 'incoming') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$xmbuser')");
+            if ($u2u['avatar'] != '') {
+                $u2uavatar = '<br /><img src="'.$u2u['avatar'].'" />';
+            }
         } else if ($u2u['type'] == 'draft') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
+            if ($self['avatar'] != '') {
+                $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
+            }
+        } else {
+            if ($self['avatar'] != '') {
+                $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
+            }
         }
 
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);

@@ -4431,8 +4431,8 @@ $u2upreview
 <td bgcolor="$altbg1" class="tablerow" width="15%">$lang[textsent]</td>
 <td bgcolor="$altbg2" class="smalltxt">$u2udateline</td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="15%">$lang[textmessage]</td>
+<tr class="tablerow" valign="top">
+<td bgcolor="$altbg1" width="15%">$lang[textmessage]$u2uavatar</td>
 <td bgcolor="$altbg2">$u2umessage</td>
 </tr>
 </table>
