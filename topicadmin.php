@@ -75,7 +75,7 @@ if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = censor(stripslashes($thread['subject']));
+    $threadname = rawHTMLsubject(stripslashes($thread['subject']));
     $fid = (int)$thread['fid'];
 } else {
     $threadname = '';
@@ -282,10 +282,10 @@ switch($action) {
                         $info = $db->fetch_array($query);
                         $db->free_result($query);
                         
-                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ('$info[fid]', '$info[subject]', '', '$info[lastpost]', 0, 0, '$info[author]', 'moved|$info[tid]', '$info[topped]')");
+                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape($info['subject'])."', '', '".$db->escape($info['lastpost'])."', 0, 0, '".$db->escape($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
                         $ntid = $db->insert_id();
 
-                        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ('$info[fid]', '$ntid', '$info[author]', '$info[tid]', '$info[subject]', 0, '', '', '', '', '')");
+                        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape($info['author'])."', '{$info['tid']}', '".$db->escape($info['subject'])."', 0, '', '', '', '', '')");
                         $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
                         $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
                     }
@@ -491,19 +491,10 @@ switch($action) {
             $db->free_result($query);
             eval('echo "'.template('topicadmin_split').'";');
         } else {
-            $subject = formVar('subject');
+            $subject = postedVar('subject', 'javascript', TRUE, TRUE, TRUE);
             if ($subject == '') {
                 error($lang['textnosubject'], false);
             }
-            $subject = addslashes($subject);
-
-            $chkInputHTML = 'no';
-            $chkInputTags = 'no';
-            if (isset($forums['allowhtml']) && $forums['allowhtml'] == 'yes') {
-                $chkInputHTML = 'yes';
-                $chkInputTags = 'no';
-            }
-            $subject = checkInput($subject, $chkInputTags, $chkInputHTML, '', false);
 
             $threadcreated = false;
             $firstmove = false;
@@ -601,7 +592,7 @@ switch($action) {
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0, 1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='$thread[subject]', icon='$thread[icon]', author='$thread[author]', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($thread['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
@@ -754,7 +745,7 @@ switch($action) {
                         $val = $val;
                     }
                     $cols[] = $key;
-                    $vals[] = addslashes($val);
+                    $vals[] = $db->escape($val);
                 }
                 reset($thread);
                 $columns = implode(', ', $cols);

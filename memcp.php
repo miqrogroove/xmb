@@ -1,6 +1,6 @@
 <?php
 /**
- * eXtreme Message Board
+ * eXtreme MessageBoard
  * XMB 1.9.10 Karl
  *
  * Developed And Maintained By The XMB Group
@@ -544,7 +544,7 @@ if ($action == 'profile') {
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-            $fav['subject'] = censor(stripslashes($fav['subject']));
+            $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
                 $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
@@ -601,7 +601,7 @@ if ($action == 'profile') {
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-            $fav['subject'] = stripslashes(censor($fav['subject']));
+            $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
                 $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
@@ -694,7 +694,6 @@ if ($action == 'profile') {
     }
 
     if ($member['mood'] != '') {
-        $member['mood'] = censor($member['mood']);
         $member['mood'] = postify($member['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
     } else {
         $member['mood'] = '';
@@ -709,7 +708,7 @@ if ($action == 'profile') {
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
-        $message['subject'] = censor(stripslashes($message['subject']));
+        $message['subject'] = rawHTMLsubject(stripslashes($message['subject']));
         if ($message['subject'] == '') {
             $message['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
@@ -743,7 +742,7 @@ if ($action == 'profile') {
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
         $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-        $fav['subject'] = stripslashes(censor($fav['subject']));
+        $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
         if ($fav['icon'] != '') {
             $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';

@@ -86,7 +86,7 @@ function url_to_text($url) {
             } else {
                 $query = $db->query("SELECT t.fid, t.subject FROM ".X_PREFIX."forums f, ".X_PREFIX."threads t WHERE $restrict AND f.fid=t.fid AND t.tid='$tid'");
                 while($locate = $db->fetch_array($query)) {
-                    $location = $lang['onlineviewthread'].' '.censor($locate['subject']);
+                    $location = $lang['onlineviewthread'].' '.rawHTMLsubject(stripslashes($locate['subject']));
                     $tsub[$tid] = $locate['subject'];
                 }
                 $db->free_result($query);

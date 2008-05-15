@@ -159,7 +159,7 @@ if (strpos($thread['closed'], '|') !== false) {
     }
 }
 
-$thread['subject'] = shortenString(censor(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+$thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
 $thislast = explode('|', $thread['lastpost']);
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
@@ -548,7 +548,6 @@ if ($action == '') {
             }
 
             if ($post['mood'] != '') {
-                $post['mood'] = censor($post['mood']);
                 $mood = '<strong>'.$lang['mood'].'</strong> '.postify($post['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
             } else {
                 $mood = '';
@@ -598,8 +597,7 @@ if ($action == '') {
         }
 
         if ($post['subject'] != '') {
-            $post['subject'] = censor(stripslashes($post['subject'])).'<br />';
-            $post['subject'] = checkOutput($post['subject'], 'no', '', true);
+            $post['subject'] = rawHTMLsubject(stripslashes($post['subject'])).'<br />';
         }
 
         $edit = '';

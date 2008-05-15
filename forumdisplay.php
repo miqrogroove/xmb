@@ -206,7 +206,7 @@ while($thread = $db->fetch_array($querytop)) {
         $topimage = '<img src="./images/admin/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
     }
 
-    $thread['subject'] = shortenString(censor(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
     if ($thread['author'] == $lang['textanonymous']) {
         $authorlink = $thread['author'];

@@ -683,7 +683,6 @@ switch($action) {
                 }
 
                 if ($memberinfo['mood'] != '') {
-                    $memberinfo['mood'] = censor($memberinfo['mood']);
                     $memberinfo['mood'] = postify($memberinfo['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
                 } else {
                     $memberinfo['mood'] = '';
@@ -742,7 +741,7 @@ switch($action) {
                     $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
 
                     $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
-                    $post['subject'] = censor($post['subject']);
+                    $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
                     $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
                     break;
                 }

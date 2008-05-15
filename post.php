@@ -112,7 +112,7 @@ if ($tid > 0) {
     }
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = censor(stripslashes($thread['subject']));
+    $threadname = rawHTMLsubject(stripslashes($thread['subject']));
 } else {
     $thread = array();
     $threadname = '';
@@ -349,8 +349,8 @@ $bbcodeinsert = bbcodeinsert();
 $smilieinsert = smilieinsert();
 
 //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-$subject = censor(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));  //per viewthread design of version 1.9.9, HTML is never allowed in subjects.
-$message = censor($messageinput);
+$subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));  //per viewthread design of version 1.9.9, HTML is never allowed in subjects.
+$message = rawHTMLmessage($messageinput);
 
 if (isset($previewpost)) {
     $currtime = $onlinetime;
@@ -422,7 +422,7 @@ switch($action) {
             if (isset($_FILES['attach'])) {
                 $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
             }
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0) && $attachedfile === FALSE) {
+            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0 && $attachedfile === FALSE) {
                 softerror($lang['postnothing']);
                 $replyvalid = FALSE;
             }
@@ -548,7 +548,7 @@ switch($action) {
 
                 $quoteperms = checkForumPermissions($thaquote);
                 if($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_USERLIST]) {
-                    $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".censor(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
+                    $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
                 }
             }
 
@@ -643,7 +643,7 @@ switch($action) {
             if (isset($_FILES['attach'])) {
                 $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
             }
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput == 0) && $attachedfile === FALSE) {
+            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0 && $attachedfile === FALSE) {
                 softerror($lang['postnothing']);
                 $topicvalid = FALSE;
             }
@@ -813,7 +813,7 @@ switch($action) {
 
         if ($status1 != 'Moderator' And ($self['username'] != $orig['author'] Or $thread['closed'] != '')) {
             if ($editvalid) {
-                softerrorerror($lang['noedit']);
+                softerror($lang['noedit']);
             } else {
                 error($lang['noedit']);
             }
@@ -882,7 +882,7 @@ switch($action) {
             }
 
             if (isset($delete) && $delete == 'yes' && !($isfirstpost['pid'] == $pid)) {
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
                 $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$pid'");
                 updatethreadcount($tid);
@@ -895,7 +895,7 @@ switch($action) {
                 if ($numrows == 1) {
                     $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
                     while($result = $db->fetch_array($query)) {
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($result['author'])."'");
                     }
                     $db->free_result($query);
                     $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid'");
@@ -905,10 +905,10 @@ switch($action) {
                 }
 
                 if ($numrows > 1) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$orig[author]'");
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
                     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$pid'");
-                    $db->query("UPDATE ".X_PREFIX."posts SET subject='$orig[subject]' WHERE tid='$tid' ORDER BY dateline ASC LIMIT 1");
+                    $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid='$tid' ORDER BY dateline ASC LIMIT 1");
                     $threaddelete = 'no';
                 }
                 updatethreadcount($tid);
@@ -983,8 +983,8 @@ switch($action) {
             }
             $db->free_result($querysmilie);
 
-            $postinfo['message'] = censor($postinfo['message']);
-            $postinfo['subject'] = censor($postinfo['subject']);
+            $postinfo['message'] = rawHTMLmessage($postinfo['message']);
+            $postinfo['subject'] = rawHTMLsubject($postinfo['subject']);
 
             if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
                 eval('$attachment = "'.template('post_edit_attachment').'";');

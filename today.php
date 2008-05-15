@@ -137,7 +137,7 @@ if ($results == 0) {
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
-        $thread['subject'] = shortenString(censor(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+        $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
         $thread['name'] = fnameOut($thread['name']);
 
         if ($thread['author'] == $lang['textanonymous']) {

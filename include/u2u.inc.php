@@ -165,7 +165,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
             if (!isset($previewsubmit)) {
                 $prefixes = array($lang['textre'], $lang['textfwd']);
                 $subject = str_replace($prefixes, '', $quote['subject']);
-                $message = censor(stripslashes($quote['message']));  //message and subject were historically double-slashed
+                $message = rawHTMLmessage(stripslashes($quote['message']));  //message and subject were historically double-slashed
                 if ($forward == 'yes') {
                     $subject = $lang['textfwd'].' '.$subject;
                     $message = '[quote][i]'.$lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
@@ -180,10 +180,10 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (isset($previewsubmit)) {
-        $subject = censor($subject);
+        $subject = rawHTMLsubject($subject);
         $u2usubject = $subject;
         $u2umessage = postify($message, "no", "", "yes", "no");
-        $message = censor($message);
+        $message = rawHTMLmessage($message);
         eval('$u2upreview = "'.template('u2u_send_preview').'";');
         $username = $msgto;
     }
@@ -231,7 +231,7 @@ function u2u_view($u2uid, $folders) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = censor(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
+        $u2usubject = rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
         $u2umessage = postify(stripslashes($u2u['message']), 'no', '', 'yes', 'no');
         $u2ufolder = $u2u['folder'];
         $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
@@ -282,7 +282,7 @@ function u2u_print($u2uid, $eMail = false) {
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-        $u2usubject = censor(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
+        $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
         $u2umessage = postify(stripslashes($u2u['message']), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
         $u2ufolder = $u2u['folder'];
         $u2ufrom = $u2u['msgfrom'];
@@ -468,16 +468,16 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 }
 
 function u2u_ignore() {
-    global $ignorelist, $ignoresubmit, $self, $lang, $db, $oToken, $xmbuser;
+    global $self, $lang, $db, $oToken, $xmbuser;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
 
     $leftpane = '';
-    if (isset($ignoresubmit) && isset($ignorelist)) {
-        $self['ignoreu2u'] = htmlspecialchars(checkInput($ignorelist));
+    if (onSubmit('ignoresubmit')) {
+        $ignorelist = postedVar('ignorelist');
+        $self['ignoreu2u'] = $ignorelist;
         $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
         u2u_msg($lang['ignoreupdate'], "u2u.php?action=ignore");
     } else {
-        $self['ignoreu2u'] = checkOutput($self['ignoreu2u']);
         eval('$leftpane = "'.template('u2u_ignore').'";');
     }
     return $leftpane;
@@ -510,7 +510,7 @@ function u2u_display($folder, $folders) {
             $u2u['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
 
-        $u2usubject = censor(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
+        $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
         if ($u2u['type'] == 'incoming') {
             if ($u2u['msgfrom'] == $u2u['username'] || $u2u['msgfrom'] == $self['username']) {
                 if ($u2u['invisible'] == 1) {

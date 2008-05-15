@@ -325,6 +325,36 @@ function attrOut($rawstring, $word='') { //Never safe for STYLE attributes.
     return htmlspecialchars($retval, ENT_QUOTES);
 }
 
+function rawHTMLmessage($rawstring, $allowhtml='no') {
+    if ($allowhtml == 'yes') {
+        return censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
+    } else {
+        return censor(decimalEntityDecode($rawstring));
+    }
+}
+
+function rawHTMLsubject($rawstring) { //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
+    return censor(decimalEntityDecode($rawstring));
+}
+
+function decimalEntityDecode($rawstring) {
+    $currPos = 0;
+    while (($currPos = strpos($rawstring, '&amp;#', $currPos)) !== FALSE) {
+        $tempPos = strpos($rawstring, ';', $currPos + 6);
+        $entLen = $tempPos - ($currPos + 6);
+        if ($entLen >= 3 And $entLen <= 5) {
+            $entNum = substr($rawstring, $currPos + 6, $entLen);
+            if (is_numeric($entNum)) {
+                if (intval($entNum) >= 160 And intval($entNum) <= 65533) {
+                    $rawstring = str_replace("&amp;#$entNum;", "&#$entNum;", $rawstring);
+                }
+            }
+        }
+        $currPos++;
+    }
+    return $rawstring;
+}
+
 // fnameOut is intended to take the raw db value of a forum's name and convert it to the standard HTML version used throughout XMB.
 //   This function must not be used for any other purpose.
 //   Forum names historically used double-slashed db values and default (ENT_COMPAT) quote decoding.

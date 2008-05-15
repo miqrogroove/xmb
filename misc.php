@@ -375,12 +375,12 @@ switch($action) {
                                     $poston = $date.' '.$lang['textat'].' '.$time;
                                     $postby = $post['author'];
 
-                                    $post['tsubject'] = stripslashes(censor($post['tsubject']));
+                                    $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
+                                    $post['tsubject'] = rawHTMLsubject(stripslashes($post['tsubject']));
                                     if (trim($post['subject']) == '') {
-                                        $post['subject'] = $post['tsubject'];
+                                        $post['subject'] = $post['tsubject']; // Is this really used for anything?
                                     }
 
-                                    $post['subject'] = censor($post['subject']);
                                     eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
                                 }
                             }
@@ -432,11 +432,11 @@ switch($action) {
                                 $poston = $date.' '.$lang['textat'].' '.$time;
                                 $postby = $post['author'];
 
-                                $post['tsubject'] = stripslashes(censor($post['tsubject']));
+                                $post['tsubject'] = rawHTMLsubject(stripslashes($post['tsubject']));
                                 if (trim($post['subject']) == '') {
                                     $post['subject'] = $post['tsubject'];
                                 } else {
-                                    $post['tsubject'] = $post['subject'];
+                                    $post['tsubject'] = rawHTMLsubject(stripslashes($post['subject']));
                                 }
 
                                 eval("\$searchresults .= \"".template("misc_search_results_row")."\";");

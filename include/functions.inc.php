@@ -250,7 +250,7 @@ function loadtemplates() {
     }
 }
 
-function censor($txt, $ignorespaces=false) {
+function censor($txt) {
     global $censorcache;
 
     $ignorespaces = TRUE;
@@ -330,9 +330,6 @@ function fixUrl($matches) {
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
     global $imgdir, $bordercolor, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum, $versionbuild, $fontsize;
 
-    $message = checkOutput($message, $allowhtml, '', true);
-    $message = censor($message, $ignorespaces);
-
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
     $smiliesallow = ($allowsmilies == 'yes' || $allowsmilies == 'on') ? (($smileyoff != 'off' && $smileyoff != 'yes') ? true : false) : false;
 
@@ -384,21 +381,21 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         for($i = 0; $i < sizeof($messagearray); $i++) {
             if (sizeof($messagearray) != 1) {
                 if ($i == 0) {
-                    $messagearray[$i] = $messagearray[$i]."[code]";
+                    $messagearray[$i] = rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
                     if ($smiliesallow) {
                         $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
                     } else {
                         $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
                     }
                 } else if ($i == sizeof($messagearray) - 1) {
-                    $messagearray[$i] = "[/code]".$messagearray[$i];
+                    $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml);
                     if ($smiliesallow) {
                         $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
                     } else {
                         $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
                     }
                 } else if ($i % 2 == 0) {
-                    $messagearray[$i] = "[/code]".$messagearray[$i]."[code]";
+                    $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
                     if ($smiliesallow) {
                         $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
                     } else {
@@ -406,6 +403,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                     }
                 }
             } else {
+                $messagearray[0] = rawHTMLmessage($messagearray[0], $allowhtml);
                 if ($smiliesallow) {
                     $messagearray[0] = bbcode(smile($messagearray[0]), $allowimgcode);
                 } else {
@@ -415,6 +413,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
         $message = implode("", $messagearray);
     } else {
+        $message = rawHTMLmessage($message, $allowhtml);
         if ($smiliesallow) {
             smile($message);
         }
@@ -866,22 +865,6 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
         $input = str_ireplace($word, "_".$word, $input);
     }
     return $input;
-}
-
-/* checkOutput() is deprecated */
-function checkOutput($output, $allowhtml='no', $word='', $allowEntities=false) {
-    $output = trim($output);
-    if ($allowhtml == 'yes' || $allowhtml == 'on') {
-        $output = htmlspecialchars_decode($output);
-    }
-    if ($word != '') {
-        $output = str_ireplace($word, "_".$word, $output);
-    }
-
-    if ($allowEntities) {
-        $output = preg_replace('/(&amp;(#[0-9]+);)/Ui', '&$2;', $output);
-    }
-    return $output;
 }
 
 if (!function_exists('htmlspecialchars_decode')) {

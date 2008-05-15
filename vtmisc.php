@@ -95,7 +95,7 @@ if($forum['type'] == 'sub') {
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.censor(stripslashes($forum['subject']));
+    $threadSubject = '- '.rawHTMLsubject(stripslashes($forum['subject']));
 }
 
 eval('echo "'.template('header').'";');
