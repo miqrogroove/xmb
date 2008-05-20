@@ -1969,7 +1969,7 @@ if ($action == "search") {
             while($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users['subject'])) {
-                    $list[] = '<a href="$link">'.rawHTMLsubject(stripslashes($users['subject'])).'<br />';
+                    $list[] = '<a href="'.$link.'">'.rawHTMLsubject(stripslashes($users['subject'])).'<br />';
                 } else {
                     $list[] = "<a href = \"$link\">- - No subject - -<br />";
                 }
@@ -1991,9 +1991,9 @@ if ($action == "search") {
             while($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users['subject'])) {
-                    $list[] = '<a href="$link">'.rawHTMLsubject(stripslashes($users['subject'])).'<br />';
+                    $list[] = '<a href="'.$link.'">'.rawHTMLsubject(stripslashes($users['subject'])).'<br />';
                 } else {
-                    $list[] = '<a href="$link">- - No subject - -<br />';
+                    $list[] = '<a href="'.$link.'">- - No subject - -<br />';
                 }
                 $found++;
             }
