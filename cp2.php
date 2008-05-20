@@ -230,7 +230,7 @@ if ($action == 'themes') {
     $single = '';
     $single_str = postedVar('single', '', FALSE, FALSE, FALSE, 'g');
     $single_int = getInt('single');
-    $newtheme = postedVar('newtheme', '', FALSE, FALSE, FALSE, 'g');
+    $newtheme = postedVar('newtheme');
 
     if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
         ?>
