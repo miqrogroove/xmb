@@ -75,6 +75,8 @@ if ($folder == '') {
     $folder = postedVar('folder', '', TRUE, FALSE, TRUE, 'g');
 }
 
+$tofolder = postedVar('tofolder', '', TRUE, FALSE, TRUE);
+
 $folderlist = '';
 $folders = '';
 $farray = array();

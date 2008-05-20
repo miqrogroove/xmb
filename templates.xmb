@@ -4339,7 +4339,7 @@ $lang[textsent] $u2udateline</span>
 <tr class="tablerow">
 <td bgcolor="$altbg1" align="center"><input type="checkbox" name="u2u_select[]" value="$u2u[u2uid]" /><input type="hidden" name="type$u2u[u2uid]" value="$u2u[type]" /></td>
 <td bgcolor="$altbg2">$u2ureadstatus</td>
-<td bgcolor="$altbg1"><a href="u2u.php?action=view&amp;folder=$folder&amp;u2uid=$u2u[u2uid]">$u2usubject</a></td>
+<td bgcolor="$altbg1"><a href="u2u.php?action=view&amp;folder=$folderrecode&amp;u2uid=$u2u[u2uid]">$u2usubject</a></td>
 <td bgcolor="$altbg2">$u2usent</td>
 <td bgcolor="$altbg1">$u2udateline</td>
 </tr>

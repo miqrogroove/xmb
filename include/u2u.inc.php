@@ -355,7 +355,8 @@ function u2u_move($u2uid, $tofolder) {
         if (!(in_array($tofolder, $folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') || ($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) || ($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) || ($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
             error($lang['textcantmove'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         }
-        $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
+        $dbfolder = $db->escape($tofolder);
+        $db->query("UPDATE ".X_PREFIX."u2u SET folder='$dbfolder' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
         u2u_msg($lang['textmovesucc'], 'u2u.php?folder='.recodeOut($folder));
     }
 }
@@ -378,7 +379,8 @@ function u2u_mod_move($tofolder, $u2u_select) {
         error($lang['textcantmove'], false, $u2uheader, $u2ufooter, 'u2u.php?folder='.recodeOut($folder), true, false, false);
         return;
     }
-    $db->query("UPDATE ".X_PREFIX."u2u SET folder='$tofolder' WHERE u2uid IN($in) AND owner='$xmbuser'");
+    $dbfolder = $db->escape($tofolder);
+    $db->query("UPDATE ".X_PREFIX."u2u SET folder='$dbfolder' WHERE u2uid IN($in) AND owner='$xmbuser'");
     u2u_msg($lang['textmovesucc'], 'u2u.php?folder='.recodeOut($folder));
 }
 
@@ -492,6 +494,7 @@ function u2u_display($folder, $folders) {
     $u2usout = '';
     $u2usdraft = '';
     $leftpane = '';
+    $folderrecode = recodeOut($folder);
     $folder = $db->escape($folder);
 
     if (empty($folder)) {
