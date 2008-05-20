@@ -49,15 +49,13 @@ if (!X_SADMIN) {
 
 $user = postedVar('user', '', TRUE, TRUE, FALSE, 'g');
 
-$userid = $db->fetch_array($db->query("SELECT uid FROM ".X_PREFIX."members WHERE username='$user'"));
-if (empty($userid['uid'])) {
+$query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
+if ($db->num_rows($query) != 1) {
     error($lang['nomember'], false);
 }
+$member = $db->fetch_array($query);
 
 if (noSubmit('editsubmit')) {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
-    $member = $db->fetch_array($query);
-
     $checked = '';
     if ($member['showemail'] == 'yes') {
         $checked = $cheHTML;
@@ -171,19 +169,14 @@ if (noSubmit('editsubmit')) {
         closedir($dir1);
     }
 
-    $lang['searchusermsg'] = str_replace('*USER*', $user, $lang['searchusermsg']);
+    $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
     $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+    
+    $userrecode = recodeOut($member['username']);
 
     eval('echo "'.template('admintool_editprofile').'";');
 } else {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
-    $member = $db->fetch_array($query);
-
-    if (!$member['username']) {
-        error($lang['badname'], false);
-    }
-
     $langfilenew = getLangFileNameFromHash(formVar('langfilenew'));
     $fileNameHash = getLangFileNameFromHash($langfilenew);
     if ($fileNameHash === false) {

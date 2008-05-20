@@ -1,5 +1,5 @@
 admintool_editprofile|#*XMB TEMPLATE*#|
-<form method="post" action="editprofile.php?user=$user" name="reg">
+<form method="post" action="editprofile.php?user=$userrecode" name="reg">
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
