@@ -656,7 +656,7 @@ $result = $db->num_rows($query);
 $db->free_result($query);
 
 // don't *ever* ban a (super-)admin!
-if (!X_ADMIN && ($self['status'] == 'Banned' || $result > 0)) {
+if (($self['status'] == 'Banned' || $result > 0) && !(X_ADMIN || (X_SCRIPT == 'misc.php' && $action == 'logout'))) {
     eval('$css = "'.template('css').'";');
     error($lang['bannedmessage']);
 }

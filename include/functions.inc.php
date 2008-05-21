@@ -1710,7 +1710,8 @@ function checkForumPermissions($forum) {
         'Super Moderator'     => 4,
         'Moderator'           => 8,
         'Member'              => 16,
-        ''                    => 32);
+        ''                    => 32,
+        'Banned'              => (1 << 30));  //$status['Banned'] == 2^30
 
     // NewPoll,NewThread,NewReply,View,Userlist,Password
     $ret = array(false, false, false, false, false, false);

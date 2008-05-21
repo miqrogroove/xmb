@@ -264,7 +264,7 @@ function u2u_view($u2uid, $folders) {
 }
 
 function u2u_print($u2uid, $eMail = false) {
-    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken, $xmbuser;
+    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken, $xmbuser, $text;
     $mailHeader = $mailFooter = '';
 
     $u2uid = (int) $u2uid;
