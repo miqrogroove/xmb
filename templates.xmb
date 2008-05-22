@@ -189,13 +189,13 @@ $buddys[offline]
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_offline|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
-<td bgcolor="$altbg1">$lang[textoffline]</td>
+<td bgcolor="$altbg1"><a href="u2u.php?action=send&amp;username=$recodename" onclick="Popup(this.href, 'Window', 700, 450); return false;">$lang[textoffline]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_online|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
-<td bgcolor="$altbg1">$buddystatus</td>
+<td bgcolor="$altbg1"><a href="u2u.php?action=send&amp;username=$recodename" onclick="Popup(this.href, 'Window', 700, 450); return false;">$buddystatus</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_edit|#*XMB TEMPLATE*#|
