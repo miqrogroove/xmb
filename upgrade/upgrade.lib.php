@@ -502,6 +502,17 @@ class Upgrade {
             $diff['indices'] = array();
         }
 
+        // Make sure indexes are never dropped on auto_increment fields.
+        $autocolumn = '';
+        foreach($this->tc[$table]['cols'] as $k=>$i) {
+            if ($i['extra'] == 'auto_increment') {
+                $autocolumn = $i['name'];
+                break;
+            }
+        }
+        $origautocolumn = $autocolumn; // Use this value after adding and dropping columns.
+        $autoindexdropped = TRUE;
+
         $query = '';
         if (isset($diff['indices']['drop'])) {
             foreach($diff['indices']['drop'] as $name) {
@@ -513,12 +524,16 @@ class Upgrade {
                     }
                 }
 
-                if ($info['type'] == 'PRIMARY KEY') {
-                    // dropping primary key gives HUGE problems
-                    // we should instead drop the entire column and possibly recreate it later.
-                    $query .= 'DROP PRIMARY KEY, ';
+                if ($info['field'] != $autocolumn) {
+                    if ($info['type'] == 'PRIMARY KEY') {
+                        // dropping primary key gives HUGE problems
+                        // we should instead drop the entire column and possibly recreate it later.
+                        $query .= 'DROP PRIMARY KEY, ';
+                    } else {
+                        $query .= "DROP INDEX `".$name."`, ";
+                    }
                 } else {
-                    $query .= "DROP INDEX `".$name."`, ";
+                    $autoindexdropped = FALSE;
                 }
             }
         }
@@ -549,6 +564,9 @@ class Upgrade {
 
                 if ($info['extra'] != '') {
                     $p[] = $info['extra'];
+                    if ($autocolumn == '' And $info['extra'] == 'auto_increment') {
+                        $autocolumn = $info['name'];
+                    }
                 }
 
                 if (trim($info['keys']) != '') {
@@ -607,6 +625,12 @@ class Upgrade {
 
                 if ($info['extra'] != '') {
                     $p[] = $info['extra'];
+                    if ($autocolumn == '' And $info['extra'] == 'auto_increment') {
+                        $autocolumn = $info['name'];
+                    }
+                }
+                if ($autocolumn == $info['name'] And $info['extra'] != 'auto_increment') {
+                    $autocolumn = '';
                 }
 
                 if ($info['keys'] != '') {
@@ -628,6 +652,10 @@ class Upgrade {
          if (isset($diff['cols']['drop'])) {
             foreach($diff['cols']['drop'] as $name) {
                 $query .= "DROP COLUMN `".$name."`, ";
+
+                if ($autocolumn == $name) {
+                    $autocolumn = '';
+                }
             }
          }
 
@@ -643,6 +671,30 @@ class Upgrade {
              foreach($diff['indices']['add'] as $name) {
                  if (($info = $this->getIndexInfoByName($table, $name)) === false) {
                      $info = $this->getIndexInfoByField($table, $name);
+                 }
+
+                 // Now drop all old auto_increment indexes, if necessary, by combining all of them with the first ADD KEY on the same column.
+                 if ($info['field'] == $origautocolumn And !$autoindexdropped) {
+                    foreach($diff['indices']['drop'] as $name) {
+                        // check that it is not a primary key!!
+                        foreach($this->tc[$table]['indices'] as $k=>$i) {
+                            if ($i['name'] == $name || $i['field'] == $name) {
+                                $originfo = $i;
+                                break;
+                            }
+                        }
+
+                        if ($originfo['field'] == $origautocolumn) {
+                            if ($originfo['type'] == 'PRIMARY KEY') {
+                                // dropping primary key gives HUGE problems
+                                // we should instead drop the entire column and possibly recreate it later.
+                                $query .= 'DROP PRIMARY KEY, ';
+                            } else {
+                                $query .= "DROP INDEX `".$name."`, ";
+                            }
+                        }
+                    }
+                    $autoindexdropped = TRUE;
                  }
 
                  if ($info['type'] == 'PRIMARY KEY') {

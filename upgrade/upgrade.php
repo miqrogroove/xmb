@@ -131,7 +131,7 @@ switch($step) {
         <div class="center-content">
             <ul>
                 <li class="current">Welcome</li>
-                <li>Version Check</li>
+<!--                <li>Version Check</li> -->
                 <li>License Agreement</li>
                 <li>Upgrade</li>
             </ul>
@@ -155,6 +155,7 @@ switch($step) {
         print_footer();
         break;
     case 2: //version check
+/*  Code in this block is broken and should not be used until repaired and tested.
         print_header();
 ?>
     <div id="sidebar">
@@ -187,6 +188,7 @@ switch($step) {
 <?php
         print_footer();
         break;
+*/
     case 3: // agreement
         print_header();
 ?>
@@ -195,7 +197,7 @@ switch($step) {
         <div class="center-content">
             <ul>
                 <li>Welcome</li>
-                <li>Version Check</li>
+<!--                <li>Version Check</li> -->
                 <li class="current">License Agreement</li>
                 <li>Upgrade</li>
             </ul>
@@ -904,7 +906,7 @@ Public License instead of this License.  But first, please read
         <div class="center-content">
             <ul>
                 <li>Welcome</li>
-                <li>Version Check</li>
+<!--                <li>Version Check</li> -->
                 <li>License Agreement</li>
                 <li class="current">Upgrade</li>
             </ul>

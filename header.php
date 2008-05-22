@@ -116,10 +116,10 @@ $versioncompany = 'The XMB Group';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
-    $beta = ' Beta 1';
+    $beta = ' Beta 2';
     $gamma = '';
     $service_pack = '';
-    $versionbuild = 20080512;
+    $versionbuild = 20080521;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';

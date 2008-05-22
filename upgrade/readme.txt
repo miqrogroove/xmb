@@ -1,19 +1,5 @@
 XMB 1.9 Upgrade Utility
 
-------------------
-IMPORTANT:
-
-If you are upgrading from XMB 1.9.9 you only need to update the XMB templates
-by importing them using the Templates option in the admin panel.  It is not
-necessary to run any other utilities after copying the new files to your server.
-
-If you are upgrading from XMB 1.9.8 SP2 or SP3 you have the option of running
-the faster and more reliable upgrade.php utility included in the Files folder.
-
-This Upgrade Utility is designed specifically to upgrade XMB versions lower
-than 1.9.8 SP2.
-------------------
-
 For full details, please read the instructions in the Documentation folder.
 
 Short version:
