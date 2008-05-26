@@ -152,7 +152,7 @@ if ($results == 0) {
         $lastPid = $lastpost[2];
 
         if ($lastpost[1] != $lang['textanonymous']) {
-            $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         }
 
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);

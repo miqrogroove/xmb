@@ -540,7 +540,7 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
-            $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -597,7 +597,7 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
             $dalast = $lastpost[0];
-            $lastpost['1'] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost['1'] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -738,7 +738,7 @@ if ($action == 'profile') {
 
         $lastpost = explode('|', $fav['lastpost']);
         $dalast = $lastpost[0];
-        $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
         $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];

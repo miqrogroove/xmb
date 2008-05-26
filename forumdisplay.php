@@ -220,7 +220,7 @@ while($thread = $db->fetch_array($querytop)) {
     $dalast = trim($lastpost[0]);
 
     if ($lastpost[1] != $lang['textanonymous']) {
-        $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
     } else {
         $lastpost[1] = $lang['textanonymous'];
     }

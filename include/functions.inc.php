@@ -430,7 +430,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
 function bbcode($message, $allowimgcode) {
     global $lang;
-    
+
     $find = array(
         0 => '[b]',
         1 => '[/b]',
@@ -586,7 +586,7 @@ function forum($forum, $template) {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
         if ($lastpost[1] != 'Anonymous' && $lastpost[1] != '') {
-            $lastpost[1] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         } else {
             $lastpost[1] = $lang['textanonymous'];
         }
@@ -620,7 +620,7 @@ function forum($forum, $template) {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
             for($num = 0; $num < count($moderators); $num++) {
-                $forum['moderator'][] = '<ahref="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
+                $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
             }
             $forum['moderator'] = implode(', ', $forum['moderator']);
             $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
@@ -1417,7 +1417,7 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
 
 function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
     global $self, $SETTINGS, $timeoffset, $addtime, $timecode;
-    
+
     if ($timestamp === null) {
         $timestamp = time();
     }
