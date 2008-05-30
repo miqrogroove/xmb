@@ -367,7 +367,7 @@ switch($action) {
                     $password .= $chars[mt_rand(0, $get)];
                 }
                 $password2 = $password;
-            } else {
+                } else {
                 $password = $_POST['password'];
                 $password2 = $_POST['password2'];
             }
@@ -521,7 +521,7 @@ switch($action) {
                             error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                         }
                     }
-                } else if ($newavatarcheck == "no") {
+                } elseif ($newavatarcheck == "no") {
                     $avatar = '';
                 }
 
@@ -563,7 +563,6 @@ switch($action) {
                 put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
                 put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
             }
-
             eval('echo "'.template('header').'";');
             echo ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
 
@@ -684,7 +683,7 @@ switch($action) {
                 }
 
                 if ($memberinfo['mood'] != '') {
-                    $memberinfo['mood'] = postify(censor($memberinfo['mood']), 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
+                    $memberinfo['mood'] = postify($memberinfo['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
                 } else {
                     $memberinfo['mood'] = '';
                 }
@@ -709,7 +708,7 @@ switch($action) {
                 $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
                 while($f = $db->fetch_array($query)) {
                     $pp = checkForumPermissions($f);
-                    if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
+                    if($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
                         $forum = $f;
                         $found = true;
                         break;
@@ -718,7 +717,7 @@ switch($action) {
 
                 if (!$found || $forum['posts'] < 1) {
                     $topforum = $lang['textnopostsyet'];
-                } else if ($memberinfo['postnum'] <= 0) {
+                } elseif($memberinfo['postnum'] <= 0) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
                     $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
@@ -729,10 +728,9 @@ switch($action) {
                 $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
                 while($post = $db->fetch_array($pq)) {
                     $pp = checkForumPermissions($post);
-                    if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
+                    if(!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
                         continue;
                     }
-
                     $lpfound = true;
                     $posts = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1; // +1 is faster than doing <= !
                     validatePpp();
@@ -747,7 +745,6 @@ switch($action) {
                     $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
                     break;
                 }
-
                 if(!$lpfound) {
                     $lastpost = $lang['textnopostsyet'];
                 }
