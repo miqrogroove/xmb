@@ -479,7 +479,7 @@ if ($action == 'profile') {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
                 }
             }
-        } elseif ($newavatarcheck == "no") {
+        } else if ($newavatarcheck == "no") {
             $avatar = '';
         }
 
@@ -523,8 +523,8 @@ if ($action == 'profile') {
         }
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
-        echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
-        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
+
+        message($lang['favaddedmsg'], false, '', '', 'memcp.php?action=favorites', true, false, true);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
@@ -576,8 +576,7 @@ if ($action == 'profile') {
         }
         $db->free_result($query);
 
-        echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
-        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
+        message($lang['favsdeletedmsg'], false, '', '', 'memcp.php?action=favorites', true, false, true);
     }
 } else if ($action == 'subscriptions') {
     eval('echo "'.template('header').'";');
@@ -629,8 +628,8 @@ if ($action == 'profile') {
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
-            echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
-            redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
+
+            message($lang['subaddedmsg'], false, '', '', 'memcp.php?action=subscriptions', true, false, true);
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
@@ -639,8 +638,8 @@ if ($action == 'profile') {
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
         $db->free_result($query);
-        echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
-        redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
+
+        message($lang['subsdeletedmsg'], false, '', '', 'memcp.php?action=subscriptions', true, false, true);
     }
 } else {
     eval('echo "'.template('header').'";');
@@ -694,7 +693,7 @@ if ($action == 'profile') {
     }
 
     if ($member['mood'] != '') {
-        $member['mood'] = postify($member['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
+        $member['mood'] = postify(censor($member['mood']), 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
     } else {
         $member['mood'] = '';
     }
