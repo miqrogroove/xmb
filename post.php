@@ -124,7 +124,11 @@ $dissubject = '';
 $message = '';
 $message1 = '';
 $preview = '';
+$spelling_lang = '';
+$spelling_submit1 = '';
+$spelling_submit2 = '';
 $subject = '';
+$suggestions = '';
 if (X_GUEST) {
     $username = 'Anonymous';
 } else {
@@ -306,43 +310,35 @@ if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
     $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
     if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
-        if (!isset($updates_submit)) {
+        if (isset($language) && !isset($updates_submit)) {
             require ROOT.'include/spelling.inc.php';
             $spelling = new spelling($language);
-            $problems = $spelling->check_text($messageinput);
+            $problems = $spelling->check_text(postedVar('message', '', FALSE, FALSE));  //Use raw value so we're not checking entity names.
             if (count($problems) > 0) {
                 $suggest = array();
                 foreach($problems as $orig=>$new) {
-                    $mistake = array();
-                    foreach($new as $suggestion) {
-                        eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
+                    if (!is_numeric($orig)) {
+                        $mistake = array();
+                        foreach($new as $suggestion) {
+                            eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
+                        }
+                        $mistake = implode("\n", $mistake);
+                        eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
                     }
-                    $mistake = implode("\n", $mistake);
-                    eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
                 }
                 $suggestions = implode("\n", $suggest);
                 eval('$suggestions = "'.template('spelling_suggestion').'";');
                 $spelling_submit2 = '<input type="submit" class="submit" name="updates_submit" value="'.$lang['replace'].'" />';
             } else {
                 eval('$suggestions = "'.template('spelling_suggestion_no').'";');
-                $spelling_submit2 = '';
             }
         } else {
             $old_words = postedArray('old_words');
             foreach($old_words as $word) {
                 $messageinput = str_replace($word, ${'replace_'.$word}, $messageinput);
             }
-            $spelling_submit2 = '';
         }
-    } else {
-        $suggestions = '';
-        $spelling_submit2 = '';
     }
-} else {
-    $spelling_submit1 = '';
-    $spelling_submit2 = '';
-    $spelling_lang = '';
-    $suggestions = '';
 }
 
 $bbcodeinsert = bbcodeinsert();

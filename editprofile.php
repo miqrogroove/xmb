@@ -190,15 +190,18 @@ if (noSubmit('editsubmit')) {
     $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
     $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
 
-    $dateformatnew = formVar('dateformatnew');
-    if (strlen($dateformatnew) == 0) {
+    $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
+    $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
+    if (strlen($dateformatnew) == 0 Or $dateformatnew != $dateformattest) {
         $dateformatnew = $SETTINGS['dateformat'];
-    } else {
-        $dateformatnew = isset($dateformatnew) ? checkInput($dateformatnew, '', '', 'script', true) : $SETTINGS['dateformat'];
     }
+    unset($dateformattest);
 
     $timeformatnew = formInt('timeformatnew');
-    $timeformatnew = $timeformatnew ? checkInput($timeformatnew, '', '', 'script', true) : $SETTINGS['timeformat'];
+    if ($timeformatnew != 12 And $timeformatnew != 24) {
+        $timeformatnew = $SETTINGS['timeformat'];
+    }
+
     $saveogu2u = formYesNo('saveogu2u');
     $emailonu2u = formYesNo('emailonu2u');
     $useoldu2u = formYesNo('useoldu2u');
@@ -209,38 +212,19 @@ if (noSubmit('editsubmit')) {
     $month = formInt('month');
     $day = formInt('day');
     $bday = iso8601_date($year, $month, $day);
-    $newavatarcheck = formVar('newavatarcheck');
-    $newavatar = formVar('newavatar');
-    $avatar = $newavatar ? checkInput($newavatar, 'no', 'yes', 'javascript', false) : '';
-    $newlocation = formVar('newlocation');
-    $location = $newlocation ? checkInput($newlocation, 'no', 'yes', 'javascript', false) : '';
-    $newicq = formVar('newicq');
-    $icq = ($newicq && is_numeric($newicq) && $newicq > 0) ? $newicq : 0;
-    $newyahoo = formVar('newyahoo');
-    $yahoo = $newyahoo ? checkInput($newyahoo, 'no', 'yes', 'javascript', false) : '';
-    $newaim = formVar('newaim');
-    $aim = $newaim ? checkInput($newaim, 'no', 'yes', 'javascript', false) : '';
-    $newmsn = formVar('newmsn');
-    $msn = $newmsn ? checkInput($newmsn, 'no', 'yes', 'javascript', false) : '';
-    $newemail = formVar('newemail');
-    $email = $newemail ? checkInput($newemail, 'no', 'yes', 'javascript', false) : '';
-    $newsite = formVar('newsite');
-    $site = $newsite ? checkInput($newsite, 'no', 'yes', 'javascript', false) : '';
-    $bio = isset($_POST['newbio']) ? checkInput($_POST['newbio'], 'no', 'no', 'javascript', false) : '';
-    $mood = isset($_POST['newmood']) ? checkInput($_POST['newmood'], 'no', 'no', 'javascript', false) : '';
-    $sig = isset($_POST['newsig']) ? checkInput($_POST['newsig'], '', $SETTINGS['sightml'], '', false) : '';
-
-    $avatar = addslashes($avatar);
-    $newavatarcheck = addslashes($newavatarcheck);
-    $location = addslashes($location);
-    $yahoo = addslashes($yahoo);
-    $aim = addslashes($aim);
-    $msn = addslashes($msn);
-    $email = addslashes($email);
-    $site = addslashes($site);
-    $bio = addslashes($bio);
-    $mood = addslashes($mood);
-    $sig = addslashes($sig);
+    $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
+    $newavatarcheck = postedVar('newavatarcheck');
+    $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
+    $icq = postedVar('newicq', '', FALSE, FALSE);
+    $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
+    $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
+    $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
+    $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
+    $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
+    $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
+    $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
+    $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
+    $sig = postedVar('newsig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
     $max_size = explode('x', $SETTINGS['max_avatar_size']);
     if (ini_get('allow_url_fopen')) {

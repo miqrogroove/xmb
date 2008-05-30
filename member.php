@@ -351,7 +351,6 @@ switch($action) {
                 $email2 = '';
             }
 
-            $username = addslashes($username);
             $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$username' $email2");
             if ($member = $db->fetch_array($query)) {
                 $db->free_result($query);
@@ -380,45 +379,29 @@ switch($action) {
             $efail = false;
             $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while($restriction = $db->fetch_array($query)) {
+                $t_username = $username;
+                $t_email = $email;
                 if ($restriction['case_sensitivity'] == 1) {
-                    if ($restriction['partial'] == 1) {
-                        if (strpos($username, $restriction['name']) !== false) {
-                            $fail = true;
-                        }
+                    $t_username = strtolower($t_username);
+                    $t_email = strtolower($t_email);
+                    $restriction['name'] = strtolower($restriction['name']);
+                }
 
-                        if (strpos($email, $restriction['name']) !== false) {
-                            $efail = true;
-                        }
-                    } else {
-                        if ($username == $restriction['name']) {
-                            $fail = true;
-                        }
+                if ($restriction['partial'] == 1) {
+                    if (strpos($t_username, $restriction['name']) !== false) {
+                        $fail = true;
+                    }
 
-                        if ($email == $restriction['name']) {
-                            $efail = true;
-                        }
+                    if (strpos($t_email, $restriction['name']) !== false) {
+                        $efail = true;
                     }
                 } else {
-                    $t_username = strtolower($username);
-                    $t_email = strtolower($email);
-                    $restriction['name'] = strtolower($restriction['name']);
+                    if ($t_username == $restriction['name']) {
+                        $fail = true;
+                    }
 
-                    if ($restriction['partial'] == 1) {
-                        if (strpos($t_username, $restriction['name']) !== false) {
-                            $fail = true;
-                        }
-
-                        if (strpos($t_email, $restriction['name']) !== false) {
-                            $efail = true;
-                        }
-                    } else {
-                        if ($t_username == $restriction['name']) {
-                            $fail = true;
-                        }
-
-                        if ($t_email == $restriction['name']) {
-                            $efail = true;
-                        }
+                    if ($t_email == $restriction['name']) {
+                        $efail = true;
                     }
                 }
             }
@@ -483,10 +466,12 @@ switch($action) {
             $day = formInt('day');
             $bday = iso8601_date($year, $month, $day);
 
-            $dateformatnew = postedVar('dateformatnew', 'javascript');
-            if (strlen($dateformatnew) == 0 Or intval($dateformatnew) > 0) { // Temporary validation of dateformat - if it contains numbers we assume the date is incorrect (blacklist approach) and therefore use the default dateformat otherwise we proceed to validation of input.
+            $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
+            $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
+            if (strlen($dateformatnew) == 0 Or $dateformatnew != $dateformattest) {
                 $dateformatnew = $SETTINGS['dateformat'];
             }
+            unset($dateformattest);
 
             $timeformatnew = formInt('timeformatnew');
             if ($timeformatnew != 12 And $timeformatnew != 24) {
