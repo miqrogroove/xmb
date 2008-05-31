@@ -99,7 +99,7 @@ $leftpane = '';
 
 switch($action) {
     case 'modif':
-        $mod = formVar('mod');
+        $mod = postedVar('mod', '', FALSE, FALSE);
         switch($mod) {
             case 'send':
                 if ($u2uid > 0) {
@@ -147,12 +147,9 @@ switch($action) {
         }
         break;
     case 'mod':
-        $modaction = formVar('modaction');
+        $modaction = postedVar('modaction', '', FALSE, FALSE);
         $u2u_select = getFormArrayInt('u2u_select');
-        $delete = formVar('delete');
-        $move = formVar('move');
-        $tofolder = formVar('tofolder');
-        $markunread = formVar('markunread');
+        $tofolder = postedVar('tofolder', '', TRUE, FALSE);
         $folder_url = recodeOut($folder);
         switch($modaction) {
             case 'delete':

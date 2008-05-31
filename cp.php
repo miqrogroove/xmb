@@ -781,8 +781,8 @@ if ($action == 'rename') {
     }
 
     if (onSubmit('renamesubmit')) {
-        $vUserFrom = formVar('frmUserFrom');
-        $vUserTo = formVar('frmUserTo');
+        $vUserFrom = postedVar('frmUserFrom');
+        $vUserTo = postedVar('frmUserTo');
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
@@ -1256,9 +1256,9 @@ if ($action == 'forum') {
             $delete = formInt('delete'.$forum['fid']);
             $moveto = formInt('moveto'.$forum['fid']);
 
-            if ($delete) {
-                $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid='$delete'");
-                $querythread = $db->query("SELECT tid, author FROM ".X_PREFIX."threads WHERE fid='$delete'");
+            if ($delete == $forum['fid']) {
+                $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid=$delete");
+                $querythread = $db->query("SELECT tid, author FROM ".X_PREFIX."threads WHERE fid=$delete");
                 while($thread = $db->fetch_array($querythread)) {
                     $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$thread[tid]'");
                     $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$thread[tid]'");
@@ -1305,14 +1305,14 @@ if ($action == 'forum') {
             $name = addslashes(htmlspecialchars(postedVar('name'.$group['fid'], 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
             $displayorder = formInt('displayorder'.$group['fid']);
             $self['status'] = formOnOff('status'.$group['fid']);
-            $delete = formVar('delete'.$group['fid']);
+            $delete = formInt('delete'.$group['fid']);
 
-            if ($delete) {
-                $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup='$delete'");
+            if ($delete == $group['fid']) {
+                $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup=$delete");
                 while($forum = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."forums SET fup=0 WHERE type='forum' AND fup='$delete'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET fup=0 WHERE type='forum' AND fup=$delete");
                 }
-                $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid='$delete'");
+                $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid=$delete");
             }
             $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
         }
@@ -1391,7 +1391,7 @@ if ($action == 'forum') {
         );
 
         if ($delete) {
-            $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid='$delete'");
+            $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid=$delete");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     }

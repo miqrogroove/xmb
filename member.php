@@ -439,12 +439,14 @@ switch($action) {
                 }
             }
 
-            $langfilenew = getLangFileNameFromHash($_POST['langfilenew']);
-            if (!$langfilenew) {
+            $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
+            $langfilenew = getLangFileNameFromHash($langfilenew);
+            if ($langfilenew === FALSE) {
                 $langfilenew = $SETTINGS['langfile'];
             } else {
                 $langfilenew = basename($langfilenew);
             }
+            $langfilenew = $db->escape($langfilenew);
 
             $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members");
             $count1 = $db->result($query,0);

@@ -37,8 +37,7 @@ eval('$css = "'.template('css').'";');
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if (X_ADMIN) {
-    $download = formVar('download');
-    if ($action == 'templates' && $download) {
+    if ($action == 'templates' && onSubmit('download')) {
         $code = '';
         $templates = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name ASC");
         while($template = $db->fetch_array($templates)) {
@@ -1148,10 +1147,10 @@ if ($action == "newsletter") {
         <?php
     } else {
         @set_time_limit(0);
-        $newssubject = addslashes(formVar('newssubject'));
-        $newsmessage = addslashes(formVar('newsmessage'));
-        $sendvia = formVar('sendvia');
-        $to = formVar('to');
+        $newssubject = postedVar('newssubject');
+        $newsmessage = postedVar('newsmessage');
+        $sendvia = postedVar('sendvia', '', FALSE, FALSE);
+        $to = postedVar('to', '', FALSE, FALSE);
         $newscopy = formYesNo('newscopy');
         $wait = formInt('wait');
 
@@ -1323,9 +1322,9 @@ if ($action == "prune") {
         <?php
     } else {
         $pruneBy = formArray('pruneBy');
-        $pruneFrom = formVar('pruneFrom');
+        $pruneFrom = postedVar('pruneFrom', '', FALSE, FALSE);
         $pruneFromList = formArray('pruneFromList');
-        $pruneFromFid = formVar('pruneFromFid');
+        $pruneFromFid = postedVar('pruneFromFid', '', FALSE, FALSE);
         $pruneType = formArray('pruneType');
 
         $queryWhere = array();
@@ -1533,7 +1532,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('edit') && noSubmit('editsubmit')) {
-        $tid = formVar('tid');
+        $tid = postedVar('tid', '', FALSE, FALSE);
         if ($tid == 'default') {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }

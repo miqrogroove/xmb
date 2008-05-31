@@ -177,13 +177,14 @@ if (noSubmit('editsubmit')) {
 
     eval('echo "'.template('admintool_editprofile').'";');
 } else {
-    $langfilenew = getLangFileNameFromHash(formVar('langfilenew'));
-    $fileNameHash = getLangFileNameFromHash($langfilenew);
-    if ($fileNameHash === false) {
+    $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
+    $langfilenew = getLangFileNameFromHash($langfilenew);
+    if ($langfilenew === false) {
         $langfilenew = $SETTINGS['langfile'];
     } else {
-        $langfilenew = basename($fileNameHash);
+        $langfilenew = basename($langfilenew);
     }
+    $langfilenew = $db->escape($langfilenew);
 
     $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
     $thememem = formInt('thememem');

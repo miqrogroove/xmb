@@ -356,7 +356,7 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        $newemail = formVar('newemail');
+        $newemail = postedVar('newemail', '', FALSE, FALSE);
         if ($newemail && (!$newemail || isset($_GET['newemail']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
             $aapos = strpos($auditaction, "?");
@@ -368,8 +368,8 @@ if ($action == 'profile') {
             die("Hack atttempt recorded in audit logs.");
         }
 
-        $newpassword = formVar('newpassword');
-        $newpasswordcf = formVar('newpasswordcf');
+        $newpassword = postedVar('newpassword', '', FALSE, FALSE);
+        $newpasswordcf = postedVar('newpasswordcf', '', FALSE, FALSE);
         if ($newpassword && (!$newpassword || isset($_GET['newpassword']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
             $aapos = strpos($auditaction, "?");
@@ -381,13 +381,14 @@ if ($action == 'profile') {
             die("Hack atttempt recorded in audit logs.");
         }
 
-        $langfilenew = formVar('langfilenew');
+        $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
         $fileNameHash = getLangFileNameFromHash($langfilenew);
         if ($fileNameHash === false) {
             $langfilenew = $SETTINGS['langfile'];
         } else {
             $langfilenew = basename($fileNameHash);
         }
+        $langfilenew = $db->escape($langfilenew);
 
         $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
         $thememem = formInt('thememem');

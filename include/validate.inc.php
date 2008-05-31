@@ -180,32 +180,6 @@ function noSubmit($submitname) {
     return (!onSubmit($submitname));
 }
 
-/**
-* Retrieve a POST variable and sanitizes it
-*
-* @param   string   $varname   name of the variable in $_POST
-* @param   boolean   $striptags   do a striptags to remove HTML tags
-* @param   boolean   $quotes   do a htmlspecialchars to sanitize input for XSS
-* @return   string   the "safe" string if the variable is available, empty otherwise
-*/
-/* formVar() is deprecated */
-function formVar($varname, $striptags = true, $quotes = false) {
-    $retval = '';
-    if (isset($_POST[$varname]) && $_POST[$varname] !== '') {
-        $retval = trim($_POST[$varname]);
-        if ($striptags) {
-            $retval = strip_tags($retval);
-            }
-
-        if ($quotes) {
-            $retval = htmlspecialchars($retval, ENT_QUOTES);
-        } else {
-            $retval = htmlspecialchars($retval, ENT_NOQUOTES);
-        }
-    }
-    return $retval;
-}
-
 // postedVar is an all-purpose function for retrieving and sanitizing user input.
 // This is the preferred function as of version 1.9.8 SP3.
 function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE, $sourcearray='p') {

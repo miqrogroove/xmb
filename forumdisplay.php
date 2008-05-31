@@ -168,7 +168,7 @@ if ($cusdate) {
     $cusdate = '';
 }
 
-$ascdesc = formVar('ascdesc');
+$ascdesc = postedVar('ascdesc', '', FALSE, FALSE);
 if (strtolower($ascdesc) != 'asc') {
     $ascdesc = "desc";
 }
