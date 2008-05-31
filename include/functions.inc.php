@@ -401,6 +401,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                     } else {
                         $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
                     }
+                } else { // Inside code block
+                    $messagearray[$i] = censor($messagearray[$i]);
                 }
             } else {
                 $messagearray[0] = rawHTMLmessage($messagearray[0], $allowhtml);
@@ -475,7 +477,7 @@ function bbcode($message, $allowimgcode) {
         11 => '</strike>',
         12 => '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">',
         13 => ' </td></tr></table><font class="mediumtxt">',
-        14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">',
+        14 => '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr>'."\n".'<tr><td class="codemessage">',
         15 => '</td></tr></table><font class="mediumtxt">',
         16 => '<ul type="square">',
         17 => '</ul>',
