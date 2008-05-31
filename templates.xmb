@@ -141,6 +141,7 @@ $dayselect
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
 $css
 <title>$bbname - $lang[textpowered]</title>
+<script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
 </head>
 <body text="$text">
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
