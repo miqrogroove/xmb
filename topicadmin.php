@@ -592,7 +592,7 @@ switch($action) {
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0, 1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($thread['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($lastpost['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
