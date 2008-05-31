@@ -381,7 +381,7 @@ $lang['memcpmood'] = "Your Current Mood:";
 $lang['memposts'] = "Posts";
 $lang['message'] = "Message";
 $lang['mergethreadmsg'] = "Thank you, the topics have been merged. You are now being forwarded back to the thread list.";
-$lang['mergewithmsg'] = "TID of the topic to be merged with:<br /><span class=\"smalltxt\">viewthread.php?tid=48, the tid would be 48</span>";
+$lang['mergewithmsg'] = "TID of the topic to be merged and deleted:<br /><span class=\"smalltxt\">viewthread.php?tid=48, the tid would be 48</span>";
 $lang['misconlinetoday'] = "The following ";
 $lang['misconlinetoday2'] = " members have visited $bbname today...";
 $lang['month1'] = "a month";
