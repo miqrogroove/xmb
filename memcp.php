@@ -509,8 +509,7 @@ if ($action == 'profile') {
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$xmbuser'");
 
-        echo '<center><span class="mediumtxt">'.$lang['usercpeditpromsg'].'</span></center>';
-        redirect('memcp.php', 2.5, X_REDIRECT_JS);
+        message($lang['usercpeditpromsg'], false, '', '', 'memcp.php', true, false, true);
     }
 } else if ($action == 'favorites') {
     eval('echo "'.template('header').'";');
@@ -531,8 +530,7 @@ if ($action == 'profile') {
         }
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
-        echo '<center><span class="mediumtxt">'.$lang['favaddedmsg'].'</span></center>';
-        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
+        message($lang['favaddedmsg'], false, '', '', 'memcp.php?action=favorites', true, false, true);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
@@ -584,8 +582,7 @@ if ($action == 'profile') {
         }
         $db->free_result($query);
 
-        echo '<center><span class="mediumtxt">'.$lang['favsdeletedmsg'].'</span></center>';
-        redirect('memcp.php?action=favorites', 2, X_REDIRECT_JS);
+        message($lang['favsdeletedmsg'], false, '', '', 'memcp.php?action=favorites', true, false, true);
     }
 } else if ($action == 'subscriptions') {
     eval('echo "'.template('header').'";');
@@ -637,8 +634,7 @@ if ($action == 'profile') {
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
-            echo '<center><span class="mediumtxt">'.$lang['subaddedmsg'].'</span></center>';
-            redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
+            message($lang['subaddedmsg'], false, '', '', 'memcp.php?action=subscriptions', true, false, true);
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
@@ -647,8 +643,7 @@ if ($action == 'profile') {
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
         $db->free_result($query);
-        echo '<center><span class="mediumtxt">'.$lang['subsdeletedmsg'].'</span></center>';
-        redirect('memcp.php?action=subscriptions', 2, X_REDIRECT_JS);
+        message($lang['subsdeletedmsg'], false, '', '', 'memcp.php?action=subscriptions', true, false, true);
     }
 } else {
     eval('echo "'.template('header').'";');
