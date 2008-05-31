@@ -1229,7 +1229,7 @@ if ($action == 'forum') {
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['forumpw']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="passwordnew" value="<?php echo htmlspecialchars($forum['password'])?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>"><input type="text" name="passwordnew" value="<?php echo attrOut($forum['password'], 'javascript')?>" /></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdeleteques']?></td>
@@ -1351,7 +1351,7 @@ if ($action == 'forum') {
         $attachstatusnew = formOnOff('attachstatusnew');
         $themeforumnew = formInt('themeforumnew');
         $userlistnew = postedVar('userlistnew', 'javascript');
-        $passwordnew = postedVar('passwordnew', 'javascript');
+        $passwordnew = postedVar('passwordnew', '', FALSE, TRUE);
         $delete = formInt('delete');
 
         if(!X_SADMIN) {

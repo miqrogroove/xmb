@@ -964,7 +964,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         if ($timeout == 0) {
             header("Location: $path");
         } else {
-            header("Refresh: $timeout; URL=./$path");
+            header("Refresh: $timeout; URL=$path");
         }
     }
     return true;
@@ -1533,7 +1533,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
         if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
             $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+                $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
                 if ($forum['password'] !== $fidpw) {
                     continue;
                 }
@@ -1636,7 +1636,7 @@ function forumJump() {
         if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
             $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = isset($_COOKIE['fidpw'.$forum['fid']]) ? trim($_COOKIE['fidpw'.$forum['fid']]) : '';
+                $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
                 if ($forum['password'] !== $fidpw) {
                     continue;
                 }
@@ -1744,9 +1744,9 @@ function checkForumPermissions($forum) {
     }
 
     // 3.Check for password
-    $password = trim($forum['password']);
-    if (strlen($password) > 0) {
-        if (isset($_COOKIE['forumPW']) && isset($_COOKIE['forumPW'][$forum['fid']]) && trim($_COOKIE['forumPW'][$forum['fid']]) == $password) {
+    $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
+    if ($forum['password'] != '') {
+        if ($pwinput == $forum['password']) {
             $ret[X_PERMS_PASSWORD] = true;
         } else {
             $ret[X_PERMS_PASSWORD] = false;
@@ -1769,16 +1769,20 @@ function handlePasswordDialog($fid, $file, $args=false) {
 
     $p = array('fid='.$fid);
     foreach($args as $key=>$val) {
-        $p[] = urlencode($key).'='.urlencode($val);
+        if ($key != 'fid') {
+            $p[] = urlencode($key).'='.urlencode($val);
+        }
     }
     $url = ROOT.$file.'?'.implode('&', $p);
 
-    if (isset($_POST['pw'])) {
-        $pass = $db->result($db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid"), 0);
+    $pwinput = postedVar('pw', '', FALSE, FALSE);
+    $query = $db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid");
+    if ($pwinput != '' And $db->num_rows($query) == 1) {
+        $pass = $db->result($query, 0);
 
-        if ($_POST['pw'] == $pass) {
-            put_cookie('forumPW['.$fid.']', $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
-            redirect($url);
+        if ($pwinput == $pass) {
+            put_cookie('fidpw'.$fid, $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
+            redirect($url, 0);
         } else {
             eval('$pwform = "'.template('forumdisplay_password').'";');
             error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);
