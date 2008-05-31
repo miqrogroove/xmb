@@ -95,6 +95,17 @@ if ($goto == 'lastpost') {
     }
     $page = quickpage($posts, $ppp);
     redirect("viewthread.php?tid=$tid&page=$page#pid$pid", 0);
+
+} else if ($goto == 'search') {
+    $tidtest = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid"), 0);
+    if ($tidtest == 0) {
+        header('HTTP/1.1 404 Not Found');
+        eval('$css = "'.template('css').'";');
+        error($lang['textnothread']);
+    }
+    $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid"), 0);
+    $page = quickpage(($pbefore+1), $ppp);
+    redirect("viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 }
 
 loadtemplates(
