@@ -432,7 +432,7 @@ switch($action) {
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = postedVar('imghash', '', FALSE, TRUE);
-                    $imgcode = postedVar('imgcode', '', FALSE, TRUE);
+                    $imgcode = postedVar('imgcode', '', FALSE, FALSE);
                     if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
                         error($lang['captchaimageinvalid']);
                     }

@@ -610,8 +610,9 @@ if ($action == '') {
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
         if ($post['filename'] != '' && $forum['attachstatus'] != 'off') {
-                $post['filename'] = checkInput($post['filename'], 'no', 'no', '', false);
-                $post['filetype'] = checkInput($post['filetype'], 'no', 'no', '', false);$attachsize = $post['filesize'];
+            $post['filename'] = attrOut($post['filename']);
+            $post['filetype'] = attrOut($post['filetype']);
+            $attachsize = $post['filesize'];
             if ($attachsize >= 1073741824) {
                 $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
             } else if ($attachsize >= 1048576) {

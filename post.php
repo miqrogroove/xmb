@@ -402,8 +402,7 @@ switch($action) {
                 } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
-                        $imghash = addslashes($imghash);
-                        $imgcode = addslashes($imgcode);
+                        $imghash = $db->escape($imghash);
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
                             softerror($lang['captchaimageinvalid']);
                             $replyvalid = FALSE;
@@ -623,8 +622,7 @@ switch($action) {
                 } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
-                        $imghash = addslashes($imghash);
-                        $imgcode = addslashes($imgcode);
+                        $imghash = $db->escape($imghash);
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
                             softerror($lang['captchaimageinvalid']);
                             $topicvalid = FALSE;
@@ -943,7 +941,7 @@ switch($action) {
                 $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
             }
             if (isset($postinfo['filename'])) {
-                $postinfo['filename'] = checkInput($postinfo['filename'], 'no', 'no', '', false);
+                $postinfo['filename'] = attrOut($postinfo['filename']);
             }
 
             if ($postinfo['bbcodeoff'] == 'yes') {

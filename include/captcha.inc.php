@@ -291,7 +291,7 @@ class Captcha {
         }
     }
 
-function GenerateCode() {
+    function GenerateCode() {
         global $db, $onlinetime;
         $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
         // loop through and generate the code letter by letter
@@ -321,7 +321,6 @@ function GenerateCode() {
     function RetrieveCode($imghash) {
         global $db;
         // check imagehash
-        $imghash = checkInput($imghash, '', '', "javascript", false);
         if ($imghash == 'test') {
             $imgCode = 'CaPtChA';
         } else {
