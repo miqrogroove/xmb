@@ -81,13 +81,18 @@ if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
     $threadname = '';
 }
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid' AND status='on'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid AND status='on'");
 $forums = $db->fetch_array($query);
 $db->free_result($query);
 
 $kill = false;
-if ($fid == 0 Or !X_STAFF) {
+
+// Check for authorization to be here in the first place
+$perms = checkForumPermissions($forums);
+if (!X_STAFF Or !$perms[X_PERMS_VIEW] Or !$perms[X_PERMS_USERLIST]) {
     $kill = true;
+} else if (!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid);
 } else if (isset($forums['type']) && $forums['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name'].'</a>'));
     if (isset($thread['subject'])) {
@@ -198,6 +203,9 @@ switch($action) {
 
     case 'close':
         $query = $db->query("SELECT closed FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
+        if ($db->num_rows($query) == 0) {
+            error($lang['textnothread'], FALSE);
+        }
         $closed = $db->result($query, 0);
         $db->free_result($query);
 
@@ -262,6 +270,9 @@ switch($action) {
             $moveto = formInt('moveto');
             if ($moveto) {
                 $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
+                if ($db->num_rows($query) == 0) {
+                    error($lang['textnoforum'], FALSE);
+                }
                 $forumtype = $db->result($query, 0);
                 $db->free_result($query);
 
@@ -473,6 +484,9 @@ switch($action) {
     case 'split':
         if (noSubmit('splitsubmit')) {
             $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            if ($db->num_rows($query) == 0) {
+                error($lang['textnothread'], FALSE);
+            }
             $replies = $db->result($query, 0);
             $db->free_result($query);
             if ($replies == 0) {
@@ -567,6 +581,9 @@ switch($action) {
             $db->free_result($queryadd1);
 
             $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            if ($db->num_rows($queryadd2) == 0) {
+                error($lang['textnothread'], FALSE);
+            }
             $replyadd2 = $db->result($queryadd2, 0);
             $db->free_result($queryadd2);
             $replyadd++;
@@ -603,6 +620,9 @@ switch($action) {
     case 'threadprune':
         if (noSubmit('threadprunesubmit')) {
             $query = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
+            if ($db->num_rows($query) == 0) {
+                error($lang['textnothread'], FALSE);
+            }
             $replies = $db->result($query, 0);
             $db->free_result($query);
 

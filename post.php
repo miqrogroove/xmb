@@ -196,7 +196,7 @@ $perms = checkForumPermissions($forum);
 if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
 } elseif(!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid, basename(__FILE__), $_GET);
+    handlePasswordDialog($fid);
 }
 
 // check posting permissions specifically

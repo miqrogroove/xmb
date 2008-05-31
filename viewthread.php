@@ -202,7 +202,7 @@ if ($forum['type'] == 'sub') {
     if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
     } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid'], basename(__FILE__), $_GET);
+        handlePasswordDialog($fup['fid']);
     }
 }
 
@@ -211,7 +211,7 @@ $perms = checkForumPermissions($forum);
 if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
 } elseif(!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid, basename(__FILE__), array());
+    handlePasswordDialog($fid);
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {

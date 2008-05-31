@@ -1758,22 +1758,10 @@ function checkForumPermissions($forum) {
     return $ret;
 }
 
-function handlePasswordDialog($fid, $file, $args=false) {
-
-    extract($GLOBALS);
+function handlePasswordDialog($fid) {
+    global $db, $url, $cookiepath, $cookiedomain;  // function vars
+    global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
     $pwform = '';
-
-    if (false == $args) {
-        $args = array();
-    }
-
-    $p = array('fid='.$fid);
-    foreach($args as $key=>$val) {
-        if ($key != 'fid') {
-            $p[] = urlencode($key).'='.urlencode($val);
-        }
-    }
-    $url = ROOT.$file.'?'.implode('&', $p);
 
     $pwinput = postedVar('pw', '', FALSE, FALSE);
     $query = $db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid");

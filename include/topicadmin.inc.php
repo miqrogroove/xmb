@@ -35,6 +35,9 @@ class mod {
         global $self, $db;
 
         $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
+        if ($db->num_rows($query) == 0) {
+            return FALSE;
+        }
         $mods = $db->result($query, 0);
 
         return (modcheck($self['username'], $mods) == 'Moderator');
