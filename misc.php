@@ -597,7 +597,7 @@ switch($action) {
             } else {
                 $where[] = " email LIKE '%".$srchemail."%'";
             }
-            $ext[] = 'srchemail='.rawurlencode($_POST['srchemail']);
+            $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE));
             $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE);
             /* Warning: $srchemail is used for template output */
         } else {
@@ -606,7 +606,7 @@ switch($action) {
 
         if ($srchip) {
             $where[] = " regip LIKE '%".$srchip."%'";
-            $ext[] = 'srchip='.rawurlencode($_POST['srchip']);
+            $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE));
             $srchip = postedVar('srchip', 'javascript', TRUE, FALSE);
             /* Warning: $srchip is used for template output */
         } else {
@@ -615,7 +615,7 @@ switch($action) {
 
         if ($srchmem) {
             $where[] = " username LIKE '%".addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchmem))."%'";
-            $ext[] = 'srchmem='.rawurlencode($_POST['srchmem']);
+            $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE));
             $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE);
             /* Warning: $srchmem is used for template output */
         } else {

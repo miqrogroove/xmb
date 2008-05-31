@@ -32,10 +32,16 @@ require 'header.php';
 require ROOT.'include/topicadmin.inc.php';
 
 $_tid = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
-$fid = isset($_POST['fid']) && is_numeric($_POST['fid']) ? (int) $_POST['fid'] : (isset($_GET['fid']) && is_numeric($_GET['fid']) ? (int) $_GET['fid'] : 0);
+$fid = getInt('fid', 'p');
+if ($fid == 0) {
+    $fid = getInt('fid');
+}
 $pid = getInt('pid');
 $othertid = formInt('othertid');
-$action = isset($_POST['action']) && !empty($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) && !empty($_GET['action']) ? $_GET['action'] : '');
+$action = postedVar('action');
+if ($action == '') {
+    $action = postedVar('action', '', TRUE, TRUE, FALSE, 'g');
+}
 
 if (is_array($_tid)) {
     $tids = array_unique(array_map('intval', $_tid));
@@ -515,7 +521,7 @@ switch($action) {
             $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid='$tid'");
             while($post = $db->fetch_array($query)) {
                 $move = "move".$post['pid'];
-                $move = isset($_POST[$move]) ? $_POST[$move] : '';
+                $move = getInt($move, 'p');
                 $thatime = $onlinetime;
                 if (!$threadcreated) {
                     $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
@@ -529,8 +535,8 @@ switch($action) {
                         $newsub = ", subject='$subject'";
                         $firstmove = true;
                     }
-                    $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid='$move'");
-                    $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid='$move'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid=$move");
+                    $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid=$move");
                     $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid='$newtid'");
                     $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                 }
@@ -666,11 +672,11 @@ switch($action) {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 while($post = $db->fetch_array($query))    {
                     $move = "move".$post['pid'];
-                    $move = isset($_POST[$move]) ? $_POST[$move] : '';
+                    $move = getInt($move, 'p');
                     if (!empty($move)) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
-                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$move'");
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$move'");
+                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
+                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                     }
                 }
@@ -683,11 +689,11 @@ switch($action) {
                         continue;
                     }
                     $move = "move".$post['pid'];
-                    $move = isset($_POST[$move]) ? $_POST[$move] : '';
+                    $move = getInt($move, 'p');
                     if (!empty($move)) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
-                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$move'");
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$move'");
+                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
+                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                     }
                 }

@@ -1172,11 +1172,9 @@ if ($action == "newsletter") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Moderator' ORDER BY uid");
         }
 
-        $_xmbuser = addslashes($xmbuser);
-
         if ($sendvia == "u2u") {
             while($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '".$_xmbuser."', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '$xmbuser', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $newssubject = stripslashes(stripslashes($newssubject));
@@ -1851,9 +1849,10 @@ if ($action == "attachments") {
         $query = $db->query("SELECT a.aid, a.filename FROM ".X_PREFIX."attachments a WHERE a.aid IN ($filelist)");
         while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
-            if ($attachment['filename'] != $_POST[$afilename] And isValidFilename($_POST[$afilename])) {
-                $afilename = isset($_POST[$afilename]) ? $db->escape(trim($_POST[$afilename])) : '';
-                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$afilename' WHERE aid='{$attachment['aid']}'");
+            $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
+            if ($attachment['filename'] != $postedvalue And isValidFilename($postedvalue)) {
+                $dbrename = $db->escape($postedvalue);
+                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid={$attachment['aid']}");
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";

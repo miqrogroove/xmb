@@ -862,9 +862,10 @@ switch($action) {
                         }
                         break;
                     case 'rename':
-                        if (isValidFilename($_POST['attach_name'])) {
-                            $name = addslashes(trim($_POST['attach_name']));
-                            $db->query("UPDATE ".X_PREFIX."attachments SET filename='$name' WHERE pid=$pid");
+                        $rename = trim(postedVar('attach_name', '', FALSE, FALSE));
+                        if (isValidFilename($rename)) {
+                            $dbrename = $db->escape($rename);
+                            $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE pid=$pid");
                         }
                         break;
                     case 'delete':
