@@ -633,12 +633,8 @@ switch($action) {
             }
         }
         if ($topicvalid) {
-            $attachedfile = FALSE;
-            if (isset($_FILES['attach'])) {
-                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
-            }
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0 && $attachedfile === FALSE) {
-                softerror($lang['postnothing']);
+            if (strlen(postedVar('subject')) == 0) {
+                softerror($lang['textnosubject']);
                 $topicvalid = FALSE;
             }
         }
@@ -742,6 +738,10 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
+            $attachedfile = FALSE;
+            if (isset($_FILES['attach'])) {
+                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
+            }
             if ($attachedfile !== FALSE) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
