@@ -261,14 +261,21 @@ class Captcha {
         }
     }
 
-    function DrawDots() {
+    function DrawDots($colors) {
+        $rmin = 0;
+        $rmax = 255;
+
         for($i = 0; $i < $this->iNumDots; $i++) {
             // allocate color
             if ($this->bUseColor) {
-                $iDotColor = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
+                $iDotColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
             } else {
-                $iRandColor = rand(100, 250);
-                $iDotColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                $iRandColor = rand($rmin, $rmax);
+                if (empty($this->aBackgroundImages)) {
+                    $iDotColor = $colors[$iRandColor];
+                } else {
+                    $iDotColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                }
             }
 
             // draw dot
@@ -276,14 +283,27 @@ class Captcha {
         }
     }
 
-    function DrawLines() {
+    function DrawLines($bg_lum, $colors) {
+        // Choose a luminosity range that will always be similar to the background color.
+        if ($bg_lum < 128) {
+            $rmin = 0;
+            $rmax = 145;
+        } else {
+            $rmin = 110;
+            $rmax = 255;
+        }
+
         for($i = 0; $i < $this->iNumLines; $i++) {
             // allocate color
             if ($this->bUseColor) {
-                $iLineColor = imagecolorallocate($this->oImage, rand(100, 250), rand(100, 250), rand(100, 250));
+                $iLineColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
             } else {
-                $iRandColor = rand(100, 250);
-                $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                $iRandColor = rand($rmin, $rmax);
+                if (empty($this->aBackgroundImages)) {
+                    $iLineColor = $colors[$iRandColor];
+                } else {
+                    $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                }
             }
 
             // draw line
@@ -335,7 +355,16 @@ class Captcha {
         return $imgCode;
     }
 
-    function DrawCharacters() {
+    function DrawCharacters($bg_lum, $colors) {
+        // Choose a luminosity range that will never conflict with the background color.
+        if ($bg_lum > 127) {
+            $rmin = 0;
+            $rmax = 110;
+        } else {
+            $rmin = 145;
+            $rmax = 255;
+        }
+
         // loop through and write out selected number of characters
         for($i = 0; $i < strlen($this->sCode); $i++) {
             // select random font
@@ -343,18 +372,26 @@ class Captcha {
 
             // select random color
             if ($this->bUseColor) {
-               $iTextColor = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
+               $iTextColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
                if ($this->bCharShadow) {
                    // shadow color
-                   $iShadowColor = imagecolorallocate($this->oImage, rand(0, 100), rand(0, 100), rand(0, 100));
+                   $iShadowColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
                 }
             } else {
-                $iRandColor = rand(0, 100);
-                $iTextColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                $iRandColor = rand($rmin, $rmax);
+                if (empty($this->aBackgroundImages)) {
+                    $iTextColor = $colors[$iRandColor];
+                } else {
+                    $iTextColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                }
                 if ($this->bCharShadow) {
                     // shadow color
-                    $iRandColor = rand(0, 100);
-                    $iShadowColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                    $iRandColor = rand($rmin, $rmax);
+                    if (empty($this->aBackgroundImages)) {
+                        $iShadowColor = $colors[$iRandColor];
+                    } else {
+                        $iShadowColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                    }
                 }
             }
 
@@ -400,6 +437,13 @@ class Captcha {
 
     function Create($imghash) {
         global $THEME;
+        // calculate color components of alternative background color 2 to match theme.
+        $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
+        $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
+        $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
+        $bg_lum = (max($bg_red, $bg_green, $bg_blue) + min($bg_red, $bg_green, $bg_blue)) >> 1;
+        $colors = array();
+
         // get background image if specified and copy to CAPTCHA
         if (!empty($this->aBackgroundImages)) {
             // create new image
@@ -427,25 +471,22 @@ class Captcha {
             imagedestroy($oBackgroundImage);
         } elseif ($this->bUseColor) {
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
+            $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+            imagefill($this->oImage, 0, 0, $bgcolor);
         } else {
             // create new image
             $this->oImage = imagecreate($this->iWidth, $this->iHeight);
+            imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+            for($i = 1; $i <= 255; $i++) {
+                $colors[$i] = imagecolorallocate($this->oImage, $i, $i, $i);
+            }
+            $colors[0] = $colors[1];
         }
 
-        // allocate alternative background color 2 to match theme.
-        $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
-        $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
-        $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
-        $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-
-        if ($this->bUseColor And empty($this->aBackgroundImages)) {
-            imagefill($this->oImage, 0, 0, $bgcolor);
-        }
-
-        $this->DrawDots();
-        $this->DrawLines();
+        $this->DrawLines($bg_lum, $colors);
+        $this->DrawDots($colors);
         $this->RetrieveCode($imghash);
-        $this->DrawCharacters();
+        $this->DrawCharacters($bg_lum, $colors);
 
         // write out image to file or browser
         $this->WriteFile();
