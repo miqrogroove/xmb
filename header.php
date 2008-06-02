@@ -664,7 +664,7 @@ if (($self['status'] == 'Banned' || $result > 0) && !(X_ADMIN || (X_SCRIPT == 'm
 // if the user is registered, check for new u2u's
 $newu2umsg = '';
 if (X_MEMBER) {
-    $query = $db->query("SELECT COUNT(readstatus) FROM ".X_PREFIX."u2u WHERE owner='$self[username]' AND folder='Inbox' AND readstatus='no'");
+    $query = $db->query("SELECT COUNT(readstatus) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
     $newu2unum = $db->result($query, 0);
     if ($newu2unum > 0) {
         $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
