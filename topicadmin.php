@@ -185,7 +185,7 @@ switch($action) {
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 while($result = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$result[author]'");
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($result['author'])."'");
                 }
                 $db->free_result($query);
 
@@ -544,20 +544,20 @@ switch($action) {
             $db->free_result($query);
 
             $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$newtid' ORDER BY dateline ASC LIMIT 0,1");
-            $firstauthor = $db->result($query, 0);
+            $firstauthor = $db->escape($db->result($query, 0));
             $db->free_result($query);
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]', replies=replies-1 WHERE tid=$newtid");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]', replies=replies-1 WHERE tid=$newtid");
 
             $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
-            $firstauthor = $db->result($query, 0);
+            $firstauthor = $db->escape($db->result($query, 0));
             $db->free_result($query);
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]' WHERE tid='$tid'");
 
             $mod->log($xmbuser, $action, $fid, $tid);
 
@@ -674,7 +674,8 @@ switch($action) {
                     $move = "move".$post['pid'];
                     $move = getInt($move, 'p');
                     if (!empty($move)) {
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
+                        $dbauthor = $db->escape($post['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
                         $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
@@ -691,7 +692,8 @@ switch($action) {
                     $move = "move".$post['pid'];
                     $move = getInt($move, 'p');
                     if (!empty($move)) {
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
+                        $dbauthor = $db->escape($post['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
                         $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
@@ -701,14 +703,14 @@ switch($action) {
             }
 
             $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
-            $firstauthor = $db->result($query, 0);
+            $firstauthor = $db->escape($db->result($query, 0));
             $db->free_result($query);
 
             $query = $db->query("SELECT pid, author, dateline FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
 
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]|$lastpost[pid]' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]' WHERE tid='$tid'");
 
             if (isset($forums['type']) && $forums['type'] == 'sub') {
                 $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid=$fid LIMIT 1");
@@ -744,64 +746,40 @@ switch($action) {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'"));
-                foreach($thread as $key=>$val) {
-                    switch($key) {
-                        case 'tid':
-                            unset($thread[$key]);
-                            break;
-                        case 'fid':
-                            $thread['fid'] = $newfid;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+
+                $thread['fid'] = $newfid;
+                unset($thread['tid']);
 
                 $cols = array();
                 $vals = array();
 
-                reset($thread);
                 foreach($thread as $key=>$val) {
-                    if (trim($key) == '') {
-                        continue;
-                    }
-
-                    if ($key == 'subject') {
-                        //$val = '[COPY] '.$val;
-                        $val = $val;
-                    }
                     $cols[] = $key;
                     $vals[] = $db->escape($val);
                 }
-                reset($thread);
                 $columns = implode(', ', $cols);
                 $values  = "'".implode("', '", $vals)."'";
 
                 $db->query("INSERT INTO ".X_PREFIX."threads ($columns) VALUES ($values)");
                 
                 $newtid = $db->insert_id();
-                $cols = array();
-                $vals = array();
 
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC");
                 while($post = $db->fetch_array($query)) {
+                    $oldPid = $post['pid'];
                     $post['fid'] = $newfid;
                     $post['tid'] = $newtid;
-
-                    $oldPid = $post['pid'];
-
                     unset($post['pid']);
-                    reset($post);
-
-                    foreach($post as $key=>$val) {
-                        $cols[] = $key;
-                        $vals[] = $val;
-                    }
-                    $columns = implode(', ', $cols);
-                    $values  = "'".implode("', '", $vals)."'";
 
                     $cols = array();
                     $vals = array();
+
+                    foreach($post as $key=>$val) {
+                        $cols[] = $key;
+                        $vals[] = $db->escape($val);
+                    }
+                    $columns = implode(', ', $cols);
+                    $values  = "'".implode("', '", $vals)."'";
 
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
