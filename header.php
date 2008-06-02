@@ -104,8 +104,19 @@ define('SHOWFULLINFO', false);
 
 require ROOT.'config.php';
 
+if (!defined('DEBUG')) {
+    define('DEBUG', FALSE);
+}
 if (DEBUG) {
     error_reporting(E_ALL | E_STRICT);
+}
+if (headers_sent()) {
+    if (DEBUG) {
+        headers_sent($filepath, $linenum);
+        exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
+    } else {
+        exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+    }
 }
 
 // Initialise pre-set Variables
