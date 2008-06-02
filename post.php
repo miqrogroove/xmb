@@ -316,10 +316,12 @@ if ($SETTINGS['spellcheck'] == 'on') {
             $problems = $spelling->check_text(postedVar('message', '', FALSE, FALSE));  //Use raw value so we're not checking entity names.
             if (count($problems) > 0) {
                 $suggest = array();
-                foreach($problems as $orig=>$new) {
-                    if (!is_numeric($orig)) {
+                foreach($problems as $raworig=>$new) {
+                    if (!is_numeric($raworig)) {
+                        $orig = cdataOut($raworig);
                         $mistake = array();
-                        foreach($new as $suggestion) {
+                        foreach($new as $rawsuggestion) {
+                            $suggestion = attrOut($rawsuggestion);
                             eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
                         }
                         $mistake = implode("\n", $mistake);
@@ -333,9 +335,10 @@ if ($SETTINGS['spellcheck'] == 'on') {
                 eval('$suggestions = "'.template('spelling_suggestion_no').'";');
             }
         } else {
-            $old_words = postedArray('old_words');
+            $old_words = postedArray('old_words', 'string', '', TRUE, FALSE);
             foreach($old_words as $word) {
-                $messageinput = str_replace($word, ${'replace_'.$word}, $messageinput);
+                $replacement = postedVar('replace_'.$word, '', TRUE, FALSE);
+                $messageinput = str_replace($word, $replacement, $messageinput);
             }
         }
     }
