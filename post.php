@@ -317,16 +317,14 @@ if ($SETTINGS['spellcheck'] == 'on') {
             if (count($problems) > 0) {
                 $suggest = array();
                 foreach($problems as $raworig=>$new) {
-                    if (!is_numeric($raworig)) {
-                        $orig = cdataOut($raworig);
-                        $mistake = array();
-                        foreach($new as $rawsuggestion) {
-                            $suggestion = attrOut($rawsuggestion);
-                            eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
-                        }
-                        $mistake = implode("\n", $mistake);
-                        eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
+                    $orig = cdataOut($raworig);
+                    $mistake = array();
+                    foreach($new as $rawsuggestion) {
+                        $suggestion = attrOut($rawsuggestion);
+                        eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
                     }
+                    $mistake = implode("\n", $mistake);
+                    eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
                 }
                 $suggestions = implode("\n", $suggest);
                 eval('$suggestions = "'.template('spelling_suggestion').'";');

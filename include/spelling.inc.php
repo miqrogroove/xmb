@@ -72,7 +72,8 @@ class spelling {
     function check_text($text) {
         $return = array();
 
-        $words = preg_split("/[\W]+/", $text);
+        preg_match_all("/(?i)\\b['a-z]+\\b/", $text, $words);
+        $words = $words[0];
         foreach($words as $word) {
             if (!$this->check_word($word)) {
                 $return[$word] = pspell_suggest($this->link, $word);
