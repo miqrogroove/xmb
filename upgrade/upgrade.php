@@ -26,8 +26,44 @@
  *
  **/
 
+// Script Parameters
 define('XMB_V', '1.9.10');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_9.xmb');
+define('MYSQL_MIN_VER', '4.0.12');
+define('PHP_MIN_VER', '4.3.0');
+$req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
+$req['files'] = array(
+'buddy.php',
+'config.php',
+'cp.php',
+'cp2.php',
+'editprofile.php',
+'lang/English.lang.php',
+'faq.php',
+'forumdisplay.php',
+'header.php',
+'index.php',
+'member.php',
+'memcp.php',
+'misc.php',
+'post.php',
+'include/admin.inc.php',
+'include/buddy.inc.php',
+'include/captcha.inc.php',
+'include/functions.inc.php',
+'include/global.inc.php',
+'include/spelling.inc.php',
+'include/smtp.inc.php',
+'include/topicadmin.inc.php',
+'include/u2u.inc.php',
+'templates.xmb',
+'today.php',
+'tools.php',
+'topicadmin.php',
+'u2u.php',
+'viewthread.php',
+'vtmisc.php'
+);
 
 function print_header() {
 ?>
@@ -897,6 +933,28 @@ Public License instead of this License.  But first, please read
         print_footer();
         break;
     case 4:
+        define('COMMENTOUTPUT', false);
+        define('IPREG', false);
+        define('IPCHECK', false);
+        define('SPECQ', false);
+        define('SHOWFULLINFO', false);
+        define('MAXATTACHSIZE', 256000);
+        define('IN_CODE', true);
+
+        require ROOT.'config.php';
+
+        if (!defined('DEBUG')) {
+            define('DEBUG', FALSE);
+        }
+        if (headers_sent()) {
+            if (DEBUG) {
+                headers_sent($filepath, $linenum);
+                exit("XMB Upgrade Step 4 Error: Failed to start due to file corruption.  Please inspect $filepath at line number $linenum.");
+            } else {
+                exit("XMB Upgrade Step 4 failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+            }
+        }
+
         print_header();
 ?>
     <div id="sidebar">
@@ -921,16 +979,6 @@ Public License instead of this License.  But first, please read
             ob_end_flush();
         }
         ob_implicit_flush(1);
-
-        define('COMMENTOUTPUT', false);
-        define('IPREG', false);
-        define('IPCHECK', false);
-        define('SPECQ', false);
-        define('SHOWFULLINFO', false);
-        define('MAXATTACHSIZE', 256000);
-        define('IN_CODE', true);
-
-        require ROOT.'config.php';
 
         $config_array = array(
             'dbname' => 'DB_NAME',
@@ -963,55 +1011,22 @@ Public License instead of this License.  But first, please read
         }
 
         show_act('Checking PHP version');
-        $v = phpversion();
-        $v = explode('.', $v);
-        if ($v[0] < 4 || ($v[0] == 4 && $v[1] < 2)) { // < 4.2.0
+        $current = phpversion();
+        $current = explode('.', $current);
+        $min = explode('.', PHP_MIN_VER);
+        if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
             show_result(X_INST_ERR);
-            error('Minimal System Requirements mismatched', 'XMB noticed your system is using PHP version '.implode('.', $v).', the minimal required version to run XMB is PHP 4.2.0. Please upgrade your PHP install before continuing.', true);
+            error('Version mismatch', 'XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.', true);
         }
         show_result(X_INST_OK);
 
         // let's check if all files we need actually exist.
-        $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
-        $req['files'] = array(
-            'buddy.php',
-            'config.php',
-            'cp.php',
-            'cp2.php',
-            'editprofile.php',
-            'lang/English.lang.php',
-            'faq.php',
-            'forumdisplay.php',
-            'header.php',
-            'index.php',
-            'member.php',
-            'memcp.php',
-            'misc.php',
-            'post.php',
-            'include/admin.inc.php',
-            'include/buddy.inc.php',
-            'include/captcha.inc.php',
-            'include/functions.inc.php',
-            'include/global.inc.php',
-            'include/spelling.inc.php',
-            'include/smtp.inc.php',
-            'include/topicadmin.inc.php',
-            'include/u2u.inc.php',
-            'stats.php',
-            'templates.xmb',
-            'today.php',
-            'tools.php',
-            'topicadmin.php',
-            'u2u.php',
-            'viewthread.php',
-        );
-
         show_act('Checking Directory Structure');
         foreach($req['dirs'] as $dir) {
             if (!file_exists(ROOT.$dir)) {
                 if ($dir == './images') {
                     show_result(X_INST_WARN);
-                    error('Missing Directory', 'XMB could not locate the <i>./images</i> directory. Although this directory, and its contents are not vital to the functioning of XMB, we do recommend you upload it, so you can enjoy the full look and feel of each theme.', false);
+                    error('Missing Directory', 'XMB could not locate the <i>./images</i> directory. Although this directory and its contents are not vital to the functioning of XMB, we do recommend you upload it, so you can enjoy the full look and feel of each theme.', false);
                     show_act('Checking (remaining) Directory Structure');
                 } else {
                     show_result(X_INST_ERR);
@@ -1093,15 +1108,14 @@ Public License instead of this License.  But first, please read
                 } else {
                     show_result(X_INST_OK);
                 }
-                $i = mysql_get_server_info($link);
+                $sqlver = mysql_get_server_info($link);
                 mysql_close();
                 show_act('Checking Database Version');
-                $mysqlver = explode('.', $i);
-
-                // min = 3.20
-                if ($mysqlver[0] <= 3 && $mysqlver[1] < 20) {
+                $current = explode('.', $sqlver);
+                $min = explode('.', MYSQL_MIN_VER);
+                if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
                     show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version 3.20 or higher to work properly.', true);
+                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
                 } else {
                     show_result(X_INST_OK);
                 }

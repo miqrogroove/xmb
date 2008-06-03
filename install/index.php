@@ -26,9 +26,47 @@
  *
  **/
 
-define('ROOT', '../');
+// Script Parameters
 define('X_VERSION', '1.9.10');
 define('X_VERSION_EXT', '1.9.10 Karl');
+define('MYSQL_MIN_VER', '4.0.12');
+define('PHP_MIN_VER', '4.3.0');
+$req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
+$req['files'] = array(
+'buddy.php',
+'config.php',
+'cp.php',
+'cp2.php',
+'editprofile.php',
+'lang/English.lang.php',
+'faq.php',
+'forumdisplay.php',
+'header.php',
+'index.php',
+'member.php',
+'memcp.php',
+'misc.php',
+'post.php',
+'include/admin.inc.php',
+'include/buddy.inc.php',
+'include/captcha.inc.php',
+'include/functions.inc.php',
+'include/global.inc.php',
+'include/spelling.inc.php',
+'include/smtp.inc.php',
+'include/topicadmin.inc.php',
+'include/u2u.inc.php',
+'templates.xmb',
+'today.php',
+'tools.php',
+'topicadmin.php',
+'u2u.php',
+'viewthread.php',
+'vtmisc.php'
+);
+
+// Script Constants
+define('ROOT', '../');
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
@@ -1069,9 +1107,6 @@ Public License instead of this License.  But first, please read
             }
             $phpv = explode('.', phpversion());
             foreach($dbs as $db) {
-                if ($db == 'mysql4' && $phpv[0] != 5) {
-                    continue;
-                }
                 if ($db == 'mysql') {
                     $types[] = "<option selected=\"selected\" name=\"$db\">$db</option>";
                 } else {
@@ -1306,48 +1341,16 @@ Public License instead of this License.  But first, please read
 <?php
         // first, let's check if we have right version of PHP
         show_act('Checking PHP version');
-        $v = phpversion();
-        $v = explode('.', $v);
-        if ($v[0] < 4 || ($v[0] == 4 && $v[1] < 1)) { // < 4.1.0
+        $current = phpversion();
+        $current = explode('.', $current);
+        $min = explode('.', PHP_MIN_VER);
+        if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
             show_result(X_INST_ERR);
-            error('Minimal System Requirements mismatched', 'XMB noticed your system is using PHP version '.implode('.', $v).', the minimal required version to run XMB is PHP 4.1.0. Please upgrade your PHP install before continuing.', true);
+            error('Version mismatch', 'XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.', true);
         }
         show_result(X_INST_OK);
 
         // let's check if all files we need actually exist.
-        $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
-        $req['files'] = array(
-            'buddy.php',
-            'config.php',
-            'cp.php',
-            'cp2.php',
-            'editprofile.php',
-            'lang/English.lang.php',
-            'faq.php',
-            'forumdisplay.php',
-            'header.php',
-            'index.php',
-            'member.php',
-            'memcp.php',
-            'misc.php',
-            'post.php',
-            'include/admin.inc.php',
-            'include/buddy.inc.php',
-            'include/captcha.inc.php',
-            'include/functions.inc.php',
-            'include/global.inc.php',
-            'include/spelling.inc.php',
-            'include/smtp.inc.php',
-            'include/topicadmin.inc.php',
-            'include/u2u.inc.php',
-            'templates.xmb',
-            'today.php',
-            'tools.php',
-            'topicadmin.php',
-            'u2u.php',
-            'viewthread.php',
-       );
-
         show_act('Checking Directory Structure');
         foreach($req['dirs'] as $dir) {
             if (!file_exists(ROOT.$dir)) {
@@ -1450,34 +1453,14 @@ Public License instead of this License.  But first, please read
                 } else {
                     show_result(X_INST_OK);
                 }
-                $i = mysql_get_server_info($link);
+                $sqlver = mysql_get_server_info($link);
                 mysql_close();
                 show_act('Checking Database Version');
-                $i = explode('.', $i);
-                // min = 3.0
-                if ($i[0] < 3 || ($i[0] == 3 && $i[1] < 20)) {
+                $current = explode('.', $sqlver);
+                $min = explode('.', MYSQL_MIN_VER);
+                if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
                     show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version 3.20 or higher to work properly.', true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                break;
-            case 'mysql4':
-                $link = new mysqli($dbhost, $dbuser, $dbpw, $dbname);
-                if (mysqli_connect_errno()) {
-                    show_result(X_INST_ERR);
-                    error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_errno().': '.mysqli_connect_error(), true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                $i = $link->server_info;
-                $link->close();
-                $i = explode('.', $i);
-                // min = 3.0
-                show_act('Checking Database Version');
-                if ($i[0] < 4 || ($i[0] == 4 && $i[1] < 1)) {
-                    show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version 4.1 or higher to work properly with this database API. We recommend using the "mysql" API instead.', true);
+                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
                 } else {
                     show_result(X_INST_OK);
                 }
