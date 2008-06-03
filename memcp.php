@@ -291,14 +291,14 @@ if ($action == 'profile') {
 
         $langfileselect = createLangFileSelect($member['langfile']);
 
-        $day = substr($member['bday'], 8, 2);
-        $month = substr($member['bday'], 5, 2);
+        $day = intval(substr($member['bday'], 8, 2));
+        $month = intval(substr($member['bday'], 5, 2));
         $year = substr($member['bday'], 0, 4);
 
-        $sel0 = $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = $sel6 = '';
-        $sel7 = $sel8 = $sel9 = $sel10 = $sel11 = $sel12 = '';
-
-        ${'sel'.(int)$month} = $selHTML;
+        for ($i = 0; $i <= 12; $i++) {
+            $sel[$i] = '';
+        }
+        $sel[$month] = $selHTML;
 
         $dayselect = array();
         $dayselect[] = '<select name="day">';

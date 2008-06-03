@@ -554,17 +554,16 @@ function u2u_display($folder, $folders) {
         $u2udateline = "$u2udate $lang[textat] $u2utime";
         switch($u2u['type']) {
             case 'outgoing':
-                $u2us = 'u2usout';
+                eval('$u2usout .= "'.template('u2u_row').'";');
                 break;
             case 'draft':
-                $u2us = 'u2usdraft';
+                eval('$u2usdraft .= "'.template('u2u_row').'";');
                 break;
             case 'incoming':
             default:
-                $u2us = 'u2usin';
+                eval('$u2usin .= "'.template('u2u_row').'";');
                 break;
         }
-        eval('$$u2us .= "'.template('u2u_row').'";');
     }
     $db->free_result($query);
 

@@ -162,7 +162,7 @@ if ($action == 'restrictions') {
         </tr>
         <tr>
         <td><span class="smalltxt">case-sensitive:</span></td>
-        <td><input type="checkbox" name="newcase" value="1" checked="unchecked" /></td>
+        <td><input type="checkbox" name="newcase" value="1" /></td>
         </tr>
         <tr>
         <td><span class="smalltxt">partial-match:</span></td>
@@ -183,39 +183,31 @@ if ($action == 'restrictions') {
     } else {
         $queryrestricted = $db->query("SELECT id FROM ".X_PREFIX."restricted");
         while($restricted = $db->fetch_array($queryrestricted)) {
-            $name = isset(${'name'.$restricted['id']}) && !empty(${'name'.$restricted['id']}) ? ${'name'.$restricted['id']} : '';
-            $delete = formInt('delete'.$restricted['id']);
-            $case = formInt('case'.$restricted['id']);
-            $partial = formInt('partial'.$restricted['id']);
-            $newname = isset($newname) && !empty($newname) ? $newname : '';
-            $newcase = formInt('newcase');
-            $newpartial = formInt('newpartial');
-
+            $name = postedVar('name'.$restricted['id'], '', FALSE, TRUE);
+            $delete = getInt('delete'.$restricted['id'], 'p');
+            $case = getInt('case'.$restricted['id'], 'p');
+            $partial = getInt('partial'.$restricted['id'], 'p');
             if ($partial) {
                 $partial = 1;
             }
-
             if ($case) {
                 $case = 1;
             }
-
             if ($delete) {
                 $db->query("DELETE FROM ".X_PREFIX."restricted WHERE id=$delete");
-                continue;
+            } else {
+                $db->query("UPDATE ".X_PREFIX."restricted SET name='$name', case_sensitivity='$case', partial='$partial' WHERE id=".$restricted['id']);
             }
-            $db->query("UPDATE ".X_PREFIX."restricted SET name='$name', case_sensitivity='$case', partial='$partial' WHERE id=".$restricted['id']);
         }
 
+        $newname = postedVar('newname', '', FALSE, TRUE);
+        $newcase = getInt('newcase', 'p');
+        $newpartial = getInt('newpartial', 'p');
         if (!empty($newname)) {
-            if (!$newpartial || $newpartial != 1) {
-                $newpartial = 0;
-            } else {
+            if ($newpartial) {
                 $newpartial = 1;
             }
-
-            if (!$newcase || $newcase != 1) {
-                $newcase = 0;
-            } else {
+            if ($newcase) {
                 $newcase = 1;
             }
             $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$newname', '$newcase', '$newpartial')");

@@ -271,10 +271,6 @@ $tables = array(
     'vote_voters'
 );
 
-foreach($tables as $name) {
-    ${'table_'.$name} = $tablepre.$name;
-}
-
 // Secured table prefix constant
 define('X_PREFIX', $tablepre);
 

@@ -71,19 +71,19 @@ $avatar
 <td bgcolor="$altbg1" width="22%">$lang[textbday]</td>
 <td bgcolor="$altbg2">
 <select name="month">
-<option value="0" $sel0>&nbsp;</option>
-<option value="1" $sel1>$lang[textjan]</option>
-<option value="2" $sel2>$lang[textfeb]</option>
-<option value="3" $sel3>$lang[textmar]</option>
-<option value="4" $sel4>$lang[textapr]</option>
-<option value="5" $sel5>$lang[textmay]</option>
-<option value="6" $sel6>$lang[textjun]</option>
-<option value="7" $sel7>$lang[textjul]</option>
-<option value="8" $sel8>$lang[textaug]</option>
-<option value="9" $sel9>$lang[textsep]</option>
-<option value="10" $sel10>$lang[textoct]</option>
-<option value="11" $sel11>$lang[textnov]</option>
-<option value="12" $sel12>$lang[textdec]</option>
+<option value="" $sel[0]>&nbsp;</option>
+<option value="1" $sel[1]>$lang[textjan]</option>
+<option value="2" $sel[2]>$lang[textfeb]</option>
+<option value="3" $sel[3]>$lang[textmar]</option>
+<option value="4" $sel[4]>$lang[textapr]</option>
+<option value="5" $sel[5]>$lang[textmay]</option>
+<option value="6" $sel[6]>$lang[textjun]</option>
+<option value="7" $sel[7]>$lang[textjul]</option>
+<option value="8" $sel[8]>$lang[textaug]</option>
+<option value="9" $sel[9]>$lang[textsep]</option>
+<option value="10" $sel[10]>$lang[textoct]</option>
+<option value="11" $sel[11]>$lang[textnov]</option>
+<option value="12" $sel[12]>$lang[textdec]</option>
 </select>
 $dayselect
 <input type="text" name="year" size="4" value="$year" />
@@ -2659,19 +2659,19 @@ $avatar
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textbday]</td>
 <td bgcolor="$altbg2"><select name="month">
-<option value="" $sel0>&nbsp;</option>
-<option value="1" $sel1>$lang[textjan]</option>
-<option value="2" $sel2>$lang[textfeb]</option>
-<option value="3" $sel3>$lang[textmar]</option>
-<option value="4" $sel4>$lang[textapr]</option>
-<option value="5" $sel5>$lang[textmay]</option>
-<option value="6" $sel6>$lang[textjun]</option>
-<option value="7" $sel7>$lang[textjul]</option>
-<option value="8" $sel8>$lang[textaug]</option>
-<option value="9" $sel9>$lang[textsep]</option>
-<option value="10" $sel10>$lang[textoct]</option>
-<option value="11" $sel11>$lang[textnov]</option>
-<option value="12" $sel12>$lang[textdec]</option>
+<option value="" $sel[0]>&nbsp;</option>
+<option value="1" $sel[1]>$lang[textjan]</option>
+<option value="2" $sel[2]>$lang[textfeb]</option>
+<option value="3" $sel[3]>$lang[textmar]</option>
+<option value="4" $sel[4]>$lang[textapr]</option>
+<option value="5" $sel[5]>$lang[textmay]</option>
+<option value="6" $sel[6]>$lang[textjun]</option>
+<option value="7" $sel[7]>$lang[textjul]</option>
+<option value="8" $sel[8]>$lang[textaug]</option>
+<option value="9" $sel[9]>$lang[textsep]</option>
+<option value="10" $sel[10]>$lang[textoct]</option>
+<option value="11" $sel[11]>$lang[textnov]</option>
+<option value="12" $sel[12]>$lang[textdec]</option>
 </select>
 $dayselect
 <input type="text" name="year" size="4" value="$year" /></td>
