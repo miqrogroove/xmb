@@ -3346,10 +3346,10 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 <td bgcolor="$altbg2" class="tablerow">
 <table width="100%">
 <tr>
-<td width="70%">
-<textarea rows="12" cols="65" name="message" id="message"  onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$postinfo[message]</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$postinfo[message]</textarea></td>
 $smilieinsert
 </tr>
+<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $offcheck2 /> $lang[textdissmileys]<br />
@@ -3488,9 +3488,10 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2">
 <table width="100%">
 <tr>
-<td width="70%"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
 $smilieinsert
 </tr>
+<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
@@ -3568,9 +3569,10 @@ $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
-<td width="70%"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
 $smilieinsert
 </tr>
+<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
