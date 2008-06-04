@@ -170,18 +170,16 @@ switch($action) {
             if (!isset($filter_distinct) || $filter_distinct != 'yes') {
                 $filter_distinct = '';
             }
+            $srchtxt = postedVar('srchtxt', '', FALSE, FALSE, FALSE, 'r');
             $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'r');
-            $srchunameurl = rawurlencode(postedVar('srchuname', '', TRUE, FALSE, FALSE, 'r'));
+            $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'r');
+            $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'r');
             if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
                 error($lang['nosearchq']);
             }
 
             if (strlen($srchuname) < 3 ) {
                 $srchuname = '';
-            }
-
-            if (empty($srchtxt)) {
-                $srchtxt = '';
             }
 
             if ($searchsubmit || $page ) {
@@ -213,19 +211,20 @@ switch($action) {
 
                 $srchfrom = time() - (int) $srchfrom;
                 if (!empty($srchtxt)) {
-                    $srchtxtsq = addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchtxt));
-                    $srchtxtsq = explode(' ', $srchtxtsq);
+                    $srchtxtsq = explode(' ', $srchtxt);
                     $sql .= ' AND (';
                     foreach ($srchtxtsq as $stxt) {
-                        $sqlsrch[] = " p.message LIKE '%$stxt%' OR p.subject LIKE '%$stxt%' OR t.subject LIKE '%$stxt%'";
+                        $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
+                        $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
+                        $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
                     }
-                    $sql .= implode(' OR ', $sqlsrch);
+                    $sql .= implode(') AND (', $sqlsrch);
                     $sql .= ')';
-                    $ext[] = 'srchtxt='.$srchtxt;
+                    $ext[] = 'srchtxt='.rawurlencode($srchtxt);
                 }
                 if ($srchuname != "") {
                     $sql .= " AND p.author='$srchuname'";
-                    $ext[] = 'srchuname='.$srchunameurl;
+                    $ext[] = 'srchuname='.rawurlencode($rawsrchuname);
                 }
                 if (isset($srchfid)) {
                     if ($srchfid != "all" && $srchfid != "") {
@@ -247,90 +246,27 @@ switch($action) {
                 $results = 0;
                 $results = $db->num_rows($querysrch);
 
-                if ($srchuname != '') {
-                    $srchtxt = '\0';
-                }
+                $temparray = array();
+                $searchresults = '';
 
-                if (isset($filter_distinct) && $filter_distinct == 'yes') {
-                    $temparray = array();
-                    $searchresults = '';
+                $forumCache = array();
+                while ($post = $db->fetch_array($querysrch)) {
+                    $forumPerms = array();
 
-                    $forumCache = array();
-                    while ($post = $db->fetch_array($querysrch)) {
-                        $forumPerms = array();
-
-                        if(isset($forumCache[$post['fid']])) {
-                            $forumPerms = $forumCache[$post['fid']];
-                        } else {
-                            $forumPerms = checkForumPermissions($post);
-                            $forumCache[$post['fid']] = $forumPerms;
-                        }
-
-                        if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
-                            if (!array_key_exists($post['ttid'], $temparray)) {
-                                $tid = $post['ttid'];
-                                $temparray[$tid] = true;
-                                $message = stripslashes($post['message']);
-
-                                $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
-                                $position = strpos($message, $srchtxt, 0);
-                                $show_num = 100;
-                                $msg_leng = strlen($message);
-
-                                if ($position <= $show_num) {
-                                    $min = 0;
-                                    $add_pre = '';
-                                } else {
-                                    $min = $position - $show_num;
-                                    $add_pre = '...';
-                                }
-
-                                if (($msg_leng - $position) <= $show_num) {
-                                    $max = $msg_leng;
-                                    $add_post = '';
-                                } else {
-                                        $max = $position + $show_num;
-                                    $add_post = '...';
-                                }
-
-                                $show = substr($message, $min, $max - $min);
-                                $show = str_replace($srchtxt, '<b><i>'.$srchtxt.'</i></b>', $show);
-                                $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
-
-                                $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                                $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-
-                                $poston = $date.' '.$lang['textat'].' '.$time;
-                                $postby = $post['author'];
-
-                                $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
-                                $post['tsubject'] = rawHTMLsubject(stripslashes($post['tsubject']));
-                                if (trim($post['subject']) == '') {
-                                    $post['subject'] = $post['tsubject']; // Is this really used for anything?
-                                }
-
-                                eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
-                            }
-                        }
+                    if(isset($forumCache[$post['fid']])) {
+                        $forumPerms = $forumCache[$post['fid']];
+                    } else {
+                        $forumPerms = checkForumPermissions($post);
+                        $forumCache[$post['fid']] = $forumPerms;
                     }
-                } else {
-                    $forumCache = array();
-                    while ($post = $db->fetch_array($querysrch)) {
-                        $forumPerms = array();
 
-                        if(isset($forumCache[$post['fid']])) {
-                            $forumPerms = $forumCache[$post['fid']];
-                        } else {
-                            $forumPerms = checkForumPermissions($post);
-                            $forumCache[$post['fid']] = $forumPerms;
-                        }
-
-                        if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
+                    if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
+                        if ($filter_distinct != 'yes' Or !array_key_exists($post['ttid'], $temparray)) {
                             $tid = $post['ttid'];
+                            $temparray[$tid] = true;
                             $message = stripslashes($post['message']);
 
-                            $srchtxt = str_replace(array('_ ', ' _','% ', ' %'), '', $srchtxt);
-                            $position = strpos($message, $srchtxt, 0);
+                            $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
                             $show_num = 100;
                             $msg_leng = strlen($message);
 
@@ -346,26 +282,28 @@ switch($action) {
                                 $max = $msg_leng;
                                 $add_post = '';
                             } else {
-                                $max = $position + $show_num;
+                                    $max = $position + $show_num;
                                 $add_post = '...';
                             }
 
+                            if (trim($post['subject']) == '') {
+                                $post['subject'] = $post['tsubject'];
+                            }
+
                             $show = substr($message, $min, $max - $min);
-                            $show = str_replace($srchtxt, '<b><i>'.$srchtxt.'</i></b>', $show);
+                            $post['subject'] = stripslashes($post['subject']);
+                            foreach ($srchtxtsq as $stxt) {
+                                $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
+                                $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
+                            }
                             $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
+                            $post['subject'] = rawHTMLsubject($post['subject']);
 
                             $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
                             $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
 
                             $poston = $date.' '.$lang['textat'].' '.$time;
                             $postby = $post['author'];
-
-                            $post['tsubject'] = rawHTMLsubject(stripslashes($post['tsubject']));
-                            if (trim($post['subject']) == '') {
-                                $post['subject'] = $post['tsubject'];
-                            } else {
-                                $post['tsubject'] = rawHTMLsubject(stripslashes($post['subject']));
-                            }
 
                             eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
                         }
@@ -376,7 +314,7 @@ switch($action) {
                 eval("\$searchresults = \"".template("misc_search_results_none")."\";");
             } elseif ($results == $ppp) {
                 // create a string containing the stuff to search for
-                $ext = htmlspecialchars(implode('&', $ext));
+                $ext = implode('&', $ext);
                 eval("\$nextlink = \"".template("misc_search_nextlink")."\";");
             }
 
@@ -544,9 +482,9 @@ switch($action) {
         $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
         $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
         $page = getInt('page');
-        $srchmem = postedVar('srchmem', '', TRUE, FALSE);
-        $srchemail = postedVar('srchemail');
-        $srchip = postedVar('srchip');
+        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE));
+        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE));
+        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE));
 
         if ($SETTINGS['memliststatus'] == 'off') {
             eval('echo "'.template('header').'";');
@@ -579,8 +517,8 @@ switch($action) {
         }
 
         if (!X_ADMIN) {
-            $srchip = '';
-            $srchemail = '';
+            $dblikeip = '';
+            $dblikeemail = '';
             $misc_mlist_template = 'misc_mlist';
             $where = array();
         } else {
@@ -590,33 +528,33 @@ switch($action) {
 
         $ext = array('&order='.$order);
 
-        if ($srchemail) {
+        if ($dblikeemail != '') {
             if (!X_SADMIN) {
-                $where[] = " email LIKE '%".$srchemail."%'";
+                $where[] = " email LIKE '%$dblikeemail%'";
                 $where[] = " showemail='yes'";
             } else {
-                $where[] = " email LIKE '%".$srchemail."%'";
+                $where[] = " email LIKE '%$dblikeemail%'";
             }
             $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE));
-            $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE);
+            $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
             /* Warning: $srchemail is used for template output */
         } else {
             $srchemail = '';
         }
 
-        if ($srchip) {
-            $where[] = " regip LIKE '%".$srchip."%'";
+        if ($dblikeip != '') {
+            $where[] = " regip LIKE '%$dblikeip%'";
             $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE));
-            $srchip = postedVar('srchip', 'javascript', TRUE, FALSE);
+            $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
             /* Warning: $srchip is used for template output */
         } else {
             $srchip = '';
         }
 
-        if ($srchmem) {
-            $where[] = " username LIKE '%".addslashes(str_replace(array('%', '_'), array('\%', '\_'), $srchmem))."%'";
+        if ($dblikemem != '') {
+            $where[] = " username LIKE '%$dblikemem%'";
             $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE));
-            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE);
+            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
             /* Warning: $srchmem is used for template output */
         } else {
             $srchmem = '';

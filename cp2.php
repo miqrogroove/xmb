@@ -1722,7 +1722,7 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('searchsubmit')) {
-        $filename = postedVar('filename');
+        $dblikefilename = $db->like_escape(postedVar('filename', '', FALSE, FALSE));
         $author = postedVar('author');
         $forumprune = postedVar('forumprune');
         $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
@@ -1769,8 +1769,8 @@ if ($action == "attachments") {
             $orderby = ' ORDER BY p.author ASC';
         }
 
-        if ($filename) {
-            $restriction .= "AND a.filename LIKE '%$filename%' ";
+        if ($dblikefilename != '') {
+            $restriction .= "AND a.filename LIKE '%$dblikefilename%' ";
         }
 
         if ($sizeless) {

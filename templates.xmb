@@ -3268,7 +3268,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_search_results_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['ttid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['tsubject']}</a></strong><br />$add_pre $show $add_post</td>
+<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['ttid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['subject']}</a></strong><br />$add_pre $show $add_post</td>
 <td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
 </tr>
 

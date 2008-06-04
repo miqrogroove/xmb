@@ -781,8 +781,8 @@ if ($action == 'rename') {
     }
 
     if (onSubmit('renamesubmit')) {
-        $vUserFrom = postedVar('frmUserFrom');
-        $vUserTo = postedVar('frmUserTo');
+        $vUserFrom = postedVar('frmUserFrom', '', TRUE, FALSE);
+        $vUserTo = postedVar('frmUserTo', '', TRUE, FALSE);
         $adm = new admin();
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
@@ -1530,14 +1530,15 @@ if ($action == "members") {
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textbanfrom']?></font></strong></td>
             </tr>
             <?php
-            $srchmem = postedVar('srchmem');
+            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
+            $dblikemem = $db->like_escape($srchmem);
             $srchstatus = postedVar('srchstatus');
             if ($srchstatus == '0') {
-                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' ORDER BY username");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' ORDER BY username");
             } else if ($srchstatus == "Pending") {
                 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE lastvisit=0 ORDER BY username");
             } else {
-                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus' ORDER BY username");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND status='$srchstatus' ORDER BY username");
             }
 
             $sadminselect = $adminselect = $smodselect = '';
@@ -1635,14 +1636,14 @@ if ($action == "members") {
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
-        $srchmem = postedVar('srchmem');
+        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE));
         $srchstatus = postedVar('srchstatus');
         if ($srchstatus == '0') {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%'");
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%'");
         } else if ($srchstatus == "Pending") {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND lastvisit = 0");
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND lastvisit = 0");
         } else {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$srchmem%' AND status='$srchstatus'");
+            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND status='$srchstatus'");
         }
 
         while($mem = $db->fetch_array($query)) {
@@ -1952,8 +1953,8 @@ if ($action == "search") {
     if (onSubmit('searchsubmit')) {
         $userip = postedVar('userip');
         $postip = postedVar('postip');
-        $profileword = postedVar('profileword');
-        $postword = postedVar('postword');
+        $dblikeprofile = $db->like_escape(postedVar('profileword', '', TRUE, FALSE));
+        $dblikepost = $db->like_escape(postedVar('postword', '', TRUE, FALSE));
 
         $found = 0;
         $list = array();
@@ -1979,8 +1980,8 @@ if ($action == "search") {
             }
         }
 
-        if ($profileword) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE bio LIKE '%$profileword%'");
+        if ($dblikeprofile != '') {
+            $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE bio LIKE '%$dblikeprofile%'");
             while($users = $db->fetch_array($query)) {
                 $link = "./member.php?action=viewpro&amp;member=".recodeOut($users['username']);
                 $list[] = "<a href = \"$link\">{$users['username']}<br />";
@@ -1988,8 +1989,8 @@ if ($action == "search") {
             }
         }
 
-        if ($postword) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE subject LIKE '%".$postword."%' OR message LIKE '%".$postword."%'");
+        if ($dblikepost != '') {
+            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE subject LIKE '%$dblikepost%' OR message LIKE '%$dblikepost%'");
             while($users = $db->fetch_array($query)) {
                 $link = "./viewthread.php?tid=$users[tid]#pid$users[pid]";
                 if (!empty($users['subject'])) {

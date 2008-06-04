@@ -503,7 +503,7 @@ switch($action) {
             $db->free_result($subquery);
 
             if (isset($emailnotify) && $emailnotify == 'yes') {
-                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$xmbuser' AND type='subscription'");
+                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
                 if ($db->num_rows($query) < 1) {
                     $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
                 }
@@ -721,7 +721,7 @@ switch($action) {
             }
 
             if (isset($emailnotify) && $emailnotify == 'yes') {
-                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$xmbuser' AND type='subscription'");
+                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
                 $thread = $db->fetch_array($query);
                 $db->free_result($query);
                 if (!$thread) {
@@ -729,7 +729,7 @@ switch($action) {
                 }
             }
 
-            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username like '$username'");
+            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
             if ((X_STAFF) && $toptopic == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");

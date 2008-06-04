@@ -33,16 +33,23 @@ if (!defined('IN_CODE')) {
 class admin {
     function rename_user($userfrom, $userto) {
         global $db, $lang, $self;
-
-        if ($userfrom == '' || $userto == '') {
-            return $lang['admin_rename_fail'];
+        
+        if (strlen($userto) < 3 || strlen($userto) > 32) {
+            return $lang['username_length_invalid'];
         }
 
-        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$userfrom'");
+        $dbuserfrom = $db->escape($userfrom);
+        $dbuserto = $db->escape($userto);
+        $dblikeuserfrom = $db->like_escape($userfrom);
+        $dbregexuserfrom = $db->regexp_escape($userfrom);
+        $userfrom = '';
+        $userto = '';
+
+        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$dbuserfrom'");
         $cUsrFrm = $db->num_rows($query);
         $db->free_result($query);
 
-        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$userto'");
+        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$dbuserto'");
         $cUsrTo = $db->num_rows($query);
         $db->free_result($query);
 
@@ -50,75 +57,65 @@ class admin {
             return $lang['admin_rename_fail'];
         }
 
-        if (!$this->check_restricted($userto)) {
+        if (!$this->check_restricted($dbuserto)) {
             return $lang['restricted'];
         }
 
-        if (strlen($userto) < 3 || strlen($userto) > 32) {
-            return $lang['username_length_invalid'];
-        }
-
         @set_time_limit(180);
-        $db->query("UPDATE ".X_PREFIX."members SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."buddys SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."buddys SET buddyname='$userto' WHERE buddyname='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."favorites SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."forums SET moderator='$userto' WHERE moderator='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."logs SET username='$userto' WHERE username='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."posts SET author='$userto' WHERE author='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."threads SET author='$userto' WHERE author='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET msgto='$userto' WHERE msgto='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET msgfrom='$userto' WHERE msgfrom='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET owner='$userto' WHERE owner='$userfrom'");
-        $db->query("UPDATE ".X_PREFIX."whosonline SET username='$userto' WHERE username='$userfrom'");
+        $db->query("UPDATE ".X_PREFIX."members SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."buddys SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."buddys SET buddyname='$dbuserto' WHERE buddyname='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."favorites SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."forums SET moderator='$dbuserto' WHERE moderator='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."logs SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."posts SET author='$dbuserto' WHERE author='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."threads SET author='$dbuserto' WHERE author='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET msgto='$dbuserto' WHERE msgto='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET msgfrom='$dbuserto' WHERE msgfrom='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."u2u SET owner='$dbuserto' WHERE owner='$dbuserfrom'");
+        $db->query("UPDATE ".X_PREFIX."whosonline SET username='$dbuserto' WHERE username='$dbuserfrom'");
 
-        $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%$userfrom'");
+        $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
-            list($posttime, $lastauthor) = explode("|", $result['lastpost']);
-            if ($lastauthor == $userfrom) {
-                $newlastpost = $posttime . '|' . $userto;
-                $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid='".$result['tid']."'");
-            }
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($usr = $db->fetch_array($query)) {
-            $parts = explode(',', $usr['ignoreu2u']);
-            $index = array_search($userfrom, $parts);
-            $parts[$index] = $userto;
+            $parts = explode(',', $db->escape($usr['ignoreu2u']));
+            $index = array_search($dbuserfrom, $parts);
+            $parts[$index] = $dbuserto;
             $parts = implode(',', $parts);
-            $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='".$parts."' WHERE uid='".$usr['uid']."'");
+            $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='$parts' WHERE uid={$usr['uid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
-            $parts = explode(',', $list['moderator']);
-            $index = array_search($userfrom, $parts);
-            $parts[$index] = $userto;
+            $parts = explode(',', $db->escape($list['moderator']));
+            $index = array_search($dbuserfrom, $parts);
+            $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE ".X_PREFIX."forums SET moderator='".$parts."' WHERE fid='".$list['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET moderator='$parts' WHERE fid={$list['fid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$userfrom()*((,)|$)')");
+        $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
-            $parts = array_unique(array_map('trim', explode(',', $list['userlist'])));
-            $index = array_search($userfrom, $parts);
-            $parts[$index] = $userto;
+            $parts = array_unique(array_map('trim', explode(',', $db->escape($list['userlist']))));
+            $index = array_search($dbuserfrom, $parts);
+            $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE ".X_PREFIX."forums SET userlist='".$parts."' WHERE fid='".$list['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET userlist='$parts' WHERE fid={$list['fid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%$userfrom'");
+        $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
-            list($posttime, $lastauthor, $lastpid) = explode("|", $result['lastpost']);
-            if ($lastauthor == $userfrom) {
-                $newlastpost = $posttime . '|' . $userto.'|'.$lastpid;
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$newlastpost' WHERE fid='".$result['fid']."'");
-            }
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
         }
         $db->free_result($query);
 

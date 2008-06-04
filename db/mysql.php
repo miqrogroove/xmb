@@ -153,6 +153,14 @@ class dbstuff {
     function escape($rawstring) {
         return mysql_real_escape_string($rawstring, $this->link);
     }
+    
+    function like_escape($rawstring) {
+        return str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($rawstring, $this->link));
+    }
+    
+    function regexp_escape($rawstring) {
+        return mysql_real_escape_string(preg_quote($rawstring), $this->link);
+    }
 
     function query($sql, $overwriteErrorPerms=false) {
         $this->start_timer();
