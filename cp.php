@@ -1816,7 +1816,8 @@ if ($action == "ipban") {
 if ($action == "deleteposts") {
     $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
     $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
-    $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
+    //Critical: Do not alias tables in the next query.  MySQL 4.0 and MySQL 4.1 use mutually incompatible syntax.
+    $db->query("DELETE ".X_PREFIX."attachments, ".X_PREFIX."posts FROM ".X_PREFIX."posts LEFT JOIN ".X_PREFIX."attachments USING(pid) WHERE author='$member'");
     $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
     while($threads = $db->fetch_array($countquery)) {
         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
@@ -1825,6 +1826,7 @@ if ($action == "deleteposts") {
     while($threads = $db->fetch_array($countquery)) {
         if ($threads['postcount'] == 0) { //This will also delete thread redirectors where the redirect's author is $member
             $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='{$threads['tid']}'");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='{$threads['tid']}'");
         }
     }
 }
