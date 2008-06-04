@@ -192,56 +192,63 @@ switch($action) {
                     $offset = 0;
                     $start = 0;
                 } else {
-                    if ( $page < 1 ) {
+                    if ($page < 1) {
                         $page = 1;
                     }
+
                     $offset = ($page-1) * ($ppp);
                     $start = $offset;
                 }
 
-                $sql = "SELECT count(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+                $sql = "SELECT COUNT(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
 
                 if (!isset($srchfrom) Or $srchfrom == 0) {
-                    $srchfrom = time();
+                    $srchfrom = $onlinetime;
                     $srchfromold = 0;
                 } else {
                     $srchfromold = $srchfrom;
                 }
-                $ext = array();
 
-                $srchfrom = time() - (int) $srchfrom;
+                $ext = array();
+                $srchfrom = $onlinetime - (int) $srchfrom;
                 if (!empty($srchtxt)) {
                     $srchtxtsq = explode(' ', $srchtxt);
                     $sql .= ' AND (';
-                    foreach ($srchtxtsq as $stxt) {
+                    foreach($srchtxtsq as $stxt) {
                         $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
                         $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
                         $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
                     }
+
                     $sql .= implode(') AND (', $sqlsrch);
                     $sql .= ')';
                     $ext[] = 'srchtxt='.rawurlencode($srchtxt);
                 }
+
                 if ($srchuname != "") {
                     $sql .= " AND p.author='$srchuname'";
                     $ext[] = 'srchuname='.rawurlencode($rawsrchuname);
                 }
+
                 if (isset($srchfid)) {
                     if ($srchfid != "all" && $srchfid != "") {
                         $sql .= " AND p.fid='".(int)$srchfid."'";
                         $ext[] = 'srchfid='.((int) $srchfid);
                     }
                 }
+
                 if ($srchfrom) {
                     $sql .= " AND p.dateline >= '$srchfrom'";
                     $ext[] = 'srchfrom='.((int) $srchfromold);
                 }
+
                 $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start, $ppp";
                 if (!isset($page) || $page < 1) {
                     $pagenum = 2;
                 } else {
                     $pagenum = $page+1;
                 }
+
                 $querysrch = $db->query($sql);
                 $results = 0;
                 $results = $db->num_rows($querysrch);
@@ -250,10 +257,10 @@ switch($action) {
                 $searchresults = '';
 
                 $forumCache = array();
-                while ($post = $db->fetch_array($querysrch)) {
+                while($post = $db->fetch_array($querysrch)) {
                     $forumPerms = array();
 
-                    if(isset($forumCache[$post['fid']])) {
+                    if (isset($forumCache[$post['fid']])) {
                         $forumPerms = $forumCache[$post['fid']];
                     } else {
                         $forumPerms = checkForumPermissions($post);
@@ -282,7 +289,7 @@ switch($action) {
                                 $max = $msg_leng;
                                 $add_post = '';
                             } else {
-                                    $max = $position + $show_num;
+                                $max = $position + $show_num;
                                 $add_post = '...';
                             }
 
@@ -292,10 +299,11 @@ switch($action) {
 
                             $show = substr($message, $min, $max - $min);
                             $post['subject'] = stripslashes($post['subject']);
-                            foreach ($srchtxtsq as $stxt) {
+                            foreach($srchtxtsq as $stxt) {
                                 $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
                                 $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
                             }
+
                             $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
                             $post['subject'] = rawHTMLsubject($post['subject']);
 
@@ -304,21 +312,21 @@ switch($action) {
 
                             $poston = $date.' '.$lang['textat'].' '.$time;
                             $postby = $post['author'];
-
-                            eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
+                            eval('$searchresults .= "'.template('misc_search_results_row').'";');
                         }
                     }
                 }
             }
+
             if ($results == 0) {
-                eval("\$searchresults = \"".template("misc_search_results_none")."\";");
-            } elseif ($results == $ppp) {
+                eval('$searchresults = "'.template('misc_search_results_none').'";');
+            } else if ($results == $ppp) {
                 // create a string containing the stuff to search for
                 $ext = implode('&', $ext);
-                eval("\$nextlink = \"".template("misc_search_nextlink")."\";");
+                eval('$nextlink = "'.template('misc_search_nextlink').'";');
             }
 
-            eval("\$search = \"".template("misc_search_results")."\";");
+            eval('$search = "'.template('misc_search_results').'";');
             $misc = $search;
         }
         break;
@@ -341,7 +349,7 @@ switch($action) {
             $member = $db->fetch_array($query);
             $db->free_result($query);
 
-            $time = $onlinetime-86400;
+            $time = $onlinetime - 86400;
             if ($member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
             }
@@ -354,7 +362,7 @@ switch($action) {
             $newpass = '';
             mt_srand((double)microtime() * 1000000);
             $get = strlen($chars) - 1;
-            for ($i = 0; $i < 13; $i++) {
+            for($i = 0; $i < 13; $i++) {
                 $newpass .= $chars[mt_rand(0, $get)];
             }
             $newmd5pass = md5($newpass);
