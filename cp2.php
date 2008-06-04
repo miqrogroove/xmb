@@ -1229,20 +1229,20 @@ if ($action == "prune") {
         <table>
         <tr>
         <td>
-        <input type="checkbox" name="pruneBy[date][check]" value="1" checked="checked" />
+        <input type="checkbox" name="pruneByDate[check]" value="1" checked="checked" />
         </td>
         <td>
-        <select name="pruneBy[date][type]">
+        <select name="pruneByDate[type]">
         <option value="more"><?php echo $lang['prunemorethan']?></option>
         <option value="is"><?php echo $lang['pruneexactly']?></option>
         <option value="less"><?php echo $lang['prunelessthan']?></option>
         </select>
-        <input type="text" name="pruneBy[date][date]" value="100" /> <?php echo $lang['daysold']?>
+        <input type="text" name="pruneByDate[date]" value="100" /> <?php echo $lang['daysold']?>
         </td>
         </tr>
         <tr>
         <td>
-        <input type="checkbox" name="pruneBy[posts][check]" value="1" />
+        <input type="checkbox" name="pruneByPosts[check]" value="1" />
         </td>
         <td>
         <select name="pruneBy[posts][type]">
@@ -1250,7 +1250,7 @@ if ($action == "prune") {
         <option value="is"><?php echo $lang['pruneexactly']?></option>
         <option value="less"><?php echo $lang['prunelessthan']?></option>
         </select>
-        <input type="text" name="pruneBy[posts][posts]" value="10" /> <?php echo $lang['memposts']?>
+        <input type="text" name="pruneByPosts[posts]" value="10" /> <?php echo $lang['memposts']?>
         </td>
         </tr>
         </table>
@@ -1311,9 +1311,10 @@ if ($action == "prune") {
         </tr>
         <?php
     } else {
-        $pruneBy = formArray('pruneBy');
+        $pruneByDate = formArray('pruneByDate');
+        $pruneByPosts = formArray('pruneByPosts');
         $pruneFrom = postedVar('pruneFrom', '', FALSE, FALSE);
-        $pruneFromList = formArray('pruneFromList');
+        $pruneFromList = postedArray('pruneFromList', 'int');
         $pruneFromFid = postedVar('pruneFromFid', '', FALSE, FALSE);
         $pruneType = formArray('pruneType');
 
@@ -1325,7 +1326,9 @@ if ($action == "prune") {
             case 'list':
                 $fs = array();
                 foreach($pruneFromList as $fid) {
-                    $fs[] = (int) trim($fid);
+                    if ($fid > 0) {
+                        $fs[] = $fid;
+                    }
                 }
                 $fs = array_unique($fs);
                 if (count($fs) < 1) {
@@ -1337,7 +1340,9 @@ if ($action == "prune") {
                 $fs = array();
                 $fids = explode(',', $pruneFromFid);
                 foreach($fids as $fid) {
-                    $fs[] = (int) trim($fid);
+                    if ($fid > 0) {
+                        $fs[] = $fid;
+                    }
                 }
                 $fs = array_unique($fs);
                 if (count($fs) < 1) {
@@ -1350,8 +1355,8 @@ if ($action == "prune") {
         }
 
         $sign = '';
-        if (isset($pruneBy['posts']['check']) && $pruneBy['posts']['check'] == 1) {
-            switch($pruneBy['posts']['type']) {
+        if (isset($pruneByPosts['check']) && $pruneByPosts['check'] == "1") {
+            switch($pruneByPosts['type']) {
                 case 'less':
                     $sign = '<';
                     break;
@@ -1363,20 +1368,20 @@ if ($action == "prune") {
                     $sign = '>';
                     break;
             }
-            $queryWhere[] = 'replies '.$sign.' '.(int) ($pruneBy['posts']['posts']-1);
+            $queryWhere[] = 'replies '.$sign.' '.(int) ($pruneByPosts['posts']-1);
         }
 
-        if (isset($pruneBy['date']['check']) && $pruneBy['date']['check'] == 1) {
-            switch($pruneBy['date']['type']) {
+        if (isset($pruneByDate['check']) && $pruneByDate['check'] == 1) {
+            switch($pruneByDate['type']) {
                 case 'less':
-                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*$pruneBy['date']['date']));
+                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*$pruneByDate['date']));
                     break;
                 case 'is':
-                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*($pruneBy['date']['date']-1))).' AND lastpost <= '.(time()-(24*3600*($pruneBy['date']['date'])));
+                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*($pruneByDate['date']-1))).' AND lastpost <= '.(time()-(24*3600*($pruneByDate['date'])));
                     break;
                 case 'more':
                 default:
-                    $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneBy['date']['date']));
+                    $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneByDate['date']));
                     break;
             }
         } elseif ($sign == '') {
