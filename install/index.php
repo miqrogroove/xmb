@@ -29,7 +29,7 @@
 // Script Parameters
 define('X_VERSION', '1.9.10');
 define('X_VERSION_EXT', '1.9.10 Karl');
-define('MYSQL_MIN_VER', '4.0.12');
+define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(

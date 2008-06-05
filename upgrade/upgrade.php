@@ -29,7 +29,7 @@
 // Script Parameters
 define('XMB_V', '1.9.10');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_9.xmb');
-define('MYSQL_MIN_VER', '4.0.12');
+define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(

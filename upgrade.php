@@ -52,7 +52,7 @@ if (!defined('X_SADMIN') Or !X_SADMIN) {
 }
 
 //Check Server Version
-define('MYSQL_MIN_VER', '4.0.12');
+define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $current = explode('.', phpversion());
 $min = explode('.', PHP_MIN_VER);
