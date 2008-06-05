@@ -487,7 +487,7 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            if (isset($forums['type']) && $forums['type'] == 'sub') {
+            if ($forums['type'] == 'sub') {
                 updateforumcount($fup['fid']);
             }
             updateforumcount($fid);
@@ -585,30 +585,21 @@ switch($action) {
                 error($lang['cannotmergesamethread'], false);
             }
 
-            $queryadd1 = $db->query("SELECT replies, fid FROM ".X_PREFIX."threads WHERE tid='$othertid'");
+            $queryadd1 = $db->query("SELECT t.replies, t.fid, f.type, f.fup FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING(fid) WHERE t.tid='$othertid'");
 
             if ($db->num_rows($queryadd1) == 0) {
                 $db->free_result($queryadd1);
                 error($lang['tidnoexist'], false);
             }
-            $replyadd = $db->result($queryadd1, 0, 'replies');
-            $otherfid = $db->result($queryadd1, 0, 'fid');
+            $otherthread = $db->fetch_array($queryadd1);
             $db->free_result($queryadd1);
-
-            $queryadd2 = $db->query("SELECT replies FROM ".X_PREFIX."threads WHERE tid='$tid'");
-            if ($db->num_rows($queryadd2) == 0) {
-                error($lang['textnothread'], FALSE);
-            }
-            $replyadd2 = $db->result($queryadd2, 0);
-            $db->free_result($queryadd2);
-            $replyadd++;
-            $replyadd = $replyadd + $replyadd2;
+            $replyadd = $otherthread['replies'];
+            $otherfid = $otherthread['fid'];
 
             $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
             $db->query("UPDATE ".X_PREFIX."attachments SET tid='$tid' WHERE tid='$othertid'");
 
             $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$othertid'");
-            $db->query("UPDATE ".X_PREFIX."forums SET threads = threads-1 WHERE fid='$otherfid'");
 
             $query = $db->query("SELECT * FROM ".X_PREFIX."favorites WHERE tid='$othertid' OR tid='$tid'");
             if ($db->num_rows($query) == 2) {
@@ -624,9 +615,20 @@ switch($action) {
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0, 1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($lastpost['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+'$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($lastpost['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
+
+            if ($forums['type'] == 'sub') {
+                updateforumcount($fup['fid']);
+            }
+            if ($otherthread['type'] == 'sub') {
+                if ($otherthread['fup'] != $fup['fid']) {
+                    updateforumcount($otherthread['fup']);
+                }
+            }
+            updateforumcount($fid);
+            updateforumcount($otherfid);
 
             message($lang['mergethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
         }
@@ -721,15 +723,10 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]' WHERE tid='$tid'");
 
-            if (isset($forums['type']) && $forums['type'] == 'sub') {
-                $query= $db->query("SELECT fup FROM ".X_PREFIX."forums WHERE fid=$fid LIMIT 1");
-                $fup = $db->fetch_array($query);
-                $db->free_result($query);
-                updateforumcount($fid);
-                updateforumcount($fup['fup']);
-            } else {
-                updateforumcount($fid);
+            if ($forums['type'] == 'sub') {
+                updateforumcount($fup['fid']);
             }
+            updateforumcount($fid);
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
@@ -748,6 +745,14 @@ switch($action) {
             }
 
             $newfid = getRequestInt('newfid');
+            
+            $query = $db->query("SELECT type, fup FROM ".X_PREFIX."forums WHERE fid=$newfid");
+            if ($db->num_rows($query) != 1) {
+                error($lang['textnoforum'], FALSE);
+            }
+            $otherforum = $db->fetch_array($query);
+            $db->free_result($query);
+
             if (!$mod->statuscheck($newfid)) {
                 error($lang['notpermitted'], false);
             }
@@ -797,6 +802,11 @@ switch($action) {
                 }
 
                 $mod->log($xmbuser, $action, $fid, $tid);
+                
+                if ($otherforum['type'] == 'sub') {
+                    updateforumcount($otherforum['fup']);
+                }
+                updateforumcount($newfid);
             }
 
             message($lang['copythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
