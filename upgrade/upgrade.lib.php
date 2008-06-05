@@ -55,7 +55,7 @@ class Upgrade {
         'vote_desc',
         'vote_results',
         'vote_voters'
-    );
+   );
 
     function Upgrade(&$db, $file='', $tablepre) {
         if ($file == '') {
@@ -133,7 +133,7 @@ class Upgrade {
                 // we have a column
                 if (strpos($data, '`') === 0) {
                     // we have a col for sure
-                    preg_match_all('#`([A-Za-z0-9_]+)` (VARCHAR|TINYINT|TEXT|DATE|SMALLINT|MEDIUMINT|INT|BIGINT|FLOAT|DOUBLE|DECIMAL|DATETIME|TIMESTAMP|TIME|YEAR|CHAR|TINYBLOB|TINYTEXT|BLOB|MEDIUMBLOB|MEDIUMTEXT|LONGBLOB|LONGTEXT|ENUM|SET){1}(\([\d]+\)|\([\'\d\w,\W]+\))?[\s]?(UNSIGNED ZEROFILL|UNSIGNED|BINARY)?[\s]?(NOT NULL|NULL)?[\s]?(default \'?(.*)\'?)?(auto_increment)?[\s]?(PRIMARY KEY|KEY)?#i', $data, $d);
+                    preg_match_all('#`([A-Za-z0-9_]+)` (VARCHAR|TINYINT|TEXT|DATE|SMALLINT|MEDIUMINT|INT|BIGINT|FLOAT|DOUBLE|DECIMAL|DATETIME|TIMESTAMP|TIME|YEAR|CHAR|TINYBLOB|TINYTEXT|BLOB|MEDIUMBLOB|MEDIUMTEXT|LONGBLOB|LONGTEXT|ENUM|SET) {1}(\([\d]+\)|\([\'\d\w,\W]+\))?[\s]?(UNSIGNED ZEROFILL|UNSIGNED|BINARY)?[\s]?(NOT NULL|NULL)?[\s]?(default \'?(.*)\'?)?(auto_increment)?[\s]?(PRIMARY KEY|KEY)?#i', $data, $d);
                     /*
                     [1][0] = name
                     [2][0] = type
@@ -778,8 +778,8 @@ class Upgrade {
             KEY `folder` (`folder`),
             KEY `readstatus` (`readstatus`),
             KEY `owner` (`owner`)
-            ) TYPE=MyISAM"
-        );
+           ) TYPE=MyISAM"
+       );
 
         $query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
         while($u2u = $this->db->fetch_array($query)) {
@@ -917,7 +917,7 @@ class Upgrade {
 
         $baselang = $lang;
 
-        switch ($v) {
+        switch($v) {
             case 0:
                 // store
                 $cache = array();
@@ -1028,7 +1028,7 @@ class Upgrade {
                     while($forum = $this->db->fetch_array($q)) {
                         // check if we need to change it first
                         $parts = explode('|', $forum['postperm']);
-                        if(count($parts) == 1) {
+                        if (count($parts) == 1) {
                             // no need to upgrade these; new format in use [we hope]
                             continue;
                         }
@@ -1079,13 +1079,13 @@ class Upgrade {
                                 $newFormat[3] = 1;
                                 break;
                         }
-                        if($guestposting == 'yes' || $guestposting == 'on') {
+                        if ($guestposting == 'yes' || $guestposting == 'on') {
                             $newFormat[0] |= 32;
                             $newFormat[1] |= 32;
                             $newFormat[2] |= 32;
                         }
 
-                        if($polls == 'yes' || $polls == 'on') {
+                        if ($polls == 'yes' || $polls == 'on') {
                             $newFormat[0] = $newFormat[1];
                         } else {
                             $newFormat[0] = 0;
@@ -1098,7 +1098,7 @@ class Upgrade {
 
             case 1:
                 // restore
-                if(isset($cache) && count($cache) > 0) {
+                if (isset($cache) && count($cache) > 0) {
                     foreach($cache as $fid=>$format) {
                         $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
                     }

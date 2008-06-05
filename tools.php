@@ -227,7 +227,7 @@ switch($action) {
 
             $lpquery = $db->query($newsql);
 
-            while ($thread = $db->fetch_array($lpquery)) {
+            while($thread = $db->fetch_array($lpquery)) {
                 if ($thread['pid'] !== NULL) {
                     $lp = $thread['dateline'].'|'.$thread['author'].'|'.$thread['pid'];
                 } else {
@@ -241,7 +241,7 @@ switch($action) {
             }
             $db->free_result($lpquery);
         }
-        
+
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr></table></table>';
         end_time();

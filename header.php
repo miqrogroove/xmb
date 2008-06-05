@@ -240,7 +240,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 
 //Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
 if ($ipcheck == 'on') {
-    if (!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
+    if (!eregi("^([0-9]{1,3}\.) {3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:) {5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
         exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
     }
 }
@@ -281,13 +281,13 @@ $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 $url_check = Array('status=', 'xmbuser=', 'xmbpw=', '%3cscript');
 foreach($url_check as $name) {
     if (strpos(strtolower($url), $name)) {
-    	$auditaction = $_SERVER['REQUEST_URI'];
-		$aapos = strpos($auditaction, "?");
-		if ($aapos !== false) {
-		    $auditaction = substr($auditaction, $aapos + 1);
-		}
-		$auditaction = $db->escape("$onlineip|#|ATTACK: $auditaction");
-		audit($xmbuser, $auditaction, 0, 0);
+        $auditaction = $_SERVER['REQUEST_URI'];
+        $aapos = strpos($auditaction, "?");
+        if ($aapos !== false) {
+            $auditaction = substr($auditaction, $aapos + 1);
+        }
+        $auditaction = $db->escape("$onlineip|#|ATTACK: $auditaction");
+        audit($xmbuser, $auditaction, 0, 0);
         exit("Attack logged.");
     }
 }
@@ -304,7 +304,7 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
 } else {
     $array = parse_url($full_url);
-    if (substr($array['host'], 0, 9) == 'localhost' || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
+    if (substr($array['host'], 0, 9) == 'localhost' || preg_match("/^([0-9]{1,3}\.) {3}[0-9]{1,3}$/i", $array['host'])) {
         $cookiedomain  = '';
     } else {
         $cookiedomain = str_replace('www', '', $array['host']);
@@ -322,11 +322,11 @@ $xmblva = getInt('xmblva', 'c'); // Last visit
 $xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
 
 if ($xmblvb > 0) {
-    $thetime = $xmblvb;		// lvb will expire in 600 seconds, so if it's there, we're in a current session
+    $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're in a current session
 } else if ($xmblva > 0) {
-    $thetime = $xmblva;		// Not currently logged in, so let's get the time from the last visit
+    $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit
 } else {
-    $thetime = $onlinetime;	// no cookie at all, so this is your first visit
+    $thetime = $onlinetime; // no cookie at all, so this is your first visit
 }
 
 put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
@@ -621,14 +621,14 @@ $links = implode(' &nbsp; ', $links);
 // Show all plugins
 $pluglinks = array();
 foreach($plugname as $plugnum => $item) {
-    if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum]) ) {
-        if (trim($plugimg[$plugnum]) != '' ) {
+    if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum])) {
+        if (trim($plugimg[$plugnum]) != '') {
             $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" />&nbsp;';
         } else {
             $img = '';
         }
 
-        if ($plugadmin[$plugnum] != true || X_ADMIN ) {
+        if ($plugadmin[$plugnum] != true || X_ADMIN) {
             $pluglinks[] = $img.'<a href="'.$plugurl[$plugnum].'"><font class="navtd">'.$plugname[$plugnum].'</font></a>&nbsp;';
         }
     }

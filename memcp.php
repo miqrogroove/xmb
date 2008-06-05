@@ -295,7 +295,7 @@ if ($action == 'profile') {
         $month = intval(substr($member['bday'], 5, 2));
         $year = substr($member['bday'], 0, 4);
 
-        for ($i = 0; $i <= 12; $i++) {
+        for($i = 0; $i <= 12; $i++) {
             $sel[$i] = '';
         }
         $sel[$month] = $selHTML;
@@ -481,18 +481,18 @@ if ($action == 'profile') {
         if (ini_get('allow_url_fopen')) {
             if ($max_size[0] > 0 && $max_size[1] > 0) {
                 $size = @getimagesize($_POST['newavatar']);
-                if ($size === false ) {
+                if ($size === false) {
                     $avatar = '';
                 } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
                 }
             }
-        } elseif ($newavatarcheck == "no") {
+        } else if ($newavatarcheck == "no") {
             $avatar = '';
         }
 
-        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '' ) {
-            if ($_POST['newpassword'] != $_POST['newpasswordcf'] ) {
+        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '') {
+            if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
                 error($lang['pwnomatch'], false);
             }
 

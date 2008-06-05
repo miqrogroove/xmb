@@ -91,6 +91,7 @@ class socket_SMTP {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -108,6 +109,7 @@ class socket_SMTP {
                 break;
             }
         }
+
         return $lines;
     }
 
@@ -157,6 +159,7 @@ class socket_SMTP {
         if (!$this->isOk($this->get())) {
             return false;
         }
+
         return true;
     }
 

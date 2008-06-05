@@ -33,7 +33,7 @@ if (!defined('IN_CODE')) {
 class admin {
     function rename_user($userfrom, $userto) {
         global $db, $lang, $self;
-        
+
         if (strlen($userto) < 3 || strlen($userto) > 32) {
             return $lang['username_length_invalid'];
         }
@@ -271,6 +271,7 @@ class admin {
             }
         }
         $db->free_result($query);
+
         return $nameokay;
     }
 }

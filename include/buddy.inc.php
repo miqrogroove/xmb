@@ -37,9 +37,9 @@ function blistmsg($message, $redirect='', $exit=false) {
     if ($redirect != '') {
         redirect($redirect, 2);
     }
-    
+
     eval('echo stripslashes("'.template('buddylist_message').'");');
-    
+
     if ($exit) {
         exit();
     }

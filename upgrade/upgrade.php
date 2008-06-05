@@ -33,36 +33,36 @@ define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
-'buddy.php',
-'config.php',
-'cp.php',
-'cp2.php',
-'editprofile.php',
-'lang/English.lang.php',
-'faq.php',
-'forumdisplay.php',
-'header.php',
-'index.php',
-'member.php',
-'memcp.php',
-'misc.php',
-'post.php',
-'include/admin.inc.php',
-'include/buddy.inc.php',
-'include/captcha.inc.php',
-'include/functions.inc.php',
-'include/global.inc.php',
-'include/spelling.inc.php',
-'include/smtp.inc.php',
-'include/topicadmin.inc.php',
-'include/u2u.inc.php',
-'templates.xmb',
-'today.php',
-'tools.php',
-'topicadmin.php',
-'u2u.php',
-'viewthread.php',
-'vtmisc.php'
+    'buddy.php',
+    'config.php',
+    'cp.php',
+    'cp2.php',
+    'editprofile.php',
+    'lang/English.lang.php',
+    'faq.php',
+    'forumdisplay.php',
+    'header.php',
+    'index.php',
+    'member.php',
+    'memcp.php',
+    'misc.php',
+    'post.php',
+    'include/admin.inc.php',
+    'include/buddy.inc.php',
+    'include/captcha.inc.php',
+    'include/functions.inc.php',
+    'include/global.inc.php',
+    'include/spelling.inc.php',
+    'include/smtp.inc.php',
+    'include/topicadmin.inc.php',
+    'include/u2u.inc.php',
+    'templates.xmb',
+    'today.php',
+    'tools.php',
+    'topicadmin.php',
+    'u2u.php',
+    'viewthread.php',
+    'vtmisc.php'
 );
 
 function print_header() {
@@ -989,7 +989,7 @@ Public License instead of this License.  But first, please read
             'tablepre' => 'TABLEPRE',
             'full_url' => 'FULLURL',
             'ipcheck' => 'IPCHECK',
-        );
+       );
         while(list($key, $value) = each ($config_array)) {
             if (${$key} == $value) {
                 show_result(X_INST_ERR);
@@ -1002,7 +1002,7 @@ Public License instead of this License.  But first, please read
         // Increase the time limit for long running queries to five minutes. This should be enough, but if you need
         // more, make it more.
         show_act('Extending script timeout to 300 seconds.');
-        if (!ini_get('safe_mode')){
+        if (!ini_get('safe_mode')) {
             set_time_limit(300);
             show_result(X_INST_OK);
         } else {
@@ -1199,7 +1199,7 @@ Public License instead of this License.  But first, please read
         } else {
             show_result(X_INST_OK);
         }
-        
+
         show_act("Check and remove sid");
         $u->removeSid();
         show_result(X_INST_OK);

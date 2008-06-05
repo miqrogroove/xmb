@@ -3753,7 +3753,7 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textbumpthread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textbumpthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3776,7 +3776,7 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[copythread]:</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[copythread]:</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3802,7 +3802,7 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textdeletethread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textdeletethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3824,7 +3824,7 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textemptythread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textemptythread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3847,7 +3847,7 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmergethread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textmergethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3874,7 +3874,7 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textmovemethod1]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textmovemethod1]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3909,7 +3909,7 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textclosethread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textclosethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3931,7 +3931,7 @@ $multipage
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textsplitthread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textsplitthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -3974,7 +3974,7 @@ $post[message]
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textprunethread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textprunethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -4007,7 +4007,7 @@ $posts
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[texttopthread]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[texttopthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[loggedinuser]</td>
@@ -4825,7 +4825,7 @@ $lang[verificationnote]
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class ="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" valign="top" width="19%">$lang[textreason]</td>

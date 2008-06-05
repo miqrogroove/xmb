@@ -174,11 +174,11 @@ switch($action) {
                 error($lang['nosearchq']);
             }
 
-            if (strlen($srchuname) < 3 ) {
+            if (strlen($srchuname) < 3) {
                 $srchuname = '';
             }
 
-            if ($searchsubmit || $page ) {
+            if ($searchsubmit || $page) {
                 validatePpp();
 
                 $searchresults = '';

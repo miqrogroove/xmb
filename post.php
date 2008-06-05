@@ -77,7 +77,7 @@ if ($action == 'edit') {
     $db->free_result($query);
     $fid = $forum['fid'];
     $tid = $forum['tid'];
-} elseif ($action == 'reply') {
+} else if ($action == 'reply') {
     $tid = getRequestInt('tid');
     $repquote = getInt('repquote');
     $query = $db->query("SELECT f.* FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid) WHERE t.tid=$tid");
@@ -87,7 +87,7 @@ if ($action == 'edit') {
     $forum = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $forum['fid'];
-} elseif ($action == 'newthread') {
+} else if ($action == 'newthread') {
     $fid = getRequestInt('fid');
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($db->num_rows($query) != 1) {
@@ -139,26 +139,26 @@ validatePpp();
 
 // check permissions on this forum (and top forum if it's a sub?)
 $perms = checkForumPermissions($forum);
-if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
 // check posting permissions specifically
-if($action == 'newthread') {
+if ($action == 'newthread') {
     if (!$perms[X_PERMS_THREAD]) {
         error($lang['textnoaction']);
-    } else if(isset($poll) && $poll == 'yes') {
-        if(!$perms[X_PERMS_POLL]) {
+    } else if (isset($poll) && $poll == 'yes') {
+        if (!$perms[X_PERMS_POLL]) {
             error($lang['textnoaction']);
         }
     }
-} elseif($action == 'reply') {
-    if(!$perms[X_PERMS_REPLY]) {
+} else if ($action == 'reply') {
+    if (!$perms[X_PERMS_REPLY]) {
         error($lang['textnoaction']);
     }
-} elseif($action == 'edit') {
+} else if ($action == 'edit') {
     // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
 } else {
     error($lang['textnoaction']);
@@ -172,14 +172,14 @@ if ($forum['type'] == 'sub') {
 
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
+    if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
-    } elseif($fup['fup'] > 0) {
+    } else if ($fup['fup'] > 0) {
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+} else if ($forum['fup'] > 0) { // 'forum' in a 'group'
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
@@ -389,7 +389,7 @@ switch($action) {
                         if ($self['status'] == "Banned") {
                             softerror($lang['bannedmessage']);
                             $replyvalid = FALSE;
-                        } elseif ($self['ban'] == "posts" || $self['ban'] == "both") {
+                        } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
                             softerror($lang['textbanfrompost']);
                             $replyvalid = FALSE;
                         } else {
@@ -399,7 +399,7 @@ switch($action) {
                         softerror($lang['textpw1']);
                         $replyvalid = FALSE;
                     }
-                } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = $db->escape($imghash);
@@ -542,7 +542,7 @@ switch($action) {
                 $quotefid = $thaquote['fid'];
 
                 $quoteperms = checkForumPermissions($thaquote);
-                if($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_USERLIST]) {
+                if ($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_USERLIST]) {
                     $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
                 }
             }
@@ -609,7 +609,7 @@ switch($action) {
                         if ($self['status'] == "Banned") {
                             softerror($lang['bannedmessage']);
                             $topicvalid = FALSE;
-                        } elseif ($self['ban'] == "posts" || $self['ban'] == "both") {
+                        } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
                             softerror($lang['textbanfrompost']);
                             $topicvalid = FALSE;
                         } else {
@@ -619,7 +619,7 @@ switch($action) {
                         softerror($lang['textpw1']);
                         $topicvalid = FALSE;
                     }
-                } elseif ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = $db->escape($imghash);
@@ -777,7 +777,7 @@ switch($action) {
             }
 
             if (isset($poll) && $poll == 'yes' && $perms[X_PERMS_POLL]) {
-                if (!isset($pollanswers)){
+                if (!isset($pollanswers)) {
                     $pollanswers = '';
                 }
                 eval('echo "'.template('post_newpoll').'";');
@@ -988,7 +988,7 @@ switch($action) {
             }
             eval('echo "'.template('post_edit').'";');
         }
-        
+
         break;
 
     default:

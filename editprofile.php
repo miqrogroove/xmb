@@ -82,7 +82,7 @@ if (noSubmit('editsubmit')) {
     }
 
     $invchecked = '';
-    if ($member['invisible'] == 1 ) {
+    if ($member['invisible'] == 1) {
         $invchecked = $cheHTML;
     }
 
@@ -113,7 +113,7 @@ if (noSubmit('editsubmit')) {
     $month = intval(substr($member['bday'], 5, 2));
     $year = substr($member['bday'], 0, 4);
 
-    for ($i = 0; $i <= 12; $i++) {
+    for($i = 0; $i <= 12; $i++) {
         $sel[$i] = '';
     }
     $sel[$month] = $selHTML;
@@ -172,7 +172,7 @@ if (noSubmit('editsubmit')) {
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
     $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
-    
+
     $userrecode = recodeOut($member['username']);
 
     eval('echo "'.template('admintool_editprofile').'";');
@@ -237,7 +237,7 @@ if (noSubmit('editsubmit')) {
                 error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
             }
         }
-    } elseif ($newavatarcheck == "no") {
+    } else if ($newavatarcheck == "no") {
         $avatar = '';
     }
 

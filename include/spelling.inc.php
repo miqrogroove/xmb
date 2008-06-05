@@ -32,8 +32,8 @@ if (!defined('IN_CODE')) {
 
 class spelling {
     var $language = '';
-    var $link = 0;
-    var $mode = 0;
+    var $link     = 0;
+    var $mode     = 0;
 
     function spelling($language='en', $mode=PSPELL_NORMAL) {
         global $charset;

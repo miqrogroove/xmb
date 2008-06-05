@@ -56,7 +56,7 @@ class dbstuff {
             $this->link = @mysql_connect($dbhost, $dbuser, $dbpw);
         }
 
-        if ( $this->link == false ) {
+        if ($this->link == false) {
             echo '<h3>Database connection error!</h3>';
             echo 'A connection to the Database could not be established.<br />';
             echo 'Please check your username, password, database name and host.<br />';
@@ -142,22 +142,22 @@ class dbstuff {
                 $error = mysql_error($this->link);
                 $errno = mysql_errno($this->link);
             }
-    		
-			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+
+            echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
         } else {
-    		echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
-    	}
-    	exit;
+            echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
+        }
+        exit;
     }
 
     function escape($rawstring) {
         return mysql_real_escape_string($rawstring, $this->link);
     }
-    
+
     function like_escape($rawstring) {
         return str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($rawstring, $this->link));
     }
-    
+
     function regexp_escape($rawstring) {
         return mysql_real_escape_string(preg_quote($rawstring), $this->link);
     }
@@ -165,9 +165,9 @@ class dbstuff {
     function query($sql, $overwriteErrorPerms=false) {
         $this->start_timer();
         $query = mysql_query($sql, $this->link);
-		if ( $query == false ) {
-			$this->panic($sql);
-		}
+        if ($query == false) {
+            $this->panic($sql);
+        }
         $this->querynum++;
         $this->querylist[] = $sql;
         $this->querytimes[] = $this->stop_timer();
@@ -177,8 +177,8 @@ class dbstuff {
     function unbuffered_query($sql) {
         $this->start_timer();
         $query = mysql_unbuffered_query($sql, $this->link);
-        if ( $query == false ) {
-        	$this->panic($sql);
+        if ($query == false) {
+            $this->panic($sql);
         }
         $this->querynum++;
         $this->querylist[] = $sql;
@@ -245,6 +245,7 @@ class dbstuff {
         return $taken;
     }
 }
+
 define('SQL_NUM', MYSQL_NUM);
 define('SQL_BOTH', MYSQL_BOTH);
 define('SQL_ASSOC', MYSQL_ASSOC);

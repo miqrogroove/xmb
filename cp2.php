@@ -253,7 +253,7 @@ if ($action == 'themes') {
 
             if ($themeinfo['themeid'] == $SETTINGS['theme']) {
                 $members = ($themeMem[$themeid]+$themeMem[0]);
-            } else{
+            } else {
                 $members = $themeMem[$themeid];
             }
 
@@ -1166,7 +1166,7 @@ if ($action == "newsletter") {
 
         if ($sendvia == "u2u") {
             while($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus ) VALUES ('".addslashes($memnews['username'])."', '$xmbuser', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".addslashes($memnews['username'])."', '$xmbuser', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $newssubject = stripslashes(stripslashes($newssubject));
@@ -1384,7 +1384,7 @@ if ($action == "prune") {
                     $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneByDate['date']));
                     break;
             }
-        } elseif ($sign == '') {
+        } else if ($sign == '') {
             $queryWhere[] = '1=0'; //Neither 'prune by' option was set, prune should abort.
         }
 
@@ -1836,7 +1836,7 @@ if ($action == "attachments") {
 
     if (onSubmit('deletesubmit')) {
         $filelist = '';
-        foreach ($_POST as $postedname => $rawvalue) {
+        foreach($_POST as $postedname => $rawvalue) {
             if (substr($postedname, 0, 8) == 'filename' And is_numeric($fileaid = substr($postedname, 8))) {
                 $filelist .= $fileaid.', ';
             }

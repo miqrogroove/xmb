@@ -97,9 +97,9 @@ if (($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'
 
 // Check for authorization to be here in the first place
 $perms = checkForumPermissions($forums);
-if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
@@ -111,15 +111,15 @@ if ($forums['type'] == 'sub') {
 
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+    if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } elseif($fup['fup'] > 0) {
+    } else if ($fup['fup'] > 0) {
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-} elseif ($forums['fup'] > 0) { // 'forum' in a 'group'
+} else if ($forums['fup'] > 0) { // 'forum' in a 'group'
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forums['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
@@ -295,7 +295,7 @@ switch($action) {
             }
             $movetorow = $db->fetch_array($query);
 
-            if($movetorow['type'] == 'group') {
+            if ($movetorow['type'] == 'group') {
                 error($lang['errormovingthreads'], FALSE);
             }
 
@@ -308,7 +308,7 @@ switch($action) {
                     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
                     $info = $db->fetch_array($query);
                     $db->free_result($query);
-                    
+
                     $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape($info['subject'])."', '', '".$db->escape($info['lastpost'])."', 0, 0, '".$db->escape($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
                     $ntid = $db->insert_id();
 
@@ -341,7 +341,7 @@ switch($action) {
             if (!is_array($tid)) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
-                	$db->free_result($query);
+                    $db->free_result($query);
                     error($lang['textnothread'], FALSE);
                 }
                 $topped = $db->result($query, 0);
@@ -359,7 +359,7 @@ switch($action) {
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
-                	$db->free_result($query);
+                    $db->free_result($query);
                     error($lang['textnothread'], FALSE);
                 }
                 $topped = $db->result($query, 0);
@@ -405,7 +405,7 @@ switch($action) {
             $db->free_result($query);
             if ($result) {
                 $buttontext = $lang['textunbanip'];
-                for ($i=1; $i<=4; ++$i) {
+                for($i=1; $i<=4; ++$i) {
                     $j = "ip$i";
                     if ($result[$j] == -1) {
                         $result[$j] = "*";
@@ -425,7 +425,7 @@ switch($action) {
                 echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
             } else {
                 $buttontext = $lang['textbanip'];
-                for ($i=1; $i<=4; ++$i) {
+                for($i=1; $i<=4; ++$i) {
                     $j = $i - 1;
                     echo "<input type=\"hidden\" name=\"newip$i\" value=\"$ip[$j]\" />";
                 }
@@ -473,7 +473,7 @@ switch($action) {
                 if ($db->num_rows($query) == 1) {
                     $pid = $db->result($query, 0);
                     $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
-                    while ($result = $db->fetch_array($query)) {
+                    while($result = $db->fetch_array($query)) {
                         $dbauthor = $db->escape($result['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                     }
@@ -581,7 +581,7 @@ switch($action) {
         } else {
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
-            } elseif ($tid == $othertid) {
+            } else if ($tid == $othertid) {
                 error($lang['cannotmergesamethread'], false);
             }
 
@@ -617,7 +617,7 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."favorites SET tid='$tid' WHERE tid='$othertid'");
             }
             $db->free_result($query);
-            
+
             $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid='$tid' OR tid='$othertid' ORDER BY pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);
             $db->free_result($query);
@@ -751,7 +751,7 @@ switch($action) {
             if (!$mod->statuscheck($newfid)) {
                 error($lang['notpermitted'], false);
             }
-            
+
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'"));
@@ -770,7 +770,7 @@ switch($action) {
                 $values  = "'".implode("', '", $vals)."'";
 
                 $db->query("INSERT INTO ".X_PREFIX."threads ($columns) VALUES ($values)");
-                
+
                 $newtid = $db->insert_id();
 
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid ASC");

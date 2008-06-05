@@ -105,6 +105,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         $self['password'] = '';
     }
     $db->free_result($query);
+
     $xmbuserinput = '';
     $xmbpwinput = '';
 
@@ -113,10 +114,10 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
     if ($xmbuser == '') {
         $self = array();
         $role['sadmin'] = false;
-        $role['admin'] = false;
-        $role['smod'] = false;
-        $role['mod'] = false;
-        $role['staff'] = false;
+        $role['admin']  = false;
+        $role['smod']   = false;
+        $role['mod']    = false;
+        $role['staff']  = false;
         if (!defined('X_GUEST')) {
             define('X_MEMBER', false);
             define('X_GUEST', true);
@@ -126,44 +127,46 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
             define('X_MEMBER', true);
             define('X_GUEST', false);
         }
+
         switch($self['status']) {
             case 'Super Administrator':
                 $role['sadmin'] = true;
-                $role['admin'] = true;
-                $role['smod'] = true;
-                $role['mod'] = true;
-                $role['staff'] = true;
+                $role['admin']  = true;
+                $role['smod']   = true;
+                $role['mod']    = true;
+                $role['staff']  = true;
                 break;
             case 'Administrator':
                 $role['sadmin'] = false;
-                $role['admin'] = true;
-                $role['smod'] = true;
-                $role['mod'] = true;
-                $role['staff'] = true;
+                $role['admin']  = true;
+                $role['smod']   = true;
+                $role['mod']    = true;
+                $role['staff']  = true;
                 break;
             case 'Super Moderator':
                 $role['sadmin'] = false;
-                $role['admin'] = false;
-                $role['smod'] = true;
-                $role['mod'] = true;
-                $role['staff'] = true;
+                $role['admin']  = false;
+                $role['smod']   = true;
+                $role['mod']    = true;
+                $role['staff']  = true;
                 break;
             case 'Moderator':
                 $role['sadmin'] = false;
-                $role['admin'] = false;
-                $role['smod'] = false;
-                $role['mod'] = true;
-                $role['staff'] = true;
+                $role['admin']  = false;
+                $role['smod']   = false;
+                $role['mod']    = true;
+                $role['staff']  = true;
                 break;
             default:
                 $role['sadmin'] = false;
-                $role['admin'] = false;
-                $role['smod'] = false;
-                $role['mod'] = false;
-                $role['staff'] = false;
+                $role['admin']  = false;
+                $role['smod']   = false;
+                $role['mod']    = false;
+                $role['staff']  = false;
                 break;
         }
     }
+
     if (!defined('X_STAFF')) {
         define('X_SADMIN', $role['sadmin']);
         define('X_ADMIN', $role['admin']);
@@ -273,6 +276,7 @@ function censor($txt) {
             }
         }
     }
+
     return $txt;
 }
 
@@ -285,6 +289,7 @@ function smile($txt) {
             $txt = str_replace($code, '<img src="./'.$smdir.'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
         }
     }
+
     return $txt;
 }
 
@@ -301,7 +306,9 @@ function createAbsFSizeFromRel($rel) {
             $cachedFs[1] = 'px';
         }
     }
+
     $o = ($rel+$cachedFs[0]).$cachedFs[1];
+
     return $o;
 }
 
@@ -351,7 +358,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             9 => '[list=1]',
             10 => '[list=a]',
             11 => '[list=A]',
-        );
+       );
 
         $end = array(
             0 => '[/b]',
@@ -366,7 +373,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             9 => '[/list=1]',
             10 => '[/list=a]',
             11 => '[/list=A]',
-        );
+       );
 
         foreach($begin as $key=>$value) {
             $check = substr_count($message, $value) - substr_count($message, $end[$key]);
@@ -426,7 +433,9 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = wordwrap($message, 150, "\n", 1);
         $message = preg_replace('#(\[/?.*)\n(.*\])#mi', '\\1\\2', $message);
     }
+
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
+
     return $message;
 }
 
@@ -460,7 +469,7 @@ function bbcode($message, $allowimgcode) {
         23 => '[/list=A]',
         24 => '[*]',
         25 => '<br />'
-    );
+   );
 
     $replace = array(
         0 => '<strong>',
@@ -489,7 +498,7 @@ function bbcode($message, $allowimgcode) {
         23 => '</ol>',
         24 => '<li />',
         25 => '<br />'
-    );
+   );
 
     $message = str_replace($find, $replace, $message);
 
@@ -507,26 +516,26 @@ function bbcode($message, $allowimgcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
-            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
+            $patterns[] = '#\[img\](http[s]?|ftp[s]?) {1}://([:a-z\\./_\-0-9%~]+) {1}\[/img\]#Smi';
             $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
-            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $patterns[] = "#\[img=([0-9]*?) {1}x([0-9]*?)\](http[s]?|ftp[s]?) {1}://([:~a-z\\./0-9_\-%]+) {1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
             $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
         }
     }
 
     $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
 
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
+    $patterns[] = "#\[url\]([a-z]+?://) {1}([^\"'<>]*?)\[/url\]#Smi";
     $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
     $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
     $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
-    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
+    $patterns[] = "#\[url=([a-z]+?://) {1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
     $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
-    $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
+    $patterns[] = "#\[email=([^\"'<>]*?) {1}([^\"]*?)\](.*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1\2">\3</a>';
 
     return preg_replace($patterns, $replacements, $message);
@@ -537,7 +546,7 @@ function modcheck($username, $mods) {
     $retval = '';
     if (X_SMOD) {
         $retval = 'Moderator';
-    } elseif (X_MOD) {
+    } else if (X_MOD) {
         $username = strtoupper($username);
         $mods = explode(',', $mods);
         foreach($mods as $key=>$moderator) {
@@ -547,6 +556,7 @@ function modcheck($username, $mods) {
             }
         }
     }
+
     return $retval;
 }
 
@@ -574,6 +584,7 @@ function modcheckPost($username, $mods, $origstatus) {
             //If member does not have X_MOD then modcheck() returned a null string.  No reason to continue testing.
         }
     }
+
     return $retval;
 }
 
@@ -649,7 +660,9 @@ function forum($forum, $template) {
         }
         eval('$foruminfo = "'.template($template).'";');
     }
+
     $dalast = '';
+
     return $foruminfo;
 }
 
@@ -713,6 +726,7 @@ function multi($num, $perpage, $page, $mpurl, $strict = false) {
     } else if ($strict !== true) {
         return false;
     }
+
     return $multipage;
 }
 
@@ -735,7 +749,7 @@ function smilieinsert() {
             $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='smiley' ORDER BY code DESC LIMIT 0, ".$smtotal);
         }
 
-        if (($smilienum = $db->num_rows($querysmilie)) > 0){
+        if (($smilienum = $db->num_rows($querysmilie)) > 0) {
             while($smilie = $db->fetch_array($querysmilie)) {
                 eval('$sms[] = "'.template('functions_smilieinsert_smilie').'";');
             }
@@ -764,6 +778,7 @@ function smilieinsert() {
             $smilieinsert = '';
         }
     }
+
     return $smilieinsert;
 }
 
@@ -831,6 +846,7 @@ function smcwcache() {
         $cached = true;
         return true;
     }
+
     return false;
 }
 
@@ -852,6 +868,7 @@ function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quot
     if ($word != '') {
         $input = str_ireplace($word, "_".$word, $input);
     }
+
     return $input;
 }
 
@@ -953,6 +970,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
             header("Refresh: $timeout; URL=$path");
         }
     }
+
     return true;
 }
 
@@ -1069,6 +1087,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     if ($die) {
         exit();
     }
+
     return $return;
 }
 
@@ -1128,6 +1147,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     if ($die) {
         exit();
     }
+
     return $return;
 }
 
@@ -1142,6 +1162,7 @@ function array_keys2keys($array, $translator) {
         }
         $new_array[$new_key] = $val;
     }
+
     return $new_array;
 }
 
@@ -1179,6 +1200,7 @@ function mysql_syn_highlight($query) {
     foreach($find as $key=>$val) {
         $replace[$key] = '</em><strong>'.$val.'</strong><em>';
     }
+
     return '<em>'.str_replace($find, $replace, $query).'</em>';
 }
 
@@ -1351,6 +1373,7 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
             if (!$toInHeader) {
                 $additional_headers[] = 'To: '.$to;
             }
+
             $additional_headers = implode("\r\n", $additional_headers);
 
             return $mail->sendMessage($SETTINGS['adminemail'], $to, $message, $additional_headers);
@@ -1455,6 +1478,7 @@ function MakeTime() {
            $objArgs[5] += 28;
        }
    }
+
    return call_user_func_array("mktime", $objArgs) + $nOffset;
 }
 
@@ -1478,6 +1502,7 @@ function iso8601_date($year=0, $month=0, $day=0) {
     if ($day > 31 || $day < 1) {
         $day = 1;
     }
+
     return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
 }
 
@@ -1488,6 +1513,7 @@ function month2text($num) {
     if ($num < 1 || $num > 12) {
         $num = 1;
     }
+
     $months = array(
         $lang['textjan'],
         $lang['textfeb'],
@@ -1502,6 +1528,7 @@ function month2text($num) {
         $lang['textnov'],
         $lang['textdec']
     );
+
     return $months[$num-1];
 }
 
@@ -1747,8 +1774,8 @@ function checkForumPermissions($forum) {
 function handlePasswordDialog($fid) {
     global $db, $url, $cookiepath, $cookiedomain;  // function vars
     global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
-    $pwform = '';
 
+    $pwform = '';
     $pwinput = postedVar('pw', '', FALSE, FALSE);
     $query = $db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid");
     if ($pwinput != '' And $db->num_rows($query) == 1) {

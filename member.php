@@ -502,13 +502,13 @@ switch($action) {
                 if (ini_get('allow_url_fopen')) {
                     if ($max_size[0] > 0 && $max_size[1] > 0) {
                         $size = @getimagesize($_POST['avatar']);
-                        if ($size === false ) {
+                        if ($size === false) {
                             $avatar = '';
                         } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
                             error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                         }
                     }
-                } elseif ($newavatarcheck == "no") {
+                } else if ($newavatarcheck == "no") {
                     $avatar = '';
                 }
 
@@ -577,7 +577,7 @@ switch($action) {
                 eval('echo "'.template('header').'";');
 
                 $daysreg = ($onlinetime - $memberinfo['regdate']) / (24*3600);
-                if ($daysreg > 1 ) {
+                if ($daysreg > 1) {
                     $ppd = $memberinfo['postnum'] / $daysreg;
                     $ppd = round($ppd, 2);
                 } else {
@@ -695,7 +695,7 @@ switch($action) {
                 $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
                 while($f = $db->fetch_array($query)) {
                     $pp = checkForumPermissions($f);
-                    if($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
+                    if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
                         $forum = $f;
                         $found = true;
                         break;
@@ -704,7 +704,7 @@ switch($action) {
 
                 if (!$found || $forum['posts'] < 1) {
                     $topforum = $lang['textnopostsyet'];
-                } elseif($memberinfo['postnum'] <= 0) {
+                } else if ($memberinfo['postnum'] <= 0) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
                     $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
@@ -715,7 +715,7 @@ switch($action) {
                 $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
                 while($post = $db->fetch_array($pq)) {
                     $pp = checkForumPermissions($post);
-                    if(!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
+                    if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
                         continue;
                     }
                     $lpfound = true;
@@ -732,7 +732,7 @@ switch($action) {
                     $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
                     break;
                 }
-                if(!$lpfound) {
+                if (!$lpfound) {
                     $lastpost = $lang['textnopostsyet'];
                 }
 

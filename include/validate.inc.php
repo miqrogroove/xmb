@@ -121,6 +121,7 @@ class page_token {
         // This old token has been used - prevent reuse
         $this->sessionToken = false;
         $this->pageToken = false;
+
         return true;
     }
 }
@@ -151,6 +152,7 @@ function isValidEmail($addr) {
             $emailValid = true;
         }
     }
+
     return $emailValid;
 }
 
@@ -166,6 +168,7 @@ function onSubmit($submitname) {
     if (!$retval) {
         $retval = (isset($_GET[$submitname]) && !empty($_GET[$submitname]));
     }
+
     return($retval);
 }
 
@@ -184,7 +187,7 @@ function noSubmit($submitname) {
 // This is the preferred function as of version 1.9.8 SP3.
 function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE, $sourcearray='p') {
     $foundvar = FALSE;
-    switch ($sourcearray) {
+    switch($sourcearray) {
         case 'p':
             if (isset($_POST[$varname])) {
                 $retval = $_POST[$varname];
@@ -211,13 +214,16 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
             }
             break;
     }
+
     if ($foundvar) {
         if (get_magic_quotes_gpc()) {
             $retval = stripslashes($retval);
         }
+
         if ($word != '') {
             $retval = str_ireplace($word, "_".$word, $retval);
         }
+
         if ($htmlencode) {
             if ($quoteencode) {
                 $retval = htmlspecialchars($retval, ENT_QUOTES);
@@ -225,12 +231,14 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
                 $retval = htmlspecialchars($retval, ENT_NOQUOTES);
             }
         }
+
         if ($dbescape) {
             $retval = $GLOBALS['db']->escape($retval);
         }
     } else {
         $retval = '';
     }
+
     return $retval;
 }
 
@@ -258,9 +266,11 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     if (get_magic_quotes_gpc()) {
                         $theObject = stripslashes($theObject);
                     }
+
                     if ($word != '') {
                         $theObject = str_ireplace($word, "_".$word, $theObject);
                     }
+
                     if ($htmlencode) {
                         if ($quoteencode) {
                             $theObject = htmlspecialchars($theObject, ENT_QUOTES);
@@ -268,6 +278,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                             $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
                         }
                     }
+
                     if ($dbescape) {
                         $theObject = $GLOBALS['db']->escape($theObject);
                     }
@@ -276,6 +287,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
             unset($theObject);
         }
    }
+
    return $arrayItems;
 }
 
@@ -313,7 +325,7 @@ function rawHTMLsubject($rawstring) { //Per the design of version 1.9.9, subject
 
 function decimalEntityDecode($rawstring) {
     $currPos = 0;
-    while (($currPos = strpos($rawstring, '&amp;#', $currPos)) !== FALSE) {
+    while(($currPos = strpos($rawstring, '&amp;#', $currPos)) !== FALSE) {
         $tempPos = strpos($rawstring, ';', $currPos + 6);
         $entLen = $tempPos - ($currPos + 6);
         if ($entLen >= 3 And $entLen <= 5) {
@@ -326,6 +338,7 @@ function decimalEntityDecode($rawstring) {
         }
         $currPos++;
     }
+
     return $rawstring;
 }
 
@@ -345,7 +358,7 @@ if (!function_exists('stripos')) {
 if (!function_exists('str_ireplace')) {
     function str_ireplace($search, $replace, $subject) {
         $ipos = 0;
-        while (($ipos = stripos($subject, $search, $ipos)) !== FALSE) {
+        while(($ipos = stripos($subject, $search, $ipos)) !== FALSE) {
             $subject = substr($subject, 0, $ipos).$replace.substr($subject, $ipos + strlen($search));
             $ipos += strlen($replace);
         }
@@ -404,6 +417,7 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
             unset($theObject);
         }
     }
+
     return $arrayItems;
 }
 
@@ -417,7 +431,7 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
 function getInt($varname, $sourcearray='g') {
     $retval = 0;
     $foundvar = FALSE;
-    switch ($sourcearray) {
+    switch($sourcearray) {
         case 'g':
             if (isset($_GET[$varname])) {
                 $retval = $_GET[$varname];
@@ -444,9 +458,11 @@ function getInt($varname, $sourcearray='g') {
             }
             break;
     }
+
     if ($foundvar And is_numeric($retval)) {
         $retval = intval($retval);
     }
+
     return $retval;
 }
 
@@ -530,6 +546,7 @@ function getFormArrayInt($varname, $doCount = true) {
     foreach($formval as $value) {
         $retval[] = intval($value);
     }
+
     return $retval;
 }
 
@@ -630,6 +647,7 @@ function createLangFileSelect($currentLangFile) {
         }
     }
     natcasesort($lfs);
+
     return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
 }
 
@@ -645,6 +663,7 @@ function getLangFileNameFromHash($ordinal) {
             }
         }
     }
+
     return false;
 }
 

@@ -93,13 +93,13 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <p>When you are ready, <a href="?step=2">Click Here if you already have a backup and want to begin the upgrade</a>.
 <?php
 
-} elseif ($_GET['step'] == 2) {
+} else if ($_GET['step'] == 2) {
 
     ?>
     <h1>XMB 1.9.8 SP3 to 1.9.10 Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
-    
+
     echo 'Confirming the upgrade files are present...<br />';
     if (is_dir('upgrade') Or is_dir('Upgrade') Or is_dir('install') Or is_dir('Install')) {
         echo 'Wrong files present!<br />'
@@ -119,7 +119,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         trigger_error('Admin attempted upgrade without turning off the board.', E_USER_ERROR);
     }
     flush();
-    
+
     echo 'Requesting to lock the forums table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
 
@@ -176,7 +176,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Releasing the lock on the forums table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
-    
+
     echo 'Opening the templates file...<br />';
     $stream = fopen('templates.xmb','r');
     $file = fread($stream, filesize('templates.xmb'));
@@ -288,7 +288,7 @@ function fixForumPerms($v) {
             while($forum = $db->fetch_array($q)) {
                 // check if we need to change it first
                 $parts = explode('|', $forum['postperm']);
-                if(count($parts) == 1) {
+                if (count($parts) == 1) {
                     // no need to upgrade these; new format in use [we hope]
                     continue;
                 }
@@ -339,13 +339,13 @@ function fixForumPerms($v) {
                         $newFormat[3] = 1;
                         break;
                 }
-                if($guestposting == 'yes' || $guestposting == 'on') {
+                if ($guestposting == 'yes' || $guestposting == 'on') {
                     $newFormat[0] |= 32;
                     $newFormat[1] |= 32;
                     $newFormat[2] |= 32;
                 }
 
-                if($polls == 'yes' || $polls == 'on') {
+                if ($polls == 'yes' || $polls == 'on') {
                     $newFormat[0] = $newFormat[1];
                 } else {
                     $newFormat[0] = 0;
@@ -357,7 +357,7 @@ function fixForumPerms($v) {
 
         case 1:
             // restore
-            if(isset($cache) && count($cache) > 0) {
+            if (isset($cache) && count($cache) > 0) {
                 foreach($cache as $fid=>$format) {
                     $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
                 }

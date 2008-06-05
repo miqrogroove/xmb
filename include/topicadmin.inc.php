@@ -49,7 +49,9 @@ class mod {
         if ($user == '') {
             $user = $xmbuser;
         }
+
         $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', ".$db->time().")");
+
         return true;
     }
 
@@ -65,6 +67,7 @@ class mod {
                 }
             }
         }
+
         return $tidstr;
     }
 
@@ -77,6 +80,7 @@ class mod {
                 $tidArr[] = $flip;
             }
         }
+
         return $tidArr;
     }
 }

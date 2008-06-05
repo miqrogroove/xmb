@@ -57,7 +57,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         if (strlen(trim($news[$i])) == 0) {
             continue;
         }
-        
+
         $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'yes', 'no')));
         $contents .= "\tcontents[$i]='$news[$i]';\n";
     }

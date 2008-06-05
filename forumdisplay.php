@@ -67,9 +67,9 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
 }
 
 $perms = checkForumPermissions($forum);
-if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
@@ -81,16 +81,16 @@ if ($forum['type'] == 'sub') {
 
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+    if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } elseif($fup['fup'] > 0) {
+    } else if ($fup['fup'] > 0) {
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+} else if ($forum['fup'] > 0) { // 'forum' in a 'group'
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
@@ -101,13 +101,13 @@ nav(fnameOut($forum['name']));
 
 eval('echo "'.template('header').'";');
 
-if($perms[X_PERMS_POLL]) {
+if ($perms[X_PERMS_POLL]) {
     eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
 } else {
     $newpolllink = '';
 }
 
-if($perms[X_PERMS_THREAD]) {
+if ($perms[X_PERMS_THREAD]) {
     eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
 } else {
     $newtopiclink = '';
@@ -120,7 +120,7 @@ if ($forum['type'] == 'forum') {
         $forumlist = '';
         while($sub = $db->fetch_array($query)) {
             $perms = checkForumPermissions($sub);
-            if($perms[X_PERMS_VIEW] And $perms[X_PERMS_USERLIST]) {
+            if ($perms[X_PERMS_VIEW] And $perms[X_PERMS_USERLIST]) {
                 $forumlist .= forum($sub, "forumdisplay_subforum");
             }
         }

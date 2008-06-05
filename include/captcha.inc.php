@@ -425,7 +425,7 @@ class Captcha {
         header("Content-type: image/$this->sFileType");
         switch($this->sFileType) {
             case 'gif':
-                imagegif($this->oImage);
+                imagegif ($this->oImage);
                 break;
             case 'png':
                 imagepng($this->oImage);
@@ -455,7 +455,7 @@ class Captcha {
             $ext = substr($vBackgroundImage, -3);
             switch($ext) {
                 case 'gif':
-                    $oBackgroundImage = imagecreatefromgif($vBackgroundImage);
+                    $oBackgroundImage = imagecreatefromgif ($vBackgroundImage);
                     break;
                 case 'png':
                     $oBackgroundImage = imagecreatefrompng($vBackgroundImage);
@@ -469,7 +469,7 @@ class Captcha {
 
             // free memory used to create background image
             imagedestroy($oBackgroundImage);
-        } elseif ($this->bUseColor) {
+        } else if ($this->bUseColor) {
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
             $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
             imagefill($this->oImage, 0, 0, $bgcolor);

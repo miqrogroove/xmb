@@ -1126,7 +1126,7 @@ if ($action == 'forum') {
         $themelist[] = '</select>';
         $themelist = implode("\n", $themelist);
         $db->free_result($query);
-        
+
         if ($forum['allowhtml'] == "yes") {
             $checked2 = $cheHTML;
         } else {
@@ -1204,7 +1204,7 @@ if ($action == 'forum') {
         </tr>
         <?php
         foreach($statusList as $key=>$val) {
-            if(!X_SADMIN and $key == 'Super Administrator') {
+            if (!X_SADMIN and $key == 'Super Administrator') {
                 $disabled = 'disabled="disabled"';
             } else {
                 $disabled = '';
@@ -1281,10 +1281,10 @@ if ($action == 'forum') {
                     if ($frow = $db->fetch_array($query)) {
                         if ($frow['type'] == 'group') {
                             $settype = ", type='forum', fup=$moveto";
-                        } elseif ($frow['type'] == 'forum') {
+                        } else if ($frow['type'] == 'forum') {
                             if ($forum['type'] == 'sub') {
                                 $settype = ", fup=$moveto";
-                            } elseif ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
+                            } else if ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
                                 $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
                                 $frow = $db->fetch_array($query2);
                                 $db->free_result($query2);
@@ -1354,12 +1354,12 @@ if ($action == 'forum') {
         $passwordnew = postedVar('passwordnew', '', FALSE, TRUE);
         $delete = formInt('delete');
 
-        if(!X_SADMIN) {
+        if (!X_SADMIN) {
             $overrule = array(0,0,0,0);
             $forum = $db->fetch_array($db->query("SELECT postperm FROM ".X_PREFIX."forums WHERE fid=$fdetails"));
             $parts = explode(',', $forum['postperm']);
             foreach($parts as $p=>$v) {
-                if($v & 1 == 1) {
+                if ($v & 1 == 1) {
                     // super admin status set
                     $overrule[$p] = 1;
                 }
@@ -1388,7 +1388,7 @@ if ($action == 'forum') {
             attachstatus='$attachstatusnew',
             password='$passwordnew'
             WHERE fid='$fdetails'"
-        );
+       );
 
         if ($delete) {
             $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid=$delete");
