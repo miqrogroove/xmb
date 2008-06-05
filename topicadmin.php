@@ -520,25 +520,25 @@ switch($action) {
             $db->free_result($query);
             eval('echo "'.template('topicadmin_split').'";');
         } else {
-            $subject = postedVar('subject', 'javascript', TRUE, TRUE, TRUE);
+            $subject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));  // Subjects are historically double-quoted
             if ($subject == '') {
                 error($lang['textnosubject'], false);
             }
 
             $threadcreated = false;
             $firstmove = false;
-            $query = $db->query("SELECT subject, pid FROM ".X_PREFIX."posts WHERE tid='$tid'");
+            $query = $db->query("SELECT pid, author, dateline, subject FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC");
+            $movecount = 0;
             while($post = $db->fetch_array($query)) {
-                $move = "move".$post['pid'];
-                $move = getInt($move, 'p');
-                $thatime = $onlinetime;
-                if (!$threadcreated) {
-                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '$xmbuser', '', 0)");
-                    $newtid = $db->insert_id();
-                    $threadcreated = true;
-                }
+                $move = getInt('move'.$post['pid'], 'p');
+                if ($move == $post['pid']) {
+                    if (!$threadcreated) {
+                        $thatime = $onlinetime;
+                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '".$db->escape($post['author'])."', '', 0)");
+                        $newtid = $db->insert_id();
+                        $threadcreated = true;
+                    }
 
-                if (!empty($move)) {
                     $newsub = '';
                     if (!$firstmove) {
                         $newsub = ", subject='$subject'";
@@ -546,29 +546,22 @@ switch($action) {
                     }
                     $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid=$move");
                     $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid=$move");
-                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+1 WHERE tid='$newtid'");
-                    $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
+                    $lastpost = $post['dateline'].'|'.$db->escape($post['author']).'|'.$post['pid'];
+                    $movecount++;
+                } else {
+                    $oldlastpost = $post['dateline'].'|'.$db->escape($post['author']).'|'.$post['pid'];
                 }
             }
+            $db->query("UPDATE ".X_PREFIX."threads SET replies=$movecount-1, lastpost='$lastpost' WHERE tid='$newtid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-$movecount, lastpost='$oldlastpost' WHERE tid='$tid'");
             $db->free_result($query);
-
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$newtid' ORDER BY dateline ASC LIMIT 0,1");
-            $firstauthor = $db->escape($db->result($query, 0));
-            $db->free_result($query);
-            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$newtid ORDER BY dateline DESC LIMIT 0,1");
-            $lastpost = $db->fetch_array($query);
-            $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]', replies=replies-1 WHERE tid=$newtid");
-
-            $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
-            $firstauthor = $db->escape($db->result($query, 0));
-            $db->free_result($query);
-            $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
-            $lastpost = $db->fetch_array($query);
-            $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape($lastpost['author'])."|$lastpost[pid]' WHERE tid='$tid'");
 
             $mod->log($xmbuser, $action, $fid, $tid);
+
+            if ($forums['type'] == 'sub') {
+                updateforumcount($fup['fid']);
+            }
+            updateforumcount($fid);
 
             message($lang['splitthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
         }
