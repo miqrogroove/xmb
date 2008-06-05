@@ -434,13 +434,8 @@ switch($action) {
             }
         }
         if ($replyvalid) {
-            $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
-            $for = $db->fetch_array($query);
-            $db->free_result($query);
-            $last = $for['lastpost'];
-
-            if ($last != '') {
-                $lastpost = explode('|', $last);
+            if ($forum['lastpost'] != '') {
+                $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
@@ -464,13 +459,15 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$username|$pid', replies=replies+1 WHERE (tid='$tid' AND fid='$fid') OR closed='moved|$tid'");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$username|$pid', replies=replies+1 WHERE tid=$tid");
 
-            if ($for['type'] == 'sub') {
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid='$for[fup]'");
+            $where = "WHERE fid=$fid";
+            if ($forum['type'] == 'sub') {
+                $where .= " OR fid={$forum['fup']}";
             }
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 $where");
+            unset($where);
 
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 WHERE fid='$fid'");
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
@@ -650,12 +647,8 @@ switch($action) {
             }
         }
         if ($topicvalid) {
-            $query = $db->query("SELECT lastpost, type, fup FROM ".X_PREFIX."forums WHERE fid='$fid'");
-            $for = $db->fetch_array($query);
-            $db->free_result($query);
-
-            if ($for['lastpost'] != '') {
-                $lastpost = explode('|', $for['lastpost']);
+            if ($forum['lastpost'] != '') {
+                $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
                     softerror($lang['floodprotect']);
@@ -688,11 +681,12 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid='$tid'");
 
-            if (isset($forum['type']) && $forum['type'] == 'sub') {
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid='$for[fup]'");
+            $where = "WHERE fid=$fid";
+            if ($forum['type'] == 'sub') {
+                $where .= " OR fid={$forum['fup']}";
             }
-
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 WHERE fid='$fid'");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 $where");
+            unset($where);
 
             if (X_MEMBER && $pollanswers != '' && $perms[X_PERMS_POLL]) {
                 $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
