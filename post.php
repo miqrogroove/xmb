@@ -137,13 +137,13 @@ if (X_GUEST) {
 
 validatePpp();
 
-if (isset($forum['type']) && $forum['type'] == 'forum') {
+if ($forum['type'] == 'forum') {
     nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 } else {
-    if (!isset($forum['fup']) || !is_numeric($forum['fup'])) {
+    if (!is_numeric($forum['fup'])) {
         error($lang['textnoforum']);
     } else {
-        $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
+        $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
         $fup = $db->fetch_array($query);
         nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
         nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
@@ -220,7 +220,6 @@ if($action == 'newthread') {
 
 // check parent-forum permissions
 if($forum['type'] == 'sub') {
-    $fup = $db->fetch_array($db->query("SELECT postperm, userlist, password FROM ".X_PREFIX."forums WHERE fid=$forum[fup]"));
     $fupPerms = checkForumPermissions($fup);
 
     if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
@@ -228,6 +227,7 @@ if($forum['type'] == 'sub') {
     }
     // do not show password-dialog here; it makes the situation too complicated
 }
+unset($fup);
 
 if (isset($smileyoff) && $smileyoff == 'yes') {
     $smileoffcheck = $cheHTML;
