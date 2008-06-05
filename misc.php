@@ -150,14 +150,11 @@ switch($action) {
         break;
 
     case 'search':
-        if ($SETTINGS['searchstatus'] != "on") {
-            eval("echo (\"".template('header')."\");");
-
-            eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
-            echo $featureoff;
+        if ($SETTINGS['searchstatus'] != 'on') {
+            eval('echo "'.template('header').'";');
+            eval('echo "'.template('misc_feature_notavailable').'";');
             end_time();
-
-            eval("echo (\"".template('footer')."\");");
+            eval('echo "'.template('footer').'";');
             exit();
         }
 
@@ -165,7 +162,6 @@ switch($action) {
             $forumselect = forumList('srchfid', FALSE, TRUE);
             eval('$search = "'.template('misc_search').'";');
             $misc = $search;
-
         } else {
             if (!isset($filter_distinct) || $filter_distinct != 'yes') {
                 $filter_distinct = '';
@@ -278,6 +274,7 @@ switch($action) {
                             } else {
                                 $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
                             }
+
                             $show_num = 100;
                             $msg_leng = strlen($message);
 
