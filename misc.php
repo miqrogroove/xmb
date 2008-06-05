@@ -273,7 +273,11 @@ switch($action) {
                             $temparray[$tid] = true;
                             $message = stripslashes($post['message']);
 
-                            $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
+                            if (empty($srchtxt)) {
+                                $position = 0;
+                            } else {
+                                $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
+                            }
                             $show_num = 100;
                             $msg_leng = strlen($message);
 
@@ -299,9 +303,11 @@ switch($action) {
 
                             $show = substr($message, $min, $max - $min);
                             $post['subject'] = stripslashes($post['subject']);
-                            foreach($srchtxtsq as $stxt) {
-                                $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
-                                $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
+                            if (!empty($srchtxt)) {
+                                foreach($srchtxtsq as $stxt) {
+                                    $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
+                                    $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
+                                }
                             }
 
                             $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
