@@ -769,31 +769,17 @@ function smilieinsert() {
 
 function updateforumcount($fid) {
     global $db;
+    $fid = intval($fid);
 
-    $postcount = 0;
-    $threadcount = 0;
-
-    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$fid'");
+    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE (fid='$fid' AND closed!='moved')");
+    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $threadcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$fid'");
-    while($children = $db->fetch_array($query)) {
-        $chquery1 = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$children[fid]'");
-        $postcount += $db->result($chquery1, 0);
-        $db->free_result($chquery1);
-
-        $chquery2 = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$children[fid]' AND closed!='moved'");
-        $threadcount += $db->result($chquery2, 0);
-        $db->free_result($chquery2);
-    }
-    $db->free_result($query);
-
-    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE (t.fid=f.fid AND f.fid='$fid') OR (t.fid=f.fid AND f.fup='$fid') ORDER BY t.lastpost DESC LIMIT 0, 1");
+    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads AS t USING(fid) WHERE f.fid=$fid OR f.fup=$fid ORDER BY t.lastpost DESC LIMIT 0, 1");
     $lp = $db->fetch_array($query);
     $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid='$fid'");
     $db->free_result($query);

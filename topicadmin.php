@@ -196,8 +196,8 @@ switch($action) {
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE closed='moved|$tid'");
 
-                if (isset($forums['type']) && $forums['type'] == 'sub') {
-                    updateforumcount($fup['fup']);
+                if ($forums['type'] == 'sub') {
+                    updateforumcount($fup['fid']);
                 }
                 updateforumcount($fid);
 
@@ -274,51 +274,45 @@ switch($action) {
             eval('echo "'.template('topicadmin_move').'";');
         } else {
             $moveto = formInt('moveto');
-            if ($moveto) {
-                $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
-                if ($db->num_rows($query) == 0) {
-                    error($lang['textnoforum'], FALSE);
-                }
-                $forumtype = $db->result($query, 0);
-                $db->free_result($query);
+            $query = $db->query("SELECT type, fup FROM ".X_PREFIX."forums WHERE fid=$moveto");
+            if ($db->num_rows($query) == 0) {
+                error($lang['textnoforum'], FALSE);
+            }
+            $movetorow = $db->fetch_array($query);
 
-                if($forumtype == 'group') {
-                    echo '<center><span class="mediumtxt">'.$lang['errormovingthreads'].'</span></center>';
-                    end_time();
-                    eval('echo "'.template('footer').'";');
-                    exit();
-                }
-
-                $tids = $mod->create_tid_array($tid);
-                foreach($tids AS $tid) {
-                    if ($type == "normal") {
-                        $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid'");
-                        $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid'");
-                    } else {
-                        $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
-                        $info = $db->fetch_array($query);
-                        $db->free_result($query);
-                        
-                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape($info['subject'])."', '', '".$db->escape($info['lastpost'])."', 0, 0, '".$db->escape($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
-                        $ntid = $db->insert_id();
-
-                        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape($info['author'])."', '{$info['tid']}', '".$db->escape($info['subject'])."', 0, '', '', '', '', '')");
-                        $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
-                        $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
-                    }
-                    updatethreadcount($tid);
-                    $f = "$fid -> $moveto";
-                    $mod->log($xmbuser, $action, $moveto, $tid);
-                }
-            } else {
-                echo '<center><span class="mediumtxt">'.$lang['errormovingthreads'].'</span></center>';
-                end_time();
-                eval('echo "'.template('footer').'";');
-                exit();
+            if($movetorow['type'] == 'group') {
+                error($lang['errormovingthreads'], FALSE);
             }
 
-            if (isset($forums['type']) && $forums['type'] == "sub") {
-                updateforumcount($fup['fup']);
+            $tids = $mod->create_tid_array($tid);
+            foreach($tids AS $tid) {
+                if ($type == "normal") {
+                    $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid'");
+                } else {
+                    $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'");
+                    $info = $db->fetch_array($query);
+                    $db->free_result($query);
+                    
+                    $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape($info['subject'])."', '', '".$db->escape($info['lastpost'])."', 0, 0, '".$db->escape($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
+                    $ntid = $db->insert_id();
+
+                    $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape($info['author'])."', '{$info['tid']}', '".$db->escape($info['subject'])."', 0, '', '', '', '', '')");
+                    $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
+                }
+                updatethreadcount($tid);
+                $f = "$fid -> $moveto";
+                $mod->log($xmbuser, $action, $moveto, $tid);
+            }
+
+            if ($forums['type'] == 'sub') {
+                updateforumcount($fup['fid']);
+            }
+            if ($movetorow['type'] == 'sub') {
+                if ($movetorow['fup'] != $fup['fid']) {
+                    updateforumcount($movetorow['fup']);
+                }
             }
             updateforumcount($fid);
             updateforumcount($moveto);
@@ -479,7 +473,7 @@ switch($action) {
                 $db->free_result($query);
             }
             if (isset($forums['type']) && $forums['type'] == 'sub') {
-                updateforumcount($fup['fup']);
+                updateforumcount($fup['fid']);
             }
             updateforumcount($fid);
 
