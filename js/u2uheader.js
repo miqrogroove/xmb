@@ -41,16 +41,10 @@ function invertSelection(the_form, element_name) {
 }
 
 function aBook() {
-    if (aBookOpen == true) {
-        aBookLink.close();
-        aBookOpen = false;
+    if (typeof sendMode === "undefined" || sendMode != true) {
+        aBookLink = window.open('buddy.php', 'aBook', "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=400");
     } else {
-        if (typeof sendMode === "undefined" || sendMode != true) {
-            aBookLink = window.open('buddy.php', 'aBook', "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=400");
-        } else {
-            aBookLink = window.open('buddy.php?action=add2u2u', 'aBook', "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=400");
-        }
-        aBookOpen = true;
+        aBookLink = window.open('buddy.php?action=add2u2u', 'aBook', "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=400");
     }
     return false;
 }

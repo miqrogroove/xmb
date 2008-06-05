@@ -224,7 +224,7 @@ $css
 </tr>
 $buddys
 <tr>
-<td class="tablerow" colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[addressupdate]" /><br /></td>
+<td class="tablerow" colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
 </tr>
 </table>
 </form>
@@ -254,7 +254,7 @@ $buddys
 <td class="tablerow" bgcolor="$altbg1"><a href="#" onclick="javascript:add();return false;">&raquo; $lang[add_buddy]</a></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="$lang[addressupdate]" /><br /></td>
+<td class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
 </tr>
 </table>
 </form>
@@ -337,19 +337,19 @@ $buddys[offline]
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_inv|#*XMB TEMPLATE*#|
 <tr class="tablerow" >
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[hidden]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_off|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[textoffline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_on|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[textonline]</td>
 </tr>
 
@@ -4151,7 +4151,7 @@ $css
 <td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php"><img src="$imgdir/inbox.gif" alt="$lang[textu2uinbox]" border="0" /><br />$lang[textu2uinbox]</a></td>
 <td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?folder=Outbox"><img src="$imgdir/outbox.gif" alt="$lang[textu2uoutbox]" border="0" /><br />$lang[textu2uoutbox]</a></td>
 <td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=send"><img src="$imgdir/newu2u.gif"  alt="$lang[textsendu2u]" border="0" /><br />$lang[textsendu2u]</a></td>
-<td align="center" bgcolor="$altbg1" width="20%"><a href="#" onclick="javascript:aBook();return false;"><img src="$imgdir/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
+<td align="center" bgcolor="$altbg1" width="20%"><a href="buddy.php" onclick="javascript:aBook();return false;"><img src="$imgdir/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
 <td align="center" bgcolor="$altbg1" width="20%"><a href="u2u.php?action=ignore"><img src="$imgdir/locku2u.gif"  alt="$lang[ignorelist]" border="0" /><br />$lang[ignorelist]</a></td>
 </tr>
 </table>

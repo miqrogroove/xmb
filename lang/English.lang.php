@@ -35,7 +35,6 @@ $charset = 'ISO-8859-1';
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Add more addresses";
 $lang['addressname'] = "Address:";
-$lang['addressupdate'] = "Update";
 $lang['addtime'] = "To crank the base time up, or down, input a number here. Time will be raised, or lowered by this amount for everyone. Put X to add time, or -X to subtract.";
 $lang['addtoaddresses'] = "Add To Address Book";
 $lang['addtobuddies'] = "Add to Address Book";
