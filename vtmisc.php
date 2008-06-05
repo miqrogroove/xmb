@@ -56,7 +56,6 @@ if ($action == 'report') {
     $db->free_result($query);
     $fid = $forum['fid'];
     $tid = $forum['tid'];
-    nav($lang['textreportpost']);
 } elseif ($action == 'votepoll') {
     $tid = getRequestInt('tid');
     $query = $db->query("SELECT f.*, t.subject FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid) WHERE t.tid=$tid");
@@ -66,12 +65,11 @@ if ($action == 'report') {
     $forum = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $forum['fid'];
-    nav($lang['textvote']);
 } else {
     error($lang['textnoaction']);
 }
 
-if ($fid == 0 || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     error($lang['textnoforum']);
 }
 
@@ -83,24 +81,45 @@ if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     handlePasswordDialog($fid);
 }
 
-// check parent-forum permissions
-if($forum['type'] == 'sub') {
-    $fup = $db->fetch_array($db->query("SELECT postperm, userlist, password FROM ".X_PREFIX."forums WHERE fid=$forum[fup]"));
-    $fupPerms = checkForumPermissions($fup);
+$fup = array();
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
 
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
         error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid']);
+    } elseif($fup['fup'] > 0) {
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
-    // do not show password-dialog here; it makes the situation too complicated
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+}
+nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
+if ($tid > 0) {
+    $subject = shortenString(rawHTMLsubject(stripslashes($forum['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    nav('<a href="viewthread.php?tid='.$tid.'">'.$subject.'</a>');
+    unset($subject);
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {
     $threadSubject = '- '.rawHTMLsubject(stripslashes($forum['subject']));
 }
 
-eval('echo "'.template('header').'";');
-
 if ($action == 'report') {
+    nav($lang['textreportpost']);
+    eval('echo "'.template('header').'";');
+
     if ($SETTINGS['reportpost'] == 'off') {
         eval('echo "'.template('misc_feature_notavailable').'";');
         end_time();
@@ -134,6 +153,9 @@ if ($action == 'report') {
     }
 
 } elseif ($action == 'votepoll') {
+    nav($lang['textvote']);
+    eval('echo "'.template('header').'";');
+
     // User voted in poll related to thread $tid. The vote option is contained in $postopnum
     $postopnum = formInt('postopnum');
     if ($postopnum === 0) {

@@ -58,30 +58,12 @@ $tid = getInt('tid');
 $fid = getInt('fid');
 $page = getInt('page');
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
 $forum = $db->fetch_array($query);
 $db->free_result($query);
 
-$notexist = false;
-if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $fid == 0 || $forum['status'] != 'on') {
-    $notexist = $lang['textnoforum'];
-}
-
-$fup = array();
-if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
-    $fup = $db->fetch_array($query);
-    $db->free_result($query);
-
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
-        error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid']);
-    }
-} else if (!isset($forum['type']) && $forum['type'] != 'forum') {
-    error($notexist);
+if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    error($lang['textnoforum']);
 }
 
 $perms = checkForumPermissions($forum);
@@ -91,31 +73,33 @@ if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     handlePasswordDialog($fid);
 }
 
-if (isset($forum['type']) && $forum['type'] == 'forum') {
-    nav(fnameOut($forum['name']));
-} else if (isset($forum['type']) && $forum['type'] == 'sub') {
+$fup = array();
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+        error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid']);
+    } elseif($fup['fup'] > 0) {
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
+    }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-    nav(fnameOut($forum['name']));
+    unset($fup);
+} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
 }
+nav(fnameOut($forum['name']));
 
 eval('echo "'.template('header').'";');
-
-$subforums = '';
-if (count($fup) == 0) {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup='$fid' AND status='on' ORDER BY displayorder");
-    if ($db->num_rows($query) != 0) {
-        $forumlist = '';
-        $fulist = $forum['userlist'];
-        while($sub = $db->fetch_array($query)) {
-            $forumlist .= forum($sub, "forumdisplay_subforum");
-        }
-        $forum['userlist'] = $fulist;
-        if (!empty($forumlist)) {
-            eval('$subforums .= "'.template('forumdisplay_subforums').'";');
-        }
-        $db->free_result($query);
-    }
-}
 
 if($perms[X_PERMS_POLL]) {
     eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
@@ -127,6 +111,24 @@ if($perms[X_PERMS_THREAD]) {
     eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
 } else {
     $newtopiclink = '';
+}
+
+$subforums = '';
+if ($forum['type'] == 'forum') {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup=$fid AND status='on' ORDER BY displayorder");
+    if ($db->num_rows($query) != 0) {
+        $forumlist = '';
+        while($sub = $db->fetch_array($query)) {
+            $perms = checkForumPermissions($sub);
+            if($perms[X_PERMS_VIEW] And $perms[X_PERMS_USERLIST]) {
+                $forumlist .= forum($sub, "forumdisplay_subforum");
+            }
+        }
+        if ($forumlist != '') {
+            eval('$subforums .= "'.template('forumdisplay_subforums').'";');
+        }
+        $db->free_result($query);
+    }
 }
 
 $t_extension = get_extension($lang['toppedprefix']);
@@ -298,11 +300,7 @@ while($thread = $db->fetch_array($querytop)) {
 }
 $db->free_result($querytop);
 
-if ($notexist) {
-    eval('$threadlist = "'.template('forumdisplay_invalidforum').'";');
-}
-
-if ($topicsnum == 0 && !$notexist) {
+if ($topicsnum == 0) {
     eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
 }
 

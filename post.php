@@ -99,7 +99,7 @@ if ($action == 'edit') {
     error($lang['textnoaction']);
 }
 
-if ($fid == 0 || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     error($lang['textnoforum']);
 }
 
@@ -137,18 +137,56 @@ if (X_GUEST) {
 
 validatePpp();
 
-if ($forum['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
-} else {
-    if (!is_numeric($forum['fup'])) {
-        error($lang['textnoforum']);
-    } else {
-        $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
-        $fup = $db->fetch_array($query);
-        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
-    }
+// check permissions on this forum (and top forum if it's a sub?)
+$perms = checkForumPermissions($forum);
+if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+    error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
+    handlePasswordDialog($fid);
 }
+
+// check posting permissions specifically
+if($action == 'newthread') {
+    if (!$perms[X_PERMS_THREAD]) {
+        error($lang['textnoaction']);
+    } else if(isset($poll) && $poll == 'yes') {
+        if(!$perms[X_PERMS_POLL]) {
+            error($lang['textnoaction']);
+        }
+    }
+} elseif($action == 'reply') {
+    if(!$perms[X_PERMS_REPLY]) {
+        error($lang['textnoaction']);
+    }
+} elseif($action == 'edit') {
+    // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
+} else {
+    error($lang['textnoaction']);
+}
+
+$fup = array();
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
+        error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
+    } elseif($fup['fup'] > 0) {
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
+    }
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+}
+nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
 $attachfile = '';
 if (isset($forum['attachstatus']) && $forum['attachstatus'] != 'off') {
@@ -189,45 +227,6 @@ $allowimgcode = (isset($forum['allowimgcode']) && $forum['allowimgcode'] == 'yes
 $allowhtml = (isset($forum['allowhtml']) && $forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowsmilies = (isset($forum['allowsmilies']) && $forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = (isset($forum['allowbbcode']) && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-
-
-// check permissions on this forum (and top forum if it's a sub?)
-$perms = checkForumPermissions($forum);
-if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
-    error($lang['privforummsg']);
-} elseif(!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid);
-}
-
-// check posting permissions specifically
-if($action == 'newthread') {
-    if (!$perms[X_PERMS_THREAD]) {
-        error($lang['textnoaction']);
-    } else if(isset($poll) && $poll == 'yes') {
-        if(!$perms[X_PERMS_POLL]) {
-            error($lang['textnoaction']);
-        }
-    }
-} elseif($action == 'reply') {
-    if(!$perms[X_PERMS_REPLY]) {
-        error($lang['textnoaction']);
-    }
-} elseif($action == 'edit') {
-    // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
-} else {
-    error($lang['textnoaction']);
-}
-
-// check parent-forum permissions
-if($forum['type'] == 'sub') {
-    $fupPerms = checkForumPermissions($fup);
-
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST] || !$fupPerms[X_PERMS_PASSWORD]) {
-        error($lang['privforummsg']);
-    }
-    // do not show password-dialog here; it makes the situation too complicated
-}
-unset($fup);
 
 if (isset($smileyoff) && $smileyoff == 'yes') {
     $smileoffcheck = $cheHTML;

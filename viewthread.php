@@ -153,8 +153,8 @@ eval('$css = "'.template('css').'";');
 $notexist = false;
 $notexist_txt = $posts = '';
 
-$query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid='$tid'");
-if ($tid == 0 || $db->num_rows($query) != 1) {
+$query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
+if ($db->num_rows($query) != 1) {
     $db->free_result($query);
     header('HTTP/1.1 404 Not Found');
     error($lang['textnothread']);
@@ -182,31 +182,16 @@ if (!isset($oldtopics)) {
     put_cookie('oldtopics', $oldtopics, $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
 }
 
-$fid = (int) $thread['fid'];
+$fid = $thread['fid'];
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid='$fid'");
+$query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
 $forum = $db->fetch_array($query);
-
-if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $db->num_rows($query) != 1 || $forum['status'] != 'on') {
-    $db->free_result($query);
-    error($lang['textnoforum']);
-}
 $db->free_result($query);
 
-$fup = array();
-if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT userlist, name, fid, password, postperm FROM ".X_PREFIX."forums WHERE fid='{$forum['fup']}'");
-    $fup = $db->fetch_array($query);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
-        error($lang['privforummsg']);
-    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid']);
-    }
+if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    error($lang['textnoforum']);
 }
 
-// Check for authorization to be here in the first place
 $perms = checkForumPermissions($forum);
 if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     error($lang['privforummsg']);
@@ -214,19 +199,35 @@ if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
     handlePasswordDialog($fid);
 }
 
+$fup = array();
+if ($forum['type'] == 'sub') {
+    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+        error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid']);
+    } elseif($fup['fup'] > 0) {
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
+    }
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+} elseif ($forum['fup'] > 0) { // 'forum' in a 'group'
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    unset($fup);
+}
+nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
+nav($thread['subject']);
+
 if ($SETTINGS['subject_in_title'] == 'on') {
     $threadSubject = '- '.$thread['subject'];
-}
-
-if (isset($forum['type']) && $forum['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
-    nav($thread['subject']);
-} else {
-    if (isset($forum['type']) && $forum['type'] == 'sub') {
-        nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
-        nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
-        nav($thread['subject']);
-    }
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];

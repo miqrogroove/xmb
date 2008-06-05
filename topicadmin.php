@@ -91,31 +91,46 @@ $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid AND status=
 $forums = $db->fetch_array($query);
 $db->free_result($query);
 
-$kill = false;
+if (($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
+    error($lang['textnoforum']);
+}
 
 // Check for authorization to be here in the first place
 $perms = checkForumPermissions($forums);
-if (!X_STAFF Or !$perms[X_PERMS_VIEW] Or !$perms[X_PERMS_USERLIST]) {
-    $kill = true;
-} else if (!$perms[X_PERMS_PASSWORD]) {
+if(!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+    error($lang['privforummsg']);
+} elseif(!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
-} else if (isset($forums['type']) && $forums['type'] == 'forum') {
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name'].'</a>'));
-    if (isset($thread['subject'])) {
-        nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
-    }
-} else if (isset($forums['type']) && $forums['type'] == 'sub') {
-    $query = $db->query("SELECT name, fid FROM ".X_PREFIX."forums WHERE fid='$forums[fup]'");
+}
+
+$fup = array();
+if ($forums['type'] == 'sub') {
+    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forums['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
-    nav('<a href="forumdisplay.php?fid='.intval($fup['fid']).'">'.fnameOut($fup['name']).'</a>');
-    nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
-    if (isset($thread['subject'])) {
-        nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
+
+    // prevent access to subforum when upper forum can't be viewed.
+    $fupPerms = checkForumPermissions($fup);
+    if(!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+        error($lang['privforummsg']);
+    } elseif(!$fupPerms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($fup['fid']);
+    } elseif($fup['fup'] > 0) {
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
-} else {
-    $kill = true;
+    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+} elseif ($forums['fup'] > 0) { // 'forum' in a 'group'
+    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forums['fup']}");
+    $fup = $db->fetch_array($query);
+    $db->free_result($query);
+    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
+nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
+if (isset($thread['subject'])) {
+    nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
+}
+
+$kill = FALSE;
 
 switch($action) {
     case 'delete':
@@ -158,12 +173,12 @@ switch($action) {
         nav($lang['textemptythread']);
         break;
     default:
-        $kill = true;
+        $kill = TRUE;
         break;
 }
 
 $mod = new mod();
-$kill &= !$mod->statuscheck($fid);
+$kill |= !X_STAFF || !$mod->statuscheck($fid);
 
 if ($kill) {
     error($lang['notpermitted']);
