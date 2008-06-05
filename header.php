@@ -244,7 +244,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 
 //Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
 if ($ipcheck == 'on') {
-    if (!eregi("^([0-9]{1,3}\.) {3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:) {5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
+    if (!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
         exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
     }
 }
