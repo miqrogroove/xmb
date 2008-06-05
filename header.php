@@ -40,12 +40,13 @@ define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
 
-define('X_PERMS_POLL',      0);
-define('X_PERMS_THREAD',    1);
-define('X_PERMS_REPLY',     2);
-define('X_PERMS_VIEW',      3);
-define('X_PERMS_USERLIST',  4);
-define('X_PERMS_PASSWORD',  5);
+// permissions constants
+define('X_PERMS_POLL', 0);
+define('X_PERMS_THREAD', 1);
+define('X_PERMS_REPLY', 2);
+define('X_PERMS_VIEW', 3);
+define('X_PERMS_USERLIST', 4);
+define('X_PERMS_PASSWORD', 5);
 
 if (!defined('ROOT')) {
     define('ROOT', './');
@@ -107,9 +108,11 @@ require ROOT.'config.php';
 if (!defined('DEBUG')) {
     define('DEBUG', FALSE);
 }
+
 if (DEBUG) {
     error_reporting(E_ALL | E_STRICT);
 }
+
 if (headers_sent()) {
     if (DEBUG) {
         headers_sent($filepath, $linenum);
@@ -149,6 +152,7 @@ $browser = 'opera'; // default to opera for now
 if (!isset($_SERVER['HTTP_USER_AGENT'])) {
     $_SERVER['HTTP_USER_AGENT'] = '';
 }
+
 if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
     define('IS_MOZILLA', true);
     $browser = 'mozilla';
@@ -295,7 +299,6 @@ foreach($url_check as $name) {
 // Load a few constants
 define('XMB_VERSION', $versiongeneral);
 define('XMB_BUILD', $versionbuild);
-
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
 
@@ -317,7 +320,6 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
 }
 
 // Update last visit cookies
-
 $xmblva = getInt('xmblva', 'c'); // Last visit
 $xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
 
