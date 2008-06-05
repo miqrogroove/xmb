@@ -189,13 +189,13 @@ $buddys[offline]
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_offline|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
+<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&amp;member=$recodename">{$buddy['buddyname']}</a></td>
 <td bgcolor="$altbg1"><a href="u2u.php?action=send&amp;username=$recodename" onclick="Popup(this.href, 'Window', 700, 450); return false;">$lang[textoffline]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddylist_buddy_online|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&member=$recodename">{$buddy['buddyname']}</a></td>
+<td bgcolor="$altbg1" width="75%"><a href="member.php?action=viewpro&amp;member=$recodename">{$buddy['buddyname']}</a></td>
 <td bgcolor="$altbg1"><a href="u2u.php?action=send&amp;username=$recodename" onclick="Popup(this.href, 'Window', 700, 450); return false;">$buddystatus</a></td>
 </tr>
 
@@ -337,19 +337,19 @@ $buddys[offline]
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_inv|#*XMB TEMPLATE*#|
 <tr class="tablerow" >
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&amp;member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[hidden]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_off|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&amp;member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[textoffline]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|buddy_u2u_on|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&member=$recodename">$buddyout</a></td>
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddyout" /> <a href="member.php?action=viewpro&amp;member=$recodename">$buddyout</a></td>
 <td bgcolor="$altbg1">$lang[textonline]</td>
 </tr>
 
@@ -4606,7 +4606,7 @@ $buttoncode
 |#*XMB TEMPLATE FILE*#|viewthread_post|#*XMB TEMPLATE*#|
 <tr bgcolor="$thisbg">
 <td rowspan="3" valign="top" class="tablerow" style="width: 18%;">
-<a href="./member.php?action=viewpro&member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
+<a href="./member.php?action=viewpro&amp;member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
 <br />
 <div class="smalltxt"><a name="pid$post[pid]"></a>
 $showtitle
