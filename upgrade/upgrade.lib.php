@@ -55,7 +55,7 @@ class Upgrade {
         'vote_desc',
         'vote_results',
         'vote_voters'
-   );
+    );
 
     function Upgrade(&$db, $file='', $tablepre) {
         if ($file == '') {
@@ -133,7 +133,7 @@ class Upgrade {
                 // we have a column
                 if (strpos($data, '`') === 0) {
                     // we have a col for sure
-                    preg_match_all('#`([A-Za-z0-9_]+)` (VARCHAR|TINYINT|TEXT|DATE|SMALLINT|MEDIUMINT|INT|BIGINT|FLOAT|DOUBLE|DECIMAL|DATETIME|TIMESTAMP|TIME|YEAR|CHAR|TINYBLOB|TINYTEXT|BLOB|MEDIUMBLOB|MEDIUMTEXT|LONGBLOB|LONGTEXT|ENUM|SET) {1}(\([\d]+\)|\([\'\d\w,\W]+\))?[\s]?(UNSIGNED ZEROFILL|UNSIGNED|BINARY)?[\s]?(NOT NULL|NULL)?[\s]?(default \'?(.*)\'?)?(auto_increment)?[\s]?(PRIMARY KEY|KEY)?#i', $data, $d);
+                    preg_match_all('#`([A-Za-z0-9_]+)` (VARCHAR|TINYINT|TEXT|DATE|SMALLINT|MEDIUMINT|INT|BIGINT|FLOAT|DOUBLE|DECIMAL|DATETIME|TIMESTAMP|TIME|YEAR|CHAR|TINYBLOB|TINYTEXT|BLOB|MEDIUMBLOB|MEDIUMTEXT|LONGBLOB|LONGTEXT|ENUM|SET){1}(\([\d]+\)|\([\'\d\w,\W]+\))?[\s]?(UNSIGNED ZEROFILL|UNSIGNED|BINARY)?[\s]?(NOT NULL|NULL)?[\s]?(default \'?(.*)\'?)?(auto_increment)?[\s]?(PRIMARY KEY|KEY)?#i', $data, $d);
                     /*
                     [1][0] = name
                     [2][0] = type
@@ -778,8 +778,8 @@ class Upgrade {
             KEY `folder` (`folder`),
             KEY `readstatus` (`readstatus`),
             KEY `owner` (`owner`)
-           ) TYPE=MyISAM"
-       );
+            ) TYPE=MyISAM"
+        );
 
         $query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
         while($u2u = $this->db->fetch_array($query)) {

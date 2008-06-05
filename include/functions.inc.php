@@ -358,7 +358,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             9 => '[list=1]',
             10 => '[list=a]',
             11 => '[list=A]',
-       );
+        );
 
         $end = array(
             0 => '[/b]',
@@ -373,7 +373,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             9 => '[/list=1]',
             10 => '[/list=a]',
             11 => '[/list=A]',
-       );
+        );
 
         foreach($begin as $key=>$value) {
             $check = substr_count($message, $value) - substr_count($message, $end[$key]);
@@ -469,7 +469,7 @@ function bbcode($message, $allowimgcode) {
         23 => '[/list=A]',
         24 => '[*]',
         25 => '<br />'
-   );
+    );
 
     $replace = array(
         0 => '<strong>',
@@ -498,7 +498,7 @@ function bbcode($message, $allowimgcode) {
         23 => '</ol>',
         24 => '<li />',
         25 => '<br />'
-   );
+    );
 
     $message = str_replace($find, $replace, $message);
 
@@ -516,26 +516,26 @@ function bbcode($message, $allowimgcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
-            $patterns[] = '#\[img\](http[s]?|ftp[s]?) {1}://([:a-z\\./_\-0-9%~]+) {1}\[/img\]#Smi';
+            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
             $replacements[] = '<img src="\1://\2\3" border="0" alt="\1://\2\3"/>';
-            $patterns[] = "#\[img=([0-9]*?) {1}x([0-9]*?)\](http[s]?|ftp[s]?) {1}://([:~a-z\\./0-9_\-%]+) {1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
             $replacements[] = '<img width="\1" height="\2" src="\3://\4\5" alt="\3://\4\5" border="0" />';
         }
     }
 
     $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
 
-    $patterns[] = "#\[url\]([a-z]+?://) {1}([^\"'<>]*?)\[/url\]#Smi";
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
     $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
     $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
     $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
-    $patterns[] = "#\[url=([a-z]+?://) {1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
+    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
     $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
-    $patterns[] = "#\[email=([^\"'<>]*?) {1}([^\"]*?)\](.*?)\[/email\]#Smi";
+    $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1\2">\3</a>';
 
     return preg_replace($patterns, $replacements, $message);

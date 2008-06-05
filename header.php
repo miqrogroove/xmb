@@ -307,7 +307,7 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
 } else {
     $array = parse_url($full_url);
-    if (substr($array['host'], 0, 9) == 'localhost' || preg_match("/^([0-9]{1,3}\.) {3}[0-9]{1,3}$/i", $array['host'])) {
+    if (substr($array['host'], 0, 9) == 'localhost' || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
         $cookiedomain  = '';
     } else {
         $cookiedomain = str_replace('www', '', $array['host']);
