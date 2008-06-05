@@ -335,6 +335,24 @@ $buddys[offline]
 </body>
 </html>
 
+|#*XMB TEMPLATE FILE*#|buddy_u2u_inv|#*XMB TEMPLATE*#|
+<tr class="tablerow" >
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[hidden]</td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|buddy_u2u_off|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[textoffline]</td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|buddy_u2u_on|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="75%"><input type="checkbox" name="users" value="$buddy[buddyname]" /> $buddy[buddyname]</td>
+<td bgcolor="$altbg1">$lang[textonline]</td>
+</tr>
+
 |#*XMB TEMPLATE FILE*#|css|#*XMB TEMPLATE*#|
 <style type="text/css">
 /*<![CDATA[*/

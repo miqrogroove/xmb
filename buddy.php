@@ -32,6 +32,9 @@ require 'header.php';
 require ROOT.'include/buddy.inc.php';
 
 loadtemplates(
+'buddy_u2u_inv',
+'buddy_u2u_off',
+'buddy_u2u_on',
 'buddy_u2u',
 'buddylist',
 'buddylist_buddy_offline',
@@ -66,6 +69,9 @@ switch($action) {
         } else {
             blistmsg($lang['nomember']);
         }
+        break;
+    case 'add2u2u':
+        buddy_addu2u();
         break;
     default:
         buddy_display();

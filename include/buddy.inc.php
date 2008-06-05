@@ -110,6 +110,43 @@ function buddy_delete($delete) {
     blistmsg($lang['buddylistupdated'], 'buddy.php');
 }
 
+/**
+* buddy_addu2u() - Display a list of buddies with their online status
+*
+* @param    none, but takes many globals
+* @return    no return value, but will display a status report or a list of buddies and their online status
+*/
+function buddy_addu2u() {
+    global $db, $lang, $xmbuser, $oToken;
+    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+
+    $users = array();
+    $buddys = array();
+    $buddys['offline'] = '';
+    $buddys['online'] = '';
+
+    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    while($buddy = $db->fetch_array($q)) {
+        if ($buddy['invisible'] == 1) {
+            if (!X_ADMIN) {
+                eval("\$buddys['offline'] .= \"".template('buddy_u2u_off')."\";");
+            } else {
+                eval("\$buddys['online'] .= \"".template('buddy_u2u_inv')."\";");
+            }
+        } else if ($buddy['username'] != '') {
+            eval("\$buddys['online'] .= \"".template('buddy_u2u_on')."\";");
+        } else {
+            eval("\$buddys['offline']   .= \"".template('buddy_u2u_off')."\";");
+        }
+    }
+
+    if (count($buddys) == 0) {
+        blistmsg($lang['no_buddies']);
+    } else {
+        eval('echo stripslashes("'.template('buddy_u2u').'");');
+    }
+}
+
 function buddy_display() {
     global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
