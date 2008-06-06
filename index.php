@@ -64,18 +64,20 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     eval('$ticker = "'.template('index_ticker').'";');
 }
 
-$gid = getInt('gid');
-if ($gid) {
-    $gid = (int) $gid;
+$gid = 0;
+if (onSubmit('gid')) {
+    $gid = getInt('gid');
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
-    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid='$gid' AND type='group' AND status='on' LIMIT 1");
+    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid=$gid AND type='group' AND status='on' LIMIT 1");
+    if ($db->num_rows($query) != 1) {
+        header('HTTP/1.1 404 Not Found');
+        error($lang['textnocat']);
+    }
     $cat = $db->fetch_array($query);
     $db->free_result($query);
     nav(fnameOut($cat['name']));
-} else {
-    $gid = 0;
 }
 
 eval('echo "'.template('header').'";');

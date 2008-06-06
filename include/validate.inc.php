@@ -429,7 +429,6 @@ function formArray($varname, $striptags = true, $quotes = false, $type = 'string
 * @return   integer   the "safe" integer if the variable is available, zero otherwise
 */
 function getInt($varname, $sourcearray='g') {
-    $retval = 0;
     $foundvar = FALSE;
     switch($sourcearray) {
         case 'g':
@@ -461,6 +460,8 @@ function getInt($varname, $sourcearray='g') {
 
     if ($foundvar And is_numeric($retval)) {
         $retval = intval($retval);
+    } else {
+        $retval = 0;
     }
 
     return $retval;
