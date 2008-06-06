@@ -312,6 +312,7 @@ $lang['foldermsg'] = "Separar todas as pastas com vírgulas (por ex. \"Pasta 1, P
 $lang['foldersupdate'] = "A lista de pastas foi actualizada com sucesso.";
 $lang['foldersupdateerror'] = 'As seguintes pastas não foram apagadas porque ainda continham mensagens u2u:';
 $lang['footer_options'] = 'Opções de Rodapé:';
+$lang['forumpermissions'] = "Fórum Permissões:";
 $lang['forgotpw'] = "Esqueceu a password?";
 $lang['forumjumpselect'] = "Seleccionar o fórum";
 $lang['forumpruned'] = "O Fórum foi filtrado com sucesso";
@@ -736,10 +737,10 @@ $lang['textfaqans21'] = "Pode fazer o logout clicando em Logout no topo da págin
 $lang['textfaqans3'] = "Para adicionar uma assinatura às suas mensagens, tem que entrar no seu <a href=\"memcp.php\">perfil</a> e digitar na caixa texto Assinatura a assinatura que deseja usar.<br /><br />O CódigoBB e HTML podem estar ligados ou desligados. Isso afecta a sua assinatura.";
 $lang['textfaqans4'] = "Mais uma vez no seu <a href=\"memcp.php\">perfil</a> tem um espaço para o 'Avatar'. Um Avatar é uma imagem debaixo do seu nome. Pergunte a seu Administrador sobre o tamanho permitido no avatar, geralmente é considerado boa educação usar um Avatar com menos de 150 pixels de largura.";
 $lang['textfaqans5'] = "Se esqueceu a password, não se preocupe. Vá a <a href=\"misc.php?action=lostpw\">secção de password perdida</a> e preencha o formulário. A sua password será enviada por email.";
-$lang['textfaqans6'] = "Mensagem U2U significa mensagem de utilizador para utilizador. É um sistema de mensagens simples, que pode ser utilizado para enviar mensagens a outros utilizadores deste fórum. Pode visualizar sua Caixa de Entrada de Mensagens u2u <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 550, 450);\">clicando aqui</a> ou indo ao seu <a href=\"memcp.php\">perfil</a>.<br /><br />Os administradores do fórum podem ter desligado esta função para certos utilizadores.<br /><br /><strong>OBSERVAÇÃO:</strong> Os Super Administradores podem visualizar sua caixa de entrada de mensagens u2u. Isto é por motivo de segurança do fórum e não para invadir sua privacidade. Assim como na internet em geral, deve ter cuidado ao enviar informações sigilosas através do sistema de mensagens u2u.";
+$lang['textfaqans6'] = "Mensagem U2U significa mensagem de utilizador para utilizador. É um sistema de mensagens simples, que pode ser utilizado para enviar mensagens a outros utilizadores deste fórum. Pode visualizar sua Caixa de Entrada de Mensagens u2u <a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">clicando aqui</a> ou indo ao seu <a href=\"memcp.php\">perfil</a>.<br /><br />Os administradores do fórum podem ter desligado esta função para certos utilizadores.<br /><br /><strong>OBSERVAÇÃO:</strong> Os Super Administradores podem visualizar sua caixa de entrada de mensagens u2u. Isto é por motivo de segurança do fórum e não para invadir sua privacidade. Assim como na internet em geral, deve ter cuidado ao enviar informações sigilosas através do sistema de mensagens u2u.";
 $lang['textfaqans7'] = "Existe um botão chamado 'Login' no alto do menu. Clicar neste botão lhe encaminhará à página de Login, onde poderá fazer o Login. Aqui poderá introduzir o seu nome de utilizador e password, clicar no botão Login, e pronto!";
 $lang['textfaqans8'] = "Clique no botão 'Pesquisa' no menu. Depois introduza o que deseja pesquisar. Pode restringir onde realizar as Pesquisas com as caixas de selecção.";
-$lang['textfaqans9'] = "Primeiro clique na <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 550, 450);\">U2U</a>  no menu, outra janela pequena pop-up vai aparecer, lá poderá aceder a tela 'Enviar Mensagem u2u', clicando no topo. Coloque o nome do utilizador no campo 'Para', e depois coloque um Assunto e uma Mensagem e envie a mensagem em 'Enviar'. ";
+$lang['textfaqans9'] = "Primeiro clique na <a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">U2U</a>  no menu, outra janela pequena pop-up vai aparecer, lá poderá aceder a tela 'Enviar Mensagem u2u', clicando no topo. Coloque o nome do utilizador no campo 'Para', e depois coloque um Assunto e uma Mensagem e envie a mensagem em 'Enviar'. ";
 $lang['textfaqextra'] = "Extra";
 $lang['textfaqstatus'] = "Status do FAQ (Perguntas Frequentes):";
 $lang['textfavorites'] = "Favoritos";
@@ -1151,6 +1152,5 @@ $lang['whosonline_on'] = "Quem está online no index:";
 $lang['whosonlinetoday'] = "Quem está online hoje";
 $lang['whoview'] = "Quem pode ver este fórum?";
 $lang['xmb'] = "XMB";
-$lang['forumpermissions'] = "Fórum Permissões:";
 $lang['xmbgroup'] = "The XMB Group";
 ?>
