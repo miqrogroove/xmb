@@ -26,8 +26,6 @@
  *
  **/
 
-// NOT FINISHED
-
 if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
