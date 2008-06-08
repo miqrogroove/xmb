@@ -477,7 +477,6 @@ switch($action) {
                         $dbauthor = $db->escape($result['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                     }
-                    $db->free_result($query);
 
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
                     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=$tid");
