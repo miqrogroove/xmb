@@ -321,7 +321,7 @@ switch($action) {
 
     case 'u2udump':
         if (noSubmit('yessubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['whoodump_confirm'].'<br /><form action="tools.php?action=u2udump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['u2udump_confirm'].'<br /><form action="tools.php?action=u2udump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
         } else if ($lang['textyes'] == $yessubmit) {
             $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
