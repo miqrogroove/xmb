@@ -137,6 +137,11 @@ if (X_GUEST) {
 
 validatePpp();
 
+$poll = postedVar('poll', '', FALSE, FALSE, FALSE, 'g');
+if ($poll != 'yes') {
+    $poll = '';
+}
+
 // check permissions on this forum (and top forum if it's a sub?)
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
@@ -147,13 +152,8 @@ if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
 
 // check posting permissions specifically
 if ($action == 'newthread') {
-    $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
-    if (!$perms[X_PERMS_THREAD]) {
+    if (!$perms[X_PERMS_THREAD] || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
         error($lang['textnoaction']);
-    } else if ($pollanswers != '' || (isset($poll) && $poll == 'yes')) {
-        if (!$perms[X_PERMS_POLL]) {
-            error($lang['textnoaction']);
-        }
     }
 } else if ($action == 'reply') {
     if (!$perms[X_PERMS_REPLY]) {
@@ -281,16 +281,6 @@ if (X_STAFF) {
 } else {
     $topcheck = '';
     $closecheck = '';
-}
-
-if (isset($poll)) {
-    if ($poll != 'yes') {
-        $poll = '';
-    } else {
-        $poll = 'yes';
-    }
-} else {
-    $poll = '';
 }
 
 $posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
@@ -609,7 +599,7 @@ switch($action) {
         break;
 
     case 'newthread':
-        if (isset($poll) && $poll == 'yes') {
+        if ($poll == 'yes') {
             nav($lang['textnewpoll']);
         } else {
             nav($lang['textpostnew']);
@@ -621,6 +611,7 @@ switch($action) {
 
         eval('echo "'.template('header').'";');
 
+        $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($topicvalid) {
@@ -645,7 +636,7 @@ switch($action) {
                             } else if (!$perms[X_PERMS_THREAD]) {
                                 softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
-                            } else if ($pollanswers != '' && !$perms[X_PERMS_POLL]) {
+                            } else if ($poll == 'yes' && !$perms[X_PERMS_POLL]) {
                                 softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
@@ -708,7 +699,7 @@ switch($action) {
         }
 
         if ($topicvalid) {
-            if ($pollanswers != '') {
+            if ($poll == 'yes') {
                 $pollopts = explode("\n", $pollanswers);
                 $pnumnum = count($pollopts);
 
@@ -739,7 +730,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 $where");
             unset($where);
 
-            if ($pollanswers != '') {
+            if ($poll == 'yes') {
                 $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
                 if ($query) {
                     $vote_id = $db->fetch_array($query);
