@@ -352,10 +352,8 @@ if (isset($previewpost)) {
     $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-
     $dissubject = $subject;
     $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-
     eval('$preview = "'.template('post_preview').'";');
 }
 
@@ -363,9 +361,11 @@ switch($action) {
     case 'reply':
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['textreply']);
+
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$threadname;
         }
+
         eval('echo "'.template('header').'";');
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
@@ -403,6 +403,7 @@ switch($action) {
                                 softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
+
                             if ($forum['type'] == 'sub') {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
@@ -429,16 +430,19 @@ switch($action) {
                 }
             }
         }
+
         if ($replyvalid) {
             $attachedfile = FALSE;
             if (isset($_FILES['attach'])) {
                 $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
             }
+
             if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0 && $attachedfile === FALSE) {
                 softerror($lang['postnothing']);
                 $replyvalid = FALSE;
             }
         }
+
         if ($replyvalid) {
             if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
@@ -450,6 +454,7 @@ switch($action) {
                 $db->free_result($query);
             }
         }
+
         if ($replyvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
@@ -461,6 +466,7 @@ switch($action) {
                 }
             }
         }
+
         if ($replyvalid) {
             if ($usesig != "yes") {
                 $usesig = "no";
@@ -600,7 +606,6 @@ switch($action) {
 
             eval('echo "'.template('post_reply').'";');
         }
-
         break;
 
     case 'newthread':
@@ -609,9 +614,11 @@ switch($action) {
         } else {
             nav($lang['textpostnew']);
         }
+
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$dissubject;
         }
+
         eval('echo "'.template('header').'";');
 
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -642,6 +649,7 @@ switch($action) {
                                 softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
+
                             if ($forum['type'] == 'sub') {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
@@ -668,12 +676,14 @@ switch($action) {
                 }
             }
         }
+
         if ($topicvalid) {
             if (strlen(postedVar('subject')) == 0) {
                 softerror($lang['textnosubject']);
                 $topicvalid = FALSE;
             }
         }
+
         if ($topicvalid) {
             if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
@@ -685,6 +695,7 @@ switch($action) {
                 $db->free_result($query);
             }
         }
+
         if ($topicvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
@@ -695,6 +706,7 @@ switch($action) {
                 }
             }
         }
+
         if ($topicvalid) {
             if ($pollanswers != '') {
                 $pollopts = explode("\n", $pollanswers);
@@ -706,6 +718,7 @@ switch($action) {
                 }
             }
         }
+
         if ($topicvalid) {
             $thatime = $onlinetime;
 
@@ -774,6 +787,7 @@ switch($action) {
             if (isset($_FILES['attach'])) {
                 $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
             }
+
             if ($attachedfile !== FALSE) {
                 $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
             }
@@ -819,15 +833,16 @@ switch($action) {
                 eval('echo "'.template('post_newthread').'";');
             }
         }
-
         break;
 
     case 'edit':
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['texteditpost']);
+
         if ($SETTINGS['subject_in_title'] == 'on') {
             $threadSubject = '- '.$threadname;
         }
+
         eval('echo "'.template('header').'";');
 
         $editvalid = onSubmit('editsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -859,6 +874,7 @@ switch($action) {
                 $db->free_result($query);
             }
         }
+
         if ($editvalid) {
             $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline LIMIT 1");
             $isfirstpost = $db->fetch_array($query);
@@ -869,6 +885,7 @@ switch($action) {
                 $editvalid = FALSE;
             }
         }
+
         if ($editvalid) {
             $threaddelete = 'no';
 
@@ -880,6 +897,7 @@ switch($action) {
             if ($SETTINGS['editedby'] == 'on') {
                 $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
             }
+
             $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
             $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid='$pid'");
 
@@ -971,10 +989,12 @@ switch($action) {
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
             }
-//update
+
+            //update
             if (isset($postinfo['filesize'])) {
                 $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
             }
+
             if (isset($postinfo['filename'])) {
                 $postinfo['filename'] = attrOut($postinfo['filename']);
             }
@@ -1022,7 +1042,6 @@ switch($action) {
             }
             eval('echo "'.template('post_edit').'";');
         }
-
         break;
 
     default:
@@ -1046,5 +1065,4 @@ function bbcodeinsert() {
 function softerror($msg) {
     error($msg, FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
 }
-
 ?>
