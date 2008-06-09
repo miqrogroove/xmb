@@ -147,9 +147,10 @@ if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
 
 // check posting permissions specifically
 if ($action == 'newthread') {
+    $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
     if (!$perms[X_PERMS_THREAD]) {
         error($lang['textnoaction']);
-    } else if (isset($poll) && $poll == 'yes') {
+    } else if ($pollanswers != '' || (isset($poll) && $poll == 'yes')) {
         if (!$perms[X_PERMS_POLL]) {
             error($lang['textnoaction']);
         }
@@ -178,18 +179,16 @@ if ($forum['type'] == 'sub') {
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-    unset($fup);
 } else if ($forum['fup'] > 0) { // 'forum' in a 'group'
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
     $fup = $db->fetch_array($query);
     $db->free_result($query);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-    unset($fup);
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
 $attachfile = '';
-if (isset($forum['attachstatus']) && $forum['attachstatus'] != 'off') {
+if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
@@ -394,6 +393,24 @@ switch($action) {
                             $replyvalid = FALSE;
                         } else {
                             $username = $xmbuser;
+
+                            // check permissions on this forum (and top forum if it's a sub?)
+                            $perms = checkForumPermissions($forum);
+                            if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+                                softerror($lang['privforummsg']);
+                                $topicvalid = FALSE;
+                            } else if (!$perms[X_PERMS_REPLY]) {
+                                softerror($lang['textnoaction']);
+                                $topicvalid = FALSE;
+                            }
+                            if ($forum['type'] == 'sub') {
+                                // prevent access to subforum when upper forum can't be viewed.
+                                $fupPerms = checkForumPermissions($fup);
+                                if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+                                    softerror($lang['privforummsg']);
+                                    $topicvalid = FALSE;
+                                }
+                            }
                         }
                     } else {
                         softerror($lang['textpw1']);
@@ -576,10 +593,11 @@ switch($action) {
             }
             $db->free_result($querytop);
 
-            $attachfile = '';
-            if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
-                eval('$attachfile = "'.template('post_attachmentbox').'";');
+            $rawperms = explode(',', $forum['postperm']);
+            if ($rawperms[X_PERMS_REPLY] == 32) { // Member posting is not allowed, do not request credentials!
+                $loggedin = '';
             }
+
             eval('echo "'.template('post_reply').'";');
         }
 
@@ -611,6 +629,27 @@ switch($action) {
                             $topicvalid = FALSE;
                         } else {
                             $username = $xmbuser;
+
+                            // check permissions on this forum (and top forum if it's a sub?)
+                            $perms = checkForumPermissions($forum);
+                            if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+                                softerror($lang['privforummsg']);
+                                $topicvalid = FALSE;
+                            } else if (!$perms[X_PERMS_THREAD]) {
+                                softerror($lang['textnoaction']);
+                                $topicvalid = FALSE;
+                            } else if ($pollanswers != '' && !$perms[X_PERMS_POLL]) {
+                                softerror($lang['textnoaction']);
+                                $topicvalid = FALSE;
+                            }
+                            if ($forum['type'] == 'sub') {
+                                // prevent access to subforum when upper forum can't be viewed.
+                                $fupPerms = checkForumPermissions($fup);
+                                if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+                                    softerror($lang['privforummsg']);
+                                    $topicvalid = FALSE;
+                                }
+                            }
                         }
                     } else {
                         softerror($lang['textpw1']);
@@ -657,8 +696,7 @@ switch($action) {
             }
         }
         if ($topicvalid) {
-            $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
-            if (X_MEMBER && $pollanswers != '' && $perms[X_PERMS_POLL]) {
+            if ($pollanswers != '') {
                 $pollopts = explode("\n", $pollanswers);
                 $pnumnum = count($pollopts);
 
@@ -688,7 +726,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 $where");
             unset($where);
 
-            if (X_MEMBER && $pollanswers != '' && $perms[X_PERMS_POLL]) {
+            if ($pollanswers != '') {
                 $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
                 if ($query) {
                     $vote_id = $db->fetch_array($query);
@@ -770,10 +808,12 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            if (isset($poll) && $poll == 'yes' && $perms[X_PERMS_POLL]) {
-                if (!isset($pollanswers)) {
-                    $pollanswers = '';
-                }
+            $rawperms = explode(',', $forum['postperm']);
+            if ($rawperms[X_PERMS_THREAD] == 32) { // Member posting is not allowed, do not request credentials!
+                $loggedin = '';
+            }
+
+            if (isset($poll) && $poll == 'yes') {
                 eval('echo "'.template('post_newpoll').'";');
             } else {
                 eval('echo "'.template('post_newthread').'";');
