@@ -152,7 +152,7 @@ if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
 
 // check posting permissions specifically
 if ($action == 'newthread') {
-    if (!$perms[X_PERMS_THREAD] || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
+    if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
         error($lang['textnoaction']);
     }
 } else if ($action == 'reply') {
@@ -633,10 +633,7 @@ switch($action) {
                             if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
                                 softerror($lang['privforummsg']);
                                 $topicvalid = FALSE;
-                            } else if (!$perms[X_PERMS_THREAD]) {
-                                softerror($lang['textnoaction']);
-                                $topicvalid = FALSE;
-                            } else if ($poll == 'yes' && !$perms[X_PERMS_POLL]) {
+                            } else if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
                                 softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
