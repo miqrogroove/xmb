@@ -142,7 +142,7 @@ $mapercent  = number_format(($membersact*100/$members), 2).'%';
 
 // Get top 5 most viewed threads
 $viewmost = array();
-$query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY views DESC LIMIT 5");
+$query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY views DESC LIMIT 5");
 while($views = $db->fetch_array($query)) {
     $views['subject'] = shortenString(rawHTMLsubject(stripslashes($views['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
     $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.$views['subject'].'</a> ('.$views['views'].')';
@@ -152,7 +152,7 @@ $db->free_result($query);
 
 // Get top 5 most replied to threads
 $replymost = array();
-$query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY replies DESC LIMIT 5");
+$query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY replies DESC LIMIT 5");
 while($reply = $db->fetch_array($query)) {
     $reply['subject'] = shortenString(rawHTMLsubject(stripslashes($reply['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
     $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.$reply['subject'].'</a> ('.$reply['replies'].')';
@@ -162,7 +162,7 @@ $db->free_result($query);
 
 // Get last 5 posts
 $latest = array();
-$query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict GROUP BY tid ORDER BY lastpost DESC LIMIT 5");
+$query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 while($last = $db->fetch_array($query)) {
     $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
