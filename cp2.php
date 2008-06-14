@@ -1147,7 +1147,7 @@ if ($action == "newsletter") {
         $wait = formInt('wait');
 
         if ($newscopy != 'yes') {
-            $tome = 'AND NOT username=\''.$xmbuser.'\'';
+            $tome = "AND NOT username='$xmbuser'";
         } else {
             $tome = '';
         }
@@ -1166,11 +1166,11 @@ if ($action == "newsletter") {
 
         if ($sendvia == "u2u") {
             while($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".addslashes($memnews['username'])."', '$xmbuser', 'incoming', '".addslashes($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".$db->escape($memnews['username'])."', '$xmbuser', 'incoming', '".$db->escape($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
-            $newssubject = stripslashes(stripslashes($newssubject));
-            $newsmessage = stripslashes(stripslashes($newsmessage));
+            $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
+            $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
             $headers[] = "From: $bbname <$adminemail>";
             $headers[] = "X-Sender: <$adminemail>";
             $headers[] = 'X-Mailer: PHP';
@@ -1194,7 +1194,7 @@ if ($action == "newsletter") {
                     $i++;
                 }
 
-                altMail($memnews['email'], '['.$bbname.'] '.$newssubject, $newsmessage, $headers);
+                altMail($memnews['email'], '['.$bbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit]</td></tr>";

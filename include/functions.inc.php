@@ -1329,7 +1329,7 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
     static $isInc, $handlers;
 
     $message = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $message);
-    $subject = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $subject);
+    $subject = str_replace(array("\r", "\n"), array('', ''), $subject);
 
     switch($mailer['type']) {
         case 'socket_SMTP':
