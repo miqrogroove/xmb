@@ -985,7 +985,7 @@ function get_extension($filename) {
 }
 
 function get_attached_file($file, $attachstatus, $max_size=1000000) {
-    global $lang, $filename, $filetype, $filesize;
+    global $db, $lang, $filename, $filetype, $filesize;
 
     $filename = '';
     $filetype = '';
@@ -1003,9 +1003,9 @@ function get_attached_file($file, $attachstatus, $max_size=1000000) {
             error($lang['attachtoobig'], false, '', '', false, false, false, false);
             return false;
         } else {
-            $attachment = addslashes(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
-            $filename = addslashes($file['name']);
-            $filetype = addslashes(preg_replace('#[\r\n%]#', '', $file['type']));
+            $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
+            $filename = $db->escape($file['name']);
+            $filetype = $db->escape(preg_replace('#[\r\n%]#', '', $file['type']));
 
             if ($filesize == 0) {
                 return false;

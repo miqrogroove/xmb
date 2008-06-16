@@ -335,8 +335,11 @@ if ($action == 'themes') {
         <?php
     }
 
-    if (onSubmit('importsubmit') && isset($themefile['tmp_name'])) {
-        $themebits = readFileAsINI($themefile['tmp_name']);
+    if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
+        if (!is_uploaded_file($_FILES['themefile']['tmp_name'])) {
+            error($lang['textthemeimportfail'], FALSE);
+        }
+        $themebits = readFileAsINI($_FILES['themefile']['tmp_name']);
         $start = "INSERT INTO ".X_PREFIX."themes";
 
         $keysql = array();
@@ -345,16 +348,16 @@ if ($action == 'themes') {
             if ($key == 'themeid') {
                 $val = '';
             } else if ($key == 'name') {
-                $name = $val;
+                $dbname = $db->escape($val);
             }
-            $keysql[] = $key;
-            $valsql[] = "'$val'";
+            $keysql[] = $db->escape($key);
+            $valsql[] = "'".$db->escape($val)."'";
         }
 
         $keysql = implode(', ', $keysql);
         $valsql = implode(', ', $valsql);
 
-        $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='".addslashes($name)."'");
+        $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='$dbname'");
         if ($db->result($query, 0) > 0) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table>');
         }
