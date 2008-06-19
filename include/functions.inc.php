@@ -34,11 +34,10 @@ if (!defined('IN_CODE')) {
 //$xmbuserinput must be html escaped & db escaped username input.
 //$xmbpwinput must be raw password hash input.
 function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FALSE) {
-    global $server, $self, $onlineip, $misc, $onlinetime, $db, $cookiepath, $cookiedomain;
+    global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
     if (elevateUser($xmbuserinput, $xmbpwinput)) {
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
-        $currtime = $onlinetime + (86400*30);
 
         $dbname = $db->escape($self['username']);
 
@@ -48,33 +47,19 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FAL
             $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
         }
 
-        if ($server == 'Mic') {
-            $misc = '<script>
-                function put_cookie(name, value, expires, path, domain, secure) {
-                    var curCookie = name + "=" + escape(value) +
-                    ((expires) ? "; expires=" + expires.toGMTString() : "") +
-                    ((path) ? "; path=" + path : "") +
-                    ((domain) ? "; domain=" + domain : "") +
-                    ((secure) ? "; secure" : "");
-                    document.cookie = curCookie;
-                }
-
-                var now = new Date();
-                now.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-
-                put_cookie("xmbuser", "'.$self['username'].'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-                put_cookie("xmbpw", "'.$xmbpwinput.'", now, "'.$cookiepath.'", "'.$cookiedomain.'");
-            </script>';
+        if ($tempcookie) {
+            $currtime = 0;
         } else {
-            if ($tempcookie) {
-                put_cookie("xmbuser", $self['username'], NULL, $cookiepath, $cookiedomain);
-                put_cookie("xmbpw", $xmbpwinput, NULL, $cookiepath, $cookiedomain);
-            } else {
-                put_cookie("xmbuser", $self['username'], $currtime, $cookiepath, $cookiedomain);
-                put_cookie("xmbpw", $xmbpwinput, $currtime, $cookiepath, $cookiedomain);
-            }
-            $misc = '';
+            $currtime = $onlinetime + (86400*30);
         }
+
+        if ($server == 'Mic') {
+            $setusing = X_SET_JS;
+        } else {
+            $setusing = X_SET_HEADER;
+        }
+        put_cookie("xmbuser", $self['username'], $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
+        put_cookie("xmbpw", $xmbpwinput, $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
         return TRUE;
     } else {
         return FALSE;
@@ -951,10 +936,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         error('Tried to redirect to potentially insecure url.');
     }
 
-    session_write_close();
-
-    $type = (headers_sent() || $type == X_REDIRECT_JS) ? X_REDIRECT_JS : X_REDIRECT_HEADER;
-    if ($type == X_REDIRECT_JS) {
+    if (headers_sent() Or $type == X_REDIRECT_JS) {
         ?>
         <script language="javascript" type="text/javascript">
         function redirect() {
@@ -966,6 +948,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     } else {
         if ($timeout == 0) {
             header("Location: $path");
+            exit;
         } else {
             header("Refresh: $timeout; URL=$path");
         }
@@ -1241,38 +1224,26 @@ function dump_query($resource, $header=true) {
     }
 }
 
-function put_cookie($name, $value=null, $expire=null, $path=null, $domain=null, $secure=null, $setVia=X_SET_HEADER) {
-
+function put_cookie($name, $value=null, $expire=0, $path=null, $domain=null, $secure=FALSE, $setVia=X_SET_HEADER) {
     if (!headers_sent() && $setVia != X_SET_JS) {
         return setcookie($name, $value, $expire, $path, $domain, $secure);
     } else {
-        if ($expire >= 0) {
+        if ($expire > 0) {
             $expire = gmdate('r', $expire);
         } else {
-            $expire = null;
+            $expire = '';
         }
         ?>
         <script type="text/javascript">
-        function setcookie(name, value="deleted", expire=0, path="", domain="", secure=0) {
-            if (expire == 0) {
-                var now = new Date();
-                expire = now.toGMTString();
+            function put_cookie(name, value, expires, path, domain, secure) {
+                var curCookie = name + "=" + escape(value) +
+                ((expires) ? "; expires=" + expires : "") +
+                ((path) ? "; path=" + path : "") +
+                ((domain) ? "; domain=" + domain : "") +
+                ((secure) ? "; secure" : "");
+                document.cookie = curCookie;
             }
-
-            if (path == "") {
-                path = window.location.pathname;
-            }
-
-            if (domain == "") {
-                domain = window.location.host;
-            }
-
-            // create cookie string (expire in GMT TIME!)
-            var cookie = '';
-            cookie = name+"="+value+"; expires="+expire+"; path="+path+"; domain="+domain+"; secure="+secure"; HttpOnly";
-            document.cookie += cookie;
-        }
-        setcookie(<?php echo $name?>, <?php echo $value?>, <?php echo $expire?>, <?php echo $path?>, <?php echo $domain?>, <?php echo $secure?>);
+            put_cookie('<?php echo $name?>', '<?php echo $value?>', '<?php echo $expire?>', '<?php echo $path?>', '<?php echo $domain?>', '<?php echo $secure?>');
         </script>
         <?php
         return true;

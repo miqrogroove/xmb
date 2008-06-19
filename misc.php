@@ -115,7 +115,9 @@ switch($action) {
         } else {
             $password = '';
             if (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
-                if ($server != 'Mic') {
+                if ($server == 'Mic') {
+                    $misc = message($lang['onlinelogin'], FALSE, '', '', 'index.php', FALSE, TRUE, FALSE);
+                } else {
                     redirect('index.php', 0);
                 }
             } else {
