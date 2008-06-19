@@ -1,1 +1,0 @@
-ALTER TABLE `$table_forums` ADD `subjectprefixes` text NOT NULL;

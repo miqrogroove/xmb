@@ -1,8 +1,0 @@
-The XMB Group Credits And Contributors Documentation
-
-So many people over the years have contributed to the development of XMB software that it's been nearly impossible to track.
-Below will be as complete a list that we can compile to show thanks for those who have participated in the past and current.
-We will note as many people as we can for there positions and contributions below but many will simply be listed as contributors
-as the list is far to long to define individually.
-
-Credits page filler -------------------------------
