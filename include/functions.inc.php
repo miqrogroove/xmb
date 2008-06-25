@@ -1350,6 +1350,9 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
             return $mail->sendMessage($SETTINGS['adminemail'], $to, $message, $additional_headers);
             break;
         default:
+            if (PHP_OS == 'WINNT' Or PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45283 a.k.a. #28038
+                ini_set('sendmail_from', ini_get('sendmail_from'));
+            }
             if (ini_get('safe_mode') == "1") {
                 return mail($to, $subject, $message, $additional_headers);
             } else {
