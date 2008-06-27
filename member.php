@@ -575,6 +575,13 @@ switch($action) {
                 error($lang['nomember']);
             } else {
                 eval('echo "'.template('header').'";');
+                
+                $encodeuser = recodeOut($memberinfo['username']);
+                if (X_GUEST) {
+                    $memberlinks = '';
+                } else {
+                    $memberlinks = " <small>(<a href=\"u2u.php?action=send&amp;username=$encodeuser\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href=\"buddy.php?action=add&amp;buddys=$encodeuser\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['addtobuddies']}</a>)</small>";
+                }
 
                 $daysreg = ($onlinetime - $memberinfo['regdate']) / (24*3600);
                 if ($daysreg > 1) {
@@ -656,7 +663,6 @@ switch($action) {
 
                 $memberinfo['bio'] = censor($memberinfo['bio']);
                 $memberinfo['bio'] = nl2br($memberinfo['bio']);
-                $encodeuser = recodeOut($memberinfo['username']);
 
                 $emailblock = '';
                 if ($memberinfo['showemail'] == 'yes') {

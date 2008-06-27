@@ -2048,7 +2048,7 @@ $todaymembers&nbsp;
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2">{$memberinfo['username']} <small>(<a href="u2u.php?action=send&amp;username=$encodeuser" onclick="Popup(this.href, 'Window', 700, 450); return false;">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href="buddy.php?action=add&amp;buddys=$encodeuser" onclick="Popup(this.href, 'Window', 450, 400); return false;">{$lang['addtobuddies']}</a>)</small></td>
+<td bgcolor="$altbg2">{$memberinfo['username']}$memberlinks</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textregistered]</td>
