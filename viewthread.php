@@ -514,7 +514,11 @@ if ($action == '') {
 
             eval('$search = "'.template('viewthread_post_search').'";');
             eval('$profile = "'.template('viewthread_post_profile').'";');
-            eval('$u2u = "'.template('viewthread_post_u2u').'";');
+            if (X_GUEST) {
+                $u2u = '';
+            } else {
+                eval('$u2u = "'.template('viewthread_post_u2u').'";');
+            }
 
             $showtitle = $post['status'];
             $rank = array();
