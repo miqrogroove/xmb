@@ -4498,7 +4498,7 @@ $sendoptions
 $poll
 <table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center">
 <tr>
-<td class="smalltxt"><a href="viewthread.php?fid=$fid&amp;tid=$tid&amp;action=printable">$lang[textprintver]</a> | <a href="memcp.php?action=subscriptions&amp;subadd=$tid">$lang[textsubscribe]</a> | <a href="memcp.php?action=favorites&amp;favadd=$tid">$lang[textaddfav]</a></td>
+<td class="smalltxt"><a href="viewthread.php?fid=$fid&amp;tid=$tid&amp;action=printable">$lang[textprintver]</a>$memcplink</td>
 <td class="post" align="right" valign="bottom">&nbsp;$newtopiclink$newpolllink$replylink</td>
 </tr>
 </table>

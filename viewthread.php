@@ -318,6 +318,12 @@ if ($action == '') {
         }
     }
 
+    if (X_GUEST) {
+        $memcplink = '';
+    } else {
+        $memcplink = " | <a href=\"memcp.php?action=subscriptions&amp;subadd=$tid\">{$lang['textsubscribe']}</a> | <a href=\"memcp.php?action=favorites&amp;favadd=$tid\">{$lang['textaddfav']}</a>";
+    }
+
     if ($perms[X_PERMS_THREAD]) {
         eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
     } else {

@@ -152,6 +152,8 @@ switch($action) {
         break;
 
     case 'search':
+        header('X-Robots-Tag: noindex');
+
         if ($SETTINGS['searchstatus'] != 'on') {
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');

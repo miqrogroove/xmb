@@ -30,6 +30,8 @@ define('X_SCRIPT', 'post.php');
 
 require 'header.php';
 
+header('X-Robots-Tag: noindex');
+
 loadtemplates(
 'post_captcha',
 'post_notloggedin',
