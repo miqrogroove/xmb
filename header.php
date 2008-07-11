@@ -125,8 +125,8 @@ if (headers_sent()) {
 // Initialise pre-set Variables
 // These strings can be pulled for use on any page as header is required by all XMB pages
 $versioncompany = 'The XMB Group';
-+$versionshort = 'XMB 1.9.10';
-+$versiongeneral = 'XMB 1.9.10 Karl';
+$versionshort = 'XMB 1.9.10';
+$versiongeneral = 'XMB 1.9.10 Karl';
 $copyright = '2001-2008';
 if ($show_full_info) {
     $alpha = '';
