@@ -123,6 +123,7 @@ if ($tid > 0) {
 //Warning! These variables are used for template output.
 $captchapostcheck = '';
 $dissubject = '';
+$imghash = '';
 $message = '';
 $message1 = '';
 $preview = '';
@@ -412,7 +413,8 @@ switch($action) {
                 } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
-                        $imghash = $db->escape($imghash);
+                        $imgcode = postedVar('imgcode', '', FALSE, FALSE);
+                        $imghash = postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
                             softerror($lang['captchaimageinvalid']);
                             $replyvalid = FALSE;
@@ -656,7 +658,8 @@ switch($action) {
                 } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
-                        $imghash = $db->escape($imghash);
+                        $imgcode = postedVar('imgcode', '', FALSE, FALSE);
+                        $imghash = postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
                             softerror($lang['captchaimageinvalid']);
                             $topicvalid = FALSE;
