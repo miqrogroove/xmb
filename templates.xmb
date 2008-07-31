@@ -3387,7 +3387,6 @@ $suggestions
 <input type="hidden" name="fid" value="$fid" />
 <input type="hidden" name="tid" value="$tid" />
 <input type="hidden" name="pid" value="$pid" />
-<input type="hidden" name="postsubject" value="$postinfo[subject]" />
 </form>
 
 |#*XMB TEMPLATE FILE*#|post_edit_attachment|#*XMB TEMPLATE*#|
