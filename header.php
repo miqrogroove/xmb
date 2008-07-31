@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -32,6 +32,28 @@ if (!defined('X_SCRIPT')) {
 
 error_reporting(E_ALL&~E_NOTICE);
 
+// Initialise pre-set Variables
+// These strings can be pulled for use on any page as header is required by all XMB pages
+$versioncompany = 'The XMB Group';
+$versionshort = '1.9.11';
+$versiongeneral = 'XMB 1.9.11';
+$copyright = '2001-2008';
+if ($show_full_info) {
+    $alpha = 'Alpha Zero';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = 20080731;
+    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
+} else {
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = '[HIDDEN]';
+    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
+}
+
 define('IN_CODE', true);
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -54,15 +76,7 @@ if (!defined('ROOT')) {
 
 // Resolve Server specific issues
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-switch($server) {
-    case 'Aby': // Abyss web server
-        $protocol = (getenv('HTTPS') == 'off') ? ('http://') : ('https://');
-        $query = (getenv('QUERY_STRING')) ? ('?'.getenv('QUERY_STRING')) : ('');
-        $url = $protocol.getenv('SERVER_NAME').getenv('SCRIPT_NAME').$query;
-        break;
-    default: // includes Apache and IIS using module and CGI forms
-        $url = $_SERVER['REQUEST_URI'];
-}
+$url = $_SERVER['REQUEST_URI'];
 
 // Required Files - XMB (Version/Patch File) Configuration File, Database Settings File
 require ROOT.'include/global.inc.php';
@@ -122,26 +136,39 @@ if (headers_sent()) {
     }
 }
 
-// Initialise pre-set Variables
-// These strings can be pulled for use on any page as header is required by all XMB pages
-$versioncompany = 'The XMB Group';
-$versionshort = 'XMB 1.9.10';
-$versiongeneral = 'XMB 1.9.10 Karl';
-$copyright = '2001-2008';
-if ($show_full_info) {
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = 20080609;
-    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
+// Create cookie-settings
+if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
+    exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
 } else {
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
+    $array = parse_url($full_url);
+
+    $cookiesecure = ($array['scheme'] == 'https');
+
+    if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
+        $cookiedomain  = '';
+    } else {
+        $cookiedomain = str_replace('www', '', $array['host']);
+    }
+
+    if (!isset($array['path'])) {
+        $array['path'] = '/';
+    }
+    $cookiepath = $array['path'];
+    unset($array);
+}
+
+// Check for double-slash problems in REQUEST_URI
+if ($url != $cookiepath) {
+    if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
+        $fixed_url = str_replace('//', '/', $url);
+        if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath Or substr($fixed_url, strlen($cookiepath), 1) == '/' Or $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
+            header('HTTP/1.0 404 Not Found');
+        } else {
+            header('HTTP/1.0 301 Moved Permanently');
+            header("Location: $fixed_url");
+        }
+        exit('XMB detected an invalid URL');
+    }
 }
 
 // discover the most likely browser
@@ -301,27 +328,6 @@ define('XMB_VERSION', $versiongeneral);
 define('XMB_BUILD', $versionbuild);
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
-
-// Create cookie-settings
-if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
-    exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
-} else {
-    $array = parse_url($full_url);
-
-    $cookiesecure = ($array['scheme'] == 'https');
-
-    if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
-        $cookiedomain  = '';
-    } else {
-        $cookiedomain = str_replace('www', '', $array['host']);
-    }
-
-    if (!isset($array['path'])) {
-        $array['path'] = '/';
-    }
-    $cookiepath = $array['path'];
-    unset($array);
-}
 
 // Update last visit cookies
 $xmblva = getInt('xmblva', 'c'); // Last visit
