@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -65,22 +65,22 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY pid DESC LIMIT 0, 1");
+        $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
         $pid = $db->result($query, 0);
         $db->free_result($query);
     } else if ($fid > 0) {
-        $query = $db->query("SELECT pid, tid FROM ".X_PREFIX."posts WHERE fid='$fid' ORDER BY pid DESC LIMIT 0, 1");
+        $query = $db->query("SELECT pid, tid, dateline FROM ".X_PREFIX."posts WHERE fid='$fid' ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
         $posts = $db->fetch_array($query);
         $db->free_result($query);
 
         $pid = $posts['pid'];
         $tid = $posts['tid'];
 
-        $query = $db->query("SELECT p.pid, p.tid FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.fid=f.fid and (f.fup=$fid) ORDER BY p.pid DESC LIMIT 0, 1");
+        $query = $db->query("SELECT p.pid, p.tid, p.dateline FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f USING (fid) WHERE f.fup=$fid ORDER BY p.dateline DESC, p.pid DESC LIMIT 0, 1");
         $fupPosts = $db->fetch_array($query);
         $db->free_result($query);
 
-        if ($fupPosts['pid'] > $pid) {
+        if ($fupPosts['dateline'] > $posts['dateline']) {
             $pid = $fupPosts['pid'];
             $tid = $fupPosts['tid'];
         }
@@ -447,7 +447,7 @@ if ($action == '') {
     }
 
     $thisbg = $altbg2;
-    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid='$fid' AND p.tid='$tid' GROUP BY p.pid ORDER BY p.pid ASC LIMIT $start_limit, $ppp");
+    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid='$fid' AND p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
@@ -715,7 +715,7 @@ if ($action == '') {
     echo $file['attachment'];
     exit();
 } else if ($action == 'printable') {
-    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY pid");
+    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY dateline ASC, pid ASC");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {

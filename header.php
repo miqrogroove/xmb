@@ -32,28 +32,6 @@ if (!defined('X_SCRIPT')) {
 
 error_reporting(E_ALL&~E_NOTICE);
 
-// Initialise pre-set Variables
-// These strings can be pulled for use on any page as header is required by all XMB pages
-$versioncompany = 'The XMB Group';
-$versionshort = '1.9.11';
-$versiongeneral = 'XMB 1.9.11';
-$copyright = '2001-2008';
-if ($show_full_info) {
-    $alpha = 'Alpha Zero';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = 20080731;
-    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
-} else {
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
-}
-
 define('IN_CODE', true);
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -134,6 +112,28 @@ if (headers_sent()) {
     } else {
         exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
     }
+}
+
+// Initialise pre-set Variables
+// These strings can be pulled for use on any page as header is required by all XMB pages
+$versioncompany = 'The XMB Group';
+$versionshort = '1.9.11';
+$versiongeneral = 'XMB 1.9.11';
+$copyright = '2001-2008';
+if ($show_full_info) {
+    $alpha = 'Alpha Zero';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = 20080731;
+    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
+} else {
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = '[HIDDEN]';
+    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
 }
 
 // Create cookie-settings
