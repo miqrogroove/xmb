@@ -111,7 +111,7 @@ function email() {
                 desc = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
                 if (desc == fetchSelection(messageElement)) {
                     wrapText('[email='+text+']', '[/email]', messageElement);
-                } else {
+                } else if (desc != null) {
                     AddText('[email='+text+']', '[/email]', desc, messageElement);
                 }
             }
@@ -147,7 +147,7 @@ function chsize(size) {
             text = prompt(bbcode_prompt_size+size, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[size='+size+']', '[/size]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[size='+size+']', '[/size]', text, messageElement);
             }
         } else {
@@ -175,7 +175,7 @@ function chfont(font) {
             text = prompt(bbcode_prompt_font+font, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[font='+font+']', '[/font]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[font='+font+']', '[/font]', text, messageElement);
             }
         } else {
@@ -203,7 +203,7 @@ function bold() {
             text = prompt(bbcode_prompt_bold, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[b]', '[/b]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[b]', '[/b]', text, messageElement);
             }
         } else {
@@ -229,7 +229,7 @@ function italicize() {
             text = prompt(bbcode_prompt_italic, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[i]', '[/i]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[i]', '[/i]', text, messageElement);
             }
         } else {
@@ -255,7 +255,7 @@ function underline() {
             text = prompt(bbcode_prompt_underline, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[u]', '[/u]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[u]', '[/u]', text, messageElement);
             }
         } else {
@@ -281,7 +281,7 @@ function center() {
             text = prompt(bbcode_prompt_center, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[align=center]', '[/align]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[align=center]', '[/align]', text, messageElement);
             }
         } else {
@@ -307,7 +307,7 @@ function image() {
             text = prompt(bbcode_prompt_image, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[img]', '[/img]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[img]', '[/img]', text, messageElement);
             }
         } else {
@@ -333,7 +333,7 @@ function quote() {
             text = prompt(bbcode_prompt_quote, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", messageElement);
-            } else {
+            } else if (text != null) {
                 AddText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", text, messageElement);
             }
         } else {
@@ -359,7 +359,7 @@ function code() {
             text = prompt(bbcode_prompt_code, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText("\r\n"+'[code]', '[/code]'+"\r\n", messageElement);
-            } else {
+            } else if (text != null) {
                 AddText("\r\n"+'[code]', '[/code]'+"\r\n", text, messageElement);
             }
         } else {
@@ -385,7 +385,7 @@ function chcolor(color) {
             text = prompt(bbcode_prompt_color+color, fetchSelection(messageElement));
             if (text == fetchSelection(messageElement)) {
                 wrapText('[color='+color+']', '[/color]', messageElement);
-            } else {
+            } else if (text != null) {
                 AddText('[color='+color+']', '[/color]', text, messageElement);
             }
         } else {
@@ -444,7 +444,7 @@ function hyperlink() {
                     var desc = prompt(bbcode_prompt_link_desc, fetchSelection(messageElement));
                     if (desc == fetchSelection(messageElement)) {
                         wrapText('[url='+url+']', '[/url]', messageElement);
-                    } else {
+                    } else if (desc != null) {
                         AddText('[url='+url+']', '[/url]', desc, messageElement);
                     }
                 }
