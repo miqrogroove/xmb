@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -150,6 +150,8 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
                 $role['staff']  = false;
                 break;
         }
+
+        $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
     }
 
     if (!defined('X_STAFF')) {

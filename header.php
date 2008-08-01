@@ -392,7 +392,6 @@ if (X_MEMBER) {
     $sig = $self['sig'];
     $invisible = $self['invisible'];
     $time = $onlinetime;
-    $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time($onlinetime)." WHERE username='$xmbuser'");
 } else {
     $langfile = $SETTINGS['langfile'];
     $timeoffset = $SETTINGS['def_tz'];
