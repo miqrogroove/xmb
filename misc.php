@@ -94,7 +94,8 @@ switch($action) {
         nav($lang['textregister']);
         break;
     default:
-        nav($lang['error']);
+        header('HTTP/1.0 404 Not Found');
+        error($lang['textnoaction']);
         break;
 }
 

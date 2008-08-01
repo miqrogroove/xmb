@@ -50,7 +50,7 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
 
         if ($posts == 0) {
-            header('HTTP/1.1 404 Not Found');
+            header('HTTP/1.0 404 Not Found');
             eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
@@ -60,7 +60,7 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
 
         if ($posts == 0) {
-            header('HTTP/1.1 404 Not Found');
+            header('HTTP/1.0 404 Not Found');
             eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
@@ -89,7 +89,7 @@ if ($goto == 'lastpost') {
         $posts = $db->result($query, 0);
         $db->free_result($query);
     } else {
-        header('HTTP/1.1 404 Not Found');
+        header('HTTP/1.0 404 Not Found');
         eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
@@ -99,7 +99,7 @@ if ($goto == 'lastpost') {
 } else if ($goto == 'search') {
     $tidtest = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid"), 0);
     if ($tidtest == 0) {
-        header('HTTP/1.1 404 Not Found');
+        header('HTTP/1.0 404 Not Found');
         eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
@@ -156,7 +156,7 @@ $notexist_txt = $posts = '';
 $query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
 if ($db->num_rows($query) != 1) {
     $db->free_result($query);
-    header('HTTP/1.1 404 Not Found');
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnothread']);
 }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -63,6 +63,7 @@ $forum = $db->fetch_array($query);
 $db->free_result($query);
 
 if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
 

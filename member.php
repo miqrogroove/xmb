@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -61,7 +61,8 @@ switch($action) {
         nav($lang['textcoppa']);
         break;
     default:
-        nav($lang['error']);
+        header('HTTP/1.0 404 Not Found');
+        error($lang['textnoaction']);
         break;
 }
 
@@ -560,6 +561,7 @@ switch($action) {
     case 'viewpro':
         $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
         if ($member == '') {
+            header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         } else {
             $memberinfo = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'"));
@@ -572,6 +574,7 @@ switch($action) {
             $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
 
             if ($memberinfo['uid'] == '') {
+                header('HTTP/1.0 404 Not Found');
                 error($lang['nomember']);
             } else {
                 eval('echo "'.template('header').'";');
