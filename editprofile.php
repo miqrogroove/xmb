@@ -233,7 +233,7 @@ if (noSubmit('editsubmit')) {
             $size = @getimagesize($_POST['newavatar']);
             if ($size === false) {
                 $avatar = '';
-            } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0) && !X_SADMIN) {
+            } else if ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
                 error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
             }
         }
