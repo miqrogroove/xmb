@@ -35,13 +35,15 @@ function chmode(switchMode) {
         alert(bbcode_normode);
     }
 }
+
 function AddText(bbFirst, bbLast, text, el) {
-    if (el.createTextRange && el.caretPos) {
-        var caretPos = el.caretPos
-        el.caretPos.text = el.caretPos.text.charAt(el.caretPos.text.length - 1) == ' ' ? text + ' ' : text;
-    } else {
-        el.value  += text;
-    }
+    var len   = el.textLength;
+    var start = el.selectionStart;
+    var end   = el.selectionEnd;
+    var pre   = el.value.substring(0, start);
+    var post  = el.value.substring(end, len);
+
+    el.value = pre + bbFirst + text + bbLast + post;
     el.focus();
 }
 
@@ -208,7 +210,7 @@ function list() {
         AddText('', '', "\r[list]\r[*]\r[*]\r[*]\r[/list]", messageElement);
     } else {
         st=prompt(bbcode_prompt_list_start,"");
-        if ((st!="") && (st!="A") && (st!="a") && (st!="1") && (st!=null)) {
+        while ((st!="") && (st!="A") && (st!="a") && (st!="1") && (st!=null)) {
             st = prompt(bbcode_prompt_list_error,"");
         }
 
