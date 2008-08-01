@@ -447,7 +447,7 @@ if ($action == '') {
     }
 
     $thisbg = $altbg2;
-    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.fid='$fid' AND p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
+    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
@@ -715,7 +715,7 @@ if ($action == '') {
     echo $file['attachment'];
     exit();
 } else if ($action == 'printable') {
-    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE fid='$fid' AND tid='$tid' ORDER BY dateline ASC, pid ASC");
+    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC, pid ASC");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
@@ -728,6 +728,6 @@ if ($action == '') {
         eval('$posts .= "'.template('viewthread_printable_row').'";');
     }
     $db->free_result($querypost);
-    eval('echo stripslashes("'.template('viewthread_printable').'");');
+    eval('echo "'.template('viewthread_printable').'";');
 }
 ?>
