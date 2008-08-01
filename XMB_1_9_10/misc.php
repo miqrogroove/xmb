@@ -208,6 +208,7 @@ switch($action) {
                 $ext = array();
                 $srchfrom = $onlinetime - (int) $srchfrom;
                 if (!empty($srchtxt)) {
+                    $sqlsrch = array();
                     $srchtxtsq = explode(' ', $srchtxt);
                     $sql .= ' AND (';
                     foreach($srchtxtsq as $stxt) {
