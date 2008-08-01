@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme MessageBoard
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,7 +121,7 @@ function makenav($current) {
 }
 
 if (X_GUEST) {
-    redirect('misc.php?action=login', 0);
+    redirect($full_url.'misc.php?action=login', 0);
     exit();
 }
 

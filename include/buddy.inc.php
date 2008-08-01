@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -46,7 +46,7 @@ function blistmsg($message, $redirect='', $exit=false) {
 }
 
 function buddy_add($buddys) {
-    global $db, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken, $full_url;
 
     if (!is_array($buddys)) {
         $buddys = array($buddys);
@@ -73,7 +73,7 @@ function buddy_add($buddys) {
                     blistmsg($lang['nomember']);
                 } else {
                     $db->query("INSERT INTO ".X_PREFIX."buddys (buddyname, username) VALUES ('$buddy', '$xmbuser')");
-                    blistmsg($buddy.' '.$lang['buddyaddedmsg'], 'buddy.php');
+                    blistmsg($buddy.' '.$lang['buddyaddedmsg'], $full_url.'buddy.php');
                 }
             }
         }
@@ -107,7 +107,7 @@ function buddy_delete($delete) {
         $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
     }
 
-    blistmsg($lang['buddylistupdated'], 'buddy.php');
+    blistmsg($lang['buddylistupdated'], $full_url.'buddy.php');
 }
 
 /**

@@ -290,7 +290,7 @@ switch($action) {
             eval('echo "'.template('footer').'";');
             exit();
         } else {
-            redirect('./cp.php', 0);
+            redirect($full_url.'cp.php', 0);
         }
         break;
 
@@ -305,7 +305,7 @@ switch($action) {
             eval('echo "'.template('footer').'";');
             exit();
         } else {
-            redirect('./cp.php', 0);
+            redirect($full_url.'cp.php', 0);
         }
         break;
 
@@ -324,7 +324,7 @@ switch($action) {
             eval('echo "'.template('footer').'";');
             exit();
         } else {
-            redirect('./cp.php', 0);
+            redirect($full_url.'cp.php', 0);
         }
         break;
 

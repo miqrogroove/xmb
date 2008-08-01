@@ -103,30 +103,30 @@ switch($action) {
         switch($mod) {
             case 'send':
                 if ($u2uid > 0) {
-                    redirect("u2u.php?action=send&u2uid=$u2uid", 0);
+                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid", 0);
                 } else {
-                    redirect('u2u.php?action=send', 0);
+                    redirect($full_url.'u2u.php?action=send', 0);
                 }
                 break;
             case 'reply':
                 if ($u2uid > 0) {
-                    redirect("u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
+                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
                 } else {
-                    redirect("u2u.php?action=send&reply=yes", 0);
+                    redirect($full_url."u2u.php?action=send&reply=yes", 0);
                 }
                 break;
             case 'replydel':
                 if ($u2uid > 0) {
-                    redirect("u2u.php?action=send&u2uid=$u2uid&reply=yes&del=yes", 0);
+                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&reply=yes&del=yes", 0);
                 } else {
-                    redirect("u2u.php?action=send&reply=yes&del=yes", 0);
+                    redirect($full_url."u2u.php?action=send&reply=yes&del=yes", 0);
                 }
                 break;
             case 'forward':
                 if ($u2uid > 0) {
-                    redirect("u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
+                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
                 } else {
-                    redirect("u2u.php?action=send&forward=yes", 0);
+                    redirect($full_url."u2u.php?action=send&forward=yes", 0);
                 }
                 break;
             case 'sendtoemail':

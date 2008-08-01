@@ -94,7 +94,7 @@ if ($goto == 'lastpost') {
         error($lang['textnothread']);
     }
     $page = quickpage($posts, $ppp);
-    redirect("viewthread.php?tid=$tid&page=$page#pid$pid", 0);
+    redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 
 } else if ($goto == 'search') {
     $tidtest = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid"), 0);
@@ -105,7 +105,7 @@ if ($goto == 'lastpost') {
     }
     $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid"), 0);
     $page = quickpage(($pbefore+1), $ppp);
-    redirect("viewthread.php?tid=$tid&page=$page#pid$pid", 0);
+    redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 }
 
 loadtemplates(
@@ -166,7 +166,7 @@ $db->free_result($query);
 if (strpos($thread['closed'], '|') !== false) {
     $moved = explode('|', $thread['closed']);
     if ($moved[0] == 'moved') {
-        redirect('forumdisplay.php?tid='.$moved[1], 0);
+        redirect($full_url.'forumdisplay.php?tid='.$moved[1], 0);
     }
 }
 

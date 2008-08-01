@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -249,7 +249,7 @@ if (noSubmit('editsubmit')) {
     }
 
     echo '<div align="center"><span class="mediumtxt">'.$lang['adminprofilechange'].'</span></div>';
-    redirect('cp.php', 2, X_REDIRECT_JS);
+    redirect($full_url.'cp.php', 2, X_REDIRECT_JS);
 }
 
 end_time();

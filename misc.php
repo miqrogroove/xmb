@@ -119,7 +119,7 @@ switch($action) {
                 if ($server == 'Mic') {
                     $misc = message($lang['onlinelogin'], FALSE, '', '', 'index.php', FALSE, TRUE, FALSE);
                 } else {
-                    redirect('index.php', 0);
+                    redirect($full_url, 0);
                 }
             } else {
                 eval('echo "'.template('header').'";');
@@ -133,7 +133,7 @@ switch($action) {
 
     case 'logout':
         if (X_GUEST) {
-            redirect("index.php", 0);
+            redirect($full_url, 0);
             break;
         }
 
@@ -149,7 +149,7 @@ switch($action) {
             }
         }
 
-        redirect('index.php', 0);
+        redirect($full_url, 0);
         break;
 
     case 'search':

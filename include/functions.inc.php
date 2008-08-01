@@ -1752,7 +1752,7 @@ function checkForumPermissions($forum) {
 }
 
 function handlePasswordDialog($fid) {
-    global $db, $url, $cookiepath, $cookiedomain;  // function vars
+    global $db, $full_url, $url, $cookiepath, $cookiedomain;  // function vars
     global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
 
     $pwform = '';
@@ -1763,7 +1763,7 @@ function handlePasswordDialog($fid) {
 
         if ($pwinput == $pass) {
             put_cookie('fidpw'.$fid, $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
-            redirect($url, 0);
+            redirect($full_url.substr($url, strlen($cookiepath)), 0);
         } else {
             eval('$pwform = "'.template('forumdisplay_password').'";');
             error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);

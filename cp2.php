@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -213,7 +213,7 @@ if ($action == 'restrictions') {
             $db->query("INSERT INTO ".X_PREFIX."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$newname', '$newcase', '$newpartial')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['restrictedupdate'].'</td></tr>';
-        redirect('cp2.php?action=restrictions', 2);
+        redirect($full_url.'cp2.php?action=restrictions', 2);
     }
 }
 
@@ -1526,7 +1526,7 @@ if ($action == "templates") {
 
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesrestoredone'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('edit') && noSubmit('editsubmit')) {
@@ -1592,7 +1592,7 @@ if ($action == "templates") {
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id=$tid");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesupdate'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('delete')) {
@@ -1631,7 +1631,7 @@ if ($action == "templates") {
         $tid = getInt('tid', 'r');
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE id=$tid");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
-        redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
+        redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
 
     if (onSubmit('new')) {

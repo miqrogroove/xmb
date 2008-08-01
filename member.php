@@ -77,11 +77,11 @@ switch($action) {
         }
 
         if ($SETTINGS['coppa'] != 'on') {
-            redirect('member.php?action=reg', 0);
+            redirect($full_url.'member.php?action=reg', 0);
         }
 
         if (onSubmit('coppasubmit')) {
-            redirect('member.php?action=reg', 0);
+            redirect($full_url.'member.php?action=reg', 0);
         } else {
             eval('echo "'.template('header').'";');
             eval('echo "'.template('member_coppa').'";');
@@ -554,7 +554,7 @@ switch($action) {
             eval('echo "'.template('header').'";');
             echo ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
 
-            redirect('index.php', 2, X_REDIRECT_JS);
+            redirect($full_url, 2, X_REDIRECT_JS);
         }
         break;
 
