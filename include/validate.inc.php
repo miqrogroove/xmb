@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -186,59 +186,51 @@ function noSubmit($submitname) {
 // postedVar is an all-purpose function for retrieving and sanitizing user input.
 // This is the preferred function as of version 1.9.8 SP3.
 function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE, $sourcearray='p') {
-    $foundvar = FALSE;
+    $retval = '';
+
     switch($sourcearray) {
-        case 'p':
-            if (isset($_POST[$varname])) {
-                $retval = $_POST[$varname];
-                $foundvar = TRUE;
+    case 'p':
+        $sourcearray =& $_POST;
+        break;
+    case 'g':
+        $sourcearray =& $_GET;
+        break;
+    case 'c':
+        $sourcearray =& $_COOKIE;
+        break;
+    case 'r':
+    default:
+        $sourcearray =& $_REQUEST;
+        break;
+    }
+    
+    if (isset($sourcearray[$varname])) {
+        if (is_string($sourcearray[$varname])) {
+            $retval = $sourcearray[$varname];
+
+            if (get_magic_quotes_gpc()) {
+                $retval = stripslashes($retval);
             }
-            break;
-        case 'g':
-            if (isset($_GET[$varname])) {
-                $retval = $_GET[$varname];
-                $foundvar = TRUE;
+
+            if ($word != '') {
+                $retval = str_ireplace($word, "_".$word, $retval);
             }
-            break;
-        case 'c':
-            if (isset($_COOKIE[$varname])) {
-                $retval = $_COOKIE[$varname];
-                $foundvar = TRUE;
+
+            if ($htmlencode) {
+                if ($quoteencode) {
+                    $retval = htmlspecialchars($retval, ENT_QUOTES);
+                } else {
+                    $retval = htmlspecialchars($retval, ENT_NOQUOTES);
+                }
             }
-            break;
-        case 'r':
-        default:
-            if (isset($_REQUEST[$varname])) {
-                $retval = $_REQUEST[$varname];
-                $foundvar = TRUE;
+
+            if ($dbescape) {
+                $retval = $GLOBALS['db']->escape($retval);
             }
-            break;
+        }
     }
 
-    if ($foundvar) {
-        if (get_magic_quotes_gpc()) {
-            $retval = stripslashes($retval);
-        }
-
-        if ($word != '') {
-            $retval = str_ireplace($word, "_".$word, $retval);
-        }
-
-        if ($htmlencode) {
-            if ($quoteencode) {
-                $retval = htmlspecialchars($retval, ENT_QUOTES);
-            } else {
-                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
-            }
-        }
-
-        if ($dbescape) {
-            $retval = $GLOBALS['db']->escape($retval);
-        }
-    } else {
-        $retval = '';
-    }
-
+    unset($sourcearray);
     return $retval;
 }
 
@@ -256,13 +248,14 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
     if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
         $arrayItems = $_POST[$varname];
         foreach($arrayItems as $item => $theObject) {
-            $theObject = & $arrayItems[$item];
+            $theObject =& $arrayItems[$item];
             switch($type) {
-                case 'int':
-                    $theObject = intval($theObject);
-                    break;
-                case 'string':
-                default:
+            case 'int':
+                $theObject = intval($theObject);
+                break;
+            case 'string':
+            default:
+                if (is_string($theObject)) {
                     if (get_magic_quotes_gpc()) {
                         $theObject = stripslashes($theObject);
                     }
@@ -282,7 +275,10 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     if ($dbescape) {
                         $theObject = $GLOBALS['db']->escape($theObject);
                     }
-                    break;
+                } else {
+                    $theObject = '';
+                }
+                break;
             }
             unset($theObject);
         }
@@ -489,10 +485,12 @@ function getRequestInt($varname) {
 */
 function getRequestVar($varname) {
     if (isset($_REQUEST[$varname])) {
-        if (get_magic_quotes_gpc()) {
-            return $_REQUEST[$varname];
-        } else {
-            return addslashes($_REQUEST[$varname]);
+        if (is_string($_REQUEST[$varname])) {
+            if (get_magic_quotes_gpc()) {
+                return $_REQUEST[$varname];
+            } else {
+                return addslashes($_REQUEST[$varname]);
+            }
         }
     } else {
         return FALSE;
