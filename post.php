@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -368,7 +368,7 @@ switch($action) {
             if ($replyvalid) {
                 softerror($lang['closedmsg']);
             } else {
-                error($lang['closedmsg']);
+                error($lang['closedmsg'], FALSE);
             }
             $replyvalid = FALSE;
         }
@@ -851,7 +851,7 @@ switch($action) {
             if ($editvalid) {
                 softerror($lang['noedit']);
             } else {
-                error($lang['noedit']);
+                error($lang['noedit'], FALSE);
             }
             $editvalid = FALSE;
         }

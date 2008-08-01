@@ -1036,7 +1036,9 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 
     $header = $footer = $return = '';
 
-    nav($lang['error']);
+    if ($showheader) {
+        nav($lang['error']);
+    }
 
     end_time();
 
@@ -1096,7 +1098,9 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
 
     $header = $footer = $return = '';
 
-    nav($lang['message']);
+    if ($showheader) {
+        nav($lang['message']);
+    }
 
     end_time();
 
