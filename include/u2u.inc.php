@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -165,7 +165,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
         $quote = $db->fetch_array($query);
         if ($quote) {
             if (!isset($previewsubmit)) {
-                $prefixes = array($lang['textre'], $lang['textfwd']);
+                $prefixes = array($lang['textre'].' ', $lang['textfwd'].' ');
                 $subject = str_replace($prefixes, '', $quote['subject']);
                 $message = rawHTMLmessage(stripslashes($quote['message']));  //message and subject were historically double-slashed
                 if ($forward == 'yes') {
