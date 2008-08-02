@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1541,47 +1541,48 @@ if ($action == "members") {
                 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND status='$srchstatus' ORDER BY username");
             }
 
-            $sadminselect = $adminselect = $smodselect = '';
-            $modselect = $memselect = $banselect = '';
-            $noban = $u2uban = $postban = $bothban = '';
             while($member = $db->fetch_array($query)) {
+                $sadminselect = $adminselect = $smodselect = '';
+                $modselect = $memselect = $banselect = '';
+                $noban = $u2uban = $postban = $bothban = '';
+
                 switch($member['status']) {
-                    case 'Super Administrator':
-                        $sadminselect = $selHTML;
-                        break;
-                    case 'Administrator':
-                        $adminselect = $selHTML;
-                        break;
-                    case 'Super Moderator':
-                        $smodselect = $selHTML;
-                        break;
-                    case 'Moderator':
-                        $modselect = $selHTML;
-                        break;
-                    case 'Member':
-                        $memselect = $selHTML;
-                        break;
-                    case 'Banned':
-                        $banselect = $selHTML;
-                        break;
-                    default:
-                        $memselect = $selHTML;
-                        break;
+                case 'Super Administrator':
+                    $sadminselect = $selHTML;
+                    break;
+                case 'Administrator':
+                    $adminselect = $selHTML;
+                    break;
+                case 'Super Moderator':
+                    $smodselect = $selHTML;
+                    break;
+                case 'Moderator':
+                    $modselect = $selHTML;
+                    break;
+                case 'Member':
+                    $memselect = $selHTML;
+                    break;
+                case 'Banned':
+                    $banselect = $selHTML;
+                    break;
+                default:
+                    $memselect = $selHTML;
+                    break;
                 }
 
                 switch($member['ban']) {
-                    case 'u2u':
-                        $u2uban = $selHTML;
-                        break;
-                    case 'posts':
-                        $postban = $selHTML;
-                        break;
-                    case 'both':
-                        $bothban = $selHTML;
-                        break;
-                    default:
-                        $noban = $selHTML;
-                        break;
+                case 'u2u':
+                    $u2uban = $selHTML;
+                    break;
+                case 'posts':
+                    $postban = $selHTML;
+                    break;
+                case 'both':
+                    $bothban = $selHTML;
+                    break;
+                default:
+                    $noban = $selHTML;
+                    break;
                 }
 
                 if ($member['lastvisit'] == 0) {
@@ -1605,7 +1606,7 @@ if ($action == "members") {
                 <option value="Member" <?php echo $memselect?>><?php echo $lang['textmem']?></option>
                 <option value="Banned" <?php echo $banselect?>><?php echo $lang['textbanned']?></option>
                 </select></td>
-                <td><input type="text" size="16" name="cusstatus<?php echo $member['uid']?>" value="<?php echo htmlspecialchars(stripslashes($member['customstatus']))?>" /></td>
+                <td><input type="text" size="16" name="cusstatus<?php echo $member['uid']?>" value="<?php echo attrOut($member['customstatus']); ?>" /></td>
                 <td><select name="banstatus<?php echo $member['uid']?>">
                 <option value="" <?php echo $noban?>><?php echo $lang['noban']?></option>
                 <option value="u2u" <?php echo $u2uban?>><?php echo $lang['banu2u']?></option>
@@ -1614,9 +1615,6 @@ if ($action == "members") {
                 </select></td>
                 </tr>
                 <?php
-                $sadminselect = $adminselect = $smodselect = '';
-                $modselect = $memselect = $banselect = '';
-                $noban = $u2uban = $postban = $bothban = '';
             }
             ?>
             <tr>
@@ -1632,7 +1630,7 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        $query = $db->query("SELECT MIN(`uid`) FROM `" . X_PREFIX. "members` WHERE `status`='Super Administrator'");
+        $query = $db->query("SELECT MIN(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
@@ -1647,53 +1645,34 @@ if ($action == "members") {
         }
 
         while($mem = $db->fetch_array($query)) {
-            $to['status'] = "status".$mem['uid'];
-            $to['status'] = isset($_POST[$to['status']]) ? $_POST[$to['status']] : '';
-
-            if (trim($to['status']) == '') {
-                $to['status'] = 'Member';
-            }
-
             $origstatus = $mem['status'];
-            $banstatus = "banstatus".$mem['uid'];
-            $banstatus =  isset($_POST[$banstatus]) ? $_POST[$banstatus] : '';
-            $cusstatus = "cusstatus".$mem['uid'];
-            $cusstatus =  isset($_POST[$cusstatus]) ? $_POST[$cusstatus] : '';
-            $pw = "pw" . $mem['uid'];
-            $pw = isset($_POST[$pw]) ? $_POST[$pw] : '';
-            $postnum = "postnum".$mem['uid'];
-            $postnum = isset($_POST[$postnum]) ? $_POST[$postnum] : '';
-            $delete = "delete".$mem['uid'];
-            $delete = isset($_POST[$delete]) ? $_POST[$delete] : '';
-
-            if ($pw != "") {
-                $newpw = md5(trim($pw));
-            } else {
-                $newpw = $mem['password'];
+            $status = postedVar('status'.$mem['uid']);
+            if ($status == '') {
+                $status = 'Member';
             }
-            $queryadd = " , password='$newpw'";
 
-            if (!X_SADMIN && ($origstatus == "Super Administrator" || $to['status'] == "Super Administrator")) {
+            if (!X_SADMIN && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
                 continue;
             }
 
-            if ($origstatus == 'Super Administrator' && $to['status'] != 'Super Administrator') {
-                if ($db->result($db->query("SELECT count(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'"), 0) == 1) {
-                    error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
+            $banstatus = postedVar('banstatus'.$mem['uid']);
+            $cusstatus = postedVar('cusstatus'.$mem['uid'], '', FALSE);
+            $postnum = getInt('postnum'.$mem['uid'], 'p');
+            $delete = getInt('delete'.$mem['uid'], 'p');
+
+            $queryadd = '';
+            if (isset($_POST['pw'.$mem['uid']])) {
+                if ($_POST['pw'.$mem['uid']] != '') {
+                    $newpw = md5($_POST['pw'.$mem['uid']]);
+                    $queryadd = ", password='$newpw' ";
                 }
             }
 
-            if ($delete != "" && $delete != $self['uid'] && $delete != $sa_uid) {
-                $db->query("DELETE FROM ".X_PREFIX."members WHERE uid='$delete'");
-                $db->query("UPDATE ".X_PREFIX."whosonline SET username='Anonymous' WHERE username='".$mem['username']."'");
+            if ($delete == $mem['uid'] && $delete != $self['uid'] && $delete != $sa_uid) {
+                $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
+                $db->query("UPDATE ".X_PREFIX."whosonline SET username='Anonymous' WHERE username='".$db->escape($mem['username'])."'");
             } else {
-                if (strpos($pw, '"') !== false || strpos($pw, "'") !== false) {
-                    $lang['textmembersupdate'] = $mem['username'].': '.$lang['textpwincorrect'];
-                } else {
-                    $newcustom = addslashes($cusstatus);
-                    $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$to[status]', postnum='$postnum', customstatus='$newcustom'$queryadd WHERE uid='$mem[uid]'");
-                    $newpw="";
-                }
+                $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
             }
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';

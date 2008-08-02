@@ -716,7 +716,7 @@ switch($action) {
                 } else if ($memberinfo['postnum'] <= 0) {
                     $topforum = $lang['textnopostsyet'];
                 } else {
-                    $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">$forum[name]</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
+                    $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">".fnameOut($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
                 }
 
                 // Last post
