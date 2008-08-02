@@ -70,24 +70,32 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
     } else if ($fid > 0) {
         $query = $db->query("SELECT pid, tid, dateline FROM ".X_PREFIX."posts WHERE fid=$fid ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
-        $posts = $db->fetch_array($query);
-        $db->free_result($query);
+        if ($db->num_rows($query) == 1) {
+            $posts = $db->fetch_array($query);
+            $db->free_result($query);
 
-        $pid = $posts['pid'];
-        $tid = $posts['tid'];
+            $pid = $posts['pid'];
+            $tid = $posts['tid'];
 
-        $query = $db->query("SELECT p.pid, p.tid, p.dateline FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f USING (fid) WHERE f.fup=$fid ORDER BY p.dateline DESC, p.pid DESC LIMIT 0, 1");
-        $fupPosts = $db->fetch_array($query);
-        $db->free_result($query);
+            $query = $db->query("SELECT p.pid, p.tid, p.dateline FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f USING (fid) WHERE f.fup=$fid ORDER BY p.dateline DESC, p.pid DESC LIMIT 0, 1");
+            if ($db->num_rows($query) == 1) {
+                $fupPosts = $db->fetch_array($query);
+                $db->free_result($query);
 
-        if ($fupPosts['dateline'] > $posts['dateline']) {
-            $pid = $fupPosts['pid'];
-            $tid = $fupPosts['tid'];
+                if ($fupPosts['dateline'] > $posts['dateline']) {
+                    $pid = $fupPosts['pid'];
+                    $tid = $fupPosts['tid'];
+                }
+            }
+
+            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+            $posts = $db->result($query, 0);
+            $db->free_result($query);
+        } else {
+            header('HTTP/1.0 404 Not Found');
+            eval('$css = "'.template('css').'";');
+            error($lang['textnothread']);
         }
-
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $posts = $db->result($query, 0);
-        $db->free_result($query);
     } else {
         header('HTTP/1.0 404 Not Found');
         eval('$css = "'.template('css').'";');
