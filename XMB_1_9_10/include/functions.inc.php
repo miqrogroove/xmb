@@ -505,7 +505,7 @@ function bbcode($message, $allowimgcode) {
     $patterns = array();
     $replacements = array();
 
-    $patterns[] = "#\[color=([^\"'<>]*?)\](.*?)\[/color\]#Ssi";
+    $patterns[] = "#\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen)\](.*?)\[/color\]#Ssi";
     $replacements[] = '<span style="color: $1;">$2</span>';
     $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
     $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';

@@ -431,7 +431,7 @@ function getInt($varname, $sourcearray='g') {
             }
             break;
     }
-    if ($foundvar And is_numeric($retval)) {
+    if ($foundvar) {
         $retval = intval($retval);
     }
     return $retval;
