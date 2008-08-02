@@ -41,21 +41,21 @@ $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if ($goto == 'lastpost') {
     if ($pid > 0) {
-        if ($tid == 0) {
-            $tid = $db->result($db->query("SELECT tid FROM ".X_PREFIX."posts WHERE pid='$pid'"), 0);
-        }
-
-        $query = $db->query("SELECT COUNT(pid) as num FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid <= $pid");
-        $posts = $db->result($query, 0);
-        $db->free_result($query);
-
-        if ($posts == 0) {
+        $query = $db->query("SELECT tid, dateline FROM ".X_PREFIX."posts WHERE pid=$pid");
+        if ($db->num_rows($query) == 1) {
+            $post = $db->fetch_array($query);
+            $tid = $post['tid'];
+            
+            $query = $db->query("SELECT COUNT(pid) as postcount FROM ".X_PREFIX."posts WHERE tid=$tid AND dateline <= {$post['dateline']}");
+            $posts = $db->result($query, 0);
+            $db->free_result($query);
+        } else {
             header('HTTP/1.0 404 Not Found');
             eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
         $db->free_result($query);
 
@@ -65,11 +65,11 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
+        $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
         $pid = $db->result($query, 0);
         $db->free_result($query);
     } else if ($fid > 0) {
-        $query = $db->query("SELECT pid, tid, dateline FROM ".X_PREFIX."posts WHERE fid='$fid' ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
+        $query = $db->query("SELECT pid, tid, dateline FROM ".X_PREFIX."posts WHERE fid=$fid ORDER BY dateline DESC, pid DESC LIMIT 0, 1");
         $posts = $db->fetch_array($query);
         $db->free_result($query);
 
@@ -85,7 +85,7 @@ if ($goto == 'lastpost') {
             $tid = $fupPosts['tid'];
         }
 
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
         $db->free_result($query);
     } else {
@@ -97,15 +97,17 @@ if ($goto == 'lastpost') {
     redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 
 } else if ($goto == 'search') {
-    $tidtest = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid"), 0);
-    if ($tidtest == 0) {
+    $tidtest = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid");
+    if ($db->num_rows($tidtest) == 1) {
+        $post = $db->fetch_array($tidtest);
+        $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND dateline <= {$post['dateline']}"), 0);
+        $page = quickpage(($posts), $ppp);
+        redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
+    } else {
         header('HTTP/1.0 404 Not Found');
         eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
-    $pbefore = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid"), 0);
-    $page = quickpage(($pbefore+1), $ppp);
-    redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
 }
 
 loadtemplates(
