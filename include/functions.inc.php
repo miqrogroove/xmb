@@ -70,7 +70,7 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FAL
 //$xmbuserinput must be html escaped & db escaped username input.
 //$xmbpwinput must be raw password hash input.
 function elevateUser($xmbuserinput, $xmbpwinput) {
-    global $xmbuser, $xmbpw, $self, $lang, $db, $charset, $SETTINGS, $onlineip;
+    global $xmbuser, $xmbpw, $self, $lang, $db, $charset, $SETTINGS, $onlineip, $status_enum;
 
     $xmbuser = '';
     $xmbpw = '';
@@ -94,72 +94,35 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
     $xmbuserinput = '';
     $xmbpwinput = '';
 
-    //Database routine complete.  Now set the role constants.
+    //Database routine complete.  Now set the user status constants.
 
     if ($xmbuser == '') {
         $self = array();
-        $role['sadmin'] = false;
-        $role['admin']  = false;
-        $role['smod']   = false;
-        $role['mod']    = false;
-        $role['staff']  = false;
+        $self['status'] = '';
         if (!defined('X_GUEST')) {
-            define('X_MEMBER', false);
-            define('X_GUEST', true);
+            define('X_MEMBER', FALSE);
+            define('X_GUEST', TRUE);
         }
     } else {
         if (!defined('X_GUEST')) {
-            define('X_MEMBER', true);
-            define('X_GUEST', false);
+            define('X_MEMBER', TRUE);
+            define('X_GUEST', FALSE);
         }
-
-        switch($self['status']) {
-            case 'Super Administrator':
-                $role['sadmin'] = true;
-                $role['admin']  = true;
-                $role['smod']   = true;
-                $role['mod']    = true;
-                $role['staff']  = true;
-                break;
-            case 'Administrator':
-                $role['sadmin'] = false;
-                $role['admin']  = true;
-                $role['smod']   = true;
-                $role['mod']    = true;
-                $role['staff']  = true;
-                break;
-            case 'Super Moderator':
-                $role['sadmin'] = false;
-                $role['admin']  = false;
-                $role['smod']   = true;
-                $role['mod']    = true;
-                $role['staff']  = true;
-                break;
-            case 'Moderator':
-                $role['sadmin'] = false;
-                $role['admin']  = false;
-                $role['smod']   = false;
-                $role['mod']    = true;
-                $role['staff']  = true;
-                break;
-            default:
-                $role['sadmin'] = false;
-                $role['admin']  = false;
-                $role['smod']   = false;
-                $role['mod']    = false;
-                $role['staff']  = false;
-                break;
-        }
-
         $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
     }
 
+    if (isset($status_enum[$self['status']])) {
+        $int_status = $status_enum[$self['status']];
+    } else {
+        $int_status = $status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
+    }
+
     if (!defined('X_STAFF')) {
-        define('X_SADMIN', $role['sadmin']);
-        define('X_ADMIN', $role['admin']);
-        define('X_SMOD', $role['smod']);
-        define('X_MOD', $role['mod']);
-        define('X_STAFF', $role['staff']);
+        define('X_SADMIN', ($self['status'] == 'Super Administrator'));
+        define('X_ADMIN', ($int_status <= $status_enum['Administrator']));
+        define('X_SMOD', ($int_status <= $status_enum['Super Moderator']));
+        define('X_MOD', ($int_status <= $status_enum['Moderator']));
+        define('X_STAFF', X_MOD);
     }
 
     return ($xmbuser != '');
@@ -1696,59 +1659,79 @@ function forumJump() {
     return implode("\n", $forumselect);
 }
 
-function checkForumPermissions($forum) {
-    // 1. Check Forum Permissions
-    global $self;
-    $status = array(
-        'Super Administrator' => 1,
-        'Administrator'       => 2,
-        'Super Moderator'     => 4,
-        'Moderator'           => 8,
-        'Member'              => 16,
-        ''                    => 32,
-        'Banned'              => (1 << 30));  //$status['Banned'] == 2^30
+// checkForumPermissions - Returns a set of boolean permissions for a specific forum.
+// Normal Usage Example
+//  $result = $db->query('SELECT * FROM '.X_PREFIX.'forums WHERE fid=1');
+//  $forum = $db->fetch_array($result);
+//  $perms = checkForumPermissions($forum);
+//  if ($perms[X_PERMS_VIEW]) { //$self is allowed to view $forum }
+// Masquerade Example
+//  $result = $db->query('SELECT * FROM '.X_PREFIX.'members WHERE uid=1');
+//  $user = $db->fetch_array($result);
+//  $perms = checkForumPermissions($forum, $user['status']);
+//  if ($perms[X_PERMS_VIEW]) { //$user is allowed to view $forum }
+// Masquerade Example 2
+//  $perms = checkForumPermissions($forum, 'Moderator');
+//  if ($perms[X_PERMS_VIEW]) { //Moderators are allowed to view $forum }
+function checkForumPermissions($forum, $user_status=FALSE) {
+    global $self, $status_enum;
 
-    // NewPoll,NewThread,NewReply,View,Userlist,Password
-    $ret = array(false, false, false, false, false, false);
+    if (is_string($user_status)) {
+        $user_status = $status_enum[$user_status];
+    } else {
+        $user_status = $status_enum[$self['status']];
+    }
+
+    // 1. Initialize $ret with zero permissions
+    $ret = array_fill(0, X_PERMS_COUNT, FALSE);
+    $ret[X_PERMS_USERLIST] = FALSE;
+    $ret[X_PERMS_PASSWORD] = FALSE;
+    
+    // 2. Check Forum Postperm
     $pp = explode(',', $forum['postperm']);
     foreach($pp as $key=>$val) {
-        if (($val & $status[$self['status']]) == $status[$self['status']]) {
-            $ret[$key] = true;
+        if ((intval($val) & $user_status) != 0) {
+            $ret[$key] = TRUE;
         }
     }
 
-    // 2. Check for userlist
+    // 3. Check Forum Userlist
     $userlist = trim($forum['userlist']);
 
-    if (strlen($userlist) > 0) {
-        if (modcheck($self['username'], $forum['moderator']) == "Moderator") {
-            $ret[X_PERMS_USERLIST] = true;
-        } else {
-            $users = explode(',', $userlist);
-            foreach($users as $user) {
-                if (strtolower(trim($user)) == strtolower($self['username'])) {
-                    $ret[X_PERMS_USERLIST] = true;
-                    break;
-                }
+    if (strlen($userlist) == 0) {
+        $ret[X_PERMS_USERLIST] = TRUE;
+    } elseif (modcheck($self['username'], $forum['moderator']) == "Moderator") {
+        $ret[X_PERMS_USERLIST] = TRUE;
+    } else {
+        $users = explode(',', $userlist);
+        foreach($users as $user) {
+            if (strtolower(trim($user)) == strtolower($self['username'])) {
+                $ret[X_PERMS_USERLIST] = TRUE;
+                break;
             }
         }
-    } else {
-        $ret[X_PERMS_USERLIST] = true;
     }
 
-    // 3.Check for password
+    // 4. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-    if ($forum['password'] != '') {
-        if ($pwinput == $forum['password']) {
-            $ret[X_PERMS_PASSWORD] = true;
-        } else {
-            $ret[X_PERMS_PASSWORD] = false;
-        }
-    } else {
-        $ret[X_PERMS_PASSWORD] = true;
+    if ($forum['password'] == '' Or $pwinput == $forum['password']) {
+        $ret[X_PERMS_PASSWORD] = TRUE;
     }
 
     return $ret;
+}
+
+// getOneForumPerm - Enables you to do complex comparisons without string parsing.
+// Normal Usage Example
+//  $result = $db->query('SELECT * FROM '.X_PREFIX.'forums WHERE fid=1');
+//  $forum = $db->fetch_array($result);
+//  $viewperms = getOneForumPerm($forum, X_PERMS_VIEW);
+//  if ($viewperms >= $status_enum['Member']) { //Some non-staff status has perms to view $forum }
+//  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
+//  if ($viewperms == $status_enum['Member'] - 1) { //$forum is staff-only }
+function getOneForumPerm($forum, $bitfield) {
+    $pp = explode(',', $forum['postperm']);
+    return $pp[$bitfield];
 }
 
 function handlePasswordDialog($fid) {

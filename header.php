@@ -41,12 +41,25 @@ define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
 
 // permissions constants
+define('X_PERMS_COUNT', 4); //Number of bit sets stored in postperm setting.
+// indexes used in permissions arrays
 define('X_PERMS_POLL', 0);
 define('X_PERMS_THREAD', 1);
 define('X_PERMS_REPLY', 2);
 define('X_PERMS_VIEW', 3);
-define('X_PERMS_USERLIST', 4);
-define('X_PERMS_PASSWORD', 5);
+define('X_PERMS_USERLIST', 40);
+define('X_PERMS_PASSWORD', 41);
+// status string to bit field assignments
+$status_enum = array(
+'Super Administrator' => 1,
+'Administrator'       => 2,
+'Super Moderator'     => 4,
+'Moderator'           => 8,
+'Member'              => 16,
+'Guest'               => 32,
+''                    => 32,
+'Banned'              => (1 << 30)
+); //$status['Banned'] == 2^30
 
 if (!defined('ROOT')) {
     define('ROOT', './');
