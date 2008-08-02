@@ -509,7 +509,7 @@ switch($action) {
                 }
 
                 $topicpages = quickpage($posts, $subs['ppp']);
-                $threadurl = $SETTINGS['boardurl'] . 'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
+                $threadurl = $full_url.'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 altMail($subs['email'], $lang['textsubsubject'].' '.$rawsubject, $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
             }
@@ -528,7 +528,7 @@ switch($action) {
             }
 
             $topicpages = quickpage($posts, $ppp);
-            message($lang['replymsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+            message($lang['replymsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         }
 
         if (!$replyvalid) {
@@ -790,7 +790,7 @@ switch($action) {
             $db->free_result($query);
 
             $topicpages = quickpage($posts, $ppp);
-            message($lang['postmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+            message($lang['postmsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
         }
 
         if (!$topicvalid) {
@@ -960,9 +960,9 @@ switch($action) {
                 $posts = $db->result($query,0);
                 $db->free_result($query);
                 $topicpages = quickpage($posts, $ppp);
-                message($lang['editpostmsg'], false, '', '', "viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
             } else {
-                message($lang['editpostmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+                message($lang['editpostmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
             }
         }
 

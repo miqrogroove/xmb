@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -154,29 +154,29 @@ switch($action) {
         switch($modaction) {
             case 'delete':
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
                 }
                 u2u_mod_delete($folder, $u2u_select);
                 break;
             case 'move':
                 if (!isset($tofolder) || empty($tofolder)) {
-                    error($lang['textnofolder'], false, $u2uheader, $u2ufooter, 'u2u.php', true, false, false);
+                    error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
                 }
 
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
                     return;
                 }
                 u2u_mod_move($tofolder, $u2u_select);
                 break;
             case 'markunread':
                 if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
+                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
                 }
                 u2u_mod_markUnread($folder, $u2u_select);
                 break;
             default:
-                error($lang['testnothingchos'], false, $u2uheader, $u2ufooter, "u2u.php?folder=$folder_url", true, false, false);
+                error($lang['testnothingchos'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
                 break;
         }
         break;

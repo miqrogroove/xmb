@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -218,7 +218,7 @@ switch($action) {
 
                 $mod->log($xmbuser, $action, $fid, $tid);
             }
-            message($lang['deletethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['deletethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -247,7 +247,7 @@ switch($action) {
             $act = ($closed != '') ? 'open' : 'close';
             $mod->log($xmbuser, $act, $fid, $tid);
 
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -262,7 +262,7 @@ switch($action) {
                 $mod->log($xmbuser, 'close', $fid, $tid);
             }
 
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -278,7 +278,7 @@ switch($action) {
                 $mod->log($xmbuser, 'open', $fid, $tid);
             }
 
-            message($lang['closethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -332,7 +332,7 @@ switch($action) {
             updateforumcount($fid);
             updateforumcount($moveto);
 
-            message($lang['movethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['movethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -375,7 +375,7 @@ switch($action) {
                 $mod->log($xmbuser, $act, $fid, $tid);
             }
 
-            message($lang['topthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['topthreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -458,7 +458,7 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            message($lang['bumpthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['bumpthreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -491,7 +491,7 @@ switch($action) {
             }
             updateforumcount($fid);
 
-            message($lang['emptythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['emptythreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -562,7 +562,7 @@ switch($action) {
             }
             updateforumcount($fid);
 
-            message($lang['splitthreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['splitthreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -622,7 +622,7 @@ switch($action) {
             updateforumcount($fid);
             updateforumcount($otherfid);
 
-            message($lang['mergethreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['mergethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -722,7 +722,7 @@ switch($action) {
 
             $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
 
-            message($lang['complete_threadprune'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['complete_threadprune'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 
@@ -801,7 +801,7 @@ switch($action) {
                 updateforumcount($newfid);
             }
 
-            message($lang['copythreadmsg'], false, '', '', 'forumdisplay.php?fid='.$fid, true, false, true);
+            message($lang['copythreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
         break;
 }

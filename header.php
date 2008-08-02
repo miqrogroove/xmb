@@ -145,7 +145,7 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     $cookiesecure = ($array['scheme'] == 'https');
 
     if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
-        $cookiedomain  = '';
+        $cookiedomain = '';
     } else {
         $cookiedomain = str_replace('www', '', $array['host']);
     }
@@ -154,6 +154,34 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
         $array['path'] = '/';
     }
     $cookiepath = $array['path'];
+
+    if (DEBUG) {
+        // Check the $full_url setting
+        $secure = FALSE;
+        if (isset($_SERVER['HTTPS'])) {
+            if ($_SERVER['HTTPS'] != 'off') {
+                $secure = TRUE;
+            }
+        }
+
+        $success = TRUE;
+        if ($array['host'] != $_SERVER['HTTP_HOST']) {
+            $success = FALSE;
+            $reason = 'Host names do not match.  '.$array['host'].' should be '.$_SERVER['HTTP_HOST'];
+        } elseif ($cookiesecure != $secure) {
+            $success = FALSE;
+            $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
+        } elseif ($cookiepath != substr($url, strlen($cookiepath))) {
+            $success = FALSE;
+            $reason = 'URI paths do not match.<br />'.$cookiepath.' was expected, but server saw '.substr($url, strlen($cookiepath));
+        }
+        
+        if (!$success) {
+            exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
+        }
+
+        unset($secure, $success, $reason);
+    }
     unset($array);
 }
 

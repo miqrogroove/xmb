@@ -417,7 +417,6 @@ if ($action == "settings") {
         printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
         printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
         printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
-        printsetting2($lang['textboardurl'], 'boardurlnew', $SETTINGS['boardurl'], 50);
         printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 50);
         printsetting1($lang['textbbrules'], 'bbrulesnew', $ruleson, $rulesoff);
         ?>
@@ -578,7 +577,6 @@ if ($action == "settings") {
         $sitenamenew = postedVar('sitenamenew');
         $bbnamenew = postedVar('bbnamenew');
         $siteurlnew = postedVar('siteurlnew');
-        $boardurlnew = postedVar('boardurlnew');
         $adminemailnew = postedVar('adminemailnew');
         $bbrulesnew = formOnOff('bbrulesnew');
         $bbrulestxtnew = postedVar('bbrulestxtnew');
@@ -709,7 +707,6 @@ if ($action == "settings") {
             avastatus='$avastatusnew',
             u2uquota='$u2uquotanew',
             gzipcompress='$gzipcompressnew',
-            boardurl='$boardurlnew',
             coppa='$coppanew',
             timeformat='$timeformatnew',
             adminemail='$adminemailnew',

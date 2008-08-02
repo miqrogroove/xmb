@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -139,7 +139,7 @@ if ($action == 'report') {
             $mod = $db->escape($modusr['username']);
             $page = quickpage($postcount, $modusr['ppp']);
 
-            $posturl = $SETTINGS['boardurl']."viewthread.php?tid=$tid&page=$page#pid$pid";
+            $posturl = $full_url."viewthread.php?tid=$tid&page=$page#pid$pid";
             $reason = postedVar('reason', '', TRUE, FALSE);
             $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
             $message = $db->escape(addslashes($message)); //Messages are historically double-slashed.
@@ -149,7 +149,7 @@ if ($action == 'report') {
         $db->free_result($modquery);
 
         $page = quickpage($postcount, $tpp);
-        message($lang['reportmsg'], false, '', '', 'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
+        message($lang['reportmsg'], false, '', '', $full_url.'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
     }
 
 } else if ($action == 'votepoll') {
@@ -194,9 +194,9 @@ if ($action == 'report') {
     $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
 
     if ($tid > 0) {
-        message($lang['votemsg'], false, '', '', 'viewthread.php?tid='.$tid, true, false, true);
+        message($lang['votemsg'], false, '', '', $full_url.'viewthread.php?tid='.$tid, true, false, true);
     } else {
-        message($lang['votemsg'], false, '', '', 'index.php', true, false, true);
+        message($lang['votemsg'], false, '', '', $full_url, true, false, true);
     }
 }
 

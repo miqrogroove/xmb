@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -407,7 +407,6 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `avastatus` varchar(4) NOT NULL default '',
       `u2uquota` smallint(5) NOT NULL default 0,
       `gzipcompress` varchar(30) NOT NULL default '',
-      `boardurl` varchar(60) NOT NULL default '',
       `coppa` char(3) NOT NULL default '',
       `timeformat` smallint(2) NOT NULL default 0,
       `adminemail` varchar(60) NOT NULL default '',

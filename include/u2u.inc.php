@@ -59,7 +59,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
 }
 
 function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
-    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $del, $oToken, $xmbuser;
+    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $del, $oToken, $xmbuser, $full_url;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
@@ -82,7 +82,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
             if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
                 $lastvisitcheck = $onlinetime - 600;
                 if ($lastvisitcheck > $rcpt['lastvisit']) {
-                    $u2uurl = $SETTINGS['boardurl'] . 'u2u.php';
+                    $u2uurl = $full_url.'u2u.php';
                     $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
                     altMail($rcpt['email'], "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
                 }
@@ -196,7 +196,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
 function u2u_view($u2uid, $folders) {
     global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken, $xmbuser;
-    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
+    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth, $full_url;
     global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
 
     $delchecked = '';
@@ -205,7 +205,7 @@ function u2u_view($u2uid, $folders) {
     $u2uid = (int) $u2uid;
 
     if (!($u2uid > 0)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php", true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
         return;
     }
 
@@ -278,7 +278,7 @@ function u2u_print($u2uid, $eMail = false) {
     $u2uid = (int) $u2uid;
 
     if (!($u2uid > 0)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php", true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
         return;
     }
 
@@ -318,7 +318,7 @@ function u2u_delete($u2uid, $folder) {
     $u2uid = (int) $u2uid;
 
     if (!($u2uid > 0)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, 'u2u.php', true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
         return;
     }
 
@@ -355,15 +355,15 @@ function u2u_move($u2uid, $tofolder) {
     $u2uid = (int) $u2uid;
 
     if (!($u2uid > 0)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, 'u2u.php', true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
         return;
     }
 
     if (empty($tofolder)) {
-        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
+        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
     } else {
         if (!(in_array($tofolder, $folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') || ($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) || ($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) || ($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
-            error($lang['textcantmove'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
+            error($lang['textcantmove'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         }
 
         $dbfolder = $db->escape($tofolder);
@@ -388,7 +388,7 @@ function u2u_mod_move($tofolder, $u2u_select) {
     }
 
     if (empty($in)) {
-        error($lang['textcantmove'], false, $u2uheader, $u2ufooter, 'u2u.php?folder='.recodeOut($folder), true, false, false);
+        error($lang['textcantmove'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
         return;
     }
 
@@ -404,17 +404,17 @@ function u2u_markUnread($u2uid, $folder, $type) {
     $u2uid = (int) $u2uid;
 
     if (!($u2uid > 0)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, "u2u.php", true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php", true, false, false);
         return;
     }
 
     if (empty($folder)) {
-        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
+        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         return;
     }
 
     if ($type == 'outgoing') {
-        error($lang['textnomur'], false, $u2uheader, $u2ufooter, 'u2u.php?folder='.recodeOut($folder), true, false, false);
+        error($lang['textnomur'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
     }
 
     $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid=$u2uid AND owner='$xmbuser'");
@@ -426,12 +426,12 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     global $db, $lang, $u2uheader, $u2ufooter, $self, $oToken, $xmbuser, $full_url;
 
     if (empty($folder)) {
-        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, "u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
+        error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         return;
     }
 
     if (empty($u2u_select)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, 'u2u.php?folder='.recodeOut($folder), true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
         return;
     }
 
@@ -447,7 +447,7 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     }
 
     if (empty($in)) {
-        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, 'u2u.php?folder='.recodeOut($folder), true, false, false);
+        error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
     }
 
     $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='no' WHERE u2uid IN($in) AND owner='$xmbuser'");

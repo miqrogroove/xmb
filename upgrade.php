@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -73,9 +73,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.8 SP3 to 1.9.10 Upgrade Script</h1>
 
-<p>This script is compatible with XMB 1.9.8 SP2 as well as SP3.
+<p>This script is compatible with XMB 1.9.10 as well as 1.9.9.
 
-<p>This script is NOT compatible with XMB 1.9.9.
+<p>This script is NOT compatible with XMB 1.9.8.
 
 <h2>Instructions</h2>
 <ol>
@@ -83,7 +83,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <li>Copy your config.php settings into the new file.
 <li>Confirm your forum database account is granted ALTER and LOCK privileges.
 <li>Disable your forums using the Board Status setting.
-<li>Upload the XMB 1.9.10 files.
+<li>Upload the XMB 1.9.11 files.
 <li>Upload and run this script to complete your database upgrade.
 <li>Go to the Administration Panel to edit your Forum permissions.
 <li>Enable your forums using the Board Status setting.
@@ -96,7 +96,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 } else if ($_GET['step'] == 2) {
 
     ?>
-    <h1>XMB 1.9.8 SP3 to 1.9.10 Upgrade Script</h1>
+    <h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
 
@@ -120,6 +120,25 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
     flush();
 
+    echo 'Requesting to lock the settings table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
+
+    echo 'Deleting the old columns in the settings table...<br />';
+    $columns = array(
+    'boardurl');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $db->query('ALTER TABLE '.X_PREFIX.'settings DROP COLUMN '.$colname);
+        }
+        $db->free_result($query);
+    }
+
+    echo 'Releasing the lock on the settings table...<br />';
+    $db->query('UNLOCK TABLES');
+    flush();
+
+/*
     echo 'Requesting to lock the forums table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
 
@@ -176,6 +195,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Releasing the lock on the forums table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
+*/
 
     echo 'Opening the templates file...<br />';
     $stream = fopen('templates.xmb','r');
@@ -206,6 +226,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Deleting the templates.xmb file...<br />';
     unlink('templates.xmb');
 
+/*
     echo 'Requesting to lock the settings table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
@@ -242,6 +263,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Releasing the lock on the settings table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
+*/
 
     echo 'Checking for new themes...';
     $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='Oxygen XMB'");
@@ -259,110 +281,4 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Done! :D<br />Now <a href="cp.php?action=forum">edit the forum permissions</a>.<br />';
 }
 
-function fixForumPerms($v) {
-    static $cache;
-    global $db;
-    /***
-        OLD FORMAT:
-        "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
-        - 1 normal (all ranks),
-        - 2 admin only,
-        - 3 admin/mod only,
-        - 4 no posting/viewing.
-    ***/
-
-    /***
-        NEW FORMAT:
-        NewPolls,NewThreads,NewReplies,View. Each field contains a number between 0-63 (a sum of the following:)
-        - 1  Super Administrator
-        - 2  Administrator
-        - 4  Super Moderator
-        - 8  Moderator
-        - 16 Member
-        - 32 Guest
-    ***/
-    switch($v) {
-        case 0:
-            // store
-            $q = $db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
-            while($forum = $db->fetch_array($q)) {
-                // check if we need to change it first
-                $parts = explode('|', $forum['postperm']);
-                if (count($parts) == 1) {
-                    // no need to upgrade these; new format in use [we hope]
-                    continue;
-                }
-                $newFormat = array(0,0,0,0);
-
-                $fid            = $forum['fid'];
-                $private        = $forum['private'];
-                $permField      = $forum['postperm'];
-                $guestposting   = $forum['guestposting'];
-                $polls          = $forum['pollstatus'];
-
-                $translationFields = array(0=>1, 1=>2);
-                foreach($parts as $key=>$val) {
-                    switch($val) {
-                        case 1:
-                            $newFormat[$translationFields[$key]] = 31;
-                            break;
-                        case 2:
-                            $newFormat[$translationFields[$key]] = 3;
-                            break;
-                        case 3:
-                            $newFormat[$translationFields[$key]] = 15;
-                            break;
-                        case 4:
-                            $newFormat[$translationFields[$key]] = 1;
-                            break;
-                        default:
-                            // allow only superadmin
-                            $newFormat[$translationFields[$key]] = 1;
-                            break;
-                    }
-                }
-                switch($private) {
-                    case 1:
-                        $newFormat[3] = 63;
-                        break;
-                    case 2:
-                        $newFormat[3] = 3;
-                        break;
-                    case 3:
-                        $newFormat[3] = 15;
-                        break;
-                    case 4:
-                        $newFormat[3] = 1;
-                        break;
-                    default:
-                        // allow only superadmin
-                        $newFormat[3] = 1;
-                        break;
-                }
-                if ($guestposting == 'yes' || $guestposting == 'on') {
-                    $newFormat[0] |= 32;
-                    $newFormat[1] |= 32;
-                    $newFormat[2] |= 32;
-                }
-
-                if ($polls == 'yes' || $polls == 'on') {
-                    $newFormat[0] = $newFormat[1];
-                } else {
-                    $newFormat[0] = 0;
-                }
-
-                $cache[$fid] = $newFormat;
-            }
-            break;
-
-        case 1:
-            // restore
-            if (isset($cache) && count($cache) > 0) {
-                foreach($cache as $fid=>$format) {
-                    $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
-                }
-            }
-            break;
-    }
-}
 ?>

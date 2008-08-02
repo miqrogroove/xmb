@@ -117,7 +117,7 @@ switch($action) {
             $password = '';
             if (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
                 if ($server == 'Mic') {
-                    $misc = message($lang['onlinelogin'], FALSE, '', '', 'index.php', FALSE, TRUE, FALSE);
+                    $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
                 } else {
                     redirect($full_url, 0);
                 }
