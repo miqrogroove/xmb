@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -237,6 +237,7 @@ $lang['day60'] = "last 60 days";
 $lang['daysold'] = "Days Old";
 $lang['db_backup'] = "Database Backup";
 $lang['defaultTimezoneDesc'] = "Default TimeZone";
+$lang['deleteaborted'] = 'The delete action was aborted due to a protection error.';
 $lang['delete_all_themes'] = "You can not delete your last theme! Your board won't work without it!";
 $lang['deletebutton'] = "Delete";
 $lang['deletecolon'] = "Delete:";
@@ -314,6 +315,7 @@ $lang['foldersupdateerror'] = 'The following folders were not deleted because th
 $lang['footer_options'] = 'Footer Options:';
 $lang['forgotpw'] = "Forgot password?";
 $lang['forumjumpselect'] = "Select A Forum";
+$lang['forumnotempty'] = 'The selected forum is not empty.  A forum must be empty to perform this action.';
 $lang['forumpruned'] = "Forum successfully pruned";
 $lang['forumpermissions'] = 'Forum Permissions:';
 $lang['forumpw'] = "Password:<br /><span class=\"smalltxt\">(leave blank for none)</span>";

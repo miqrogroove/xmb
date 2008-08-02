@@ -1248,60 +1248,63 @@ if ($action == 'forum') {
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
-            $self['status'] = formOnOff('status'.$forum['fid']);
+            $forum['status'] = formOnOff('status'.$forum['fid']);
             $name = addslashes(htmlspecialchars(postedVar('name'.$forum['fid'], 'javascript', FALSE), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
             $delete = formInt('delete'.$forum['fid']);
             $moveto = formInt('moveto'.$forum['fid']);
 
+            $dsuccess = FALSE;
             if ($delete == $forum['fid']) {
-                $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid=$delete");
-                $querythread = $db->query("SELECT tid, author FROM ".X_PREFIX."threads WHERE fid=$delete");
-                while($thread = $db->fetch_array($querythread)) {
-                    $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$thread[tid]'");
-                    $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$thread[tid]'");
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$thread[author]'");
-                    $querypost = $db->query("SELECT pid, author FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
-                    while($post = $db->fetch_array($querypost)) {
-                        $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$post[pid]'");
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$post[author]'");
-                    }
-                    $db->free_result($querypost);
-                }
-                $db->free_result($querythread);
-            }
-            $settype = '';
-            if ($forum['fup'] != $moveto And $moveto != $forum['fid'] And $forum['type'] != 'group') { //Forum is being moved
-                if ($moveto == 0) {
-                    $settype = ", type='forum', fup=0";
+                if ($db->num_rows($db->query('SELECT tid FROM '.X_PREFIX.'threads WHERE fid='.$forum['fid'])) > 0) {
+                    $dsuccess = FALSE;
+                } elseif ($db->num_rows($db->query('SELECT fid FROM '.X_PREFIX.'forums WHERE fup='.$forum['fid'])) > 0) {
+                    $dsuccess = FALSE;
+                } elseif ($db->num_rows($db->query('SELECT pid FROM '.X_PREFIX.'posts WHERE fid='.$forum['fid'])) > 0) {
+                    $dsuccess = FALSE;
                 } else {
-                    $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
-                    if ($frow = $db->fetch_array($query)) {
-                        if ($frow['type'] == 'group') {
-                            $settype = ", type='forum', fup=$moveto";
-                        } else if ($frow['type'] == 'forum') {
-                            if ($forum['type'] == 'sub') {
-                                $settype = ", fup=$moveto";
-                            } else if ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
-                                $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
-                                $frow = $db->fetch_array($query2);
-                                $db->free_result($query2);
-                                if ($frow['subcount'] == 0) {
-                                    $settype = ", type='sub', fup=$moveto";
+                    $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid=".$forum['fid']);
+                    $dsuccess = TRUE;
+                }
+                if (!$dsuccess) {
+                    message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
+                }
+            }
+            
+            if (!$dsuccess) {
+                $settype = '';
+                if ($forum['fup'] != $moveto And $moveto != $forum['fid'] And $forum['type'] != 'group') { //Forum is being moved
+                    if ($moveto == 0) {
+                        $settype = ", type='forum', fup=0";
+                    } else {
+                        $query = $db->query("SELECT type FROM ".X_PREFIX."forums WHERE fid=$moveto");
+                        if ($frow = $db->fetch_array($query)) {
+                            if ($frow['type'] == 'group') {
+                                $settype = ", type='forum', fup=$moveto";
+                            } else if ($frow['type'] == 'forum') {
+                                if ($forum['type'] == 'sub') {
+                                    $settype = ", fup=$moveto";
+                                } else if ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
+                                    $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
+                                    $frow = $db->fetch_array($query2);
+                                    $db->free_result($query2);
+                                    if ($frow['subcount'] == 0) {
+                                        $settype = ", type='sub', fup=$moveto";
+                                    }
                                 }
                             }
                         }
+                        $db->free_result($query);
                     }
-                    $db->free_result($query);
                 }
+                $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='{$forum['status']}'$settype WHERE fid='".$forum['fid']."'");
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='$self[status]'$settype WHERE fid='".$forum['fid']."'");
         }
 
         $querygroup = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
         while($group = $db->fetch_array($querygroup)) {
             $name = addslashes(htmlspecialchars(postedVar('name'.$group['fid'], 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
             $displayorder = formInt('displayorder'.$group['fid']);
-            $self['status'] = formOnOff('status'.$group['fid']);
+            $group['status'] = formOnOff('status'.$group['fid']);
             $delete = formInt('delete'.$group['fid']);
 
             if ($delete == $group['fid']) {
@@ -1311,7 +1314,7 @@ if ($action == 'forum') {
                 }
                 $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid=$delete");
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=".$displayorder.", status='".$self['status']."' WHERE fid='".$group['fid']."'");
+            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=$displayorder, status='{$group['status']}' WHERE fid={$group['fid']}");
         }
 
         $newgname = addslashes(htmlspecialchars(postedVar('newgname', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
