@@ -950,43 +950,28 @@ Public License instead of this License.  But first, please read
             $configuration = file_get_contents('../config.php');
 
             // Now, replace the main text values with those given by user
-            $find = array('DB_NAME', 'DB_USER', 'DB_PW', 'DB_HOST', 'DB_TYPE', 'TABLEPRE', 'FULLURL', 'MAXATTACHSIZE', 'MAILER_TYPE', 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
-            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], $_REQUEST['db_host'], $_REQUEST['db_type'], $_REQUEST['table_pre'], $_REQUEST['fullurl'], $_REQUEST['maxattachsize'], $_REQUEST['MAILER_TYPE'], $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
+            $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", "= 'mysql';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
+            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", "= '{$_REQUEST['db_type']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '$_REQUEST['MAILER_TYPE']';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
             $configuration = str_replace($find, $replace, $configuration);
 
             // Change Comment Output Option
             if (isset($_REQUEST['c_output'])) {
-                $configuration = str_replace('COMMENTOUTPUT', 'true', $configuration);
-            } else {
-                $configuration = str_replace('COMMENTOUTPUT', 'false', $configuration);
-            }
-
-            // IP Reg
-            if (isset($_REQUEST['ip_reg'])) {
-                $configuration = str_replace('IPREG', 'on', $configuration);
-            } else {
-                $configuration = str_replace('IPREG', 'off', $configuration);
+                $configuration = str_replace("comment_output = FALSE;", "comment_output = TRUE;", $configuration);
             }
 
             // IP Check
             if (isset($_REQUEST['ip_check'])) {
-                $configuration = str_replace('IPCHECK', 'on', $configuration);
-            } else {
-                $configuration = str_replace('IPCHECK', 'off', $configuration);
+                $configuration = str_replace("ipcheck        = 'off';", "ipcheck        = 'on';", $configuration);
             }
 
             // Allow Special Queries
             if (isset($_REQUEST['allowspecialq'])) {
-                $configuration = str_replace('SPECQ', 'true', $configuration);
-            } else {
-                $configuration = str_replace('SPECQ', 'false', $configuration);
+                $configuration = str_replace("allow_spec_q   = FALSE;", "allow_spec_q   = TRUE;", $configuration);
             }
 
             // Show Full Footer Info
-            if (isset($_REQUEST['showfullinfo'])) {
-                $configuration = str_replace('SHOWFULLINFO', 'true', $configuration);
-            } else {
-                $configuration = str_replace('SHOWFULLINFO', 'false', $configuration);
+            if (!isset($_REQUEST['showfullinfo'])) {
+                $configuration = str_replace("show_full_info = TRUE;", "show_full_info = FALSE;", $configuration);
             }
 
             switch($_REQUEST['method']) {
@@ -1269,6 +1254,28 @@ Public License instead of this License.  But first, please read
         break; // end case 4
 
     case 5: // Make the administrator set a username and password for the super admin user
+
+        require '../config.php';
+
+        $config_array = array(
+            'dbname' => 'DB/NAME',
+            'dbuser' => 'DB/USER',
+            'dbpw' => 'DB/PW',
+            'dbhost' => 'DB_HOST',
+            'database' => 'DB_TYPE',
+            'tablepre' => 'TABLE/PRE',
+            'full_url' => 'FULLURL',
+            'ipcheck' => 'IPCHECK',
+            'allow_spec_q' => 'SPECQ',
+            'show_full_info' => 'SHOWFULLINFO',
+            'comment_output' => 'COMMENTOUTPUT'
+        );
+        foreach($config_array as $key => $value) {
+            if (${$key} === $value) {
+                error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.'), TRUE);
+            }
+        }
+
         ?>
     <div id="sidebar">
         <div class="top"><span></span></div>

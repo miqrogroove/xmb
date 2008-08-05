@@ -981,22 +981,25 @@ Public License instead of this License.  But first, please read
         ob_implicit_flush(1);
 
         $config_array = array(
-            'dbname' => 'DB_NAME',
-            'dbuser' => 'DB_USER',
-            'dbpw' => 'DB_PW',
+            'dbname' => 'DB/NAME',
+            'dbuser' => 'DB/USER',
+            'dbpw' => 'DB/PW',
             'dbhost' => 'DB_HOST',
             'database' => 'DB_TYPE',
-            'tablepre' => 'TABLEPRE',
+            'tablepre' => 'TABLE/PRE',
             'full_url' => 'FULLURL',
             'ipcheck' => 'IPCHECK',
-       );
-        while(list($key, $value) = each ($config_array)) {
-            if (${$key} == $value) {
+            'allow_spec_q' => 'SPECQ',
+            'show_full_info' => 'SHOWFULLINFO',
+            'comment_output' => 'COMMENTOUTPUT'
+        );
+        foreach($config_array as $key => $value) {
+            if (${$key} === $value) {
                 show_result(X_INST_ERR);
-                error('Incorrect Configuration', 'XMB noticed that your config.php has not been fully configured.<br />The &#36;'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).', true);
+                error('Incorrect Configuration', 'XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).', true);
             }
         }
-
+        
         require ROOT."db/$database.php";
 
         // Increase the time limit for long running queries to five minutes. This should be enough, but if you need

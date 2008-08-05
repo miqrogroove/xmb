@@ -101,13 +101,6 @@ $quickjump = '';
 $newu2umsg = '';
 $othertid = '';
 
-define('COMMENTOUTPUT', false);
-define('MAXATTACHSIZE', 256000);
-define('IPREG', 'on');
-define('IPCHECK', 'off');
-define('SPECQ', false);
-define('SHOWFULLINFO', false);
-
 require ROOT.'config.php';
 
 if (!defined('DEBUG')) {
@@ -124,6 +117,25 @@ if (headers_sent()) {
         exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
     } else {
         exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+    }
+}
+
+$config_array = array(
+'dbname' => 'DB/NAME',
+'dbuser' => 'DB/USER',
+'dbpw' => 'DB/PW',
+'dbhost' => 'DB_HOST',
+'database' => 'DB_TYPE',
+'tablepre' => 'TABLE/PRE',
+'full_url' => 'FULLURL',
+'ipcheck' => 'IPCHECK',
+'allow_spec_q' => 'SPECQ',
+'show_full_info' => 'SHOWFULLINFO',
+'comment_output' => 'COMMENTOUTPUT'
+);
+foreach($config_array as $key => $value) {
+    if (${$key} === $value) {
+        exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
     }
 }
 

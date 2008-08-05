@@ -31,26 +31,26 @@ if (!defined('IN_CODE')) {
 }
 
 // Database connection settings
-    $dbname         = 'DB_NAME'; // Name of your database
-    $dbuser         = 'DB_USER'; // Username used to access it
-    $dbpw           = 'DB_PW';   // Password used to access it
-    $dbhost         = 'DB_HOST'; // Database host, usually 'localhost'
-    $database       = 'DB_TYPE'; // Database type, currently only mysql is supported.
-    $pconnect       = 0;         // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
+    $dbname         = 'DB/NAME';   // Name of your database
+    $dbuser         = 'DB/USER';   // Username used to access it
+    $dbpw           = 'DB/PW';     // Password used to access it
+    $dbhost         = 'localhost'; // Database host, usually 'localhost'
+    $database       = 'mysql';     // Database type, currently only mysql is supported.
+    $pconnect       = 0;           // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
 
 // Table Settings
-    $tablepre       = 'TABLEPRE'; // Table-pre
+    $tablepre       = 'TABLE/PRE'; // XMB will prefix each table name with the string you specify here.  'xmb_' is a common choice.
 
 // Path-settings
-    // In full_path, put the full URL you see when you go to your boards, WITHOUT the filename though!!
-    // And please, don't forget the / at the end...
+    // In full_url, put the full URL you see when you go to your boards, WITHOUT the filename though!!
+    // And please, remember to add the / at the end...
     $full_url       = 'FULLURL';
 
 // Other settings
     // There are situations where you don't want to see the <!-- template start: index -->...<!-- template end: index -->
     // tags around each template. In those cases, change the following to false, or true to turn it back on.
     // Default value: false;
-    $comment_output = COMMENTOUTPUT;
+    $comment_output = FALSE;
 
     // Alternative mailer
     // some hosts prevent the direct use of sendmail, which php uses to send out emails by default.
@@ -60,7 +60,7 @@ if (!defined('IN_CODE')) {
     //                     (does not require a username/password/host/port)
     // 'socket_SMTP'    => a connection to the SMTP server trough sockets. Requires the username,
     //                     password, host and port values to be entered correctly to work.
-    $mailer['type']     = 'MAILER_TYPE';
+    $mailer['type']     = 'default';
 
     // mailer-options (for socket_SMTP only, currently)
     $mailer['username'] = 'MAILER_USER';
@@ -97,17 +97,17 @@ if (!defined('IN_CODE')) {
      * this might shut a few users out, so you can turn it off by changing the $ipcheck variable to 'off'
      ****************
      * The allow_spec_q variable specifies if Special queries (eg. USE database and SHOW DATABASES) are allowed.
-     * By default, they are not, meaning $allow_spec_q = false;
+     * By default, they are not, meaning $allow_spec_q = FALSE;
      * To allow them, change $allow_spec_q to true ($allow_spec_q = true;)
      ****************
      * The show_full_info variable lets you decide wether to show the Build and Alpha/Beta/SP markings in the HTML or not.
      * Change the value to true to show them, or false to turn them off.
-     * Default = true;
+     * Default = TRUE;
      ****************/
 
-    $ipcheck        = 'IPCHECK';
-    $allow_spec_q   = SPECQ;
-    $show_full_info = SHOWFULLINFO;
+    $ipcheck        = 'off';
+    $allow_spec_q   = FALSE;
+    $show_full_info = TRUE;
 
 // Resolving serveral modes (currently, 2)
 // Debug-mode
@@ -118,8 +118,8 @@ if (!defined('IN_CODE')) {
     /
     / SECURITY NOTICE: DO NOT COMMENT OUT UNLESS YOU KNOW WHAT YOU'RE DOING!
     */
-    define('DEBUG', false);
-    // define('DEBUG', true);
+    define('DEBUG', FALSE);
+    // define('DEBUG', TRUE);
     //
     /*
     / Comment first line and uncomment second line to use debug mode (1.9+ only). Only one define can be
@@ -131,6 +131,6 @@ if (!defined('IN_CODE')) {
     / line and uncomment second line.  DEBUG queries will not be shown.
     / ****  DEBUG MUST BE SET TO TRUE  ****
     */
-    define('DEBUG_ALL', false);
-    // define('DEBUG_ALL', true);
+    define('DEBUG_ALL', FALSE);
+    // define('DEBUG_ALL', TRUE);
 ?>
