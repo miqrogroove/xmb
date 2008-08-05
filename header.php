@@ -106,6 +106,9 @@ require ROOT.'config.php';
 if (!defined('DEBUG')) {
     define('DEBUG', FALSE);
 }
+if (!defined('LOG_MYSQL_ERRORS')) {
+    define('LOG_MYSQL_ERRORS', FALSE);
+}
 
 if (DEBUG) {
     error_reporting(E_ALL | E_STRICT);

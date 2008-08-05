@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -132,20 +132,33 @@ class dbstuff {
     }
 
     function panic($sql = '') {
+        // Check that we actually made a connection
+        if ($this->link === FALSE) {
+            $error = mysql_error();
+            $errno = mysql_errno();
+        } else {
+            $error = mysql_error($this->link);
+            $errno = mysql_errno($this->link);
+        }
 
-        if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
-            // Check that we actually made a connection
-            if ($this->link === FALSE) {
-                $error = mysql_error();
-                $errno = mysql_errno();
-            } else {
-                $error = mysql_error($this->link);
-                $errno = mysql_errno($this->link);
-            }
-
-            echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
         } else {
             echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
+    	}
+        if (LOG_MYSQL_ERRORS) {
+            if (ini_get('display_errors') Or !ini_get('log_errors')) {
+                ini_set('log_errors', TRUE);
+                ini_set('error_log', 'error_log');
+                ini_set('display_errors', FALSE);
+            }
+            if (!ini_get('display_errors')) {
+                $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
+                if ($sql != '') {
+                    $log .= "In the following query:\n$sql";
+                }
+                trigger_error($log, E_USER_ERROR);
+            }
         }
         exit;
     }
