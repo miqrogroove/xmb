@@ -163,7 +163,7 @@ eval('$css = "'.template('css').'";');
 $notexist = false;
 $notexist_txt = $posts = '';
 
-$query = $db->query("SELECT fid, subject, replies, closed, topped, lastpost FROM ".X_PREFIX."threads WHERE tid=$tid");
+$query = $db->query("SELECT t.fid, t.subject, t.closed, t.topped, t.lastpost, t.replies, COUNT(pid) AS postcount, MAX(dateline) AS lastpostdate FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
 if ($db->num_rows($query) != 1) {
     $db->free_result($query);
     header('HTTP/1.0 404 Not Found');
@@ -172,6 +172,13 @@ if ($db->num_rows($query) != 1) {
 
 $thread = $db->fetch_array($query);
 $db->free_result($query);
+
+$thislast = explode('|', $thread['lastpost']);
+
+// Perform automatic maintenance
+if ($thislast[0] != $thread['lastpostdate'] Or $thread['replies'] != $thread['postcount'] - 1) {
+    updatethreadcount($tid);
+}
 
 if (strpos($thread['closed'], '|') !== false) {
     $moved = explode('|', $thread['closed']);
@@ -182,7 +189,6 @@ if (strpos($thread['closed'], '|') !== false) {
 
 $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
-$thislast = explode('|', $thread['lastpost']);
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 if (!isset($oldtopics)) {
     put_cookie('oldtopics', '|'.$lastPid.'|', $onlinetime+600, $cookiepath, $cookiedomain, null, X_SET_HEADER);
@@ -348,11 +354,8 @@ if ($action == '') {
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
-    $max_page = (int) ($thread['replies'] / $ppp) + 1;
+    $max_page = ceil($thread['postcount'] / $ppp);
     if ($page && $page >= 1 && $page <= $max_page) {
-        if ($page < 1) {
-            $page = 1;
-        }
         $start_limit = ($page-1) * $ppp;
     } else {
         $start_limit = 0;

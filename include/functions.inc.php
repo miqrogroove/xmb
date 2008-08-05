@@ -777,7 +777,7 @@ function updatethreadcount($tid) {
     $replycount = $db->num_rows($query);
     $db->free_result($query);
     $replycount--;
-    $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 1");
+    $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 1");
     $lp = $db->fetch_array($query);
     $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
