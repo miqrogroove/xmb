@@ -565,13 +565,25 @@ switch($action) {
             error($lang['nomember']);
         } else {
             $memberinfo = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'"));
-            if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
-                $limit = "title = '$memberinfo[status]'";
+            if ($memberinfo['status'] == 'Banned') {
+                $memberinfo['avatar'] = '';
+                $rank = array(
+                'title' => 'Banned',
+                'posts' => 0,
+                'id' => 0,
+                'stars' => 0,
+                'allowavatars' => 'no',
+                'avatarrank' => ''
+                );
             } else {
-                $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Super Moderator' AND title != 'Moderator'";
-            }
+                if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
+                    $limit = "title = '$memberinfo[status]'";
+                } else {
+                    $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Super Moderator' AND title != 'Moderator'";
+                }
 
-            $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+                $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+            }
 
             if ($memberinfo['uid'] == '') {
                 header('HTTP/1.0 404 Not Found');
@@ -618,7 +630,7 @@ switch($action) {
                 if ($rank['avatarrank'] != '') {
                     $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
-
+                
                 if ($memberinfo['avatar'] != '') {
                     $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
