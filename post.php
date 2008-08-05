@@ -702,7 +702,14 @@ switch($action) {
 
         if ($topicvalid) {
             if ($poll == 'yes') {
-                $pollopts = explode("\n", $pollanswers);
+                $pollopts = array();
+                $pollopts2 = explode("\n", $pollanswers);
+                foreach($pollopts2 as $value) {
+                    $value = trim($value);
+                    if ($value != '') {
+                        $pollopts[] = $value;
+                    }
+                }
                 $pnumnum = count($pollopts);
 
                 if ($pnumnum < 2) {
