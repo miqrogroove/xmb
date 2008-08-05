@@ -224,7 +224,7 @@ $css
 </tr>
 $buddys
 <tr>
-<td class="tablerow" colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
+<td class="tablerow" colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="{$lang['addressupdate']}" /><br /></td>
 </tr>
 </table>
 </form>
@@ -254,7 +254,7 @@ $buddys
 <td class="tablerow" bgcolor="$altbg1"><a href="#" onclick="javascript:add();return false;">&raquo; $lang[add_buddy]</a></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="Update" /><br /></td>
+<td class="tablerow" bgcolor="$altbg2"><input type="submit" class="submit" name="editsubmit" value="{$lang['addressupdate']}" /><br /></td>
 </tr>
 </table>
 </form>
