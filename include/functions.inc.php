@@ -669,7 +669,7 @@ function multi($num, $perpage, $page, $mpurl, $strict = false) {
 
         $string = (strpos($mpurl, '?') !== false) ? '&amp;' : '?';
         if (1 != $page) {
-            $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.$string.'page=1">1</a></u>';
+            $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.'">1</a></u>';
             if (2 < $from) {
                 $multipage .= '&nbsp;&nbsp;..';
             }
