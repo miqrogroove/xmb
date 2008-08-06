@@ -4810,7 +4810,10 @@ $smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Windo
 <td width="85%"> <div align="left">$lang[textemailnotify] </div></td>
 </tr>
 </table></div>
-<div align="left"><br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="$lang[textpostreply]" class="submit" /></div></td>
+<div align="left">
+<br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="$lang[textpostreply]" class="submit" />
+<br /><br />&nbsp;&nbsp;<input type="submit" name="previewpost" value="$lang[textpreview]" class="submit" />
+</div></td>
 </tr>
 </table>
 </td>
@@ -4820,15 +4823,13 @@ $smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Windo
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply_captcha|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="3" class="ctrtablerow" bgcolor="$altbg1">
-$lang[verificationnote]
-<br />
-<br />
+<td bgcolor="$altbg1" />
+<td class="rghttablerow" bgcolor="$altbg2">
 <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" />
-<br />
 <br />
 <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" />
 </td>
+<td class="tablerow" bgcolor="$altbg2">$lang[verificationnote]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_reply|#*XMB TEMPLATE*#|
