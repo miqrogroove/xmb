@@ -131,7 +131,7 @@ if ($action == 'report') {
         eval('echo "'.template('vtmisc_report').'";');
     } else {
         $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $postcount = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+        $postcount = intval($db->result($query, 0));
         $db->free_result($query);
 
         $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
@@ -175,7 +175,7 @@ if ($action == 'report') {
 
     // does the poll option exist?
     $query = $db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
-    $vote_result = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+    $vote_result = intval($db->result($query, 0)); //Aggregate functions with no grouping always return 1 row.
     $db->free_result($query);
     if ($vote_result != 1) {
         error($lang['pollvotenotselected'], false);
@@ -183,9 +183,9 @@ if ($action == 'report') {
 
     // Has the user voted on this poll before?
     $query = $db->query("SELECT COUNT(vote_id) FROM ".X_PREFIX."vote_voters WHERE vote_id=$vote_id AND vote_user_id={$self['uid']}");
-    $voted = $db->result($query, 0); //Aggregate functions with no grouping always return 1 row.
+    $voted = intval($db->result($query, 0));
     $db->free_result($query);
-    if ($voted === 1) {
+    if ($voted >= 1) {
         error($lang['alreadyvoted'], false);
     }
 
