@@ -820,28 +820,6 @@ function smcwcache() {
     return false;
 }
 
-/* checkInput() is deprecated */
-function checkInput($input, $striptags='no', $allowhtml='no', $word='', $no_quotes=true) {
-    $input = trim($input);
-    if ($striptags == 'yes') {
-        $input = strip_tags($input);
-    }
-
-    if ($allowhtml != 'yes' && $allowhtml != 'on') {
-        if ($no_quotes) {
-            $input = htmlspecialchars($input, ENT_NOQUOTES);
-        } else {
-            $input = htmlspecialchars($input, ENT_QUOTES);
-        }
-    }
-
-    if ($word != '') {
-        $input = str_ireplace($word, "_".$word, $input);
-    }
-
-    return $input;
-}
-
 if (!function_exists('htmlspecialchars_decode')) {
     function htmlspecialchars_decode($string, $type=ENT_QUOTES) {
         $array = array_flip(get_html_translation_table(HTML_SPECIALCHARS, $type));
@@ -1248,9 +1226,9 @@ function audit($user='', $action, $fid, $tid, $reason='') {
 
     $fid = (int) $fid;
     $tid = (int) $tid;
-    $action = checkInput($action);
-    $user = checkInput($user);
-    $reason = checkInput($reason);
+    $action = cdataOut($action);
+    $user = cdataOut($user);
+    $reason = cdataOut($reason);
 
     $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', " . $db->time() . ")");
     return true;

@@ -373,8 +373,8 @@ if ($action == 'themes') {
         }
         echo '</td></tr>';
     } else if (onSubmit('themesubmit')) {
-        $theme_delete = formArray('theme_delete');
-        $theme_name = formArray('theme_name');
+        $theme_delete = postedArray('theme_delete', 'int');
+        $theme_name = postedArray('theme_name', 'string', 'javascript', TRUE, TRUE, TRUE);
 
         $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM ".X_PREFIX."themes"), 0);
 
@@ -384,7 +384,7 @@ if ($action == 'themes') {
 
         if ($theme_delete) {
             foreach($theme_delete as $themeid) {
-                $otherid = $db->result($db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE themeid != '$themeid' ORDER BY rand() LIMIT 1"), 0);
+                $otherid = $db->result($db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE themeid != $themeid ORDER BY rand() LIMIT 1"), 0);
                 $db->query("UPDATE ".X_PREFIX."members SET theme='$otherid' WHERE theme='$themeid'");
                 $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE theme='$themeid'");
 
@@ -768,16 +768,16 @@ if ($action == "smilies") {
         </tr>
         <?php
     } else {
-        $smdelete = formArray('smdelete');
-        $smcode = formArray('smcode');
-        $smurl = formArray('smurl');
+        $smdelete = postedArray('smdelete', 'int');
+        $smcode = postedArray('smcode', 'string', 'javascript', TRUE, TRUE, TRUE);
+        $smurl = postedArray('smurl', 'string', 'javascript', TRUE, TRUE, TRUE);
 
         $newcode = postedVar('newcode');
         $newurl1 = postedVar('newurl1');
         $autoinsertsmilies = formInt('autoinsertsmilies');
 
-        $pidelete = formArray('pidelete');
-        $piurl = formArray('piurl');
+        $pidelete = postedArray('pidelete', 'int');
+        $piurl = postedArray('piurl', 'string', 'javascript', TRUE, TRUE, TRUE);
 
         $newurl2 = postedVar('newurl2');
         $autoinsertposticons = formInt('autoinsertposticons');
@@ -1000,7 +1000,7 @@ if ($action == "ranks") {
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td class="tablerow" align="center"><input type="checkbox" name="delete[<?php echo $rank['id']?>]" value="<?php echo $rank['id']?>" <?php echo $staff_disable?> /></td>
-            <td class="tablerow" align="left"><input type="text" name="title[<?php echo $rank['id']?>]" value="<?php echo $rank['title']?>" <?php echo $staff_disable?>/></td>
+            <td class="tablerow" align="left"><input type="text" name="title[<?php echo $rank['id']?>]" value="<?php echo attrOut($rank['title']); ?>" <?php echo $staff_disable?>/></td>
             <td class="tablerow"><input type="text" name="posts[<?php echo $rank['id']?>]" value="<?php echo $rank['posts']?>" <?php echo $staff_disable?> size="5" /></td>
             <td class="tablerow"><input type="text" name="stars[<?php echo $rank['id']?>]" value="<?php echo $rank['stars']?>" size="4" /></td>
             <td class="tablerow"><select name="allowavatars[<?php echo $rank['id']?>]">
@@ -1034,18 +1034,18 @@ if ($action == "ranks") {
         </tr>
         <?php
     } else {
-        $id = formArray('id');
-        $delete = formArray('delete');
-        $title = formArray('title');
-        $posts = formArray('posts');
-        $stars = formArray('stars');
-        $allowavatars = formArray('allowavatars');
-        $avaurl = formArray('avaurl');
-        $newtitle = postedVar('newtitle');
+        $id = postedArray('id', 'int');
+        $delete = postedArray('delete', 'int');
+        $title = postedArray('title', 'string', '', FALSE);
+        $posts = postedArray('posts', 'int');
+        $stars = postedArray('stars', 'int');
+        $allowavatars = postedArray('allowavatars', 'yesno');
+        $avaurl = postedArray('avaurl', 'string', 'javascript', TRUE, TRUE, TRUE);
+        $newtitle = postedVar('newtitle', '', FALSE);
         $newposts = formInt('newposts');
         $newstars = formInt('newstars');
         $newallowavatars = formYesNo('newallowavatars');
-        $newavaurl = postedVar('newavaurl');
+        $newavaurl = postedVar('newavaurl', 'javascript', TRUE, TRUE, TRUE);
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");
         $staffranks = array();
@@ -1314,12 +1314,12 @@ if ($action == "prune") {
         </tr>
         <?php
     } else {
-        $pruneByDate = formArray('pruneByDate');
-        $pruneByPosts = formArray('pruneByPosts');
+        $pruneByDate = postedArray('pruneByDate');
+        $pruneByPosts = postedArray('pruneByPosts');
         $pruneFrom = postedVar('pruneFrom', '', FALSE, FALSE);
         $pruneFromList = postedArray('pruneFromList', 'int');
         $pruneFromFid = postedVar('pruneFromFid', '', FALSE, FALSE);
-        $pruneType = formArray('pruneType');
+        $pruneType = postedArray('pruneType', 'int');
 
         $queryWhere = array();
         // let's check what to prune first

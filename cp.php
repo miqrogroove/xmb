@@ -636,7 +636,7 @@ if ($action == "settings") {
         $bbinsertnew = formOnOff('bbinsertnew');
         $smileyinsertnew = formOnOff('smileyinsertnew');
 
-        $new_footer_options = formArray('new_footer_options');
+        $new_footer_options = postedArray('new_footer_options');
         if (!empty($new_footer_options)) {
             $footer_options = implode('-', $new_footer_options);
         } else {
@@ -1455,7 +1455,7 @@ if ($action == "mods") {
         </tr>
         <?php
     } else {
-        $mod = formArray('mod');
+        $mod = postedArray('mod');
         if (is_array($mod)) {
             foreach($mod as $fid=>$mods) {
                 $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");

@@ -29,7 +29,6 @@
 define('X_SCRIPT', 'misc.php');
 
 require 'header.php';
-require ROOT.'include/online.inc.php';
 
 loadtemplates(
 'functions_smilieinsert',
@@ -373,6 +372,8 @@ switch($action) {
         break;
 
     case 'online':
+        require ROOT.'include/online.inc.php';
+
         if ($SETTINGS['whosonlinestatus'] == 'off') {
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');

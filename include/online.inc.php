@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -267,10 +267,9 @@ function url_to_text($url) {
     }
 
     $location = html_entity_decode(str_replace('%20', '&nbsp;', htmlspecialchars($location)));
-    $url = addslashes(trim($url));
 
     $return = array();
-    $return['url'] = checkInput($url, 'yes');
+    $return['url'] = attrOut($url, 'javascript');
     $return['text'] = $location;
     return $return;
 }

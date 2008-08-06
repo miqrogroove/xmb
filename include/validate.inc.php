@@ -252,6 +252,21 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
         foreach($arrayItems as $item => $theObject) {
             $theObject =& $arrayItems[$item];
             switch($type) {
+            case 'onoff':
+                if (strtolower($theObject) == 'on') {
+                    $theObject = 'on';
+                } else {
+                    $theObject = 'off';
+                }
+                break;
+            case 'yesno':
+                if (strtolower($theObject) == 'yes') {
+                    $theObject = 'yes';
+                } else {
+                    $theObject = 'no';
+                }
+                break;
+                break;
             case 'int':
                 $theObject = intval($theObject);
                 break;
@@ -364,61 +379,6 @@ if (!function_exists('str_ireplace')) {
         }
         return $subject;
     }
-}
-
-/**
-* Retrieve the contents of an array from a POST
-*
-* This function will attempt to retrieve a named array($varname)
-* and sanitize it based upon type($type). If a string, $striptags indicates
-* if striptags should be used, and $quotes is only enabled when you want it
-*
-* This function always returns an array. It will be an empty array if there's
-* no data or variable to be returned.
-*
-* @param   string   $varname   name of the variable in $_POST
-* @param   boolean   $striptags   strings only: do a striptags to remove HTML tags
-* @param   boolean   $quotes   strings only: do a htmlspecialchars to sanitize input for XSS
-* @param   string   $type   'string' or 'int' to specify what needs to be done to the values
-* @return   array   the array found for $varname, empty otherwise
-*/
-/* formArray() is deprecated */
-function formArray($varname, $striptags = true, $quotes = false, $type = 'string') {
-    $arrayItems = array();
-    // Convert a single or comma delimited list to an array
-    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
-        if (strpos($_POST[$varname], ',') !== false) {
-            $_POST[$varname] = explode(',', $_POST[$varname]);
-        } else {
-            $_POST[$varname] = array($_POST[$varname]);
-        }
-    }
-
-    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
-        $arrayItems = $_POST[$varname];
-        foreach($arrayItems as $item => $theObject) {
-            $theObject = & $arrayItems[$item];
-            switch($type) {
-                case 'int':
-                    $theObject = intval($theObject);
-                    break;
-                case 'string':
-                default:
-                    if ($striptags) {
-                        $theObject = strip_tags($theObject);
-                    }
-                    if ($quotes) {
-                        $theObject = htmlspecialchars($theObject, ENT_QUOTES);
-                    } else {
-                        $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
-                    }
-                    break;
-            }
-            unset($theObject);
-        }
-    }
-
-    return $arrayItems;
 }
 
 /**
