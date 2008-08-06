@@ -711,7 +711,11 @@ if (count($pluglinks) == 0) {
 // If the board is offline, display an appropriate message
 if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php') {
     eval('$css = "'.template('css').'";');
-    message(nl2br(stripslashes($bboffreason)));
+    if ($bboffreason != '') {
+        message(nl2br($bboffreason));
+    } else {
+        message($lang['textbstatusdefault']);
+    }
 }
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message

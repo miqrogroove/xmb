@@ -86,7 +86,7 @@ class page_token {
     * @return   string   the token that was retrieved
     */
     function get_page_token() {
-        return getRequestVar('token');
+        return postedVar('token');
     }
 
     /**
@@ -475,26 +475,6 @@ function getRequestInt($varname) {
         $retval = intval($_REQUEST[$varname]);
     }
     return $retval;
-}
-
-/**
-* Retrieve a REQUEST variable
-*
-* @param   string   $varname   name of the variable in $_REQUEST
-* @return   mixed   the value of $varname, false otherwise
-*/
-function getRequestVar($varname) {
-    if (isset($_REQUEST[$varname])) {
-        if (is_string($_REQUEST[$varname])) {
-            if (get_magic_quotes_gpc()) {
-                return $_REQUEST[$varname];
-            } else {
-                return addslashes($_REQUEST[$varname]);
-            }
-        }
-    } else {
-        return FALSE;
-    }
 }
 
 /**

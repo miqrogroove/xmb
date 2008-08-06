@@ -9,6 +9,10 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
 <tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['textusername']}</td>
+<td bgcolor="$altbg2">{$member['username']}</td>
+</tr>
+<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textpassword]</td>
 <td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
 </tr>

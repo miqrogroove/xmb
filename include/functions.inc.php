@@ -1000,7 +1000,7 @@ function ServerLoad() {
 }
 
 function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation;
+    global $footerstuff, $lang, $navigation, $THEME;
 
     if (isset($GLOBALS)) {
         extract($GLOBALS);
@@ -1062,7 +1062,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 }
 
 function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation;
+    global $footerstuff, $lang, $navigation, $THEME;
 
     if (isset($GLOBALS)) {
         extract($GLOBALS);

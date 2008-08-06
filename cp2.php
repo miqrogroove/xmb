@@ -1452,7 +1452,7 @@ if ($action == "templates") {
         echo '<select name="tid"><option value="default">'.$lang['selecttemplate'].'</option>';
         while($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
-                echo '<option value="'.intval($template['id']).'">'.stripslashes($template['name']).'</option>\r\n';
+                echo '<option value="'.intval($template['id']).'">'.$template['name']."</option>\r\n";
             }
         }
         echo '</select>&nbsp;&nbsp;';
@@ -1552,7 +1552,7 @@ if ($action == "templates") {
         $db->free_result($query);
         ?>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
-        <td><?php echo $lang['templatename']?>&nbsp;<strong><?php echo stripslashes($template['name'])?></strong></td>
+        <td><?php echo $lang['templatename']?>&nbsp;<strong><?php echo $template['name']; ?></strong></td>
         </tr>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
         <td><textarea cols="100" rows="30" name="templatenew"><?php echo stripslashes(htmlspecialchars($template['template']))?></textarea></td>
@@ -1573,8 +1573,8 @@ if ($action == "templates") {
     if (onSubmit('editsubmit')) {
         $tid = postedVar('tid', '', FALSE, FALSE, FALSE, 'g');
         $namenew = postedVar('namenew');
-        //Templates are double-slashed so that they can be eval'd as raw strings.
-        $templatenew = $db->escape(getRequestVar('templatenew'));
+        //Templates are historically double-slashed.
+        $templatenew = $db->escape(addslashes(postedVar('templatenew', '', FALSE, FALSE)));
 
         if ($tid == 'new') {
             if (!$namenew) {

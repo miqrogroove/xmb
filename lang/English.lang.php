@@ -660,6 +660,7 @@ $lang['textborder'] = "Border Color:";
 $lang['textborderwidth'] = "Border Width:";
 $lang['textbriefsummary'] = "Brief Account Summary For";
 $lang['textbstatus'] = "Board Status:";
+$lang['textbstatusdefault'] = "This message board is currently turned off.";
 $lang['textbuddylist'] = "Address Book";
 $lang['textbumpthread'] = "Bump Thread";
 $lang['textby'] = "by";
