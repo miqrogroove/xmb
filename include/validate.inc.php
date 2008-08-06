@@ -86,7 +86,7 @@ class page_token {
     * @return   string   the token that was retrieved
     */
     function get_page_token() {
-        return postedVar('token');
+        return addslashes(postedVar('token', '', FALSE, FALSE));
     }
 
     /**
