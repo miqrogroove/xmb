@@ -212,6 +212,8 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
                 $retval = stripslashes($retval);
             }
 
+            $retval = str_replace("\x00", '', $retval);
+
             if ($word != '') {
                 $retval = str_ireplace($word, "_".$word, $retval);
             }
@@ -259,6 +261,8 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     if (get_magic_quotes_gpc()) {
                         $theObject = stripslashes($theObject);
                     }
+
+                    $theObject = str_replace("\x00", '', $theObject);
 
                     if ($word != '') {
                         $theObject = str_ireplace($word, "_".$word, $theObject);
