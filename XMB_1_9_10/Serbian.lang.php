@@ -1115,7 +1115,6 @@ $lang['showsubforums'] = "Podforumi na naslovnoj strani:<br /><span class=\"smal
 $lang['message'] = "Poruka";
 $lang['textcheck'] = "Proveri tabele";
 $lang['textlogsdump'] = "Obriši logove";
-$lang['evalu2ustaffquota'] = '$lang["uqinfo"] = "Imate $u2ucount U2U poruka bez ograničenja.";';
 $lang['forumpermissions'] = 'Dozvole za forum:';
 $lang['index_stats'] = "Statistike na naslovnoj strani:<br /><span class=\"smalltxt\">Ova ocija ce uključiti-isključiti statistike na naslovnoj strani</span>";
 $lang['invalidtid'] = "Tema ne može biti spojena.  Pogrešan ID (tid) teme";
@@ -1155,3 +1154,5 @@ $lang['tool_logs'] = 'Logovi očišćeni';
 $lang['u2umsgempty'] = 'U2U poruka koju pokušavate da pošaljete je prazna.';
 $lang['view'] = 'Pregled';
 $lang['xmb'] = "XMB";
+$lang['forumjumpselect'] = "Izaberite forum";
+?>
