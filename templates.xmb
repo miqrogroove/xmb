@@ -1284,7 +1284,7 @@ $lang[bestmember]
 <tr>
 <td class="nav" style="padding-bottom: 1px" bgcolor="$altbg2">&nbsp;<a href="index.php">$bbname</a>$navigation</td>
 <td class="tablerow" align="right" bgcolor="$altbg2">$quickjump&nbsp;</td>
-<td align="right" bgcolor="$altbg2" width="2%"><a href="#top"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
+<td align="right" bgcolor="$altbg2" width="2%"><a href="#top" title="$lang[gototop]"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
 </tr>
 </table>
 </td>
@@ -1471,10 +1471,10 @@ $multipage
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newpoll|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes"><img src="$imgdir/poll.gif" border="0" alt="$lang[textnewpoll]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textnewpoll]"><img src="$imgdir/poll.gif" border="0" alt="$lang[textnewpoll]" /></a>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newtopic|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_nothreads|#*XMB TEMPLATE*#|
 <tr class="tablerow">
@@ -1562,7 +1562,7 @@ $forumlist
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1602,7 +1602,7 @@ $forumlist
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1703,16 +1703,16 @@ var messageElement;
 </select>
 $spelling_lang
 <br />
-<a href="javascript:bold()" accesskey="b"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
-<a href="javascript:italicize()" accesskey="i"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
-<a href="javascript:underline()" accesskey="u"><img src="$imgdir/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
-<a href="javascript:center()"><img src="$imgdir/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
-<a href="javascript:hyperlink()"><img src="$imgdir/bb_url.gif" border="0" width="23" height="22" alt="$lang[cb_insert_hyperlink]" /></a>
-<a href="javascript:email()"><img src="$imgdir/bb_email.gif" border="0" width="23" height="22" alt="$lang[cb_insert_email]" /></a>
-<a href="javascript:image()"><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
-<a href="javascript:code()"><img src="$imgdir/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
-<a href="javascript:quote()"><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
-<a href="javascript:list()"><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a></td>
+<a href="javascript:bold()" accesskey="b" title="$lang[cb_insert_bold]"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
+<a href="javascript:italicize()" accesskey="i" title="$lang[cb_insert_italics]"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
+<a href="javascript:underline()" accesskey="u" title="$lang[cb_insert_underlined]"><img src="$imgdir/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
+<a href="javascript:center()" title="lang[cb_insert_centered]" ><img src="$imgdir/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
+<a href="javascript:hyperlink()" title="$lang[cb_insert_hyperlink]" ><img src="$imgdir/bb_url.gif" border="0" width="23" height="22" alt="$lang[cb_insert_hyperlink]" /></a>
+<a href="javascript:email()" title="$lang[cb_insert_email]" ><img src="$imgdir/bb_email.gif" border="0" width="23" height="22" alt="$lang[cb_insert_email]" /></a>
+<a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
+<a href="javascript:code()" title="$lang[cb_insert_code]" ><img src="$imgdir/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
+<a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
+<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|functions_smilieinsert|#*XMB TEMPLATE*#|
@@ -1762,7 +1762,7 @@ $bbcodescript
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td class="navtd"><font class="navtd">$links $pluglink</font></td>
-<td align="right"><a href="$siteurl"><font class="navtd">$lang[backto] <img src="$imgdir/top_home.gif" border="0" alt="$sitename" /></font></a></td>
+<td align="right"><a href="$siteurl" title="$sitename"><font class="navtd">$lang[backto] <img src="$imgdir/top_home.gif" border="0" alt="$sitename" /></font></a></td>
 </tr>
 </table>
 </td>
@@ -1777,7 +1777,7 @@ $bbcodescript
 <tr>
 <td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
 <td align="right">$quickjump</td>
-<td align="right" width="1"><a href="#bottom"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
+<td align="right" width="1"><a href="#bottom" title="$lang[gotobottom]"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
 </tr>
 </table>
 </td>
@@ -1839,7 +1839,7 @@ $statsbar
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr class="rghttablerow">
 <td bgcolor="$altbg1" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" nowrap="nowrap">&nbsp;<a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg1" nowrap="nowrap">&nbsp;<a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -3100,10 +3100,10 @@ $multipage
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_email|#*XMB TEMPLATE*#|
-<a href="mailto:$member[email]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
+<a href="mailto:$member[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_site|#*XMB TEMPLATE*#|
-<a href="$member[site]" target="_blank"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$member[site]" target="_blank" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_separator|#*XMB TEMPLATE*#|
 <tr>
@@ -3757,7 +3757,7 @@ $multipage
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr class="tablerow" align="right">
 <td bgcolor="$altbg2" nowrap="nowrap"><font size="1" face="verdana">$lastpost</font></td>
-<td bgcolor="$altbg2" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg2" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 </td>
@@ -4559,10 +4559,10 @@ $quickreply
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_newpoll|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes"><img src="$imgdir/poll.gif" border="0" alt="$lang[textpoll]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textpoll]"><img src="$imgdir/poll.gif" border="0" alt="$lang[textpoll]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_newtopic|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll|#*XMB TEMPLATE*#|
 <form method="post" name="poll" action="vtmisc.php?action=votepoll&amp;fid=$fid&amp;tid=$tid">
@@ -4664,7 +4664,7 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_aim|#*XMB TEMPLATE*#|
-<a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board."><img src="$imgdir/aim.gif" alt="" border="0" /></a>
+<a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board." title="{$lang['textaim']}"><img src="$imgdir/aim.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachment|#*XMB TEMPLATE*#|
 <br />
@@ -4681,34 +4681,34 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 <br />
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|
-<a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
+<a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_email|#*XMB TEMPLATE*#|
-<a href="mailto:$post[email]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
+<a href="mailto:$post[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_icq|#*XMB TEMPLATE*#|
-<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" target="_blank"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
+<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" target="_blank" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_ip|#*XMB TEMPLATE*#|
-<a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
+<a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altgetip]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_msn|#*XMB TEMPLATE*#|
-<a href="http://members.msn.com/$post[msn]" target="_blank"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
+<a href="http://members.msn.com/$post[msn]" target="_blank" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
 </font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_profile|#*XMB TEMPLATE*#|
-<a href="member.php?action=viewpro&amp;member=$encodename"><img src="$imgdir/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
+<a href="member.php?action=viewpro&amp;member=$encodename" title="$lang[altviewprofile]"><img src="$imgdir/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_report|#*XMB TEMPLATE*#|
-<a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
+<a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altreportpost]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_repquote|#*XMB TEMPLATE*#|
-<a href="post.php?action=reply&amp;fid=$fid&amp;tid=$tid&amp;repquote=$post[pid]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
+<a href="post.php?action=reply&amp;fid=$fid&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_search|#*XMB TEMPLATE*#|
-<a href="misc.php?action=search&amp;srchuname=$encodename&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
+<a href="misc.php?action=search&amp;srchuname=$encodename&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_sig|#*XMB TEMPLATE*#|
 </font>
@@ -4719,13 +4719,13 @@ $post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attach
 <div class="sig">$post[sig]</div>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_site|#*XMB TEMPLATE*#|
-<a href="$post[site]" target="_blank"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$post[site]" target="_blank" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_u2u|#*XMB TEMPLATE*#|
-<a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
+<a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;" title="{$lang['altu2umember']}"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_yahoo|#*XMB TEMPLATE*#|
-<a href="http://profiles.yahoo.com/$post[yahoo]" target="_blank"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
+<a href="http://profiles.yahoo.com/$post[yahoo]" target="_blank" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
