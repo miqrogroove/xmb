@@ -1063,7 +1063,6 @@ $lang['Enable_Page_load'] = "Enable Page-loadtimes";
 $lang['Enable_PHP_SQL'] = "Enable PHP/SQL Calculation";
 $lang['Enable_Queries'] = "Enable Queries";
 $lang['Enable_Server_Load'] = "Enable Server Load";
-$lang['evalu2ustaffquota'] = $lang["uqinfo"] = "Imate $u2ucount U2U poruka bez ograničenja.";
 $lang['filecorrupt'] = "Fajl koji pokušavate da preuzmete je izgleda neispravan. Preuzimanje fajla prekinuto.";
 $lang['floodprotect_u2u'] = "Vaša prethodna u2u poruka je bila pre manje od sekunde, a nije vam dozvoljeno da ih šaljete tako često. Ako ste slučajno dva puta stisnuli, vaša prva u2u poruka je uspešno poslata, samo je vaša naredna u2u poruka zaustavljena.";
 $lang['ipreg'] = "Dozvoli samo jedno registrovanje po IP adresi dnevno?";
@@ -1115,6 +1114,7 @@ $lang['showsubforums'] = "Podforumi na naslovnoj strani:<br /><span class=\"smal
 $lang['message'] = "Poruka";
 $lang['textcheck'] = "Proveri tabele";
 $lang['textlogsdump'] = "Obriši logove";
+$lang['evalu2ustaffquota'] = '$lang["uqinfo"] = "Imate $u2ucount U2U poruka bez ograničenja.";';
 $lang['forumpermissions'] = 'Dozvole za forum:';
 $lang['index_stats'] = "Statistike na naslovnoj strani:<br /><span class=\"smalltxt\">Ova ocija ce uključiti-isključiti statistike na naslovnoj strani</span>";
 $lang['invalidtid'] = "Tema ne može biti spojena.  Pogrešan ID (tid) teme";
