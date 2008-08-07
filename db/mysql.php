@@ -235,6 +235,10 @@ class dbstuff {
         $query = mysql_fetch_row($query);
         return $query;
     }
+    
+    function affected_rows() {
+        return mysql_affected_rows($this->link);
+    }
 
     function time($time=NULL) {
         if ($time === NULL) {

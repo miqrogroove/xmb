@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -65,8 +65,11 @@ class Captcha {
     var $sFileType;
     var $sCode = '';
     var $bCompatible;
+    var $bPoison;
 
     function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+        $this->bPoison = FALSE;
+
         // get parameters
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
         $this->SetNumDots(CAPTCHA_NUM_DOTS);
@@ -313,6 +316,9 @@ class Captcha {
 
     function GenerateCode() {
         global $db, $onlinetime;
+
+        $this->bPoison = TRUE;
+
         $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
         // loop through and generate the code letter by letter
         for($i = 0; $i < $this->iNumChars; $i++) {
@@ -345,6 +351,10 @@ class Captcha {
             $imgCode = 'CaPtChA';
         } else {
             $query = $db->query("SELECT * FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
+            if ($db->num_rows($query) !== 1) {
+                $bPoison = TRUE;
+                return FALSE;
+            }
             $captchaimage = $db->fetch_array($query);
             $db->free_result($query);
             $imgCode = $captchaimage['imagestring'];
@@ -437,6 +447,9 @@ class Captcha {
 
     function Create($imghash) {
         global $THEME;
+
+        $this->bPoison = TRUE;
+
         // calculate color components of alternative background color 2 to match theme.
         $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
         $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
@@ -500,11 +513,23 @@ class Captcha {
     function ValidateCode($sUserCode, $imghash) {
         global $db;
 
-        if ($imghash == 'test') {
-            return false;
+        if ($this->bPoison) {
+            return FALSE;
+        }
+
+        if (strlen($sUserCode) != CAPTCHA_NUM_CHARS Or $imghash == 'test') {
+            $this->bPoison = TRUE;
+            return FALSE;
         }
 
         $this->RetrieveCode($imghash);
+
+        if ($this->bPoison) {
+            return FALSE;
+        }
+
+        $this->bPoison = TRUE;
+
         if ($this->bCaseInsensitive) {
             $sUserCode = strtoupper($sUserCode);
             $this->sCode = strtoupper($this->sCode);
@@ -513,20 +538,25 @@ class Captcha {
         if ($sUserCode == $this->sCode) {
             // clear to prevent re-use
             $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
-            return true;
+            if ($db->affected_rows() === 1) {
+                return TRUE;
+            }
         }
-        return false;
+        return FALSE;
     }
 
     function CheckCompatibility() {
         // check for required gd functions
         if ($this->bCompatible === false) {
+            $this->bPoison = TRUE;
             return false;
         } else if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || ($this->aBackgroundImages != '' && !function_exists('imagecreatetruecolor'))) {
             $this->bCompatible = false;
+            $this->bPoison = TRUE;
             return false;
         } else if (empty($this->aFonts)) {
             $this->bCompatible = false;
+            $this->bPoison = TRUE;
             return false;
         } else {
             $this->bCompatible = true;
