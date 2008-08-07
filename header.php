@@ -153,7 +153,7 @@ if ($show_full_info) {
     $beta = '';
     $gamma = '';
     $service_pack = '';
-    $versionbuild = 20080731;
+    $versionbuild = 20080807;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';
@@ -199,9 +199,9 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
         } elseif ($cookiesecure != $secure) {
             $success = FALSE;
             $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-        } elseif ($cookiepath != substr($url, strlen($cookiepath))) {
+        } elseif ($cookiepath != substr($url, 0, strlen($cookiepath))) {
             $success = FALSE;
-            $reason = 'URI paths do not match.<br />'.$cookiepath.' was expected, but server saw '.substr($url, strlen($cookiepath));
+            $reason = 'URI paths do not match.<br />'.$cookiepath.' was expected, but server saw '.substr($url, 0, strlen($cookiepath));
         }
         
         if (!$success) {
