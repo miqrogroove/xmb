@@ -26,7 +26,56 @@
  *
  **/
 
-// class defaults
+if (!defined('IN_CODE')) {
+    exit ("Not allowed to run this file directly.");
+}
+
+
+/***************************************************************/
+/* PhpCaptcha - A visual and audio CAPTCHA generation library
+
+  Software License Agreement (BSD License)
+
+  Copyright (C) 2005-2006, Edward Eliot.
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+     * Neither the name of Edward Eliot nor the names of its contributors
+       may be used to endorse or promote products derived from this software
+       without specific prior written permission of Edward Eliot.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  Last Updated:  18th April 2006                               */
+/***************************************************************/
+
+/************************ Documentation ************************/
+/*
+
+Documentation is available at http://www.ejeliot.com/pages/2
+
+*/
+/************************ Default Options **********************/
+
+
+// class defaults - change to effect globally
+
 define('CAPTCHA_WIDTH', $SETTINGS['captcha_image_width']);
 define('CAPTCHA_HEIGHT', $SETTINGS['captcha_image_width']);
 define('CAPTCHA_NUM_CHARS', $SETTINGS['captcha_code_length']);
@@ -42,9 +91,9 @@ define('CAPTCHA_MAX_FONT_SIZE', $SETTINGS['captcha_image_maxfont']);
 define('CAPTCHA_USE_COLOR', $SETTINGS['captcha_image_color'] == 'on' ? true : false);
 define('CAPTCHA_FILE_TYPE', $SETTINGS['captcha_image_type']);
 
-if (!defined('IN_CODE')) {
-    exit ("Not allowed to run this file directly.");
-}
+/************************ End Default Options **********************/
+
+// don't edit below this line (unless you want to change the class!)
 
 class Captcha {
     var $oImage;
@@ -64,12 +113,11 @@ class Captcha {
     var $bUseColor;
     var $sFileType;
     var $sCode = '';
+    // XMB Members
     var $bCompatible;
     var $bPoison;
 
     function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
-        $this->bPoison = FALSE;
-
         // get parameters
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
         $this->SetNumDots(CAPTCHA_NUM_DOTS);
@@ -85,6 +133,8 @@ class Captcha {
         $this->SetFileType(CAPTCHA_FILE_TYPE);
         $this->SetWidth($iWidth);
         $this->SetHeight($iHeight);
+        // Initialize XMB Members
+        $this->bPoison = FALSE;
         $this->CheckCompatibility();
     }
 
@@ -108,10 +158,6 @@ class Captcha {
         $this->CalculateSpacing();
     }
 
-    function SetNumDots($iNumDots) {
-        $this->iNumDots = $iNumDots;
-    }
-
     function SetNumLines($iNumLines) {
         $this->iNumLines = $iNumLines;
     }
@@ -119,6 +165,10 @@ class Captcha {
     function DisplayShadow($bCharShadow) {
         $this->bCharShadow = $bCharShadow;
     }
+
+    //function SetOwnerText($sOwnerText) {  // Not used in XMB
+    //   $this->sOwnerText = $sOwnerText;
+    //}
 
     function SetCharSet($vCharSet) {
         // check for input type
@@ -153,6 +203,307 @@ class Captcha {
                 }
             }
         }
+    }
+
+    function CaseInsensitive($bCaseInsensitive) {
+        $this->bCaseInsensitive = $bCaseInsensitive;
+    }
+
+    //function SetBackgroundImages($vBackgroundImages) {  // Replaced, See Below
+    //   $this->vBackgroundImages = $vBackgroundImages;
+    //}
+
+    function SetMinFontSize($iMinFontSize) {
+        $this->iMinFontSize = $iMinFontSize;
+    }
+
+    function SetMaxFontSize($iMaxFontSize) {
+        $this->iMaxFontSize = $iMaxFontSize;
+    }
+
+    function UseColor($bUseColor) {
+        $this->bUseColor = $bUseColor;
+    }
+
+    function SetFileType($sFileType) {
+        // check for valid file type
+        if (in_array($sFileType, array('gif', 'png', 'jpeg'))) {
+            $this->sFileType = $sFileType;
+        } else {
+            $this->sFileType = 'jpeg';
+        }
+    }
+
+    function DrawLines($bg_lum, $colors) {
+        //XMB chooses a lightness range that will always be similar to the background color.
+        if ($bg_lum < 128) {
+            $rmin = 0;
+            $rmax = 145;
+        } else {
+            $rmin = 110;
+            $rmax = 255;
+        }
+
+        for($i = 0; $i < $this->iNumLines; $i++) {
+            // allocate color
+            if ($this->bUseColor) {  // XMB forces true color mode to prevent palette overflow.
+                $iLineColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
+            } else {
+                $iRandColor = rand($rmin, $rmax);
+                if (empty($this->aBackgroundImages)) {  // XMB pre-allocates all greyscales to prevent palette overflow.
+                    $iLineColor = $colors[$iRandColor];
+                } else {
+                    $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                }
+            }
+
+            // draw line
+            imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColor);
+        }
+    }
+
+    //function DrawOwnerText() {  // Not used in XMB
+    //   // allocate owner text colour
+    //   $iBlack = imagecolorallocate($this->oImage, 0, 0, 0);
+    //   // get height of selected font
+    //   $iOwnerTextHeight = imagefontheight(2);
+    //   // calculate overall height
+    //   $iLineHeight = $this->iHeight - $iOwnerTextHeight - 4;
+    //
+    //   // draw line above text to separate from CAPTCHA
+    //   imageline($this->oImage, 0, $iLineHeight, $this->iWidth, $iLineHeight, $iBlack);
+    //
+    //   // write owner text
+    //   imagestring($this->oImage, 2, 3, $this->iHeight - $iOwnerTextHeight - 3, $this->sOwnerText, $iBlack);
+    //
+    //   // reduce available height for drawing CAPTCHA
+    //   $this->iHeight = $this->iHeight - $iOwnerTextHeight - 5;
+    //}
+
+    function GenerateCode() {
+        // reset code
+        $this->sCode = '';
+
+        // loop through and generate the code letter by letter
+        for($i = 0; $i < $this->iNumChars; $i++) {
+            if (count($this->aCharSet) >= $this->iNumChars) {
+                // select random character and add to code string
+                $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
+            } else {
+                // select random character and add to code string
+                $this->sCode .= chr(rand(65, 90));
+            }
+        }
+
+        // XMB saves code in DB and returns hashed code.
+        global $db, $onlinetime;
+        $time = $onlinetime;
+        $this->bPoison = TRUE;
+
+        if ($this->bCaseInsensitive) {
+            $imagehash = md5(strtoupper($this->sCode));
+        } else {
+            $imagehash = md5($this->sCode);
+        }
+
+        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
+        $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$imagehash', '$this->sCode', '$time')");
+        return $imagehash;
+    }
+
+    function DrawCharacters($bg_lum, $colors) {
+        // XMB chooses a lightness range that will never conflict with the background color.
+        if ($bg_lum > 127) {
+            $rmin = 0;
+            $rmax = 110;
+        } else {
+            $rmin = 145;
+            $rmax = 255;
+        }
+
+        // loop through and write out selected number of characters
+        for($i = 0; $i < strlen($this->sCode); $i++) {
+            // select random font
+            $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
+
+            // select random color
+            if ($this->bUseColor) {
+               $iTextColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
+               
+               if ($this->bCharShadow) {
+                   // shadow color
+                   $iShadowColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
+                }
+            } else {
+                $iRandColor = rand($rmin, $rmax);
+                if (empty($this->aBackgroundImages)) {  // XMB pre-allocates all greyscales to prevent palette overflow.
+                    $iTextColor = $colors[$iRandColor];
+                } else {
+                    $iTextColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                }
+                if ($this->bCharShadow) {
+                    // shadow color
+                    $iRandColor = rand($rmin, $rmax);
+                    if (empty($this->aBackgroundImages)) {  // XMB pre-allocates all greyscales to prevent palette overflow.
+                        $iShadowColor = $colors[$iRandColor];
+                    } else {
+                        $iShadowColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
+                    }
+                }
+            }
+
+            // select random font size
+            $iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
+
+            // select random angle
+            $iAngle = rand(-30, 30);
+
+            // get dimensions of character in selected font and text size
+            $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
+
+            // calculate character starting coordinates
+            $iX = $this->iSpacing / 4 + $i * $this->iSpacing;
+            $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
+            $iY = $this->iHeight / 2 + $iCharHeight / 4;
+
+            // write text to image
+            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i], array());
+            
+            if ($this->bCharShadow) {
+                $iOffsetAngle = rand(-30, 30);
+                
+                $iRandOffsetX = rand(-5, 5);
+                $iRandOffsetY = rand(-5, 5);
+                
+                imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i], array());
+            }
+        }
+    }
+
+    function WriteFile() {
+        // tell browser that data is jpeg
+        header("Content-type: image/$this->sFileType");
+        
+        switch($this->sFileType) {
+            case 'gif':
+                imagegif ($this->oImage);
+                break;
+            case 'png':
+                imagepng($this->oImage);
+                break;
+            default:
+                imagejpeg($this->oImage);
+        }
+    }
+
+    function Create($imghash) {
+        global $THEME;
+
+        $this->bPoison = TRUE;
+
+        // XMB calculates the color components of alternative background color 2 to match theme.
+        $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
+        $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
+        $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
+        $bg_lum = (max($bg_red, $bg_green, $bg_blue) + min($bg_red, $bg_green, $bg_blue)) >> 1;
+        $colors = array();
+
+        // get background image if specified and copy to CAPTCHA
+        if (!empty($this->aBackgroundImages)) {
+            // create new image
+            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
+
+            // create background image
+            $iRandImage = array_rand($this->aBackgroundImages);
+            $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
+            $ext = substr($vBackgroundImage, -3);
+            switch($ext) {
+                case 'gif':
+                    $oBackgroundImage = imagecreatefromgif ($vBackgroundImage);
+                    break;
+                case 'png':
+                    $oBackgroundImage = imagecreatefrompng($vBackgroundImage);
+                    break;
+                default:
+                    $oBackgroundImage = imagecreatefromjpeg($vBackgroundImage);
+            }
+
+            // copy background image
+            imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
+
+            // free memory used to create background image
+            imagedestroy($oBackgroundImage);
+        } else if ($this->bUseColor) {
+            // XMB forces true color mode to prevent palette overflow.
+            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
+            $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+            imagefill($this->oImage, 0, 0, $bgcolor);
+        } else {
+            // XMB pre-allocates all greyscales to prevent palette overflow.
+            $this->oImage = imagecreate($this->iWidth, $this->iHeight);
+            imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
+            for($i = 1; $i <= 255; $i++) {
+                $colors[$i] = imagecolorallocate($this->oImage, $i, $i, $i);
+            }
+            $colors[0] = $colors[1];
+        }
+
+        $this->DrawLines($bg_lum, $colors);
+        $this->DrawDots($colors);
+        $this->RetrieveCode($imghash);
+        $this->DrawCharacters($bg_lum, $colors);
+
+        // write out image to file or browser
+        $this->WriteFile();
+
+        // free memory used in creating image
+        imagedestroy($this->oImage);
+        return true;
+    }
+
+
+    /* end Edward Eliot code */
+    /***************************************************************/
+    // All remaining functions are maintained for use with XMB.
+
+
+    function ValidateCode($sUserCode, $imghash) {
+        global $db;
+
+        if ($this->bPoison) {
+            return FALSE;
+        }
+
+        if (strlen($sUserCode) != CAPTCHA_NUM_CHARS Or $imghash == 'test') {
+            $this->bPoison = TRUE;
+            return FALSE;
+        }
+
+        $this->RetrieveCode($imghash);
+
+        if ($this->bPoison) {
+            return FALSE;
+        }
+
+        $this->bPoison = TRUE;
+
+        if ($this->bCaseInsensitive) {
+            $sUserCode = strtoupper($sUserCode);
+            $this->sCode = strtoupper($this->sCode);
+        }
+
+        if ($sUserCode == $this->sCode) {
+            // clear to prevent re-use
+            $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
+            if ($db->affected_rows() === 1) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
+    function SetNumDots($iNumDots) {
+        $this->iNumDots = $iNumDots;
     }
 
     function SetFonts($vFonts) {
@@ -192,10 +543,6 @@ class Captcha {
                 }
             }
         }
-    }
-
-    function CaseInsensitive($bCaseInsensitive) {
-        $this->bCaseInsensitive = $bCaseInsensitive;
     }
 
     function SetBackgroundImages($vBackgroundImages) {
@@ -243,27 +590,6 @@ class Captcha {
         }
     }
 
-    function SetMinFontSize($iMinFontSize) {
-        $this->iMinFontSize = $iMinFontSize;
-    }
-
-    function SetMaxFontSize($iMaxFontSize) {
-        $this->iMaxFontSize = $iMaxFontSize;
-    }
-
-    function UseColor($bUseColor) {
-        $this->bUseColor = $bUseColor;
-    }
-
-    function SetFileType($sFileType) {
-        // check for valid file type
-        if (in_array($sFileType, array('gif', 'png', 'jpeg'))) {
-            $this->sFileType = $sFileType;
-        } else {
-            $this->sFileType = 'jpeg';
-        }
-    }
-
     function DrawDots($colors) {
         $rmin = 0;
         $rmax = 255;
@@ -284,64 +610,6 @@ class Captcha {
             // draw dot
             imagesetpixel($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), $iDotColor);
         }
-    }
-
-    function DrawLines($bg_lum, $colors) {
-        // Choose a luminosity range that will always be similar to the background color.
-        if ($bg_lum < 128) {
-            $rmin = 0;
-            $rmax = 145;
-        } else {
-            $rmin = 110;
-            $rmax = 255;
-        }
-
-        for($i = 0; $i < $this->iNumLines; $i++) {
-            // allocate color
-            if ($this->bUseColor) {
-                $iLineColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
-            } else {
-                $iRandColor = rand($rmin, $rmax);
-                if (empty($this->aBackgroundImages)) {
-                    $iLineColor = $colors[$iRandColor];
-                } else {
-                    $iLineColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
-                }
-            }
-
-            // draw line
-            imageline($this->oImage, rand(0, $this->iWidth), rand(0, $this->iHeight), rand(0, $this->iWidth), rand(0, $this->iHeight), $iLineColor);
-        }
-    }
-
-    function GenerateCode() {
-        global $db, $onlinetime;
-
-        $this->bPoison = TRUE;
-
-        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
-        // loop through and generate the code letter by letter
-        for($i = 0; $i < $this->iNumChars; $i++) {
-            if (count($this->aCharSet) >= $this->iNumChars) {
-                // select random character and add to code string
-                $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
-            } else {
-                // select random character and add to code string
-                $this->sCode .= chr(rand(65, 90));
-            }
-        }
-
-        // save code in DB and return image hash.
-        $time = $onlinetime;
-
-        if ($this->bCaseInsensitive) {
-            $imagehash = md5(strtoupper($this->sCode));
-        } else {
-            $imagehash = md5($this->sCode);
-        }
-
-        $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$imagehash', '$this->sCode', '$time')");
-        return $imagehash;
     }
 
     function RetrieveCode($imghash) {
@@ -365,192 +633,12 @@ class Captcha {
         return $imgCode;
     }
 
-    function DrawCharacters($bg_lum, $colors) {
-        // Choose a luminosity range that will never conflict with the background color.
-        if ($bg_lum > 127) {
-            $rmin = 0;
-            $rmax = 110;
-        } else {
-            $rmin = 145;
-            $rmax = 255;
-        }
-
-        // loop through and write out selected number of characters
-        for($i = 0; $i < strlen($this->sCode); $i++) {
-            // select random font
-            $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
-
-            // select random color
-            if ($this->bUseColor) {
-               $iTextColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
-               if ($this->bCharShadow) {
-                   // shadow color
-                   $iShadowColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
-                }
-            } else {
-                $iRandColor = rand($rmin, $rmax);
-                if (empty($this->aBackgroundImages)) {
-                    $iTextColor = $colors[$iRandColor];
-                } else {
-                    $iTextColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
-                }
-                if ($this->bCharShadow) {
-                    // shadow color
-                    $iRandColor = rand($rmin, $rmax);
-                    if (empty($this->aBackgroundImages)) {
-                        $iShadowColor = $colors[$iRandColor];
-                    } else {
-                        $iShadowColor = imagecolorallocate($this->oImage, $iRandColor, $iRandColor, $iRandColor);
-                    }
-                }
-            }
-
-            // select random font size
-            $iFontSize = rand($this->iMinFontSize, $this->iMaxFontSize);
-
-            // select random angle
-            $iAngle = rand(-30, 30);
-
-            // get dimensions of character in selected font and text size
-            $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
-
-            // calculate character starting coordinates
-            $iX = $this->iSpacing / 4 + $i * $this->iSpacing;
-            $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
-            $iY = $this->iHeight / 2 + $iCharHeight / 4;
-
-            // write text to image
-            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i], array());
-            if ($this->bCharShadow) {
-                $iOffsetAngle = rand(-30, 30);
-                $iRandOffsetX = rand(-5, 5);
-                $iRandOffsetY = rand(-5, 5);
-                imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i], array());
-            }
-        }
-    }
-
-    function WriteFile() {
-        // tell browser that data is jpeg
-        header("Content-type: image/$this->sFileType");
-        switch($this->sFileType) {
-            case 'gif':
-                imagegif ($this->oImage);
-                break;
-            case 'png':
-                imagepng($this->oImage);
-                break;
-            default:
-                imagejpeg($this->oImage);
-        }
-    }
-
-    function Create($imghash) {
-        global $THEME;
-
-        $this->bPoison = TRUE;
-
-        // calculate color components of alternative background color 2 to match theme.
-        $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
-        $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
-        $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
-        $bg_lum = (max($bg_red, $bg_green, $bg_blue) + min($bg_red, $bg_green, $bg_blue)) >> 1;
-        $colors = array();
-
-        // get background image if specified and copy to CAPTCHA
-        if (!empty($this->aBackgroundImages)) {
-            // create new image
-            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
-
-            // create background image
-            $iRandImage = array_rand($this->aBackgroundImages);
-            $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
-            $ext = substr($vBackgroundImage, -3);
-            switch($ext) {
-                case 'gif':
-                    $oBackgroundImage = imagecreatefromgif ($vBackgroundImage);
-                    break;
-                case 'png':
-                    $oBackgroundImage = imagecreatefrompng($vBackgroundImage);
-                    break;
-                default:
-                    $oBackgroundImage = imagecreatefromjpeg($vBackgroundImage);
-            }
-
-            // copy background image
-            imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
-
-            // free memory used to create background image
-            imagedestroy($oBackgroundImage);
-        } else if ($this->bUseColor) {
-            $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
-            $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-            imagefill($this->oImage, 0, 0, $bgcolor);
-        } else {
-            // create new image
-            $this->oImage = imagecreate($this->iWidth, $this->iHeight);
-            imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-            for($i = 1; $i <= 255; $i++) {
-                $colors[$i] = imagecolorallocate($this->oImage, $i, $i, $i);
-            }
-            $colors[0] = $colors[1];
-        }
-
-        $this->DrawLines($bg_lum, $colors);
-        $this->DrawDots($colors);
-        $this->RetrieveCode($imghash);
-        $this->DrawCharacters($bg_lum, $colors);
-
-        // write out image to file or browser
-        $this->WriteFile();
-
-        // free memory used in creating image
-        imagedestroy($this->oImage);
-        return true;
-    }
-
-    // call this method statically
-    function ValidateCode($sUserCode, $imghash) {
-        global $db;
-
-        if ($this->bPoison) {
-            return FALSE;
-        }
-
-        if (strlen($sUserCode) != CAPTCHA_NUM_CHARS Or $imghash == 'test') {
-            $this->bPoison = TRUE;
-            return FALSE;
-        }
-
-        $this->RetrieveCode($imghash);
-
-        if ($this->bPoison) {
-            return FALSE;
-        }
-
-        $this->bPoison = TRUE;
-
-        if ($this->bCaseInsensitive) {
-            $sUserCode = strtoupper($sUserCode);
-            $this->sCode = strtoupper($this->sCode);
-        }
-
-        if ($sUserCode == $this->sCode) {
-            // clear to prevent re-use
-            $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
-            if ($db->affected_rows() === 1) {
-                return TRUE;
-            }
-        }
-        return FALSE;
-    }
-
     function CheckCompatibility() {
         // check for required gd functions
         if ($this->bCompatible === false) {
             $this->bPoison = TRUE;
             return false;
-        } else if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || ($this->aBackgroundImages != '' && !function_exists('imagecreatetruecolor'))) {
+        } else if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || !function_exists('imagecreatetruecolor')) {
             $this->bCompatible = false;
             $this->bPoison = TRUE;
             return false;
