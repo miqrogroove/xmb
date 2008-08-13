@@ -67,11 +67,11 @@ if (X_SADMIN) {
         $perms = checkForumPermissions($forum);
         $fCache[$forum['fid']] = $perms;
 
-        if ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST] && $perms[X_PERMS_PASSWORD]) {
+        if (($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST]) && $perms[X_PERMS_PASSWORD]) {
             if ($forum['type'] == 'sub') {
                 // also check above forum!
                 $parentP = $fCache[$forum['fup']];
-                if ($parentP[X_PERMS_VIEW] && $parentP[X_PERMS_USERLIST] && $parentP[X_PERMS_PASSWORD]) {
+                if (($parentP[X_PERMS_VIEW] || $parentP[X_PERMS_USERLIST]) && $parentP[X_PERMS_PASSWORD]) {
                     $fids[] = $forum['fid'];
                 }
             } else {

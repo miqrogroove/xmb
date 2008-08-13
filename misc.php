@@ -255,7 +255,7 @@ switch($action) {
                     $forumCache[$post['fid']] = $forumPerms;
                 }
 
-                if ($forumPerms[X_PERMS_VIEW] && $forumPerms[X_PERMS_USERLIST] && $forumPerms[X_PERMS_PASSWORD]) {
+                if (($forumPerms[X_PERMS_VIEW] || $forumPerms[X_PERMS_USERLIST]) && $forumPerms[X_PERMS_PASSWORD]) {
                     if ($filter_distinct != 'yes' Or !array_key_exists($post['ttid'], $temparray)) {
                         $tid = $post['ttid'];
                         $temparray[$tid] = true;

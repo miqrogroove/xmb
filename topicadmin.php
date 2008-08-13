@@ -97,7 +97,7 @@ if (($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'
 
 // Check for authorization to be here in the first place
 $perms = checkForumPermissions($forums);
-if (!$perms[X_PERMS_VIEW] || !$perms[X_PERMS_USERLIST]) {
+if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
     error($lang['privforummsg']);
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
@@ -111,7 +111,7 @@ if ($forums['type'] == 'sub') {
 
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW] || !$fupPerms[X_PERMS_USERLIST]) {
+    if (!($fupPerms[X_PERMS_VIEW] || $fupPerms[X_PERMS_USERLIST])) {
         error($lang['privforummsg']);
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
