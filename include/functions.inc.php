@@ -598,7 +598,7 @@ function forum($forum, $template) {
 
     $foruminfo = '';
     $perms = checkForumPermissions($forum);
-    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
         if (isset($forum['moderator']) && $forum['moderator'] != '') {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
@@ -1484,7 +1484,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     $subforums = array();
     while($forum = $db->fetch_array($query)) {
         $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
             $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
                 $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
@@ -1587,7 +1587,7 @@ function forumJump() {
     $subforums = array();
     while($forum = $db->fetch_array($query)) {
         $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_USERLIST])) {
+        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
             $forum['name'] = fnameOut($forum['name']);
             if (!X_SADMIN && $forum['password'] != '') {
                 $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
