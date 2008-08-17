@@ -280,7 +280,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
         $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $subperms = checkForumPermissions($queryrow);
-            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] && $subperms[X_PERMS_USERLIST])) {
+            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST])) {
                 $index_subforums[] = $queryrow;
             }
         }

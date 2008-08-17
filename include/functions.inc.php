@@ -511,10 +511,10 @@ function bbcode($message, $allowimgcode) {
     return preg_replace($patterns, $replacements, $message);
 }
 
-function modcheck($username, $mods) {
+function modcheck($username, $mods, $override=X_SMOD) {
 
     $retval = '';
-    if (X_SMOD) {
+    if ($override) {
         $retval = 'Moderator';
     } else if (X_MOD) {
         $username = strtoupper($username);
@@ -1694,11 +1694,9 @@ function checkForumPermissions($forum, $user_status=FALSE) {
     }
 
     // 3. Check Forum Userlist
-    $userlist = trim($forum['userlist']);
+    $userlist = $forum['userlist'];
 
-    if (strlen($userlist) == 0) {
-        $ret[X_PERMS_USERLIST] = TRUE;
-    } elseif (modcheck($self['username'], $forum['moderator']) == "Moderator") {
+    if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
         $ret[X_PERMS_USERLIST] = TRUE;
     } else {
         $users = explode(',', $userlist);

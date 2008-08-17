@@ -716,7 +716,7 @@ switch($action) {
                 $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
                 while($f = $db->fetch_array($query)) {
                     $pp = checkForumPermissions($f);
-                    if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD]) {
+                    if (($pp[X_PERMS_VIEW] || $pp[X_PERMS_USERLIST]) && $pp[X_PERMS_PASSWORD]) {
                         $forum = $f;
                         $found = true;
                         break;
@@ -736,7 +736,7 @@ switch($action) {
                 $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
                 while($post = $db->fetch_array($pq)) {
                     $pp = checkForumPermissions($post);
-                    if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_USERLIST] && $pp[X_PERMS_PASSWORD])) {
+                    if (!(($pp[X_PERMS_VIEW] || $pp[X_PERMS_USERLIST]) && $pp[X_PERMS_PASSWORD])) {
                         continue;
                     }
                     $lpfound = true;
