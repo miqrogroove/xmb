@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -713,7 +713,7 @@ switch($action) {
 
                 // Forum most active in
                 $found = false;
-                $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
+                $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.moderator, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
                 while($f = $db->fetch_array($query)) {
                     $pp = checkForumPermissions($f);
                     if (($pp[X_PERMS_VIEW] || $pp[X_PERMS_USERLIST]) && $pp[X_PERMS_PASSWORD]) {
@@ -733,7 +733,7 @@ switch($action) {
 
                 // Last post
                 $lpfound = false;
-                $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
+                $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
                 while($post = $db->fetch_array($pq)) {
                     $pp = checkForumPermissions($post);
                     if (!(($pp[X_PERMS_VIEW] || $pp[X_PERMS_USERLIST]) && $pp[X_PERMS_PASSWORD])) {

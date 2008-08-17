@@ -1745,17 +1745,21 @@ function forumJump() {
 // Masquerade Example 2
 //  $perms = checkForumPermissions($forum, 'Moderator');
 //  if ($perms[X_PERMS_VIEW]) { //Moderators are allowed to view $forum }
-function checkForumPermissions($forum, $user_status=FALSE) {
+function checkForumPermissions($forum, $user_status_in=FALSE) {
     global $self, $status_enum;
 
-    if (is_string($user_status)) {
-        $user_status = $status_enum[$user_status];
+    if (is_string($user_status_in)) {
+        $user_status = $status_enum[$user_status_in];
     } else {
         $user_status = $status_enum[$self['status']];
     }
 
     // 1. Initialize $ret with zero permissions
     $ret = array_fill(0, X_PERMS_COUNT, FALSE);
+    $ret[X_PERMS_POLL] = FALSE;
+    $ret[X_PERMS_THREAD] = FALSE;
+    $ret[X_PERMS_REPLY] = FALSE;
+    $ret[X_PERMS_VIEW] = FALSE;
     $ret[X_PERMS_USERLIST] = FALSE;
     $ret[X_PERMS_PASSWORD] = FALSE;
     
@@ -1768,27 +1772,31 @@ function checkForumPermissions($forum, $user_status=FALSE) {
     }
 
     // 3. Check Forum Userlist
-    $userlist = $forum['userlist'];
+    if ($user_status_in === FALSE) {
+        $userlist = $forum['userlist'];
 
-    if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
-        $ret[X_PERMS_USERLIST] = TRUE;
-        if ($user_status === FALSE) {
+        if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
+            $ret[X_PERMS_USERLIST] = TRUE;
             $ret[X_PERMS_VIEW] = TRUE;
-        }
-    } elseif (!X_GUEST) {
-        $users = explode(',', $userlist);
-        foreach($users as $user) {
-            if (strtolower(trim($user)) == strtolower($self['username'])) {
-                $ret[X_PERMS_USERLIST] = TRUE;
-                if ($user_status === FALSE) {
+        } elseif (!X_GUEST) {
+            $users = explode(',', $userlist);
+            foreach($users as $user) {
+                if (strtolower(trim($user)) == strtolower($self['username'])) {
+                    $ret[X_PERMS_USERLIST] = TRUE;
                     $ret[X_PERMS_VIEW] = TRUE;
+                    break;
                 }
-                break;
             }
         }
     }
+    
+    // 4. Set Effective Permissions
+    $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL];
+    $ret[X_PERMS_THREAD] = $ret[X_PERMS_RAWTHREAD];
+    $ret[X_PERMS_REPLY]  = $ret[X_PERMS_RAWREPLY];
+    $ret[X_PERMS_VIEW]   = $ret[X_PERMS_RAWVIEW] || $ret[X_PERMS_USERLIST];
 
-    // 4. Check Forum Password
+    // 5. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
     if ($forum['password'] == '' Or $pwinput == $forum['password']) {
         $ret[X_PERMS_PASSWORD] = TRUE;

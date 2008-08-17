@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -41,14 +41,18 @@ define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
 
 // permissions constants
-define('X_PERMS_COUNT', 4); //Number of bit sets stored in postperm setting.
+define('X_PERMS_COUNT', 4); //Number of raw bit sets stored in postperm setting.
 // indexes used in permissions arrays
-define('X_PERMS_POLL', 0);
-define('X_PERMS_THREAD', 1);
-define('X_PERMS_REPLY', 2);
-define('X_PERMS_VIEW', 3);
-define('X_PERMS_USERLIST', 40);
-define('X_PERMS_PASSWORD', 41);
+define('X_PERMS_RAWPOLL', 0);
+define('X_PERMS_RAWTHREAD', 1);
+define('X_PERMS_RAWREPLY', 2);
+define('X_PERMS_RAWVIEW', 3);
+define('X_PERMS_POLL', 40);
+define('X_PERMS_THREAD', 41);
+define('X_PERMS_REPLY', 42);
+define('X_PERMS_VIEW', 43); //View is now = Rawview || Userlist
+define('X_PERMS_USERLIST', 44);
+define('X_PERMS_PASSWORD', 45);
 // status string to bit field assignments
 $status_enum = array(
 'Super Administrator' => 1,
@@ -58,6 +62,7 @@ $status_enum = array(
 'Member'              => 16,
 'Guest'               => 32,
 ''                    => 32,
+'Reserved-Future-Use' => 64,
 'Banned'              => (1 << 30)
 ); //$status['Banned'] == 2^30
 
