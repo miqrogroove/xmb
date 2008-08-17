@@ -94,6 +94,7 @@ if (isset($forum['type']) && $forum['type'] == 'forum') {
 
 eval('echo "'.template('header').'";');
 
+$index_subforums = array();
 $subforums = '';
 if (count($fup) == 0) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup='$fid' AND status='on' ORDER BY displayorder");
@@ -101,7 +102,7 @@ if (count($fup) == 0) {
         $forumlist = '';
         $fulist = $forum['userlist'];
         while($sub = $db->fetch_array($query)) {
-            $forumlist .= forum($sub, "forumdisplay_subforum");
+            $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
         }
         $forum['userlist'] = $fulist;
         if (!empty($forumlist)) {
