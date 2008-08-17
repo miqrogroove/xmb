@@ -1772,13 +1772,17 @@ function checkForumPermissions($forum, $user_status=FALSE) {
 
     if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
         $ret[X_PERMS_USERLIST] = TRUE;
-        $ret[X_PERMS_VIEW] = TRUE;
-    } else {
+        if ($user_status === FALSE) {
+            $ret[X_PERMS_VIEW] = TRUE;
+        }
+    } elseif (!X_GUEST) {
         $users = explode(',', $userlist);
         foreach($users as $user) {
             if (strtolower(trim($user)) == strtolower($self['username'])) {
                 $ret[X_PERMS_USERLIST] = TRUE;
-                $ret[X_PERMS_VIEW] = TRUE;
+                if ($user_status === FALSE) {
+                    $ret[X_PERMS_VIEW] = TRUE;
+                }
                 break;
             }
         }

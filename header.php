@@ -709,12 +709,16 @@ if (count($pluglinks) == 0) {
 }
 
 // If the board is offline, display an appropriate message
-if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN) && X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php') {
-    eval('$css = "'.template('css').'";');
-    if ($bboffreason != '') {
-        message(nl2br($bboffreason));
-    } else {
-        message($lang['textbstatusdefault']);
+if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
+    if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
+        header('HTTP/1.0 503 Service Unavailable');
+        header('Retry-After: 3600');
+        eval('$css = "'.template('css').'";');
+        if ($bboffreason != '') {
+            message(nl2br($bboffreason));
+        } else {
+            message($lang['textbstatusdefault']);
+        }
     }
 }
 
