@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -193,7 +193,11 @@ switch($action) {
             $start = $offset;
             $pagenum = $page+1;
 
-            $sql = "SELECT COUNT(p.tid), p.*, t.tid AS ttid, t.subject AS tsubject, f.fid, f.postperm, f.userlist, f.password FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON  f.fid=t.fid WHERE p.tid=t.tid";
+            $forums = permittedForums(forumCache(), 'thread', 'csv');
+            $sql = "SELECT p.*, t.subject AS tsubject "
+                 . "FROM ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING(tid) INNER JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid "
+                 . "WHERE f.fid IN($forums)";
+            unset($forums);
 
             if ($srchfrom <= 0) {
                 $srchfrom = $onlinetime;
@@ -235,7 +239,7 @@ switch($action) {
                 $ext[] = "srchfrom=$srchfromold";
             }
 
-            $sql .=" GROUP BY dateline ORDER BY dateline DESC LIMIT $start, $ppp";
+            $sql .=" ORDER BY dateline DESC LIMIT $start, $ppp";
 
             $querysrch = $db->query($sql);
             $results = 0;
@@ -244,71 +248,58 @@ switch($action) {
             $temparray = array();
             $searchresults = '';
 
-            $forumCache = array();
             while($post = $db->fetch_array($querysrch)) {
-                $forumPerms = array();
+                if ($filter_distinct != 'yes' Or !array_key_exists($post['tid'], $temparray)) {
+                    $temparray[$post['tid']] = true;
+                    $message = stripslashes($post['message']);
 
-                if (isset($forumCache[$post['fid']])) {
-                    $forumPerms = $forumCache[$post['fid']];
-                } else {
-                    $forumPerms = checkForumPermissions($post);
-                    $forumCache[$post['fid']] = $forumPerms;
-                }
-
-                if (($forumPerms[X_PERMS_VIEW] || $forumPerms[X_PERMS_USERLIST]) && $forumPerms[X_PERMS_PASSWORD]) {
-                    if ($filter_distinct != 'yes' Or !array_key_exists($post['ttid'], $temparray)) {
-                        $tid = $post['ttid'];
-                        $temparray[$tid] = true;
-                        $message = stripslashes($post['message']);
-
-                        if (empty($srchtxt)) {
-                            $position = 0;
-                        } else {
-                            $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
-                        }
-
-                        $show_num = 100;
-                        $msg_leng = strlen($message);
-
-                        if ($position <= $show_num) {
-                            $min = 0;
-                            $add_pre = '';
-                        } else {
-                            $min = $position - $show_num;
-                            $add_pre = '...';
-                        }
-
-                        if (($msg_leng - $position) <= $show_num) {
-                            $max = $msg_leng;
-                            $add_post = '';
-                        } else {
-                            $max = $position + $show_num;
-                            $add_post = '...';
-                        }
-
-                        if (trim($post['subject']) == '') {
-                            $post['subject'] = $post['tsubject'];
-                        }
-
-                        $show = substr($message, $min, $max - $min);
-                        $post['subject'] = stripslashes($post['subject']);
-                        if (!empty($srchtxt)) {
-                            foreach($srchtxtsq as $stxt) {
-                                $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
-                                $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
-                            }
-                        }
-
-                        $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
-                        $post['subject'] = rawHTMLsubject($post['subject']);
-
-                        $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                        $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-
-                        $poston = $date.' '.$lang['textat'].' '.$time;
-                        $postby = $post['author'];
-                        eval('$searchresults .= "'.template('misc_search_results_row').'";');
+                    if (empty($srchtxt)) {
+                        $position = 0;
+                    } else {
+                        $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
                     }
+
+                    $show_num = 100;
+                    $msg_leng = strlen($message);
+
+                    if ($position <= $show_num) {
+                        $min = 0;
+                        $add_pre = '';
+                    } else {
+                        $min = $position - $show_num;
+                        $add_pre = '...';
+                    }
+
+                    if (($msg_leng - $position) <= $show_num) {
+                        $max = $msg_leng;
+                        $add_post = '';
+                    } else {
+                        $max = $position + $show_num;
+                        $add_post = '...';
+                    }
+
+                    if (trim($post['subject']) == '') {
+                        $post['subject'] = $post['tsubject'];
+                    }
+
+                    $show = substr($message, $min, $max - $min);
+                    $post['subject'] = stripslashes($post['subject']);
+                    if (!empty($srchtxt)) {
+                        foreach($srchtxtsq as $stxt) {
+                            $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
+                            $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
+                        }
+                    }
+
+                    $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
+                    $post['subject'] = rawHTMLsubject($post['subject']);
+
+                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+
+                    $poston = $date.' '.$lang['textat'].' '.$time;
+                    $postby = $post['author'];
+                    eval('$searchresults .= "'.template('misc_search_results_row').'";');
                 }
             }
 

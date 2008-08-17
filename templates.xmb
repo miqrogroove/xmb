@@ -3214,7 +3214,8 @@ $multipage
 </table>
 
 |#*XMB TEMPLATE FILE*#|misc_search|#*XMB TEMPLATE*#|
-<form method="post" action="misc.php?action=search">
+<form method="get" action="misc.php">
+<input type="hidden" name="action" value="search" />
 <input type="hidden" name="token" value="$oToken->newToken" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3290,7 +3291,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|misc_search_results_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['ttid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['subject']}</a></strong><br />$add_pre $show $add_post</td>
+<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['subject']}</a></strong><br />$add_pre $show $add_post</td>
 <td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
 </tr>
 
