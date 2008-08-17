@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -62,7 +62,7 @@ if (X_SADMIN) {
     }
 } else {
     $fCache = array();
-    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+    $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
     while($forum = $db->fetch_array($q)) {
         $perms = checkForumPermissions($forum);
         $fCache[$forum['fid']] = $perms;
