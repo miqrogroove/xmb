@@ -44,6 +44,7 @@ if ($SETTINGS['stats'] == 'off') {
     error($lang['fnasorry3'], false);
 }
 
+$fids = array();
 if (X_SADMIN) {
     $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
     while($f = $db->fetch_array($q)) {
