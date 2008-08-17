@@ -588,9 +588,9 @@ function modcheckPost($username, $mods, $origstatus) {
     return $retval;
 }
 
-function forum($forum, $template) {
+function forum($forum, $template, $index_subforums) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
-    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
+    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
     $forum['description'] = html_entity_decode($forum['description']);

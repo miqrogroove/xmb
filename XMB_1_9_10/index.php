@@ -274,8 +274,8 @@ if ($SETTINGS['catsonly'] != 'on') {
     eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
+$index_subforums = array();
 if ($SETTINGS['showsubforums'] == 'on') {
-    $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
@@ -291,7 +291,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
 while($thing = $db->fetch_array($fquery)) {
 
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $cforum = forum($thing, "index_forum");
+        $cforum = forum($thing, "index_forum", $index_subforums);
     } else {
         $cforum = '';
     }

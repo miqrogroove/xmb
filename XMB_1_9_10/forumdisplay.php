@@ -113,6 +113,7 @@ if ($perms[X_PERMS_THREAD]) {
     $newtopiclink = '';
 }
 
+$index_subforums = array();
 $subforums = '';
 if ($forum['type'] == 'forum') {
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup=$fid AND status='on' ORDER BY displayorder");
@@ -121,7 +122,7 @@ if ($forum['type'] == 'forum') {
         while($sub = $db->fetch_array($query)) {
             $perms = checkForumPermissions($sub);
             if ($perms[X_PERMS_VIEW] And $perms[X_PERMS_USERLIST]) {
-                $forumlist .= forum($sub, "forumdisplay_subforum");
+                $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
             }
         }
         if ($forumlist != '') {
