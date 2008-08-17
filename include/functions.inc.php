@@ -1805,11 +1805,11 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
     return $ret;
 }
 
-// getOneForumPerm - Enables you to do complex comparisons without string parsing.
+// getOneForumPerm - Enables you to do complex comparisons without string parsing.  Valid with X_PERMS_RAW* indexes only!
 // Normal Usage Example
 //  $result = $db->query('SELECT * FROM '.X_PREFIX.'forums WHERE fid=1');
 //  $forum = $db->fetch_array($result);
-//  $viewperms = getOneForumPerm($forum, X_PERMS_VIEW);
+//  $viewperms = getOneForumPerm($forum, X_PERMS_RAWVIEW);
 //  if ($viewperms >= $status_enum['Member']) { //Some non-staff status has perms to view $forum }
 //  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
 //  if ($viewperms == $status_enum['Member'] - 1) { //$forum is staff-only }

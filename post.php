@@ -593,8 +593,7 @@ switch($action) {
             }
             $db->free_result($querytop);
 
-            $rawperms = explode(',', $forum['postperm']);
-            if ($rawperms[X_PERMS_REPLY] == 32) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == $status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
