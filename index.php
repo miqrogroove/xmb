@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -274,13 +274,13 @@ if ($SETTINGS['catsonly'] != 'on') {
     eval('$indexBar = "'.template('index_category_hr').'";');
 }
 
+$index_subforums = array();
 if ($SETTINGS['showsubforums'] == 'on') {
-    $index_subforums = array();
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $subperms = checkForumPermissions($queryrow);
-            if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST])) {
+            if ($SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST])) {
                 $index_subforums[] = $queryrow;
             }
         }
@@ -291,7 +291,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
 while($thing = $db->fetch_array($fquery)) {
 
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $cforum = forum($thing, "index_forum");
+        $cforum = forum($thing, "index_forum", $index_subforums);
     } else {
         $cforum = '';
     }

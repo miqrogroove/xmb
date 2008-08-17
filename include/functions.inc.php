@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -558,9 +558,9 @@ function modcheckPost($username, $mods, $origstatus) {
     return $retval;
 }
 
-function forum($forum, $template) {
+function forum($forum, $template, $index_subforums) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
-    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS, $index_subforums;
+    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
     $forum['description'] = html_entity_decode($forum['description']);
@@ -598,7 +598,7 @@ function forum($forum, $template) {
 
     $foruminfo = '';
     $perms = checkForumPermissions($forum);
-    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
+    if ($SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
         if (isset($forum['moderator']) && $forum['moderator'] != '') {
             $moderators = explode(', ', $forum['moderator']);
             $forum['moderator'] = array();
@@ -615,7 +615,7 @@ function forum($forum, $template) {
                 $sub = $index_subforums[$i];
                 $subperms = checkForumPermissions($sub);
                 if ($sub['fup'] == $forum['fid']) {
-                    if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
+                    if ($SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
                         $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
                     }
                 }
@@ -1473,51 +1473,137 @@ function month2text($num) {
     return $months[$num-1];
 }
 
-function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
-    global $db, $self, $lang, $SETTINGS;
+// forumCache() returns a db query result containing all active forums and forum categories.
+function forumCache() {
+    global $db;
+    static $cache = FALSE;
 
-    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+    if ($cache === FALSE) {
+        $cache = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+    }
+    
+    if ($cache !== FALSE) {
+        if ($db->num_rows($cache) > 0) {
+            $db->data_seek($cache, 0);  // Restores the pointer for fetch_array().
+        }
+    }
+
+    return $cache;
+}
+
+// getForum() returns an associative array for the specified forum.
+function getForum($fid) {
+    $forums = forumCache();
+    while($forum = $db->fetch_array($forums)) {
+        if (intval($forum['fid']) == intval($fid)) {
+            return $forum;
+        }
+    }
+    return FALSE;
+}
+
+// permittedForums() returns an array of permitted forum arrays
+// $forums is a db query result, preferably from forumCache()
+// $mode is a string designating whether to check for forum listing permissions or thread listing permissions
+// $output if set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an array of arrays.
+// $check_parents is a bool indicating whether each forum's permissions depend on the parent forum also being permitted.
+// $user_status is an optional masquerade value passed to checkForumPermissions()
+function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE) {
+    global $db, $SETTINGS;
+    
+    $permitted = array();
+    $fids['group'] = array();
+    $fids['forum'] = array();
+    $fids['sub'] = array();
+    
+    while($forum = $db->fetch_array($forums)) {
+        $perms = checkForumPermissions($forum, $user_status);
+        if ($mode == 'thread') {
+            if ($forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+                $permitted[] = $forum;
+                $fids[$forum['type']][] = $forum['fid'];
+            }
+        } elseif ($mode == 'forum') {
+            if ($SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || $perms[X_PERMS_VIEW]) {
+                $permitted[] = $forum;
+                $fids[$forum['type']][] = $forum['fid'];
+            }
+        }
+    }
+
+    if ($check_parents) { // Use the $fids array to see if each forum's parent is permitted.
+        $filtered = array();
+        $fids['forum'] = array();
+        $fids['sub'] = array();
+        foreach($permitted as $forum) {
+            if ($forum['type'] == 'group') {
+                $filtered[] = $forum;
+            } elseif ($forum['type'] == 'forum') {
+                if (intval($forum['fup']) == 0) {
+                    $filtered[] = $forum;
+                    $fids['forum'][] = $forum['fid'];
+                } elseif (array_search($forum['fup'], $fids['group']) !== FALSE) {
+                    $filtered[] = $forum;
+                    $fids['forum'][] = $forum['fid'];
+                }
+            }
+        }
+
+        foreach($permitted as $forum) {
+            if ($forum['type'] == 'sub') {
+                if (intval($forum['fup']) == 0) {
+                    $filtered[] = $forum;
+                    $fids['sub'][] = $forum['fid'];
+                } elseif (array_search($forum['fup'], $fids['forum']) !== FALSE) {
+                    $filtered[] = $forum;
+                    $fids['sub'][] = $forum['fid'];
+                }
+            }
+        }
+        
+        $permitted = $filtered;
+    }
+    
+    if ($output == 'csv') {
+        $permitted = implode(', ', array_merge($fids['group'], $fids['forum'], $fids['sub']));
+    }
+    
+    return $permitted;
+}
+
+function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
+    global $lang;
+
+    $permitted = permittedForums(forumCache(), 'forum');
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($query)) {
-        $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = fnameOut($forum['name']);
-            if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-                if ($forum['password'] !== $fidpw) {
-                    continue;
+    foreach($permitted as $forum) {
+        switch($forum['type']) {
+        case 'group':
+            $categories[] = $forum;
+            break;
+        case 'sub':
+            if (!isset($subforums[$forum['fup']])) {
+                $subforums[$forum['fup']] = array();
+            }
+            $subforums[$forum['fup']][] = $forum;
+            break;
+        case 'forum':
+        default:
+            if ($forum['fup'] == 0) {
+                $standAloneForums[] = $forum;
+            } else {
+                if (!isset($forums[$forum['fup']])) {
+                    $forums[$forum['fup']] = array();
                 }
+                $forums[$forum['fup']][] = $forum;
             }
-
-            switch($forum['type']) {
-                case 'group':
-                    $categories[] = $forum;
-                    break;
-                case 'sub':
-                    if (!isset($subforums[$forum['fup']])) {
-                        $subforums[$forum['fup']] = array();
-                    }
-                    $subforums[$forum['fup']][] = $forum;
-                    break;
-                case 'forum':
-                default:
-                    if ($forum['fup'] == 0) {
-                        $standAloneForums[] = $forum;
-                    } else {
-                        if (!isset($forums[$forum['fup']])) {
-                            $forums[$forum['fup']] = array();
-                        }
-                        $forums[$forum['fup']][] = $forum;
-                    }
-                    break;
-            }
+            break;
         }
     }
-    $db->free_result($query);
 
     $forumselect = array();
     if (!$multiple) {
@@ -1577,50 +1663,38 @@ function readFileAsINI($filename) {
 }
 
 function forumJump() {
-    global $db, $self, $lang, $SETTINGS;
+    global $lang;
 
-    $query = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+    $permitted = permittedForums(forumCache(), 'forum');
 
     $standAloneForums = array();
     $forums = array();
     $categories = array();
     $subforums = array();
-    while($forum = $db->fetch_array($query)) {
-        $perms = checkForumPermissions($forum);
-        if (X_SADMIN || $SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
-            $forum['name'] = fnameOut($forum['name']);
-            if (!X_SADMIN && $forum['password'] != '') {
-                $fidpw = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-                if ($forum['password'] !== $fidpw) {
-                    continue;
+    foreach($permitted as $forum) {
+        switch($forum['type']) {
+        case 'group':
+            $categories[] = $forum;
+            break;
+        case 'sub':
+            if (!isset($subforums[$forum['fup']])) {
+                $subforums[$forum['fup']] = array();
+            }
+            $subforums[$forum['fup']][] = $forum;
+            break;
+        case 'forum':
+        default:
+            if ($forum['fup'] == 0) {
+                $standAloneForums[] = $forum;
+            } else {
+                if (!isset($forums[$forum['fup']])) {
+                    $forums[$forum['fup']] = array();
                 }
+                $forums[$forum['fup']][] = $forum;
             }
-
-            switch($forum['type']) {
-                case 'group':
-                    $categories[] = $forum;
-                    break;
-                case 'sub':
-                    if (!isset($subforums[$forum['fup']])) {
-                        $subforums[$forum['fup']] = array();
-                    }
-                    $subforums[$forum['fup']][] = $forum;
-                    break;
-                case 'forum':
-                default:
-                    if ($forum['fup'] == 0) {
-                        $standAloneForums[] = $forum;
-                    } else {
-                        if (!isset($forums[$forum['fup']])) {
-                            $forums[$forum['fup']] = array();
-                        }
-                        $forums[$forum['fup']][] = $forum;
-                    }
-                    break;
-            }
+            break;
         }
     }
-    $db->free_result($query);
 
     $forumselect = array();
 
@@ -1698,11 +1772,13 @@ function checkForumPermissions($forum, $user_status=FALSE) {
 
     if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
         $ret[X_PERMS_USERLIST] = TRUE;
+        $ret[X_PERMS_VIEW] = TRUE;
     } else {
         $users = explode(',', $userlist);
         foreach($users as $user) {
             if (strtolower(trim($user)) == strtolower($self['username'])) {
                 $ret[X_PERMS_USERLIST] = TRUE;
+                $ret[X_PERMS_VIEW] = TRUE;
                 break;
             }
         }

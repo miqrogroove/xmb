@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -114,6 +114,7 @@ if ($perms[X_PERMS_THREAD]) {
     $newtopiclink = '';
 }
 
+$index_subforums = array();
 $subforums = '';
 if ($forum['type'] == 'forum') {
     $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE type='sub' AND fup=$fid AND status='on' ORDER BY displayorder");
@@ -122,7 +123,7 @@ if ($forum['type'] == 'forum') {
         while($sub = $db->fetch_array($query)) {
             $perms = checkForumPermissions($sub);
             if ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST]) {
-                $forumlist .= forum($sub, "forumdisplay_subforum");
+                $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
             }
         }
         if ($forumlist != '') {
