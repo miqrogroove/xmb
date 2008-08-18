@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -32,15 +32,14 @@ if (!defined('IN_CODE')) {
 
 class mod {
     function statuscheck($fid) {
-        global $self, $db;
+        global $self;
 
-        $query = $db->query("SELECT moderator FROM ".X_PREFIX."forums WHERE fid='$fid'");
-        if ($db->num_rows($query) == 0) {
+        $forum = getForum($fid);
+        if ($forum === FALSE) {
             return FALSE;
         }
-        $mods = $db->result($query, 0);
 
-        return (modcheck($self['username'], $mods) == 'Moderator');
+        return (modcheck($self['username'], $forum['moderator']) == 'Moderator');
     }
 
     function log($user='', $action, $fid, $tid, $reason='') {

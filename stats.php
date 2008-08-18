@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -44,33 +44,7 @@ if ($SETTINGS['stats'] == 'off') {
     error($lang['fnasorry3'], false);
 }
 
-if (X_SADMIN) {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
-    while($f = $db->fetch_array($q)) {
-        $fids[] = $f['fid'];
-    }
-} else {
-    $fCache = array();
-    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
-    while($forum = $db->fetch_array($q)) {
-        $perms = checkForumPermissions($forum);
-        $fCache[$forum['fid']] = $perms;
-
-        if (($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST]) && $perms[X_PERMS_PASSWORD]) {
-            if ($forum['type'] == 'sub') {
-                // also check above forum!
-                $parentP = $fCache[$forum['fup']];
-                if (($parentP[X_PERMS_VIEW] || $parentP[X_PERMS_USERLIST]) && $parentP[X_PERMS_PASSWORD]) {
-                    $fids[] = $forum['fid'];
-                }
-            } else {
-                $fids[] = $forum['fid'];
-            }
-        }
-    }
-}
-
-$fids = implode(',', $fids);
+$fids = permittedForums(forumCache(), 'thread', 'csv');
 $restrict = ' fid IN ('.$fids.')';
 
 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");

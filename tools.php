@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -59,34 +59,22 @@ $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 switch($action) {
     case 'fixftotals':
-        $fquery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum'");
-        while($forum = $db->fetch_array($fquery)) {
-            $threadnum = $postnum = $sub_threadnum = $sub_postnum = 0;
-            $squery = $stquery = $spquery = $ftquery = $fpquery = '';
-            $squery = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$forum[fid]' AND type='sub'");
-            while($sub = $db->fetch_array($squery)) {
-                $stquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$sub[fid]'");
-                $sub_threadnum = $db->result($stquery, 0);
+        // Update all forums using as few queries as possible.
+        $sql = "UPDATE ".X_PREFIX."forums AS f "
+             . " INNER JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query2 ON f.fid=query2.fid "
+             . " INNER JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query3 ON f.fid=query3.fid "
+             . "SET f.threads = query2.tcount, f.posts = query3.pcount "
+             . "WHERE f.type = 'sub'";
+        $db->query($sql);
 
-                $spquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$sub[fid]'");
-                $sub_postnum = $db->result($spquery, 0);
+        $sql = "UPDATE ".X_PREFIX."forums AS f "
+             . " INNER JOIN (SELECT fup, SUM(threads) AS tcount, SUM(posts) AS pcount FROM ".X_PREFIX."forums GROUP BY fup) AS query2 ON f.fid=query2.fup "
+             . " INNER JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query3 ON f.fid=query3.fid "
+             . " INNER JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query4 ON f.fid=query4.fid "
+             . "SET f.threads = query2.tcount + query3.tcount, f.posts = query2.pcount + query4.pcount "
+             . "WHERE f.type = 'forum'";
+        $db->query($sql);
 
-                $db->query("UPDATE ".X_PREFIX."forums SET threads='$sub_threadnum', posts='$sub_postnum' WHERE fid='$sub[fid]'");
-                $threadnum += $sub_threadnum;
-                $postnum += $sub_postnum;
-            }
-            $db->free_result($squery);
-
-            $ftquery = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$forum[fid]'");
-            $threadnum += $db->result($ftquery, 0);
-            $db->free_result($ftquery);
-
-            $fpquery = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE fid='$forum[fid]'");
-            $postnum += $db->result($fpquery, 0);
-            $db->free_result($fpquery);
-
-            $db->query("UPDATE ".X_PREFIX."forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
-        }
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_forumtotal'].'</td></tr></table></table>';
         end_time();
@@ -95,14 +83,12 @@ switch($action) {
         break;
 
     case 'fixttotals':
-        $queryt = $db->query("SELECT * FROM ".X_PREFIX."threads");
-        while($threads = $db->fetch_array($queryt)) {
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$threads[tid]'");
-            $replynum = $db->result($query, 0) -1;
-            $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies='$replynum' WHERE tid='$threads[tid]'");
-        }
-        $db->free_result($queryt);
+        // Update all threads using as few queries as possible.
+        $sql = "UPDATE ".X_PREFIX."threads AS t "
+             . " INNER JOIN (SELECT tid, COUNT(pid) as pcount FROM ".X_PREFIX."posts GROUP BY tid) AS query2 USING (tid) "
+             . "SET t.replies = query2.pcount - 1";
+        $db->query($sql);
+
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_threadtotal'].'</td></tr></table></table>';
         end_time();
@@ -111,15 +97,12 @@ switch($action) {
         break;
 
     case 'fixmposts':
-        $queryt = $db->query("SELECT username FROM ".X_PREFIX."members");
-        while($mem = $db->fetch_array($queryt)) {
-            $mem['username'] = addslashes(stripslashes($mem['username']));
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$mem[username]'");
-            $postsnum = $db->result($query, 0);
-            $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."members SET postnum='$postsnum' WHERE username='$mem[username]'");
-        }
-        $db->free_result($queryt);
+        // Update all members using as few queries as possible.
+        $sql = "UPDATE ".X_PREFIX."members AS m "
+             . " INNER JOIN (SELECT author, COUNT(pid) as pcount FROM ".X_PREFIX."posts GROUP BY author) AS query2 ON m.username = query2.author "
+             . "SET m.postnum = query2.pcount";
+        $db->query($sql);
+
         nav($lang['tools']);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr></table></table>';
         end_time();

@@ -31,40 +31,13 @@ if (!defined('IN_CODE')) {
 }
 
 function url_to_text($url) {
-    global $db, $lang, $self, $xmbuser;
-    static $restrict, $rset, $fname, $tsub;
+    global $db, $lang, $self, $xmbuser, $SETTINGS;
+    static $fname, $tsub;
+    static $restrict = '';
 
-    if (!$rset) {
-        if (X_SADMIN) {
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
-            while($f = $db->fetch_array($q)) {
-                $fids[] = $f['fid'];
-            }
-        } else {
-            $fCache = array();
-            $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
-            while($forum = $db->fetch_array($q)) {
-                $perms = checkForumPermissions($forum);
-                $fCache[$forum['fid']] = $perms;
-
-                if (($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST]) && $perms[X_PERMS_PASSWORD]) {
-                    if ($forum['type'] == 'sub') {
-                        // also check above forum!
-                        $parentP = $fCache[$forum['fup']];
-                        if (($parentP[X_PERMS_VIEW] || $parentP[X_PERMS_USERLIST]) && $parentP[X_PERMS_PASSWORD]) {
-                            $fids[] = $forum['fid'];
-                        }
-                    } else {
-                        $fids[] = $forum['fid'];
-                    }
-                }
-            }
-        }
-
-        $fids = implode(',', $fids);
+    if ($restrict == '') {
+        $fids = permittedForums(forumCache(), 'thread', 'csv');
         $restrict = ' f.fid IN('.$fids.')';
-
-        $rset = true;
     }
 
     if (false !== strpos($url, '/viewthread.php')) {
@@ -116,12 +89,12 @@ function url_to_text($url) {
             if (isset($fname[$fid])) {
                 $location = $lang['onlineforumdisplay'].' '.$fname[$fid];
             } else {
-                $query = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$fid'");
-                while($locate = $db->fetch_array($query)) {
+                $locate = getForum($fid);
+                $perms = checkForumPermissions($locate);
+                if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
                     $location = $lang['onlineforumdisplay'].' '.$locate['name'];
                     $fname[$fid] = $locate['name'];
                 }
-                $db->free_result($query);
             }
         } else {
             $location = $lang['onlinenoforum'];
@@ -163,9 +136,10 @@ function url_to_text($url) {
         if (false !== strpos($url, 'gid=')) {
             $temp = explode('?', $url);
             $gid = (int) str_replace('gid=', '', $temp[1]);
-            $q = $db->query("SELECT name FROM ".X_PREFIX."forums f WHERE $restrict AND f.fid='$gid'");
-            $cat = $db->fetch_array($q);
-            if (!$cat) {
+            $cat = getForum($gid);
+            if ($cat === FALSE) {
+                $location = $lang['onlinecatunknown'];
+            } elseif ($cat['type'] != 'group') {
                 $location = $lang['onlinecatunknown'];
             } else {
                 $location = $lang['onlineviewcat'].$cat['name'];

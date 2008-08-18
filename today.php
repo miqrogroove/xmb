@@ -51,41 +51,8 @@ if ($SETTINGS['todaysposts'] == 'off') {
 $daysold = (isset($daysold) && is_numeric($daysold) ? (int) $daysold : 1);
 $srchfrom = $onlinetime - (86400 * $daysold);
 
-$fids = array();
 $tids = array();
-$fup = array();
-
-if (X_SADMIN) {
-    $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
-    while($f = $db->fetch_array($q)) {
-        $fids[] = $f['fid'];
-    }
-} else {
-    $fCache = array();
-    $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
-    while($forum = $db->fetch_array($q)) {
-        $perms = checkForumPermissions($forum);
-        $fCache[$forum['fid']] = $perms;
-
-        if (($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST]) && $perms[X_PERMS_PASSWORD]) {
-            if ($forum['type'] == 'sub') {
-                // also check above forum!
-                $parentP = $fCache[$forum['fup']];
-                if (($parentP[X_PERMS_VIEW] || $parentP[X_PERMS_USERLIST]) && $parentP[X_PERMS_PASSWORD]) {
-                    $fids[] = $forum['fid'];
-                }
-            } else {
-                $fids[] = $forum['fid'];
-            }
-        }
-    }
-}
-
-if (count($fids) == 0) {
-    error($lang['nopoststoday'], false);
-}
-
-$fids = implode(', ', $fids);
+$fids = permittedForums(forumCache(), 'thread', 'csv');
 
 $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN ($fids)");
 $results = $db->num_rows($query);

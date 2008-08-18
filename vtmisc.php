@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -30,16 +30,16 @@ define('X_SCRIPT', 'vtmisc.php');
 
 require 'header.php';
 
+loadtemplates(
+'vtmisc_report',
+'misc_feature_notavailable'
+);
+
 eval('$css = "'.template('css').'";');
 
 if (!X_MEMBER) {
     error($lang['notpermitted']);
 }
-
-loadtemplates(
-'vtmisc_report',
-'misc_feature_notavailable'
-);
 
 //Validate $action, $pid, $tid, and $fid
 $fid = -1;
@@ -83,25 +83,22 @@ if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
-    $fup = $db->fetch_array($query);
-    $db->free_result($query);
-
+    $fup = getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!($fupPerms[X_PERMS_VIEW] || $fupPerms[X_PERMS_USERLIST])) {
+    if (!$fupPerms[X_PERMS_VIEW]) {
         error($lang['privforummsg']);
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ($fup['fup'] > 0) {
-        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
+        $fupup = getForum($fup['fup']);
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
+        unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 } else if ($forum['fup'] > 0) { // 'forum' in a 'group'
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
-    $fup = $db->fetch_array($query);
-    $db->free_result($query);
+    $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 }

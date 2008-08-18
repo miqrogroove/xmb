@@ -1474,6 +1474,7 @@ function month2text($num) {
 }
 
 // forumCache() returns a db query result containing all active forums and forum categories.
+// Important: The return value is passed by reference.  There is only one query object.  This cannot be used in nested functions.
 function forumCache() {
     global $db;
     static $cache = FALSE;
@@ -1493,6 +1494,8 @@ function forumCache() {
 
 // getForum() returns an associative array for the specified forum.
 function getForum($fid) {
+    global $db;
+    
     $forums = forumCache();
     while($forum = $db->fetch_array($forums)) {
         if (intval($forum['fid']) == intval($fid)) {
@@ -1500,6 +1503,41 @@ function getForum($fid) {
         }
     }
     return FALSE;
+}
+
+// getStructuredForums() returns a multi-dimensional array containing the following associative subscripts:
+//  0:forums.type
+//  1:forums.fup (always '0' for groups)
+//  2:forums.fid
+//  3:forums.*
+// Usage example:
+//  $forums = getStructuredForums();
+//  echo fnameOut($forums['forum']['9']['14']['name']);
+function getStructuredForums($usePerms=FALSE) {
+    global $db;
+    
+    if ($usePerms) {
+        $forums = permittedForums(forumCache(), 'forum');
+    } else {
+        $forums = array();
+        $query = forumCache();
+        while($forum = $db->fetch_array($query)) {
+            $forums[] = $forum;
+        }
+    }
+    
+    // This function guarantees the following subscripts exist, regardless of forum count.
+    $structured['group'] = array();
+    $structured['forum'] = array();
+    $structured['sub'] = array();
+    $structured['group']['0'] = array();
+    $structured['forum']['0'] = array();
+
+    foreach($forums as $forum) {
+        $structured[$forum['type']][$forum['fup']][$forum['fid']] = $forum;
+    }
+    
+    return $structured;
 }
 
 // permittedForums() returns an array of permitted forum arrays
@@ -1574,37 +1612,7 @@ function permittedForums($forums, $mode='thread', $output='array', $check_parent
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
     global $lang;
 
-    $permitted = permittedForums(forumCache(), 'forum');
-
-    $standAloneForums = array();
-    $forums = array();
-    $categories = array();
-    $subforums = array();
-    foreach($permitted as $forum) {
-        switch($forum['type']) {
-        case 'group':
-            $categories[] = $forum;
-            break;
-        case 'sub':
-            if (!isset($subforums[$forum['fup']])) {
-                $subforums[$forum['fup']] = array();
-            }
-            $subforums[$forum['fup']][] = $forum;
-            break;
-        case 'forum':
-        default:
-            if ($forum['fup'] == 0) {
-                $standAloneForums[] = $forum;
-            } else {
-                if (!isset($forums[$forum['fup']])) {
-                    $forums[$forum['fup']] = array();
-                }
-                $forums[$forum['fup']][] = $forum;
-            }
-            break;
-        }
-    }
-
+    // Initialize $forumselect
     $forumselect = array();
     if (!$multiple) {
         $forumselect[] = '<select name="'.$selectname.'">';
@@ -1618,26 +1626,26 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
         $forumselect[] = '<option value="" disabled="disabled" selected="selected">'.$lang['textforum'].'</option>';
     }
 
-    unset($forum);
-    reset($forums);
+    // Populate $forumselect
+    $permitted = getStructuredForums(TRUE);
 
-    foreach($standAloneForums as $forum) {
+    foreach($permitted['forum']['0'] as $forum) {
         $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.$forum['name'].'</option>';
-        if (isset($subforums[$forum['fid']])) {
-            foreach($subforums[$forum['fid']] as $sub) {
+        if (isset($permitted['sub'][$forum['fid']])) {
+            foreach($permitted['sub'][$forum['fid']] as $sub) {
                 $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
             }
         }
     }
 
     $forumselect[] = '<option value="0" disabled="disabled">&nbsp;</option>';
-    foreach($categories as $group) {
-        if (isset($forums[$group['fid']]) && count($forums[$group['fid']]) > 0) {
+    foreach($permitted['group']['0'] as $group) {
+        if (isset($permitted['forum'][$group['fid']]) && count($permitted['forum'][$group['fid']]) > 0) {
             $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.$group['name'].'</option>';
-            foreach($forums[$group['fid']] as $forum) {
+            foreach($permitted['forum'][$group['fid']] as $forum) {
                 $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.$forum['name'].'</option>';
-                if (isset($subforums[$forum['fid']])) {
-                    foreach($subforums[$forum['fid']] as $sub) {
+                if (isset($permitted['sub'][$forum['fid']])) {
+                    foreach($permitted['sub'][$forum['fid']] as $sub) {
                         $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
                     }
                 }
@@ -1665,62 +1673,32 @@ function readFileAsINI($filename) {
 function forumJump() {
     global $lang;
 
-    $permitted = permittedForums(forumCache(), 'forum');
-
-    $standAloneForums = array();
-    $forums = array();
-    $categories = array();
-    $subforums = array();
-    foreach($permitted as $forum) {
-        switch($forum['type']) {
-        case 'group':
-            $categories[] = $forum;
-            break;
-        case 'sub':
-            if (!isset($subforums[$forum['fup']])) {
-                $subforums[$forum['fup']] = array();
-            }
-            $subforums[$forum['fup']][] = $forum;
-            break;
-        case 'forum':
-        default:
-            if ($forum['fup'] == 0) {
-                $standAloneForums[] = $forum;
-            } else {
-                if (!isset($forums[$forum['fup']])) {
-                    $forums[$forum['fup']] = array();
-                }
-                $forums[$forum['fup']][] = $forum;
-            }
-            break;
-        }
-    }
-
+    // Initialize $forumselect
     $forumselect = array();
 
     $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
     $forumselect[] = '<option value="0" selected="selected">'.$lang['forumjumpselect'].'</option>';
 
-    unset($forum);
-    reset($forums);
+    // Populate $forumselect
+    $permitted = getStructuredForums(TRUE);
 
-    foreach($standAloneForums as $forum) {
+    foreach($permitted['forum']['0'] as $forum) {
         $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.$forum['name'].'</option>';
-        if (isset($subforums[$forum['fid']])) {
-            foreach($subforums[$forum['fid']] as $sub) {
+        if (isset($permitted['sub'][$forum['fid']])) {
+            foreach($permitted['sub'][$forum['fid']] as $sub) {
                 $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
             }
         }
     }
 
-    foreach($categories as $group) {
-        if (isset($forums[$group['fid']])) {
+    foreach($permitted['group']['0'] as $group) {
+        if (isset($permitted['forum'][$group['fid']])) {
             $forumselect[] = '<option value="0"></option>';
             $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.$group['name'].'</option>';
-            foreach($forums[$group['fid']] as $forum) {
+            foreach($permitted['forum'][$group['fid']] as $forum) {
                 $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.$forum['name'].'</option>';
-                if (isset($subforums[$forum['fid']])) {
-                    foreach($subforums[$forum['fid']] as $sub) {
+                if (isset($permitted['sub'][$forum['fid']])) {
+                    foreach($permitted['sub'][$forum['fid']] as $sub) {
                         $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.$sub['name'].'</option>';
                     }
                 }

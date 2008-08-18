@@ -91,12 +91,10 @@ if ($action == 'edit') {
     $fid = $forum['fid'];
 } else if ($action == 'newthread') {
     $fid = getRequestInt('fid');
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid=$fid");
-    if ($db->num_rows($query) != 1) {
+    $forum = getForum($fid);
+    if ($forum === FALSE) {
         error($lang['textnoforum']);
     }
-    $forum = $db->fetch_array($query);
-    $db->free_result($query);
 } else {
     error($lang['textnoaction']);
 }
@@ -147,7 +145,7 @@ if ($poll != 'yes') {
 
 // check permissions on this forum (and top forum if it's a sub?)
 $perms = checkForumPermissions($forum);
-if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
+if (!$perms[X_PERMS_VIEW]) {
     error($lang['privforummsg']);
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
@@ -170,22 +168,19 @@ if ($action == 'newthread') {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $query = $db->query("SELECT f.*, g.name AS groupname FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."forums AS g ON f.fup=g.fid WHERE f.fid={$forum['fup']}");
-    $fup = $db->fetch_array($query);
-    $db->free_result($query);
-
+    $fup = getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!(($fupPerms[X_PERMS_VIEW] || $fupPerms[X_PERMS_USERLIST]) && $fupPerms[X_PERMS_PASSWORD])) {
+    if (!($fupPerms[X_PERMS_VIEW] && $fupPerms[X_PERMS_PASSWORD])) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
     } else if ($fup['fup'] > 0) {
-        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fup['groupname']).'</a>');
+        $fupup = getForum($fup['fup']);
+        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
+        unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 } else if ($forum['fup'] > 0) { // 'forum' in a 'group'
-    $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE fid={$forum['fup']}");
-    $fup = $db->fetch_array($query);
-    $db->free_result($query);
+    $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
@@ -389,7 +384,7 @@ switch($action) {
 
                             // check permissions on this forum (and top forum if it's a sub?)
                             $perms = checkForumPermissions($forum);
-                            if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
+                            if (!$perms[X_PERMS_VIEW]) {
                                 softerror($lang['privforummsg']);
                                 $topicvalid = FALSE;
                             } else if (!$perms[X_PERMS_REPLY]) {
@@ -400,7 +395,7 @@ switch($action) {
                             if ($forum['type'] == 'sub') {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
-                                if (!($fupPerms[X_PERMS_VIEW] || $fupPerms[X_PERMS_USERLIST])) {
+                                if (!$fupPerms[X_PERMS_VIEW]) {
                                     softerror($lang['privforummsg']);
                                     $topicvalid = FALSE;
                                 }
@@ -556,7 +551,7 @@ switch($action) {
                 $quotefid = $thaquote['fid'];
 
                 $quoteperms = checkForumPermissions($thaquote);
-                if ($quoteperms[X_PERMS_VIEW] || $quoteperms[X_PERMS_USERLIST]) {
+                if ($quoteperms[X_PERMS_VIEW]) {
                     $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
                 }
             }
@@ -633,7 +628,7 @@ switch($action) {
 
                             // check permissions on this forum (and top forum if it's a sub?)
                             $perms = checkForumPermissions($forum);
-                            if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
+                            if (!$perms[X_PERMS_VIEW]) {
                                 softerror($lang['privforummsg']);
                                 $topicvalid = FALSE;
                             } else if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
@@ -644,7 +639,7 @@ switch($action) {
                             if ($forum['type'] == 'sub') {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
-                                if (!($fupPerms[X_PERMS_VIEW] || $fupPerms[X_PERMS_USERLIST])) {
+                                if (!$fupPerms[X_PERMS_VIEW]) {
                                     softerror($lang['privforummsg']);
                                     $topicvalid = FALSE;
                                 }
@@ -821,8 +816,7 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            $rawperms = explode(',', $forum['postperm']);
-            if ($rawperms[X_PERMS_THREAD] == 32) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == $status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 

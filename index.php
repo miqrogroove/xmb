@@ -70,13 +70,14 @@ if (onSubmit('gid')) {
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
-    $query = $db->query("SELECT name FROM ".X_PREFIX."forums WHERE fid=$gid AND type='group' AND status='on' LIMIT 1");
-    if ($db->num_rows($query) != 1) {
+    $cat = getForum($gid);
+    if ($cat === FALSE) {
+        header('HTTP/1.0 404 Not Found');
+        error($lang['textnocat']);
+    } elseif ($cat['type'] != 'group' Or $cat['status'] != 'on') {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnocat']);
     }
-    $cat = $db->fetch_array($query);
-    $db->free_result($query);
     nav(fnameOut($cat['name']));
 }
 
@@ -280,7 +281,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
         $query = $db->query("SELECT * FROM ".X_PREFIX."forums WHERE status='on' AND type='sub' ORDER BY fup, displayorder");
         while($queryrow = $db->fetch_array($query)) {
             $subperms = checkForumPermissions($queryrow);
-            if ($SETTINGS['hideprivate'] == 'off' || ($subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST])) {
+            if ($SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW]) {
                 $index_subforums[] = $queryrow;
             }
         }
