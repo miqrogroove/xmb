@@ -39,7 +39,7 @@ $aid = 0;
 $pid = 0;
 $filename = '';
 
-switch($SETTINGS['file_url_format']) {
+switch(intval($SETTINGS['file_url_format'])) {
 case 1:
 //    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
     $aid = getInt('aid');
@@ -48,30 +48,30 @@ case 1:
 case 2:
 //    $url = "{$virtual_path}files/$pid/$aid/";
     $result = explode('/', $url);
-    if ($result[count($result) - 3] == 'files') {
-        $pid = intval($result[count($result) - 2]);
-        $aid = intval($result[count($result) - 1]);
+    if ($result[count($result) - 4] == 'files') { // Remember count() is 1-based
+        $pid = intval($result[count($result) - 3]);
+        $aid = intval($result[count($result) - 2]);
     }
     break;
 case 3:
 //    $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
-    if ($result[count($result) - 2] == 'files') {
-        $aid = intval($result[count($result) - 1]);
-        $filename = urldecode($result[count($result)]);
+    if ($result[count($result) - 3] == 'files') {
+        $aid = intval($result[count($result) - 2]);
+        $filename = urldecode($result[count($result) - 1]);
     }
     break;
 case 4:
 //    $url = "{$virtual_path}/$pid/$aid/";
     $result = explode('/', $url);
-    $pid = intval($result[count($result) - 2]);
-    $aid = intval($result[count($result) - 1]);
+    $pid = intval($result[count($result) - 3]);
+    $aid = intval($result[count($result) - 2]);
     break;
 case 5:
 //    $url = "{$virtual_path}/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
-    $aid = intval($result[count($result) - 1]);
-    $filename = urldecode($result[count($result)]);
+    $aid = intval($result[count($result) - 2]);
+    $filename = urldecode($result[count($result) - 1]);
     break;
 default:
     $aid = getInt('aid');
@@ -125,7 +125,7 @@ if ($file['filesize'] != strlen($file['attachment'])) {
     error($lang['filecorrupt']);
 }
 
-$db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE pid='$pid'");
+$db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$aid");
 
 $type = strtolower($file['filetype']);
 $size = (int) $file['filesize'];
@@ -143,6 +143,7 @@ echo $file['attachment'];
 exit();
 
 function fileError() {
+    global $lang;
     header('HTTP/1.0 404 Not Found');
     error($lang['textnothread']);
 }

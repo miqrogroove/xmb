@@ -1850,6 +1850,12 @@ if ($action == "upgrade") {
             if ($explode[$num] != '') {
                 $query = $db->query($explode[$num]." -- Injected by $xmbuser using cp.php", true);
 
+                if (is_bool($query)) {
+                    $numfields = 1;
+                } else {
+                    $numfields = $db->num_fields($query);
+                }
+
                 echo '<br />';
                 ?>
                 <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
@@ -1857,10 +1863,10 @@ if ($action == "upgrade") {
                 <td bgcolor="<?php echo $bordercolor?>">
                 <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td colspan="<?php echo $db->num_fields($query)?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
+                <td colspan="<?php echo $numfields; ?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
                 <?php
                 $xn = strtoupper($explode[$num]);
-                if (strpos($xn, 'SELECT') !== false || strpos($xn, 'SHOW') !== false || strpos($xn, 'EXPLAIN') !== false || strpos($xn, 'DESCRIBE') !== false) {
+                if (!is_bool($query)) {
                     dump_query($query, true);
                 } else {
                     $selq=false;

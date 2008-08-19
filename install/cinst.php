@@ -473,6 +473,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `onlinetodaycount` smallint(5) NOT NULL default 0,
       `onlinetoday_status` set('on','off') NOT NULL default 'on',
       `file_url_format` TINYINT NOT NULL DEFAULT '1',
+      `files_virtual_url` VARCHAR(60) NOT NULL,
       `filesperpost` TINYINT NOT NULL DEFAULT '10',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200'
    ) TYPE=MyISAM

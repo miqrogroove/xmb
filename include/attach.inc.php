@@ -183,10 +183,10 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
 function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
     global $full_url, $SETTINGS;
     
-    $SETTINGS_virtual_path = '';
-    
-    if ($SETTINGS_virtual_path == '') {
+    if ($SETTINGS['files_virtual_url'] == '') {
         $virtual_path = $full_url;
+    } else {
+        $virtual_path = $SETTINGS['files_virtual_url'];
     }
 
     switch($SETTINGS['file_url_format']) {
@@ -204,10 +204,10 @@ function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
         $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
         break;
     case 4:
-        $url = "{$virtual_path}/$pid/$aid/";
+        $url = "{$virtual_path}$pid/$aid/";
         break;
     case 5:
-        $url = "{$virtual_path}/$aid/".rawurlencode($filename);
+        $url = "{$virtual_path}$aid/".rawurlencode($filename);
         break;
     }
 

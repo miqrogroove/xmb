@@ -137,6 +137,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Adding the new columns to the settings table...<br />';
     $columns = array(
     'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
+    'files_virtual_url' => "VARCHAR(60) NOT NULL",
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
     foreach($columns as $colname => $coltype) {

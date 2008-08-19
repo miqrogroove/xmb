@@ -224,12 +224,13 @@ if ($url != $cookiepath) {
         $fixed_url = str_replace('//', '/', $url);
         if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath Or substr($fixed_url, strlen($cookiepath), 1) == '/' Or $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
             header('HTTP/1.0 404 Not Found');
+            exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
         } else {
             $fixed_url = $full_url.substr($fixed_url, strlen($cookiepath));
             header('HTTP/1.0 301 Moved Permanently');
             header("Location: $fixed_url");
+            exit('XMB detected an invalid URL');
         }
-        exit('XMB detected an invalid URL');
     }
 }
 
