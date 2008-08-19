@@ -1150,7 +1150,7 @@ function dump_query($resource, $header=true) {
                 if (trim($a[$i]) == '') {
                     echo '&nbsp;';
                 } else {
-                    echo nl2br($a[$i]);
+                    echo nl2br(cdataOut($a[$i]));
                 }
                 echo '</td>';
             }

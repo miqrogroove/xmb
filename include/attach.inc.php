@@ -30,6 +30,11 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+// attachUploadedFile() checks for the presence of $_FILES[$varname].
+// If found, the file will be stored and attached to the specified $pid.
+// The $pid can be omitted in post preview mode, thus creating
+// orphaned attachments that the registered user will be allowed to manage.
+// Storage responsibilities include subdirectory and thumbnail creation.
 function attachUploadedFile($varname, $pid=0) {
     global $db, $self, $SETTINGS;
     
@@ -46,7 +51,30 @@ function attachUploadedFile($varname, $pid=0) {
         $query = $db->fetch_array($query);
         if ($query['atcount'] < $SETTINGS['filesperpost']) {
             $type = $db->escape($_FILES['attach']['type']);
-            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid) VALUES ($pid, '$filename', '$filetype', '$filesize', '$file', {$self['uid']})");
+            $sqlsize = '';
+
+            // Check if we can store image metadata
+            $extention = get_extension($filename);
+            if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
+                $result = getimagesize($_FILES[$varname]['tmp_name']);
+            } else {
+                $result = FALSE;
+            }
+
+            if ($result !== FALSE) {
+                $imgSize = new CartesianSize($result[0], $result[1]);
+                $sqlsize = $result[0].'x'.$result[1];
+            }
+
+            // Store File
+            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size) VALUES ($pid, '$filename', '$filetype', '$filesize', '$file', {$self['uid']}, '$sqlsize')");
+            unset($file);
+
+            // Make Thumbnail
+            if ($result !== FALSE) {
+                createThumbnail($_FILES[$varname]['name'], $_FILES[$varname]['tmp_name'], $imgSize, $db->insert_id(), $pid);
+            }
+
             return TRUE;
         }
     }
@@ -152,19 +180,22 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     }
 }
 
-function getAttachmentURL($aid, $pid, $filename) {
+function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
     global $full_url, $SETTINGS;
     
     $SETTINGS_virtual_path = '';
-    $SETTINGS_url_format = 1;
     
     if ($SETTINGS_virtual_path == '') {
         $virtual_path = $full_url;
     }
 
-    switch($SETTINGS_url_format) {
+    switch($SETTINGS['file_url_format']) {
     case 1:
-        $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
+        if ($htmlencode) {
+            $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
+        } else {
+            $url = "{$virtual_path}files.php?pid=$pid&aid=$aid";
+        }
         break;
     case 2:
         $url = "{$virtual_path}files/$pid/$aid/";
@@ -178,11 +209,106 @@ function getAttachmentURL($aid, $pid, $filename) {
     case 5:
         $url = "{$virtual_path}/$aid/".rawurlencode($filename);
         break;
-    default:
-        $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
-        break;
     }
 
     return $url;
+}
+
+function createThumbnail($filename, $filepath, $imgSize, $aid, $pid) {
+    global $db, $self, $SETTINGS;
+
+    // Check if GD is available
+    if (!function_exists('imagecreatetruecolor')) {
+        return FALSE;
+    }
+
+    // Determine if a thumbnail is needed.
+    $result = explode('x', $SETTINGS['max_thumb_size']);
+    if ($result[0] > 0 And $result[1] > 0) {
+        $thumbMaxSize = new CartesianSize($result[0], $result[1]);
+    } else {
+        return FALSE;
+    }
+
+    if ($imgSize->isSmallerThan($thumbMaxSize)) {
+        return FALSE;
+    }
+
+    // Create a thumbnail for this attachment.
+    if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
+        $thumbSize = new CartesianSize($thumbMaxSize->width, round($imgSize->aspect() * $thumbMaxSize->width));
+    } else {
+        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
+    }
+    
+    $extention = get_extension($filename);
+    switch($extension) {
+    case 'png':
+        $img = @imagecreatefrompng($filepath);
+        break;
+    case 'bmp':
+        $img = @imagecreatefromwbmp($filepath);
+        break;
+    case 'gif':
+        $img = @imagecreatefromgif($filepath);
+        break;
+    case 'jpeg':
+    case 'jpg':
+    case 'jpe':
+    default:
+        $img = @imagecreatefromjpeg($filepath);
+        break;
+    }
+
+    if (!$img) {
+        return FALSE;
+    }
+    
+    $thumb = imagecreatetruecolor($thumbSize->width, $thumbSize->height);
+
+    // Resize $img
+    if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
+        return FALSE;
+    }
+
+    $filename = $filename.'-thumb.jpg';
+    $filepath = $filepath.'-thumb.jpg';
+
+    // Write to Disk
+    imagejpeg($thumb, $filepath);
+
+    $filesize = intval(filesize($filepath));
+    $file = $db->escape(fread(fopen($filepath, 'rb'), $filesize));
+    $filetype = 'image/jpeg';
+    $sqlsize = $thumbSize->width.'x'.$thumbSize->height;
+
+    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size) VALUES ($pid, '$filename', '$filetype', '$filesize', '$file', {$self['uid']}, $aid, '$sqlsize')");
+    
+    return TRUE;
+}
+
+class CartesianSize {
+    var $height;
+    var $width;
+    
+    function CartesianSize($width, $height) {
+        $this->height = intval($height);
+        $this->width = intval($width);
+    }
+    
+    function aspect() {
+        // Read-Only Property
+        return $this->width / $this->height;
+    }
+    
+    function isBiggerThan($otherSize) {
+        // Would overload '>' operator
+        return ($this->width > $otherSize->width Or $this->height > $otherSize->height);
+    }
+
+    function isSmallerThan($otherSize) {
+        // Would overload '<=' operator
+        return ($this->width <= $otherSize->width And $this->height <= $otherSize->height);
+    }
 }
 ?>

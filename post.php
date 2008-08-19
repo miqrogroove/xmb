@@ -29,7 +29,6 @@
 define('X_SCRIPT', 'post.php');
 
 require 'header.php';
-require 'include/attach.inc.php';
 
 header('X-Robots-Tag: noindex');
 
@@ -191,6 +190,7 @@ if ($forum['type'] == 'sub') {
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
 if ($forum['attachstatus'] == 'on') {
+    require 'include/attach.inc.php';
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 

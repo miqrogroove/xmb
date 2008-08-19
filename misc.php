@@ -92,6 +92,9 @@ switch($action) {
     case 'captchaimage':
         nav($lang['textregister']);
         break;
+    case 'smilies':
+        nav($lang['smilies']);
+        break;
     default:
         header('HTTP/1.0 404 Not Found');
         error($lang['textnoaction']);

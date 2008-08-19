@@ -141,13 +141,13 @@ show_act("Creating ".$tablepre."attachments");
 $db->query("DROP TABLE IF EXISTS ".$tablepre."attachments");
 $r = $db->query("CREATE TABLE ".$tablepre."attachments (
       `aid` int(10) NOT NULL auto_increment,
-      `tid` int(10) NOT NULL default 0,
       `pid` int(10) NOT NULL default 0,
       `filename` varchar(120) NOT NULL default '',
       `filetype` varchar(120) NOT NULL default '',
       `filesize` varchar(120) NOT NULL default '',
       `attachment` longblob NOT NULL,
       `downloads` int(10) NOT NULL default 0,
+      `img_size` VARCHAR(9) NOT NULL,
       `parentid` INT NOT NULL DEFAULT '0',
       `uid` INT NOT NULL DEFAULT '0',
       `updatetime` TIMESTAMP NOT NULL default current_timestamp,
@@ -472,7 +472,9 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `index_stats` set('on','off') NOT NULL default 'on',
       `onlinetodaycount` smallint(5) NOT NULL default 0,
       `onlinetoday_status` set('on','off') NOT NULL default 'on',
-      `filesperpost` TINYINT NOT NULL DEFAULT '10'
+      `file_url_format` TINYINT NOT NULL DEFAULT '1',
+      `filesperpost` TINYINT NOT NULL DEFAULT '10',
+      `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------

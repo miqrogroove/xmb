@@ -4694,15 +4694,17 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachment|#*XMB TEMPLATE*#|
 <br />
 <br />
-$lang[attachment] <a href="./viewthread.php?action=attachment&amp;tid=$tid&amp;pid=$post[pid]" target="_blank">$post[filename]</a> ($attachsize)
+$lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</a> ($attachsize)
 <br />
 <font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
-<br />
+
+|#*XMB TEMPLATE FILE*#|viewthread_post_attachmentthumb|#*XMB TEMPLATE*#|
+<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentimage|#*XMB TEMPLATE*#|
 <br />
 <br />
-$post[author] $lang[textattachedimg]<br /><img src="viewthread.php?action=attachment&amp;tid=$tid&amp;pid=$post[pid]" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize"/>
+$post[author] $lang[textattachedimg]<br /><img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
 <br />
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|

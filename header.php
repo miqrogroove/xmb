@@ -188,7 +188,7 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     }
     $cookiepath = $array['path'];
 
-    if (DEBUG) {
+    if (DEBUG And X_SCRIPT != 'files.php') {
         // Check the $full_url setting
         $secure = FALSE;
         if (isset($_SERVER['HTTPS'])) {
@@ -282,9 +282,11 @@ $navigation = '';
 nav();
 
 // Cache-control
-header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
+if (X_SCRIPT != 'files.php') {
+    header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+}
 
 // Fix annoying bug in windows... *sigh*
 $action = isset($action) ? $action : '';

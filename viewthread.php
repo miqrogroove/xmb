@@ -147,6 +147,7 @@ loadtemplates(
 'viewthread_post_repquote',
 'viewthread_post_report',
 'viewthread_post_edit',
+'viewthread_post_attachmentthumb',
 'viewthread_post_attachmentimage',
 'viewthread_post_attachment',
 'viewthread_post_sig',
@@ -454,7 +455,13 @@ if ($action == '') {
     }
 
     $thisbg = $altbg2;
-    $querypost = $db->query("SELECT a.aid, a.filename, a.filetype, a.filesize, a.downloads, p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."attachments a ON a.pid=p.pid LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
+    $querypost = $db->query("SELECT p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
+
+    if ($forum['attachstatus'] == 'on') {
+        require('include/attach.inc.php');
+        $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
+    }
+
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
@@ -638,29 +645,54 @@ if ($action == '') {
         $smileyoff = $post['smileyoff'];
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
-        if ($post['filename'] != '' && $forum['attachstatus'] != 'off') {
-            $post['filename'] = attrOut($post['filename']);
-            $post['filetype'] = attrOut($post['filetype']);
-            $attachsize = $post['filesize'];
-            if ($attachsize >= 1073741824) {
-                $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
-            } else if ($attachsize >= 1048576) {
-                $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-            } else if ($attachsize >= 1024) {
-                $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
-            } else {
-                $attachsize = $attachsize . "b";
+        if ($forum['attachstatus'] == 'on') {
+            $count = 0;
+            if ($db->num_rows($queryattach) > 0) {
+                $db->data_seek($queryattach, 0);
             }
+            while($attach = $db->fetch_array($queryattach)) {
+                if ($attach['pid'] == $post['pid']) {
+                    if ($count == 0) {
+                        $post['message'] .= "<br />";
+                    }
+                    $post['filename'] = attrOut($attach['filename']);
+                    $post['filetype'] = attrOut($attach['filetype']);
+                    $post['fileurl'] = getAttachmentURL($attach['aid'], $post['pid'], $attach['filename']);
+                    $attachsize = $attach['filesize'];
+                    if ($attachsize >= 1073741824) {
+                        $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
+                    } else if ($attachsize >= 1048576) {
+                        $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
+                    } else if ($attachsize >= 1024) {
+                        $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
+                    } else {
+                        $attachsize = $attachsize . "b";
+                    }
 
-            $extention = strtolower(substr(strrchr($post['filename'],"."),1));
-            if ($attachimgpost == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
-                eval("\$post['message'] .= \"".template('viewthread_post_attachmentimage')."\";");
-            } else {
-                $downloadcount = $post['downloads'];
-                if ($downloadcount == '') {
-                    $downloadcount = 0;
+                    $post['filedims'] = '';
+                    $extention = get_extension($post['filename']);
+                    if ($attachimgpost == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+                        if (intval($attach['thumbid'] > 0)) {
+                            $post['thumburl'] = getAttachmentURL($attach['thumbid'], $post['pid'], $attach['thumbname']);
+                            $result = explode('x', $attach['thumbsize']);
+                            $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
+                            eval("\$post['message'] .= \"".template('viewthread_post_attachmentthumb')."\";");
+                        } else {
+                            if ($attach['img_size'] != '') {
+                                $result = explode('x', $attach['img_size']);
+                                $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
+                            }
+                            eval("\$post['message'] .= \"".template('viewthread_post_attachmentimage')."\";");
+                        }
+                    } else {
+                        $downloadcount = $attach['downloads'];
+                        if ($downloadcount == '') {
+                            $downloadcount = 0;
+                        }
+                        eval("\$post['message'] .= \"".template('viewthread_post_attachment')."\";");
+                    }
+                    $count++;
                 }
-                eval("\$post['message'] .= \"".template('viewthread_post_attachment')."\";");
             }
         }
 
@@ -697,30 +729,22 @@ if ($action == '') {
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
-} else if ($action == 'attachment' && $forum['attachstatus'] != 'off' && $pid > 0 && $tid > 0) {
-    $query = $db->query("SELECT * FROM ".X_PREFIX."attachments WHERE pid='$pid' and tid='$tid'");
-    $file = $db->fetch_array($query);
-    $db->free_result($query);
-
-    $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE pid='$pid'");
-
-    if ($file['filesize'] != strlen($file['attachment'])) {
-        error($lang['filecorrupt']);
+} else if ($action == 'attachment' && $forum['attachstatus'] == 'on' && $pid > 0 && $tid > 0) {
+    // Try to validate $pid
+    $query = $db->query("SELECT aid, filename FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.pid=$pid AND a.parentid=0 AND p.tid='$tid' ORDER BY aid LIMIT 1");
+    if ($db->num_rows($query) == 1) {
+        $file = $db->fetch_array($query);
+        $db->free_result($query);
+        require('include/attach.inc.php');
+        $url = getAttachmentURL($file['aid'], $pid, $file['filename'], FALSE);
+        header('HTTP/1.0 301 Moved Permanently');
+        header('Location: '.$url);
+        exit();
+    } else {
+        header('HTTP/1.0 404 Not Found');
+        eval('$css = "'.template('css').'";');
+        error($lang['textnothread']);
     }
-
-    $type = strtolower($file['filetype']);
-    $size = (int) $file['filesize'];
-    $type = ($type == 'text/html') ? 'text/plain' : $type;
-
-    header("Content-type: $type");
-    header("Content-length: $size");
-    header("Content-Disposition: attachment; filename=\"{$file['filename']}\"");
-    header("Content-Description: XMB Attachment");
-    header("Cache-Control: public; max-age=604800");
-    header("Expires: 604800");
-
-    echo $file['attachment'];
-    exit();
 } else if ($action == 'printable') {
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC, pid ASC");
     $posts = '';

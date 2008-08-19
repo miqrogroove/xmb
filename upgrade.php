@@ -136,7 +136,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 
     echo 'Adding the new columns to the settings table...<br />';
     $columns = array(
-    'filesperpost' => "TINYINT NOT NULL DEFAULT '10'");
+    'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
+    'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
+    'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
         if ($db->num_rows($query) == 1) {
@@ -148,8 +150,20 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Requesting to lock the attachments table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
+    echo 'Deleting the old columns in the attachments table...<br />';
+    $columns = array(
+    'tid');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.'attachments '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $db->query('ALTER TABLE '.X_PREFIX.'attachments DROP COLUMN '.$colname);
+        }
+        $db->free_result($query);
+    }
+
     echo 'Adding the new columns to the attachments table...<br />';
     $columns = array(
+    'img_size' => "VARCHAR(9) NOT NULL",
     'parentid' => "INT NOT NULL DEFAULT '0'",
     'uid' => "INT NOT NULL DEFAULT '0'",
     'updatetime' => "TIMESTAMP NOT NULL default current_timestamp",
