@@ -437,6 +437,10 @@ if ($onlinetodaycount < 5) {
     $onlinetodaycount = 30;
 }
 
+if (ini_get('upload_max_filesize') < $SETTINGS['maxattachsize']) {
+    $SETTINGS['maxattachsize'] = ini_get('upload_max_filesize');
+}
+
 // Get the user-vars, and make them semi-global
 
 elevateUser(postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c'), postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'));

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -134,7 +134,36 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->free_result($query);
     }
 
-    echo 'Releasing the lock on the settings table...<br />';
+    echo 'Adding the new columns to the settings table...<br />';
+    $columns = array(
+    'filesperpost' => "TINYINT NOT NULL DEFAULT '10'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $db->query('ALTER TABLE '.X_PREFIX.'settings ADD '.$colname.' '.$coltype);
+        }
+        $db->free_result($query);
+    }
+
+    echo 'Requesting to lock the attachments table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
+
+    echo 'Adding the new columns to the attachments table...<br />';
+    $columns = array(
+    'parentid' => "INT NOT NULL DEFAULT '0'",
+    'uid' => "INT NOT NULL DEFAULT '0'",
+    'updatetime' => "TIMESTAMP NOT NULL default current_timestamp",
+    'INDEX' => "(parentid)",
+    'INDEX' => "(uid)");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.'attachments '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $db->query('ALTER TABLE '.X_PREFIX.'attachments ADD '.$colname.' '.$coltype);
+        }
+        $db->free_result($query);
+    }
+
+    echo 'Releasing the lock on the attachments table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
 

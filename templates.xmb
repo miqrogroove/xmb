@@ -3324,13 +3324,33 @@ $bbcodescript
 <div align="center">
 <br />
 
+|#*XMB TEMPLATE FILE*#|post_attachment_orphan|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1"><strong>$lang[attachment]</strong>
+<br />
+<div style="padding-left: 10px;">
+$lang[textfilename] <em>$postinfo[filename]</em>
+<br />
+$lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
+</div>
+</td>
+<td bgcolor="$altbg2">
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="leave" checked="checked" />$lang[leaveuntouched].<br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="replace" />$lang[uploadinstead]<br />
+<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
+<input type="file" name="replace_{$postinfo['aid']}" style="margin-left: 2em;" width="25" size="25" /><br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="rename" />$lang[renamefile]<br />
+<input type="text" name="rename_{$postinfo['aid']}" style="margin-left: 2em;" size="22" value="$postinfo[filename]"/><br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="delete" />$lang[deletecurrent]<br />
+</td>
+</tr>
+
 |#*XMB TEMPLATE FILE*#|post_attachmentbox|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[attachment]</td>
 <td bgcolor="$altbg2">
-<input type="file" name="attach" size="20" />
 <input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
-<input type="hidden" name="attachment_action" value="edit" />
+<input type="file" name="attach" size="20" />
 </td>
 </tr>
 
@@ -3406,17 +3426,17 @@ $lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
 $lang[textdownloads] <em>$postinfo[downloads]</em>
 <br />
 <br />
-<em>&raquo; <a href="./viewthread.php?action=attachment&amp;tid=$tid&amp;pid=$pid">$lang[textdownload]</a></em>
+<em>&raquo; <a href="{$postinfo['url']}">$lang[textdownload]</a></em>
 </div>
 </td>
 <td bgcolor="$altbg2">
-<input type="radio" name="attachment[action]" value="leave" checked="checked" />$lang[leaveuntouched].<br />
-<input type="radio" name="attachment[action]" value="replace" />$lang[uploadinstead]<br />
-<input type="file" name="attachment_replace" style="margin-left: 2em;" width="25" size="25" />
-<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" /><br />
-<input type="radio" name="attachment[action]" value="rename" />$lang[renamefile]<br />
-<input type="text" name="attach_name" style="margin-left: 2em;" size="22" value="$postinfo[filename]"/><br />
-<input type="radio" name="attachment[action]" value="delete" />$lang[deletecurrent]<br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="leave" checked="checked" />$lang[leaveuntouched].<br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="replace" />$lang[uploadinstead]<br />
+<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
+<input type="file" name="replace_{$postinfo['aid']}" style="margin-left: 2em;" width="25" size="25" /><br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="rename" />$lang[renamefile]<br />
+<input type="text" name="rename_{$postinfo['aid']}" style="margin-left: 2em;" size="22" value="$postinfo[filename]"/><br />
+<input type="radio" name="attachment[{$postinfo['aid']}][action]" value="delete" />$lang[deletecurrent]<br />
 </td>
 </tr>
 

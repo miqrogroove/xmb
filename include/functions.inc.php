@@ -882,7 +882,7 @@ function end_time() {
         $stuff = array();
         $stuff[] = '<table cols="2" style="width: 97%;"><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
         foreach($db->querylist as $key=>$val) {
-            $val = mysql_syn_highlight($val);
+            $val = mysql_syn_highlight(cdataOut($val));
             $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($db->querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
         }
         $stuff[] = '</table>';
@@ -927,40 +927,6 @@ function get_extension($filename) {
         return '';
     } else {
         return $a[$count-1];
-    }
-}
-
-function get_attached_file($file, $attachstatus, $max_size=1000000) {
-    global $db, $lang, $filename, $filetype, $filesize;
-
-    $filename = '';
-    $filetype = '';
-    $filesize = 0;
-
-    if ($file['name'] != 'none' && !empty($file['name']) && $attachstatus != 'off' && is_uploaded_file($file['tmp_name'])) {
-        $file['name'] = trim($file['name']);
-        if (!isValidFilename($file['name'])) {
-            error($lang['invalidFilename'], false, '', '', false, false, false, false);
-            return false;
-        }
-
-        $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes
-        if ($file['size'] > $max_size) {
-            error($lang['attachtoobig'], false, '', '', false, false, false, false);
-            return false;
-        } else {
-            $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
-            $filename = $db->escape($file['name']);
-            $filetype = $db->escape(preg_replace('#[\r\n%]#', '', $file['type']));
-
-            if ($filesize == 0) {
-                return false;
-            } else {
-                return $attachment;
-            }
-        }
-    } else {
-        return false;
     }
 }
 

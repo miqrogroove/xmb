@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -148,9 +148,14 @@ $r = $db->query("CREATE TABLE ".$tablepre."attachments (
       `filesize` varchar(120) NOT NULL default '',
       `attachment` longblob NOT NULL,
       `downloads` int(10) NOT NULL default 0,
+      `parentid` INT NOT NULL DEFAULT '0',
+      `uid` INT NOT NULL DEFAULT '0',
+      `updatetime` TIMESTAMP NOT NULL default current_timestamp,
       PRIMARY KEY  (`aid`),
       KEY `tid` (`tid`),
-      KEY `pid` (`pid`)
+      KEY `pid` (`pid`),
+      KEY `parentid` (`parentid`),
+      KEY `uid` (`uid`)
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
@@ -466,7 +471,8 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `quickjump_status` set('on','off') NOT NULL default 'on',
       `index_stats` set('on','off') NOT NULL default 'on',
       `onlinetodaycount` smallint(5) NOT NULL default 0,
-      `onlinetoday_status` set('on','off') NOT NULL default 'on'
+      `onlinetoday_status` set('on','off') NOT NULL default 'on',
+      `filesperpost` TINYINT NOT NULL DEFAULT '10'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------

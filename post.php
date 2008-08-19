@@ -29,6 +29,7 @@
 define('X_SCRIPT', 'post.php');
 
 require 'header.php';
+require 'include/attach.inc.php';
 
 header('X-Robots-Tag: noindex');
 
@@ -37,6 +38,7 @@ loadtemplates(
 'post_notloggedin',
 'post_loggedin',
 'post_preview',
+'post_attachment_orphan',
 'post_attachmentbox',
 'post_newthread',
 'post_reply_review_toolong',
@@ -119,11 +121,14 @@ if ($tid > 0) {
 }
 
 //Warning! These variables are used for template output.
+$attachfile = '';
+$attachment = '';
 $captchapostcheck = '';
 $dissubject = '';
 $imghash = '';
 $message = '';
 $message1 = '';
+$postinfo = array();
 $preview = '';
 $spelling_lang = '';
 $spelling_submit1 = '';
@@ -185,8 +190,7 @@ if ($forum['type'] == 'sub') {
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
-$attachfile = '';
-if (isset($forum['attachstatus']) && $forum['attachstatus'] == 'on') {
+if ($forum['attachstatus'] == 'on') {
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
@@ -356,6 +360,14 @@ switch($action) {
 
         eval('echo "'.template('header').'";');
 
+        if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+            attachUploadedFile('attach');
+            doAttachmentEdits();
+            $attachSkipped = FALSE;
+        } else {
+            $attachSkipped = TRUE;
+        }
+
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
         //Check all replying permissions for this $tid.
@@ -421,12 +433,7 @@ switch($action) {
         }
 
         if ($replyvalid) {
-            $attachedfile = FALSE;
-            if (isset($_FILES['attach'])) {
-                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
-            }
-
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0 && $attachedfile === FALSE) {
+            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0) {
                 softerror($lang['postnothing']);
                 $replyvalid = FALSE;
             }
@@ -518,8 +525,12 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            if ($attachedfile != FALSE) {
-                $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
+            if ($forum['attachstatus'] == 'on') {
+                if ($attachSkipped) {
+                    attachUploadedFile('attach', $pid);
+                } elseif ($username != 'Anonymous') {
+                    claimOrphanedAttachments($pid);
+                }
             }
 
             $topicpages = quickpage($posts, $ppp);
@@ -527,6 +538,23 @@ switch($action) {
         }
 
         if (!$replyvalid) {
+            // Fill $attachfile
+            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+                $attachment = '';
+                $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                while ($postinfo = $db->fetch_array($query)) {
+                    $postinfo['filename'] = attrOut($postinfo['filename']);
+                    $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
+                    eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                }
+                if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
+                    $attachfile = $attachment.$attachfile;
+                } else {
+                    $attachfile = $attachment;
+                }
+                $db->free_result($query);
+            }
+
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
@@ -608,6 +636,14 @@ switch($action) {
         }
 
         eval('echo "'.template('header').'";');
+
+        if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+            attachUploadedFile('attach');
+            doAttachmentEdits();
+            $attachSkipped = FALSE;
+        } else {
+            $attachSkipped = TRUE;
+        }
 
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -777,13 +813,12 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
-            $attachedfile = FALSE;
-            if (isset($_FILES['attach'])) {
-                $attachedfile = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize']);
-            }
-
-            if ($attachedfile !== FALSE) {
-                $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$attachedfile', 0)");
+            if ($forum['attachstatus'] == 'on') {
+                if ($attachSkipped) {
+                    attachUploadedFile('attach', $pid);
+                } elseif ($username != 'Anonymous') {
+                    claimOrphanedAttachments($pid);
+                }
             }
 
             $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
@@ -795,6 +830,23 @@ switch($action) {
         }
 
         if (!$topicvalid) {
+            // Fill $attachfile
+            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+                $attachment = '';
+                $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                while ($postinfo = $db->fetch_array($query)) {
+                    $postinfo['filename'] = attrOut($postinfo['filename']);
+                    $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
+                    eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                }
+                if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
+                    $attachfile = $attachment.$attachfile;
+                } else {
+                    $attachfile = $attachment;
+                }
+                $db->free_result($query);
+            }
+
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
@@ -838,10 +890,10 @@ switch($action) {
 
         eval('echo "'.template('header').'";');
 
-        $editvalid = onSubmit('editsubmit'); // This new flag will indicate a message was submitted and successful.
+        $editvalid = TRUE; // This new flag will indicate a message was submitted and successful.
 
         //Check all editing permissions for this $pid.  Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
-        $query = $db->query("SELECT p.author as author, m.status as status, p.subject as subject FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON p.author=m.username WHERE pid=$pid");
+        $query = $db->query("SELECT p.*, m.status FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON p.author=m.username WHERE p.pid=$pid");
         $orig = $db->fetch_array($query);
         $db->free_result($query);
 
@@ -857,6 +909,15 @@ switch($action) {
         }
 
         if ($editvalid) {
+            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+                attachUploadedFile('attach', $pid);
+                doAttachmentEdits($pid);
+            }
+
+            $editvalid = onSubmit('editsubmit');
+        }
+
+        if ($editvalid) {
             if ($posticon != '') {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if ($db->num_rows($query) == 0) {
@@ -869,7 +930,7 @@ switch($action) {
         }
 
         if ($editvalid) {
-            $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline LIMIT 1");
+            $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline LIMIT 1");
             $isfirstpost = $db->fetch_array($query);
             $db->free_result($query);
 
@@ -882,114 +943,75 @@ switch($action) {
         if ($editvalid) {
             $threaddelete = 'no';
 
-            $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
-            if ($isfirstpost['pid'] == $pid && !(isset($delete) && $delete == 'yes')) {
-                $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$dbsubject' WHERE tid='$tid'");
-            }
-
-            if ($SETTINGS['editedby'] == 'on') {
-                $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
-            }
-
-            $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
-            $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid='$pid'");
-
-            if (isset($_FILES['attach']) && ($file = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
-                $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attach[type]', '$filesize', '$file', 0)");
-            }
-
-            if (isset($attachment) && is_array($attachment)) {
-                switch($attachment['action']) {
-                    case 'replace':
-                        if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
-                            $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-                            $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attachment_replace[type]', '$filesize', '$file', 0)");
-                        }
-                        break;
-                    case 'rename':
-                        $rename = trim(postedVar('attach_name', '', FALSE, FALSE));
-                        if (isValidFilename($rename)) {
-                            $dbrename = $db->escape($rename);
-                            $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE pid=$pid");
-                        }
-                        break;
-                    case 'delete':
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-                        break;
-                    default:
-                        break;
+            if (!(isset($delete) && $delete == 'yes')) {
+                if ($SETTINGS['editedby'] == 'on') {
+                    $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
                 }
-            }
 
-            if (isset($delete) && $delete == 'yes' && !($isfirstpost['pid'] == $pid)) {
+                $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
+                $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
+
+                if ($isfirstpost['pid'] == $pid) {
+                    $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$dbsubject' WHERE tid=$tid");
+                }
+
+                $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid=$pid");
+            } else {
+                $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-                $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$pid'");
-                updatethreadcount($tid);
-                updateforumcount($fid);
-            } else if (isset($delete) && $delete == 'yes' && $isfirstpost['pid'] == $pid) {
-                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                $numrows = $db->num_rows($query);
-                $db->free_result($query);
+                deleteAllAttachments($pid);
 
-                if ($numrows == 1) {
-                    $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                    while($result = $db->fetch_array($query)) {
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($result['author'])."'");
-                    }
+                if ($isfirstpost['pid'] == $pid) {
+                    $query = $db->query("SELECT COUNT(pid) AS pcount FROM ".X_PREFIX."posts WHERE tid=$tid");
+                    $numrows = $db->fetch_array($query);
+                    $numrows = $numrows['pcount'];
                     $db->free_result($query);
-                    $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid'");
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid='$tid'");
-                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                    $threaddelete = 'yes';
-                }
 
-                if ($numrows > 1) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-                    $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid='$pid'");
-                    $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid='$tid' ORDER BY dateline ASC LIMIT 1");
-                    $threaddelete = 'no';
+                    if ($numrows == 0) {
+                        $threaddelete = 'yes';
+                        $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid");
+                    } else {
+                        $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
+                    }
                 }
                 updatethreadcount($tid);
                 updateforumcount($fid);
             }
 
-            if ($threaddelete != 'yes') {
-                $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= '$pid' AND tid='$tid' AND fid='$fid'");
+            if ($threaddelete == 'no') {
+                $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE dateline <= {$orig['dateline']} AND tid=$tid");
                 $posts = $db->result($query,0);
                 $db->free_result($query);
                 $topicpages = quickpage($posts, $ppp);
-                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}&page={$topicpages}#pid${pid}", true, false, true);
             } else {
                 message($lang['editpostmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
             }
         }
 
         if (!$editvalid) {
+            // Fill $attachment
+            $attachment = '';
+            $query = $db->query("SELECT aid, filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0");
+            while ($postinfo = $db->fetch_array($query)) {
+                $postinfo['filename'] = attrOut($postinfo['filename']);
+                $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
+                $postinfo['url'] = getAttachmentURL($postinfo['aid'], $pid, $postinfo['filename']);
+                eval('$attachment .= "'.template('post_edit_attachment').'";');
+            }
+            if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
+                $attachment .= $attachfile;
+            }
+            $db->free_result($query);
+
+            // Fill $postinfo
             $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
             if (onSubmit('editsubmit') || isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
                 $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon);
-                $query = $db->query("SELECT filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid='$pid' AND tid='$tid'");
-                if ($db->num_rows($query) > 0) {
-                    $postinfo = array_merge($postinfo, $db->fetch_array($query));
-                }
-                $db->free_result($query);
             } else {
-                $query = $db->query("SELECT a.filename, a.filesize, a.downloads, p.* FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."attachments a  ON (a.pid=p.pid) WHERE p.pid='$pid' AND p.tid='$tid' AND p.fid=".$forum['fid']);
-                $postinfo = $db->fetch_array($query);
-                $db->free_result($query);
+                $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
-            }
-
-            //update
-            if (isset($postinfo['filesize'])) {
-                $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-            }
-
-            if (isset($postinfo['filename'])) {
-                $postinfo['filename'] = attrOut($postinfo['filename']);
             }
 
             if ($postinfo['bbcodeoff'] == 'yes') {
@@ -1028,11 +1050,6 @@ switch($action) {
             $postinfo['message'] = rawHTMLmessage($postinfo['message']);
             $postinfo['subject'] = rawHTMLsubject($postinfo['subject']);
 
-            if (isset($postinfo['filename']) && $postinfo['filename'] != '') {
-                eval('$attachment = "'.template('post_edit_attachment').'";');
-            } else {
-                $attachment = $attachfile;
-            }
             eval('echo "'.template('post_edit').'";');
         }
         break;

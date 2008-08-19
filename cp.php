@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1819,8 +1819,12 @@ if ($action == "upgrade") {
     if (onSubmit('upgradesubmit')) {
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
-            $add = get_attached_file($_FILES['sql_file'], 'on');
-            if ($add !== false) {
+            require('include/attach.inc.php');
+            $filename = '';
+            $filetype = '';
+            $filesize = 0;
+            $add = get_attached_file('sql_file', $filename, $filetype, $filesize, FALSE);
+            if ($add !== FALSE) {
                 $upgrade .= $add;
             }
         }
