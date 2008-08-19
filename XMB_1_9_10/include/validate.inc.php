@@ -669,6 +669,6 @@ function getLangFileNameFromHash($ordinal) {
 }
 
 function isValidFilename($filename) {
-    return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]*$#", trim($filename));
+    return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
 ?>

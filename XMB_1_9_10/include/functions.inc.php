@@ -505,8 +505,12 @@ function bbcode($message, $allowimgcode) {
     $patterns = array();
     $replacements = array();
 
-    $patterns[] = "#\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen)\](.*?)\[/color\]#Ssi";
+    $patterns[] = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\](.*?)\[/color\]@Ssi";
     $replacements[] = '<span style="color: $1;">$2</span>';
+    $patterns[] = "@\[color=#([\\da-f]{3,6})\](.*?)\[/color\]@Ssi";
+    $replacements[] = '<span style="color: #$1;">$2</span>';
+    $patterns[] = "@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\](.*?)\[/color\]@Ssi";
+    $replacements[] = '<span style="color: rgb($1);">$2</span>';
     $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
     $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';
     $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
@@ -934,7 +938,7 @@ function end_time() {
         $stuff = array();
         $stuff[] = '<table cols="2" style="width: 97%;"><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
         foreach($db->querylist as $key=>$val) {
-            $val = mysql_syn_highlight($val);
+            $val = mysql_syn_highlight(cdataOut($val));
             $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($db->querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
         }
         $stuff[] = '</table>';
@@ -984,7 +988,7 @@ function get_extension($filename) {
     }
 }
 
-function get_attached_file($file, $attachstatus, $max_size=1000000) {
+function get_attached_file($file, $attachstatus, $max_size=1000000, $dbescape=TRUE) {
     global $lang, $filename, $filetype, $filesize;
 
     $filename = '';
@@ -1003,10 +1007,16 @@ function get_attached_file($file, $attachstatus, $max_size=1000000) {
             error($lang['attachtoobig'], false, '', '', false, false, false, false);
             return false;
         } else {
-            $attachment = addslashes(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
-            $filename = addslashes($file['name']);
-            $filetype = addslashes(preg_replace('#[\r\n%]#', '', $file['type']));
-
+            if ($dbescape) {
+                $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
+                $filename = $db->escape($file['name']);
+                $filetype = $db->escape(preg_replace('#[\\x00\\r\\n%]#', '', $file['type']));
+            } else {
+                $attachment = fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name']));
+                $filename = $file['name'];
+                $filetype = preg_replace('#[\\x00\\r\\n%]#', '', $file['type']);
+            }
+    
             if ($filesize == 0) {
                 return false;
             } else {

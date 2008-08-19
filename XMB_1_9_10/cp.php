@@ -1840,7 +1840,7 @@ if ($action == "upgrade") {
     if (onSubmit('upgradesubmit')) {
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
-            $add = get_attached_file($_FILES['sql_file'], 'on');
+            $add = get_attached_file($_FILES['sql_file'], 'on', ini_get('upload_max_filesize'), FALSE);
             if ($add !== false) {
                 $upgrade .= $add;
             }

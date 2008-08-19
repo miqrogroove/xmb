@@ -890,7 +890,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid='$pid'");
 
             if (isset($_FILES['attach']) && ($file = get_attached_file($_FILES['attach'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
-                $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attach[type]', '$filesize', '$file', 0)");
+                $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$file', 0)");
             }
 
             if (isset($attachment) && is_array($attachment)) {
@@ -898,7 +898,7 @@ switch($action) {
                     case 'replace':
                         if (isset($_FILES['attachment_replace']) && ($file = get_attached_file($_FILES['attachment_replace'], $forum['attachstatus'], $SETTINGS['maxattachsize'])) !== false) {
                             $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid='$pid'");
-                            $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$attachment_replace[type]', '$filesize', '$file', 0)");
+                            $db->query("INSERT INTO ".X_PREFIX."attachments (tid, pid, filename, filetype, filesize, attachment, downloads) VALUES ($tid, $pid, '$filename', '$filetype', '$filesize', '$file', 0)");
                         }
                         break;
                     case 'rename':
