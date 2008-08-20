@@ -577,11 +577,12 @@ foreach($db->fetch_array($query) as $key=>$val) {
     }
     $THEME[$key] = $val;
 }
-$imgdir = './'.$imgdir;
+$imgdirpath = ROOT.$imgdir;
+$imgdir = $full_url.$imgdir;
 $db->free_result($query);
 
 // additional CSS to load?
-if (file_exists($imgdir.'/theme.css')) {
+if (file_exists($imgdirpath.'/theme.css')) {
     $cssInclude = '<style type="text/css">'."\n"."@import url('".$imgdir."/theme.css');"."\n".'</style>';
 } else {
     $cssInclude = '';
