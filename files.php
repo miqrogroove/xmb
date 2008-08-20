@@ -39,6 +39,7 @@ $aid = 0;
 $pid = 0;
 $filename = '';
 
+// Parse "Pretty" URLs
 switch(intval($SETTINGS['file_url_format'])) {
 case 1:
 //    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
@@ -83,6 +84,7 @@ if ($aid <= 0 Or ($pid <= 0 And $filename == '')) {
     fileError();
 }
 
+// Retrieve attachment metadata
 if ($pid > 0) {
     $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.aid=$aid AND a.pid=$pid");
 } else {
@@ -101,6 +103,7 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
     fileError();
 }
 
+// Check attachment permissions
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW]) {
     error($lang['privforummsg']);
@@ -121,10 +124,36 @@ if ($forum['type'] == 'sub') {
     unset($fup);
 }
 
-if ($file['filesize'] != strlen($file['attachment'])) {
+// Verify file is available
+$path = '';
+$size = 0;
+if ($file['subdir'] == '') {
+    $size = strlen($file['attachment']);
+} else {
+    $path = $SETTINGS['files_storage_path'];
+    if (substr($path, -1) != '/') {
+        $path .= '/';
+    }
+    $path = $path.$file['subdir'].'/'.$file['aid'];
+    $size = intval(filesize($path));
+}
+if ($size != $file['filesize']) {
     error($lang['filecorrupt']);
 }
 
+// Verify output stream is empty
+if (headers_sent()) {
+    if (DEBUG) {
+        headers_sent($filepath, $linenum);
+        exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
+    } else {
+        exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+    }
+}
+
+// Do not issue any errors below this line
+
+// Check If-Modified-Since request header
 // "If the requested variant has not been modified since the time specified in this field,
 // an entity will not be returned from the server; instead, a 304 (not modified) response
 // will be returned without any message-body."
@@ -135,12 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' And isset($_SERVER['HTTP_IF_MODIFIED_SIN
     }
 }
 
+// Increment hit counter
 $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$aid");
 
+// Set response headers
 $type = strtolower($file['filetype']);
-$size = (int) $file['filesize'];
 $type = ($type == 'text/html') ? 'text/plain' : $type;
-
 header("Content-type: $type");
 header("Content-length: $size");
 header("Content-Disposition: attachment; filename=\"{$file['filename']}\"");
@@ -149,7 +178,12 @@ header("Cache-Control: public; max-age=604800");
 header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
 header("Last-Modified: ".gmdate('D, d M Y H:i:s', $file['updatestamp'])." GMT");
 
-echo $file['attachment'];
+// Send the response entity
+if ($file['subdir'] == '') {
+    echo $file['attachment'];
+} else {
+    readfile($path);
+}
 exit();
 
 function fileError() {

@@ -39,7 +39,15 @@ function attachUploadedFile($varname, $pid=0) {
     global $db, $self, $SETTINGS;
     
     $pid = intval($pid);
-    $file = get_attached_file($varname, $filename, $filetype, $filesize);
+    $path = $SETTINGS['files_storage_path'];
+    $usedb = TRUE;
+    if ($path != '') {
+        if (is_dir($path)) {
+            $usedb = FALSE;
+        }
+    }
+
+    $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
 
     if ($file !== FALSE) {
         if ($pid == 0) {
@@ -75,12 +83,40 @@ function attachUploadedFile($varname, $pid=0) {
             }
 
             // Store File
-            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size) VALUES ($pid, '$filename', '$filetype', '$filesize', '$file', {$self['uid']}, '$sqlsize')");
-            unset($file);
+            if ($usedb) {
+                $subdir = '';
+            } else {
+                if ($SETTINGS['files_subdir_format'] = 1) {
+                    $subdir = gmdate('Y/m');
+                } else {
+                    $subdir = gmdate('Y/m/d');
+                }
+                if (substr($path, -1) != '/') {
+                    $path .= '/';
+                }
+                $path = $path.$subdir;
+                if (!is_dir($path)) {
+                    mkdir($path, 0777, TRUE);
+                }
+            }
+            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, '$sqlsize', '$subdir')");
+            if ($db->affected_rows() == 1) {
+                $aid = $db->insert_id();
+            } else {
+                return FALSE;
+            }
+            if ($usedb) {
+                unset($file);
+                $path = $_FILES[$varname]['tmp_name'];
+            } else {
+                $newfilename = $aid;
+                $path .= '/'.$newfilename;
+                move_uploaded_file($_FILES[$varname]['tmp_name'], $path);
+            }
 
             // Make Thumbnail
             if ($result !== FALSE) {
-                createThumbnail($_FILES[$varname]['name'], $_FILES[$varname]['tmp_name'], $filesize, $imgSize, $db->insert_id(), $pid);
+                createThumbnail($_FILES[$varname]['name'], $path, $filesize, $imgSize, $aid, $pid);
             }
 
             return TRUE;
@@ -141,12 +177,13 @@ function deleteAllAttachments($pid) {
     $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
 }
 
-function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE) {
+function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE, $loadfile=TRUE) {
     global $db, $lang, $SETTINGS;
 
     $filename = '';
     $filetype = '';
     $filesize = 0;
+    $attachment = '';
 
     if (isset($_FILES[$varname])) {
         $file =& $_FILES[$varname];
@@ -167,11 +204,15 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
             return false;
         } else {
             if ($dbescape) {
-                $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
+                if ($loadfile) {
+                    $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
+                }
                 $filename = $db->escape($file['name']);
                 $filetype = $db->escape(preg_replace('#[\\x00\\r\\n%]#', '', $file['type']));
             } else {
-                $attachment = fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name']));
+                if ($loadfile) {
+                    $attachment = fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name']));
+                }
                 $filename = $file['name'];
                 $filetype = preg_replace('#[\\x00\\r\\n%]#', '', $file['type']);
             }
@@ -297,7 +338,7 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid) 
     imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
     imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
 
-    $filename = $filename.'-thumb.jpg';
+    $filename = $db->escape($filename.'-thumb.jpg');
     $filepath = $filepath.'-thumb.jpg';
 
     // Write to Disk
@@ -308,7 +349,9 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid) 
     $filetype = 'image/jpeg';
     $sqlsize = $thumbSize->width.'x'.$thumbSize->height;
 
-    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size) VALUES ($pid, '$filename', '$filetype', '$filesize', '$file', {$self['uid']}, $aid, '$sqlsize')");
+    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize')");
+    unset($file);
+    unlink($filepath);
     
     return TRUE;
 }
