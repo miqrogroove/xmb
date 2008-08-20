@@ -125,6 +125,16 @@ if ($file['filesize'] != strlen($file['attachment'])) {
     error($lang['filecorrupt']);
 }
 
+// "If the requested variant has not been modified since the time specified in this field,
+// an entity will not be returned from the server; instead, a 304 (not modified) response
+// will be returned without any message-body."
+if ($_SERVER['REQUEST_METHOD'] == 'GET' And isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+    if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $file['updatestamp']) {
+        header('HTTP/1.0 304 Not Modified');
+        exit;
+    }
+}
+
 $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$aid");
 
 $type = strtolower($file['filetype']);
