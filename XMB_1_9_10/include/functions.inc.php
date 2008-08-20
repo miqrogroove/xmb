@@ -989,7 +989,7 @@ function get_extension($filename) {
 }
 
 function get_attached_file($file, $attachstatus, $max_size=1000000, $dbescape=TRUE) {
-    global $lang, $filename, $filetype, $filesize;
+    global $db, $lang, $filename, $filetype, $filesize;
 
     $filename = '';
     $filetype = '';
