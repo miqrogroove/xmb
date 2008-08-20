@@ -64,6 +64,14 @@ function attachUploadedFile($varname, $pid=0) {
             if ($result !== FALSE) {
                 $imgSize = new CartesianSize($result[0], $result[1]);
                 $sqlsize = $result[0].'x'.$result[1];
+
+                $result = explode('x', $SETTINGS['max_image_size']);
+                if ($result[0] > 0 And $result[1] > 0) {
+                    $maxImgSize = new CartesianSize($result[0], $result[1]);
+                    if ($imgSize->isBiggerThan($maxImgSize)) {
+                        return FALSE;
+                    }
+                }
             }
 
             // Store File
@@ -72,7 +80,7 @@ function attachUploadedFile($varname, $pid=0) {
 
             // Make Thumbnail
             if ($result !== FALSE) {
-                createThumbnail($_FILES[$varname]['name'], $_FILES[$varname]['tmp_name'], $imgSize, $db->insert_id(), $pid);
+                createThumbnail($_FILES[$varname]['name'], $_FILES[$varname]['tmp_name'], $filesize, $imgSize, $db->insert_id(), $pid);
             }
 
             return TRUE;
@@ -93,9 +101,8 @@ function doAttachmentEdits($pid=0) {
         foreach($_POST['attachment'] as $aid => $attachment) {
             switch($attachment['action']) {
             case 'replace':
-                if (attachUploadedFile('replace_'.$aid, $pid)) {
-                    deleteAttachment($aid, $pid);
-                }
+                deleteAttachment($aid, $pid);
+                attachUploadedFile('replace_'.$aid, $pid);
                 break;
             case 'rename':
                 $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
@@ -214,7 +221,20 @@ function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
     return $url;
 }
 
-function createThumbnail($filename, $filepath, $imgSize, $aid, $pid) {
+function getSizeFormatted($attachsize) {
+    if ($attachsize >= 1073741824) {
+        $attachsize = round($attachsize / 1073741824, 2)."GB";
+    } else if ($attachsize >= 1048576) {
+        $attachsize = round($attachsize / 1048576, 1)."MB";
+    } else if ($attachsize >= 1024) {
+        $attachsize = round($attachsize / 1024)."kB";
+    } else {
+        $attachsize = $attachsize."B";
+    }
+    return $attachsize;
+}
+
+function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid) {
     global $db, $self, $SETTINGS;
 
     // Check if GD is available
@@ -236,12 +256,12 @@ function createThumbnail($filename, $filepath, $imgSize, $aid, $pid) {
 
     // Create a thumbnail for this attachment.
     if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
-        $thumbSize = new CartesianSize($thumbMaxSize->width, round($imgSize->aspect() * $thumbMaxSize->width));
+        $thumbSize = new CartesianSize($thumbMaxSize->width, round($thumbMaxSize->width / $imgSize->aspect()));
     } else {
         $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
     }
     
-    $extention = get_extension($filename);
+    $extension = get_extension($filename);
     switch($extension) {
     case 'png':
         $img = @imagecreatefrompng($filepath);
@@ -270,12 +290,18 @@ function createThumbnail($filename, $filepath, $imgSize, $aid, $pid) {
     if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
         return FALSE;
     }
+    
+    // Write full size and dimensions on thumbnail
+    $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
+    $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 96);
+    imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
+    imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
 
     $filename = $filename.'-thumb.jpg';
     $filepath = $filepath.'-thumb.jpg';
 
     // Write to Disk
-    imagejpeg($thumb, $filepath);
+    imagejpeg($thumb, $filepath, 85);
 
     $filesize = intval(filesize($filepath));
     $file = $db->escape(fread(fopen($filepath, 'rb'), $filesize));

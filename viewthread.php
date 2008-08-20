@@ -658,16 +658,7 @@ if ($action == '') {
                     $post['filename'] = attrOut($attach['filename']);
                     $post['filetype'] = attrOut($attach['filetype']);
                     $post['fileurl'] = getAttachmentURL($attach['aid'], $post['pid'], $attach['filename']);
-                    $attachsize = $attach['filesize'];
-                    if ($attachsize >= 1073741824) {
-                        $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
-                    } else if ($attachsize >= 1048576) {
-                        $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-                    } else if ($attachsize >= 1024) {
-                        $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
-                    } else {
-                        $attachsize = $attachsize . "b";
-                    }
+                    $attachsize = getSizeFormatted($attach['filesize']);
 
                     $post['filedims'] = '';
                     $extention = get_extension($post['filename']);

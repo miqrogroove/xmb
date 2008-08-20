@@ -139,6 +139,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
     'files_virtual_url' => "VARCHAR(60) NOT NULL",
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
+    'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '2000x2000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
