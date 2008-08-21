@@ -38,10 +38,11 @@ if (!defined('IN_CODE')) {
 function attachUploadedFile($varname, $pid=0) {
     global $db, $self, $SETTINGS;
     
+    $path = getFullPathFromSubdir('');
     $pid = intval($pid);
-    $path = $SETTINGS['files_storage_path'];
     $usedb = TRUE;
-    if ($path != '') {
+
+    if ($path !== FALSE) {
         if (is_dir($path)) {
             $usedb = FALSE;
         }
@@ -50,6 +51,13 @@ function attachUploadedFile($varname, $pid=0) {
     $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
 
     if ($file !== FALSE) {
+        // Check minimum file size for disk storage
+        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+            $usedb = TRUE;
+            $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+        }
+
+        // Check maximum attachments per post
         if ($pid == 0) {
             $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
         } else {
@@ -86,37 +94,36 @@ function attachUploadedFile($varname, $pid=0) {
             if ($usedb) {
                 $subdir = '';
             } else {
-                if ($SETTINGS['files_subdir_format'] = 1) {
-                    $subdir = gmdate('Y/m');
-                } else {
-                    $subdir = gmdate('Y/m/d');
-                }
-                if (substr($path, -1) != '/') {
-                    $path .= '/';
-                }
-                $path = $path.$subdir;
+                $file = '';
+                $subdir = getNewSubdir();
+                $path = getFullPathFromSubdir($subdir);
                 if (!is_dir($path)) {
                     mkdir($path, 0777, TRUE);
                 }
             }
             $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, '$sqlsize', '$subdir')");
+            unset($file);
             if ($db->affected_rows() == 1) {
                 $aid = $db->insert_id();
             } else {
                 return FALSE;
             }
             if ($usedb) {
-                unset($file);
                 $path = $_FILES[$varname]['tmp_name'];
             } else {
                 $newfilename = $aid;
-                $path .= '/'.$newfilename;
+                $path .= $newfilename;
                 move_uploaded_file($_FILES[$varname]['tmp_name'], $path);
             }
 
             // Make Thumbnail
             if ($result !== FALSE) {
-                createThumbnail($_FILES[$varname]['name'], $path, $filesize, $imgSize, $aid, $pid);
+                createThumbnail($_FILES[$varname]['name'], $path, $filesize, $imgSize, $aid, $pid, $subdir);
+            }
+            
+            // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
+            if ($usedb) {
+                unlink($path);
             }
 
             return TRUE;
@@ -165,16 +172,30 @@ function renameAttachment($aid, $pid, $rawnewname) {
 }
 
 function deleteAttachment($aid, $pid) {
-    global $db;
     $aid = intval($aid);
     $pid = intval($pid);
-    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE (aid=$aid OR parentid=$aid) AND pid=$pid");
+    private_deleteAttachments("WHERE (aid=$aid OR parentid=$aid) AND pid=$pid");
 }
 
 function deleteAllAttachments($pid) {
-    global $db;
     $pid = intval($pid);
-    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$pid");
+    private_deleteAttachments("WHERE pid=$pid");
+}
+
+function private_deleteAttachments($where) {
+    global $db;
+    $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments $where");
+    while($attachment = $db->fetch_array($query)) {
+        $path = getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
+        if ($path !== FALSE) {
+            $path .= $attachment['aid'];
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
+    $db->query("DELETE FROM ".X_PREFIX."attachments $where");
 }
 
 function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE, $loadfile=TRUE) {
@@ -186,7 +207,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     $attachment = '';
 
     if (isset($_FILES[$varname])) {
-        $file =& $_FILES[$varname];
+        $file = $_FILES[$varname];
     } else {
         return false;
     }
@@ -275,7 +296,37 @@ function getSizeFormatted($attachsize) {
     return $attachsize;
 }
 
-function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid) {
+// getNewSubdir returns the value that should be stored in the subdir column of a new row in the attachment table.
+function getNewSubdir() {
+    global $SETTINGS;
+    if ($SETTINGS['files_subdir_format'] == 1) {
+        return gmdate('Y/m');
+    } else {
+        return gmdate('Y/m/d');
+    }
+}
+
+// getFullPathFromSubdir() returns the concatenation of
+// the file storage path and a specified subdir value.
+// A trailing forward-slash is guaranteed in the return value.
+// Returns FALSE if the file storage path is empty.
+function getFullPathFromSubdir($subdir) {
+    global $SETTINGS;
+    $path = $SETTINGS['files_storage_path'];
+    if (strlen($path) == 0) {
+        return FALSE;
+    }
+    if (substr($path, -1) != '/') {
+        $path .= '/';
+    }
+    $path .= $subdir;
+    if (substr($path, -1) != '/') {
+        $path .= '/';
+    }
+    return $path;
+}
+
+function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid, $subdir) {
     global $db, $self, $SETTINGS;
 
     // Check if GD is available
@@ -344,14 +395,34 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid) 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
 
+    // Gather metadata
     $filesize = intval(filesize($filepath));
-    $file = $db->escape(fread(fopen($filepath, 'rb'), $filesize));
     $filetype = 'image/jpeg';
     $sqlsize = $thumbSize->width.'x'.$thumbSize->height;
 
-    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize')");
+    // Check minimum file size for disk storage
+    if ($filesize < $SETTINGS['files_min_disk_size']) {
+        $subdir = '';
+    }
+
+    // Add database record
+    if ($subdir == '') {
+        $file = $db->escape(fread(fopen($filepath, 'rb'), $filesize));
+        unlink($filepath);
+    } else {
+        $file = '';
+    }
+    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize', '$subdir')");
     unset($file);
-    unlink($filepath);
+    if ($db->affected_rows() == 1) {
+        $aid = $db->insert_id();
+    } else {
+        return FALSE;
+    }
+    if ($subdir != '') {
+        $newfilename = $aid;
+        rename($filepath, getFullPathFromSubdir($subdir).$newfilename);
+    }
     
     return TRUE;
 }

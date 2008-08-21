@@ -123,124 +123,91 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Requesting to lock the settings table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
-    echo 'Deleting the old columns in the settings table...<br />';
+    echo 'Gathering schema information from the settings table...<br />';
+    $sql = array();
+    $table = 'settings';
     $columns = array(
     'boardurl');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'settings DROP COLUMN '.$colname);
+            $sql[] = 'DROP COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
     }
-
-    echo 'Adding the new columns to the settings table...<br />';
     $columns = array(
+    'files_min_disk_size' => "MEDIUMINT NOT NULL DEFAULT '9216'";
+    'files_storage_path' => "VARCHAR( 100 ) NOT NULL";
+    'files_subdir_format' => "TINYINT NOT NULL DEFAULT '1'";
     'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
     'files_virtual_url' => "VARCHAR(60) NOT NULL",
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '2000x2000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'settings ADD '.$colname.' '.$coltype);
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the settings table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
     }
 
     echo 'Requesting to lock the attachments table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
-    echo 'Deleting the old columns in the attachments table...<br />';
+    echo 'Gathering schema information from the attachments table...<br />';
+    $sql = array();
+    $table = 'attachments';
     $columns = array(
     'tid');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'attachments '.$colname);
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'attachments DROP COLUMN '.$colname);
+            $sql[] = 'DROP COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'img_size' => "VARCHAR(9) NOT NULL",
+    'parentid' => "INT NOT NULL DEFAULT '0'",
+    'subdir' => "VARCHAR(1 ) NOT NULL",
+    'uid' => "INT NOT NULL DEFAULT '0'",
+    'updatetime' => "TIMESTAMP NOT NULL default current_timestamp");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'parentid',
+    'uid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
         }
         $db->free_result($query);
     }
 
-    echo 'Adding the new columns to the attachments table...<br />';
-    $columns = array(
-    'img_size' => "VARCHAR(9) NOT NULL",
-    'parentid' => "INT NOT NULL DEFAULT '0'",
-    'uid' => "INT NOT NULL DEFAULT '0'",
-    'updatetime' => "TIMESTAMP NOT NULL default current_timestamp",
-    'INDEX' => "(parentid)",
-    'INDEX' => "(uid)");
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'attachments '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'attachments ADD '.$colname.' '.$coltype);
-        }
-        $db->free_result($query);
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the attachments table...<br />';
+        // Important to do this all in one step because MySQL copies the entire table after every ALTER command.
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
     }
 
     echo 'Releasing the lock on the attachments table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
 
-/*
-    echo 'Requesting to lock the forums table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
-
-    echo 'Checking the forums table schema...<br />';
-    $columns = array(
-    'private',
-    'pollstatus',
-    'guestposting');
-    foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'forums '.$colname);
-        if ($db->num_rows($query) != 1) {
-            echo 'The forums table in your database is not at version 1.9.8.<br />'
-                .'The upgrade process has been aborted to avoid damaging your database.<br />';
-            trigger_error('Admin attempted upgrade while required fields missing from forums table.', E_USER_ERROR);
-        }
-        $db->free_result($query);
-    }
-
-    echo 'Loading the new postperm values...<br />';
-    fixForumPerms(0);
-
-    echo 'Making room for the new values in the postperm column...<br />';
-    $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
-
-    echo 'Saving the new postperm values...<br />';
-    fixForumPerms(1);
-
-    echo 'Deleting the index on the private column...<br />';
-    $query = $db->query('SHOW INDEX FROM '.X_PREFIX.'forums');
-    while($indexrow = $db->fetch_array($query)) {
-        if ($indexrow['Key_name'] == 'private') { // Index exists
-            $db->query('ALTER TABLE '.X_PREFIX."forums DROP INDEX private");
-            break;
-        }
-    }
-    $db->free_result($query);
-
-    echo 'Deleting the old columns in the forums table...<br />';
-    $columns = array(
-    'private',
-    'pollstatus',
-    'guestposting',
-    'mt_status',
-    'mt_open',
-    'mt_close');
-    foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'forums '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'forums DROP COLUMN '.$colname);
-        }
-        $db->free_result($query);
-    }
-
-    echo 'Releasing the lock on the forums table...<br />';
-    $db->query('UNLOCK TABLES');
-    flush();
-*/
 
     echo 'Opening the templates file...<br />';
     $stream = fopen('templates.xmb','r');
@@ -271,44 +238,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Deleting the templates.xmb file...<br />';
     unlink('templates.xmb');
 
-/*
-    echo 'Requesting to lock the settings table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
-
-    echo 'Deleting the old columns in the settings table...<br />';
-    $columns = array(
-    'files_status',
-    'files_foldername',
-    'files_screenshot',
-    'files_shotsize',
-    'files_guests',
-    'files_cpp',
-    'files_mouseover',
-    'files_fpp',
-    'files_report',
-    'files_jumpbox',
-    'files_search',
-    'files_spp',
-    'files_searchcolor',
-    'files_stats',
-    'files_notify',
-    'files_content_types',
-    'files_comment_report',
-    'files_navigation',
-    'files_faq',
-    'files_paypal_account');
-    foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.'settings '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $db->query('ALTER TABLE '.X_PREFIX.'settings DROP COLUMN '.$colname);
-        }
-        $db->free_result($query);
-    }
-
-    echo 'Releasing the lock on the settings table...<br />';
-    $db->query('UNLOCK TABLES');
-    flush();
-*/
 
     echo 'Checking for new themes...';
     $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='Oxygen XMB'");
