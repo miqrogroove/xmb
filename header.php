@@ -723,6 +723,7 @@ if (count($pluglinks) == 0) {
 
 // If the board is offline, display an appropriate message
 if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
+    $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
         header('HTTP/1.0 503 Service Unavailable');
         header('Retry-After: 3600');
@@ -737,6 +738,7 @@ if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
 
 // If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
 if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
+    $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
         $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         eval('$css = "'.template('css').'";');
