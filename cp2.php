@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1725,15 +1725,16 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('searchsubmit')) {
+        require('include/attach.inc.php');
         $dblikefilename = $db->like_escape(postedVar('filename', '', FALSE, FALSE));
         $author = postedVar('author');
         $forumprune = postedVar('forumprune');
         $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
-        $sizeless = formInt('sizeless');
-        $sizemore = formInt('sizemore');
-        $dlcountless = formInt('dlcountless');
-        $dlcountmore = formInt('dlcountmore');
-        $daysold = formInt('daysold');
+        $sizeless = formInt('sizeless', FALSE);
+        $sizemore = formInt('sizemore', FALSE);
+        $dlcountless = formInt('dlcountless', FALSE);
+        $dlcountmore = formInt('dlcountmore', FALSE);
+        $daysold = formInt('daysold', FALSE);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -1746,10 +1747,10 @@ if ($action == "attachments") {
         <td class="category" colspan="6"><font color="<?php echo $cattext?>"><strong><?php echo $lang['textattachsearchresults']?></strong></font></td>
         </tr>
         <tr>
-        <td class="header" width="4%" align="center">?</td>
         <td class="header" width="25%"><?php echo $lang['textfilename']?></td>
-        <td class="header" width="29%"><?php echo $lang['textauthor']?></td>
+        <td class="header" width="19%"><?php echo $lang['textauthor']?></td>
         <td class="header" width="27%"><?php echo $lang['textinthread']?></td>
+        <td class="header" width="10%"><?php echo $lang['textlocation']?></td>
         <td class="header" width="10%"><?php echo $lang['textfilesize']?></td>
         <td class="header" width="5%"><?php echo $lang['textdownloads']?></td>
         </tr>
@@ -1757,11 +1758,37 @@ if ($action == "attachments") {
         $restriction = '';
         $orderby = '';
 
+        if ($dblikefilename != '') {
+            $restriction .= "AND a.filename LIKE '%$dblikefilename%' ";
+        }
+
+        if ($sizeless !== '') {
+            $restriction .= "AND a.filesize < $sizeless ";
+            $orderby = ' ORDER BY a.filesize DESC';
+        }
+
+        if ($sizemore !== '') {
+            $restriction .= "AND a.filesize > $sizemore ";
+            $orderby = ' ORDER BY a.filesize DESC';
+        }
+
+        if ($dlcountless !== '') {
+            $restriction .= "AND a.downloads < $dlcountless ";
+            $orderby = ' ORDER BY a.downloads DESC';
+        }
+
+        if ($dlcountmore !== '') {
+            $restriction .= "AND a.downloads > $dlcountmore ";
+            $orderby = ' ORDER BY a.downloads DESC ';
+        }
+        
+        $restriction2 = 'WHERE b.parentid!=0 '.$restriction;
+
         if ($forumprune) {
             $restriction .= "AND t.fid=$forumprune ";
         }
 
-        if ($daysold) {
+        if ($daysold !== '') {
             $datethen = $onlinetime - (86400 * $daysold);
             $restriction .= "AND p.dateline <= $datethen ";
             $orderby = ' ORDER BY p.dateline ASC';
@@ -1772,56 +1799,96 @@ if ($action == "attachments") {
             $orderby = ' ORDER BY p.author ASC';
         }
 
-        if ($dblikefilename != '') {
-            $restriction .= "AND a.filename LIKE '%$dblikefilename%' ";
-        }
+        $restriction1 = 'WHERE a.parentid=0 '.$restriction;
 
-        if ($sizeless) {
-            $restriction .= "AND a.filesize < $sizeless ";
-            $orderby = ' ORDER BY a.filesize DESC';
+        $query2 = $db->query("SELECT b.aid, b.pid, b.parentid, b.filename, b.filesize, b.downloads, b.subdir FROM ".X_PREFIX."attachments AS b "
+                           . "LEFT JOIN ".X_PREFIX."attachments AS a ON a.aid=b.parentid $restriction2");
+        
+        $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filesize, a.downloads, a.subdir, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname, m.username "
+                          . "FROM ".X_PREFIX."attachments a "
+                          . "LEFT JOIN ".X_PREFIX."posts p USING (pid) "
+                          . "LEFT JOIN ".X_PREFIX."threads t ON t.tid=p.tid "
+                          . "LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid "
+                          . "LEFT JOIN ".X_PREFIX."members m ON a.uid=m.uid $restriction1 $orderby");
+        $diskpath = getFullPathFromSubdir('');
+        if ($diskpath !== FALSE) {
+            $diskpath = is_dir($diskpath);
         }
-
-        if ($sizemore) {
-            $restriction .= "AND a.filesize > $sizemore ";
-            $orderby = ' ORDER BY a.filesize DESC';
-        }
-
-        if ($dlcountless) {
-            $restriction .= "AND a.downloads < $dlcountless ";
-            $orderby = ' ORDER BY a.downloads DESC';
-        }
-
-        if ($dlcountmore) {
-            $restriction .= "AND a.downloads > $dlcountmore ";
-            $orderby = ' ORDER BY a.downloads DESC ';
-        }
-
-        $query = $db->query("SELECT a.aid, a.pid, a.filename, LENGTH(a.attachment) AS rowsize, a.downloads, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname FROM ".X_PREFIX."attachments a LEFT JOIN ".X_PREFIX."posts p USING (pid) LEFT JOIN ".X_PREFIX."threads t ON t.tid=p.tid LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid WHERE 1=1 $restriction $orderby");
         while($attachment = $db->fetch_array($query)) {
-            $attachsize = $attachment['rowsize'];
-            if ($attachsize >= 1073741824) {
-                $attachsize = round($attachsize / 1073741824 * 100) / 100 . "gb";
-            } else if ($attachsize >= 1048576) {
-                $attachsize = round($attachsize / 1048576 * 100) / 100 . "mb";
-            } else if ($attachsize >= 1024) {
-                $attachsize = round($attachsize / 1024 * 100) / 100 . "kb";
-            } else {
-                $attachsize = $attachsize . "b";
-            }
+            $attachsize = getSizeFormatted($attachment['filesize']);
 
             $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
-            $attachment['fname'] = stripslashes($attachment['fname']);
+            $attachment['fname'] = fnameOut($attachment['fname']);
             $attachment['filename'] = attrOut($attachment['filename'], 'javascript');
+            $movelink = '';
+            if ($attachment['subdir'] == '') {
+                $attachment['subdir'] = 'DB';
+                if ($diskpath) {
+                    $movelink = '<a href="cp2.php?action=movetodisk_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['movetodisk'].'</a>';
+                }
+            } else {
+                $attachment['subdir'] = '/'.$attachment['subdir'].'/';
+                if ($diskpath) {
+                    $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['movetodb'].'</a>';
+                }
+            }
+            if ($attachment['pid'] == 0) {
+                $attachment['author'] = $attachment['username'];
+                $downloadlink = '';
+            } else {
+                $downloadlink = '<a href="'.getAttachmentURL($attachment['aid'], $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
+            }
+            $deletelink = '<a href="cp2.php?action=delete_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['deletebutton'].'</a>';
             ?>
             <tr>
-            <td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center" valign="middle"><a href="cp2.php?action=delete_attachment&amp;aid=<?php echo $attachment['aid']?>">Delete</a>
-            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>"><br /><span class="smalltxt"><a href="viewthread.php?action=attachment&amp;tid=<?php echo $attachment['tid']?>&amp;pid=<?php echo $attachment['pid']?>" target="_blank"><?php echo $lang['textdownload']?></a></td>
+            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>">
+                <br /><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?> - <?php echo $deletelink; ?></span></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment['author']?></td>
-            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment['tid']?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
+            <?php if ($attachment['pid'] == 0) { ?>
+                <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
+            <?php } else { ?>
+                <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment['tid']?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
+            <?php } ?>
+            <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachment['subdir']?></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachsize?></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachment['downloads']?></td>
             </tr>
             <?php
+            if ($db->num_rows($query2) > 0) {
+                $db->data_seek($query2, 0);
+            }
+            while($child = $db->fetch_array($query2)) {
+                if ($child['parentid'] == $attachment['aid'] And substr($child['filename'], -10) == '-thumb.jpg') {
+                    $attachsize = getSizeFormatted($child['filesize']);
+                    $movelink = '';
+                    if ($child['subdir'] == '') {
+                        $child['subdir'] = 'DB';
+                        if ($diskpath) {
+                            $movelink = '<a href="cp2.php?action=movetodisk_attachment&amp;aid='.$child['aid'].'&amp;pid='.$child['pid'].'">'.$lang['movetodisk'].'</a>';
+                        }
+                    } else {
+                        $child['subdir'] = '/'.$child['subdir'].'/';
+                        if ($diskpath) {
+                            $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$child['aid'].'&amp;pid='.$child['pid'].'">'.$lang['movetodb'].'</a>';
+                        }
+                    }
+                    if ($child['pid'] == 0) {
+                        $downloadlink = $lang['thumbnail'];
+                    } else {
+                        $downloadlink = '<a href="'.getAttachmentURL($child['aid'], $child['pid'], $child['filename']).'" target="_blank">'.$lang['thumbnail'].'</a>';
+                    }
+                    ?>
+                        <tr>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?></span></td>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $child['subdir']?></td>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachsize?></td>
+                        <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $child['downloads']?></td>
+                        </tr>
+                    <?php
+                }
+            }
         }
         ?>
         <tr>
@@ -1838,21 +1905,21 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('deletesubmit')) {
-        $filelist = '';
+        require('include/attach.inc.php');
+        $filelist = array();
         foreach($_POST as $postedname => $rawvalue) {
             if (substr($postedname, 0, 8) == 'filename' And is_numeric($fileaid = substr($postedname, 8))) {
-                $filelist .= $fileaid.', ';
+                $filelist[] = $fileaid;
             }
         }
-        $filelist = substr($filelist, 0, -2);
+        $filelist = implode(', ', $filelist);
 
-        $query = $db->query("SELECT a.aid, a.filename FROM ".X_PREFIX."attachments a WHERE a.aid IN ($filelist)");
+        $query = $db->query("SELECT aid, pid, filename FROM ".X_PREFIX."attachments WHERE aid IN ($filelist)");
         while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
-            if ($attachment['filename'] != $postedvalue And isValidFilename($postedvalue)) {
-                $dbrename = $db->escape($postedvalue);
-                $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid={$attachment['aid']}");
+            if ($attachment['filename'] != $postedvalue) {
+                renameAttachment($attachment['aid'], $attachment['pid'], $postedvalue);
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2100,11 +2167,28 @@ if ($action == "cplog") {
 }
 
 if ($action == "delete_attachment") {
+    require('include/attach.inc.php');
     $aid = getInt('aid');
-    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid=$aid");
+    $pid = getInt('pid');
+    deleteAttachment($aid, $pid);
     echo "<p align=\"center\">Deleted ...</br>";
 }
 
+if ($action == "movetodb_attachment") {
+    require('include/attach-admin.inc.php');
+    $aid = getInt('aid');
+    $pid = getInt('pid');
+    moveAttachmentToDB($aid, $pid);
+    echo "<p align=\"center\">Moved ...</br>";
+}
+
+if ($action == "movetodisk_attachment") {
+    require('include/attach-admin.inc.php');
+    $aid = getInt('aid');
+    $pid = getInt('pid');
+    moveAttachmentToDisk($aid, $pid);
+    echo "<p align=\"center\">Moved ...</br>";
+}
 echo '</table></td></tr></table>';
 end_time();
 eval('echo "'.template('footer').'";');

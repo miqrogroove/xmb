@@ -1,0 +1,81 @@
+<?php
+/**
+ * eXtreme Message Board
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ *
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
+ *
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
+
+if (!defined('IN_CODE')) {
+    exit("Not allowed to run this file directly.");
+}
+
+require_once('attach.inc.php');
+
+function moveAttachmentToDB($aid, $pid) {
+    global $db;
+    $aid = intval($aid);
+    $pid = intval($pid);
+    $query = $db->query("SELECT aid, filesize, subdir FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+    if ($db->num_rows($query) != 1) {
+        return FALSE;
+    }
+    $attach = $db->fetch_array($query);
+    if ($attach['subdir'] == '') {
+        return FALSE;
+    }
+    $path = getFullPathFromSubdir($attach['subdir']).$attach['aid'];
+    if (intval(filesize($path)) != intval($attach['filesize'])) {
+        return FALSE;
+    }
+    $attachment = $db->escape(fread(fopen($path, 'rb'), $attach['filesize']));
+    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment'");
+    unlink($path);
+}
+
+function moveAttachmentToDisk($aid, $pid) {
+    global $db;
+    $aid = intval($aid);
+    $pid = intval($pid);
+    $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+    if ($db->num_rows($query) != 1) {
+        return FALSE;
+    }
+    $attach = $db->fetch_array($query);
+    if ($attach['subdir'] != '' Or strlen($attach['attachment']) != $attach['filesize']) {
+        return FALSE;
+    }
+    $subdir = getNewSubdir($attach['updatestamp']);
+    $path = getFullPathFromSubdir($subdir);
+    if (!is_dir($path)) {
+        mkdir($path, 0777, TRUE);
+    }
+    $newfilename = $aid;
+    $path .= $newfilename;
+    $file = fopen($path, 'wb');
+    fwrite($file, $attach['attachment']);
+    fclose($file);
+    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
+}
+
+?>

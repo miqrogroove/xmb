@@ -297,12 +297,15 @@ function getSizeFormatted($attachsize) {
 }
 
 // getNewSubdir returns the value that should be stored in the subdir column of a new row in the attachment table.
-function getNewSubdir() {
+function getNewSubdir($date='') {
     global $SETTINGS;
+    if ($date == '') {
+        $date = time();
+    }
     if ($SETTINGS['files_subdir_format'] == 1) {
-        return gmdate('Y/m');
+        return gmdate('Y/m', $date);
     } else {
-        return gmdate('Y/m/d');
+        return gmdate('Y/m/d', $date);
     }
 }
 
