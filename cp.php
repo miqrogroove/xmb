@@ -202,15 +202,6 @@ if ($action == "settings") {
         $onlinetoday_statuson = $onlinetoday_statusoff = '';
         settingHTML('onlinetoday_status', $onlinetoday_statuson, $onlinetoday_statusoff);
 
-        $avataron = $avataroff = $avatarlist = '';
-        if ($SETTINGS['avastatus'] == 'on') {
-            $avataron = $selHTML;
-        } else if ($avastatus == 'list') {
-            $avatarlist = $selHTML;
-        } else {
-            $avataroff = $selHTML;
-        }
-
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -279,9 +270,9 @@ if ($action == "settings") {
         }
 
         $avchecked[0] = $avchecked[1] = $avchecked[2] = false;
-        if (!empty($avatarlist)) {
+        if ($SETTINGS['avastatus'] == 'list') {
             $avchecked[1] = true;
-        } else if (!empty($avataroff)) {
+        } else if ($SETTINGS['avastatus'] == 'off') {
             $avchecked[2] = true;
         } else {
             $avchecked[0] = true;
@@ -491,7 +482,6 @@ if ($action == "settings") {
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
-        printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
         ?>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
@@ -519,6 +509,34 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
+        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
+        </tr>
+        <?php
+        $max_image_sizes = explode('x', $SETTINGS['max_image_size']);
+        $max_thumb_sizes = explode('x', $SETTINGS['max_thumb_size']);
+        for($i=0; $i<=4; $i++) {
+            $urlformatchecked[$i] = ($SETTINGS['file_url_format'] == $i + 1);
+        }
+        for($i=0; $i<=1; $i++) {
+            $subdirchecked[$i] = ($SETTINGS['files_subdir_format'] == $i + 1);
+        }
+        printsetting2($lang['textfilesperpost'], 'filesperpostnew', ((int)$SETTINGS['filesperpost']), 3);
+        printsetting2($lang['max_attachment_size'], 'maxAttachSize', ((int)$SETTINGS['maxattachsize']), 12);
+        printsetting2($lang['textfilessizew'], 'max_image_size_w_new', $max_image_sizes[0], 5);
+        printsetting2($lang['textfilessizeh'], 'max_image_size_h_new', $max_image_sizes[1], 5);
+        printsetting2($lang['textfilesthumbw'], 'max_thumb_size_w_new', $max_thumb_sizes[0], 5);
+        printsetting2($lang['textfilesthumbh'], 'max_thumb_size_h_new', $max_thumb_sizes[1], 5);
+        printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
+        printsetting2($lang['textfilespath'], 'filespathnew', $SETTINGS['files_storage_path'], 50);
+        printsetting2($lang['textfilesminsize'], 'filesminsizenew', ((int)$SETTINGS['files_min_disk_size']), 7);
+        printsetting3($lang['textfilessubdir'], 'filessubdirnew', array($lang['textfilessubdir1'], $lang['textfilessubdir2']), array('1', '2'), $subdirchecked, false);
+        printsetting3($lang['textfilesurlpath'], 'filesurlpathnew', array($lang['textfilesurlpath1'], $lang['textfilesurlpath2'], $lang['textfilesurlpath3'], $lang['textfilesurlpath4'], $lang['textfilesurlpath5']), array('1', '2', '3', '4', '5'), $urlformatchecked, false);
+        printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_virtual_url'], 50);
+        ?>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        </tr>
+        <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
         </tr>
         <?php
@@ -526,7 +544,6 @@ if ($action == "settings") {
         printsetting1($lang['bbinsert'], 'bbinsertnew', $bbinserton, $bbinsertoff);
         printsetting1($lang['smileyinsert'], 'smileyinsertnew', $smileyinserton, $smileyinsertoff);
         printsetting3($lang['footer_options'], 'new_footer_options', $names, $values, $checked);
-        printsetting2($lang['max_attachment_size'], 'maxAttachSize', ((int)$SETTINGS['maxattachsize']), 8);
         printsetting3($lang['defaultTimezoneDesc'], 'def_tz_new', array($lang['timezone1'], $lang['timezone2'], $lang['timezone3'], $lang['timezone4'], $lang['timezone5'], $lang['timezone6'], $lang['timezone7'], $lang['timezone8'], $lang['timezone9'], $lang['timezone10'], $lang['timezone11'], $lang['timezone12'], $lang['timezone13'], $lang['timezone14'], $lang['timezone15'], $lang['timezone16'], $lang['timezone17'], $lang['timezone18'], $lang['timezone19'], $lang['timezone20'], $lang['timezone21'], $lang['timezone22'], $lang['timezone23'], $lang['timezone24'], $lang['timezone25'], $lang['timezone26'], $lang['timezone27'], $lang['timezone28'], $lang['timezone29'], $lang['timezone30'], $lang['timezone31'], $lang['timezone32'], $lang['timezone33']), array('-12', '-11', '-10', '-9', '-8', '-7', '-6', '-5', '-4', '-3.5', '-3', '-2', '-1', '0', '1', '2', '3', '3.5', '4', '4.5', '5', '5.5', '5.75', '6', '6.5', '7', '8', '9', '9.5', '10', '11', '12', '13'), array($timezone1, $timezone2, $timezone3, $timezone4, $timezone5, $timezone6, $timezone7, $timezone8, $timezone9, $timezone10, $timezone11, $timezone12, $timezone13, $timezone14, $timezone15, $timezone16, $timezone17, $timezone18, $timezone19, $timezone20, $timezone21, $timezone22, $timezone23, $timezone24, $timezone25, $timezone26, $timezone27, $timezone28, $timezone29, $timezone30, $timezone31, $timezone32, $timezone33), false);
         printsetting2($lang['addtime'], 'addtimenew', $SETTINGS['addtime'], 3);
         printsetting1($lang['sigbbcode'], 'sigbbcodenew', $sigbbcodeon, $sigbbcodeoff);
@@ -679,6 +696,19 @@ if ($action == "settings") {
         $index_statsnew = formOnOff('index_statsnew');
         $onlinetodaycountnew = formInt('onlinetodaycountnew');
         $onlinetoday_statusnew = formOnOff('onlinetoday_statusnew');
+        
+        $filespathnew = postedVar('filespathnew');
+        $filesbasenew = postedVar('filesbasenew');
+        $filesminsizenew = formInt('filesminsizenew');
+        $filesperpostnew = formInt('filesperpostnew');
+        $filesurlpathnew = formInt('filesurlpathnew');
+        $filessubdirnew = formInt('filessubdirnew');
+        $max_image_size_w_new = formInt('max_image_size_w_new');
+        $max_image_size_h_new = formInt('max_image_size_h_new');
+        $max_thumb_size_w_new = formInt('max_thumb_size_w_new');
+        $max_thumb_size_h_new = formInt('max_thumb_size_h_new');
+        $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
+        $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -765,7 +795,15 @@ if ($action == "settings") {
             quickjump_status='$quickjump_statusnew',
             index_stats='$index_statsnew',
             onlinetodaycount='$onlinetodaycountnew',
-            onlinetoday_status='$onlinetoday_statusnew'
+            onlinetoday_status='$onlinetoday_statusnew',
+            files_min_disk_size='$filesminsizenew',
+            files_storage_path='$filespathnew',
+            files_subdir_format='$filessubdirnew',
+            file_url_format='$filesurlpathnew',
+            files_virtual_url='$filesbasenew',
+            filesperpost='$filesperpostnew',
+            max_image_size='$max_image_size',
+            max_thumb_size='$max_thumb_size'
         ");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';

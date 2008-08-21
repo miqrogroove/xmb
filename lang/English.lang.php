@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -47,6 +47,7 @@ $lang['admin_main_settings4'] = "Cosmetic Options";
 $lang['admin_main_settings5'] = "User Control";
 $lang['admin_main_settings6'] = "Other";
 $lang['admin_main_settings7'] = 'Captcha Image Settings';
+$lang['admin_main_settings8'] = 'File Attachment Settings';
 $lang['admin_rename_fail'] = "Could not rename user. Either the user does not exist, or there's more than one.";
 $lang['admin_rename_success'] = "Successfully renamed user.";
 $lang['admin_rename_txt'] = "Rename User";
@@ -95,7 +96,7 @@ $lang['analyze'] = 'Analyze Tables';
 $lang['and'] = 'and';
 $lang['anystatus'] = "Any status";
 $lang['asc'] = "Ascending";
-$lang['attachimginpost'] = "Attached Images in Posts:<br /><span class=\"smalltxt\">Do you want to show attachments that are images in the posts?</span>";
+$lang['attachimginpost'] = "Show Thumbnails in Posts:";
 $lang['attachmanwhereauthor'] = "and author is:";
 $lang['attachmanwheredaysold'] = "and where post is this many days old:";
 $lang['attachmanwheredlcountgreater'] = "and download count is greater than:";
@@ -368,7 +369,7 @@ $lang['look_feel'] = 'Look &amp; Feel';
 $lang['lostpw_in24hrs'] = "You have already requested your password once in the last 24 hours.<br />You can not rerequest it in the same 24-hour period.";
 $lang['lpoststats'] = "last post";
 $lang['max_addresses_per_entry'] = "Due to server-protection, it is not allowed to save more than 10 addresses at one time.";
-$lang['max_attachment_size'] = "Maximum Attachment size (in bytes):";
+$lang['max_attachment_size'] = "Maximum File Size (in bytes):";
 $lang['max_avatar_size_h'] = "The maximum avatar Height (in pixels):";
 $lang['max_avatar_size_w'] = "The maximum avatar Width (in pixels):";
 $lang['max_daily_regs'] = "Maximum number of new registrations per day.<br />Set to 0 for unlimited registrations per day.";
@@ -750,7 +751,24 @@ $lang['textfaqstatus'] = "FAQ Status:";
 $lang['textfavorites'] = "Favorites";
 $lang['textfeb'] = "February";
 $lang['textfilename'] = "Filename:";
+$lang['textfilesbase'] = 'Attachment Virtual URL:<br /><span class="smalltxt">Optional, base URL if different from $full_url.</span>';
 $lang['textfilesize'] = "Filesize:";
+$lang['textfilesminsize'] = 'Attachment Minimum Storage Size:<br /><span class="smalltxt">Storage Path is ignored for files<br />smaller than this many bytes.</span>';
+$lang['textfilespath'] = 'Attachment Storage Path:<br /><span class="smalltxt">Optional, disk storage location for new files.</span>';
+$lang['textfilesperpost'] = 'Maximum Files Per Post:';
+$lang['textfilessizeh'] = 'Maximum Image Height:';
+$lang['textfilessizew'] = 'Maximum Image Width:';
+$lang['textfilessubdir'] = 'Attachment Subdirectory Scheme:';
+$lang['textfilessubdir1'] = 'Year/Month';
+$lang['textfilessubdir2'] = 'Year/Month/Day';
+$lang['textfilesthumbh'] = 'Maximum Thumbnail Height:';
+$lang['textfilesthumbw'] = 'Maximum Thumbnail Width:';
+$lang['textfilesurlpath'] = 'Attachment URL Format:<br /><span class="smalltxt">For Advanced Webmasters Only</span>';
+$lang['textfilesurlpath1'] = '____(default) /files.php?pid=$pid&amp;aid=$aid';
+$lang['textfilesurlpath2'] = '(+MultiViews) /files/$pid/$aid/';
+$lang['textfilesurlpath3'] = '(+MultiViews) /files/$aid/$filename';
+$lang['textfilesurlpath4'] = '(mod_rewrite) /$pid/$aid/';
+$lang['textfilesurlpath5'] = '(mod_rewrite) /$aid/$filename';
 $lang['textfixlastposts'] = "Fix Last Posts";
 $lang['textfixmemposts'] = "Fix Member Post Totals";
 $lang['textfixmoods'] = "Reset Blank Moods";
