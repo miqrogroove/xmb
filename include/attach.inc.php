@@ -51,10 +51,9 @@ function attachUploadedFile($varname, $pid=0) {
     $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
 
     if ($file !== FALSE) {
-        // Check minimum file size for disk storage
-        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
-            $usedb = TRUE;
-            $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+        // Sanity checks
+        if (intval($self['uid']) <= 0) {
+            return FALSE;
         }
 
         // Check maximum attachments per post
@@ -65,71 +64,176 @@ function attachUploadedFile($varname, $pid=0) {
         }
         $query = $db->query($sql);
         $query = $db->fetch_array($query);
-        if ($query['atcount'] < $SETTINGS['filesperpost']) {
-            $type = $db->escape($_FILES['attach']['type']);
-            $sqlsize = '';
-
-            // Check if we can store image metadata
-            $extention = get_extension($filename);
-            if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
-                $result = getimagesize($_FILES[$varname]['tmp_name']);
-            } else {
-                $result = FALSE;
-            }
-
-            if ($result !== FALSE) {
-                $imgSize = new CartesianSize($result[0], $result[1]);
-                $sqlsize = $result[0].'x'.$result[1];
-
-                $result = explode('x', $SETTINGS['max_image_size']);
-                if ($result[0] > 0 And $result[1] > 0) {
-                    $maxImgSize = new CartesianSize($result[0], $result[1]);
-                    if ($imgSize->isBiggerThan($maxImgSize)) {
-                        return FALSE;
-                    }
-                }
-            }
-
-            // Store File
-            if ($usedb) {
-                $subdir = '';
-            } else {
-                $file = '';
-                $subdir = getNewSubdir();
-                $path = getFullPathFromSubdir($subdir);
-                if (!is_dir($path)) {
-                    mkdir($path, 0777, TRUE);
-                }
-            }
-            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, '$sqlsize', '$subdir')");
-            unset($file);
-            if ($db->affected_rows() == 1) {
-                $aid = $db->insert_id();
-            } else {
-                return FALSE;
-            }
-            if ($usedb) {
-                $path = $_FILES[$varname]['tmp_name'];
-            } else {
-                $newfilename = $aid;
-                $path .= $newfilename;
-                move_uploaded_file($_FILES[$varname]['tmp_name'], $path);
-            }
-
-            // Make Thumbnail
-            if ($result !== FALSE) {
-                createThumbnail($_FILES[$varname]['name'], $path, $filesize, $imgSize, $aid, $pid, $subdir);
-            }
-            
-            // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
-            if ($usedb) {
-                unlink($path);
-            }
-
-            return TRUE;
+        if ($query['atcount'] >= $SETTINGS['filesperpost']) {
+            return FALSE;
         }
+
+        // Check minimum file size for disk storage
+        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+            $usedb = TRUE;
+            $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+        }
+
+        return private_attachGenericFile($pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $_FILES[$varname]['name'], $filetype, $filesize);
     }
     return FALSE;
+}
+
+function attachRemoteFile($url, $pid=0) {
+    global $db, $self, $SETTINGS;
+
+    $path = getFullPathFromSubdir('');
+    $pid = intval($pid);
+    $usedb = TRUE;
+    $filetype = '';
+
+    $filepath = FALSE;
+    if ($path !== FALSE) {
+        if (is_dir($path)) {
+            $usedb = FALSE;
+        }
+        $filepath = tempnam($path, 'xmb-');
+    }
+    if ($filepath === FALSE) {
+        $filepath = tempnam('', 'xmb-');
+        if ($filepath === FALSE) {
+            return FALSE;
+        }
+    }
+
+    // Sanity checks
+    if (!ini_get('allow_url_fopen')) {
+        return FALSE;
+    }
+    if (substr($url, 0, 7) != 'http://' And substr($url, 0, 6) != 'ftp://') {
+        return FALSE;
+    }
+    $urlparts = parse_url($url);
+    if ($urlparts === FALSE) {
+        return FALSE;
+    }
+    $filename = FALSE;
+    $urlparts = explode('/', $urlparts['path']);
+    for($i=count($urlparts)-1; $i>=0; $i--) {
+        if (isValidFilename($urlparts[$i])) {
+            $filename = $urlparts[$i];
+            break;
+        }
+    }
+    if ($filename === FALSE) { //Failed to find a usable filename in $url.
+        $filename = explode('/', $filepath);
+        $filename = array_pop($filename);
+    }
+    $dbfilename = $db->escape($filename);
+    if (intval($self['uid']) <= 0) {
+        return FALSE;
+    }
+
+    // Check maximum attachments per post
+    if ($pid == 0) {
+        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
+    } else {
+        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0";
+    }
+    $query = $db->query($sql);
+    $query = $db->fetch_array($query);
+    if ($query['atcount'] >= $SETTINGS['filesperpost']) {
+        return FALSE;
+    }
+
+    // Now grab the remote file
+    $file = file_get_contents($url);
+
+    if ($file !== FALSE) {
+        $filesize = strlen($file);
+        
+        // Write to disk
+        $handle = fopen($filepath, 'wb');
+        fwrite($handle, $file);
+        fclose($handle);
+
+        // Verify that the file is actually an image.
+        $result = getimagesize($filepath);
+        if ($result === FALSE) {
+            return FALSE;
+        }
+        $filetype = $db->escape(image_type_to_mime_type($result[2]));
+
+        // Check minimum file size for disk storage
+        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+            $usedb = TRUE;
+        } else {
+            $file = '';
+        }
+
+        $file = $db->escape($file);
+        return private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
+    }
+    return FALSE;
+}
+
+function private_attachGenericFile($pid, $usedb, $dbfile, $filepath, $dbfilename, $rawfilename, $dbfiletype, $dbfilesize) {
+    global $db, $self, $SETTINGS;
+
+    // Check if we can store image metadata
+    $extention = get_extension($rawfilename);
+    if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
+        $result = getimagesize($filepath);
+    } else {
+        $result = FALSE;
+    }
+
+    $sqlsize = '';
+    if ($result !== FALSE) {
+        $imgSize = new CartesianSize($result[0], $result[1]);
+        $sqlsize = $result[0].'x'.$result[1];
+
+        $result = explode('x', $SETTINGS['max_image_size']);
+        if ($result[0] > 0 And $result[1] > 0) {
+            $maxImgSize = new CartesianSize($result[0], $result[1]);
+            if ($imgSize->isBiggerThan($maxImgSize)) {
+                return FALSE;
+            }
+        }
+    }
+
+    // Store File
+    if ($usedb) {
+        $subdir = '';
+    } else {
+        $file = '';
+        $subdir = getNewSubdir();
+        $path = getFullPathFromSubdir($subdir);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, TRUE);
+        }
+    }
+    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$dbfilename', '$dbfiletype', $dbfilesize, '$dbfile', {$self['uid']}, '$sqlsize', '$subdir')");
+    unset($file);
+    if ($db->affected_rows() == 1) {
+        $aid = $db->insert_id();
+    } else {
+        return FALSE;
+    }
+    if ($usedb) {
+        $path = $filepath;
+    } else {
+        $newfilename = $aid;
+        $path .= $newfilename;
+        rename($filepath, $path);
+    }
+
+    // Make Thumbnail
+    if ($result !== FALSE) {
+        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, $aid, $pid, $subdir);
+    }
+
+    // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
+    if ($usedb) {
+        unlink($path);
+    }
+
+    return $aid;
 }
 
 function claimOrphanedAttachments($pid) {
@@ -139,12 +243,14 @@ function claimOrphanedAttachments($pid) {
 }
 
 function doAttachmentEdits($pid=0) {
+    $deletes = array();
     if (isset($_POST['attachment']) && is_array($_POST['attachment'])) {
         $pid = intval($pid);
         foreach($_POST['attachment'] as $aid => $attachment) {
             switch($attachment['action']) {
             case 'replace':
                 deleteAttachment($aid, $pid);
+                $deletes[] = $aid;
                 attachUploadedFile('replace_'.$aid, $pid);
                 break;
             case 'rename':
@@ -153,12 +259,14 @@ function doAttachmentEdits($pid=0) {
                 break;
             case 'delete':
                 deleteAttachment($aid, $pid);
+                $deletes[] = $aid;
                 break;
             default:
                 break;
             }
         }
     }
+    return $deletes;
 }
 
 function renameAttachment($aid, $pid, $rawnewname) {
@@ -226,7 +334,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
         } else {
             if ($dbescape) {
                 if ($loadfile) {
-                    $attachment = $db->escape(fread(fopen($file['tmp_name'], 'rb'), filesize($file['tmp_name'])));
+                    $attachment = $db->escape(file_get_contents($file['tmp_name']));
                 }
                 $filename = $db->escape($file['name']);
                 $filetype = $db->escape(preg_replace('#[\\x00\\r\\n%]#', '', $file['type']));
@@ -452,6 +560,34 @@ class CartesianSize {
     function isSmallerThan($otherSize) {
         // Would overload '<=' operator
         return ($this->width <= $otherSize->width And $this->height <= $otherSize->height);
+    }
+}
+
+function extractRemoteImages($pid, &$message, &$message2) {
+    // Extract img codes
+    $results = array();
+    $items = array();
+    $pattern = '#\[img(=([0-9]*?){1}x([0-9]*?))?\]((http|ftp){1}://([:a-z\\./_\-0-9%~]+){1}(\?[a-z=0-9&_\-;~]*)?)\[/img\]#Smi';
+    preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
+    foreach($results as $result) {
+        if (isset($result[4])) {
+            $item['code'] = $result[0];
+            $item['url'] = $result[4];
+            $items[] = $item;
+        }
+    }
+    
+    // Process URLs
+    foreach($items as $result) {
+        $aid = attachRemoteFile($result['url'], $pid);
+        if ($aid !== FALSE) {
+            $temppos = strpos($message, $item['code']);
+            $message = substr($message, 0, $temppos)."[file]{$aid}[/file]".substr($message, $temppos + strlen($item['code']));
+            if ($message2 != '') {
+                $temppos = strpos($message2, $item['code']);
+                $message2 = substr($message2, 0, $temppos)."[file]{$aid}[/file]".substr($message2, $temppos + strlen($item['code']));
+            }
+        }
     }
 }
 ?>

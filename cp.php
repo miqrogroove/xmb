@@ -202,6 +202,9 @@ if ($action == "settings") {
         $onlinetoday_statuson = $onlinetoday_statusoff = '';
         settingHTML('onlinetoday_status', $onlinetoday_statuson, $onlinetoday_statusoff);
 
+        $remoteimageson = $remoteimagesoff = '';
+        settingHTML('attach_remote_images', $remoteimageson, $remoteimagesoff);
+
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -396,13 +399,23 @@ if ($action == "settings") {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
+        <span class="smalltxt">
+        <a href="#1"><?php echo $lang['admin_main_settings1']; ?></a><br />
+        <a href="#2"><?php echo $lang['admin_main_settings2']; ?></a><br />
+        <a href="#3"><?php echo $lang['admin_main_settings3']; ?></a><br />
+        <a href="#4"><?php echo $lang['admin_main_settings4']; ?></a><br />
+        <a href="#5"><?php echo $lang['admin_main_settings5']; ?></a><br />
+        <a href="#8"><?php echo $lang['admin_main_settings8']; ?></a><br />
+        <a href="#6"><?php echo $lang['admin_main_settings6']; ?></a><br />
+        <a href="#7"><?php echo $lang['admin_main_settings7']; ?></a><br />
+        </span>
         <form method="post" action="cp.php?action=settings">
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="1" />&raquo;&nbsp;<?php echo $lang['admin_main_settings1']?></font></strong></td>
         </tr>
         <?php
         printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
@@ -421,7 +434,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings2']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="2" />&raquo;&nbsp;<?php echo $lang['admin_main_settings2']?></font></strong></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textlanguage']?></td>
@@ -447,7 +460,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings3']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="3" />&raquo;&nbsp;<?php echo $lang['admin_main_settings3']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['textsearchstatus'], 'searchstatusnew', $searchon, $searchoff);
@@ -463,7 +476,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="4" />&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
@@ -487,7 +500,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="5" />&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['reg_on'], 'reg_on', $regon, $regoff);
@@ -509,7 +522,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="8" />&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
         </tr>
         <?php
         $max_image_sizes = explode('x', $SETTINGS['max_image_size']);
@@ -527,6 +540,7 @@ if ($action == "settings") {
         printsetting2($lang['textfilesthumbw'], 'max_thumb_size_w_new', $max_thumb_sizes[0], 5);
         printsetting2($lang['textfilesthumbh'], 'max_thumb_size_h_new', $max_thumb_sizes[1], 5);
         printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
+        printsetting1($lang['textremoteimages'], 'remoteimages', $remoteimageson, $remoteimagesoff);
         printsetting2($lang['textfilespath'], 'filespathnew', $SETTINGS['files_storage_path'], 50);
         printsetting2($lang['textfilesminsize'], 'filesminsizenew', ((int)$SETTINGS['files_min_disk_size']), 7);
         printsetting3($lang['textfilessubdir'], 'filessubdirnew', array($lang['textfilessubdir1'], $lang['textfilessubdir2']), array('1', '2'), $subdirchecked, false);
@@ -537,7 +551,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="6" />&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
         </tr>
         <?php
         printsetting2($lang['texthottopic'], 'hottopicnew', ((int)$SETTINGS['hottopic']), 3);
@@ -558,7 +572,7 @@ if ($action == "settings") {
         <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
         </tr>
         <tr class="category">
-        <td colspan="2"><strong><font color="<?php echo $cattext?>">&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="7" />&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
         </tr>
         <?php
         printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
@@ -709,6 +723,7 @@ if ($action == "settings") {
         $max_thumb_size_h_new = formInt('max_thumb_size_h_new');
         $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
         $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
+        $remoteimages = formOnOff('remoteimages');
 
         $db->query("UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -796,6 +811,7 @@ if ($action == "settings") {
             index_stats='$index_statsnew',
             onlinetodaycount='$onlinetodaycountnew',
             onlinetoday_status='$onlinetoday_statusnew',
+            attach_remote_images='$remoteimages',
             files_min_disk_size='$filesminsizenew',
             files_storage_path='$filespathnew',
             files_subdir_format='$filessubdirnew',

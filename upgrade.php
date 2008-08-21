@@ -136,6 +136,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->free_result($query);
     }
     $columns = array(
+    'attach_remote_images' => "SET('on', 'off') NOT NULL DEFAULT 'off'";
     'files_min_disk_size' => "MEDIUMINT NOT NULL DEFAULT '9216'";
     'files_storage_path' => "VARCHAR( 100 ) NOT NULL";
     'files_subdir_format' => "TINYINT NOT NULL DEFAULT '1'";

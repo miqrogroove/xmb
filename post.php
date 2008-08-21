@@ -362,7 +362,14 @@ switch($action) {
 
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
             attachUploadedFile('attach');
-            doAttachmentEdits();
+            $deletes = doAttachmentEdits();
+            foreach($deletes as $aid) {
+                $message = str_replace("[file]{$aid}[/file]", '', $message);
+                $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
+            }
+            if ($SETTINGS['attach_remote_images'] == 'on') {
+                extractRemoteImages(0, $message, $messageinput);
+            }
             $attachSkipped = FALSE;
         } else {
             $attachSkipped = TRUE;
@@ -542,10 +549,21 @@ switch($action) {
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 $attachment = '';
                 $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                    if ($bbcodeoff = 'no') {
+                        $bbcode = "[file]{$postinfo['aid']}[/file]";
+                        if (strstr($message, $bbcode) === FALSE) {
+                            if ($counter == 0) {
+                                $message .= "\r\n\r\n";
+                            }
+                            $message .= $bbcode;
+                            $counter++;
+                        }
+                    }
                 }
                 if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
                     $attachfile = $attachment.$attachfile;
@@ -580,6 +598,7 @@ switch($action) {
 
                 $quoteperms = checkForumPermissions($thaquote);
                 if ($quoteperms[X_PERMS_VIEW]) {
+                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
                     $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
                 }
             }
@@ -639,7 +658,14 @@ switch($action) {
 
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
             attachUploadedFile('attach');
-            doAttachmentEdits();
+            $deletes = doAttachmentEdits();
+            foreach($deletes as $aid) {
+                $message = str_replace("[file]{$aid}[/file]", '', $message);
+                $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
+            }
+            if ($SETTINGS['attach_remote_images'] == 'on') {
+                extractRemoteImages(0, $message, $messageinput);
+            }
             $attachSkipped = FALSE;
         } else {
             $attachSkipped = TRUE;
@@ -834,10 +860,21 @@ switch($action) {
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 $attachment = '';
                 $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                    if ($bbcodeoff = 'no') {
+                        $bbcode = "[file]{$postinfo['aid']}[/file]";
+                        if (strstr($message, $bbcode) === FALSE) {
+                            if ($counter == 0) {
+                                $message .= "\r\n\r\n";
+                            }
+                            $message .= $bbcode;
+                            $counter++;
+                        }
+                    }
                 }
                 if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
                     $attachfile = $attachment.$attachfile;
@@ -911,7 +948,14 @@ switch($action) {
         if ($editvalid) {
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 attachUploadedFile('attach', $pid);
-                doAttachmentEdits($pid);
+                $deletes = doAttachmentEdits($pid);
+                foreach($deletes as $aid) {
+                    $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
+                }
+                $temp = '';
+                if ($SETTINGS['attach_remote_images'] == 'on') {
+                    extractRemoteImages($pid, $messageinput, $temp);
+                }
             }
 
             $editvalid = onSubmit('editsubmit');
@@ -990,20 +1034,6 @@ switch($action) {
         }
 
         if (!$editvalid) {
-            // Fill $attachment
-            $attachment = '';
-            $query = $db->query("SELECT aid, filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0");
-            while ($postinfo = $db->fetch_array($query)) {
-                $postinfo['filename'] = attrOut($postinfo['filename']);
-                $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-                $postinfo['url'] = getAttachmentURL($postinfo['aid'], $pid, $postinfo['filename']);
-                eval('$attachment .= "'.template('post_edit_attachment').'";');
-            }
-            if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
-                $attachment .= $attachfile;
-            }
-            $db->free_result($query);
-
             // Fill $postinfo
             $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
             if (onSubmit('editsubmit') || isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
@@ -1046,6 +1076,33 @@ switch($action) {
                 }
             }
             $db->free_result($querysmilie);
+
+            // Fill $attachment
+            $attachment = '';
+            $query = $db->query("SELECT aid, filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0");
+            $counter = 0;
+            while ($attach = $db->fetch_array($query)) {
+                $postinfo['aid'] = $attach['aid'];
+                $postinfo['downloads'] = $attach['downloads'];
+                $postinfo['filename'] = attrOut($attach['filename']);
+                $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
+                $postinfo['url'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
+                eval('$attachment .= "'.template('post_edit_attachment').'";');
+                if ($bbcodeoff = 'no') {
+                    $bbcode = "[file]{$attach['aid']}[/file]";
+                    if (strstr($postinfo['message'], $bbcode) === FALSE) {
+                        if ($counter == 0) {
+                            $postinfo['message'] .= "\r\n\r\n";
+                        }
+                        $postinfo['message'] .= $bbcode;
+                        $counter++;
+                    }
+                }
+            }
+            if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
+                $attachment .= $attachfile;
+            }
+            $db->free_result($query);
 
             $postinfo['message'] = rawHTMLmessage($postinfo['message']);
             $postinfo['subject'] = rawHTMLsubject($postinfo['subject']);

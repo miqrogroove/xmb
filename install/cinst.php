@@ -473,6 +473,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `index_stats` set('on','off') NOT NULL default 'on',
       `onlinetodaycount` smallint(5) NOT NULL default 0,
       `onlinetoday_status` set('on','off') NOT NULL default 'on',
+      `attach_remote_images` SET('on','off') NOT NULL DEFAULT 'off',
       `files_min_disk_size` MEDIUMINT NOT NULL DEFAULT '9216',
       `files_storage_path` VARCHAR( 100 ) NOT NULL,
       `files_subdir_format` TINYINT NOT NULL DEFAULT '1',

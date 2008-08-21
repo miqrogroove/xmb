@@ -48,7 +48,7 @@ function moveAttachmentToDB($aid, $pid) {
     if (intval(filesize($path)) != intval($attach['filesize'])) {
         return FALSE;
     }
-    $attachment = $db->escape(fread(fopen($path, 'rb'), $attach['filesize']));
+    $attachment = $db->escape(file_get_contents($path));
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment'");
     unlink($path);
 }

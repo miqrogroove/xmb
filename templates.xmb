@@ -4692,8 +4692,6 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 <a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board." title="{$lang['textaim']}"><img src="$imgdir/aim.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachment|#*XMB TEMPLATE*#|
-<br />
-<br />
 $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</a> ($attachsize)
 <br />
 <font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
@@ -4702,10 +4700,7 @@ $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</
 <a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentimage|#*XMB TEMPLATE*#|
-<br />
-<br />
-$post[author] $lang[textattachedimg]<br /><img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
-<br />
+<img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|
 <a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>

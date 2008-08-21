@@ -951,6 +951,7 @@ $lang['textregdate'] = "Registration Date";
 $lang['textreggedonly'] = "Allow only registered users to view boards?";
 $lang['textregister'] = "Register";
 $lang['textregistered'] = "Registered:";
+$lang['textremoteimages'] = 'Attach Remote Images:<br /><span class="smalltxt">Convert new [img] BBCodes to attachments.</span>';
 $lang['textreplies'] = "Replies:";
 $lang['textreply'] = "Reply";
 $lang['textreplytrash'] = "Reply and delete";
