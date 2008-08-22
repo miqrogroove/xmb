@@ -30,6 +30,28 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+define('X_EMPTY_UPLOAD', -1);
+define('X_BAD_STORAGE_PATH', -2);
+define('X_ATTACH_COUNT_EXCEEDED', -3);
+define('X_ATTACH_SIZE_EXCEEDED', -4);
+define('X_IMAGE_DIMS_EXCEEDED', -5);
+define('X_INVALID_REMOTE_LINK', -6);
+define('X_NOT_AN_IMAGE', -7);
+define('X_NO_TEMP_FILE', -8);
+define('X_GENERIC_ATTACH_ERROR', -9);
+define('X_INVALID_FILENAME', -10);
+
+$attachmentErrors = array(
+X_BAD_STORAGE_PATH      => $lang['fileuploaderror1'],
+X_ATTACH_COUNT_EXCEEDED => $lang['fileuploaderror2'],
+X_INVALID_REMOTE_LINK   => $lang['fileuploaderror3'],
+X_NOT_AN_IMAGE          => $lang['fileuploaderror4'],
+X_IMAGE_DIMS_EXCEEDED   => $lang['fileuploaderror5'],
+X_ATTACH_SIZE_EXCEEDED  => $lang['fileuploaderror6'],
+X_NO_TEMP_FILE          => $lang['fileuploaderror7'],
+X_GENERIC_ATTACH_ERROR  => $lang['fileuploaderror8'],
+X_INVALID_FILENAME      => $lang['invalidFilename']);
+
 // attachUploadedFile() checks for the presence of $_FILES[$varname].
 // If found, the file will be stored and attached to the specified $pid.
 // The $pid can be omitted in post preview mode, thus creating
@@ -38,6 +60,8 @@ if (!defined('IN_CODE')) {
 function attachUploadedFile($varname, $pid=0) {
     global $db, $self, $SETTINGS;
     
+    $return = FALSE;
+    
     $path = getFullPathFromSubdir('');
     $pid = intval($pid);
     $usedb = TRUE;
@@ -45,38 +69,41 @@ function attachUploadedFile($varname, $pid=0) {
     if ($path !== FALSE) {
         if (is_dir($path)) {
             $usedb = FALSE;
+        } else {
+            exit($attachmentErrors[X_BAD_STORAGE_PATH]);
         }
     }
 
     $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
-
-    if ($file !== FALSE) {
-        // Sanity checks
-        if (intval($self['uid']) <= 0) {
-            return FALSE;
-        }
-
-        // Check maximum attachments per post
-        if ($pid == 0) {
-            $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
-        } else {
-            $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0";
-        }
-        $query = $db->query($sql);
-        $query = $db->fetch_array($query);
-        if ($query['atcount'] >= $SETTINGS['filesperpost']) {
-            return FALSE;
-        }
-
-        // Check minimum file size for disk storage
-        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
-            $usedb = TRUE;
-            $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
-        }
-
-        return private_attachGenericFile($pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $_FILES[$varname]['name'], $filetype, $filesize);
+    if ($file === FALSE) {
+        return $filetype;
     }
-    return FALSE;
+    var_dump($filetype);
+
+    // Sanity checks
+    if (intval($self['uid']) <= 0) {
+        return X_GENERIC_ATTACH_ERROR;
+    }
+
+    // Check maximum attachments per post
+    if ($pid == 0) {
+        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
+    } else {
+        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0";
+    }
+    $query = $db->query($sql);
+    $query = $db->fetch_array($query);
+    if ($query['atcount'] >= $SETTINGS['filesperpost']) {
+        return X_ATTACH_COUNT_EXCEEDED;
+    }
+
+    // Check minimum file size for disk storage
+    if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+        $usedb = TRUE;
+        $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+    }
+
+    return private_attachGenericFile($pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $_FILES[$varname]['name'], $filetype, $filesize);
 }
 
 function attachRemoteFile($url, $pid=0) {
@@ -91,28 +118,33 @@ function attachRemoteFile($url, $pid=0) {
     if ($path !== FALSE) {
         if (is_dir($path)) {
             $usedb = FALSE;
+        } else {
+            exit($attachmentErrors[X_BAD_STORAGE_PATH]);
         }
         $filepath = tempnam($path, 'xmb-');
     }
     if ($filepath === FALSE) {
         $filepath = tempnam('', 'xmb-');
         if ($filepath === FALSE) {
-            return FALSE;
+            exit($attachmentErrors[X_NO_TEMP_FILE]);
         }
     }
 
     // Sanity checks
     if (substr($url, 0, 7) != 'http://' And substr($url, 0, 6) != 'ftp://') {
-        return FALSE;
+        return X_INVALID_REMOTE_LINK;
     }
     $urlparts = parse_url($url);
     if ($urlparts === FALSE) {
-        return FALSE;
+        return X_INVALID_REMOTE_LINK;
+    }
+    if (!isset($urlparts['path'])) { // Parse was successful but $url had no path
+        return X_INVALID_REMOTE_LINK;
+    }
+    if ($urlparts['path'] == '/') {
+        return X_INVALID_REMOTE_LINK;
     }
     $filename = FALSE;
-    if (!isset($urlparts['path'])) { // Parse was successful but $url had no path
-        return FALSE;
-    }
     $urlparts = explode('/', $urlparts['path']);
     for($i=count($urlparts)-1; $i>=0; $i--) {
         if (isValidFilename($urlparts[$i])) {
@@ -126,7 +158,7 @@ function attachRemoteFile($url, $pid=0) {
     }
     $dbfilename = $db->escape($filename);
     if (intval($self['uid']) <= 0) {
-        return FALSE;
+        return X_GENERIC_ATTACH_ERROR;
     }
 
     // Check maximum attachments per post
@@ -138,42 +170,44 @@ function attachRemoteFile($url, $pid=0) {
     $query = $db->query($sql);
     $query = $db->fetch_array($query);
     if ($query['atcount'] >= $SETTINGS['filesperpost']) {
-        return FALSE;
+        return X_ATTACH_COUNT_EXCEEDED;
     }
 
     // Now grab the remote file
     $file = file_get_contents($url);
-
-    $aid = FALSE;
-    if ($file !== FALSE) {
-        $filesize = strlen($file);
-        
-        // Write to disk
-        $handle = fopen($filepath, 'wb');
-        fwrite($handle, $file);
-        fclose($handle);
-
-        // Verify that the file is actually an image.
-        $result = getimagesize($filepath);
-        if ($result !== FALSE) {
-            $filetype = $db->escape(image_type_to_mime_type($result[2]));
-
-            // Check minimum file size for disk storage
-            if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
-                $usedb = TRUE;
-            } else {
-                $file = '';
-            }
-
-            $file = $db->escape($file);
-            $aid = private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
-        }
-
-        // Clean up disk if attachment failed.
-        if ($aid === FALSE) {
-            unlink($filepath);
-        }
+    if ($file === FALSE) {
+        return X_INVALID_REMOTE_LINK;
     }
+    
+    $filesize = strlen($file);
+    
+    // Write to disk
+    $handle = fopen($filepath, 'wb');
+    fwrite($handle, $file);
+    fclose($handle);
+
+    // Verify that the file is actually an image.
+    $result = getimagesize($filepath);
+    if ($result === FALSE) {
+        return X_NOT_AN_IMAGE;
+    }
+    $filetype = $db->escape(image_type_to_mime_type($result[2]));
+
+    // Check minimum file size for disk storage
+    if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+        $usedb = TRUE;
+    } else {
+        $file = '';
+    }
+
+    $file = $db->escape($file);
+    $aid = private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
+
+    // Clean up disk if attachment failed.
+    if ($aid <= 0) {
+        unlink($filepath);
+    }
+
     return $aid;
 }
 
@@ -197,7 +231,7 @@ function private_attachGenericFile($pid, $usedb, $dbfile, $filepath, $dbfilename
         if ($result[0] > 0 And $result[1] > 0) {
             $maxImgSize = new CartesianSize($result[0], $result[1]);
             if ($imgSize->isBiggerThan($maxImgSize)) {
-                return FALSE;
+                return X_IMAGE_DIMS_EXCEEDED;
             }
         }
     }
@@ -218,7 +252,7 @@ function private_attachGenericFile($pid, $usedb, $dbfile, $filepath, $dbfilename
     if ($db->affected_rows() == 1) {
         $aid = $db->insert_id();
     } else {
-        return FALSE;
+        return X_GENERIC_ATTACH_ERROR;
     }
     if ($usedb) {
         $path = $filepath;
@@ -247,7 +281,8 @@ function claimOrphanedAttachments($pid) {
     $db->query("UPDATE ".X_PREFIX."attachments SET pid=$pid WHERE pid=0 AND uid={$self['uid']}");
 }
 
-function doAttachmentEdits($pid=0) {
+function doAttachmentEdits(&$deletes, $pid=0) {
+    $return = TRUE;
     $deletes = array();
     if (isset($_POST['attachment']) && is_array($_POST['attachment'])) {
         $pid = intval($pid);
@@ -256,11 +291,17 @@ function doAttachmentEdits($pid=0) {
             case 'replace':
                 deleteAttachment($aid, $pid);
                 $deletes[] = $aid;
-                attachUploadedFile('replace_'.$aid, $pid);
+                $status = attachUploadedFile('replace_'.$aid, $pid);
+                if ($status < 0 And $status != X_EMPTY_UPLOAD) {
+                    $return = $status;
+                }
                 break;
             case 'rename':
                 $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
-                renameAttachment($aid, $pid, $rename);
+                $status = renameAttachment($aid, $pid, $rename);
+                if ($status < 0) {
+                    $return = $status;
+                }
                 break;
             case 'delete':
                 deleteAttachment($aid, $pid);
@@ -271,7 +312,7 @@ function doAttachmentEdits($pid=0) {
             }
         }
     }
-    return $deletes;
+    return $return;
 }
 
 function renameAttachment($aid, $pid, $rawnewname) {
@@ -281,6 +322,9 @@ function renameAttachment($aid, $pid, $rawnewname) {
         $dbrename = $db->escape($rawnewname);
         $pid = intval($pid);
         $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid=$aid AND pid=$pid");
+        return TRUE;
+    } else {
+        return X_INVALID_FILENAME;
     }
 }
 
@@ -379,20 +423,26 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     if (isset($_FILES[$varname])) {
         $file = $_FILES[$varname];
     } else {
-        return false;
+        $filetype = X_EMPTY_UPLOAD;
+        return FALSE;
     }
 
     if ($file['name'] != 'none' && !empty($file['name']) && is_uploaded_file($file['tmp_name'])) {
         $file['name'] = trim($file['name']);
         if (!isValidFilename($file['name'])) {
-            error($lang['invalidFilename'], false, '', '', false, false, false, false);
-            return false;
+            $file['name'] = basename($file['tmp_name']);
+            if (!isValidFilename($file['name'])) {
+                $filetype = X_GENERIC_ATTACH_ERROR;
+                error($lang['invalidFilename'], false, '', '', false, false, false, false);
+                return FALSE;
+            }
         }
 
         $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes
         if ($file['size'] > $SETTINGS['maxattachsize']) {
+            $filetype = X_ATTACH_SIZE_EXCEEDED;
             error($lang['attachtoobig'], false, '', '', false, false, false, false);
-            return false;
+            return FALSE;
         } else {
             if ($dbescape) {
                 if ($loadfile) {
@@ -409,13 +459,15 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
             }
 
             if ($filesize == 0) {
-                return false;
+                $filetype = X_EMPTY_UPLOAD;
+                return FALSE;
             } else {
                 return $attachment;
             }
         }
     } else {
-        return false;
+        $filetype = X_EMPTY_UPLOAD;
+        return FALSE;
     }
 }
 
@@ -639,7 +691,7 @@ class CartesianSize {
 function extractRemoteImages($pid, &$message, &$message2) {
     // Sanity Checks
     if (!ini_get('allow_url_fopen')) {
-        return FALSE;
+        return TRUE;
     }
 
     // Extract img codes
@@ -654,11 +706,14 @@ function extractRemoteImages($pid, &$message, &$message2) {
             $items[] = $item;
         }
     }
-    
+
+    $return = TRUE;
+
     // Process URLs
     foreach($items as $result) {
         $aid = attachRemoteFile($result['url'], $pid);
-        if ($aid === FALSE) {
+        if ($aid <= 0) {
+            $return = $aid;
             $replace = '[bad '.substr($result['code'], 1, -6).'[/bad img]';
         } else {
             $replace = "[file]{$aid}[/file]";
@@ -670,5 +725,6 @@ function extractRemoteImages($pid, &$message, &$message2) {
             $message2 = substr($message2, 0, $temppos).$replace.substr($message2, $temppos + strlen($result['code']));
         }
     }
+    return $return;
 }
 ?>

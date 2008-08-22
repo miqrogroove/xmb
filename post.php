@@ -360,22 +360,34 @@ switch($action) {
 
         eval('echo "'.template('header').'";');
 
+        $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
+
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-            attachUploadedFile('attach');
-            $deletes = doAttachmentEdits();
+            $result = attachUploadedFile('attach');
+            if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                softerror($attachmentErrors[$result]);
+                $replyvalid = FALSE;
+            }
+            $result = doAttachmentEdits($deletes);
+            if ($result < 0) {
+                softerror($attachmentErrors[$result]);
+                $replyvalid = FALSE;
+            }
             foreach($deletes as $aid) {
                 $message = str_replace("[file]{$aid}[/file]", '', $message);
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on') {
-                extractRemoteImages(0, $message, $messageinput);
+                $result = extractRemoteImages(0, $message, $messageinput);
+                if ($result < 0) {
+                    softerror($attachmentErrors[$result]);
+                    $replyvalid = FALSE;
+                }
             }
             $attachSkipped = FALSE;
         } else {
             $attachSkipped = TRUE;
         }
-
-        $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
         //Check all replying permissions for this $tid.
         if (!X_SADMIN And $thread['closed'] != '') {
@@ -656,23 +668,35 @@ switch($action) {
 
         eval('echo "'.template('header').'";');
 
+        $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
+        $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
+
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-            attachUploadedFile('attach');
-            $deletes = doAttachmentEdits();
+            $result = attachUploadedFile('attach');
+            if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                softerror($attachmentErrors[$result]);
+                $topicvalid = FALSE;
+            }
+            $result = doAttachmentEdits($deletes);
+            if ($result < 0) {
+                softerror($attachmentErrors[$result]);
+                $topicvalid = FALSE;
+            }
             foreach($deletes as $aid) {
                 $message = str_replace("[file]{$aid}[/file]", '', $message);
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on') {
-                extractRemoteImages(0, $message, $messageinput);
+                $result = extractRemoteImages(0, $message, $messageinput);
+                if ($result < 0) {
+                    softerror($attachmentErrors[$result]);
+                    $topicvalid = FALSE;
+                }
             }
             $attachSkipped = FALSE;
         } else {
             $attachSkipped = TRUE;
         }
-
-        $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
-        $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($topicvalid) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
@@ -947,19 +971,31 @@ switch($action) {
 
         if ($editvalid) {
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-                attachUploadedFile('attach', $pid);
-                $deletes = doAttachmentEdits($pid);
+                $result = attachUploadedFile('attach', $pid);
+                if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                    softerror($attachmentErrors[$result]);
+                    $editvalid = FALSE;
+                }
+                $result = doAttachmentEdits($deletes, $pid);
+                if ($result < 0) {
+                    softerror($attachmentErrors[$result]);
+                    $editvalid = FALSE;
+                }
                 foreach($deletes as $aid) {
                     $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
                 }
                 $temp = '';
                 if ($SETTINGS['attach_remote_images'] == 'on') {
-                    extractRemoteImages($pid, $messageinput, $temp);
+                    $result = extractRemoteImages($pid, $messageinput, $temp);
+                    if ($result < 0) {
+                        softerror($attachmentErrors[$result]);
+                        $editvalid = FALSE;
+                    }
                 }
             }
-
-            $editvalid = onSubmit('editsubmit');
         }
+
+        $editvalid &= onSubmit('editsubmit');
 
         if ($editvalid) {
             if ($posticon != '') {
