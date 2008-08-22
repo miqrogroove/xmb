@@ -1848,10 +1848,11 @@ if ($action == "ipban") {
 }
 
 if ($action == "deleteposts") {
+    require('include/attach-admin.inc.php');
     $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
     $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
-    //Critical: Do not alias tables in the next query.  MySQL 4.0 and MySQL 4.1 use mutually incompatible syntax.
-    $db->query("DELETE ".X_PREFIX."attachments, ".X_PREFIX."posts FROM ".X_PREFIX."posts LEFT JOIN ".X_PREFIX."attachments USING(pid) WHERE author='$member'");
+    deleteAttachmentsByUser($member);
+    $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
     $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
     while($threads = $db->fetch_array($countquery)) {
         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");

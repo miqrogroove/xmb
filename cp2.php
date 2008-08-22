@@ -1404,6 +1404,7 @@ if ($action == "prune") {
         }
 
         if (count($queryWhere) > 0) {
+            require('include/attach-admin.inc.php');
             $tids = array();
             $queryWhere = implode(' AND ', $queryWhere);
             $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE ".$queryWhere);
@@ -1413,8 +1414,8 @@ if ($action == "prune") {
                 }
                 $tids = implode(',', $tids);
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
+                deleteMultiThreadAttachments($tids); // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid IN ($tids)");
             }
         } else {
             $db->query("TRUNCATE TABLE ".X_PREFIX."threads");

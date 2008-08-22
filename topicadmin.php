@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -191,6 +191,7 @@ switch($action) {
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.template('topicadmin_delete').'";');
         } else {
+            require('include/attach.inc.php');
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
@@ -200,8 +201,8 @@ switch($action) {
                 $db->free_result($query);
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid'");
+                deleteThreadAttachments($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid='$tid'");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$tid'");
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE closed='moved|$tid'");
@@ -460,6 +461,7 @@ switch($action) {
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.template('topicadmin_empty').'";');
         } else {
+            require('include/attach.inc.php');
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1");
@@ -471,8 +473,8 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                     }
 
+                    deleteThreadAttachments($tid);  // Must delete attachments before posts!
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
-                    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE tid=$tid");
 
                     updatethreadcount($tid); //Also updates lastpost
                     $mod->log($xmbuser, $action, $fid, $tid);
@@ -537,7 +539,6 @@ switch($action) {
                         $firstmove = true;
                     }
                     $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid=$move");
-                    $db->query("UPDATE ".X_PREFIX."attachments SET tid=$newtid WHERE pid=$move");
                     $lastpost = $post['dateline'].'|'.$db->escape($post['author']).'|'.$post['pid'];
                     $movecount++;
                 } else {
@@ -578,11 +579,10 @@ switch($action) {
             }
             $otherthread = $db->fetch_array($queryadd1);
             $db->free_result($queryadd1);
-            $replyadd = $otherthread['replies'];
+            $replyadd = intval($otherthread['replies']) + 1;
             $otherfid = $otherthread['fid'];
 
             $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
-            $db->query("UPDATE ".X_PREFIX."attachments SET tid='$tid' WHERE tid='$othertid'");
 
             $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$othertid'");
 
@@ -664,6 +664,7 @@ switch($action) {
             }
             eval('echo "'.template('topicadmin_threadprune').'";');
         } else {
+            require('include/attach.inc.php');
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 while($post = $db->fetch_array($query))    {
@@ -673,7 +674,7 @@ switch($action) {
                         $dbauthor = $db->escape($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
+                        deleteAllAttachments($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                     }
                 }
@@ -691,7 +692,7 @@ switch($action) {
                         $dbauthor = $db->escape($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE pid=$move");
+                        deleteAllAttachments($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid='$tid'");
                     }
                 }
@@ -725,6 +726,7 @@ switch($action) {
             $forumselect = forumList('newfid', false, false);
             eval('echo "'.template('topicadmin_copy').'";');
         } else {
+            require('include/attach.inc.php');
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);
             }
@@ -783,7 +785,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    $db->query("INSERT INTO ".X_PREFIX."attachments (`tid`,`pid`,`filename`,`filetype`,`filesize`,`attachment`,`downloads`) SELECT '$newtid','$newpid',`filename`,`filetype`,`filesize`,`attachment`,`downloads` FROM ".X_PREFIX."attachments WHERE pid='$oldPid'");
+                    copyAllAttachments($oldPid, $newpid);
                 }
 
                 $mod->log($xmbuser, $action, $fid, $tid);

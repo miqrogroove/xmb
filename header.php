@@ -649,7 +649,7 @@ if (empty($action)) {
 }
 
 // Gzip-compression
-if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment") {
+if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment" && X_SCRIPT != 'files.php') {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
     } else if ($res === false) {

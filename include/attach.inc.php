@@ -102,9 +102,6 @@ function attachRemoteFile($url, $pid=0) {
     }
 
     // Sanity checks
-    if (!ini_get('allow_url_fopen')) {
-        return FALSE;
-    }
     if (substr($url, 0, 7) != 'http://' And substr($url, 0, 6) != 'ftp://') {
         return FALSE;
     }
@@ -279,6 +276,57 @@ function renameAttachment($aid, $pid, $rawnewname) {
     }
 }
 
+function copyAllAttachments($frompid, $topid) {
+    global $db;
+    $frompid = intval($frompid);
+    $topid = intval($topid);
+    
+    // Find all primary attachments for $frompid
+    $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid=0");
+    while($attach = $db->fetch_array($query)) {
+        $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
+                 . "SELECT {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM ".X_PREFIX."attachments WHERE aid={$attach['aid']}");
+        if ($db->affected_rows() == 1) {
+            $aid = $db->insert_id();
+            if ($attach['subdir'] != '') {
+                private_copyDiskAttachment($attach['aid'], $aid, $attach['subdir']);
+            }
+        }
+        
+        // Update any [file] object references in the new copy of the post messsage.
+        $message = $db->query("SELECT message FROM ".X_PREFIX."posts WHERE pid=$topid");
+        if ($message = $db->fetch_array($message)) {
+            $newmessage = str_replace("[file]{$attach['aid']}[/file]", "[file]{$aid}[/file]", $message['message']);
+            if ($newmessage != $message['message']) {
+                $newmessage = $db->escape($newmessage);
+                $db->query("UPDATE ".X_PREFIX."posts SET message='$newmessage' WHERE pid=$topid");
+            }
+        }
+        
+        // Find all children of this attachment and copy them too.
+        $childquery = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid={$attach['aid']}");
+        while($childattach = $db->fetch_array($childquery)) {
+            $db->query("INSERT INTO ".X_PREFIX."attachments (parentid, pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
+                     . "SELECT {$aid}, {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM ".X_PREFIX."attachments WHERE aid={$childattach['aid']}");
+            if ($db->affected_rows() == 1) {
+                $childaid = $db->insert_id();
+                if ($childattach['subdir'] != '') {
+                    private_copyDiskAttachment($childattach['aid'], $childaid, $childattach['subdir']);
+                }
+            }
+        }
+    }
+}
+
+function private_copyDiskAttachment($fromaid, $toaid, $subdir) {
+    $path = getFullPathFromSubdir($subdir);
+    if ($path !== FALSE) {
+        if (is_file($path.$fromaid)) {
+            copy($path.$fromaid, $path.$toaid);
+        }
+    }
+}
+
 function deleteAttachment($aid, $pid) {
     $aid = intval($aid);
     $pid = intval($pid);
@@ -288,6 +336,11 @@ function deleteAttachment($aid, $pid) {
 function deleteAllAttachments($pid) {
     $pid = intval($pid);
     private_deleteAttachments("WHERE pid=$pid");
+}
+
+function deleteThreadAttachments($tid) {
+    $tid = intval($tid);
+    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE tid=$tid");
 }
 
 function private_deleteAttachments($where) {
@@ -303,7 +356,7 @@ function private_deleteAttachments($where) {
         }
     }
 
-    $db->query("DELETE FROM ".X_PREFIX."attachments $where");
+    $db->query("DELETE ".X_PREFIX."attachments FROM ".X_PREFIX."attachments $where");
 }
 
 function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE, $loadfile=TRUE) {
@@ -564,6 +617,11 @@ class CartesianSize {
 }
 
 function extractRemoteImages($pid, &$message, &$message2) {
+    // Sanity Checks
+    if (!ini_get('allow_url_fopen')) {
+        return FALSE;
+    }
+
     // Extract img codes
     $results = array();
     $items = array();
@@ -580,13 +638,16 @@ function extractRemoteImages($pid, &$message, &$message2) {
     // Process URLs
     foreach($items as $result) {
         $aid = attachRemoteFile($result['url'], $pid);
-        if ($aid !== FALSE) {
-            $temppos = strpos($message, $item['code']);
-            $message = substr($message, 0, $temppos)."[file]{$aid}[/file]".substr($message, $temppos + strlen($item['code']));
-            if ($message2 != '') {
-                $temppos = strpos($message2, $item['code']);
-                $message2 = substr($message2, 0, $temppos)."[file]{$aid}[/file]".substr($message2, $temppos + strlen($item['code']));
-            }
+        if ($aid === FALSE) {
+            $replace = '[bad '.substr($item['code'], 4, -5).'[/bad img]';
+        } else {
+            $replace = "[file]{$aid}[/file]";
+        }
+        $temppos = strpos($message, $item['code']);
+        $message = substr($message, 0, $temppos).$replace.substr($message, $temppos + strlen($item['code']));
+        if ($message2 != '') {
+            $temppos = strpos($message2, $item['code']);
+            $message2 = substr($message2, 0, $temppos).$replace.substr($message2, $temppos + strlen($item['code']));
         }
     }
 }

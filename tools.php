@@ -236,17 +236,8 @@ switch($action) {
             echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" /></td></tr>';
             echo '</form>';
         } else {
-            $i = 0;
-            $q = $db->query("SELECT aid, pid FROM ".X_PREFIX."attachments");
-            while($a = $db->fetch_array($q)) {
-               $result = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE pid={$a['pid']}");
-                  if ($db->num_rows($result) == 0) {
-                  $db->free_result($result);
-                  $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid={$a['aid']}");
-                  $i++;
-                }
-            }
-            $db->free_result($q);
+            require('include/attach-admin.inc.php');
+            $i = deleteOrphans();
 
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_attachments_found'].'</td></tr>';

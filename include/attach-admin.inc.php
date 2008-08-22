@@ -78,4 +78,26 @@ function moveAttachmentToDisk($aid, $pid) {
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
 }
 
+function deleteOrphans() {
+    global $db;
+    $q = $db->query("SELECT a.aid, a.pid FROM ".X_PREFIX."attachments AS a "
+                  . "LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
+                  . "LEFT JOIN ".X_PREFIX."attachments AS b ON a.parentid=b.aid "
+                  . "WHERE ((a.uid=0 OR a.pid > 0) AND p.pid IS NULL) OR (a.parentid > 0 AND b.aid IS NULL)");
+
+    while($a = $db->fetch_array($q)) {
+        deleteAttachment($a['aid'], $a['pid']);
+    }
+    
+    return $db->num_rows($q);
+}
+
+function deleteMultiThreadAttachments($tids) {
+    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE tid IN ($tids)");
+}
+
+function deleteAttachmentsByUser($username) {
+    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE author='$username'");
+    private_deleteAttachments("INNER JOIN ".X_PREFIX."members USING (uid) WHERE username='$username'");
+}
 ?>
