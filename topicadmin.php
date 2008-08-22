@@ -194,9 +194,9 @@ switch($action) {
             require('include/attach.inc.php');
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
+                $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid='$tid' GROUP BY author");
                 while($result = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($result['author'])."'");
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='".$db->escape($result['author'])."'");
                 }
                 $db->free_result($query);
 
@@ -464,13 +464,13 @@ switch($action) {
             require('include/attach.inc.php');
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1");
+                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
                     $pid = $db->result($query, 0);
-                    $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
+                    $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid GROUP BY author");
                     while($result = $db->fetch_array($query)) {
                         $dbauthor = $db->escape($result['author']);
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='$dbauthor'");
                     }
 
                     deleteThreadAttachments($tid);  // Must delete attachments before posts!
@@ -787,6 +787,12 @@ switch($action) {
 
                     copyAllAttachments($oldPid, $newpid);
                 }
+
+                $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid='$tid' GROUP BY author");
+                while($result = $db->fetch_array($query)) {
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+{$result['pidcount']} WHERE username='".$db->escape($result['author'])."'");
+                }
+                $db->free_result($query);
 
                 $mod->log($xmbuser, $action, $fid, $tid);
                 

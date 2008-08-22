@@ -110,6 +110,9 @@ function attachRemoteFile($url, $pid=0) {
         return FALSE;
     }
     $filename = FALSE;
+    if (!isset($urlparts['path'])) { // Parse was successful but $url had no path
+        return FALSE;
+    }
     $urlparts = explode('/', $urlparts['path']);
     for($i=count($urlparts)-1; $i>=0; $i--) {
         if (isValidFilename($urlparts[$i])) {
@@ -141,6 +144,7 @@ function attachRemoteFile($url, $pid=0) {
     // Now grab the remote file
     $file = file_get_contents($url);
 
+    $aid = FALSE;
     if ($file !== FALSE) {
         $filesize = strlen($file);
         
@@ -151,22 +155,26 @@ function attachRemoteFile($url, $pid=0) {
 
         // Verify that the file is actually an image.
         $result = getimagesize($filepath);
-        if ($result === FALSE) {
-            return FALSE;
-        }
-        $filetype = $db->escape(image_type_to_mime_type($result[2]));
+        if ($result !== FALSE) {
+            $filetype = $db->escape(image_type_to_mime_type($result[2]));
 
-        // Check minimum file size for disk storage
-        if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
-            $usedb = TRUE;
-        } else {
-            $file = '';
+            // Check minimum file size for disk storage
+            if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+                $usedb = TRUE;
+            } else {
+                $file = '';
+            }
+
+            $file = $db->escape($file);
+            $aid = private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
         }
 
-        $file = $db->escape($file);
-        return private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
+        // Clean up disk if attachment failed.
+        if ($aid === FALSE) {
+            unlink($filepath);
+        }
     }
-    return FALSE;
+    return $aid;
 }
 
 function private_attachGenericFile($pid, $usedb, $dbfile, $filepath, $dbfilename, $rawfilename, $dbfiletype, $dbfilesize) {
@@ -222,7 +230,7 @@ function private_attachGenericFile($pid, $usedb, $dbfile, $filepath, $dbfilename
 
     // Make Thumbnail
     if ($result !== FALSE) {
-        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, $aid, $pid, $subdir);
+        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, $dbfiletype, $aid, $pid, $subdir);
     }
 
     // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
@@ -338,6 +346,7 @@ function deleteAllAttachments($pid) {
     private_deleteAttachments("WHERE pid=$pid");
 }
 
+// Important: call deleteThreadAttachments() BEFORE deleting posts, because it uses a multi-table query.
 function deleteThreadAttachments($tid) {
     $tid = intval($tid);
     private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE tid=$tid");
@@ -490,7 +499,7 @@ function getFullPathFromSubdir($subdir) {
     return $path;
 }
 
-function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid, $subdir) {
+function createThumbnail($filename, $filepath, $filesize, $imgSize, $filetype, $aid, $pid, $subdir) {
     global $db, $self, $SETTINGS;
 
     // Check if GD is available
@@ -518,6 +527,17 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $aid, $pid, 
     }
     
     $extension = get_extension($filename);
+    if ($extension == '') {
+        if (strpos($filetype, 'jpeg') !== FALSE) {
+            $extension = 'jpg';
+        } elseif (strpos($filetype, 'gif') !== FALSE) {
+            $extension = 'gif';
+        } elseif (strpos($filetype, 'bmp') !== FALSE) {
+            $extension = 'bmp';
+        } elseif (strpos($filetype, 'png') !== FALSE) {
+            $extension = 'png';
+        }
+    }
     switch($extension) {
     case 'png':
         $img = @imagecreatefrompng($filepath);
@@ -639,15 +659,15 @@ function extractRemoteImages($pid, &$message, &$message2) {
     foreach($items as $result) {
         $aid = attachRemoteFile($result['url'], $pid);
         if ($aid === FALSE) {
-            $replace = '[bad '.substr($item['code'], 4, -5).'[/bad img]';
+            $replace = '[bad '.substr($result['code'], 1, -6).'[/bad img]';
         } else {
             $replace = "[file]{$aid}[/file]";
         }
-        $temppos = strpos($message, $item['code']);
-        $message = substr($message, 0, $temppos).$replace.substr($message, $temppos + strlen($item['code']));
+        $temppos = strpos($message, $result['code']);
+        $message = substr($message, 0, $temppos).$replace.substr($message, $temppos + strlen($result['code']));
         if ($message2 != '') {
-            $temppos = strpos($message2, $item['code']);
-            $message2 = substr($message2, 0, $temppos).$replace.substr($message2, $temppos + strlen($item['code']));
+            $temppos = strpos($message2, $result['code']);
+            $message2 = substr($message2, 0, $temppos).$replace.substr($message2, $temppos + strlen($result['code']));
         }
     }
 }
