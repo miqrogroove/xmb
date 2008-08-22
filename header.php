@@ -218,6 +218,14 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     unset($array);
 }
 
+// Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
+// XMB expects all links to be relative to $full_url + script name + query string.
+$querystring = strstr($url, '?');
+if ($querystring === FALSE) {
+    $querystring = '';
+}
+$baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
+
 // Check for double-slash problems in REQUEST_URI
 if ($url != $cookiepath) {
     if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
@@ -577,12 +585,10 @@ foreach($db->fetch_array($query) as $key=>$val) {
     }
     $THEME[$key] = $val;
 }
-$imgdirpath = ROOT.$imgdir;
-$imgdir = $full_url.$imgdir;
 $db->free_result($query);
 
 // additional CSS to load?
-if (file_exists($imgdirpath.'/theme.css')) {
+if (file_exists(ROOT.$imgdir.'/theme.css')) {
     $cssInclude = '<style type="text/css">'."\n"."@import url('".$imgdir."/theme.css');"."\n".'</style>';
 } else {
     $cssInclude = '';
