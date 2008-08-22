@@ -393,6 +393,11 @@ function deleteThreadAttachments($tid) {
     $tid = intval($tid);
     private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE tid=$tid");
 }
+function emptyThreadAttachments($tid, $pid) {
+    $tid = intval($tid);
+    $pid = intval($pid);
+    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE p.tid=$tid AND p.pid!=$pid");
+}
 
 function private_deleteAttachments($where) {
     global $db;
@@ -619,7 +624,7 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $filetype, $
     
     // Write full size and dimensions on thumbnail
     $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
-    $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 96);
+    $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
     imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
     imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
 

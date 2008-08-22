@@ -473,7 +473,7 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='$dbauthor'");
                     }
 
-                    deleteThreadAttachments($tid);  // Must delete attachments before posts!
+                    emptyThreadAttachments($tid, $pid);  // Must delete attachments before posts!
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
 
                     updatethreadcount($tid); //Also updates lastpost
