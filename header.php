@@ -154,11 +154,11 @@ $versionshort = '1.9.11';
 $versiongeneral = 'XMB 1.9.11';
 $copyright = '2001-2008';
 if ($show_full_info) {
-    $alpha = 'Alpha Zero';
+    $alpha = 'Alpha One';
     $beta = '';
     $gamma = '';
     $service_pack = '';
-    $versionbuild = 20080807;
+    $versionbuild = 20080822;
     $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
 } else {
     $alpha = '';

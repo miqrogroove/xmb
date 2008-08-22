@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme MessageBoard
- * XMB 1.9.11 Alpha Zero - This software should not be used for any purpose after 31 August 2008.
+ * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group

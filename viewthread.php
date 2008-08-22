@@ -652,9 +652,6 @@ if ($action == '') {
             }
             while($attach = $db->fetch_array($queryattach)) {
                 if ($attach['pid'] == $post['pid']) {
-                    if ($count == 0) {
-                        $post['message'] .= "<br /><br />";  // We need some sort of a seperator template here.
-                    }
                     $post['filename'] = attrOut($attach['filename']);
                     $post['filetype'] = attrOut($attach['filetype']);
                     $post['fileurl'] = getAttachmentURL($attach['aid'], $post['pid'], $attach['filename']);
@@ -676,17 +673,22 @@ if ($action == '') {
                             }
                             eval('$output = "'.template('viewthread_post_attachmentimage').'";');
                         }
+                        $seperator = '';
                     } else {
                         $downloadcount = $attach['downloads'];
                         if ($downloadcount == '') {
                             $downloadcount = 0;
                         }
                         eval('$output = "'.template('viewthread_post_attachment').'";');
+                        $seperator = "<br /><br />";
+                    }
+                    if ($count == 0) {
+                        $post['message'] .= "<br /><br />";
                     }
                     $matches = 0;
                     $post['message'] = preg_replace('@\\[file\\]'.$attach['aid'].'\\[/file\\]@', $output, $post['message'], 1, $matches);
                     if ($matches == 0) {
-                        $post['message'] .= $output;
+                        $post['message'] .= $output.$seperator; // Do we need some sort of a seperator template here?
                     }
                     $count++;
                 }
