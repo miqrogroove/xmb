@@ -78,6 +78,82 @@ function moveAttachmentToDisk($aid, $pid) {
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
 }
 
+function regenerateThumbnail($aid, $pid) {
+    global $db, $SETTINGS;
+    $aid = intval($aid);
+    $pid = intval($pid);
+    deleteThumbnail($aid, $pid);
+
+    // Initialize
+    $path = getFullPathFromSubdir('');
+    $usedb = TRUE;
+
+    // Write attachment to disk
+    $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+    if ($db->num_rows($query) != 1) {
+        return FALSE;
+    }
+    $attach = $db->fetch_array($query);
+    if ($attach['subdir'] == '') {
+        if (strlen($attach['attachment']) != $attach['filesize']) {
+            return FALSE;
+        }
+        $subdir = getNewSubdir($attach['updatestamp']);
+        $path = getFullPathFromSubdir($subdir);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, TRUE);
+        }
+        $newfilename = $aid;
+        $path .= $newfilename;
+        $file = fopen($path, 'wb');
+        fwrite($file, $attach['attachment']);
+        fclose($file);
+    } else {
+        $path = getFullPathFromSubdir($attach['subdir']);
+        $path .= $aid;
+        if (!is_file($path)) {
+            return FALSE;
+        }
+        if (filesize($path) != $attach['filesize']) {
+            return FALSE;
+        }
+    }
+
+    // Check if we can store image metadata
+    $result = getimagesize($path);
+
+    if ($result === FALSE) {
+        return FALSE;
+    }
+    $imgSize = new CartesianSize($result[0], $result[1]);
+    $sqlsize = $result[0].'x'.$result[1];
+
+    $result = explode('x', $SETTINGS['max_image_size']);
+    if ($result[0] > 0 And $result[1] > 0) {
+        $maxImgSize = new CartesianSize($result[0], $result[1]);
+        if ($imgSize->isBiggerThan($maxImgSize)) {
+            return FALSE;
+        }
+    }
+
+    if ($attach['img_size'] != $sqlsize) {
+        $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
+    }
+    
+    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $db->escape($attach['filetype']), $aid, $pid, $attach['subdir']);
+
+    // Clean up temp files
+    if ($attach['subdir'] == '') {
+        unlink($path);
+    }
+}
+
+function deleteThumbnail($aid, $pid) {
+    $aid = intval($aid);
+    $pid = intval($pid);
+    private_deleteAttachments("WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
+}
+
 function deleteOrphans() {
     global $db;
     $q = $db->query("SELECT a.aid, a.pid FROM ".X_PREFIX."attachments AS a "

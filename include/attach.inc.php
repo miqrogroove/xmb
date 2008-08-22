@@ -60,8 +60,6 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
 function attachUploadedFile($varname, $pid=0) {
     global $db, $self, $SETTINGS;
     
-    $return = FALSE;
-    
     $path = getFullPathFromSubdir('');
     $pid = intval($pid);
     $usedb = TRUE;

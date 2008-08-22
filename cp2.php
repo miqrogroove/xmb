@@ -1822,6 +1822,7 @@ if ($action == "attachments") {
             $attachment['fname'] = fnameOut($attachment['fname']);
             $attachment['filename'] = attrOut($attachment['filename'], 'javascript');
             $movelink = '';
+            $newthumblink = '';
             if ($attachment['subdir'] == '') {
                 $attachment['subdir'] = 'DB';
                 if ($diskpath) {
@@ -1838,12 +1839,15 @@ if ($action == "attachments") {
                 $downloadlink = '';
             } else {
                 $downloadlink = '<a href="'.getAttachmentURL($attachment['aid'], $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
+                if (function_exists('imagecreatetruecolor')) {
+                    $newthumblink = '<a href="cp2.php?action=regeneratethumbnail&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['regeneratethumbnail'].'</a>';
+                }
             }
             $deletelink = '<a href="cp2.php?action=delete_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['deletebutton'].'</a>';
             ?>
             <tr>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>">
-                <br /><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?> - <?php echo $deletelink; ?></span></td>
+                <br /><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?> - <?php echo $newthumblink; ?> - <?php echo $deletelink; ?></span></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment['author']?></td>
             <?php if ($attachment['pid'] == 0) { ?>
                 <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
@@ -2190,6 +2194,15 @@ if ($action == "movetodisk_attachment") {
     moveAttachmentToDisk($aid, $pid);
     echo "<p align=\"center\">Moved ...</br>";
 }
+
+if ($action == "regeneratethumbnail") {
+    require('include/attach-admin.inc.php');
+    $aid = getInt('aid');
+    $pid = getInt('pid');
+    regenerateThumbnail($aid, $pid);
+    echo "<p align=\"center\">Done ...</br>";
+}
+
 echo '</table></td></tr></table>';
 end_time();
 eval('echo "'.template('footer').'";');
