@@ -176,9 +176,15 @@ $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$
 // Set response headers
 $type = strtolower($file['filetype']);
 $type = ($type == 'text/html') ? 'text/plain' : $type;
+if ($file['img_size'] == '') {
+    $dispositionType = 'attachment';
+} else {
+    $dispositionType = 'inline';
+}
+
 header("Content-type: $type");
 header("Content-length: $size");
-header("Content-Disposition: attachment; filename=\"{$file['filename']}\"");
+header("Content-Disposition: {$dispositionType}; filename=\"{$file['filename']}\"");
 header("Content-Description: XMB Attachment");
 header("Cache-Control: public; max-age=604800");
 header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");

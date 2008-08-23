@@ -148,6 +148,9 @@ function attachRemoteFile($url, $pid=0) {
         if (isValidFilename($urlparts[$i])) {
             $filename = $urlparts[$i];
             break;
+        } elseif (isValidFilename(urldecode($urlparts[$i]))) {
+            $filename = urldecode($urlparts[$i]);
+            break;
         }
     }
     if ($filename === FALSE) { //Failed to find a usable filename in $url.
@@ -190,6 +193,23 @@ function attachRemoteFile($url, $pid=0) {
         return X_NOT_AN_IMAGE;
     }
     $filetype = $db->escape(image_type_to_mime_type($result[2]));
+
+    // Try to make sure the filename extension is okay
+    $extention = get_extension($filename);
+    if (!($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+        $extension = '';
+        if (strpos($filetype, 'jpeg') !== FALSE) {
+            $extension = 'jpg';
+        } elseif (strpos($filetype, 'gif') !== FALSE) {
+            $extension = 'gif';
+        } elseif (strpos($filetype, 'bmp') !== FALSE) {
+            $extension = 'bmp';
+        } elseif (strpos($filetype, 'png') !== FALSE) {
+            $extension = 'png';
+        }
+        $filename .= $extension;
+        $dbfilename .= $extension;
+    }
 
     // Check minimum file size for disk storage
     if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {

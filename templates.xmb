@@ -4698,7 +4698,7 @@ $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</
 <font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentthumb|#*XMB TEMPLATE*#|
-<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" {$post['filedims']} /></a>
+<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentimage|#*XMB TEMPLATE*#|
 <img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
