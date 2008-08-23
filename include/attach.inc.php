@@ -203,13 +203,13 @@ function attachRemoteFile($url, $pid=0) {
     if (!($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
         $extension = '';
         if (strpos($filetype, 'jpeg') !== FALSE) {
-            $extension = 'jpg';
+            $extension = '.jpg';
         } elseif (strpos($filetype, 'gif') !== FALSE) {
-            $extension = 'gif';
+            $extension = '.gif';
         } elseif (strpos($filetype, 'bmp') !== FALSE) {
-            $extension = 'bmp';
+            $extension = '.bmp';
         } elseif (strpos($filetype, 'png') !== FALSE) {
-            $extension = 'png';
+            $extension = '.png';
         }
         $filename .= $extension;
         $dbfilename .= $extension;
