@@ -175,7 +175,11 @@ function attachRemoteFile($url, $pid=0) {
     }
 
     // Now grab the remote file
-    $file = file_get_contents($url);
+    if (DEBUG) {
+        $file = file_get_contents($url);
+    } else {
+        $file = @file_get_contents($url);
+    }
     if ($file === FALSE) {
         return X_INVALID_REMOTE_LINK;
     }

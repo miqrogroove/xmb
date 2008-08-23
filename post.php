@@ -572,7 +572,7 @@ switch($action) {
                             if ($counter == 0) {
                                 $message .= "\r\n\r\n";
                             }
-                            $message .= $bbcode;
+                            $message .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
                         }
                     }
@@ -895,7 +895,7 @@ switch($action) {
                             if ($counter == 0) {
                                 $message .= "\r\n\r\n";
                             }
-                            $message .= $bbcode;
+                            $message .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
                         }
                     }
@@ -1130,7 +1130,7 @@ switch($action) {
                         if ($counter == 0) {
                             $postinfo['message'] .= "\r\n\r\n";
                         }
-                        $postinfo['message'] .= $bbcode;
+                        $postinfo['message'] .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                         $counter++;
                     }
                 }
