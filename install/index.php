@@ -38,16 +38,13 @@ $req['files'] = array(
     'cp.php',
     'cp2.php',
     'editprofile.php',
-    'lang/English.lang.php',
     'faq.php',
+    'files.php',
     'forumdisplay.php',
     'header.php',
-    'index.php',
-    'member.php',
-    'memcp.php',
-    'misc.php',
-    'post.php',
     'include/admin.inc.php',
+    'include/attach.inc.php',
+    'include/attach-admin.inc.php',
     'include/buddy.inc.php',
     'include/captcha.inc.php',
     'include/functions.inc.php',
@@ -56,6 +53,13 @@ $req['files'] = array(
     'include/smtp.inc.php',
     'include/topicadmin.inc.php',
     'include/u2u.inc.php',
+    'index.php',
+    'lang/English.lang.php',
+    'member.php',
+    'memcp.php',
+    'misc.php',
+    'post.php',
+    'stats.php',
     'templates.xmb',
     'today.php',
     'tools.php',
@@ -951,7 +955,7 @@ Public License instead of this License.  But first, please read
 
             // Now, replace the main text values with those given by user
             $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", "= 'mysql';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
-            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", "= '{$_REQUEST['db_type']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '$_REQUEST['MAILER_TYPE']';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
+            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", "= '{$_REQUEST['db_type']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
             $configuration = str_replace($find, $replace, $configuration);
 
             // Change Comment Output Option
