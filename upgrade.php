@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -205,7 +205,29 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the attachments table...<br />';
+    echo 'Requesting to lock the members table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
+
+    echo 'Gathering schema information from the members table...<br />';
+    $sql = array();
+    $table = 'members';
+    $columns = array(
+    'u2ualert' => "TINYINT NOT NULL DEFAULT '0'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the members table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the members table...<br />';
     $db->query('UNLOCK TABLES');
     flush();
 

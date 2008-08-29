@@ -114,6 +114,16 @@ $dayselect
 </td>
 </tr>
 <tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[u2ualert1]</td>
+<td bgcolor="$altbg2">
+<select name="u2ualert">
+<option value="2" $u2uasel2>$lang[u2ualert2]</option>
+<option value="1" $u2uasel1>$lang[u2ualert3]</option>
+<option value="0" $u2uasel0>$lang[u2ualert4]</option>
+</select>
+</td>
+</tr>
+<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[texttimeformat]</td>
 <td bgcolor="$altbg2"><input type="radio" value="24" name="timeformatnew" $check24 />&nbsp;$lang[text24hour]&nbsp;<input type="radio" value="12" name="timeformatnew" $check12 />&nbsp;$lang[text12hour]</td>
 </tr>
@@ -2223,6 +2233,16 @@ $dayselect
 <td bgcolor="$altbg2"><input type="checkbox" name="newsletter" value="yes" checked="checked" /> </td>
 </tr>
 <tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[u2ualert1]</td>
+<td bgcolor="$altbg2">
+<select name="u2ualert">
+<option value="2">$lang[u2ualert2]</option>
+<option value="1">$lang[u2ualert3]</option>
+<option value="0">$lang[u2ualert4]</option>
+</select>
+</td>
+</tr>
+<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textuseoldu2u]</td>
 <td bgcolor="$altbg2"><input type="checkbox" name="useoldu2u" value="yes" />
 </td>
@@ -2718,6 +2738,16 @@ $dayselect
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textgetnews]</td>
 <td bgcolor="$altbg2"><input type="checkbox" name="newnewsletter" value="yes" $newschecked /> </td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[u2ualert1]</td>
+<td bgcolor="$altbg2">
+<select name="u2ualert">
+<option value="2" $u2uasel2>$lang[u2ualert2]</option>
+<option value="1" $u2uasel1>$lang[u2ualert3]</option>
+<option value="0" $u2uasel0>$lang[u2ualert4]</option>
+</select>
+</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textuseoldu2u]</td>

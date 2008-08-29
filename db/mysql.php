@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -182,7 +182,9 @@ class dbstuff {
             $this->panic($sql);
         }
         $this->querynum++;
-        $this->querylist[] = $sql;
+    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+            $this->querylist[] = $sql;
+        }
         $this->querytimes[] = $this->stop_timer();
         return $query;
     }
@@ -194,7 +196,9 @@ class dbstuff {
             $this->panic($sql);
         }
         $this->querynum++;
-        $this->querylist[] = $sql;
+    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+            $this->querylist[] = $sql;
+        }
         $this->querytimes[] = $this->stop_timer();
         return $query;
     }

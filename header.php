@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -768,12 +768,22 @@ if (($self['status'] == 'Banned' || $result > 0) && !(X_ADMIN || (X_SCRIPT == 'm
 // if the user is registered, check for new u2u's
 $newu2umsg = '';
 if (X_MEMBER) {
-    $query = $db->query("SELECT COUNT(readstatus) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
+    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
     $newu2unum = $db->result($query, 0);
+    $db->free_result($query);
     if ($newu2unum > 0) {
         $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
+        // Popup Alert
+        if ($self['u2ualert'] == 2 Or ($self['u2ualert'] == 1 And X_SCRIPT == 'index.php')) {
+            $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
+            if ($newu2unum == 1) {
+                $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';
+            } else {
+                $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert6'].'"; ';
+            }
+            $newu2umsg .= "if (confirm(u2uAlertMsg)) { Popup('u2u.php', 'testWindow', 700, 450); } } setTimeout('u2uAlert();', 10);</script>";
+        }
     }
-    $db->free_result($query);
 }
 
 // create forum jump

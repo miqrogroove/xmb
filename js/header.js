@@ -42,7 +42,7 @@ function Popup(url, window_name, window_width, window_height) {
     "toolbar=no,location=no,directories=no,"+
     "status=no,menubar=no,scrollbars=yes,"+
     "resizable=yes,width="+window_width+",height="+window_height;
-    NewWindow=window.open(url,window_name,settings);
+    window.open(url,window_name,settings);
 }
 
 

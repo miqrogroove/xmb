@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -131,6 +131,20 @@ if (noSubmit('editsubmit')) {
     $dayselect[] = '</select>';
     $dayselect = implode("\n", $dayselect);
 
+    $u2uasel0 = $u2uasel1 = $u2uasel2 = '';
+    switch($member['u2ualert']) {
+        case 2:
+            $u2uasel2 = $selHTML;
+            break;
+        case 1:
+            $u2uasel1 = $selHTML;
+            break;
+        case 0:
+        default:
+            $u2uasel0 = $selHTML;
+            break;
+    }
+
     $check12 = $check24 = '';
     if ($member['timeformat'] == 24) {
         $check24 = $cheHTML;
@@ -209,6 +223,7 @@ if (noSubmit('editsubmit')) {
     $invisible = formInt('newinv');
     $showemail = formYesNo('newshowemail');
     $newsletter = formYesNo('newnewsletter');
+    $u2ualert = formInt('u2ualert');
     $year = formInt('year');
     $month = formInt('month');
     $day = formInt('day');
@@ -241,7 +256,7 @@ if (noSubmit('editsubmit')) {
         $avatar = '';
     }
 
-    $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u' WHERE username='$user'");
+    $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$user'");
     $newpassword = $_POST['newpassword'];
     if ($newpassword) {
         $newpassword = md5($newpassword);

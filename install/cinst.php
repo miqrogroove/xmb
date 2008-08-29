@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -313,6 +313,7 @@ $db->query("CREATE TABLE ".$tablepre."members (
       `saveogu2u` char(3) NOT NULL default '',
       `emailonu2u` char(3) NOT NULL default '',
       `useoldu2u` char(3) NOT NULL default '',
+      `u2ualert` TINYINT NOT NULL DEFAULT '0',
       PRIMARY KEY  (`uid`),
       KEY `username` (username (8)),
       KEY `status` (`status`),

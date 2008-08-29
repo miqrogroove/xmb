@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1140,6 +1140,12 @@ $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "You have successfully topped/untopped the message you will now be taken back to the thread list";
 $lang['topuntop'] = "Top/Untop";
 $lang['u2uadmin_noperm'] = "You do not have permission to use this feature.";
+$lang['u2ualert1'] = "U2U Alert Feature";
+$lang['u2ualert2'] = "On Every Page";
+$lang['u2ualert3'] = "On Index Only";
+$lang['u2ualert4'] = "No Alert";
+$lang['u2ualert5'] = " unread U2U message. Would you like to view it now?";
+$lang['u2ualert6'] = " unread U2U messages. Would you like to view them now?";
 $lang['u2ublocked'] = "The would-be recipient of this U2U has blocked you, so you can't send this message.";
 $lang['u2udump'] = "Clear All U2Us";
 $lang['u2udump_confirm'] = 'Are you sure you want to Delete all u2u\'s?';

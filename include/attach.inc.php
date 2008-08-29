@@ -76,7 +76,6 @@ function attachUploadedFile($varname, $pid=0) {
     if ($file === FALSE) {
         return $filetype;
     }
-    var_dump($filetype);
 
     // Sanity checks
     if (intval($self['uid']) <= 0) {
