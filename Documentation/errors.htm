@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>Known Errors</title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="ProgId" content="VisualStudio.HTML">
+		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
+		<LINK href="xmb.css" type="text/css" rel="stylesheet">
+			<base target="main">
+	</head>
+	<body>
+		<p>We hope that you never have any problems with this software, but we realize that
+			occasionally you will encounter a few glitches or normal error messages. We
+			have compiled a small list of common problems you may encounter and some
+			suggested solutions for these problems.</p>
+		<p>If your particular issue is not addressed below please don't hesitate to post
+			your questions to our Support Team at <a href="http://forums.xmbforum.com/">
+				http://forums.xmbforum.com/</a>
+		</p>
+		<hr>
+		<p class="subTitle">1) &quot;Help! I can't log into my new boards!&quot;</P>
+		<br />
+			<p>
+			This is a common issue with new installs and is usually due to the $full_url
+			not being filled our correctly in your config.php file.
+		</p>
+		<p>Open your config.php file in a text editor and find the *// Path-settings*
+			section. Within that section you will see</p>
+		<p>$full_url = 'FULLURL';</p>
+		<p>You need to make sure to replace the &quot;FULLURL&quot; with the url to your
+			forums - and don't forget the trailing forward slash. For example,
+		</p>
+		<p>$full_url = '<a href="http://forums.xmbforum.com/">http://forums.xmbforum.com/</a>';
+		</p>
+		<p>Save the config.php file and upload to your server. 99% of the time this will
+			clear up any &quot;new install&quot; login issues.
+			<br>
+			<br>
+			If you still have login issues after checking the above solution please consult
+			the following &quot;How To&quot; threads on our support forums:</p>
+		<ul>
+			<li>
+				How Do I Enable/Delete Cookies<br>
+				<a href="http://forums.xmbforum.com/viewthread.php?tid=740614">http://forums.xmbforum.com/viewthread.php?tid=740614</a><br>
+				&nbsp;</li>
+			<li>
+				HOW TO: Deal with Login/Logout Issues<br>
+				<a href="http://forums.xmbforum.com/viewthread.php?tid=740632">http://forums.xmbforum.com/viewthread.php?tid=740632</a>
+				<br>
+			&nbsp;</ul>
+		<p>If all of the above fail to help please post your question in our support forums
+			(listed above) and we will be happy to help from there.</p>
+		<hr>
+		<p class="subTitle">&quot;I get a Column count not found at row 1 error!&quot;</p>
+		<br />
+		<p>This is due to hacks. XMB 1.9.5 will NEVER display this message as all SQL
+			queries it issues are fully specified. If you have hacks installed, you will
+			need to ask for support from the person you obtained the hack from.
+		</p>
+		<p>However, the best bet to resolve this issue is to return XMB 1.9.5 to pristine
+			condition by <a href="upgrade.htm">performing an upgrade</a>. Just follow
+			the steps described in the upgrade documentation. The upgrade basically
+			restores your board to correct working condition.<br>
+		</p>
+		<hr>
+		<p class="subTitle">&quot;A few of my new members are getting an error message and
+			they are not being allowed to register! The error message is 'Access to this
+			website is currently not possible as your hostname/IP appears suspicious' -
+			what is that all about?!</p>
+			<br>
+			<p>The error message &quot;Access to this website is currently not possible as
+			your hostname/IP appears suspicious&quot; is due to a &quot;check&quot;
+			installed by default to prevent any suspicious activity that could harm your
+			forums. Sometimes it can get in the way of valid registrations. This is
+			particularly true in countries like Australia where all the major ISPs use
+			transparent proxies. If many users get this message, just turn the check off.</p>
+		<p>You can turn off this check by opening your config.php file in a text editor.
+			Find the &quot;// Registration settings&quot; section and change $ipcheck to
+			&quot;off&quot; instead of the default &quot;on&quot;. Save the config.php file
+			and upload to your server.</p>
+		<hr>
+		<p class="subTitle">3) &quot;I tried to register a new account for my forum but I
+			get this error: 'Error: You have already registered today, you can re-register
+			again in 24 hours' - why is this happening?!</p>
+			<br>
+			<p>This is due to a check in the config.php file. You can turn of the check by
+			opening your config.php file in a text editor and looking in the &quot;//
+			Registration settings&quot; section and changing $ipreg to &quot;off&quot;
+			instead of the default &quot;on&quot;. Save the config.php file and upload to
+			your server.</p>
+		<hr>
+		<p>These are just a few of the many possible questions you may have about your XMB
+			forum. If your question has not been addressed by this document please visit
+			the <a href="support.htm">support page</a> for additional support
+			options.</p>
+		<p>We hope that this document will help you to get a good start on setting up and
+			enjoying your new forums!
+		</p>
+	</body>
+</html>
