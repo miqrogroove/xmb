@@ -184,7 +184,7 @@ if ($thislast[0] != $thread['lastpostdate'] Or $thread['replies'] != $thread['po
 if (strpos($thread['closed'], '|') !== false) {
     $moved = explode('|', $thread['closed']);
     if ($moved[0] == 'moved') {
-        redirect($full_url.'forumdisplay.php?tid='.$moved[1], 0);
+        redirect($full_url.'viewthread.php?tid='.$moved[1], 0);
     }
 }
 
