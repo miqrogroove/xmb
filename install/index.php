@@ -1276,7 +1276,7 @@ Public License instead of this License.  But first, please read
         );
         foreach($config_array as $key => $value) {
             if (${$key} === $value) {
-                error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.'), TRUE);
+                error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.', TRUE);
             }
         }
 
