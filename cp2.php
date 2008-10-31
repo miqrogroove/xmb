@@ -98,6 +98,7 @@ if (X_ADMIN) {
                 $value = $row['cdata'];
                 $value = str_replace("\\", "\\\\", $value);
                 $value = str_replace('"', '\"', $value);
+                $value = str_replace('$', '\$', $value);
                 $value = str_replace("\n", '\n', $value);
                 $contents .= "\$lang['{$row['langkey']}'] = \"$value\";\r\n";
             }
@@ -420,6 +421,11 @@ if ($action == 'lang') {
                     }
                     break;
                 case '"':
+                    if ($quoting == '"') {
+                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
+                    }
+                    break;
+                case '$':
                     if ($quoting == '"') {
                         $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
                     }
