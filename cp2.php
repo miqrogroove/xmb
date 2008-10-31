@@ -74,6 +74,40 @@ if (X_ADMIN) {
         echo implode("\r\n", $contents);
         exit();
     }
+    if ($action == "lang" && $download) {
+        $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid=$download");
+        if ($db->num_rows($result) == 0) {
+            error($lang['generic_missing']);
+        }
+        $row = $db->fetch_array($result);
+        $db->free_result($result);
+        $devname = $row['devname'];
+
+        $query = "SELECT k.langkey, t.cdata "
+               . "FROM ".X_PREFIX."lang_keys AS k "
+               . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
+               . "WHERE t.langid=$download "
+               . "GROUP BY k.langkey ORDER BY k.langkey";
+        $query = $db->query($query);
+        $contents = '';
+        $meta = '';
+        while($row = $db->fetch_array($query)) {
+            if (in_array($row['langkey'], array('charset','iso639','language'))) {
+                $meta .= "\$lang['{$row['langkey']}'] = '{$row['cdata']}';\r\n";
+            } else {
+                $value = $row['cdata'];
+                $value = str_replace("\\", "\\\\", $value);
+                $value = str_replace('"', '\"', $value);
+                $value = str_replace("\n", '\n', $value);
+                $contents .= "\$lang['{$row['langkey']}'] = \"$value\";\r\n";
+            }
+        }
+        $contents = "\$devname = '$devname';\r\n".$meta.$contents;
+        header("Content-Type: application/x-ms-download");
+        header("Content-Disposition: filename=\"$devname.lang.php\"");
+        echo $contents;
+        exit();
+    }
 }
 
 nav($lang['textcp']);
@@ -219,10 +253,10 @@ if ($action == 'restrictions') {
 
 // Management for Translation Database
 if ($action == 'lang') {
-    if (noSubmit('importsubmit')) { // Default screen: Language List, Options to Install, Uninstall, and Export.
+    if (noSubmit('importsubmit') And noSubmit('edit') And noSubmit('editsubmit') And noSubmit('detail')) { // Default screen: Language List, Options to Install, Uninstall, and Export.
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
-        <td>
+        <td align="center">
         <form method="POST" action="cp2.php?action=lang" name="theme_main">
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
@@ -230,25 +264,32 @@ if ($action == 'lang') {
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textthemename']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['translation_name']; ?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['numberusing']?></font></strong></td>
         </tr>
         <?php
 
         $query = $db->query("SELECT b.devname, b.langid, COUNT(m.uid) AS cnt FROM ".X_PREFIX."lang_base AS b LEFT JOIN ".X_PREFIX."members AS m ON m.langfile = b.devname GROUP BY b.langid, b.devname ORDER BY b.devname ASC");
+        $count = $db->num_rows($query);
+        if ($count == 1) {
+            $disabledelete = ' disabled="disabled"';
+        } else {
+            $disabledelete = '';
+        }
+
         while($themeinfo = $db->fetch_array($query)) {
             $themeid = $themeinfo['langid'];
             $members = $themeinfo['cnt'];
 
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['langid']?>" /></td>
+            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['langid']?>"<?php echo $disabledelete; ?> /></td>
             <td>
-            <input type="text" name="theme_name[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" />
-            <a href="cp2.php?action=themes&amp;single=<?php echo $themeinfo['langid']?>">
+            <input type="text" name="theme_name[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" disabled="disabled" />
+            <a href="cp2.php?action=lang&amp;detail=<?php echo $themeinfo['langid']?>">
             <?php echo $lang['textdetails']?></a>
             -
-            <a href="cp2.php?action=themes&amp;download=<?php echo $themeinfo['langid']?>">
+            <a href="cp2.php?action=lang&amp;download=<?php echo $themeinfo['langid']?>">
             <?php echo $lang['textdownload']?>
             </a>
             </td>
@@ -260,25 +301,6 @@ if ($action == 'lang') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td colspan="3"><img src="./images/pixel.gif" alt="" /></td>
         </tr>
-        <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
-        <td colspan="3">
-        <a href="cp2.php?action=themes&amp;single=anewtheme1">
-            <strong><?php echo $lang['textnewtheme']?></strong>
-        </a>
-         -
-        <a href="#" onclick="setCheckboxes('theme_main', 'theme_delete[]', true); return false;">
-            <?php echo $lang['checkall']?>
-        </a>
-         -
-        <a href="#" onclick="setCheckboxes('theme_main', 'theme_delete[]', false); return false;">
-            <?php echo $lang['uncheckall']?>
-        </a>
-         -
-        <a href="#" onclick="invertSelection('theme_main', 'theme_delete[]'); return false;">
-            <?php echo $lang['invertselection']?>
-        </a>
-        </td>
-        </tr>
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="3"><input type="submit" name="themesubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
@@ -288,20 +310,56 @@ if ($action == 'lang') {
         </table>
         </form>
         <br />
+
+
+        <form method="post" action="cp2.php?action=lang">
+        <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
+        <tr>
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr class="category">
+        <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo "{$lang['textedit']} - $langfile"?></font></strong></td>
+        </tr>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow">
+        <?php
+        $query = $db->query("SELECT * FROM ".X_PREFIX."lang_keys ORDER BY langkey");
+        echo '<select name="phraseid"><option value="default">'.$lang['translation_select'].'</option>';
+        while($template = $db->fetch_array($query)) {
+            echo '<option value="'.$template['phraseid'].'">'.$template['langkey']."</option>\r\n";
+        }
+        echo '</select>&nbsp;&nbsp;';
+        $db->free_result($query);
+        ?>
+        </td>
+        </tr>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow">
+        <input type="submit" class="submit" name="edit" value="<?php echo $lang['textedit']?>" />&nbsp;
+        </td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+        </form>
+
+
+        <br />
         <form method="post" action="cp2.php?action=lang" enctype="multipart/form-data">
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="header">
-        <td colspan="2"><?php echo $lang['textimporttheme']?></td>
+        <td colspan="2"><?php echo $lang['translation_import']; ?></td>
         </tr>
         <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textthemefile']?></td>
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['generic_file']; ?></td>
         <td bgcolor="<?php echo $altbg2?>"><input name="themefile" type="file" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" name="importsubmit" value="<?php echo $lang['textimportsubmit']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" name="importsubmit" value="<?php echo $lang['translation_import']; ?>" /></td>
         </tr>
         </table>
         </td>
@@ -354,22 +412,21 @@ if ($action == 'lang') {
             while(($curpos = strpos($phrase, "\\", $curpos)) !== FALSE) {
                 switch ($phrase[$curpos + 1]) {
                 case "\\":
-                    $phrase[$curpos] = '';
+                    $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
                     break;
                 case "'":
-                    if ($match[2] == "'") {
-                        $phrase[$curpos] = '';
+                    if ($quoting == "'") {
+                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
                     }
                     break;
                 case '"':
-                    if ($match[2] == '"') {
-                        $phrase[$curpos] = '';
+                    if ($quoting == '"') {
+                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
                     }
                     break;
                 case 'n':
-                    if ($match[2] == '"') {
-                        $phrase[$curpos + 1] = '';
-                        $phrase[$curpos] = "\n";
+                    if ($quoting == '"') {
+                        $phrase = substr($phrase, 0, $curpos)."\n".substr($phrase, $curpos + 2);
                     }
                     break;
                 default:
@@ -439,6 +496,130 @@ if ($action == 'lang') {
             echo $lang['langimportsuccess'];
         }
         echo '</td></tr>';
+    }
+    
+    if (onSubmit('edit') && noSubmit('editsubmit')) {
+        $phraseid = getInt('phraseid', 'r');
+        $result = $db->query("SELECT k.*, t.cdata "
+                           . "FROM ".X_PREFIX."lang_keys AS k "
+                           . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
+                           . "LEFT JOIN ".X_PREFIX."lang_base AS b USING (langid) "
+                           . "WHERE k.phraseid=$phraseid AND (b.devname='$langfile' OR b.devname IS NULL)");
+        if ($db->num_rows($result) == 0) {
+            error($lang['generic_missing'], FALSE);
+        }
+        $row = $db->fetch_array($result);
+        $langkey = $row['langkey'];
+        $value = cdataOut($row['cdata']); //Escape for use in the form field.
+        
+        ?>
+        <tr bgcolor="<?php echo $altbg2?>">
+        <td align="center">
+        <form method="post" action="cp2.php?action=lang">
+        <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
+        <tr>
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr class="category">
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['translations']; ?></font></strong></td>
+        </tr>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
+        <td><?php echo $lang['translation_phrase'].':'; ?>&nbsp;<strong><?php echo "$langkey ($langfile)"; ?></strong></td>
+        </tr>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
+        <td><textarea cols="100" rows="15" name="templatenew"><?php echo $value; ?></textarea></td>
+        </tr>
+        <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
+        <td>
+         <input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" />
+         <input type="hidden" name="phraseid" value="<?php echo $phraseid; ?>">
+        </td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+        </form>
+        </td>
+        </tr>
+        <?php
+
+    }
+
+    if (onSubmit('editsubmit')) {
+        $phraseid = getInt('phraseid', 'p');
+        $newvalue = postedVar('templatenew', '', FALSE); // HTML is always allowed in translations.
+
+        $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
+        if ($db->num_rows($result) == 0) {
+            error($lang['generic_missing'], FALSE);
+        }
+        $db->free_result($result);
+        $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
+        if ($db->num_rows($result) == 0) {
+            error($lang['generic_missing'], FALSE);
+        }
+        $row = $db->fetch_array($result);
+        $db->free_result($result);
+        $langid = $row['langid'];
+
+        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
+        $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$newvalue'");
+
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['translation_update'].'</td></tr>';
+        redirect($full_url.'cp2.php?action=lang', 2, X_REDIRECT_JS);
+    }
+
+    if (onSubmit('detail')) {
+        $langid = getInt('detail');
+        
+        $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid='$langid'");
+        if ($db->num_rows($result) == 0) {
+            error($lang['generic_missing'], FALSE);
+        }
+        $row = $db->fetch_array($result);
+        $db->free_result($result);
+        $devname = $row['devname'];
+
+        $query = "SELECT k.langkey, k.phraseid, COUNT(t.cdata) AS phrasecount "
+               . "FROM ".X_PREFIX."lang_keys AS k "
+               . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
+               . "WHERE t.langid=$langid OR t.langid IS NULL "
+               . "GROUP BY k.phraseid, k.langkey ORDER BY k.langkey";
+        $query = $db->query($query);
+
+        ?>
+        <tr bgcolor="<?php echo $altbg2?>">
+        <td align="center">
+        <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
+        <tr>
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr class="category">
+        <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['translation_phrase']; ?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $devname; ?></font></strong></td>
+        </tr>
+        <?php
+
+        while($row = $db->fetch_array($query)) {
+            $langkey = $row['langkey'];
+            $value = ($row['phrasecount'] == 0) ? $lang['textnewcode'] : $lang['textedit'];
+
+            ?>
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+            <td><?php echo $langkey; ?></td>
+            <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $value; ?></a></td>
+            </tr>
+            <?php
+        }
+        ?>
+        </table>
+        </td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        <?php
     }
 }
 
