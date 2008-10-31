@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -126,6 +126,60 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
     }
 
     return ($xmbuser != '');
+}
+
+// loadLang() uses the new translation database to populate the old $land and $langfile variables.
+// Parameter $devname is the name specified by XMB for internal use (usually written in English).
+function loadLang($devname = "English") {
+    global $db, $lang, $langfile;
+
+    // Query The Translation Database
+    $sql = 'SELECT k.langkey, t.cdata '
+         . 'FROM '.X_PREFIX.'lang_keys AS k'
+         . ' LEFT JOIN '.X_PREFIX.'lang_text AS t USING (phraseid)'
+         . ' INNER JOIN '.X_PREFIX.'lang_base AS b USING (langid)'
+         . "WHERE b.devname = '$devname'";
+    $result = $db->query($sql);
+
+    // Load the $lang array.
+    if ($db->num_rows($result) > 0) {
+        $langfile = $devname;
+        $lang = array();
+        while($row = $db->fetch_array($result)) {
+            $lang[$row['langkey']] = $row['cdata'];
+        }
+        $db->free_result($query);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+// loadPhrase uses the new translation database to retrieve a single phrase in all available languages.
+// Parameter $langkey is the same string used as the $lang array key.
+// Returns an associative array in which lang_base.devname is the key.
+function loadPhrase($langkey) {
+    global $db;
+
+    // Query The Translation Database
+    $sql = 'SELECT b.devname, t.cdata '
+         . 'FROM '.X_PREFIX.'lang_base AS b'
+         . ' LEFT JOIN '.X_PREFIX.'lang_text AS t USING (langid)'
+         . ' INNER JOIN '.X_PREFIX.'lang_keys AS k USING (phraseid)'
+         . "WHERE k.langkey = '$langkey'";
+    $result = $db->query($sql);
+
+    // Load the $lang array.
+    if ($db->num_rows($result) > 0) {
+        $phrase = array();
+        while($row = $db->fetch_array($result)) {
+            $phrase[$row['devname']] = $row['cdata'];
+        }
+        $db->free_result($query);
+        return $phrase;
+    } else {
+        return FALSE;
+    }
 }
 
 function nav($add=false, $raquo=true) {

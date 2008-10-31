@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -250,6 +250,44 @@ $db->query("CREATE TABLE ".$tablepre."forums (
       KEY `displayorder` (`displayorder`),
       KEY `status` (`status`)
    ) TYPE=MyISAM
+");
+// --------------------------------------------------------
+show_result(X_INST_OK);
+
+show_act("Creating ".$tablepre."lang_base");
+// ------------ xmb_lang_base --------------------------------
+$db->query("DROP TABLE IF EXISTS ".$tablepre."lang_base");
+$db->query("CREATE TABLE ".$tablepre."lang_base (
+    `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+    `devname` VARCHAR( 15 ) NOT NULL ,
+    UNIQUE ( `devname` )
+  ) TYPE=MyISAM COMMENT = 'List of Installed Languages'
+");
+// --------------------------------------------------------
+show_result(X_INST_OK);
+
+show_act("Creating ".$tablepre."lang_keys");
+// ------------ xmb_lang_keys --------------------------------
+$db->query("DROP TABLE IF EXISTS ".$tablepre."lang_keys");
+$db->query("CREATE TABLE ".$tablepre."lang_keys (
+    `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+    `langkey` VARCHAR( 30 ) NOT NULL ,
+    UNIQUE ( `langkey` )
+  ) TYPE=MyISAM COMMENT = 'List of Translation Variables'
+");
+// --------------------------------------------------------
+show_result(X_INST_OK);
+
+show_act("Creating ".$tablepre."lang_text");
+// ------------ xmb_lang_text --------------------------------
+$db->query("DROP TABLE IF EXISTS ".$tablepre."lang_text");
+$db->query("CREATE TABLE ".$tablepre."lang_text (
+    `langid` TINYINT UNSIGNED NOT NULL ,
+    `phraseid` SMALLINT UNSIGNED NOT NULL ,
+    `cdata` BLOB NOT NULL ,
+    UNIQUE `langid` ( `langid` , `phraseid` ) ,
+    INDEX ( `phraseid` )
+  ) TYPE=MyISAM COMMENT = 'Translation Table'
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);

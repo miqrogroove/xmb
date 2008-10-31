@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -71,11 +71,11 @@ if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] |
 
 if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
-<h1>XMB 1.9.8 SP3 to 1.9.10 Upgrade Script</h1>
+<h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
 
-<p>This script is compatible with XMB 1.9.10 as well as 1.9.9.
+<p>This script is compatible with XMB 1.9.10.
 
-<p>This script is NOT compatible with XMB 1.9.8.
+<p>This script is NOT compatible with XMB 1.9.8 or 1.9.9.
 
 <h2>Instructions</h2>
 <ol>
@@ -85,7 +85,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <li>Disable your forums using the Board Status setting.
 <li>Upload the XMB 1.9.11 files.
 <li>Upload and run this script to complete your database upgrade.
-<li>Go to the Administration Panel to edit your Forum permissions.
 <li>Enable your forums using the Board Status setting.
 <li>Deny ALTER and LOCK privileges to the forum database account. (Optional, recommended)
 </ol>
@@ -118,12 +117,13 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
             .'Please <a href="cp.php?action=settings">Go To The Admin Panel</a> first to begin the upgrade successfully.<br />';
         trigger_error('Admin attempted upgrade without turning off the board.', E_USER_ERROR);
     }
-    flush();
 
     echo 'Requesting to lock the settings table...<br />';
+    flush();
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
     echo 'Gathering schema information from the settings table...<br />';
+    flush();
     $sql = array();
     $table = 'settings';
     $columns = array(
@@ -160,9 +160,11 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the attachments table...<br />';
+    flush();
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
     echo 'Gathering schema information from the attachments table...<br />';
+    flush();
     $sql = array();
     $table = 'attachments';
     $columns = array(
@@ -206,9 +208,11 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the members table...<br />';
+    flush();
     $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
 
     echo 'Gathering schema information from the members table...<br />';
+    flush();
     $sql = array();
     $table = 'members';
     $columns = array(
@@ -229,8 +233,26 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 
     echo 'Releasing the lock on the members table...<br />';
     $db->query('UNLOCK TABLES');
-    flush();
 
+    echo 'Adding new tables...<br />';
+    flush();
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_base (
+        `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        `devname` VARCHAR( 15 ) NOT NULL ,
+        UNIQUE ( `devname` )
+      ) TYPE=MyISAM COMMENT = 'List of Installed Languages'");
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_keys (
+        `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        `langkey` VARCHAR( 30 ) NOT NULL ,
+        UNIQUE ( `langkey` )
+      ) TYPE=MyISAM COMMENT = 'List of Translation Variables'");
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_text (
+        `langid` TINYINT UNSIGNED NOT NULL ,
+        `phraseid` SMALLINT UNSIGNED NOT NULL ,
+        `cdata` BLOB NOT NULL ,
+        UNIQUE `langid` ( `langid` , `phraseid` ) ,
+        INDEX ( `phraseid` )
+      ) COMMENT = 'Translation Table'");
 
     echo 'Opening the templates file...<br />';
     $stream = fopen('templates.xmb','r');
@@ -241,6 +263,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
 
     echo 'Requesting to lock the templates table...<br />';
+    flush();
     $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
     echo 'Saving the new templates...<br />';

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,12 +26,17 @@
  *
  **/
 
-if (!defined('IN_CODE')) {
-    exit("Not allowed to run this file directly.");
-}
+exit("Not allowed to run lang files.");
 
-$charset = 'ISO-8859-1';
+// Name assigned by XMB for internal use.
+$devname = 'English';
 
+// Meta Data
+$lang['charset'] = 'ISO-8859-1';
+$lang['iso639'] = 'en';
+$lang['language'] = 'English';
+
+// Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Add more addresses";
 $lang['addressname'] = "Address:";
@@ -137,7 +142,7 @@ $lang['bbcode_help_italic'] = "Italicise Tag\\nMakes the enclosed text italicize
 $lang['bbcode_help_link'] = "Hyperlink Tag\\nTurns an URL into a hyperlink.\\nUsage: [url]http://www.anywhere.com[/url]\\nUsage: [url=http://www.anywhere.com]link text[/url]";
 $lang['bbcode_help_list'] = "List Tag\\nBuilds a bulleted, numbered, or alphabetical list.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";
 $lang['bbcode_help_quote'] = "Quote tag\\nQuotes the enclosed text to reference something specific that someone has posted.\\nUsage: [quote]This is a quote[/quote]";
-$lang['bbcode_help_size'] = "Size Tag\\nSets the text size.\\n\\nUsage: The size given will be a relative size, relative to the default board size.\\n Eg. default text size is 12pt, setting".'[size=-3]This is size -3pt text[/size]\n will provide a text of size 9pt (because 12pt-3pt = 9pt)';
+$lang['bbcode_help_size'] = "Size Tag\\nSets the text size.\\n\\nUsage: The size given will be a relative size, relative to the default board size.\\n Eg. default text size is 12pt, setting[size=-3]This is size -3pt text[/size]\\n will provide a text of size 9pt (because 12pt-3pt = 9pt)";
 $lang['bbcode_help_underline'] = "Underline Tag\\nUnderlines the enclosed text.\\nUsage: [u]This text is underlined[/u]";
 $lang['bbcode_helpmode'] = "Help Mode\\nClick on any of the formatting buttons for a description and instructions.";
 $lang['bbcode_normode'] = "Normal Mode\\nPopups will bring you step by step through the process of inserting BB Code.";
@@ -361,6 +366,8 @@ $lang['invalidtid'] = "Thread cannot be merged.  Invalid Thread ID (tid)";
 $lang['invertselection'] = "Invert Selection";
 $lang['ipwarning'] = "<br /><strong>Warning!</strong> Your IP Address is on the list. You'll be permanently banned if you log out.";
 $lang['key'] = 'Key: ';
+$lang['langimportfail'] = "The language could not be imported.";
+$lang['langimportsuccess'] = "The language imported successfully.";
 $lang['last50today'] = "Last $onlinetodaycount Members Who Have Visited Today (if applicable)";
 $lang['lastactive'] = "Last active:";
 $lang['lastreply1'] = "on";
@@ -1139,6 +1146,7 @@ $lang['toppedpost'] = "This post is topped";
 $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "You have successfully topped/untopped the message you will now be taken back to the thread list";
 $lang['topuntop'] = "Top/Untop";
+$lang['translations'] = "Translations";
 $lang['u2uadmin_noperm'] = "You do not have permission to use this feature.";
 $lang['u2ualert1'] = "U2U Alert Feature";
 $lang['u2ualert2'] = "On Every Page";

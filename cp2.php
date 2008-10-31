@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -217,6 +217,231 @@ if ($action == 'restrictions') {
     }
 }
 
+// Management for Translation Database
+if ($action == 'lang') {
+    if (noSubmit('importsubmit')) { // Default screen: Language List, Options to Install, Uninstall, and Export.
+        ?>
+        <tr bgcolor="<?php echo $altbg2?>">
+        <td>
+        <form method="POST" action="cp2.php?action=lang" name="theme_main">
+        <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
+        <tr>
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr class="category">
+        <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textthemename']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['numberusing']?></font></strong></td>
+        </tr>
+        <?php
+
+        $query = $db->query("SELECT b.devname, b.langid, COUNT(m.uid) AS cnt FROM ".X_PREFIX."lang_base AS b LEFT JOIN ".X_PREFIX."members AS m ON m.langfile = b.devname GROUP BY b.langid, b.devname ORDER BY b.devname ASC");
+        while($themeinfo = $db->fetch_array($query)) {
+            $themeid = $themeinfo['langid'];
+            $members = $themeinfo['cnt'];
+
+            ?>
+            <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['langid']?>" /></td>
+            <td>
+            <input type="text" name="theme_name[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" />
+            <a href="cp2.php?action=themes&amp;single=<?php echo $themeinfo['langid']?>">
+            <?php echo $lang['textdetails']?></a>
+            -
+            <a href="cp2.php?action=themes&amp;download=<?php echo $themeinfo['langid']?>">
+            <?php echo $lang['textdownload']?>
+            </a>
+            </td>
+            <td><?php echo $members?></td>
+            </tr>
+            <?php
+        }
+        ?>
+        <tr bgcolor="<?php echo $altbg2?>">
+        <td colspan="3"><img src="./images/pixel.gif" alt="" /></td>
+        </tr>
+        <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+        <td colspan="3">
+        <a href="cp2.php?action=themes&amp;single=anewtheme1">
+            <strong><?php echo $lang['textnewtheme']?></strong>
+        </a>
+         -
+        <a href="#" onclick="setCheckboxes('theme_main', 'theme_delete[]', true); return false;">
+            <?php echo $lang['checkall']?>
+        </a>
+         -
+        <a href="#" onclick="setCheckboxes('theme_main', 'theme_delete[]', false); return false;">
+            <?php echo $lang['uncheckall']?>
+        </a>
+         -
+        <a href="#" onclick="invertSelection('theme_main', 'theme_delete[]'); return false;">
+            <?php echo $lang['invertselection']?>
+        </a>
+        </td>
+        </tr>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="3"><input type="submit" name="themesubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+        </form>
+        <br />
+        <form method="post" action="cp2.php?action=lang" enctype="multipart/form-data">
+        <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
+        <tr>
+        <td bgcolor="<?php echo $bordercolor?>">
+        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+        <tr class="header">
+        <td colspan="2"><?php echo $lang['textimporttheme']?></td>
+        </tr>
+        <tr class="tablerow">
+        <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textthemefile']?></td>
+        <td bgcolor="<?php echo $altbg2?>"><input name="themefile" type="file" /></td>
+        </tr>
+        <tr>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" name="importsubmit" value="<?php echo $lang['textimportsubmit']?>" /></td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+        </form>
+        </td>
+        </tr>
+        <?php
+    }
+
+    if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) { // Handle upload of new translation file.
+
+        // Retrieve uploaded file
+        require('include/attach.inc.php');
+        $filename = '';
+        $filetype = '';
+        $filesize = 0;
+        $upload = get_attached_file('themefile', $filename, $filetype, $filesize, FALSE);
+        if ($upload === FALSE) {
+            error($lang['langimportfail'], FALSE);
+        }
+
+        // Perform sanity checks
+        $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
+        eval('return true; '.$upload); //This will safely error out if file is not valid PHP.
+        
+        // Parse the uploaded code
+        $devname = '';
+        $newlang = array();
+        $find = "$devname = '";
+        $curpos = strpos($upload, $find);
+        $tmppos = strpos($upload, "';", $curpos);
+        if ($curpos === FALSE Or $tmppos === FALSE) {
+            error($lang['langimportfail'], FALSE);
+        }
+        $curpos += strlen($find);
+        $devname = substr($upload, $curpos, $tmppos - $curpos);
+
+        // Match $lang['*'] = "*";
+        preg_match_all("@\\\$lang\\['([_\\w]+)'] = (['\"]{1})(.*?)\\2;\\r?\\n@", $upload, $matches, PREG_SET_ORDER);
+
+        // Load unparsed strings into $newlang array.
+        foreach($matches as $match) {
+            // Parse this string
+            $key = $match[1];
+            $quoting = $match[2];
+            $phrase = $match[3];
+            $curpos = 0;
+            while(($curpos = strpos($phrase, "\\", $curpos)) !== FALSE) {
+                switch ($phrase[$curpos + 1]) {
+                case "\\":
+                    $phrase[$curpos] = '';
+                    break;
+                case "'":
+                    if ($match[2] == "'") {
+                        $phrase[$curpos] = '';
+                    }
+                    break;
+                case '"':
+                    if ($match[2] == '"') {
+                        $phrase[$curpos] = '';
+                    }
+                    break;
+                case 'n':
+                    if ($match[2] == '"') {
+                        $phrase[$curpos + 1] = '';
+                        $phrase[$curpos] = "\n";
+                    }
+                    break;
+                default:
+                    break;
+                }
+                $curpos++;
+            }
+            // Save parsed string.
+            $newlang[$key] = $phrase;
+        }
+        
+        // Ensure all new keys are present in the database.
+        $newkeys = array_keys($newlang);
+        $oldkeys = array();
+        $phraseids = array();
+        $result = $db->query("SELECT langkey FROM ".X_PREFIX."lang_keys");
+        while ($row = $db->fetch_array($result)) {
+            $oldkeys[] = $row['langkey'];
+        }
+        $db->free_result($result);
+        $newkeys = array_diff($newkeys, $oldkeys);
+        if (count($newkeys) > 0) {
+            $sql = implode("'), ('", $newkeys);
+            $sql = "INSERT INTO ".X_PREFIX."lang_keys (langkey) VALUES ('$sql')";
+            $db->query($sql);
+        }
+        
+        // Query Key IDs
+        $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys");
+        while ($row = $db->fetch_array($result)) {
+            $oldkeys[] = $row['langkey'];
+            $phraseids[$row['langkey']] = $row['phraseid'];
+        }
+        $db->free_result($result);
+
+        // Ensure $devname is present in the database.
+        $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$devname'");
+        if ($db->num_rows($result) == 0) {
+            $db->query("INSERT INTO ".X_PREFIX."lang_base SET devname='$devname'");
+            $langid = $db->insert_id();
+        } else {
+            $row = $db->fetch_array($result);
+            $langid = $row['langid'];
+        }
+        $db->free_result($result);
+
+        // Install the new translation
+        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid");
+        $flag = FALSE;
+        $sql = '';
+        foreach($newlang as $key=>$value) {
+            $phraseid = $phraseids[$key];
+            $value = $db->escape($value);
+            if ($flag) {
+                $sql .= ", ($langid, $phraseid, '$value')";
+            } else {
+                $sql .= "($langid, $phraseid, '$value')";
+                $flag = TRUE;
+            }
+        }
+        $query = $db->query("INSERT INTO ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
+
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+        if (!$query) {
+            echo $lang['langimportfail'];
+        } else {
+            echo $lang['langimportsuccess'];
+        }
+        echo '</td></tr>';
+    }
+}
+
 if ($action == 'themes') {
     $single = '';
     $single_str = postedVar('single', '', FALSE, FALSE, FALSE, 'g');
@@ -257,11 +482,6 @@ if ($action == 'themes') {
                 $members = $themeMem[$themeid];
             }
 
-            if ($themeinfo['themeid'] == $theme) {
-                $checked = 'checked="checked"';
-            } else {
-                $checked = 'checked="unchecked"';
-            }
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['themeid']?>" /></td>

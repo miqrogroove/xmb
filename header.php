@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -357,6 +357,9 @@ $tables = array(
     'captchaimages',
     'favorites',
     'forums',
+    'lang_base',
+    'lang_keys',
+    'lang_text',
     'logs',
     'members',
     'posts',

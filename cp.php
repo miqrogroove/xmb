@@ -1236,16 +1236,6 @@ if ($action == 'forum') {
         <tr class="tablerow">
         <td style="background-color: <?php echo $THEME['altbg1']?>"><?php echo $lang['forumpermissions']?></td>
         <td style="background-color: <?php echo $THEME['altbg2']?>"><table style="width: 100%; text-align: center;">
-        <?php
-        $perms = explode(',', $forum['postperm']);
-        $statusList = array(
-            'Super Administrator'   => 1,
-            'Administrator'         => 2,
-            'Super Moderator'       => 4,
-            'Moderator'             => 8,
-            'Member'                => 16,
-            'guest'                 => 32);
-         ?>
         <tr>
             <td class="tablerow" style="width: 25ex;">&nbsp;</td>
             <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['polls'];   ?></td>
@@ -1254,21 +1244,24 @@ if ($action == 'forum') {
             <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: center;"><?php echo $lang['view'];    ?></td>
         </tr>
         <?php
-        foreach($statusList as $key=>$val) {
-            if (!X_SADMIN and $key == 'Super Administrator') {
-                $disabled = 'disabled="disabled"';
-            } else {
-                $disabled = '';
+        $perms = explode(',', $forum['postperm']);
+        foreach($status_enum as $key=>$val) {
+            if ($key != '') {
+                if (!X_SADMIN and $key == 'Super Administrator') {
+                    $disabled = 'disabled="disabled"';
+                } else {
+                    $disabled = '';
+                }
+                ?>
+                <tr class="tablerow">
+                    <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: right;"><?php echo ucwords($key);?></td>
+                    <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[0][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_POLL]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                    <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[1][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_THREAD]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                    <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[2][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_REPLY]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                    <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[3][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_VIEW]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
+                </tr>
+                <?php
             }
-            ?>
-            <tr class="tablerow">
-                <td class="category" style="color: <?php echo $THEME['cattext']?>; font-weight: bold; text-align: right;"><?php echo ucwords($key);?></td>
-                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[0][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_POLL]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
-                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[1][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_THREAD]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
-                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[2][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_REPLY]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
-                <td class="altbg1 ctrtablerow"><input type="checkbox" name="permsNew[3][]" value="<?php echo $val;?>" <?php echo ((($perms[X_PERMS_VIEW]&$val) == $val) ? 'checked="checked"' : ''); ?> <?php echo $disabled;?> /></td>
-            </tr>
-            <?php
         }
         ?>
         </table></td>
@@ -1408,8 +1401,8 @@ if ($action == 'forum') {
         $passwordnew = postedVar('passwordnew', '', FALSE, TRUE);
         $delete = formInt('delete');
 
+        $overrule = array(0,0,0,0);
         if (!X_SADMIN) {
-            $overrule = array(0,0,0,0);
             $forum = $db->fetch_array($db->query("SELECT postperm FROM ".X_PREFIX."forums WHERE fid=$fdetails"));
             $parts = explode(',', $forum['postperm']);
             foreach($parts as $p=>$v) {
@@ -1418,8 +1411,6 @@ if ($action == 'forum') {
                     $overrule[$p] = 1;
                 }
             }
-        } else {
-            $overrule = array(0,0,0,0);
         }
 
         $perms = array(0,0,0,0);
