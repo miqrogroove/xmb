@@ -1201,5 +1201,6 @@ $lang['whosonline_on'] = "Who's online in index status:";
 $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmb'] = "XMB";
+$lang['xmbforum'] = "XMB Forum Software";
 $lang['xmbgroup'] = "The XMB Group";
 ?>

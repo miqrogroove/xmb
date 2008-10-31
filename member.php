@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -95,7 +95,7 @@ switch($action) {
         }
 
         if ($SETTINGS['maxdayreg'] > 0) {
-            $time = $onlinetime - 86400; // take the date and distract 24 hours from it
+            $time = $onlinetime - 86400; // subtract 24 hours
             $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
             if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
                 error($lang['max_regs']);

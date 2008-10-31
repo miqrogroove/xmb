@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -943,7 +943,7 @@ if ($action == 'forum') {
             }
             foreach($groups as $moveforum) { //Groups and grouped forum options.
                 echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
-                if (!isset($subs[$forum['fid']])) {
+                if (isset($forums[$moveforum['fid']]) And !isset($subs[$forum['fid']])) {
                     foreach($forums[$moveforum['fid']] as $moveforum) {
                         echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                     }
@@ -981,8 +981,10 @@ if ($action == 'forum') {
                     }
                     foreach($groups as $moveforum) { //Groups and grouped forum options.
                         echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
-                        foreach($forums[$moveforum['fid']] as $moveforum) {
-                            echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                        if (isset($forums[$moveforum['fid']])) {
+                            foreach($forums[$moveforum['fid']] as $moveforum) {
+                                echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
+                            }
                         }
                     }
                     ?>

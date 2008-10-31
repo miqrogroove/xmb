@@ -18,7 +18,7 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://network-tools.com/default.asp?prog=validate&amp;host=$member[email]" target="_blank">$lang[adminverifyemail]</a></td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://network-tools.com/default.asp?prog=validate&amp;host=$member[email]" onclick="window.open(this.href); return false;">$lang[adminverifyemail]</a></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
@@ -133,7 +133,7 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://network-tools.com/default.asp?prog=whois&host=$member[regip]" target="_blank">$member[regip]</a></td>
+<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://network-tools.com/default.asp?prog=whois&host=$member[regip]" onclick="window.open(this.href); return false;">$member[regip]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprosearch]</td>
@@ -1314,7 +1314,7 @@ $lang[bestmember]
 <font class="smalltxt">
 $versionlong
 <br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank"><strong>$lang[xmbgroup]</strong></a>&nbsp;&copy; $copyright
+<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;"><strong>$lang['xmbforum']</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
 <br />
 $footerstuff[totaltime]
 $footerstuff[querynum]
@@ -2074,7 +2074,7 @@ $todaymembers&nbsp;
 <td bgcolor="$altbg2">$memberinfo[postnum] ($percent% $lang[textoftotposts])</td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" valign="top">$lang[textstatus]<br /><a href="$sitelink" target="_blank">$memberinfo[avatar]</a></td>
+<td bgcolor="$altbg1" valign="top">$lang[textstatus]<br /><a href="$sitelink" onclick="window.open(this.href); return false;">$memberinfo[avatar]</a></td>
 <td bgcolor="$altbg2">$showtitle$customstatus<br />$stars<br /><br />$rank[avatarrank]</td>
 </tr>
 <tr class="tablerow">
@@ -2095,7 +2095,7 @@ $todaymembers&nbsp;
 $emailblock
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
-<td bgcolor="$altbg2"><a href="$site" target="_blank">$site</a></td>
+<td bgcolor="$altbg2"><a href="$site" onclick="window.open(this.href); return false;">$site</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textaim]</td>
@@ -2103,15 +2103,15 @@ $emailblock
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[texticq]</td>
-<td bgcolor="$altbg2"><a href="http://people.icq.com/people/about_me.php?uin=$memberinfo[icq]" target="_blank">$memberinfo[icq]</a></td>
+<td bgcolor="$altbg2"><a href="http://people.icq.com/people/about_me.php?uin=$memberinfo[icq]" onclick="window.open(this.href); return false;">$memberinfo[icq]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textyahoo]</td>
-<td bgcolor="$altbg2"><a href="http://profiles.yahoo.com/{$memberinfo['yahoorecode']}" target="_blank">{$memberinfo['yahoo']}</a></td>
+<td bgcolor="$altbg2"><a href="http://profiles.yahoo.com/{$memberinfo['yahoorecode']}" onclick="window.open(this.href); return false;">{$memberinfo['yahoo']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textmsn]</td>
-<td bgcolor="$altbg2"><a href="http://members.msn.com/{$memberinfo['msnrecode']}" target="_blank">{$memberinfo['msn']}</a></td>
+<td bgcolor="$altbg2"><a href="http://members.msn.com/{$memberinfo['msnrecode']}" onclick="window.open(this.href); return false;">{$memberinfo['msn']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textlocation]</td>
@@ -3138,7 +3138,7 @@ $multipage
 <a href="mailto:$member[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_site|#*XMB TEMPLATE*#|
-<a href="$member[site]" target="_blank" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$member[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_separator|#*XMB TEMPLATE*#|
 <tr>
@@ -3215,10 +3215,10 @@ $multipage
 <td align="center" width="10%">$onlinetime</td>
 <td>$online[location]</td>
 <td align="center">
-<a href="http://network-tools.com/default.asp?prog=whois&host=$online[ip]" target="_blank" />W</a>
-<a href="http://network-tools.com/default.asp?prog=trace&host=$online[ip]" target="_blank" />T</a>
-<a href="http://network-tools.com/default.asp?prog=lookup&host=$online[ip]" target="_blank">L</a>
-<a href="http://www.networldmap.com/TryIt.htm?GetLocation&amp;Template=demo.htm&amp;ipaddress=$online[ip]" target="_blank">M</a> $online[ip]</a></td>
+<a href="http://network-tools.com/default.asp?prog=whois&host=$online[ip]" onclick="window.open(this.href); return false;" />W</a>
+<a href="http://network-tools.com/default.asp?prog=trace&host=$online[ip]" onclick="window.open(this.href); return false;" />T</a>
+<a href="http://network-tools.com/default.asp?prog=lookup&host=$online[ip]" onclick="window.open(this.href); return false;">L</a>
+<a href="http://www.networldmap.com/TryIt.htm?GetLocation&amp;Template=demo.htm&amp;ipaddress=$online[ip]" onclick="window.open(this.href); return false;">M</a> $online[ip]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online_today|#*XMB TEMPLATE*#|
@@ -4179,7 +4179,7 @@ $u2usdraft
 <tr>
 <td align="center"><font style="font-size: 10px; font-family: Verdana">$versionlong
 <br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" target="_blank">$lang[xmbgroup]</a>&nbsp;&copy; $copyright</font></td>
+$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;">$lang[xmbgroup]</a>&nbsp;&copy; $copyright</font></td>
 </tr>
 </table>
 </body>
@@ -4517,7 +4517,7 @@ $u2upreview
 </table>
 <table cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
-<td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=$u2uid" target="_blank">$lang[textprintver]</a></td>
+<td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=$u2uid" onclick="window.open(this.href); return false;">$lang[textprintver]</a></td>
 </tr>
 </table>
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
@@ -4723,7 +4723,7 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 <a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board." title="{$lang['textaim']}"><img src="$imgdir/aim.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachment|#*XMB TEMPLATE*#|
-$lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</a> ($attachsize)
+$lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); return false;">$post[filename]</a> ($attachsize)
 <br />
 <font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
 
@@ -4740,13 +4740,13 @@ $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</
 <a href="mailto:$post[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_icq|#*XMB TEMPLATE*#|
-<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" target="_blank" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
+<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" onclick="window.open(this.href); return false;" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_ip|#*XMB TEMPLATE*#|
 <a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altgetip]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_msn|#*XMB TEMPLATE*#|
-<a href="http://members.msn.com/$post[msn]" target="_blank" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
+<a href="http://members.msn.com/$post[msn]" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
 </font>
@@ -4772,13 +4772,13 @@ $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</
 <div class="sig">$post[sig]</div>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_site|#*XMB TEMPLATE*#|
-<a href="$post[site]" target="_blank" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$post[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_u2u|#*XMB TEMPLATE*#|
 <a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;" title="{$lang['altu2umember']}"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_yahoo|#*XMB TEMPLATE*#|
-<a href="http://profiles.yahoo.com/$post[yahoo]" target="_blank" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
+<a href="http://profiles.yahoo.com/$post[yahoo]" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

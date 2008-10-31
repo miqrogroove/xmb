@@ -1,6 +1,3 @@
-var bbcode_prompt_link1 = bbcode_prompt_link_desc;
-var bbcode_prompt_link2 = bbcode_prompt_list_item;
-
 var defmode = 'normal';
 
 if (defmode == 'advanced') {
@@ -162,9 +159,9 @@ function hyperlink() {
     } else if (advmode) {
         AddText('', '', "[url] [/url]", messageElement);
     } else {
-        txt2=prompt(bbcode_prompt_link1,"");
+        txt2=prompt(bbcode_prompt_link_desc,"");
         if (txt2!=null)    {
-            txt=prompt(bbcode_prompt_link2,"http://");
+            txt=prompt(bbcode_prompt_link_url,"http://");
             if (txt!=null)    {
                 if (txt2=="") {
                     AddText('', '', "[url]"+txt+"[/url]", messageElement);
