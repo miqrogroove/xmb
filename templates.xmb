@@ -2226,7 +2226,7 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textshowemail]</td>
-<td bgcolor="$altbg2"><input type="checkbox" name="showemail" value="yes" checked="checked" /></td>
+<td bgcolor="$altbg2"><input type="checkbox" name="showemail" value="yes" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textgetnews]</td>
@@ -3355,6 +3355,15 @@ $bbcodescript
 <div align="center">
 <br />
 
+|#*XMB TEMPLATE FILE*#|post_attachmentbox|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[attachment]</td>
+<td bgcolor="$altbg2">
+<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
+<input type="file" name="attach" size="20" />
+</td>
+</tr>
+
 |#*XMB TEMPLATE FILE*#|post_attachment_orphan|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1"><strong>$lang[attachment]</strong>
@@ -3373,15 +3382,6 @@ $lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
 <input type="radio" name="attachment[{$postinfo['aid']}][action]" value="rename" />$lang[renamefile]<br />
 <input type="text" name="rename_{$postinfo['aid']}" style="margin-left: 2em;" size="22" value="$postinfo[filename]"/><br />
 <input type="radio" name="attachment[{$postinfo['aid']}][action]" value="delete" />$lang[deletecurrent]<br />
-</td>
-</tr>
-
-|#*XMB TEMPLATE FILE*#|post_attachmentbox|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td bgcolor="$altbg1">$lang[attachment]</td>
-<td bgcolor="$altbg2">
-<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
-<input type="file" name="attach" size="20" />
 </td>
 </tr>
 
@@ -4727,11 +4727,11 @@ $lang[attachment] <a href="{$post['fileurl']}" target="_blank">$post[filename]</
 <br />
 <font class="smalltxt">$lang[textdownloadcount1] $downloadcount $lang[textdownloadcount2]</font>
 
-|#*XMB TEMPLATE FILE*#|viewthread_post_attachmentthumb|#*XMB TEMPLATE*#|
-<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
-
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentimage|#*XMB TEMPLATE*#|
 <img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
+
+|#*XMB TEMPLATE FILE*#|viewthread_post_attachmentthumb|#*XMB TEMPLATE*#|
+<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|
 <a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
