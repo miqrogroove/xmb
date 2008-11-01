@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,15 +26,21 @@
  *
  **/
 
-if (!defined('IN_CODE')) {
-    exit("Not allowed to run this file directly.");
-}
+exit("Not allowed to run lang files.");
 
-$charset = 'ISO-8859-1';
+// Name assigned by XMB for internal use.
+$devname = 'Dutch';
 
+// Meta Data
+$lang['charset'] = 'ISO-8859-1';
+$lang['iso639'] = 'nl';
+$lang['language'] = 'Nederlands';
+
+// Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Voeg meer adressen toe";
 $lang['addressname'] = "Adres:";
+$lang['addressupdate'] = "Update";
 $lang['addtime'] = "To crank the base time up, or down, input a number here. Time will be raised, or lowered by this amount for everyone. Put X to add time, or -X to subtract.";
 $lang['addtoaddresses'] = "Voeg toe aan adresboek";
 $lang['addtobuddies'] = "Voeg toe aan adresboek";
@@ -46,6 +52,7 @@ $lang['admin_main_settings4'] = "uiterlijke opties";
 $lang['admin_main_settings5'] = "gebruikers Control";
 $lang['admin_main_settings6'] = "anders";
 $lang['admin_main_settings7'] = 'Captcha afbeelding instellingen';
+$lang['admin_main_settings8'] = 'File Attachment Settings';
 $lang['admin_rename_fail'] = "Kan de gebruikersnaam niet veranderen. of de gebruikersnaam bestaat niet, of er heeft iemand die naam al in gebruik.";
 $lang['admin_rename_success'] = "gebruikersnaam veranderd.";
 $lang['admin_rename_txt'] = "hernoem gebruiker";
@@ -58,7 +65,7 @@ $lang['adminprofilechange'] = "Dank u , u heeft succesvol een gebruikers profiel
 $lang['adminverifyemail'] = "Controleer gebruikes E-mail Adres";
 $lang['allowrankedit'] = "voorkom dat mods post editen?<br /><span class=\"smalltxt\">(Om te voorkomen dat stafleden posts bewerken van andere stafleden zet edit op no)</span>";
 $lang['alreadyreg'] = "Deze naam/ of e-mail bestaat al , Probeer het opnieuw.";
-$lang['alreadyvoted']  = 'U heeft al gestemd!';
+$lang['alreadyvoted'] = 'U heeft al gestemd!';
 $lang['altadmintools'] = "Administration Tools";
 $lang['altavatar'] = "Avatar";
 $lang['altboardlogo'] = 'Forum Logo';
@@ -238,6 +245,7 @@ $lang['daysold'] = "Dagen oud";
 $lang['db_backup'] = "Database Backup";
 $lang['defaultTimezoneDesc'] = "standaard Tijdzone";
 $lang['delete_all_themes'] = "U kunt het laatste theme niet verwijderen! Uw forum zal niet meer werken!";
+$lang['deleteaborted'] = 'The delete action was aborted due to a protection error.';
 $lang['deletebutton'] = "Verwijder";
 $lang['deletecolon'] = "Verwijder:";
 $lang['deletecurrent'] = "&nbsp;Verwijder huidige file.";
@@ -302,6 +310,14 @@ $lang['favonlistmsg'] = "Het geselecteerde onderwerp staat al in uw favorieten."
 $lang['favsdeletedmsg'] = "Het geselecterrde topic is verweijderd uit uw favorietenlijst, U word terug gebracht .";
 $lang['featurewarning'] = "Waarschuwing";
 $lang['filecorrupt'] = "De file die u wilt downloaden is niet correct. Download word afgebroken.";
+$lang['fileuploaderror1'] = 'XMB Error: The Attachment Storage Path setting appears to be invalid.';
+$lang['fileuploaderror2'] = 'You have attached the maximum number of files allowed per post.';
+$lang['fileuploaderror3'] = 'There appears to be an invalid URL in one of the IMG links in your message.';
+$lang['fileuploaderror4'] = 'One of the IMG links in your message points to a non-image file.';
+$lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height limits.  Please re-size the image and try again.';
+$lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
+$lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
+$lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
 $lang['floodprotect'] = "Uw laatste reactie was minder dan $SETTINGS[floodctrl] seconden geleden , en u bent niet gemachtigd zo snel te  reageren. als u per ongeluk een dubbel post maakt , is uw eerste post gewoon geplaatst ,en de  2e geannuleert.";
 $lang['floodprotect_u2u'] = "Uw laatste u2u was minder dan  $SETTINGS[floodctrl] seconden geleden , en u bent niet gemachtigd zo snel te  reageren. als u per ongeluk een dubbel post maakt , is uw eerste post gewoon geplaatst ,en de  2e geannuleert.";
 $lang['fnasorry'] = "Sorry, deze optie is momenteel niet te gebruiken...";
@@ -314,19 +330,22 @@ $lang['foldersupdateerror'] = 'De volgende mappen zijn niet verwijderd omdat er 
 $lang['footer_options'] = 'Footer Opties:';
 $lang['forgotpw'] = "wachtwoord vergeten ?";
 $lang['forumjumpselect'] = "Selecteer een Forum";
+$lang['forumnotempty'] = 'The selected forum is not empty.  A forum must be empty to perform this action.';
 $lang['forumpruned'] = "Forum succesvol gepruned";
 $lang['forumpermissions'] = 'Forum Permissies:';
 $lang['forumpw'] = "wachtwoord:<br /><small>(laat leeg indien geen)</small>";
 $lang['forumpwinfo'] = "Dit forum is beveiligd met een wachtwoord. om dit forum te bekijken moet u het correcte wachtwoord invoeren.";
 $lang['found'] = "Gevonden";
 $lang['general'] = 'General';
+$lang['generic_file'] = 'File to Upload:';
+$lang['generic_missing'] = 'The item you requested could not be found.';
 $lang['gotobottom'] = "Ga naar beneden";
 $lang['gototop'] = "Ga naar boven";
 $lang['guestpostingonmsg'] = "<br />je hoeft geen lid te zijn om op dit forum te posten.<br /><small> om anoniem te posten moet je niet zijn ingelogd.</small>";
 $lang['gzipcompression'] = "gebruik Gzip Pagina Compressie<br /><small> PHP 4 noodzakelijk</small>";
 $lang['helpbar'] = "Help";
 $lang['hidden'] = "onzichtbaar";
-$lang['hottopic'] = "meer dan  $hottopic replies";
+$lang['hottopiceval'] = "\$lang['hottopic'] = \"meer dan  \$hottopic replies\";";
 $lang['ipreg'] = "Maximaal 1 registratie per ip per dag ?";
 $lang['ignorelist'] = "Ignore Lijst";
 $lang['ignoremsg'] = "Ignore Lijst:<br /><span class=\"smalltxt\">scheid de namen met een komma (i.e. \"Person 1, Person 2,\"). vergeet de komma  niet achter elke naam.</span>";
@@ -349,7 +368,9 @@ $lang['invalidtid'] = "Thread kan niet worden samengevoegd. Verkeerd thread ID (
 $lang['invertselection'] = "Draai  Selectie om";
 $lang['ipwarning'] = "<br /><strong>LET OP!</strong> uw ip adres is geregistreerd als u uitlogd ben u permanent gebanned.";
 $lang['key'] = 'Key: ';
-$lang['last50today'] = "Laatste $onlinetodaycount leden die vandaag het forum hebben bezocht (waar van toepassing)";
+$lang['langimportfail'] = "The language could not be imported.";
+$lang['langimportsuccess'] = "The language imported successfully.";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"Laatste \$onlinetodaycount leden die vandaag het forum hebben bezocht (waar van toepassing)\";";
 $lang['lastactive'] = "Laatst gezien:";
 $lang['lastreply1'] = "aan";
 $lang['lastsadmin'] = "u probeert de laatste superadmin te deactiveren. dit is niet slim on te doen als het gedaan is  kan niemand je meer terug zetten naar superadmin.";
@@ -392,6 +413,8 @@ $lang['moresmilies'] = "Meer smilies";
 $lang['moved'] = "verplaatst:";
 $lang['moveques'] = "verplaats?";
 $lang['movethreadmsg'] = "Bedankt het topic is verplaatsts. U word terug gebracht naar de onderwerpen lijst.";
+$lang['movetodb'] = 'Move to Database';
+$lang['movetodisk'] = 'Move to Disk';
 $lang['multipnote'] = "Let op!: om meerdere ip's te gelijk te verbannen, vervang één van de 4 delen van het IP met een * (ex: 220.194.45.*)";
 $lang['multmodnote'] = "Let op!: om meerdere maderators aan te maken, scheidt moderators met een comma (inclusief een spatie) (vb: Moderator 1, Moderator 2)";
 $lang['mysql_tools'] = "Database gereedschap";
@@ -540,6 +563,7 @@ $lang['reggedonly'] = "je moet geregistreerd zijn om dit forum te kunnen bekijke
 $lang['registerrulestitle'] = "Registratie voorwaarden";
 $lang['regques'] = "je registreren?";
 $lang['refreshpage'] = 'Ververs de pagina';
+$lang['regeneratethumbnail'] = "Regenerate Thumbnail";
 $lang['renamefile'] = "&nbsp;hernoem huidig bestand:";
 $lang['repair'] = 'Repareer tabellen';
 $lang['replace'] = "Vervang";
@@ -657,6 +681,7 @@ $lang['textborder'] = "Eand kleur:";
 $lang['textborderwidth'] = "Rand breedte:";
 $lang['textbriefsummary'] = "Overzicht instellingen van";
 $lang['textbstatus'] = "forum Status:";
+$lang['textbstatusdefault'] = "This message board is currently turned off.";
 $lang['textbuddylist'] = "Adres boek";
 $lang['textbumpthread'] = "duw onderwerp op";
 $lang['textby'] = "door";
@@ -746,7 +771,24 @@ $lang['textfaqstatus'] = "FAQ Status:";
 $lang['textfavorites'] = "Favorieten";
 $lang['textfeb'] = "Februarie";
 $lang['textfilename'] = "Filenaam:";
+$lang['textfilesbase'] = 'Attachment Virtual URL:<br /><span class="smalltxt">Optional, base URL if different from $full_url.</span>';
 $lang['textfilesize'] = "Filegroote:";
+$lang['textfilesminsize'] = 'Attachment Minimum Storage Size:<br /><span class="smalltxt">Storage Path is ignored for files<br />smaller than this many bytes.</span>';
+$lang['textfilespath'] = 'Attachment Storage Path:<br /><span class="smalltxt">Optional, disk storage location for new files.</span>';
+$lang['textfilesperpost'] = 'Maximum Files Per Post:';
+$lang['textfilessizeh'] = 'Maximum Image Height:';
+$lang['textfilessizew'] = 'Maximum Image Width:';
+$lang['textfilessubdir'] = 'Attachment Subdirectory Scheme:';
+$lang['textfilessubdir1'] = 'Year/Month';
+$lang['textfilessubdir2'] = 'Year/Month/Day';
+$lang['textfilesthumbh'] = 'Maximum Thumbnail Height:';
+$lang['textfilesthumbw'] = 'Maximum Thumbnail Width:';
+$lang['textfilesurlpath'] = 'Attachment URL Format:<br /><span class="smalltxt">For Advanced Webmasters Only</span>';
+$lang['textfilesurlpath1'] = '____(default) /files.php?pid=$pid&amp;aid=$aid';
+$lang['textfilesurlpath2'] = '(+MultiViews) /files/$pid/$aid/';
+$lang['textfilesurlpath3'] = '(+MultiViews) /files/$aid/$filename';
+$lang['textfilesurlpath4'] = '(mod_rewrite) /$pid/$aid/';
+$lang['textfilesurlpath5'] = '(mod_rewrite) /$aid/$filename';
 $lang['textfixlastposts'] = "Repareer laatste posts";
 $lang['textfixmemposts'] = "Repareer leden post totalen";
 $lang['textfixmoods'] = "Reset lege stemmingen";
@@ -767,7 +809,7 @@ $lang['textforwardu2utoemail'] = "zend naar mijn e-mail";
 $lang['textfrom'] = "Van:";
 $lang['textfwd'] = "Fwd:";
 $lang['textgetip'] = "Get IP";
-$lang['textgetnews'] ="ontvang nieuwsbrieven van de admin?";
+$lang['textgetnews'] = "ontvang nieuwsbrieven van de admin?";
 $lang['textgo'] = "Bekijk resultaten";
 $lang['textguest1'] = "Gast";
 $lang['textguests'] = "Gasten";
@@ -785,7 +827,6 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "het teken dat je gebruikte is niet toegestaan.";
 $lang['textimgcode'] = "IMG Code";
 $lang['textimgcodeis'] = "[img] Code is";
-$lang['textimportsubmit'] = "Importeer Theme naar $bbname";
 $lang['textimporttheme'] = "Importeer Theme:";
 $lang['textinforum'] = "in forum:";
 $lang['textinthread'] = "In Onderwerp:";
@@ -927,6 +968,7 @@ $lang['textregdate'] = "Registratie Datum";
 $lang['textreggedonly'] = "Alleen leden mogen dit forum bekijken?";
 $lang['textregister'] = "Registreer";
 $lang['textregistered'] = "Registreerde:";
+$lang['textremoteimages'] = 'Attach Remote Images:<br /><span class="smalltxt">Convert new [img] BBCodes to attachments.</span>';
 $lang['textreplies'] = "Antwoorden:";
 $lang['textreply'] = "Antwoord";
 $lang['textreplytrash'] = "Antwoord en verwijder";
@@ -1047,9 +1089,9 @@ $lang['theme_already_exists'] = "Een theme met deze naam bestaat al!";
 $lang['themes'] = "Themes";
 $lang['themeupdate'] = "Themes succesvol bijgewerkt!";
 $lang['threads'] = '';
+$lang['thumbnail'] = 'Thumbnail';
 $lang['tickercontents'] = "Nieuws in Nieuwsbalk:";
 $lang['tickername'] = "Nieuws &amp; Updates";
-$lang['tidnoexist'] = "Thread kon niet worden samengevoegd. Thread ($othertid) bestaat niet";
 $lang['timemsg'] = "Verwerkt in";
 $lang['timezone1'] = "(GMT -12:00) Eniwetok, Kwajalein";
 $lang['timezone10'] = "(GMT -3:30) Newfoundland";
@@ -1104,7 +1146,20 @@ $lang['toppedpost'] = "Deze post is getopped";
 $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "U heeft  met succes  het onferwerp getopped /untopped u gaat nu terugnaar de onderwerpem";
 $lang['topuntop'] = "Top/Untop";
+$lang['translations'] = "Translations";
+$lang['translation_delete'] = "Translation(s) deleted.";
+$lang['translation_import'] = "Install New Language";
+$lang['translation_name'] = "Translation Name";
+$lang['translation_phrase'] = "Phrase Name";
+$lang['translation_select'] = "Please select a phrase...";
+$lang['translation_update'] = "Phrase text saved successfully.";
 $lang['u2uadmin_noperm'] = "U heeft geen permissie om dit te gebruiken.";
+$lang['u2ualert1'] = "U2U Alert Feature";
+$lang['u2ualert2'] = "On Every Page";
+$lang['u2ualert3'] = "On Index Only";
+$lang['u2ualert4'] = "No Alert";
+$lang['u2ualert5'] = " unread U2U message. Would you like to view it now?";
+$lang['u2ualert6'] = " unread U2U messages. Would you like to view them now?";
 $lang['u2ublocked'] = "De ontvanger van deze u2u heeft  geblokked, U kunt dit bericht niet versturen.";
 $lang['u2udump'] = "Verwijder alle u2u";
 $lang['u2udump_confirm'] = 'Weet u zeker dat u alle u2u wilt verwijderen?';
@@ -1152,5 +1207,6 @@ $lang['whosonline_on'] = "wie is online in de index:";
 $lang['whosonlinetoday'] = "Wie is er vandaag op het forum";
 $lang['whoview'] = "Kan dit forum bekijken?";
 $lang['xmb'] = "XMB";
+$lang['xmbforum'] = "XMB Forum Software";
 $lang['xmbgroup'] = "De XMB Group";
 ?>

@@ -1,7 +1,7 @@
 <?php // Translated By: Daniel Gouveia
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,15 +26,21 @@
  *
  **/
  
-if (!defined('IN_CODE')) {
-    exit("Não tem permissão para executar este arquivo directamente.");
-}
+exit("Não tem permissão para executar este arquivo directamente.");
 
-$charset = 'ISO-8859-1';
+// Name assigned by XMB for internal use.
+$devname = 'Portuguese';
 
+// Meta Data
+$lang['charset'] = 'ISO-8859-1';
+$lang['iso639'] = 'pt';
+$lang['language'] = 'Portugu&ecirc;s';
+
+// Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Adicionar mais endereços";
 $lang['addressname'] = "Endereço:";
+$lang['addressupdate'] = "Update";
 $lang['addtime'] = "Para aumentar ou diminuir as horas, coloque um número aqui. A hora será aumentada ou diminuída nessa quantidade para todos os fúsos-horários. Coloque X para adicionar horas, ou -X para subtrair horas.";
 $lang['addtoaddresses'] = "Adiconar ao Livro de Endereços";
 $lang['addtobuddies'] = "Adicionar ao Livro de Endereços";
@@ -46,6 +52,7 @@ $lang['admin_main_settings4'] = "Opções de Aspecto";
 $lang['admin_main_settings5'] = "Controlo de Utilizador";
 $lang['admin_main_settings6'] = "Outras opções";
 $lang['admin_main_settings7'] = "Captcha Image Settings";
+$lang['admin_main_settings8'] = 'File Attachment Settings';
 $lang['admin_rename_fail'] = "Impossível renomear o utilizador. O utilizador não existe, ou existe mais de um utilizador com o mesmo nome.";
 $lang['admin_rename_success'] = "Utilizador renomeado com sucesso.";
 $lang['admin_rename_txt'] = "Renomear utilizador";
@@ -58,7 +65,7 @@ $lang['adminprofilechange'] = "Obrigado, mudou o conteúdo do perfil de um utiliz
 $lang['adminverifyemail'] = "Verificar endereço de e-mail do utilizador";
 $lang['allowrankedit'] = "Proibir que membros do staff editem mensagens?<br /><span class=\"smalltxt\">(Para previnir que membros do staff editem mensagens de outros membros do staff, deixe a opção LIGADA)</span>";
 $lang['alreadyreg'] = "Este nome e/ou email já foi registrado, favor tentar novamente.";
-$lang['alreadyvoted']  = 'Você já votou nesta pesquisa!';
+$lang['alreadyvoted'] = 'Você já votou nesta pesquisa!';
 $lang['altadmintools'] = "Ferramentas Administrativas";
 $lang['altavatar'] = "Avatar";
 $lang['altboardlogo'] = 'Logo do Fórum';
@@ -135,7 +142,7 @@ $lang['bbcode_help_italic'] = "Italicise Tag\\nMakes the enclosed text italicize
 $lang['bbcode_help_link'] = "Hyperlink Tag\\nTurns an URL into a hyperlink.\\nUsage: [url]http://www.anywhere.com[/url]\\nUsage: [url=http://www.anywhere.com]link text[/url]";
 $lang['bbcode_help_list'] = "List Tag\\nBuilds a bulleted, numbered, or alphabetical list.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";
 $lang['bbcode_help_quote'] = "Quote tag\\nQuotes the enclosed text to reference something specific that someone has posted.\\nUsage: [quote]This is a quote[/quote]";
-$lang['bbcode_help_size'] = "Size Tag\\nSets the text size.\\n\\nUsage: The size given will be a relative size, relative to the default board size.\\n Eg. default text size is 12pt, setting".'[size=-3]This is size -3pt text[/size]\n will provide a text of size 9pt (because 12pt-3pt = 9pt)';
+$lang['bbcode_help_size'] = "Size Tag\\nSets the text size.\\n\\nUsage: The size given will be a relative size, relative to the default board size.\\n Eg. default text size is 12pt, setting[size=-3]This is size -3pt text[/size]\\n will provide a text of size 9pt (because 12pt-3pt = 9pt)";
 $lang['bbcode_help_underline'] = "Underline Tag\\nUnderlines the enclosed text.\\nUsage: [u]This text is underlined[/u]";
 $lang['bbcode_helpmode'] = "Help Mode\\nClick on any of the formatting buttons for a description and instructions.";
 $lang['bbcode_normode'] = "Normal Mode\\nPopups will bring you step by step through the process of inserting BB Code.";
@@ -238,6 +245,7 @@ $lang['daysold'] = " dias";
 $lang['db_backup'] = "Backup de base de dados";
 $lang['defaultTimezoneDesc'] = "Padrão fuso horário";
 $lang['delete_all_themes'] = "Não pode apagar o seu último tema! O fórum não funciona sem pelo menos um tema!";
+$lang['deleteaborted'] = 'The delete action was aborted due to a protection error.';
 $lang['deletebutton'] = "Apagar";
 $lang['deletecolon'] = "Apagar:";
 $lang['deletecurrent'] = "&nbsp;Apagar o arquivo actual.";
@@ -302,6 +310,14 @@ $lang['favonlistmsg'] = "O tópico seleccionado já está na sua lista de favoritos
 $lang['favsdeletedmsg'] = "Os tópicos seleccionados foram removidos com sucesso da sua lista de favoritos. Você será redireccionado para a sua lista de favoritos.";
 $lang['featurewarning'] = "Aviso";
 $lang['filecorrupt'] = "O arquivo que está tentar fazer download não existe. Download Cancelado.";
+$lang['fileuploaderror1'] = 'XMB Error: The Attachment Storage Path setting appears to be invalid.';
+$lang['fileuploaderror2'] = 'You have attached the maximum number of files allowed per post.';
+$lang['fileuploaderror3'] = 'There appears to be an invalid URL in one of the IMG links in your message.';
+$lang['fileuploaderror4'] = 'One of the IMG links in your message points to a non-image file.';
+$lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height limits.  Please re-size the image and try again.';
+$lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
+$lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
+$lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
 $lang['floodprotect'] = "Sua última mensagem foi há menos que $SETTINGS[floodctrl] segundos, e não é permitido enviar mensagens com esta frequência. Se enviou uma mensagem duas vezes por acidente, a sua primeira mensagem foi enviada. Apenas a segunda mensagem foi bloqueada.";
 $lang['floodprotect_u2u'] = "Seu último U2U foi enviado a segundos atrás, e você não está autorizado a enviar mensagem com esta frequência. Se você enviou a dupla acidente, o seu primeiro U2U foi enviado com sucesso, é apenas o seu segundo U2U que foi interrompido.";
 $lang['fnasorry'] = "Esta função não está disponível no momento...";
@@ -315,18 +331,21 @@ $lang['footer_options'] = 'Opções de Rodapé:';
 $lang['forumpermissions'] = "Fórum Permissões:";
 $lang['forgotpw'] = "Esqueceu a password?";
 $lang['forumjumpselect'] = "Seleccionar o fórum";
+$lang['forumnotempty'] = 'The selected forum is not empty.  A forum must be empty to perform this action.';
 $lang['forumpruned'] = "O Fórum foi filtrado com sucesso";
 $lang['forumpw'] = "Password:<br /><span class=\"smalltxt\">(deixe em branco se não quiser utilizar password)</span>";
 $lang['forumpwinfo'] = "Este fórum é protegido por password. Para visualizar este fórum introduza a password correcta abaixo.";
 $lang['found'] = "Encontrado";
 $lang['general'] = 'Geral';
+$lang['generic_file'] = 'File to Upload:';
+$lang['generic_missing'] = 'The item you requested could not be found.';
 $lang['gotobottom'] = "Descer para o final da página";
 $lang['gototop'] = "Subir para o início da página";
 $lang['guestpostingonmsg'] = "<br />É permitido enviar mensagens anónimas neste Fórum.<br /><span class=\"smalltxt\"> Não introduze nome de utilizador ou password para enviar mensagem anónima.</span>";
 $lang['gzipcompression'] = "Usar Compactação Gzip<br /><span class=\"smalltxt\">É necessário PHP 4.0.4 ou superior</span>";
 $lang['helpbar'] = "Ajuda";
 $lang['hidden'] = "Invisível";
-$lang['hottopic'] = "mais que $SETTINGS[hottopic] respostas";
+$lang['hottopiceval'] = "\$lang['hottopic'] = \"mais que \$SETTINGS[hottopic] respostas\";";
 $lang['ignorelist'] = "Lista Ignorar";
 $lang['ignoremsg'] = "Lista Ignorar:<br /><span class=\"smalltxt\">Separe os nomes com vírgulas (por ex. \"Pessoa 1, Pessoa 2,\"). Não esqueça de pôr vírgula depois do último nome.</span>";
 $lang['ignoreupdate'] = "A Lista Ignorar foi actualizada com sucesso!";
@@ -349,7 +368,9 @@ $lang['invertselection'] = "Inverter Selecção";
 $lang['ipreg'] = "Permitir no máximo 1 utilizador a registar-se por ip por dia?";
 $lang['ipwarning'] = "<br /><strong>Aviso!</strong> O seu endereço IP está na lista. Você será permanentemente bloqueado se sair do Fórum (Sair).";
 $lang['key'] = 'Chave: ';
-$lang['last50today'] = "50 utilizadores que visitaram o Fórum hoje (se houver)";
+$lang['langimportfail'] = "The language could not be imported.";
+$lang['langimportsuccess'] = "The language imported successfully.";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"\$onlinetodaycount utilizadores que visitaram o Fórum hoje (se houver)\";";
 $lang['lastactive'] = "Activo pela última vez:";
 $lang['lastreply1'] = "em";
 $lang['lastsadmin'] = "Você só tentou status de admin última superpotência do Administrador. Este é uma perigosa coisa a fazer. Depois de admin, não é possível voltar a uma redefinição do estatuto de volta a Super Administrator";
@@ -392,6 +413,8 @@ $lang['moresmilies'] = "Mais smilies";
 $lang['moved'] = "Movido:";
 $lang['moveques'] = "Mover?";
 $lang['movethreadmsg'] = "Obrigado, o tópico foi movido. Você será redireccionado de volta para a lista de tópicos.";
+$lang['movetodb'] = 'Move to Database';
+$lang['movetodisk'] = 'Move to Disk';
 $lang['multipnote'] = "Observação: Para bloquear vários endereços IP de uma só vez, substitua uma das 4 partes do IP por * (ex: 220.194.45.*)";
 $lang['multmodnote'] = "Observação: Para criar vários moderadores, separe os nomes dos moderadores com vírgulas (incluindo espaço) (ex: Moderador 1, Moderador 2)";
 $lang['mysql_tools'] = "Ferramentas de Base de Dados";
@@ -533,6 +556,7 @@ $lang['raw_mysql'] = "Inserir SQL puro";
 $lang['reason'] = "Razão:";
 $lang['refreshbuddylist'] = "actualizar Livro de Endereços";
 $lang['refreshpage'] = "Actualizar Página";
+$lang['regeneratethumbnail'] = "Regenerate Thumbnail";
 $lang['reg_on'] = "Permitir registo de utilizadores";
 $lang['reg_today'] = "Já efectuou um registo hoje. Só pode voltar-se a registar daqui a 24 horas.<br />";
 $lang['regged'] = "Obrigado por se registrar. Será redireccionado para a página principal do fórum.";
@@ -657,6 +681,7 @@ $lang['textborder'] = "Cor da Borda:";
 $lang['textborderwidth'] = "Largura da Borda:";
 $lang['textbriefsummary'] = "Resumo da Conta para";
 $lang['textbstatus'] = "Estado do Fórum:";
+$lang['textbstatusdefault'] = "This message board is currently turned off.";
 $lang['textbuddylist'] = "Livro de Endereço";
 $lang['textbumpthread'] = "Colocar Tópico no topo";
 $lang['textby'] = "por";
@@ -746,7 +771,24 @@ $lang['textfaqstatus'] = "Status do FAQ (Perguntas Frequentes):";
 $lang['textfavorites'] = "Favoritos";
 $lang['textfeb'] = "Fevereiro";
 $lang['textfilename'] = "Nome do Arquivo:";
+$lang['textfilesbase'] = 'Attachment Virtual URL:<br /><span class="smalltxt">Optional, base URL if different from $full_url.</span>';
 $lang['textfilesize'] = "Tamanho do Arquivo:";
+$lang['textfilesminsize'] = 'Attachment Minimum Storage Size:<br /><span class="smalltxt">Storage Path is ignored for files<br />smaller than this many bytes.</span>';
+$lang['textfilespath'] = 'Attachment Storage Path:<br /><span class="smalltxt">Optional, disk storage location for new files.</span>';
+$lang['textfilesperpost'] = 'Maximum Files Per Post:';
+$lang['textfilessizeh'] = 'Maximum Image Height:';
+$lang['textfilessizew'] = 'Maximum Image Width:';
+$lang['textfilessubdir'] = 'Attachment Subdirectory Scheme:';
+$lang['textfilessubdir1'] = 'Year/Month';
+$lang['textfilessubdir2'] = 'Year/Month/Day';
+$lang['textfilesthumbh'] = 'Maximum Thumbnail Height:';
+$lang['textfilesthumbw'] = 'Maximum Thumbnail Width:';
+$lang['textfilesurlpath'] = 'Attachment URL Format:<br /><span class="smalltxt">For Advanced Webmasters Only</span>';
+$lang['textfilesurlpath1'] = '____(default) /files.php?pid=$pid&amp;aid=$aid';
+$lang['textfilesurlpath2'] = '(+MultiViews) /files/$pid/$aid/';
+$lang['textfilesurlpath3'] = '(+MultiViews) /files/$aid/$filename';
+$lang['textfilesurlpath4'] = '(mod_rewrite) /$pid/$aid/';
+$lang['textfilesurlpath5'] = '(mod_rewrite) /$aid/$filename';
 $lang['textfixlastposts'] = "Corrigir Últimas Mensagens";
 $lang['textfixmemposts'] = "Corrigir Contagens Totais de Mensagens de utilizadors";
 $lang['textfixmoods'] = "Reiniciar os Tons em Branco";
@@ -785,7 +827,6 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "O termo de Pesquisa utilizado não é permitido.";
 $lang['textimgcode'] = "Código IMG";
 $lang['textimgcodeis'] = "Código [img] está";
-$lang['textimportsubmit'] = "Importar Tema para o XMB";
 $lang['textimporttheme'] = "Importar Tema:";
 $lang['textinforum'] = "no fórum:";
 $lang['textinthread'] = "no Tópico:";
@@ -927,6 +968,7 @@ $lang['textregdate'] = "Data de registo";
 $lang['textreggedonly'] = "Somente utilizadores registadoss poderão ler os fóruns?";
 $lang['textregister'] = "registo";
 $lang['textregistered'] = "Registo:";
+$lang['textremoteimages'] = 'Attach Remote Images:<br /><span class="smalltxt">Convert new [img] BBCodes to attachments.</span>';
 $lang['textreplies'] = "Respostas:";
 $lang['textreply'] = "Resposta";
 $lang['textreplytrash'] = "Responder e excluir";
@@ -1047,9 +1089,9 @@ $lang['theme_already_exists'] = "Já existe um tema com este nome!";
 $lang['themes'] = "Temas";
 $lang['themeupdate'] = "Temas actualizados com sucesso!";
 $lang['threads'] = "Threads";
+$lang['thumbnail'] = 'Thumbnail';
 $lang['tickercontents'] = "Notícias no Painel de Notícias:";
 $lang['tickername'] = "Notícias &amp; Novidades";
-$lang['tidnoexist'] = "Tópicos não podem ser fundidos. Thread () não existe";
 $lang['timemsg'] = "Processado em";
 $lang['timezone1'] = "(GMT -12:00) Eniwetok, Kwajalein";
 $lang['timezone10'] = "(GMT -3:30) Newfoundland";
@@ -1104,7 +1146,20 @@ $lang['toppedpost'] = "Este post está no topo";
 $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "Conseguiu colocar/retirar a mensagem no topo com sucesso. Será redireccionado para a lista de tópicos";
 $lang['topuntop'] = "Colocar/retirar do topo";
+$lang['translations'] = "Translations";
+$lang['translation_delete'] = "Translation(s) deleted.";
+$lang['translation_import'] = "Install New Language";
+$lang['translation_name'] = "Translation Name";
+$lang['translation_phrase'] = "Phrase Name";
+$lang['translation_select'] = "Please select a phrase...";
+$lang['translation_update'] = "Phrase text saved successfully.";
 $lang['u2uadmin_noperm'] = "Não tem autorização para usar esta função.";
+$lang['u2ualert1'] = "U2U Alert Feature";
+$lang['u2ualert2'] = "On Every Page";
+$lang['u2ualert3'] = "On Index Only";
+$lang['u2ualert4'] = "No Alert";
+$lang['u2ualert5'] = " unread U2U message. Would you like to view it now?";
+$lang['u2ualert6'] = " unread U2U messages. Would you like to view them now?";
 $lang['u2ublocked'] = "O destinatário desta mensagem U2U bloqueou-o, esta mensagem não pode ser enviada.";
 $lang['u2udump'] = "Apagar todas as mensagens U2U";
 $lang['u2udump_confirm'] = 'Tem a certeza que deseja apagar todas as mensagens u2u\'?';
@@ -1136,15 +1191,15 @@ $lang['welcomeunreg'] = "Se não estiver registado ou ligado, poderá visualizar t
 $lang['welcomeunregnotify'] = "Não está registado ou ligado";
 $lang['what_tickerdelay'] = "Notícia Programada:";
 $lang['what_tickerstatus'] = "Painel de Notícias:";
-$lang['whocanpost'] = "Que pode postar?"; 
-$lang['whocanpost11'] = "Todos os usuários podem criar novos tópicos"; 
-$lang['whocanpost12'] = "<strong>Os administradores</strong> podem criar novos tópicos"; 
-$lang['whocanpost13'] = "<strong>Os administradores e moderadores podem criar novos tópicos</strong>"; 
-$lang['whocanpost14'] = "Não são permitidos novos tópicos"; 
-$lang['whocanpost21'] = "Todos os usuários podem responder."; 
-$lang['whocanpost22'] = "Os administradores podem responder."; 
-$lang['whocanpost23'] = "Os administradores e moderadores podem responder."; 
-$lang['whocanpost24'] = "Respostas não são permitidas."; 
+$lang['whocanpost'] = "Que pode postar?";
+$lang['whocanpost11'] = "Todos os usuários podem criar novos tópicos";
+$lang['whocanpost12'] = "<strong>Os administradores</strong> podem criar novos tópicos";
+$lang['whocanpost13'] = "<strong>Os administradores e moderadores podem criar novos tópicos</strong>";
+$lang['whocanpost14'] = "Não são permitidos novos tópicos";
+$lang['whocanpost21'] = "Todos os usuários podem responder.";
+$lang['whocanpost22'] = "Os administradores podem responder.";
+$lang['whocanpost23'] = "Os administradores e moderadores podem responder.";
+$lang['whocanpost24'] = "Respostas não são permitidas.";
 $lang['whoodump_confirm'] = 'Tem certeza que deseja apagar o "quem está online"?';
 $lang['whosoneval'] = '$lang["whosonmsg"] = "Existem actualmente $guestn, $membern e $hiddenn no fórum $SETTINGS[bbname]";';
 $lang['whosonline'] = "Quem está online";
@@ -1152,5 +1207,6 @@ $lang['whosonline_on'] = "Quem está online no index:";
 $lang['whosonlinetoday'] = "Quem está online hoje";
 $lang['whoview'] = "Quem pode ver este fórum?";
 $lang['xmb'] = "XMB";
+$lang['xmbforum'] = "XMB Forum Software";
 $lang['xmbgroup'] = "The XMB Group";
 ?>
