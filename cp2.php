@@ -254,7 +254,8 @@ if ($action == 'restrictions') {
 
 // Management for Translation Database
 if ($action == 'lang') {
-    if (noSubmit('importsubmit') And noSubmit('edit') And noSubmit('editsubmit') And noSubmit('detail')) { // Default screen: Language List, Options to Install, Uninstall, and Export.
+    if (noSubmit('importsubmit') And noSubmit('edit') And noSubmit('editsubmit') And noSubmit('detail') And noSubmit('deletesubmit')) {
+        // Default screen: Language List, Options to Install, Uninstall, and Export.
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -265,28 +266,35 @@ if ($action == 'lang') {
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textlanguage']; ?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['translation_name']; ?></font></strong></td>
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['numberusing']?></font></strong></td>
         </tr>
         <?php
 
-        $query = $db->query("SELECT b.devname, b.langid, COUNT(m.uid) AS cnt FROM ".X_PREFIX."lang_base AS b LEFT JOIN ".X_PREFIX."members AS m ON m.langfile = b.devname GROUP BY b.langid, b.devname ORDER BY b.devname ASC");
-        $count = $db->num_rows($query);
-        if ($count == 1) {
-            $disabledelete = ' disabled="disabled"';
-        } else {
-            $disabledelete = '';
-        }
+        $query = $db->query("SELECT b.devname, b.langid, t.cdata, COUNT(m.uid) AS cnt "
+                          . "FROM ".X_PREFIX."lang_base AS b "
+                          . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (langid) "
+                          . "INNER JOIN ".X_PREFIX."lang_keys AS k USING (phraseid) "
+                          . "LEFT JOIN ".X_PREFIX."members AS m ON m.langfile = b.devname "
+                          . "WHERE k.langkey='language' "
+                          . "GROUP BY b.langid, b.devname, t.cdata ORDER BY b.devname ASC");
 
         while($themeinfo = $db->fetch_array($query)) {
             $themeid = $themeinfo['langid'];
             $members = $themeinfo['cnt'];
+            if ($themeinfo['devname'] == $langfile Or $themeinfo['devname'] == $SETTINGS['langfile']) {
+                $disabledelete = ' disabled="disabled"';
+            } else {
+                $disabledelete = '';
+            }
 
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['langid']?>"<?php echo $disabledelete; ?> /></td>
+            <td align="center"><input type="checkbox" name="lang_delete[]" value="<?php echo $themeinfo['langid']?>"<?php echo $disabledelete; ?> /></td>
+            <td><input type="text" name="langname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['cdata']?>" disabled="disabled" /></td>
             <td>
-            <input type="text" name="theme_name[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" disabled="disabled" />
+            <input type="text" name="devname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" disabled="disabled" />
             <a href="cp2.php?action=lang&amp;detail=<?php echo $themeinfo['langid']?>">
             <?php echo $lang['textdetails']?></a>
             -
@@ -300,10 +308,10 @@ if ($action == 'lang') {
         }
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
-        <td colspan="3"><img src="./images/pixel.gif" alt="" /></td>
+        <td colspan="4"><img src="./images/pixel.gif" alt="" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="3"><input type="submit" name="themesubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
+        <td colspan="4" bgcolor="<?php echo $altbg2?>" class="ctrtablerow"><input type="submit" name="deletesubmit" value="<?php echo $lang['textsubmitchanges']?>" class="submit" /></td>
         </tr>
         </table>
         </td>
@@ -495,6 +503,22 @@ if ($action == 'lang') {
         }
         $query = $db->query("INSERT INTO ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
 
+        // Cleanup unused keys.
+        $oldids = array();
+        $sql = ("SELECT k.phraseid "
+              . "FROM ".X_PREFIX."lang_keys AS k "
+              . "LEFT JOIN ".X_PREFIX."lang_text USING (phraseid) "
+              . "GROUP BY k.phraseid "
+              . "HAVING COUNT(langid) = 0");
+        $result = $db->query($sql);
+        while($row = $db->fetch_array($result)) {
+            $oldids[] = $row['phraseid'];
+        }
+        if (count($oldids) > 0) {
+            $oldids = implode(", ", $oldids);
+            $db->query("DELETE FROM ".X_PREFIX."lang_keys WHERE phraseid IN ($oldids)");
+        }
+
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
         if (!$query) {
             echo $lang['langimportfail'];
@@ -589,8 +613,9 @@ if ($action == 'lang') {
 
         $query = "SELECT k.langkey, k.phraseid, COUNT(t.cdata) AS phrasecount "
                . "FROM ".X_PREFIX."lang_keys AS k "
-               . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
-               . "WHERE t.langid=$langid OR t.langid IS NULL "
+               . "CROSS JOIN ".X_PREFIX."lang_base AS b "
+               . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid, langid) "
+               . "WHERE b.langid=$langid "
                . "GROUP BY k.phraseid, k.langkey ORDER BY k.langkey";
         $query = $db->query($query);
 
@@ -603,20 +628,25 @@ if ($action == 'lang') {
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
         <td align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['translation_phrase']; ?></font></strong></td>
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $devname; ?></font></strong></td>
+        <td colspan="2" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $devname; ?></font></strong></td>
         </tr>
         <?php
 
         while($row = $db->fetch_array($query)) {
             $langkey = $row['langkey'];
-            $value = ($row['phrasecount'] == 0) ? $lang['textnewcode'] : $lang['textedit'];
 
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td><?php echo $langkey; ?></td>
-            <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $value; ?></a></td>
+            <?php if ($row['phrasecount'] == 0) { ?>
+            <td></td>
+            <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $lang['textnewcode']; ?></a></td>
             </tr>
-            <?php
+            <?php } else { ?>
+            <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $lang['textedit']; ?></a></td>
+            <td></td>
+            </tr>
+            <?php }
         }
         ?>
         </table>
@@ -626,6 +656,24 @@ if ($action == 'lang') {
         </td>
         </tr>
         <?php
+    }
+
+    if (onSubmit('deletesubmit')) {
+        $theme_delete = postedArray('lang_delete', 'int');
+        $result = $db->result($db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile' OR devname='{$SETTINGS['langfile']}'"), 0);
+        while($row = $db->result($result)) {
+            $lockIDs[] = $row['langid'];
+        }
+
+        if ($theme_delete) {
+            foreach($theme_delete as $deleteid) {
+                if (!in_array($deleteid, $lockIDs)) {
+                    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$deleteid");
+                    $db->query("DELETE FROM ".X_PREFIX."lang_base WHERE langid=$deleteid");
+                }
+            }
+        }
+        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['translation_delete'].'</td></tr>';
     }
 }
 
@@ -730,7 +778,7 @@ if ($action == 'themes') {
         <td bgcolor="<?php echo $altbg2?>"><input name="themefile" type="file" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" name="importsubmit" value="<?php echo $lang['textimportsubmit']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow" align="center" colspan="2"><input type="submit" class="submit" name="importsubmit" value="<?php echo $lang['textimporttheme']; ?>" /></td>
         </tr>
         </table>
         </td>

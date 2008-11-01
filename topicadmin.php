@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -575,7 +575,7 @@ switch($action) {
 
             if ($db->num_rows($queryadd1) == 0) {
                 $db->free_result($queryadd1);
-                error($lang['tidnoexist'], false);
+                error($lang['invalidtid'], false);
             }
             $otherthread = $db->fetch_array($queryadd1);
             $db->free_result($queryadd1);
