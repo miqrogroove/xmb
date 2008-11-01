@@ -1,32 +1,37 @@
 <?php
-/* $Id: Estonian.lang.php,v 1.1.2.15 2007/03/10 22:05:00 FunForum Exp $ */
-/*
-    © 2001 - 2007 Aventure Media & The XMB Development Team
-    http://www.aventure-media.co.uk
-    http://www.xmbforum.com
+/**    Made by:    Ixan
+ * eXtreme Message Board
+ * XMB 1.9.10 Karl
+ *
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
+ *
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-    ----------------------------------------
-
-    Made by:    Ixan
-    Last mod:   December 17th 2005
-    Status:     Sync'ed with Base.lang.php,v 1.1.2.12
-*/
+if (!defined('IN_CODE')) {
+    exit("Not allowed to run this file directly.");
+}
 
 $charset = 'ISO-8859-1';
+
 
 $lang['4spaces'] = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $lang['add_buddy'] = 'Lisa uusi nimesid';
@@ -345,7 +350,7 @@ $lang['invertselection'] = 'Peegelda valitu';
 $lang['ipreg'] = "Üks kasutaja sama ip aadressi kohta on päevas lubatud.";
 $lang['ipwarning'] = '<br /><strong>Hoiatus!</strong> Sinu IP aadress on nimekirjas. Kui sa välja logid, oled alaliselt bännitud.';
 $lang['key'] = 'Legend: ';
-$lang['last50today'] = '50 liiget, kes on täna foorumit külastanud (kui on nii palju) ';
+$lang['last50today'] = "$onlinetodaycount liiget, kes on täna foorumit külastanud (kui on nii palju) ";
 $lang['lastactive'] = 'Viimati aktiivne:';
 $lang['lastreply1'] = 'on';
 $lang['lastsadmin'] = 'Sa soovid eemaldada staatust viimaselt Superadministraatorilt. Kui sa seda teed, pole hiljem võimalik seda staatust tagasi anda.';
@@ -442,7 +447,7 @@ $lang['onlinebuddyadd2u2u'] = "Kasutaja(te) lisamine U2Usse";
 $lang['onlinecoppa'] = 'Registreerib (loeb COPPA litsentsi)';
 $lang['onlinecp'] = 'Administreerib foorumit';
 $lang['onlinecatunknown'] = "Tundmatu kategooria vaatamine";
-$lang['onlineeditprofile'] = "Muudab $user profiili";
+$lang['onlineeditprofile'] = 'Muudab $user profiili';
 $lang['onlineeditnoprofile'] = 'Tundmatu profiili muutmine';
 $lang['onlinefaq'] = 'Loeb abi';
 $lang['onlineforumdisplay'] = 'Vaatab foorumit: ';
@@ -452,9 +457,9 @@ $lang['onlinelogout'] = 'Logib välja';
 $lang['onlinelostpw'] = 'Küsib kaotatud parooli';
 $lang['onlinemanagefolders'] = "U2U kaustade haldamine";
 $lang['onlinememcp'] = 'Muudab oma profiili';
-$lang['onlinememcpfav'] = "Viewing favorite threads";
 $lang['onlinememcppro'] = "Personaalse profiili uuendamine";
 $lang['onlinememcpsub'] = "Tellitud niitide vaatamine";
+$lang['onlinememcpfav'] = "Vaatab lemmikuid teemasid";
 $lang['onlinememlist'] = 'Vaatab kasutajate nimekirja';
 $lang['onlineonlinetoday'] = 'Vaatab viimase 24h jooksul foorumit külastanute nimekirja';
 $lang['onlineother'] = 'Muu';
@@ -733,7 +738,7 @@ $lang['textfaqans21'] = "Sa saad välja logida klõpsates linki 'Logi välja' lehe 
 $lang['textfaqans3'] = "Allkirja oma postitustele saad lisada oma seadete alt, klõpsates 'Muuda profiili'.";
 $lang['textfaqans4'] = "Muutes oma profiili saad kirjutada soovitud pildi aadressi kasti 'Avatar'. Avatar ei tohiks olla rohkem kui 200x200 pikslit.";
 $lang['textfaqans5'] = 'Kui sa oled unustanud oma parooli, saad uue parooli tellida oma e-maili aadressile <a href=\"misc.php?action=lostpw\">siit</a>.';
-$lang['textfaqans6'] = "U2U tähendab User to User (kasutajalt kasutajale). See on lihtne sõnumiklient, mille abil saad saata foorumisiseselt teateid teistele kasutajatele. Sa saad lugeda saabunud teateid ja saata uusi <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 550, 450);\">klõpsates siia</a>.<br /><strong>NB!</strong> See võimalus pole mõeldud kasutajate spammimiseks soovimatu reklaamiga.";
+$lang['textfaqans6'] = "U2U tähendab User to User (kasutajalt kasutajale). See on lihtne sõnumiklient, mille abil saad saata foorumisiseselt teateid teistele kasutajatele. Sa saad lugeda saabunud teateid ja saata uusi <a href=\"#\" onclick=\"Popup('u2u.php', 'Window', 700, 450);\">klõpsates siia</a>.<br /><strong>NB!</strong> See võimalus pole mõeldud kasutajate spammimiseks soovimatu reklaamiga.";
 $lang['textfaqans7'] = "Sisse saad logida klõpsates linki 'Logi sisse' lehe ülaosas.";
 $lang['textfaqans8'] = "Otsingut saad kasutada klõpsates linki 'Otsi' ülal menüüs.";
 $lang['textfaqans9'] = "U2U'd saad kõige lihtsamalt saata klõpsates nuppu 'U2U' kasutaja postituse kõrval.";
@@ -797,7 +802,7 @@ $lang['textjun'] = 'Juuni';
 $lang['textlanguage'] = 'Keel:';
 $lang['textlastpost'] = 'Viimane postitus:';
 $lang['textlatestfavs'] = 'Viimased viis lemmikut uute vastustega';
-$lang['textlatestu2us'] = 'Viimased 15 U2Ud';
+$lang['textlatestu2us'] = 'Viimased 5 U2Ud';
 $lang['textlfrom'] = 'Ajast:';
 $lang['textlink'] = 'Lingi värv:';
 $lang['textlist'] = 'Nimekiri';
@@ -1149,3 +1154,4 @@ $lang['whosonlinetoday'] = 'Kes külastas foorumit viimase 24h jooksul';
 $lang['whoview'] = "Kes Näeb Seda Foorumit?";
 $lang['xmb'] = "XMB";
 $lang['xmbgroup'] = 'XMB Meeskond';
+?>
