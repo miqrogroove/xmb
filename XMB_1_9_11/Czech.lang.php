@@ -1,7 +1,7 @@
 <?php
 /**Made by:    Kurt    Last mod:   21.8.2008
  * eXtreme Message Board
- * XMB 1.9.10
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,15 +26,21 @@
  *
 **/
 
-if (!defined('IN_CODE')) {
-    exit("Not allowed to run this file directly.");
-}
+exit("Not allowed to run lang files.");
 
-$charset = 'ISO-8859-2';
+// Name assigned by XMB for internal use.
+$devname = 'Czech';
 
+// Meta Data
+$lang['charset'] = 'ISO-8859-2';
+$lang['iso639'] = 'cs';
+$lang['language'] = '&#268;e&#353;tina';
+
+// Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "Pøidat adresy";
 $lang['addressname'] = "Adresa:";
+$lang['addressupdate'] = "Update";
 $lang['addtime'] = "Zadejte zde èíslo pro zmìnu èasu nahoru nebo dolù. Èas bude zvý¹en nebo sní¾en pro v¹echny. Zadejte X pro zvý¹ení nebo -X pro sní¾ení.";
 $lang['addtoaddresses'] = "Pøidat do adresáøe";
 $lang['addtobuddies'] = "Pøidat do adresáøe";
@@ -46,6 +52,7 @@ $lang['admin_main_settings4'] = "Kosmetické volby";
 $lang['admin_main_settings5'] = "Nastavení u¾ivatelù";
 $lang['admin_main_settings6'] = "Jiné";
 $lang['admin_main_settings7'] = 'Vlastnosti Captcha Obrázku';
+$lang['admin_main_settings8'] = 'File Attachment Settings';
 $lang['admin_rename_fail'] = "Nelze pøejmenovat u¾ivatele. Buï neexistuje, nebo je jich více jak jeden.";
 $lang['admin_rename_success'] = "U¾ivatel úspì¹nì pøejmenován.";
 $lang['admin_rename_txt'] = "Pøejmenovat u¾iv.";
@@ -58,7 +65,7 @@ $lang['adminprofilechange'] = "Dìkujeme, obsah profilu u¾ivatele byl úspì¹nì zmì
 $lang['adminverifyemail'] = "Potvrdit E-mail adresu u¾ivatele";
 $lang['allowrankedit'] = "Zakázat správcùm mìnit pøíspìvky?<br /><span class=\"small\">(Zabránit správcùm vzájemnì si editovat pøíspìvky - nastavte Ano)</span>";
 $lang['alreadyreg'] = "Jméno nebo  e-mail ji¾ byly registrovány, zkuste prosím znovu.";
-$lang['alreadyvoted']  = 'V této anketì jste ji¾ hlasoval!';
+$lang['alreadyvoted'] = 'V této anketì jste ji¾ hlasoval!';
 $lang['altadmintools'] = "Nástroje administrace";
 $lang['altavatar'] = "Avatar";
 $lang['altboardlogo'] = 'Logo fora';
@@ -135,7 +142,7 @@ $lang['bbcode_help_italic'] = "Kurziva\\nVlo¾ený text bude kurzivou (¹ikmý).\\nU
 $lang['bbcode_help_link'] = "Odkaz\\nZmìní URL (adresu webu) na klikací odkaz.\\nPou¾ití: [url]http://www.anywhere.com[/url]\\nPou¾ití: [url=http://www.anywhere.com]text odkazu[/url]";
 $lang['bbcode_help_list'] = "Seznam\\nVytvoøí seznam s odrá¾kami nebo èíslovaný nebo abecední.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";
 $lang['bbcode_help_quote'] = "Citace\\nOdsadí text, který cituje nìco, co nìkdo jiný napsal.\\nPou¾ití: [quote]Toto je citace[/quote]";
-$lang['bbcode_help_size'] = "Velikost písma\\nNastaví velikost písma.\\n\\nPou¾ití: Zadaná velikost je relativní vzhledem k výchozí velikosti písma fora.\\n Je-li napø výchozí velikost 12pt, mastavení".'[size=-3]Toto je velikost -3pt text[/size]\n nastaví velikost textu na  9pt (proto¾e 12pt-3pt = 9pt)';
+$lang['bbcode_help_size'] = "Velikost písma\\nNastaví velikost písma.\\n\\nPou¾ití: Zadaná velikost je relativní vzhledem k výchozí velikosti písma fora.\\n Je-li napø výchozí velikost 12pt, mastavení[size=-3]Toto je velikost -3pt text[/size]\\n nastaví velikost textu na  9pt (proto¾e 12pt-3pt = 9pt)";
 $lang['bbcode_help_underline'] = "Podtr¾ené\\nVlo¾ený text bude podtr¾en.\\nPou¾ití: [u]Tento text je podtr¾ený[/u]";
 $lang['bbcode_helpmode'] = "Help\\nKliknìte na nìkteré formátovací tlaèítko a zobrazí se popis a instrukce.";
 $lang['bbcode_normode'] = "Normální re¾im\\nVyskakovací okénka vás provedou krok za krokem vkládáním BB Code.";
@@ -238,6 +245,7 @@ $lang['daysold'] = "dní staré";
 $lang['db_backup'] = "Záloha databáze";
 $lang['defaultTimezoneDesc'] = "Výchozí èasové pásmo";
 $lang['delete_all_themes'] = "Nemù¾ete smazat poslední téma! Va¹e forum bez nìho nebude fungovat!";
+$lang['deleteaborted'] = 'The delete action was aborted due to a protection error.';
 $lang['deletebutton'] = "Smazat";
 $lang['deletecolon'] = "Smazat:";
 $lang['deletecurrent'] = "&nbsp;Smazat aktuální soubor.";
@@ -302,6 +310,14 @@ $lang['favonlistmsg'] = "Zvolené téma je ji¾ na va¹em seznamu oblíbených.";
 $lang['favsdeletedmsg'] = "Zvolená témata byla zru¹ena z va¹eho seznamu oblíbených, budete nyní pøesmìrován(a) zpìt na seznam.";
 $lang['featurewarning'] = "Varování";
 $lang['filecorrupt'] = "Soubor, který se pokou¹íte stáhnout, je zøejmì po¹kozen. Stahování zru¹eno.";
+$lang['fileuploaderror1'] = 'XMB Error: The Attachment Storage Path setting appears to be invalid.';
+$lang['fileuploaderror2'] = 'You have attached the maximum number of files allowed per post.';
+$lang['fileuploaderror3'] = 'There appears to be an invalid URL in one of the IMG links in your message.';
+$lang['fileuploaderror4'] = 'One of the IMG links in your message points to a non-image file.';
+$lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height limits.  Please re-size the image and try again.';
+$lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
+$lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
+$lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
 $lang['floodprotect'] = "Vá¹ poslední pøíspìvek byl pøed ménì ne¾ $floodctrl sekundami, není povoleno odesílat pøíspìvky tak èasto. Jestli¾e jste ho odeslal dvakrát omylem, vá¹ první pøíspìvek byl odeslán, ale druhý zastaven.";
 $lang['floodprotect_u2u'] = "Va¹e pøedchozí soukromá zpráva byla odeslána pøed $SETTINGS[floodctrl] vteøinami. Není povoleno posílat zprávy tak rychle za sebou. Pokud se jedná o omyl, va¹e první soukromá zpráva byla úspì¹nì odeslána, dal¹í zastavena.";
 $lang['fnasorry'] = "Je mi líto, tato funkce je¹tì není dostupná...";
@@ -314,19 +330,22 @@ $lang['foldersupdateerror'] = 'Následující slo¾ky nebyly smazány, proto¾e obsahu
 $lang['footer_options'] = 'Nastavení patièky:';
 $lang['forgotpw'] = "Zapomnìl(a) jste heslo?";
 $lang['forumjumpselect'] = "Zvolte sekci:";
+$lang['forumnotempty'] = 'The selected forum is not empty.  A forum must be empty to perform this action.';
 $lang['forumpruned'] = "Fórum úspì¹nì proèi¹tìno";
 $lang['forumpermissions'] = 'Oprávnìní fora:';
 $lang['forumpw'] = "Heslo:<br /><span class=\"small\">(prázdné, není-li)</span>";
 $lang['forumpwinfo'] = "Tato sekce je chránìna heslem. Musíte zadat správné heslo.";
 $lang['found'] = "nalezeno";
 $lang['general'] = 'Obecné';
+$lang['generic_file'] = 'File to Upload:';
+$lang['generic_missing'] = 'The item you requested could not be found.';
 $lang['gotobottom'] = "Dolù";
 $lang['gototop'] = "Nahoru";
 $lang['guestpostingonmsg'] = "<br />Anonymní pøíspìvky povoleny.<br /><span class=\"small\"> Nezadávejte jméno ani heslo, chcete-li pøispìt anonymnì.</span>";
 $lang['gzipcompression'] = "Pou¾ít Gzip kompresi<br /><span class=\"small\">Vy¾aduje PHP 4.0.4 nebo vy¹¹í</span>";
 $lang['helpbar'] = "Pomoc";
 $lang['hidden'] = "skrytý";
-$lang['hottopic'] = "více ne¾ $hottopic odpovìdí";
+$lang['hottopiceval'] = "\$lang['hottopic'] = \"více ne¾ \$hottopic odpovìdí\";";
 $lang['ipreg'] = "Povolit jednoho u¾ivatele z jedné IP dennì?";
 $lang['ignorelist'] = "Ignorovaní";
 $lang['ignoremsg'] = "Seznam ignorovaných:<br /><span class=\"small\">Oddìlujte jména èárkami (napø \"Person 1, Person 2,\"). Ujistìte se, ¾e za posledním jménem je èárka.</span>";
@@ -349,7 +368,9 @@ $lang['invalidtid'] = "Téma nelze slouèit.  Nesprávné ID tématu (tid)";
 $lang['invertselection'] = "Invertovat výbìr";
 $lang['ipwarning'] = "<br /><strong>Varování!</strong> Va¹e IP Addresa je na seznamu. Jak se odhlásíte, bude vám zakázán trvale pøístup .";
 $lang['key'] = 'Vysvìtlivky: ';
-$lang['last50today'] = "Posledních $onlinetodaycount dnes pøítomných u¾ivatelù: ";
+$lang['langimportfail'] = "The language could not be imported.";
+$lang['langimportsuccess'] = "The language imported successfully.";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"Posledních \$onlinetodaycount dnes pøítomných u¾ivatelù: \";";
 $lang['lastactive'] = "Naposled aktivní:";
 $lang['lastreply1'] = "";
 $lang['lastsadmin'] = "Pokusil jste se zru¹it posledního zbývajícího Super Administrátora. To je nebezpeèné. Jakmile to provedete, nebude mo¾né nastavit nikomu status Super Administrator";
@@ -392,6 +413,8 @@ $lang['moresmilies'] = "Dal¹í smajlíci";
 $lang['moved'] = "Pøesunuto:";
 $lang['moveques'] = "Pøesunout?";
 $lang['movethreadmsg'] = "Téma bylo pøesunuto. Budete pøesmìrován(a) zpìt seznam témat.";
+$lang['movetodb'] = 'Move to Database';
+$lang['movetodisk'] = 'Move to Disk';
 $lang['multipnote'] = "Pozn.: Chcete-li zakázat více IP adres naráz, nahraïte nìkterou s 4 èástí IP hvìzdièkou * (napø: 220.194.45.*)";
 $lang['multmodnote'] = "Pozn.: Chcete-li zadat více moderátorù, oddìlte jména èárkami (vèetnì mezer) (napø: Moderator 1, Moderator 2)";
 $lang['mysql_tools'] = "Databázové nástroje";
@@ -540,6 +563,7 @@ $lang['reggedonly'] = "Musíte se registrovat, chcete-li prohlí¾et toto fórum.";
 $lang['registerrulestitle'] = "Podmínky registrace";
 $lang['regques'] = "Registrovat?";
 $lang['refreshpage'] = 'Obnovit stránku';
+$lang['regeneratethumbnail'] = "Regenerate Thumbnail";
 $lang['renamefile'] = "&nbsp;Pøejmenovat aktuální soubor na:";
 $lang['repair'] = 'Opravit tabulky';
 $lang['replace'] = "Nahradit";
@@ -657,6 +681,7 @@ $lang['textborder'] = "Barva okrajù:";
 $lang['textborderwidth'] = "©íøka okrajù:";
 $lang['textbriefsummary'] = "Struèný pøehled o úètu pro ";
 $lang['textbstatus'] = "Status fóra:";
+$lang['textbstatusdefault'] = "This message board is currently turned off.";
 $lang['textbuddylist'] = "Adresáø";
 $lang['textbumpthread'] = "O¾ivit téma";
 $lang['textby'] = "od";
@@ -746,7 +771,24 @@ $lang['textfaqstatus'] = "FAQ Stav:";
 $lang['textfavorites'] = "Oblíbené";
 $lang['textfeb'] = "Únor";
 $lang['textfilename'] = "Název souboru:";
+$lang['textfilesbase'] = 'Attachment Virtual URL:<br /><span class="smalltxt">Optional, base URL if different from $full_url.</span>';
 $lang['textfilesize'] = "Velikost souboru:";
+$lang['textfilesminsize'] = 'Attachment Minimum Storage Size:<br /><span class="smalltxt">Storage Path is ignored for files<br />smaller than this many bytes.</span>';
+$lang['textfilespath'] = 'Attachment Storage Path:<br /><span class="smalltxt">Optional, disk storage location for new files.</span>';
+$lang['textfilesperpost'] = 'Maximum Files Per Post:';
+$lang['textfilessizeh'] = 'Maximum Image Height:';
+$lang['textfilessizew'] = 'Maximum Image Width:';
+$lang['textfilessubdir'] = 'Attachment Subdirectory Scheme:';
+$lang['textfilessubdir1'] = 'Year/Month';
+$lang['textfilessubdir2'] = 'Year/Month/Day';
+$lang['textfilesthumbh'] = 'Maximum Thumbnail Height:';
+$lang['textfilesthumbw'] = 'Maximum Thumbnail Width:';
+$lang['textfilesurlpath'] = 'Attachment URL Format:<br /><span class="smalltxt">For Advanced Webmasters Only</span>';
+$lang['textfilesurlpath1'] = '____(default) /files.php?pid=$pid&amp;aid=$aid';
+$lang['textfilesurlpath2'] = '(+MultiViews) /files/$pid/$aid/';
+$lang['textfilesurlpath3'] = '(+MultiViews) /files/$aid/$filename';
+$lang['textfilesurlpath4'] = '(mod_rewrite) /$pid/$aid/';
+$lang['textfilesurlpath5'] = '(mod_rewrite) /$aid/$filename';
 $lang['textfixlastposts'] = "Opravit poslední pøíspìvky";
 $lang['textfixmemposts'] = "Opravit poèty pøíspìvkù u èlenù";
 $lang['textfixmoods'] = "Resetovat nevyplnìné Nálady";
@@ -785,7 +827,6 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "Dotaz, který jste pou¾il(a), není povolen.";
 $lang['textimgcode'] = "IMG Kód";
 $lang['textimgcodeis'] = "[img] kód ";
-$lang['textimportsubmit'] = "Importovat téma vzhledu do $bbname";
 $lang['textimporttheme'] = "Importovat téma vzhledu:";
 $lang['textinforum'] = "v sekci:";
 $lang['textinthread'] = "V tématu:";
@@ -927,6 +968,7 @@ $lang['textregdate'] = "Datum registrace";
 $lang['textreggedonly'] = "Povolit prohlí¾ení fóra jen registrovaným u¾ivatelùm?";
 $lang['textregister'] = "Registrovat";
 $lang['textregistered'] = "Registrován:";
+$lang['textremoteimages'] = 'Attach Remote Images:<br /><span class="smalltxt">Convert new [img] BBCodes to attachments.</span>';
 $lang['textreplies'] = "Odpovìdí:";
 $lang['textreply'] = "Odpovìdìt";
 $lang['textreplytrash'] = "Odpovìdìt a smazat zprávu";
@@ -1047,9 +1089,9 @@ $lang['theme_already_exists'] = "Téma vzhledu s tímto názvem ji¾ existuje!";
 $lang['themes'] = "Téma vzhledu";
 $lang['themeupdate'] = "Témata vzhledu aktualizována!";
 $lang['threads'] = 'Témata';
+$lang['thumbnail'] = 'Thumbnail';
 $lang['tickercontents'] = "Zprávy v aktualitách:";
 $lang['tickername'] = "Novinky a zmìny";
-$lang['tidnoexist'] = "Téma nemù¾e být slouèeno. ID tématu ($othertid) neexistuje";
 $lang['timemsg'] = "Zpracováno v";
 $lang['timezone1'] = "(GMT -12:00) Eniwetok, Kwajalein";
 $lang['timezone10'] = "(GMT -3:30) Newfoundland";
@@ -1104,7 +1146,20 @@ $lang['toppedpost'] = "Toto téma je pøilepeno";
 $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "Zpráva byla pøilepena / odlepena. Nyní budete pøesmìrován(a) zpìt na seznam témat";
 $lang['topuntop'] = "Pøilepit/odlepit";
+$lang['translations'] = "Translations";
+$lang['translation_delete'] = "Translation(s) deleted.";
+$lang['translation_import'] = "Install New Language";
+$lang['translation_name'] = "Translation Name";
+$lang['translation_phrase'] = "Phrase Name";
+$lang['translation_select'] = "Please select a phrase...";
+$lang['translation_update'] = "Phrase text saved successfully.";
 $lang['u2uadmin_noperm'] = "Nemáte povoleno pou¾ívat tuto funkci.";
+$lang['u2ualert1'] = "U2U Alert Feature";
+$lang['u2ualert2'] = "On Every Page";
+$lang['u2ualert3'] = "On Index Only";
+$lang['u2ualert4'] = "No Alert";
+$lang['u2ualert5'] = " unread U2U message. Would you like to view it now?";
+$lang['u2ualert6'] = " unread U2U messages. Would you like to view them now?";
 $lang['u2ublocked'] = "Pøíjemce této zprávy vás zablokoval, tak¾e zpráva nemù¾e být odeslána.";
 $lang['u2udump'] = "Smazat v¹echny SZ";
 $lang['u2udump_confirm'] = 'Opravdu chcete smazat v¹echny soukromé zprávy?';
@@ -1152,5 +1207,6 @@ $lang['whosonline_on'] = "Kdo je online na hlavní stranì:";
 $lang['whosonlinetoday'] = "Kdo je dnes online";
 $lang['whoview'] = "Kdo mù¾e prohlí¾et?";
 $lang['xmb'] = "XMB";
+$lang['xmbforum'] = "XMB Forum Software";
 $lang['xmbgroup'] = "The XMB Group";
 ?>
