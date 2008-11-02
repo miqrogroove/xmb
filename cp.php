@@ -615,11 +615,10 @@ if ($action == "settings") {
         $bboffreasonnew = postedVar('bboffreasonnew');
         $gzipcompressnew = formOnOff('gzipcompressnew');
 
-        $langfilenew = getLangFileNameFromHash($langfilenew);
-        if (!$langfilenew) {
+        $langfilenew = postedVar('langfilenew');
+        $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
+        if ($db->num_rows($result) == 0) {
             $langfilenew = $SETTINGS['langfile'];
-        } else {
-            $langfilenew = basename($langfilenew);
         }
 
         $themenew = formInt('themenew');

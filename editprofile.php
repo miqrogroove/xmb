@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -191,14 +191,11 @@ if (noSubmit('editsubmit')) {
 
     eval('echo "'.template('admintool_editprofile').'";');
 } else {
-    $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
-    $langfilenew = getLangFileNameFromHash($langfilenew);
-    if ($langfilenew === false) {
+    $langfilenew = postedVar('langfilenew');
+    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
+    if ($db->num_rows($result) == 0) {
         $langfilenew = $SETTINGS['langfile'];
-    } else {
-        $langfilenew = basename($langfilenew);
     }
-    $langfilenew = $db->escape($langfilenew);
 
     $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
     $thememem = formInt('thememem');

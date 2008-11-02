@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -574,40 +574,6 @@ function isChecked($varname, $compare = 'yes') {
 function encode_ip($dotquad_ip) {
     $ip_sep = explode('.', $dotquad_ip);
     return sprintf('%02x%02x%02x%02x', $ip_sep[0], $ip_sep[1], $ip_sep[2], $ip_sep[3]);
-}
-
-function createLangFileSelect($currentLangFile) {
-    $lfs = array();
-    $dir = opendir(ROOT.'lang/');
-    while($file = readdir($dir)) {
-        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
-            $file = str_replace('.lang.php', '', $file);
-            if ($file == $currentLangFile) {
-                $lfs[] = '<option value="'.md5($file).'" selected="selected">'.$file.'</option>';
-            } else {
-                $lfs[] = '<option value="'.md5($file).'">'.$file.'</option>';
-            }
-        }
-    }
-    natcasesort($lfs);
-
-    return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
-}
-
-function getLangFileNameFromHash($ordinal) {
-    global $member;
-
-    $dir = opendir(ROOT.'lang/');
-    while($file = readdir($dir)) {
-        if (is_file(ROOT.'lang/'.$file) && false !== strpos($file, '.lang.php')) {
-            $file = str_replace('.lang.php', '', $file);
-            if (md5($file) == $ordinal) {
-                return $file;
-            }
-        }
-    }
-
-    return false;
 }
 
 function isValidFilename($filename) {

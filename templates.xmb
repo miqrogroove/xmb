@@ -1314,7 +1314,7 @@ $lang[bestmember]
 <font class="smalltxt">
 $versionlong
 <br />
-<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;"><strong>$lang['xmbforum']</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
+<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
 <br />
 $footerstuff[totaltime]
 $footerstuff[querynum]

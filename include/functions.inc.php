@@ -98,10 +98,12 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
 
     if ($xmbuser != '') {
         // Initialize the new translation system
-        if (!loadLang($self['langfile'])) {
-            if (!loadLang($SETTINGS['langfile'])) {
-                require(ROOT.'include/translation.inc.php');
-                langPanic();
+        if (X_SCRIPT != 'upgrade.php') {
+            if (!loadLang($self['langfile'])) {
+                if (!loadLang($SETTINGS['langfile'])) {
+                    require(ROOT.'include/translation.inc.php');
+                    langPanic();
+                }
             }
         }
 
@@ -121,9 +123,11 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
             $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
         }
     } else {
-        if (!loadLang($SETTINGS['langfile'])) {
-            require(ROOT.'include/translation.inc.php');
-            langPanic();
+        if (X_SCRIPT != 'upgrade.php') {
+            if (!loadLang($SETTINGS['langfile'])) {
+                require(ROOT.'include/translation.inc.php');
+                langPanic();
+            }
         }
 
         $self = array();
@@ -210,7 +214,7 @@ function loadLang($devname = "English") {
         while($row = $db->fetch_array($result)) {
             $lang[$row['langkey']] = $row['cdata'];
         }
-        $db->free_result($query);
+        $db->free_result($result);
         $charset = $lang['charset'];
         return TRUE;
     } else {
@@ -1903,5 +1907,26 @@ function handlePasswordDialog($fid) {
         eval('$pwform = "'.template('forumdisplay_password').'";');
         error($lang['forumpwinfo'], true, '', $pwform, false, true, false, true);
     }
+}
+
+function createLangFileSelect($currentLangFile) {
+    global $db;
+
+    $lfs = array();
+
+    $query = $db->query("SELECT b.devname, t.cdata "
+                      . "FROM ".X_PREFIX."lang_base AS b "
+                      . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (langid) "
+                      . "INNER JOIN ".X_PREFIX."lang_keys AS k USING (phraseid) "
+                      . "WHERE k.langkey='language' "
+                      . "ORDER BY t.cdata ASC");
+    while ($row = $db->fetch_array($query)) {
+        if ($row['devname'] == $currentLangFile) {
+            $lfs[] = '<option value="'.$row['devname'].'" selected="selected">'.$row['cdata'].'</option>';
+        } else {
+            $lfs[] = '<option value="'.$row['devname'].'">'.$row['cdata'].'</option>';
+        }
+    }
+    return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
 }
 ?>

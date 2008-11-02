@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -27,7 +27,7 @@
  **/
 
 // Script Parameters
-define('XMB_V', '1.9.10');
+define('XMB_V', '1.9.11');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_9.xmb');
 define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
@@ -40,6 +40,7 @@ $req['files'] = array(
     'editprofile.php',
     'lang/English.lang.php',
     'faq.php',
+    'files.php',
     'forumdisplay.php',
     'header.php',
     'index.php',
@@ -48,6 +49,8 @@ $req['files'] = array(
     'misc.php',
     'post.php',
     'include/admin.inc.php',
+    'include/attach.inc.php',
+    'include/attach-admin.inc.php',
     'include/buddy.inc.php',
     'include/captcha.inc.php',
     'include/functions.inc.php',
@@ -55,7 +58,9 @@ $req['files'] = array(
     'include/spelling.inc.php',
     'include/smtp.inc.php',
     'include/topicadmin.inc.php',
+    'include/translation.inc.php',
     'include/u2u.inc.php',
+    'include/validate.inc.php',
     'templates.xmb',
     'today.php',
     'tools.php',

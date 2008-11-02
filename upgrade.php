@@ -136,10 +136,10 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->free_result($query);
     }
     $columns = array(
-    'attach_remote_images' => "SET('on', 'off') NOT NULL DEFAULT 'off'";
-    'files_min_disk_size' => "MEDIUMINT NOT NULL DEFAULT '9216'";
-    'files_storage_path' => "VARCHAR( 100 ) NOT NULL";
-    'files_subdir_format' => "TINYINT NOT NULL DEFAULT '1'";
+    'attach_remote_images' => "SET('on', 'off') NOT NULL DEFAULT 'off'",
+    'files_min_disk_size' => "MEDIUMINT NOT NULL DEFAULT '9216'",
+    'files_storage_path' => "VARCHAR( 100 ) NOT NULL",
+    'files_subdir_format' => "TINYINT NOT NULL DEFAULT '1'",
     'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
     'files_virtual_url' => "VARCHAR(60) NOT NULL",
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
@@ -288,6 +288,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
     unset($file);
     flush();
+
+    echo 'Releasing the lock on the templates table...<br />';
+    $db->query('UNLOCK TABLES');
 
     echo 'Deleting the templates.xmb file...<br />';
     unlink('templates.xmb');
