@@ -259,7 +259,7 @@ show_act("Creating ".$tablepre."lang_base");
 $db->query("DROP TABLE IF EXISTS ".$tablepre."lang_base");
 $db->query("CREATE TABLE ".$tablepre."lang_base (
     `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-    `devname` VARCHAR( 15 ) NOT NULL ,
+    `devname` VARCHAR( 20 ) NOT NULL ,
     UNIQUE ( `devname` )
   ) TYPE=MyISAM COMMENT = 'List of Installed Languages'
 ");
@@ -927,6 +927,12 @@ show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
 $db->query("INSERT INTO ".$tablepre."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 12, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no');");
+show_result(X_INST_OK);
+
+show_act("Inserting data into translation tables");
+require ROOT.'include/translation.inc.php';
+$upload = file_get_contents('lang/English.lang.php');
+installNewTranslation($upload);
 show_result(X_INST_OK);
 
 // Try to remove all files now

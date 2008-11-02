@@ -125,7 +125,11 @@ switch($action) {
                 }
             } else {
                 eval('echo "'.template('header').'";');
-                eval('echo "'.template('misc_login_incorrectdetails').'";');
+                if ($self['status'] == "Banned") {
+                    error($lang['bannedmessage'], FALSE);
+                } else {
+                    eval('echo "'.template('misc_login_incorrectdetails').'";');
+                }
                 end_time();
                 eval('echo "'.template('footer').'";');
                 exit();

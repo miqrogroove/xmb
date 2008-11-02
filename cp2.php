@@ -392,138 +392,15 @@ if ($action == 'lang') {
             error($lang['langimportfail'], FALSE);
         }
 
-        // Perform sanity checks
-        $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
-        eval('return true; '.$upload); //This will safely error out if file is not valid PHP.
+        // Install uploaded file
+        require('include/translation.inc.php');
+        $result = installNewTranslation($upload);
         
-        // Parse the uploaded code
-        $devname = '';
-        $newlang = array();
-        $find = "$devname = '";
-        $curpos = strpos($upload, $find);
-        $tmppos = strpos($upload, "';", $curpos);
-        if ($curpos === FALSE Or $tmppos === FALSE) {
-            error($lang['langimportfail'], FALSE);
-        }
-        $curpos += strlen($find);
-        $devname = substr($upload, $curpos, $tmppos - $curpos);
-
-        // Match $lang['*'] = "*";
-        preg_match_all("@\\\$lang\\['([_\\w]+)'] = (['\"]{1})(.*?)\\2;\\r?\\n@", $upload, $matches, PREG_SET_ORDER);
-
-        // Load unparsed strings into $newlang array.
-        foreach($matches as $match) {
-            // Parse this string
-            $key = $match[1];
-            $quoting = $match[2];
-            $phrase = $match[3];
-            $curpos = 0;
-            while(($curpos = strpos($phrase, "\\", $curpos)) !== FALSE) {
-                switch ($phrase[$curpos + 1]) {
-                case "\\":
-                    $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                    break;
-                case "'":
-                    if ($quoting == "'") {
-                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                    }
-                    break;
-                case '"':
-                    if ($quoting == '"') {
-                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                    }
-                    break;
-                case '$':
-                    if ($quoting == '"') {
-                        $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                    }
-                    break;
-                case 'n':
-                    if ($quoting == '"') {
-                        $phrase = substr($phrase, 0, $curpos)."\n".substr($phrase, $curpos + 2);
-                    }
-                    break;
-                default:
-                    break;
-                }
-                $curpos++;
-            }
-            // Save parsed string.
-            $newlang[$key] = $phrase;
-        }
-        
-        // Ensure all new keys are present in the database.
-        $newkeys = array_keys($newlang);
-        $oldkeys = array();
-        $phraseids = array();
-        $result = $db->query("SELECT langkey FROM ".X_PREFIX."lang_keys");
-        while ($row = $db->fetch_array($result)) {
-            $oldkeys[] = $row['langkey'];
-        }
-        $db->free_result($result);
-        $newkeys = array_diff($newkeys, $oldkeys);
-        if (count($newkeys) > 0) {
-            $sql = implode("'), ('", $newkeys);
-            $sql = "INSERT INTO ".X_PREFIX."lang_keys (langkey) VALUES ('$sql')";
-            $db->query($sql);
-        }
-        
-        // Query Key IDs
-        $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys");
-        while ($row = $db->fetch_array($result)) {
-            $oldkeys[] = $row['langkey'];
-            $phraseids[$row['langkey']] = $row['phraseid'];
-        }
-        $db->free_result($result);
-
-        // Ensure $devname is present in the database.
-        $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$devname'");
-        if ($db->num_rows($result) == 0) {
-            $db->query("INSERT INTO ".X_PREFIX."lang_base SET devname='$devname'");
-            $langid = $db->insert_id();
-        } else {
-            $row = $db->fetch_array($result);
-            $langid = $row['langid'];
-        }
-        $db->free_result($result);
-
-        // Install the new translation
-        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid");
-        $flag = FALSE;
-        $sql = '';
-        foreach($newlang as $key=>$value) {
-            $phraseid = $phraseids[$key];
-            $value = $db->escape($value);
-            if ($flag) {
-                $sql .= ", ($langid, $phraseid, '$value')";
-            } else {
-                $sql .= "($langid, $phraseid, '$value')";
-                $flag = TRUE;
-            }
-        }
-        $query = $db->query("INSERT INTO ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
-
-        // Cleanup unused keys.
-        $oldids = array();
-        $sql = ("SELECT k.phraseid "
-              . "FROM ".X_PREFIX."lang_keys AS k "
-              . "LEFT JOIN ".X_PREFIX."lang_text USING (phraseid) "
-              . "GROUP BY k.phraseid "
-              . "HAVING COUNT(langid) = 0");
-        $result = $db->query($sql);
-        while($row = $db->fetch_array($result)) {
-            $oldids[] = $row['phraseid'];
-        }
-        if (count($oldids) > 0) {
-            $oldids = implode(", ", $oldids);
-            $db->query("DELETE FROM ".X_PREFIX."lang_keys WHERE phraseid IN ($oldids)");
-        }
-
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
-        if (!$query) {
-            echo $lang['langimportfail'];
-        } else {
+        if ($result) {
             echo $lang['langimportsuccess'];
+        } else {
+            echo $lang['langimportfail'];
         }
         echo '</td></tr>';
     }
@@ -610,6 +487,8 @@ if ($action == 'lang') {
         $row = $db->fetch_array($result);
         $db->free_result($result);
         $devname = $row['devname'];
+        
+        $db->query("UPDATE ".X_PREFIX."members SET langfile='$devname' WHERE username='$xmbuser'");
 
         $query = "SELECT k.langkey, k.phraseid, COUNT(t.cdata) AS phrasecount "
                . "FROM ".X_PREFIX."lang_keys AS k "

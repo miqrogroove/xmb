@@ -70,7 +70,7 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FAL
 //$xmbuserinput must be html escaped & db escaped username input.
 //$xmbpwinput must be raw password hash input.
 function elevateUser($xmbuserinput, $xmbpwinput) {
-    global $xmbuser, $xmbpw, $self, $lang, $db, $charset, $SETTINGS, $onlineip, $status_enum;
+    global $xmbuser, $xmbpw, $self, $db, $SETTINGS, $status_enum;
 
     $xmbuser = '';
     $xmbpw = '';
@@ -96,21 +96,45 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
 
     //Database routine complete.  Now set the user status constants.
 
-    if ($xmbuser == '') {
+    if ($xmbuser != '') {
+        // Initialize the new translation system
+        if (!loadLang($self['langfile'])) {
+            if (!loadLang($SETTINGS['langfile'])) {
+                require(ROOT.'include/translation.inc.php');
+                langPanic();
+            }
+        }
+
+        if ($self['status'] == 'Banned') {
+            $xmbuser = '';
+            $self = array();
+            $self['status'] = 'Banned';
+            if (!defined('X_GUEST')) {
+                define('X_MEMBER', FALSE);
+                define('X_GUEST', TRUE);
+            }
+        } else {
+            if (!defined('X_GUEST')) {
+                define('X_MEMBER', TRUE);
+                define('X_GUEST', FALSE);
+            }
+            $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
+        }
+    } else {
+        if (!loadLang($SETTINGS['langfile'])) {
+            require(ROOT.'include/translation.inc.php');
+            langPanic();
+        }
+
         $self = array();
         $self['status'] = '';
         if (!defined('X_GUEST')) {
             define('X_MEMBER', FALSE);
             define('X_GUEST', TRUE);
         }
-    } else {
-        if (!defined('X_GUEST')) {
-            define('X_MEMBER', TRUE);
-            define('X_GUEST', FALSE);
-        }
-        $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
     }
 
+    // Enumerate status
     if (isset($status_enum[$self['status']])) {
         $int_status = $status_enum[$self['status']];
     } else {
@@ -125,13 +149,51 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         define('X_STAFF', X_MOD);
     }
 
+    // Set more globals
+    global $timeoffset, $themeuser, $status, $tpp, $ppp, $memtime, $dateformat,
+           $sig, $invisible, $timecode, $dformatorig;
+
+    if ($xmbuser != '') {
+        $timeoffset = $self['timeoffset'];
+        $themeuser = $self['theme'];
+        $status = $self['status'];
+        $tpp = $self['tpp'];
+        $ppp = $self['ppp'];
+        $memtime = $self['timeformat'];
+        $dateformat = $self['dateformat'];
+        $sig = $self['sig'];
+        $invisible = $self['invisible'];
+    } else {
+        $timeoffset = $SETTINGS['def_tz'];
+        $themeuser = '';
+        $status = 'member';
+        $tpp = $SETTINGS['topicperpage'];
+        $ppp = $SETTINGS['postperpage'];
+        $memtime = $SETTINGS['timeformat'];
+        $sig = '';
+        $invisible = 0;
+        $self['ban'] = '';
+        $self['sig'] = '';
+        $self['username'] = '';
+    }
+
+    if ($memtime == 24) {
+        $timecode = "H:i";
+    } else {
+        $timecode = "h:i A";
+    }
+
+    $dformatorig = $dateformat;
+    $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
+
+
     return ($xmbuser != '');
 }
 
-// loadLang() uses the new translation database to populate the old $land and $langfile variables.
+// loadLang() uses the new translation database to populate the old $lang and $langfile variables.
 // Parameter $devname is the name specified by XMB for internal use (usually written in English).
 function loadLang($devname = "English") {
-    global $db, $lang, $langfile;
+    global $charset, $db, $lang, $langfile;
 
     // Query The Translation Database
     $sql = 'SELECT k.langkey, t.cdata '
@@ -149,6 +211,7 @@ function loadLang($devname = "English") {
             $lang[$row['langkey']] = $row['cdata'];
         }
         $db->free_result($query);
+        $charset = $lang['charset'];
         return TRUE;
     } else {
         return FALSE;

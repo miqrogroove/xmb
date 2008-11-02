@@ -84,6 +84,7 @@ $cookiedomain = '';
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
+$time = $onlinetime;
 $bbcodescript = '';
 $threadSubject = '';
 $user = (isset($user)) ? $user : '';
@@ -460,57 +461,6 @@ if (ini_get('upload_max_filesize') < $SETTINGS['maxattachsize']) {
 elevateUser(postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c'), postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'));
 
 
-if (X_MEMBER) {
-    $langfile = ($self['langfile'] == "" || !file_exists("lang/{$self['langfile']}.lang.php")) ? $SETTINGS['langfile'] : $self['langfile'];
-    $timeoffset = $self['timeoffset'];
-    $themeuser = $self['theme'];
-    $status = $self['status'];
-    $tpp = $self['tpp'];
-    $ppp = $self['ppp'];
-    $memtime = $self['timeformat'];
-    $memdate = $self['dateformat'];
-    $sig = $self['sig'];
-    $invisible = $self['invisible'];
-    $time = $onlinetime;
-} else {
-    $langfile = $SETTINGS['langfile'];
-    $timeoffset = $SETTINGS['def_tz'];
-    $themeuser = '';
-    $status = 'member';
-    $tpp = $SETTINGS['topicperpage'];
-    $ppp = $SETTINGS['postperpage'];
-    $memtime = '';
-    $memdate = '';
-    $sig = '';
-    $invisible = 0;
-    $time = $onlinetime;
-    $self['ban'] = '';
-    $self['sig'] = '';
-    $self['status'] = '';
-    $self['username'] = '';
-}
-
-if ($memtime == '') {
-    if ($timeformat == 24) {
-        $timecode = "H:i";
-    } else {
-        $timecode = "h:i A";
-    }
-} else {
-    if ($memtime == 24) {
-        $timecode = "H:i";
-    } else {
-        $timecode = "h:i A";
-    }
-}
-
-// Load a language file
-if (file_exists(ROOT.'lang/'.$langfile.'.lang.php')) {
-    require ROOT.'lang/'.$langfile.'.lang.php';
-} else {
-    require ROOT.'lang/English.lang.php';
-}
-
 // Checks for the possibility to register
 $reglink = '';
 if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
@@ -534,16 +484,6 @@ if (X_MEMBER) {
     $self['status'] = '';
     $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
 }
-
-// Checks if the timeformat has been set, if not, use default
-if ($memdate == '') {
-    $dateformat = $dateformat;
-} else {
-    $dateformat = $memdate;
-}
-
-$dformatorig = $dateformat;
-$dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
 // Get themes, [fid, [tid]]
 if (isset($tid) && is_numeric($tid) && $action != 'templates') {
@@ -763,7 +703,7 @@ $result = $db->num_rows($query);
 $db->free_result($query);
 
 // don't *ever* ban a (super-)admin!
-if (($self['status'] == 'Banned' || $result > 0) && !(X_ADMIN || (X_SCRIPT == 'misc.php' && $action == 'logout'))) {
+if ($self['status'] == 'Banned' || ($result > 0 && !X_ADMIN)) {
     eval('$css = "'.template('css').'";');
     error($lang['bannedmessage']);
 }
@@ -793,5 +733,15 @@ if (X_MEMBER) {
 $quickjump = '';
 if ($SETTINGS['quickjump_status'] == 'on') {
     $quickjump = forumJump();
+}
+
+// catch all unexpected output
+if (headers_sent()) {
+    if (DEBUG) {
+        headers_sent($filepath, $linenum);
+        exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
+    } else {
+        exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+    }
 }
 ?>

@@ -238,7 +238,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     flush();
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_base (
         `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-        `devname` VARCHAR( 15 ) NOT NULL ,
+        `devname` VARCHAR( 20 ) NOT NULL ,
         UNIQUE ( `devname` )
       ) TYPE=MyISAM COMMENT = 'List of Installed Languages'");
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_keys (
@@ -253,6 +253,14 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         UNIQUE `langid` ( `langid` , `phraseid` ) ,
         INDEX ( `phraseid` )
       ) COMMENT = 'Translation Table'");
+
+    echo 'Initializing the new translation system...<br />';
+    require_once('include/translation.inc.php');
+    $upload = file_get_contents('lang/English.lang.php');
+
+    echo 'Installing English.lang.php...<br />';
+    installNewTranslation($upload);
+    unset($upload);
 
     echo 'Opening the templates file...<br />';
     $stream = fopen('templates.xmb','r');
