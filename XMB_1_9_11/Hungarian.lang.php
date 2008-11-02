@@ -301,7 +301,7 @@ $lang['evaltrevlt'] = '$lang["trevltmsg"] = "Ez egy nagyon hosszú topik, kattint
 $lang['evaluqinfo'] = '$lang["uqinfo"] = "Neked $u2ucount személyes üzeneted érkezett. Ez $percent%-a a maximálisan engedélyezett $SETTINGS[u2uquota] üzenetnek.";';
 $lang['evaluqinfo_over'] = '$lang["uqinfo"] = "<strong>Figyelem! Addig nem tudsz újabb Személyes üzenet küldeni amíg nem törölsz néhányat az eddig elmentett személyes üzenteid közül.</strong><br />Neked jelenleg $u2ucount Személyes üzented van a maxium $SETTINGS[u2uquota]-bõl.";';
 $lang['evalu2ustaffquota'] = '$lang["uqinfo"] = "Nekede $u2ucount privát üzeneted (U2U) van, meghatározott felsõ határ nélkül.";';
-$lang['evalusercpwelcome'] = '$lang["Usercpwelcome"] = "Szia $xmbuser. Üdvözöllek a Beállítások között. Itt tudod megváltoztatni a Te profilodat, küldeni és fogadni személyes üzeneteket, belépni a kedvenc topikjaidba és még sokminden mást.";';
+$lang['evalusercpwelcome'] = '$lang["usercpwelcome"] = "Szia $xmbuser. Üdvözöllek a Beállítások között. Itt tudod megváltoztatni a Te profilodat, küldeni és fogadni személyes üzeneteket, belépni a kedvenc topikjaidba és még sokminden mást.";';
 $lang['existingip'] = "Ez az IP cím már korábban ki lett tiltva";
 $lang['export_fid_expl'] = "Melyik fórumba rakjam át az elárvult topikokat? Kérlek add meg a (fid) Fórum ID változót.";
 $lang['export_fid_not_there'] = "Nem határoztad meg hogy melyik fórumba rakjam át az elárvult topikokat.";
@@ -472,7 +472,7 @@ $lang['onlinecatunknown'] = "Egy ismeretlen kategóriát böngészik";
 $lang['onlinecoppa'] = "Olvassa a COPPA szerzõdést";
 $lang['onlinecp'] = "Használja a vezérlõ pultot";
 $lang['onlineeditnoprofile'] = 'Egy ismeretlen profilt szerkeszt';
-$lang['onlineeditprofile'] = "Módositja $user profilját";
+$lang['onlineeditprofile'] = 'Módositja $user profilját';
 $lang['onlinefaq'] = "Olvassa a GYIK-et";
 $lang['onlineforumdisplay'] = "Olvassa a fórumot: ";
 $lang['onlineindex'] = "A tartalomjegyzékben keresgél";
