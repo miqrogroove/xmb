@@ -439,4 +439,54 @@ function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     </tr>
     <?php
 }
+
+function readFileAsINI($filename) {
+    $lines = file($filename);
+    foreach($lines as $line_num => $line) {
+        $temp = explode("=",$line);
+        if ($temp[0] != 'dummy') {
+            $key = trim($temp[0]);
+            $val = trim($temp[1]);
+            $thefile[$key] = $val;
+        }
+    }
+    return $thefile;
+}
+
+function dump_query($resource, $header=true) {
+    global $altbg2, $altbg1, $db, $cattext;
+    if (!$db->error()) {
+        $count = $db->num_fields($resource);
+        if ($header) {
+            ?>
+            <tr class="category" bgcolor="<?php echo $altbg2?>" align="center">
+            <?php
+            for($i=0;$i<$count;$i++) {
+                echo '<td align="left">';
+                echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
+                echo '</td>';
+            }
+            echo '</tr>';
+        }
+
+        while($a = $db->fetch_array($resource, SQL_NUM)) {
+            ?>
+            <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
+            <?php
+            for($i=0;$i<$count;$i++) {
+                echo '<td align="left">';
+
+                if (trim($a[$i]) == '') {
+                    echo '&nbsp;';
+                } else {
+                    echo nl2br(cdataOut($a[$i]));
+                }
+                echo '</td>';
+            }
+            echo '</tr>';
+        }
+    } else {
+        error($db->error());
+    }
+}
 ?>

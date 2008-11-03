@@ -101,7 +101,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         if (X_SCRIPT != 'upgrade.php') {
             if (!loadLang($self['langfile'])) {
                 if (!loadLang($SETTINGS['langfile'])) {
-                    require(ROOT.'include/translation.inc.php');
+                    require_once(ROOT.'include/translation.inc.php');
                     langPanic();
                 }
             }
@@ -125,7 +125,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
     } else {
         if (X_SCRIPT != 'upgrade.php') {
             if (!loadLang($SETTINGS['langfile'])) {
-                require(ROOT.'include/translation.inc.php');
+                require_once(ROOT.'include/translation.inc.php');
                 langPanic();
             }
         }
@@ -490,17 +490,9 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $message);
         for($i = 0; $i < sizeof($messagearray); $i++) {
-            if (sizeof($messagearray) != 1) {
-                if ($i == 0) {
-                    $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
-                } else if ($i == sizeof($messagearray) - 1) {
-                    $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
-                } else if ($i % 2 == 0) {
-                    $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
-                } // else inside nobr block
-            } else {
-                $messagearray[0] = wordwrap($messagearray[0], 150, "\n", TRUE);
-            }
+            if ($i % 2 == 0) {
+                $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
+            } // else inside nobr block
         }
         $message = implode("", $messagearray);
 
@@ -952,13 +944,6 @@ if (!function_exists('htmlspecialchars_decode')) {
     }
 }
 
-if (!function_exists('htmlentities_decode')) {
-    function htmlentities_decode($string, $type=ENT_QUOTES) {
-        $array = array_flip(get_html_translation_table(HTML_ENTITIES, $type));
-        return strtr($string, $array);
-    }
-}
-
 function end_time() {
     global $footerstuff, $starttime, $SETTINGS;
     extract($GLOBALS);
@@ -1192,21 +1177,6 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     return $return;
 }
 
-function array_keys2keys($array, $translator) {
-    $new_array = array();
-
-    foreach($array as $key=>$val) {
-        if (isset($translator[$key])) {
-            $new_key = $translator[$key];
-        } else {
-            $new_key = $key;
-        }
-        $new_array[$new_key] = $val;
-    }
-
-    return $new_array;
-}
-
 function mysql_syn_highlight($query) {
     global $tables, $tablepre;
 
@@ -1243,43 +1213,6 @@ function mysql_syn_highlight($query) {
     }
 
     return '<em>'.str_replace($find, $replace, $query).'</em>';
-}
-
-function dump_query($resource, $header=true) {
-    global $altbg2, $altbg1, $db, $cattext;
-    if (!$db->error()) {
-        $count = $db->num_fields($resource);
-        if ($header) {
-            ?>
-            <tr class="category" bgcolor="<?php echo $altbg2?>" align="center">
-            <?php
-            for($i=0;$i<$count;$i++) {
-                echo '<td align="left">';
-                echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
-                echo '</td>';
-            }
-            echo '</tr>';
-        }
-
-        while($a = $db->fetch_array($resource, SQL_NUM)) {
-            ?>
-            <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
-            <?php
-            for($i=0;$i<$count;$i++) {
-                echo '<td align="left">';
-
-                if (trim($a[$i]) == '') {
-                    echo '&nbsp;';
-                } else {
-                    echo nl2br(cdataOut($a[$i]));
-                }
-                echo '</td>';
-            }
-            echo '</tr>';
-        }
-    } else {
-        error($db->error());
-    }
 }
 
 function put_cookie($name, $value=null, $expire=0, $path=null, $domain=null, $secure=FALSE, $setVia=X_SET_HEADER) {
@@ -1355,68 +1288,62 @@ function validateTpp() {
 
 function altMail($to, $subject, $message, $additional_headers='', $additional_parameters=null) {
     global $mailer, $SETTINGS;
-    static $isInc, $handlers;
+    static $handlers;
 
     $message = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $message);
     $subject = str_replace(array("\r", "\n"), array('', ''), $subject);
 
-    switch($mailer['type']) {
-        case 'socket_SMTP':
-            if (!isset($isInc['socket_SMTP'])) {
-                require ROOT.'include/smtp.inc.php';
-                $isInc['socket_SMTP'] = true;
-            }
+    if ($mailer['type'] == 'socket_SMTP') {
+        require_once(ROOT.'include/smtp.inc.php');
 
-            if (!isset($handlers['socket_SMTP'])) {
-                if (DEBUG) {
-                    $mail = new socket_SMTP(true, './smtp-log.txt');
-                } else {
-                    $mail = new socket_SMTP;
-                }
-                $handlers['socket_SMTP'] = &$mail;
-                $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password']);
-                register_shutdown_function(array(&$mail, 'disconnect'));
+        if (!isset($handlers['socket_SMTP'])) {
+            if (DEBUG) {
+                $mail = new socket_SMTP(true, './smtp-log.txt');
             } else {
-                $mail = &$handlers['socket_SMTP'];
+                $mail = new socket_SMTP;
+            }
+            $handlers['socket_SMTP'] = &$mail;
+            $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password']);
+            register_shutdown_function(array(&$mail, 'disconnect'));
+        } else {
+            $mail = &$handlers['socket_SMTP'];
+        }
+
+        $subjectInHeader = false;
+        $toInHeader = false;
+        $additional_headers = explode("\r\n", $additional_headers);
+        foreach($additional_headers as $k=>$h) {
+            if (strpos(trim($h), 'ubject:') === 1) {
+                $additional_headers[$k] = 'Subject: '.$subject."\r\n";
+                $subjectInHeader = true;
+                continue;
             }
 
-            $subjectInHeader = false;
-            $toInHeader = false;
-            $additional_headers = explode("\r\n", $additional_headers);
-            foreach($additional_headers as $k=>$h) {
-                if (strpos(trim($h), 'ubject:') === 1) {
-                    $additional_headers[$k] = 'Subject: '.$subject."\r\n";
-                    $subjectInHeader = true;
-                    continue;
-                }
-
-                if (strpos(trim(strtolower($h)), 'to:') === 0) {
-                    $toInHeader = true;
-                }
+            if (strpos(trim(strtolower($h)), 'to:') === 0) {
+                $toInHeader = true;
             }
+        }
 
-            if (!$subjectInHeader) {
-                $additional_headers[] = 'Subject: '.$subject;
-            }
+        if (!$subjectInHeader) {
+            $additional_headers[] = 'Subject: '.$subject;
+        }
 
-            if (!$toInHeader) {
-                $additional_headers[] = 'To: '.$to;
-            }
+        if (!$toInHeader) {
+            $additional_headers[] = 'To: '.$to;
+        }
 
-            $additional_headers = implode("\r\n", $additional_headers);
+        $additional_headers = implode("\r\n", $additional_headers);
 
-            return $mail->sendMessage($SETTINGS['adminemail'], $to, $message, $additional_headers);
-            break;
-        default:
-            if (PHP_OS == 'WINNT' Or PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45283 a.k.a. #28038
-                ini_set('sendmail_from', ini_get('sendmail_from'));
-            }
-            if (ini_get('safe_mode') == "1") {
-                return mail($to, $subject, $message, $additional_headers);
-            } else {
-                return mail($to, $subject, $message, $additional_headers, $additional_parameters);
-            }
-            break;
+        return $mail->sendMessage($SETTINGS['adminemail'], $to, $message, $additional_headers);
+    } else {
+        if (PHP_OS == 'WINNT' Or PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45283 a.k.a. #28038
+            ini_set('sendmail_from', ini_get('sendmail_from'));
+        }
+        if (ini_get('safe_mode') == "1") {
+            return mail($to, $subject, $message, $additional_headers);
+        } else {
+            return mail($to, $subject, $message, $additional_headers, $additional_parameters);
+        }
     }
 }
 
@@ -1748,19 +1675,6 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     return implode("\n", $forumselect);
 }
 
-function readFileAsINI($filename) {
-    $lines = file($filename);
-    foreach($lines as $line_num => $line) {
-        $temp = explode("=",$line);
-        if ($temp[0] != 'dummy') {
-            $key = trim($temp[0]);
-            $val = trim($temp[1]);
-            $thefile[$key] = $val;
-        }
-    }
-    return $thefile;
-}
-
 function forumJump() {
     global $lang;
 
@@ -1802,8 +1716,8 @@ function forumJump() {
 
 // checkForumPermissions - Returns a set of boolean permissions for a specific forum.
 // Normal Usage Example
-//  $result = $db->query('SELECT * FROM '.X_PREFIX.'forums WHERE fid=1');
-//  $forum = $db->fetch_array($result);
+//  $fid = 1;
+//  $forum = getForum($fid);
 //  $perms = checkForumPermissions($forum);
 //  if ($perms[X_PERMS_VIEW]) { //$self is allowed to view $forum }
 // Masquerade Example
@@ -1876,8 +1790,8 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
 
 // getOneForumPerm - Enables you to do complex comparisons without string parsing.  Valid with X_PERMS_RAW* indexes only!
 // Normal Usage Example
-//  $result = $db->query('SELECT * FROM '.X_PREFIX.'forums WHERE fid=1');
-//  $forum = $db->fetch_array($result);
+//  $fid = 1;
+//  $forum = getForum($fid);
 //  $viewperms = getOneForumPerm($forum, X_PERMS_RAWVIEW);
 //  if ($viewperms >= $status_enum['Member']) { //Some non-staff status has perms to view $forum }
 //  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
