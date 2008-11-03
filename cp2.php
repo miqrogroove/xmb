@@ -70,40 +70,17 @@ if (X_ADMIN) {
         }
         $name = str_replace(' ', '+', $themebits['name']);
         header("Content-Type: application/x-ms-download");
-        header("Content-Disposition: filename=${name}-theme.xmb");
+        header("Content-Disposition: filename=\"$name-theme.xmb\"");
         echo implode("\r\n", $contents);
         exit();
     }
     if ($action == "lang" && $download) {
-        $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid=$download");
-        if ($db->num_rows($result) == 0) {
+        require('include/translation.inc.php');
+        $devname = '';
+        $contents = exportTranslation($download, $devname);
+        if ($contents === FALSE) {
             error($lang['generic_missing']);
         }
-        $row = $db->fetch_array($result);
-        $db->free_result($result);
-        $devname = $row['devname'];
-
-        $query = "SELECT k.langkey, t.cdata "
-               . "FROM ".X_PREFIX."lang_keys AS k "
-               . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
-               . "WHERE t.langid=$download "
-               . "GROUP BY k.langkey ORDER BY k.langkey";
-        $query = $db->query($query);
-        $contents = '';
-        $meta = '';
-        while($row = $db->fetch_array($query)) {
-            if (in_array($row['langkey'], array('charset','iso639','language'))) {
-                $meta .= "\$lang['{$row['langkey']}'] = '{$row['cdata']}';\r\n";
-            } else {
-                $value = $row['cdata'];
-                $value = str_replace("\\", "\\\\", $value);
-                $value = str_replace('"', '\"', $value);
-                $value = str_replace('$', '\$', $value);
-                $value = str_replace("\n", '\n', $value);
-                $contents .= "\$lang['{$row['langkey']}'] = \"$value\";\r\n";
-            }
-        }
-        $contents = "\$devname = '$devname';\r\n".$meta.$contents;
         header("Content-Type: application/x-ms-download");
         header("Content-Disposition: filename=\"$devname.lang.php\"");
         echo $contents;
@@ -454,24 +431,14 @@ if ($action == 'lang') {
     }
 
     if (onSubmit('editsubmit')) {
+        require('include/translation.inc.php');
+
         $phraseid = getInt('phraseid', 'p');
         $newvalue = postedVar('templatenew', '', FALSE); // HTML is always allowed in translations.
 
-        $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
-        if ($db->num_rows($result) == 0) {
+        if (!setLangValue($phraseid, $newvalue)) {
             error($lang['generic_missing'], FALSE);
         }
-        $db->free_result($result);
-        $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
-        if ($db->num_rows($result) == 0) {
-            error($lang['generic_missing'], FALSE);
-        }
-        $row = $db->fetch_array($result);
-        $db->free_result($result);
-        $langid = $row['langid'];
-
-        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
-        $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$newvalue'");
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['translation_update'].'</td></tr>';
         redirect($full_url.'cp2.php?action=lang', 2, X_REDIRECT_JS);

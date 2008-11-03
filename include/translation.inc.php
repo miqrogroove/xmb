@@ -30,6 +30,68 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+// setNewLangValue() will add a new $lang value to the current translation and also add a new key if not found.
+// Parameter $langkey is the new translation key.
+// Parameter $cdata is the new value and it must be db-escaped!
+// Returns TRUE on success, FALSE if no translation has been loaded.
+// In other words, setNewLangValue('stats1', 'Statistics'); is equivalent to importing $lang['stats1'] = 'Statistics';
+function setNewLangValue($langkey, $cdata) {
+    global $db, $langfile;
+
+    $langkey = $db->escape($langkey);
+
+    $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE langkey='$langkey'");
+    if ($db->num_rows($result) == 0) {
+        $db->query("INSERT INTO ".X_PREFIX."lang_keys SET langkey='$langkey'");
+        $phraseid = $db->insert_id();
+    } else {
+        $row = $db->fetch_array($result);
+        $db->free_result($result);
+        $phraseid = $row['phraseid'];
+    }
+
+    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
+    if ($db->num_rows($result) == 0) {
+        return FALSE;
+    }
+    $row = $db->fetch_array($result);
+    $db->free_result($result);
+    $langid = $row['langid'];
+
+    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
+    $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
+
+    return TRUE;
+}
+
+// setLangValue() will set a $lang value in the current translation for an existing key.
+// Parameter $phraseid is an integer, primary key of the lang_keys table.
+// Parameter $cdata is the new value and it must be db-escaped!
+// Returns TRUE on success.
+function setLangValue($phraseid, $cdata) {
+    global $db, $langfile;
+    
+    $phraseid = intval($phraseid);
+
+    $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
+    if ($db->num_rows($result) == 0) {
+        return FALSE;
+    }
+    $db->free_result($result);
+    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
+    if ($db->num_rows($result) == 0) {
+        return FALSE;
+    }
+    $row = $db->fetch_array($result);
+    $db->free_result($result);
+    $langid = $row['langid'];
+
+    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
+    $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
+    
+    return TRUE;
+}
+
 // installNewTranslation() handles all logic necessary to install an XMB translation file.
 // Parameter $upload must be a string containing the entire translation file.
 // Returns TRUE on success.
@@ -164,6 +226,49 @@ function installNewTranslation($upload) {
     }
     
     return $query;
+}
+
+// exportTranslation() creates a PHP file of a single translation.
+// String literals are always expressed in double quotes because the original quoting was not saved during installation.
+// Parameter $langid must be an integer, primary key of the lang_base table.
+// Parameter $devname will be modified by this function to return the lang_base.devname value.
+// Returns the entire file as a string on success, FALSE otherwise.
+function exportTranslation($langid, &$devname) {
+    global $db;
+    
+    $langid = intval($langid);
+    
+    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid=$langid");
+    if ($db->num_rows($result) == 0) {
+        return FALSE;
+    }
+    $row = $db->fetch_array($result);
+    $db->free_result($result);
+    $devname = $row['devname'];
+
+    $query = "SELECT k.langkey, t.cdata "
+           . "FROM ".X_PREFIX."lang_keys AS k "
+           . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
+           . "WHERE t.langid=$download "
+           . "GROUP BY k.langkey ORDER BY k.langkey";
+    $query = $db->query($query);
+    $contents = '';
+    $meta = '';
+    while($row = $db->fetch_array($query)) {
+        if (in_array($row['langkey'], array('charset','iso639','language'))) {
+            $meta .= "\$lang['{$row['langkey']}'] = '{$row['cdata']}';\r\n";
+        } else {
+            $value = $row['cdata'];
+            $value = str_replace("\\", "\\\\", $value);
+            $value = str_replace('"', '\"', $value);
+            $value = str_replace('$', '\$', $value);
+            $value = str_replace("\n", '\n', $value);
+            $contents .= "\$lang['{$row['langkey']}'] = \"$value\";\r\n";
+        }
+    }
+    $contents = "\$devname = '$devname';\r\n".$meta.$contents;
+
+    return $contents;
 }
 
 // langPanic() handles any unexpected configuration that prevented the translation database from loading.
