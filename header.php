@@ -456,33 +456,44 @@ if (ini_get('upload_max_filesize') < $SETTINGS['maxattachsize']) {
     $SETTINGS['maxattachsize'] = ini_get('upload_max_filesize');
 }
 
-// Get the user-vars, and make them semi-global
-
-elevateUser(postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c'), postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'));
-
-
-// Checks for the possibility to register
-$reglink = '';
-if ($SETTINGS['regstatus'] == 'on' && X_GUEST) {
-    $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
+// Authorize user, get the user-vars, and make them semi-global
+$uinput = postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c');
+if (!elevateUser($uinput, postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'))) {
+    // Delete cookies when authentication fails.
+    if ($uinput != '') {
+        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
+        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
+    }
 }
+unset($uinput);
 
-// Creates login/logout links
+// Create login/logout links
 if (X_MEMBER) {
-    $loginout = '<a href="misc.php?action=logout">'.$lang['textlogout'].'</a>';
-    $memcp = '<a href="memcp.php">'.$lang['textusercp'].'</a>';
-    $onlineuser = $xmbuser;
-    $cplink = '';
-    $u2ulink = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['banu2u']}</a> - ";
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
+    } else {
+        $cplink = '';
     }
+    $loginout = '<a href="misc.php?action=logout">'.$lang['textlogout'].'</a>';
+    $memcp = '<a href="memcp.php">'.$lang['textusercp'].'</a>';
+    $u2ulink = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['banu2u']}</a> - ";
     $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.recodeOut($xmbuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
+
+    // Update lastvisit in the header shown
+    $theTime = $xmblva + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
+    $lastdate = gmdate($dateformat, $theTime);
+    $lasttime = gmdate($timecode, $theTime);
+    $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
+    // Checks for the possibility to register
+    if ($SETTINGS['regstatus'] == 'on') {
+        $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
+    } else {
+        $reglink = '';
+    }
     $loginout = '<a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-    $onlineuser = 'xguest123';
-    $self['status'] = '';
     $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
+    $lastvisittext = '';
 }
 
 // Get themes, [fid, [tid]]
@@ -581,16 +592,6 @@ $fontedit = preg_replace('#(\D)#', '', $fontsize);
 $fontsuf = preg_replace('#(\d)#', '', $fontsize);
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
-
-// Update lastvisit in the header shown
-if (isset($lastvisit) && X_MEMBER) {
-    $theTime = $xmblva + ($timeoffset * 3600) + ($addtime * 3600);
-    $lastdate = gmdate($dateformat, $theTime);
-    $lasttime = gmdate($timecode, $theTime);
-    $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
-} else {
-    $lastvisittext = '';
-}
 
 // Checks for various settings
 if (empty($action)) {
@@ -701,9 +702,8 @@ $ips = explode(".", $onlineip);
 $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
 $result = $db->num_rows($query);
 $db->free_result($query);
-
-// don't *ever* ban a (super-)admin!
-if ($self['status'] == 'Banned' || ($result > 0 && !X_ADMIN)) {
+// don't *ever* ban an admin!
+if ($result > 0 && !X_ADMIN) {
     eval('$css = "'.template('css').'";');
     error($lang['bannedmessage']);
 }

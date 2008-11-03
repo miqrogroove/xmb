@@ -155,7 +155,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
 
     // Set more globals
     global $timeoffset, $themeuser, $status, $tpp, $ppp, $memtime, $dateformat,
-           $sig, $invisible, $timecode, $dformatorig;
+           $sig, $invisible, $timecode, $dformatorig, $onlineuser;
 
     if ($xmbuser != '') {
         $timeoffset = $self['timeoffset'];
@@ -167,6 +167,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         $dateformat = $self['dateformat'];
         $sig = $self['sig'];
         $invisible = $self['invisible'];
+        $onlineuser = $xmbuser;
     } else {
         $timeoffset = $SETTINGS['def_tz'];
         $themeuser = '';
@@ -176,6 +177,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         $memtime = $SETTINGS['timeformat'];
         $sig = '';
         $invisible = 0;
+        $onlineuser = 'xguest123';
         $self['ban'] = '';
         $self['sig'] = '';
         $self['username'] = '';
@@ -189,7 +191,6 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
 
     $dformatorig = $dateformat;
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
-
 
     return ($xmbuser != '');
 }
