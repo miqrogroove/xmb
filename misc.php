@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha One - This software should not be used for any purpose after 30 September 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -510,10 +510,10 @@ switch($action) {
         }
 
         if ($order != 'username' && $order != 'postnum' && $order != 'status') {
-            $orderby = "uid";
-            $order = 'uid';
+            $order = '';
+            $orderby = 'regdate';
         } else if ($order == 'status') {
-            $orderby = "if (status='Super Administrator',1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='member', 5, if (status='banned',6,7))))))";
+            $orderby = "if (status='Super Administrator',1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='Member', 5, if (status='Banned',6,7))))))";
         } else {
             $orderby = $order;
         }
@@ -522,14 +522,16 @@ switch($action) {
             $dblikeip = '';
             $dblikeemail = '';
             $misc_mlist_template = 'misc_mlist';
-            $where = array();
         } else {
-            $where = array();
             $misc_mlist_template = 'misc_mlist_admin';
         }
 
-        $ext = array('&order='.$order);
-
+        $where = array();
+        $ext = array();
+        if ($order != '') {
+            $ext = array('order='.$order);
+        }
+        
         if ($dblikeemail != '') {
             if (!X_SADMIN) {
                 $where[] = " email LIKE '%$dblikeemail%'";
@@ -568,7 +570,11 @@ switch($action) {
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
         $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
 
-        $ext = implode('&amp;', $ext);
+        if (count($ext) > 0) {
+            $ext = '&amp;'.implode('&amp;', $ext);
+        } else {
+            $ext = '';
+        }
 
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 
@@ -618,7 +624,7 @@ switch($action) {
             $memberperpage = $postperpage;
         }
 
-        $mpurl = 'misc.php?action=list&amp;desc='.$desc.''.$ext;
+        $mpurl = 'misc.php?action=list&amp;desc='.$desc.$ext;
         if (($multipage = multi($num, $memberperpage, $page, $mpurl)) === false) {
             $multipage = '';
         } else {
