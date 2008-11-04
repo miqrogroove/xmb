@@ -374,7 +374,7 @@ $lang['max_regs'] = "Le maximum d'inscription par jour a été atteind. Merci d'at
 $lang['mcpread'] = "Lut?";
 $lang['mcpuid'] = "UID";
 $lang['memberisoff'] = "Statut: Non connecté";
-$lang['memberison'] = "Statut: <font color=\"red\"><b>En ligne</b></font>";
+$lang['memberison'] = "Statut: <b>En ligne</b>";
 $lang['memcp_otherinfo'] = "Autre information";
 $lang['memcp_otheroptions'] = "Autres choix";
 $lang['memcpmood'] = "Votre humeur actuelle:";
