@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,20 +26,101 @@
  *
  **/
 
-if (!defined('X_SCRIPT')) {
-    exit("Not allowed to run this file directly.");
-}
+
+/* Front Matter */
 
 error_reporting(E_ALL&~E_NOTICE);
+define('IN_CODE', TRUE);
+if (!defined('X_SCRIPT')) exit("Not allowed to run this file directly.");
+if (!defined('ROOT')) define('ROOT', './');
+require ROOT.'include/global.inc.php';
 
-define('IN_CODE', true);
+
+/* Global Constants and Initialized Values */
+
+$versioncompany = 'The XMB Group';
+$versionshort = '1.9.11';
+$versiongeneral = 'XMB 1.9.11';
+$copyright = '2001-2008';
+$alpha = 'Alpha Two';
+$beta = '';
+$gamma = '';
+$service_pack = '';
+$versionbuild = 20081103;
+$versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
+$mtime = explode(" ", microtime());
+$starttime = $mtime[1] + $mtime[0];
+$onlinetime = time();
+$time = $onlinetime;
+$selHTML = 'selected="selected"';
+$cheHTML = 'checked="checked"';
+$server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
+$url = $_SERVER['REQUEST_URI'];
+$onlineip = $_SERVER['REMOTE_ADDR'];
+
+$cookiepath = '';
+$cookiedomain = '';
+$bbcodescript = '';
+$database = '';
+$threadSubject = '';
+$filesize = 0;
+$filename = '';
+$filetype = '';
+$full_url = '';
+$navigation = '';
+$newu2umsg = '';
+$othertid = '';
+$quickjump = '';
+$status = '';
+$xmbuser = '';
+$xmbpw = '';
+
+$SETTINGS = array();
+$THEME = array();
+$footerstuff = array();
+$links = array();
+$lang = array();
+$mailer = array();
+$plugadmin = array();
+$plugimg = array();
+$plugname = array();
+$plugurl = array();
+$tables = array(
+'attachments',
+'banned',
+'buddys',
+'captchaimages',
+'favorites',
+'forums',
+'lang_base',
+'lang_keys',
+'lang_text',
+'logs',
+'members',
+'posts',
+'ranks',
+'restricted',
+'settings',
+'smilies',
+'templates',
+'themes',
+'threads',
+'u2u',
+'whosonline',
+'words',
+'vote_desc',
+'vote_results',
+'vote_voters'
+);
+
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
+define('X_REDIRECT_HEADER', 1);
+define('X_REDIRECT_JS', 2);
 define('X_SET_HEADER', 1);
 define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
-
 // permissions constants
 define('X_PERMS_COUNT', 4); //Number of raw bit sets stored in postperm setting.
 // indexes used in permissions arrays
@@ -66,67 +147,36 @@ $status_enum = array(
 'Banned'              => (1 << 30)
 ); //$status['Banned'] == 2^30
 
-if (!defined('ROOT')) {
-    define('ROOT', './');
+// discover the most likely browser
+// so we can use bbcode specifically made for it
+$browser = 'opera'; // default to opera
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
+        $browser = 'mozilla';
+    }
+    if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
+        $browser = 'opera';
+    }
+    if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+        $browser = 'ie';
+    }
 }
+define('IS_MOZILLA', ($browser == 'mozilla'));
+define('IS_OPERA', ($browser == 'opera'));
+define('IS_IE', ($browser == 'ie'));
 
-// Resolve Server specific issues
-$server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-$url = $_SERVER['REQUEST_URI'];
 
-// Required Files - XMB (Version/Patch File) Configuration File, Database Settings File
-require ROOT.'include/global.inc.php';
-require ROOT.'include/validate.inc.php';
-
-// Initialising certain key variables. These are default values, please don't change them!
-$cookiepath = '';
-$cookiedomain = '';
-$mtime = explode(" ", microtime());
-$starttime = $mtime[1] + $mtime[0];
-$onlinetime = time();
-$time = $onlinetime;
-$bbcodescript = '';
-$threadSubject = '';
-$user = (isset($user)) ? $user : '';
-$SETTINGS = array();
-$THEME = array();
-$links = array();
-$lang = array();
-$plugname = array();
-$plugadmin = array();
-$plugurl = array();
-$plugimg = array();
-$footerstuff = array();
-$mailer = array();
-$selHTML = 'selected="selected"';
-$cheHTML = 'checked="checked"';
-$filesize = 0;
-$filename = '';
-$filetype = '';
-$quickjump = '';
-$newu2umsg = '';
-$othertid = '';
+/* Load the Configuration Created by Install */
 
 require ROOT.'config.php';
 
 if (!defined('DEBUG')) {
     define('DEBUG', FALSE);
+} elseif (DEBUG) {
+    require(ROOT.'include/debug.inc.php');
 }
 if (!defined('LOG_MYSQL_ERRORS')) {
     define('LOG_MYSQL_ERRORS', FALSE);
-}
-
-if (DEBUG) {
-    error_reporting(E_ALL | E_STRICT);
-}
-
-if (headers_sent()) {
-    if (DEBUG) {
-        headers_sent($filepath, $linenum);
-        exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
-    } else {
-        exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
-    }
 }
 
 $config_array = array(
@@ -147,31 +197,12 @@ foreach($config_array as $key => $value) {
         exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
     }
 }
+unset($config_array);
 
-// Initialise pre-set Variables
-// These strings can be pulled for use on any page as header is required by all XMB pages
-$versioncompany = 'The XMB Group';
-$versionshort = '1.9.11';
-$versiongeneral = 'XMB 1.9.11';
-$copyright = '2001-2008';
-if ($show_full_info) {
-    $alpha = 'Alpha Two';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = 20081102;
-    $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack.''.(DEBUG === true ? ' (Debug Mode)' : '');
-} else {
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-    $versionlong = 'Powered by XMB'.(DEBUG === true ? ' (Debug Mode)' : '');
-}
 
-// Create cookie-settings
-if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
+/* Validate URL Configuration and Security */
+
+if (empty($full_url)) {
     exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
 } else {
     $array = parse_url($full_url);
@@ -189,43 +220,21 @@ if (!isset($full_url) || empty($full_url) || $full_url == 'FULLURL') {
     }
     $cookiepath = $array['path'];
 
-    if (DEBUG And X_SCRIPT != 'files.php') {
-        // Check the $full_url setting
-        $secure = FALSE;
-        if (isset($_SERVER['HTTPS'])) {
-            if ($_SERVER['HTTPS'] != 'off') {
-                $secure = TRUE;
-            }
-        }
-
-        $success = TRUE;
-        if ($array['host'] != $_SERVER['HTTP_HOST']) {
-            $success = FALSE;
-            $reason = 'Host names do not match.  '.$array['host'].' should be '.$_SERVER['HTTP_HOST'];
-        } elseif ($cookiesecure != $secure) {
-            $success = FALSE;
-            $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-        } elseif ($cookiepath != substr($url, 0, strlen($cookiepath))) {
-            $success = FALSE;
-            $reason = 'URI paths do not match.<br />'.$cookiepath.' was expected, but server saw '.substr($url, 0, strlen($cookiepath));
-        }
-        
-        if (!$success) {
-            exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
-        }
-
-        unset($secure, $success, $reason);
+    if (DEBUG) {
+        debugURLsettings($array['host'], $cookiesecure, $cookiepath);
     }
     unset($array);
 }
 
-// Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
-// XMB expects all links to be relative to $full_url + script name + query string.
-$querystring = strstr($url, '?');
-if ($querystring === FALSE) {
-    $querystring = '';
+// Common XSS Protection: XMB disallows '<' in all URLs.
+$url_check = Array('%3c', '<');
+foreach($url_check as $name) {
+    if (strpos(strtolower($url), $name)) {
+        header('HTTP/1.0 403 Forbidden');
+        exit('403 Forbidden - URL rejected by XMB');
+    }
 }
-$baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
+unset($url_check);
 
 // Check for double-slash problems in REQUEST_URI
 if ($url != $cookiepath) {
@@ -243,104 +252,22 @@ if ($url != $cookiepath) {
     }
 }
 
-// discover the most likely browser
-// so we can use bbcode specifically made for it
-// this allows the use of various nice new features in eg mozilla
-// while others are available via IE and/or opera
-$browser = 'opera'; // default to opera for now
-if (!isset($_SERVER['HTTP_USER_AGENT'])) {
-    $_SERVER['HTTP_USER_AGENT'] = '';
-}
 
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
-    define('IS_MOZILLA', true);
-    $browser = 'mozilla';
-}
+/* Assert Additional Security */
 
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
-    define('IS_OPERA', true);
-    $browser = 'opera';
-}
-
-if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
-    define('IS_IE', true);
-    $browser = 'ie';
-}
-
-if (!defined('IS_MOZILLA')) {
-    define('IS_MOZILLA', false);
-}
-
-if (!defined('IS_OPERA')) {
-    define('IS_OPERA', false);
-}
-
-if (!defined('IS_IE')) {
-    define('IS_IE', false);
-}
-
-if (!file_exists(ROOT.'db/'.$database.'.php')) {
-    die('Error: XMB is not installed, or is configured incorrectly. <a href="install/index.php">Click Here to install XMB</a>');
-}
-require ROOT.'db/'.$database.'.php';
-$oToken = new page_token();
-$oToken->init();
-require ROOT.'include/functions.inc.php';
-
-// initialize navigation
-$navigation = '';
-nav();
-
-// Cache-control
-if (X_SCRIPT != 'files.php') {
-    header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
-    header("Cache-Control: post-check=0, pre-check=0", false);
-    header("Pragma: no-cache");
-}
-
-// Fix annoying bug in windows... *sigh*
-$action = isset($action) ? $action : '';
-if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
-    header("Content-type: text/html");
-}
-
-// Security checks
 if (file_exists('./install/') && !@rmdir('./install/')) {
     exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server, but could not be removed. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
 }
-
-if (file_exists('./cplogfile.php') && !@unlink('./cplogfile.php')) {
-    exit('<h1>Error:</h1><br />The old logfile ("./cplogfile.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-}
-
-if (file_exists('./fixhack.php') && !@unlink('./fixhack.php')) {
-    exit('<h1>Error:</h1><br />The hack repair tool ("./fixhack.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-}
-
 if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./Upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
-
 if (file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
-
 if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
     if (!@unlink('./upgrade.php')) {
         exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
     }
-}
-
-// Checks the format of the URL, blocks if necessary....
-if (eregi("\?[0-9]+$", $url)) {
-    exit("Invalid String Format, Please Check Your URL");
-}
-
-// Get visitors IP address (which is usually their transparent proxy)
-// DO NOT USE HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR as these can (and are) forged by attackers. ajv
-$onlineip = '';
-if (isset($_SERVER['REMOTE_ADDR'])) {
-    $onlineip = $_SERVER['REMOTE_ADDR'];
 }
 
 //Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
@@ -350,83 +277,17 @@ if ($ipcheck == 'on') {
     }
 }
 
-// Load Objects, and such
-$tables = array(
-    'attachments',
-    'banned',
-    'buddys',
-    'captchaimages',
-    'favorites',
-    'forums',
-    'lang_base',
-    'lang_keys',
-    'lang_text',
-    'logs',
-    'members',
-    'posts',
-    'ranks',
-    'restricted',
-    'settings',
-    'smilies',
-    'templates',
-    'themes',
-    'threads',
-    'u2u',
-    'whosonline',
-    'words',
-    'vote_desc',
-    'vote_results',
-    'vote_voters'
-);
 
-// Secured table prefix constant
-define('X_PREFIX', $tablepre);
+/* Load Common Files and Establish Database Connection */
+
+define('X_PREFIX', $tablepre); // Secured table prefix constant
+
+require ROOT.'db/'.$database.'.php';
+require ROOT.'include/validate.inc.php';
+require ROOT.'include/functions.inc.php';
 
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
-
-// Checks for various variables in the URL, if any of them is found, script is halted
-$url_check = Array('status=', 'xmbuser=', 'xmbpw=', '%3cscript');
-foreach($url_check as $name) {
-    if (strpos(strtolower($url), $name)) {
-        $auditaction = $_SERVER['REQUEST_URI'];
-        $aapos = strpos($auditaction, "?");
-        if ($aapos !== false) {
-            $auditaction = substr($auditaction, $aapos + 1);
-        }
-        $auditaction = $db->escape("$onlineip|#|ATTACK: $auditaction");
-        audit($xmbuser, $auditaction, 0, 0);
-        exit("Attack logged.");
-    }
-}
-
-// Load a few constants
-define('XMB_VERSION', $versiongeneral);
-define('XMB_BUILD', $versionbuild);
-define('X_REDIRECT_HEADER', 1);
-define('X_REDIRECT_JS', 2);
-
-// Update last visit cookies
-$xmblva = getInt('xmblva', 'c'); // Last visit
-$xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
-
-if ($xmblvb > 0) {
-    $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're in a current session
-} else if ($xmblva > 0) {
-    $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit
-} else {
-    $thetime = $onlinetime; // no cookie at all, so this is your first visit
-}
-
-put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb =
-
-$lastvisit = $thetime;
-$lastvisit2 = $lastvisit - 540;
-
-if (isset($oldtopics)) {
-    put_cookie('oldtopics', $oldtopics, ($onlinetime+600), $cookiepath, $cookiedomain);
-}
 
 // Make all settings global, and put them in the $SETTINGS[] array
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
@@ -456,7 +317,46 @@ if (ini_get('upload_max_filesize') < $SETTINGS['maxattachsize']) {
     $SETTINGS['maxattachsize'] = ini_get('upload_max_filesize');
 }
 
-// Authorize user, get the user-vars, and make them semi-global
+
+/* Set Global HTTP Headers */
+
+if (X_SCRIPT != 'files.php') {
+    header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+}
+
+// Fix annoying bug in windows... *sigh*
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
+    header("Content-type: text/html");
+}
+
+// Update last visit cookies
+$xmblva = getInt('xmblva', 'c'); // Last visit
+$xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
+
+if ($xmblvb > 0) {
+    $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're in a current session
+} else if ($xmblva > 0) {
+    $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit
+} else {
+    $thetime = $onlinetime; // no cookie at all, so this is your first visit
+}
+
+put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
+put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb =
+
+$lastvisit = $thetime;
+$lastvisit2 = $lastvisit - 540;
+
+if (isset($oldtopics)) {
+    put_cookie('oldtopics', $oldtopics, ($onlinetime+600), $cookiepath, $cookiedomain);
+}
+
+
+/* Authorize User, Set Up Session, and Load Language Translation */
+
 $uinput = postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c');
 if (!elevateUser($uinput, postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'))) {
     // Delete cookies when authentication fails.
@@ -467,7 +367,18 @@ if (!elevateUser($uinput, postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'))) {
 }
 unset($uinput);
 
-// Create login/logout links
+
+/* Set Up HTML Templates and Themes */
+
+// Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
+// XMB expects all links to be relative to $full_url + script name + query string.
+$querystring = strstr($url, '?');
+if ($querystring === FALSE) {
+    $querystring = '';
+}
+$baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
+
+// login/logout links
 if (X_MEMBER) {
     if (X_ADMIN) {
         $cplink = ' - <a href="cp.php">'.$lang['textcp'].'</a>';
@@ -512,13 +423,6 @@ if (isset($tid) && is_numeric($tid) && $action != 'templates') {
         $forumtheme = 0;
     }
 }
-
-$wollocation = $db->escape($url);
-$newtime = $onlinetime - 600;
-
-// clear out old entries and guests
-$db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
-$db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
 
 // Check what theme to use
 if ((int) $themeuser > 0) {
@@ -593,30 +497,6 @@ $fontsuf = preg_replace('#(\d)#', '', $fontsize);
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
-// Checks for various settings
-if (empty($action)) {
-    $action = NULL;
-}
-
-// Gzip-compression
-if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment" && X_SCRIPT != 'files.php') {
-    if (($res = @ini_get('zlib.output_compression')) === 1) {
-        // leave it
-    } else if ($res === false) {
-        // ini_get not supported. So let's just leave it
-    } else {
-        if (function_exists('gzopen')) {
-            $r = @ini_set('zlib.output_compression', 'On');
-            $r2 = @ini_set('zlib.output_compression_level', '3');
-            if (!$r || !$r2) {
-                ob_start('ob_gzhandler');
-            }
-        } else {
-            ob_start('ob_gzhandler');
-        }
-    }
-}
-
 // Search-link
 if ($SETTINGS['searchstatus'] == 'on') {
     $links[] = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
@@ -671,7 +551,23 @@ if (count($pluglinks) == 0) {
     $pluglink = implode('&nbsp;', $pluglinks);
 }
 
-// If the board is offline, display an appropriate message
+
+/* HTML Ready.  Issue Any Global Alerts To User. */
+
+// Check if the client is ip-banned
+if (!X_ADMIN) {
+    $ips = explode(".", $onlineip);
+    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
+    $result = $db->num_rows($query);
+    $db->free_result($query);
+    if ($result > 0) {
+        header('HTTP/1.0 403 Forbidden');
+        eval('$css = "'.template('css').'";');
+        error($lang['bannedmessage']);
+    }
+}
+
+// Check if the board is offline
 if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
     $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
@@ -686,7 +582,7 @@ if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
     }
 }
 
-// If the board is set to 'reg-only' use, check if someone is logged in, and if not display a message
+// Check if the board is set to 'reg-only'
 if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
     $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
@@ -696,19 +592,13 @@ if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
     }
 }
 
-// Check if the user is ip-banned
-$ips = explode(".", $onlineip);
-// also disable 'ban all'-possibility
-$query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
-$result = $db->num_rows($query);
-$db->free_result($query);
-// don't *ever* ban an admin!
-if ($result > 0 && !X_ADMIN) {
-    eval('$css = "'.template('css').'";');
-    error($lang['bannedmessage']);
+// create forum jump
+$quickjump = '';
+if ($SETTINGS['quickjump_status'] == 'on') {
+    $quickjump = forumJump();
 }
 
-// if the user is registered, check for new u2u's
+// check for new u2u's
 $newu2umsg = '';
 if (X_MEMBER) {
     $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
@@ -729,10 +619,26 @@ if (X_MEMBER) {
     }
 }
 
-// create forum jump
-$quickjump = '';
-if ($SETTINGS['quickjump_status'] == 'on') {
-    $quickjump = forumJump();
+
+/* Perform HTTP Connection Maintenance */
+
+// Gzip-compression
+if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment" && X_SCRIPT != 'files.php') {
+    if (($res = @ini_get('zlib.output_compression')) === 1) {
+        // leave it
+    } else if ($res === false) {
+        // ini_get not supported. So let's just leave it
+    } else {
+        if (function_exists('gzopen')) {
+            $r = @ini_set('zlib.output_compression', 'On');
+            $r2 = @ini_set('zlib.output_compression_level', '3');
+            if (!$r || !$r2) {
+                ob_start('ob_gzhandler');
+            }
+        } else {
+            ob_start('ob_gzhandler');
+        }
+    }
 }
 
 // catch all unexpected output
@@ -743,5 +649,7 @@ if (headers_sent()) {
     } else {
         exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
     }
+} else {
+    return;
 }
 ?>

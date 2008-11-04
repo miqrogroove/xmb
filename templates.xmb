@@ -1,6 +1,6 @@
 admintool_editprofile|#*XMB TEMPLATE*#|
 <form method="post" action="editprofile.php?user=$userrecode" name="reg">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -227,7 +227,7 @@ $css
 <tr>
 <td bgcolor="$bordercolor">
 <form method="post" action="buddy.php?action=delete">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[editbuddylist]</font></strong></td>
@@ -250,7 +250,7 @@ $buddys
 <tr>
 <td bgcolor="$bordercolor">
 <form method="post" action="buddy.php?action=add">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category" colspan="2"><strong><font color="$cattext">$lang[addtoaddresses]</font></strong></td>
@@ -326,7 +326,7 @@ $css
 <tr>
 <td class="tablerow" bgcolor="$altbg1">
 <form action="#" onsubmit="javascript:add();">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table width="98%">
 <tr>
 <td class="tablerow" bgcolor="$altbg2" colspan="2"><strong>$lang[textonline]</strong></td>
@@ -670,7 +670,7 @@ $header
 
 |#*XMB TEMPLATE FILE*#|error_nologinsession|#*XMB TEMPLATE*#|
 <form method="post" action="misc.php?action=login">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -1393,7 +1393,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|forumdisplay_admin|#*XMB TEMPLATE*#|
 $subforums
 <form method="post" name="geatneet" action="topicadmin.php?fid=$forum[fid]">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
@@ -1423,7 +1423,7 @@ $threadlist
 <tr>
 <td class="tablerow" align="right">
 <input type="hidden" name="fid" value="$fid" />
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
 <select name="action">
 <option value="" selected="selected"></option>
@@ -1498,7 +1498,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|forumdisplay_password|#*XMB TEMPLATE*#|
 <br />
 <form method="post" action="$url">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -1520,7 +1520,7 @@ $multipage
 <tr>
 <td colspan="10" class="ctrtablerow" bgcolor="$altbg2">
 <form method="post" action="forumdisplay.php?fid=$fid">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 $lang[showtopics]
 &nbsp;&nbsp;
 <select name="cusdate">
@@ -1936,7 +1936,7 @@ window.onload = tickerstart;
 <td><font size="1">$lang[welcomeunreg]</font></td>
 <td align="right" width="25%">
 <form method="post" action="misc.php?action=login">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellpadding="0" cellspacing="0">
 <tr>
 <td nowrap="nowrap">
@@ -2033,7 +2033,7 @@ $todaymembers&nbsp;
 
 |#*XMB TEMPLATE FILE*#|member_coppa|#*XMB TEMPLATE*#|
 <form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2165,7 +2165,7 @@ $emailblock
 
 |#*XMB TEMPLATE FILE*#|member_reg|#*XMB TEMPLATE*#|
 <form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2394,7 +2394,7 @@ $avatd
 
 |#*XMB TEMPLATE FILE*#|member_reg_rules|#*XMB TEMPLATE*#|
 <form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2419,7 +2419,7 @@ $avatd
 
 |#*XMB TEMPLATE FILE*#|memcp_favs|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=favorites">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2628,7 +2628,7 @@ $favs
 
 |#*XMB TEMPLATE FILE*#|memcp_profile|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=profile" name="reg">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2837,7 +2837,7 @@ $dayselect
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=subscriptions">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2934,7 +2934,7 @@ $header
 
 |#*XMB TEMPLATE FILE*#|misc_login|#*XMB TEMPLATE*#|
 <form method="post" action="misc.php?action=login">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2985,7 +2985,7 @@ $header
 
 |#*XMB TEMPLATE FILE*#|misc_lostpw|#*XMB TEMPLATE*#|
 <form method="post" action="misc.php?action=lostpw">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3034,7 +3034,7 @@ $header
 </table>
 <br />
 <form method="post" action="misc.php?action=list">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3084,7 +3084,7 @@ $multipage
 </table>
 <br />
 <form method="post" action="misc.php?action=list">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3247,7 +3247,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|misc_search|#*XMB TEMPLATE*#|
 <form method="get" action="misc.php">
 <input type="hidden" name="action" value="search" />
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3394,7 +3394,7 @@ $lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
 |#*XMB TEMPLATE FILE*#|post_edit|#*XMB TEMPLATE*#|
 $preview
 <form method="post" name="input" action="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$pid" enctype="multipart/form-data">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3480,7 +3480,7 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 |#*XMB TEMPLATE FILE*#|post_newpoll|#*XMB TEMPLATE*#|
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" enctype="multipart/form-data">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3534,7 +3534,7 @@ $suggestions
 |#*XMB TEMPLATE FILE*#|post_newthread|#*XMB TEMPLATE*#|
 $preview
 <form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid" enctype="multipart/form-data" >
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3618,7 +3618,7 @@ $suggestions
 |#*XMB TEMPLATE FILE*#|post_reply|#*XMB TEMPLATE*#|
 $preview
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid" enctype="multipart/form-data">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -3695,7 +3695,7 @@ $posts
 |#*XMB TEMPLATE FILE*#|spelling_suggestion|#*XMB TEMPLATE*#|
 <br />
 <form action="post.php?fid=$fid&amp;tid=$tid&amp;action=$action&amp;pid=$pid" method="post">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3724,7 +3724,7 @@ $suggestions
 |#*XMB TEMPLATE FILE*#|spelling_suggestion_no|#*XMB TEMPLATE*#|
 <br />
 <form action="post.php?fid=$fid&amp;tid=$tid&amp;action=$action" method="post">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3760,7 +3760,7 @@ $mistake
 
 |#*XMB TEMPLATE FILE*#|today|#*XMB TEMPLATE*#|
 <form method="post" action="today.php">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3821,7 +3821,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_bump|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=bump">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -3843,7 +3843,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_copy|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=copy">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3870,7 +3870,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_delete|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=delete">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -3892,7 +3892,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_empty|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=empty">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -3914,7 +3914,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_merge|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=merge">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3941,7 +3941,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_move|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=move">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3977,7 +3977,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_openclose|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=$action">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -3999,7 +3999,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|topicadmin_split|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=split">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -4041,7 +4041,7 @@ $post[message]
 
 |#*XMB TEMPLATE FILE*#|topicadmin_threadprune|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=threadprune">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4075,7 +4075,7 @@ $posts
 
 |#*XMB TEMPLATE FILE*#|topicadmin_topuntop|#*XMB TEMPLATE*#|
 <form method="post" action="topicadmin.php?action=top">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -4151,7 +4151,7 @@ $u2usdraft
 
 |#*XMB TEMPLATE FILE*#|u2u_folders|#*XMB TEMPLATE*#|
 <form method="post" action="u2u.php?action=folders">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4220,7 +4220,7 @@ $css
 
 |#*XMB TEMPLATE FILE*#|u2u_ignore|#*XMB TEMPLATE*#|
 <form method="post" action="u2u.php?action=ignore">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4264,7 +4264,7 @@ $u2usin
 
 |#*XMB TEMPLATE FILE*#|u2u_main|#*XMB TEMPLATE*#|
 <form method="post" action="u2u.php?action=mod" name="u2u_main">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 $u2ulist
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
@@ -4430,7 +4430,7 @@ $lang[textsent] $u2udateline</span>
 var sendMode = true;
 </script>
 <form method="post" action="u2u.php?action=send">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <input name="u2uid" type="hidden" value="$u2uid" />
 $u2upreview
 <table cellspacing="0" cellpadding="0" border="0" width="$thewidth" align="center">
@@ -4524,7 +4524,7 @@ $u2upreview
 <tr>
 <td bgcolor="$bordercolor">
 <form method="post" action="u2u.php?action=modif">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="category"><font color="$cattext">$lang[textu2uoptions]</font></td>
@@ -4590,7 +4590,7 @@ $quickreply
 |#*XMB TEMPLATE FILE*#|viewthread_modoptions|#*XMB TEMPLATE*#|
 <a NAME="admintools"></a>
 <form action="topicadmin.php?tid=$tid&amp;fid=$fid" method="get">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
 <br />
 <select name="action" id="action" onchange="if(this.options[this.selectedIndex].value != '') { window.location=('topicadmin.php?tid=$tid&amp;fid=$fid&amp;action='+this.options[this.selectedIndex].value) }">
@@ -4622,7 +4622,7 @@ $quickreply
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll|#*XMB TEMPLATE*#|
 <form method="post" name="poll" action="vtmisc.php?action=votepoll&amp;fid=$fid&amp;tid=$tid">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -4828,7 +4828,7 @@ $posts
 <br />
 <a name="qreply"></a>
 <form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>
 <td><input type="hidden" name="subject" value="" />
@@ -4890,7 +4890,7 @@ $smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Windo
 
 |#*XMB TEMPLATE FILE*#|vtmisc_report|#*XMB TEMPLATE*#|
 <form method="post" name="input" action="vtmisc.php?action=report">
-<input type="hidden" name="token" value="$oToken->newToken" />
+<input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -37,8 +37,6 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FAL
     global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
     if (elevateUser($xmbuserinput, $xmbpwinput)) {
-        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ip='$onlineip' && username='xguest123'");
-
         $dbname = $db->escape($self['username']);
 
         if ($invisible) {
@@ -191,6 +189,14 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
 
     $dformatorig = $dateformat;
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
+
+    // Save This Session
+    global $onlineip, $onlinetime, $url;
+
+    $wollocation = $db->escape($url);
+    $newtime = $onlinetime - 600;
+    $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
+    $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
 
     return ($xmbuser != '');
 }
@@ -1175,44 +1181,6 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     }
 
     return $return;
-}
-
-function mysql_syn_highlight($query) {
-    global $tables, $tablepre;
-
-    $find = array();
-    $replace = array();
-
-    foreach($tables as $name) {
-        $find[] = $tablepre.$name;
-    }
-
-    $find[] = 'SELECT';
-    $find[] = 'UPDATE';
-    $find[] = 'DELETE';
-    $find[] = 'INSERT INTO ';
-    $find[] = ' WHERE ';
-    $find[] = ' ON ';
-    $find[] = ' FROM ';
-    $find[] = ' GROUP BY ';
-    $find[] = 'ORDER BY ';
-    $find[] = ' LEFT JOIN ';
-    $find[] = ' IN ';
-    $find[] = ' SET ';
-    $find[] = ' AS ';
-    $find[] = '(';
-    $find[] = ')';
-    $find[] = ' ASC';
-    $find[] = ' DESC';
-    $find[] = ' AND ';
-    $find[] = ' OR ';
-    $find[] = ' NOT';
-
-    foreach($find as $key=>$val) {
-        $replace[$key] = '</em><strong>'.$val.'</strong><em>';
-    }
-
-    return '<em>'.str_replace($find, $replace, $query).'</em>';
 }
 
 function put_cookie($name, $value=null, $expire=0, $path=null, $domain=null, $secure=FALSE, $setVia=X_SET_HEADER) {

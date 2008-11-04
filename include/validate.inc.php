@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -28,102 +28,6 @@
 
 if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
-}
-
-/**
-* CSRF protection class. Call this to obtain and test a page token.
-*
-* From XMB 1.9.8, each user has a single token per page no matter which destination
-* action. These should be used for all actions. XMB 2.0 will extend this to include
-* unique tokens per action, making it much harder for attackers to spoof any particular
-* action.
-*
-* As each page has many old and new, and only one token slot in the session,
-* there is a way to re-seed the session.
-*/
-class page_token {
-    /**
-    * @access private
-    * @var mixed
-    */
-    var $pageToken;
-    /**
-    * @access private
-    * @var mixed
-    */
-    var $sessionToken;
-    /**
-    * @access public
-    * @var string
-    */
-    var $newToken;
-    /**
-    * Initialization of the class
-    *
-    * Sets all the class variables to their needed values
-    */
-    function init() {
-        $this->pageToken = $this->get_page_token();
-        $this->sessionToken = $this->get_session_token();
-        $this->newToken = md5(sha1(uniqid(rand(), true)));
-        $this->set_session_token($this->newToken);
-    }
-
-    /**
-    * Sets the 'token' SESSION variable
-    *
-    * @param   string   $token   the token to set the 'token' variable as
-    * @return   string   the token that was retrieved
-    */
-    function set_session_token($token) {
-        $_SESSION['token'] = $token;
-        return $token;
-    }
-
-    /**
-    * Retrieves the 'token' REQUEST variable
-    *
-    * @return   string   the token that was retrieved
-    */
-    function get_page_token() {
-        return addslashes(postedVar('token', '', FALSE, FALSE));
-    }
-
-    /**
-    * Retrieves the 'token' SESSION variable
-    *
-    * @return   mixed   the token that was retrieved if it's set, false otherwise
-    */
-    function get_session_token() {
-        return (isset($_SESSION['token'])) ? $_SESSION['token'] : false;
-    }
-
-    /**
-    * Retrieves the a new token generated at initialization
-    *
-    * @return   string   the new token
-    */
-    function get_new_token() {
-        return $this->newToken;
-    }
-
-    /**
-    * Checks for valid token. Error's if there is not one.
-    *
-    * @return   boolean   true no matter what
-    */
-    function assert_token() {
-        global $lang;
-
-        if ($this->sessionToken === false || $this->pageToken === false || $this->sessionToken !== $this->pageToken) {
-            error($lang['textnoaction'], false);
-        }
-        // This old token has been used - prevent reuse
-        $this->sessionToken = false;
-        $this->pageToken = false;
-
-        return true;
-    }
 }
 
 /**
