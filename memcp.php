@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 October 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -370,18 +370,6 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        $newemail = postedVar('newemail', '', FALSE, FALSE);
-        if ($newemail && (!$newemail || isset($_GET['newemail']))) {
-            $auditaction = $_SERVER['REQUEST_URI'];
-            $aapos = strpos($auditaction, "?");
-            if ($aapos !== false) {
-                $auditaction = substr($auditaction, $aapos + 1);
-            }
-            $auditaction = addslashes("$onlineip|#|$auditaction");
-            audit($xmbuser, $auditaction, 0, 0, "Potential XSS exploit using newemail");
-            die("Hack atttempt recorded in audit logs.");
-        }
-
         $newpassword = postedVar('newpassword', '', FALSE, FALSE);
         $newpasswordcf = postedVar('newpasswordcf', '', FALSE, FALSE);
         if ($newpassword && (!$newpassword || isset($_GET['newpassword']))) {
@@ -392,7 +380,7 @@ if ($action == 'profile') {
             }
             $auditaction = addslashes("$onlineip|#|$auditaction");
             audit($xmbuser, $auditaction, 0, 0, "Potential XSS exploit using newpassword");
-            die("Hack atttempt recorded in audit logs.");
+            die("Hack attempt recorded in audit logs.");
         }
 
         $langfilenew = postedVar('langfilenew');
@@ -477,6 +465,13 @@ if ($action == 'profile') {
             error($lang['emailrestricted']);
         }
 
+        require ROOT.'include/validate-email.inc.php';
+        $test = new EmailAddressValidator();
+        $rawemail = postedVar('email', '', FALSE, FALSE);
+        if (false === $test->check_email_address($rawemail)) {
+            error($lang['bademail']);
+        }
+
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
                 if (strlen($sig) > 0) {
@@ -530,10 +525,27 @@ if ($action == 'profile') {
     $favadd = getInt('favadd');
     if (noSubmit('favsubmit') && $favadd) {
         if ($favadd == 0) {
-            error($lang['fnasorry'], false);
+            error($lang['generic_missing'], false);
         }
 
-        $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$favadd' AND username='$xmbuser' AND type='favorite'");
+        $query = $db->query("SELECT fid FROM ".X_PREFIX."threads WHERE tid=$favadd");
+        if ($db->num_rows($query) == 0) {
+            error($lang['privforummsg'], FALSE);
+        }
+        $row = $db->fetch_array($query);
+        $forum = getForum($row['fid']);
+        $perms = checkForumPermissions($forum);
+        if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+            error($lang['privforummsg'], FALSE);
+        }
+        if ($forum['type'] == 'sub') {
+            $perms = checkForumPermissions(getForum($forum['fup']));
+            if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+                error($lang['privforummsg'], FALSE);
+            }
+        }
+
+        $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid=$favadd AND username='$xmbuser' AND type='favorite'");
         $favthread = $db->fetch_array($query);
         $db->free_result($query);
 
@@ -541,12 +553,13 @@ if ($action == 'profile') {
             error($lang['favonlistmsg'], false);
         }
 
-        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$favadd', '$xmbuser', 'favorite')");
+        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($favadd, '$xmbuser', 'favorite')");
         message($lang['favaddedmsg'], false, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC");
+        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC");
         $favnum = 0;
         $favs = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
@@ -590,7 +603,7 @@ if ($action == 'profile') {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='favorite'");
         while($fav = $db->fetch_array($query)) {
             $delete = formInt('delete'.$fav['tid']);
-            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='favorite'");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid=$delete AND type='favorite'");
         }
         $db->free_result($query);
 
@@ -741,14 +754,13 @@ if ($action == 'profile') {
     }
     $db->free_result($u2uquery);
 
-    $query2 = $db->query("SELECT * FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t, ".X_PREFIX."posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC LIMIT 0,5");
+    $fids = permittedForums(forumCache(), 'thread', 'csv');
+    $query2 = $db->query("SELECT t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
     $favnum = $db->num_rows($query2);
     $favs = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($fav = $db->fetch_array($query2)) {
-        $query = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
-        $forum = $db->fetch_array($query);
-        $db->free_result($query);
+        $forum = getForum($fav['fid']);
         $forum['name'] = fnameOut($forum['name']);
 
         $lastpost = explode('|', $fav['lastpost']);

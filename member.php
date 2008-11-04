@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -416,7 +416,10 @@ switch($action) {
                 error($lang['emailrestricted']);
             }
 
-            if (false === strpos($email, "@")) {
+            require ROOT.'include/validate-email.inc.php';
+            $test = new EmailAddressValidator();
+            $rawemail = postedVar('email', '', FALSE, FALSE);
+            if (false === $test->check_email_address($rawemail)) {
                 error($lang['bademail']);
             }
 
@@ -534,7 +537,8 @@ switch($action) {
 
                     $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
                     while($notify = $db->fetch_array($mailquery)) {
-                        altMail($notify['email'], $lang['textnewmember'], $lang['textnewmember2'], $headers);
+                        $adminemail = htmlspecialchars_decode($notify['email'], ENT_QUOTES);
+                        altMail($adminemail, $lang['textnewmember'], $lang['textnewmember2'], $headers);
                     }
                     $db->free_result($mailquery);
                 }
@@ -542,7 +546,7 @@ switch($action) {
 
             if ($SETTINGS['emailcheck'] == 'on') {
                 $username = $_POST['username'];
-                altMail($email, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", "From: $bbname <$adminemail>");
+                altMail($rawemail, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", "From: $bbname <$adminemail>");
             } else {
                 $username = postedVar('username', '', TRUE, FALSE);
                 $currtime = $onlinetime + (86400*30);

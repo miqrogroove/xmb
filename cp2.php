@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1498,7 +1498,8 @@ if ($action == "newsletter") {
                     $i++;
                 }
 
-                altMail($memnews['email'], '['.$bbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
+                $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES)
+                altMail($rawemail, '['.$bbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit]</td></tr>";

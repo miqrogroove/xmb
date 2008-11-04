@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -532,7 +532,9 @@ switch($action) {
                 $topicpages = quickpage($posts, $subs['ppp']);
                 $threadurl = $full_url.'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-                altMail($subs['email'], $rawsubject.' ('.$lang['textsubsubject'].')', $username.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
+                $rawusername = htmlspecialchars_decode($rawstring, ENT_QUOTES);
+                $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+                altMail($rawemail, $rawsubject.' ('.$lang['textsubsubject'].')', $rawusername.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
             }
             $db->free_result($subquery);
 

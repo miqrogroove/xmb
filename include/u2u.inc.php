@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -84,7 +84,8 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
                 if ($lastvisitcheck > $rcpt['lastvisit']) {
                     $u2uurl = $full_url.'u2u.php';
                     $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-                    altMail($rcpt['email'], "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
+                    $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
+                    altMail($rawaddress, "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
                 }
             }
         } else {
@@ -301,7 +302,8 @@ function u2u_print($u2uid, $eMail = false) {
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
             $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".stripslashes($u2umessage).$mailFooter;
-            altMail($self['email'], $lang['textu2utoemail']." ".$u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
+            $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
+            altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
             eval('echo stripslashes("'.template('u2u_printable').'");');

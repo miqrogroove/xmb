@@ -31,36 +31,6 @@ if (!defined('IN_CODE')) {
 }
 
 /**
-* Checks if the supplied email address is valid
-*
-* @return   boolean   true if the e-mail address is valid, false otherwise
-*/
-function isValidEmail($addr) {
-    $emailPattern = "^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$";
-    $emailValid = false;
-
-    if (eregi($emailPattern, $addr)) {
-        // Under Windows, PHP does not possess getmxrr(), so we skip it
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $emailValid = true;
-            break;
-        }
-
-        $user = '';
-        $domain = '';
-        list($user, $domain) = split('@', $addr);
-
-        // Check if the site has an MX record. We can't send unless there is.
-        $mxrecords = '';
-        if (getmxrr($domain, $mxrecords)) {
-            $emailValid = true;
-        }
-    }
-
-    return $emailValid;
-}
-
-/**
 * Has the named submit button been invoked?
 *
 * Looks in the form post data for a named submit
