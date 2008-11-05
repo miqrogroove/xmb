@@ -1497,7 +1497,7 @@ if ($action == "newsletter") {
                     $i++;
                 }
 
-                $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES)
+                $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
                 altMail($rawemail, '['.$bbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
             }
         }
