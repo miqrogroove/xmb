@@ -436,7 +436,7 @@ if ($action == 'profile') {
             $count1 = $db->result($query,0);
             $db->free_result($query);
             if ($count1 != 0) {
-                error($lang['alreadyreg']);
+                error($lang['alreadyreg'], FALSE);
             }
         }
 
@@ -462,14 +462,14 @@ if ($action == 'profile') {
         $db->free_result($query);
 
         if ($efail) {
-            error($lang['emailrestricted']);
+            error($lang['emailrestricted'], FALSE);
         }
 
         require ROOT.'include/validate-email.inc.php';
         $test = new EmailAddressValidator();
-        $rawemail = postedVar('email', '', FALSE, FALSE);
+        $rawemail = postedVar('newemail', '', FALSE, FALSE);
         if (false === $test->check_email_address($rawemail)) {
-            error($lang['bademail']);
+            error($lang['bademail'], FALSE);
         }
 
         if ($SETTINGS['resetsigs'] == 'on') {
