@@ -85,7 +85,14 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
                     $u2uurl = $full_url.'u2u.php';
                     $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
                     $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
-                    altMail($rawaddress, "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", "From: $bbname <$adminemail>");
+                    $headers = array();
+                    $headers[] = "From: $bbname <$adminemail>";
+                    $headers[] = 'X-Mailer: PHP';
+                    $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                    $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
+                    $headers[] = 'Content-Type: text/plain; charset='.$charset;
+                    $headers = implode("\r\n", $headers);
+                    altMail($rawaddress, "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", $headers);
                 }
             }
         } else {
@@ -303,7 +310,15 @@ function u2u_print($u2uid, $eMail = false) {
             eval('$mailFooter = "'.template('email_html_footer').'";');
             $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".stripslashes($u2umessage).$mailFooter;
             $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
-            altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, 'From: '.$bbname.' <'.$self['email'].">\r\n".'Content-type: text/html');
+            $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+            $headers = array();
+            $headers[] = "From: $bbname <$adminemail>";
+            $headers[] = 'X-Mailer: PHP';
+            $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+            $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
+            $headers[] = 'Content-Type: text/html; charset='.$charset;
+            $headers = implode("\r\n", $headers);
+            altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, $headers);
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
             eval('echo stripslashes("'.template('u2u_printable').'");');

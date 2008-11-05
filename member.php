@@ -525,14 +525,13 @@ switch($action) {
                     }
                     $db->free_result($mailquery);
                 } else {
-                    $headers[] = "From: $bbname <$SETTINGS[adminemail]>";
-                    $headers[] = "X-Sender: <$SETTINGS[adminemail]>";
+                    $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+                    $headers = array();
+                    $headers[] = "From: $bbname <$adminemail>";
                     $headers[] = 'X-Mailer: PHP';
-                    $headers[] = 'X-AntiAbuse: Board servername - '.$SETTINGS['bbname'];
-                    $headers[] = 'X-AntiAbuse: Username - '.$xmbuser;
-                    $headers[] = 'X-Priority: 2';
-                    $headers[] = "Return-Path: <$SETTINGS[adminemail]>";
-                    $headers[] = 'Content-Type: text/plain; charset=ASCII';
+                    $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                    $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
+                    $headers[] = 'Content-Type: text/plain; charset='.$charset;
                     $headers = implode("\r\n", $headers);
 
                     $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
@@ -545,8 +544,15 @@ switch($action) {
             }
 
             if ($SETTINGS['emailcheck'] == 'on') {
-                $username = $_POST['username'];
-                altMail($rawemail, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", "From: $bbname <$adminemail>");
+                $username = postedVar('username', '', FALSE, FALSE);
+                $headers = array();
+                $headers[] = "From: $bbname <$adminemail>";
+                $headers[] = 'X-Mailer: PHP';
+                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                $headers[] = 'X-AntiAbuse: Username - '.$username;
+                $headers[] = 'Content-Type: text/plain; charset='.$charset;
+                $headers = implode("\r\n", $headers);
+                altMail($rawemail, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", $headers);
             } else {
                 $username = postedVar('username', '', TRUE, FALSE);
                 $currtime = $onlinetime + (86400*30);

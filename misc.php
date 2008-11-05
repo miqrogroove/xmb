@@ -363,7 +363,14 @@ switch($action) {
 
             $emailuname = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
-            altMail($emailaddy, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $emailuname\n{$lang['textpassword']} $newpass", "From: $bbname <$adminemail>");
+            $headers = array();
+            $headers[] = "From: $bbname <$adminemail>";
+            $headers[] = 'X-Mailer: PHP';
+            $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+            $headers[] = 'X-AntiAbuse: Username - '.$emailuname;
+            $headers[] = 'Content-Type: text/plain; charset='.$charset;
+            $headers = implode("\r\n", $headers);
+            altMail($emailaddy, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $emailuname\n{$lang['textpassword']} $newpass", $headers);
 
             $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
             $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';

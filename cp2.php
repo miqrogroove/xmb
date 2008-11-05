@@ -1475,13 +1475,12 @@ if ($action == "newsletter") {
         } else {
             $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
             $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
+            $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+            $headers = array();
             $headers[] = "From: $bbname <$adminemail>";
-            $headers[] = "X-Sender: <$adminemail>";
             $headers[] = 'X-Mailer: PHP';
-            $headers[] = 'X-AntiAbuse: Board servername - '.$bbname;
-            $headers[] = 'X-AntiAbuse: Username - '.$xmbuser;
-            $headers[] = 'X-Priority: 2';
-            $headers[] = "Return-Path: <$adminemail>";
+            $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+            $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
             $headers[] = 'Content-Type: text/plain; charset='.$charset;
             $headers = implode("\r\n", $headers);
 

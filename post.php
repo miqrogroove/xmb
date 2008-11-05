@@ -532,9 +532,16 @@ switch($action) {
                 $topicpages = quickpage($posts, $subs['ppp']);
                 $threadurl = $full_url.'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-                $rawusername = htmlspecialchars_decode($rawstring, ENT_QUOTES);
+                $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
-                altMail($rawemail, $rawsubject.' ('.$lang['textsubsubject'].')', $rawusername.' '.$lang['textsubbody']." \n".$threadurl, "From: $bbname <$adminemail>");
+                $headers = array();
+                $headers[] = "From: $bbname <$adminemail>";
+                $headers[] = 'X-Mailer: PHP';
+                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
+                $headers[] = 'Content-Type: text/plain; charset='.$charset;
+                $headers = implode("\r\n", $headers);
+                altMail($rawemail, $rawsubject.' ('.$lang['textsubsubject'].')', $rawusername.' '.$lang['textsubbody']." \n".$threadurl, $headers);
             }
             $db->free_result($subquery);
 
