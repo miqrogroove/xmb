@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -958,7 +958,7 @@ $lang['textprofor'] = "Profile for";
 $lang['textprune'] = "Prune";
 $lang['textprunethread'] = "Prune Thread";
 $lang['textpw1'] = "Sorry, the username/password you have entered appears to be incorrect.";
-$lang['textpw2'] = "Please press the back button on your browser now, and try again.";
+$lang['textpw2'] = "Please try again.";
 $lang['textpwincorrect'] = 'You entered an incorrect password';
 $lang['textquote'] = "Quote:";
 $lang['textre'] = "Re:";

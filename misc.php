@@ -105,34 +105,24 @@ $misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
+        $password = '';
         if (X_MEMBER) {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if (noSubmit('loginsubmit')) {
+            eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
+        } elseif (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
-        } else {
-            $password = '';
-            if (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
-                if ($server == 'Mic') {
-                    $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
-                } else {
-                    redirect($full_url, 0);
-                }
+        } elseif (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
+            if ($server == 'Mic') {
+                $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
             } else {
+                redirect($full_url, 0);
+            }
+        } else {
+            if ($self['status'] == "Banned") {
                 eval('echo "'.template('header').'";');
-                if ($self['status'] == "Banned") {
-                    error($lang['bannedmessage'], FALSE);
-                } else {
-                    eval('echo "'.template('misc_login_incorrectdetails').'";');
-                }
-                end_time();
-                eval('echo "'.template('footer').'";');
-                exit();
+                error($lang['bannedmessage'], FALSE);
+            } else {
+                eval('$misc = "'.template('misc_login_incorrectdetails').'";');
+                eval('$misc .= "'.template('misc_login').'";');
             }
         }
         break;
