@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -347,6 +347,11 @@ if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
 }
 
 if ($status1 == 'Moderator') {
+    if (X_ADMIN) {
+        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="./images/admin/editforumsets.gif" border="0" /></a>';
+    } else {
+        $fadminlink = '';
+    }
     eval('echo "'.template('forumdisplay_admin').'";');
 } else {
     eval('echo "'.template('forumdisplay').'";');
