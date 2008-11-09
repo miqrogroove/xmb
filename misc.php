@@ -327,7 +327,7 @@ switch($action) {
         } else {
             $username = postedVar('username');
             $email = postedVar('email');
-            $query = $db->query("SELECT username, email, pwdate FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
+            $query = $db->query("SELECT username, email, pwdate, langfile FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             $member = $db->fetch_array($query);
             $db->free_result($query);
 
@@ -351,6 +351,8 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
 
+            $lang2 = loadPhrases(array('charset','textyourpw','textyourpwis','textusername','textpassword'));
+            $translate = $lang2[$member['langfile']];
             $emailuname = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
             $headers = array();
@@ -358,9 +360,9 @@ switch($action) {
             $headers[] = 'X-Mailer: PHP';
             $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
             $headers[] = 'X-AntiAbuse: Username - '.$emailuname;
-            $headers[] = 'Content-Type: text/plain; charset='.$charset;
+            $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
             $headers = implode("\r\n", $headers);
-            altMail($emailaddy, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $emailuname\n{$lang['textpassword']} $newpass", $headers);
+            altMail($emailaddy, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $emailuname\n{$translate['textpassword']} $newpass", $headers);
 
             $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
             $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';

@@ -230,27 +230,29 @@ function loadLang($devname = "English") {
 }
 
 // loadPhrase uses the new translation database to retrieve a single phrase in all available languages.
-// Parameter $langkey is the same string used as the $lang array key.
-// Returns an associative array in which lang_base.devname is the key.
-function loadPhrase($langkey) {
+// Parameter $langkeys is an array of strings used as the $lang array key.
+// Returns an associative array in which lang_base.devname and lang_keys.langkey are the keys.
+function loadPhrases($langkeys) {
     global $db;
 
+    $csv = "'".implode("', '", $langkeys)."'";
+
     // Query The Translation Database
-    $sql = 'SELECT b.devname, t.cdata '
+    $sql = 'SELECT b.devname, t.cdata, k.langkey '
          . 'FROM '.X_PREFIX.'lang_base AS b'
          . ' LEFT JOIN '.X_PREFIX.'lang_text AS t USING (langid)'
          . ' INNER JOIN '.X_PREFIX.'lang_keys AS k USING (phraseid)'
-         . "WHERE k.langkey = '$langkey'";
+         . "WHERE k.langkey IN ($csv)";
     $result = $db->query($sql);
 
     // Load the $lang array.
     if ($db->num_rows($result) > 0) {
-        $phrase = array();
+        $phrases = array();
         while($row = $db->fetch_array($result)) {
-            $phrase[$row['devname']] = $row['cdata'];
+            $phrases[$row['devname']][$row['langkey']] = $row['cdata'];
         }
         $db->free_result($query);
-        return $phrase;
+        return $phrases;
     } else {
         return FALSE;
     }

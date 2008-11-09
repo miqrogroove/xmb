@@ -518,10 +518,15 @@ switch($action) {
                 $topicpages = 1;
             }
 
-            $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid < $pid ORDER BY pid ASC LIMIT 1"), 0);
-            $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status FROM ".X_PREFIX."favorites f LEFT JOIN ".X_PREFIX."members m ON (m.username=f.username) WHERE f.type='subscription' AND f.tid='$tid' AND f.username!= '$username'");
+            $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
+            $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+            $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid < $pid ORDER BY dateline DESC LIMIT 1"), 0);
+            $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
+                                 . "FROM ".X_PREFIX."favorites f "
+                                 . "INNER JOIN ".X_PREFIX."members m USING (username) "
+                                 . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$username' AND m.lastvisit >= $date");
             while($subs = $db->fetch_array($subquery)) {
-                if ($subs['status'] == 'banned' || $subs['lastvisit'] < $date) {
+                if ($viewperm < $status_enum[$subs['status']]) {
                     continue;
                 }
 
@@ -529,6 +534,7 @@ switch($action) {
                     $subs['ppp'] = $posts;
                 }
 
+                $translate = $lang2[$subs['langfile']];
                 $topicpages = quickpage($posts, $subs['ppp']);
                 $threadurl = $full_url.'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
@@ -539,9 +545,9 @@ switch($action) {
                 $headers[] = 'X-Mailer: PHP';
                 $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
                 $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
-                $headers[] = 'Content-Type: text/plain; charset='.$charset;
+                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
                 $headers = implode("\r\n", $headers);
-                altMail($rawemail, $rawsubject.' ('.$lang['textsubsubject'].')', $rawusername.' '.$lang['textsubbody']." \n".$threadurl, $headers);
+                altMail($rawemail, $rawsubject.' ('.$translate['textsubsubject'].')', $rawusername.' '.$translate['textsubbody']." \n".$threadurl, $headers);
             }
             $db->free_result($subquery);
 

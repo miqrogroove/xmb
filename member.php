@@ -517,42 +517,41 @@ switch($action) {
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]', '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
             }
 
-            if ($SETTINGS['notifyonreg'] != 'off') {
-                if ($SETTINGS['notifyonreg'] == 'u2u') {
-                    $mailquery = $db->query("SELECT username FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-                    while($admin = $db->fetch_array($mailquery)) {
-                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".addslashes($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$lang[textnewmember]', '$lang[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
-                    }
-                    $db->free_result($mailquery);
-                } else {
-                    $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-                    $headers = array();
-                    $headers[] = "From: $bbname <$adminemail>";
-                    $headers[] = 'X-Mailer: PHP';
-                    $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                    $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
-                    $headers[] = 'Content-Type: text/plain; charset='.$charset;
-                    $headers = implode("\r\n", $headers);
+            $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
 
-                    $mailquery = $db->query("SELECT email FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
-                    while($notify = $db->fetch_array($mailquery)) {
-                        $adminemail = htmlspecialchars_decode($notify['email'], ENT_QUOTES);
-                        altMail($adminemail, $lang['textnewmember'], $lang['textnewmember2'], $headers);
+            if ($SETTINGS['notifyonreg'] != 'off') {
+                $mailquery = $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
+                while($admin = $db->fetch_array($mailquery)) {
+                    $translate = $lang2[$admin['langfile']];
+                    if ($SETTINGS['notifyonreg'] == 'u2u') {
+                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".addslashes($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
+                    } else {
+                        $headers = array();
+                        $headers[] = "From: $bbname <$adminemail>";
+                        $headers[] = 'X-Mailer: PHP';
+                        $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                        $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
+                        $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
+                        $headers = implode("\r\n", $headers);
+
+                        $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
+                        altMail($adminemail, $translate['textnewmember'], $translate['textnewmember2']."\n\n$full_url", $headers);
                     }
-                    $db->free_result($mailquery);
                 }
+                $db->free_result($mailquery);
             }
 
             if ($SETTINGS['emailcheck'] == 'on') {
+                $translate = $lang2[$langfilenew];
                 $username = postedVar('username', '', FALSE, FALSE);
                 $headers = array();
                 $headers[] = "From: $bbname <$adminemail>";
                 $headers[] = 'X-Mailer: PHP';
                 $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
                 $headers[] = 'X-AntiAbuse: Username - '.$username;
-                $headers[] = 'Content-Type: text/plain; charset='.$charset;
+                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
                 $headers = implode("\r\n", $headers);
-                altMail($rawemail, '['.$bbname.'] '.$lang['textyourpw'], "{$lang['textyourpwis']} \n\n{$lang['textusername']} $username\n{$lang['textpassword']} $password2", $headers);
+                altMail($rawemail, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2", $headers);
             } else {
                 $username = postedVar('username', '', TRUE, FALSE);
                 $currtime = $onlinetime + (86400*30);

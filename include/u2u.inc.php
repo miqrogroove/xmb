@@ -64,7 +64,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
 
-    $query = $db->query("SELECT username, email, lastvisit, ignoreu2u, emailonu2u, status FROM ".X_PREFIX."members WHERE username='$msgto'");
+    $query = $db->query("SELECT username, email, lastvisit, ignoreu2u, emailonu2u, status, langfile FROM ".X_PREFIX."members WHERE username='$msgto'");
     if ($rcpt = $db->fetch_array($query)) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
@@ -76,24 +76,23 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
 
             $u2uid = (int) $u2uid;
             if ($del == 'yes' && $u2uid > 0) {
-                   $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
+                $db->query("UPDATE ".X_PREFIX."u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
             }
 
             if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
-                $lastvisitcheck = $onlinetime - 600;
-                if ($lastvisitcheck > $rcpt['lastvisit']) {
-                    $u2uurl = $full_url.'u2u.php';
-                    $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-                    $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
-                    $headers = array();
-                    $headers[] = "From: $bbname <$adminemail>";
-                    $headers[] = 'X-Mailer: PHP';
-                    $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                    $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
-                    $headers[] = 'Content-Type: text/plain; charset='.$charset;
-                    $headers = implode("\r\n", $headers);
-                    altMail($rawaddress, "$lang[textnewu2uemail]", "$rawusername $lang[textnewu2ubody] \n$u2uurl", $headers);
-                }
+                $lang2 = loadPhrases(array('charset','textnewu2uemail','textnewu2ubody'));
+                $translate = $lang2[$rcpt['langfile']];
+                $u2uurl = $full_url.'u2u.php';
+                $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+                $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
+                $headers = array();
+                $headers[] = "From: $bbname <$adminemail>";
+                $headers[] = 'X-Mailer: PHP';
+                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
+                $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
+                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
+                $headers = implode("\r\n", $headers);
+                altMail($rawaddress, $translate['textnewu2uemail'], "$rawusername ".$translate['textnewu2ubody']." \n$u2uurl", $headers);
             }
         } else {
             $errors = '<br />'.$lang['u2ublocked'];

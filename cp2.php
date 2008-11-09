@@ -269,9 +269,9 @@ if ($action == 'lang') {
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td align="center"><input type="checkbox" name="lang_delete[]" value="<?php echo $themeinfo['langid']?>"<?php echo $disabledelete; ?> /></td>
-            <td><input type="text" name="langname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['cdata']?>" disabled="disabled" /></td>
+            <td><input type="text" name="langname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['cdata']?>" readonly="readonly" /></td>
             <td>
-            <input type="text" name="devname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" disabled="disabled" />
+            <input type="text" name="devname[<?php echo $themeinfo['langid']?>]" value="<?php echo $themeinfo['devname']?>" readonly="readonly" />
             <a href="cp2.php?action=lang&amp;detail=<?php echo $themeinfo['langid']?>">
             <?php echo $lang['textdetails']?></a>
             -
