@@ -512,12 +512,6 @@ switch($action) {
             $posts = $db->result($query,0);
             $db->free_result($query);
 
-            if ($posts > $ppp) {
-                $topicpages = quickpage($posts, $ppp);
-            } else {
-                $topicpages = 1;
-            }
-
             $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
             $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid < $pid ORDER BY dateline DESC LIMIT 1"), 0);
@@ -536,7 +530,8 @@ switch($action) {
 
                 $translate = $lang2[$subs['langfile']];
                 $topicpages = quickpage($posts, $subs['ppp']);
-                $threadurl = $full_url.'viewthread.php?tid='.$tid.'&page='.$topicpages.'#pid'.$pid;
+                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                $threadurl = $full_url.'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
@@ -568,7 +563,8 @@ switch($action) {
             }
 
             $topicpages = quickpage($posts, $ppp);
-            message($lang['replymsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+            $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+            message($lang['replymsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
         }
 
         if (!$replyvalid) {
@@ -891,7 +887,8 @@ switch($action) {
             $db->free_result($query);
 
             $topicpages = quickpage($posts, $ppp);
-            message($lang['postmsg'], false, '', '', $full_url."viewthread.php?tid=${tid}&page=${topicpages}#pid${pid}", true, false, true);
+            $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+            message($lang['postmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
         }
 
         if (!$topicvalid) {
@@ -1078,7 +1075,8 @@ switch($action) {
                 $posts = $db->result($query,0);
                 $db->free_result($query);
                 $topicpages = quickpage($posts, $ppp);
-                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}&page={$topicpages}#pid${pid}", true, false, true);
+                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
             } else {
                 message($lang['editpostmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
             }

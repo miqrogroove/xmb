@@ -229,7 +229,7 @@ function loadLang($devname = "English") {
     }
 }
 
-// loadPhrase uses the new translation database to retrieve a single phrase in all available languages.
+// loadPhrases uses the new translation database to retrieve a single phrase in all available languages.
 // Parameter $langkeys is an array of strings used as the $lang array key.
 // Returns an associative array in which lang_base.devname and lang_keys.langkey are the keys.
 function loadPhrases($langkeys) {
@@ -251,7 +251,7 @@ function loadPhrases($langkeys) {
         while($row = $db->fetch_array($result)) {
             $phrases[$row['devname']][$row['langkey']] = $row['cdata'];
         }
-        $db->free_result($query);
+        $db->free_result($result);
         return $phrases;
     } else {
         return FALSE;
