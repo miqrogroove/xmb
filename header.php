@@ -46,7 +46,7 @@ $alpha = 'Alpha Two';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081103;
+$versionbuild = 20081113;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -146,6 +146,15 @@ $status_enum = array(
 'Reserved-Future-Use' => 64,
 'Banned'              => (1 << 30)
 ); //$status['Banned'] == 2^30
+// status bit to $lang key assignments
+$status_translate = array(
+1  => 'superadmin',
+2  => 'textadmin',
+4  => 'textsupermod',
+8  => 'textmod',
+16 => 'textmem',
+32 => 'textguest1'
+);
 
 // discover the most likely browser
 // so we can use bbcode specifically made for it
