@@ -373,40 +373,6 @@ function smile($txt) {
     return $txt;
 }
 
-function createAbsFSizeFromRel($rel) {
-    global $fontsize;
-    static $cachedFs;
-
-    if (!is_array($cachedFs) || count($cachedFs) != 2) {
-        preg_match('#([0-9]+)([a-z]+)?#i', $fontsize, $res);
-        $cachedFs[0] = $res[1];
-        $cachedFs[1] = $res[2];
-
-        if (empty($cachedFs[1])) {
-            $cachedFs[1] = 'px';
-        }
-    }
-
-    $o = ($rel+$cachedFs[0]).$cachedFs[1];
-
-    return $o;
-}
-
-function fixUrl($matches) {
-    $fullurl = '';
-    if (!empty($matches[2])) {
-        if ($matches[3] != 'www') {
-            $fullurl = $matches[2];
-        } else {
-            $fullurl = 'http://'.$matches[2];
-        }
-    }
-
-    $fullurl = strip_tags($fullurl);
-
-    return ' [url]'.$fullurl.'[/url]';
-}
-
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
@@ -590,8 +556,6 @@ function bbcode($message, $allowimgcode) {
     $replacements[] = '<span style="color: #$1;">$2</span>';
     $patterns[] = "@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\](.*?)\[/color\]@Ssi";
     $replacements[] = '<span style="color: rgb($1);">$2</span>';
-    $patterns[] = "#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssie";
-    $replacements[] = '"<span style=\"font-size: ".createAbsFSizeFromRel(\'$1\').";\">".stripslashes(\'$2\')."</span>"';
     $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
     $replacements[] = '<span style="font-family: $1;">$2</span>';
     $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
@@ -633,7 +597,47 @@ function bbcode($message, $allowimgcode) {
     $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1\2">\3</a>';
 
-    return preg_replace($patterns, $replacements, $message);
+    $message = preg_replace($patterns, $replacements, $message);
+
+    $message = preg_replace_callback("#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssi", 'bbcodeSizeTags', $message);
+
+    return $message;
+}
+
+function fixUrl($matches) {
+    $fullurl = '';
+    if (!empty($matches[2])) {
+        if ($matches[3] != 'www') {
+            $fullurl = $matches[2];
+        } else {
+            $fullurl = 'http://'.$matches[2];
+        }
+    }
+
+    $fullurl = strip_tags($fullurl);
+
+    return ' [url]'.$fullurl.'[/url]';
+}
+
+function bbcodeSizeTags($matches) {
+    global $fontsize;
+    static $cachedFs;
+
+    if (!is_array($cachedFs) || count($cachedFs) != 2) {
+        preg_match('#([0-9]+)([a-z]+)?#i', $fontsize, $res);
+        $cachedFs[0] = $res[1];
+        $cachedFs[1] = $res[2];
+
+        if (empty($cachedFs[1])) {
+            $cachedFs[1] = 'px';
+        }
+    }
+
+    $o = ($matches[1]+$cachedFs[0]).$cachedFs[1];
+
+    $html = "<span style=\"font-size: $o;\">{$matches[2]}</span>";
+
+    return $html;
 }
 
 function modcheck($username, $mods, $override=X_SMOD) {
