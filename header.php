@@ -221,7 +221,7 @@ if (empty($full_url)) {
     $cookiepath = $array['path'];
 
     if (DEBUG) {
-        debugURLsettings($array['host'], $cookiesecure, $cookiepath);
+        debugURLsettings($cookiesecure, $array['host'], $cookiepath);
     }
     unset($array);
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -575,23 +575,32 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="7" />&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
         </tr>
         <?php
-        printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
-        printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);
-        printsetting1($lang['captchapoststatus'], 'captchapostnew', $captchapostOn, $captchapostOff);
-        printsetting2($lang['captchacharset'], 'captchacharsetnew', $SETTINGS['captcha_code_charset'], 50);
-        printsetting2($lang['captchacodelength'], 'captchacodenew', ((int)$SETTINGS['captcha_code_length']), 3);
-        printsetting1($lang['captchacodecase'], 'captchacodecasenew', $captchacodecaseOn, $captchacodecaseOff);
-        printsetting1($lang['captchacodeshadow'], 'captchacodeshadownew', $captchacodeshadowOn, $captchacodeshadowOff);
-        printsetting2($lang['captchaimagetype'], 'captchaimagetypenew', $SETTINGS['captcha_image_type'], 5);
-        printsetting2($lang['captchaimagewidth'], 'captchaimagewidthnew', ((int)$SETTINGS['captcha_image_width']), 5);
-        printsetting2($lang['captchaimageheight'], 'captchaimageheightnew', ((int)$SETTINGS['captcha_image_height']), 5);
-        printsetting2($lang['captchaimagebg'], 'captchaimagebgnew', $SETTINGS['captcha_image_bg'], 50);
-        printsetting2($lang['captchaimagedots'], 'captchaimagedotsnew', ((int)$SETTINGS['captcha_image_dots']), 3);
-        printsetting2($lang['captchaimagelines'], 'captchaimagelinesnew', ((int)$SETTINGS['captcha_image_lines']), 3);
-        printsetting2($lang['captchaimagefonts'], 'captchaimagefontsnew', $SETTINGS['captcha_image_fonts'], 50);
-        printsetting2($lang['captchaimageminfont'], 'captchaimageminfontnew', ((int)$SETTINGS['captcha_image_minfont']), 3);
-        printsetting2($lang['captchaimagemaxfont'], 'captchaimagemaxfontnew', ((int)$SETTINGS['captcha_image_maxfont']), 3);
-        printsetting1($lang['captchaimagecolor'], 'captchaimagecolornew', $captchaimagecolorOn, $captchaimagecolorOff);
+        if (DEBUG) {
+            ?>
+            <tr class="tablerow">
+            <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $lang['captchastatus']; ?></td>
+            <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $lang['captchaindebug']; ?></td>
+            </tr>
+            <?php
+        } else {
+            printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
+            printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);
+            printsetting1($lang['captchapoststatus'], 'captchapostnew', $captchapostOn, $captchapostOff);
+            printsetting2($lang['captchacharset'], 'captchacharsetnew', $SETTINGS['captcha_code_charset'], 50);
+            printsetting2($lang['captchacodelength'], 'captchacodenew', ((int)$SETTINGS['captcha_code_length']), 3);
+            printsetting1($lang['captchacodecase'], 'captchacodecasenew', $captchacodecaseOn, $captchacodecaseOff);
+            printsetting1($lang['captchacodeshadow'], 'captchacodeshadownew', $captchacodeshadowOn, $captchacodeshadowOff);
+            printsetting2($lang['captchaimagetype'], 'captchaimagetypenew', $SETTINGS['captcha_image_type'], 5);
+            printsetting2($lang['captchaimagewidth'], 'captchaimagewidthnew', ((int)$SETTINGS['captcha_image_width']), 5);
+            printsetting2($lang['captchaimageheight'], 'captchaimageheightnew', ((int)$SETTINGS['captcha_image_height']), 5);
+            printsetting2($lang['captchaimagebg'], 'captchaimagebgnew', $SETTINGS['captcha_image_bg'], 50);
+            printsetting2($lang['captchaimagedots'], 'captchaimagedotsnew', ((int)$SETTINGS['captcha_image_dots']), 3);
+            printsetting2($lang['captchaimagelines'], 'captchaimagelinesnew', ((int)$SETTINGS['captcha_image_lines']), 3);
+            printsetting2($lang['captchaimagefonts'], 'captchaimagefontsnew', $SETTINGS['captcha_image_fonts'], 50);
+            printsetting2($lang['captchaimageminfont'], 'captchaimageminfontnew', ((int)$SETTINGS['captcha_image_minfont']), 3);
+            printsetting2($lang['captchaimagemaxfont'], 'captchaimagemaxfontnew', ((int)$SETTINGS['captcha_image_maxfont']), 3);
+            printsetting1($lang['captchaimagecolor'], 'captchaimagecolornew', $captchaimagecolorOn, $captchaimagecolorOff);
+        }
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -684,23 +693,6 @@ if ($action == "settings") {
         $tickerdelaynew = formInt('tickerdelaynew');
         $tickercontentsnew = postedVar('tickercontentsnew');
         $maxDayReg = formInt('maxDayReg');
-        $captchanew = formOnOff('captchanew');
-        $captcharegnew = formOnOff('captcharegnew');
-        $captchapostnew = formOnOff('captchapostnew');
-        $captchacharsetnew = postedVar('captchacharsetnew');
-        $captchacodenew = formInt('captchacodenew');
-        $captchacodecasenew = formOnOff('captchacodecasenew');
-        $captchacodeshadownew = formOnOff('captchacodeshadownew');
-        $captchaimagetypenew = postedVar('captchaimagetypenew');
-        $captchaimagewidthnew = formInt('captchaimagewidthnew');
-        $captchaimageheightnew = formInt('captchaimageheightnew');
-        $captchaimagebgnew = postedVar('captchaimagebgnew');
-        $captchaimagedotsnew = formInt('captchaimagedotsnew');
-        $captchaimagelinesnew = formInt('captchaimagelinesnew');
-        $captchaimagefontsnew = postedVar('captchaimagefontsnew');
-        $captchaimageminfontnew = formInt('captchaimageminfontnew');
-        $captchaimagemaxfontnew = formInt('captchaimagemaxfontnew');
-        $captchaimagecolornew = formOnOff('captchaimagecolornew');
         $showsubforumsnew = formOnOff('showsubforumsnew');
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
         $regoptionalnew = formOnOff('regoptionalnew');
@@ -724,7 +716,7 @@ if ($action == "settings") {
         $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
         $remoteimages = formOnOff('remoteimages');
 
-        $db->query("UPDATE ".X_PREFIX."settings SET
+        $sql = "UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
             bbname='$bbnamenew',
             postperpage='$postperpagenew',
@@ -786,23 +778,6 @@ if ($action == "settings") {
             ipreg='$ipReg',
             maxdayreg='$maxDayReg',
             maxattachsize='$maxAttachSize',
-            captcha_status='$captchanew',
-            captcha_reg_status='$captcharegnew',
-            captcha_post_status='$captchapostnew',
-            captcha_code_charset='$captchacharsetnew',
-            captcha_code_length='$captchacodenew',
-            captcha_code_casesensitive='$captchacodecasenew',
-            captcha_code_shadow='$captchacodeshadownew',
-            captcha_image_type='$captchaimagetypenew',
-            captcha_image_width='$captchaimagewidthnew',
-            captcha_image_height='$captchaimageheightnew',
-            captcha_image_bg='$captchaimagebgnew',
-            captcha_image_dots='$captchaimagedotsnew',
-            captcha_image_lines='$captchaimagelinesnew',
-            captcha_image_fonts='$captchaimagefontsnew',
-            captcha_image_minfont='$captchaimageminfontnew',
-            captcha_image_maxfont='$captchaimagemaxfontnew',
-            captcha_image_color='$captchaimagecolornew',
             showsubforums='$showsubforumsnew',
             regoptional='$regoptionalnew',
             quickreply_status='$quickreply_statusnew',
@@ -819,7 +794,49 @@ if ($action == "settings") {
             filesperpost='$filesperpostnew',
             max_image_size='$max_image_size',
             max_thumb_size='$max_thumb_size'
-        ");
+        ";
+        
+        if (!DEBUG) {
+            $captchanew = formOnOff('captchanew');
+            $captcharegnew = formOnOff('captcharegnew');
+            $captchapostnew = formOnOff('captchapostnew');
+            $captchacharsetnew = postedVar('captchacharsetnew');
+            $captchacodenew = formInt('captchacodenew');
+            $captchacodecasenew = formOnOff('captchacodecasenew');
+            $captchacodeshadownew = formOnOff('captchacodeshadownew');
+            $captchaimagetypenew = postedVar('captchaimagetypenew');
+            $captchaimagewidthnew = formInt('captchaimagewidthnew');
+            $captchaimageheightnew = formInt('captchaimageheightnew');
+            $captchaimagebgnew = postedVar('captchaimagebgnew');
+            $captchaimagedotsnew = formInt('captchaimagedotsnew');
+            $captchaimagelinesnew = formInt('captchaimagelinesnew');
+            $captchaimagefontsnew = postedVar('captchaimagefontsnew');
+            $captchaimageminfontnew = formInt('captchaimageminfontnew');
+            $captchaimagemaxfontnew = formInt('captchaimagemaxfontnew');
+            $captchaimagecolornew = formOnOff('captchaimagecolornew');
+
+            $sql .= ",
+            captcha_status='$captchanew',
+            captcha_reg_status='$captcharegnew',
+            captcha_post_status='$captchapostnew',
+            captcha_code_charset='$captchacharsetnew',
+            captcha_code_length='$captchacodenew',
+            captcha_code_casesensitive='$captchacodecasenew',
+            captcha_code_shadow='$captchacodeshadownew',
+            captcha_image_type='$captchaimagetypenew',
+            captcha_image_width='$captchaimagewidthnew',
+            captcha_image_height='$captchaimageheightnew',
+            captcha_image_bg='$captchaimagebgnew',
+            captcha_image_dots='$captchaimagedotsnew',
+            captcha_image_lines='$captchaimagelinesnew',
+            captcha_image_fonts='$captchaimagefontsnew',
+            captcha_image_minfont='$captchaimageminfontnew',
+            captcha_image_maxfont='$captchaimagemaxfontnew',
+            captcha_image_color='$captchaimagecolornew'
+            ";
+        }
+        
+        $db->query($sql);
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
     }

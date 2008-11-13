@@ -196,6 +196,7 @@ $lang['captchaimagemaxfont'] = 'Max Font Size:';
 $lang['captchaimageminfont'] = 'Min Font Size:';
 $lang['captchaimagetype'] = 'Image Type:';
 $lang['captchaimagewidth'] = 'Image Width:';
+$lang['captchaindebug'] = "Captcha features are not available in DEBUG mode.";
 $lang['captchapoststatus'] = 'Anonymous Posting Status:';
 $lang['captcharegstatus'] = 'Registration Status:';
 $lang['captchastatus'] = 'Main Status:';

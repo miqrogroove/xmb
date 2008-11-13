@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -109,14 +109,11 @@ if (!defined('IN_CODE')) {
     $allow_spec_q   = FALSE;
     $show_full_info = TRUE;
 
-// Resolving serveral modes (currently, 2)
 // Debug-mode
     /*
     / To turn on DEBUG mode (you can then see ALL queries done at the bottom of each screen (except buddy-list & u2u)
     / just uncomment this variable. These queries are ONLY visible to the user currently loading that page
     / and ONLY visible to Super Administrators
-    /
-    / SECURITY NOTICE: DO NOT COMMENT OUT UNLESS YOU KNOW WHAT YOU'RE DOING!
     */
     define('DEBUG', FALSE);
     // define('DEBUG', TRUE);
@@ -127,7 +124,7 @@ if (!defined('IN_CODE')) {
     */
     //
     /*
-    / To enable logging of all MySQL errors (necessary in the case of registration or login errors), comment first
+    / To enable logging of all MySQL errors (necessary in the case of registration, login, or captcha errors), comment first
     / line and uncomment second line.  Note the log file will be visible to the public unless it is protected
     / by your web server configuration.  The file name will be 'error_log' unless you change the PHP configuration.
     */

@@ -33,14 +33,14 @@ if (!defined('IN_CODE')) {
 error_reporting(E_ALL | E_STRICT);
 
 if ($show_full_info) {
-    $versionlong .= ' (Debug Mode)' );
+    $versionlong .= ' (Debug Mode)';
 } else {
     $alpha = '';
     $beta = '';
     $gamma = '';
     $service_pack = '';
     $versionbuild = '[HIDDEN]';
-    $versionlong = 'Powered by XMB (Debug Mode)');
+    $versionlong = 'Powered by XMB (Debug Mode)';
 }
 
 function debugURLsettings($securesetting, $hostsetting, $pathsetting) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1094,7 +1094,6 @@ Public License instead of this License.  But first, please read
                     $dbs[] = $configuration = str_replace('.php', '', $file);
                 }
             }
-            $phpv = explode('.', phpversion());
             foreach($dbs as $db) {
                 if ($db == 'mysql') {
                     $types[] = "<option selected=\"selected\" name=\"$db\">$db</option>";

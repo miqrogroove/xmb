@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -638,7 +638,11 @@ class Captcha {
         if ($this->bCompatible === false) {
             $this->bPoison = TRUE;
             return false;
-        } else if (!function_exists('imagecreate') || !function_exists("image$this->sFileType") || !function_exists('imagecreatetruecolor')) {
+        } else if (!function_exists('imagecreate')
+                || !function_exists("image$this->sFileType")
+                || !function_exists('imagecreatetruecolor')
+                || !function_exists('imageftbbox')
+                || !function_exists('imagefttext')) {
             $this->bCompatible = false;
             $this->bPoison = TRUE;
             return false;
