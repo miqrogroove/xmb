@@ -125,7 +125,7 @@ loadtemplates(
 'viewthread_quickreply',
 'viewthread_quickreply_captcha',
 'viewthread',
-'viewthread_invalid',
+'viewthread_modlog',
 'viewthread_modoptions',
 'viewthread_newpoll',
 'viewthread_newtopic',
@@ -161,8 +161,7 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$notexist = false;
-$notexist_txt = $posts = '';
+$posts = '';
 
 $query = $db->query("SELECT t.fid, t.subject, t.closed, t.topped, t.lastpost, t.replies, COUNT(pid) AS postcount, MAX(dateline) AS lastpostdate FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
 if ($db->num_rows($query) != 1) {
@@ -453,9 +452,50 @@ if ($action == '') {
         }
         eval('$poll = "'.template('viewthread_poll').'";');
     }
+    
+    $startdate = '0';
+    $enddate = '0';
+    $sql = "SELECT dateline "
+         . "FROM ".X_PREFIX."posts "
+         . "WHERE tid=$tid "
+         . "ORDER BY dateline ASC, pid ASC "
+         . "LIMIT $start_limit, ".($ppp + 1);
+    $query1 = $db->query($sql);
+    $rowcount = $db->num_rows($query1);
+    if ($rowcount > 0) {
+        $row = $db->fetch_array($query1);
+        $startdate = $row['dateline'];
+        if ($rowcount <= $ppp) {
+            $enddate = $onlinetime;
+        } else {
+            $db->data_seek($query1, $rowcount - 1);
+            $enddate = $row['dateline'];
+        }
+    }
+    $db->free_result($query1);
 
     $thisbg = $altbg2;
-    $querypost = $db->query("SELECT p.*, m.*,w.time FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."members m ON m.username=p.author LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author WHERE p.tid='$tid' GROUP BY p.pid ORDER BY p.dateline ASC, p.pid ASC LIMIT $start_limit, $ppp");
+    $sql = "SELECT p.*, m.*, w.time "
+         . "FROM "
+         . "( "
+         . "  ( "
+         . "    SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff "
+         . "    FROM ".X_PREFIX."posts "
+         . "    WHERE tid=$tid "
+         . "    ORDER BY dateline ASC, pid ASC "
+         . "    LIMIT $start_limit, $ppp "
+         . "  ) "
+         . "  UNION ALL "
+         . "  ( "
+         . "    SELECT 'modlog' AS type, fid, tid, username AS author, action AS subject, date AS dateline, '', '', '', '', '', '', '' "
+         . "    FROM ".X_PREFIX."logs "
+         . "    WHERE tid=$tid AND date >= $startdate AND date < $enddate "
+         . "  ) "
+         . ") AS p "
+         . "LEFT JOIN ".X_PREFIX."members m ON m.username=p.author "
+         . "LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author "
+         . "ORDER BY p.dateline ASC, p.type DESC, p.pid ASC ";
+    $querypost = $db->query($sql);
 
     if ($forum['attachstatus'] == 'on') {
         require('include/attach.inc.php');
@@ -706,10 +746,16 @@ if ($action == '') {
             $rank['avatar'] = '';
         }
 
-        if (!$notexist) {
+        if ($post['type'] == 'post') {
+
             eval('$posts .= "'.template('viewthread_post').'";');
+
         } else {
-            eval('$posts .= "'.template('viewthread_invalid').'";');
+
+            $poston = $date.' '.$lang['textat'].' '.$time;
+            $post['message'] = $poston.'<br />'.$post['subject'];
+            eval('$posts .= "'.template('viewthread_modlog').'";');
+
         }
 
         if ($thisbg == $altbg2) {

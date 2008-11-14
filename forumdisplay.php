@@ -34,7 +34,6 @@ loadtemplates(
 'forumdisplay',
 'forumdisplay_admin',
 'forumdisplay_sortby',
-'forumdisplay_invalidforum',
 'forumdisplay_multipage',
 'forumdisplay_multipage_admin',
 'forumdisplay_newpoll',

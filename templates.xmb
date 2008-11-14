@@ -1469,11 +1469,6 @@ $multipage
 </tr>
 </table>
 
-|#*XMB TEMPLATE FILE*#|forumdisplay_invalidforum|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td colspan="8" bgcolor="$altbg1">$notexist</td>
-</tr>
-
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow" bgcolor="$altbg2">
 <td colspan="7" class="multi">&nbsp;$multipage</td>
@@ -4582,9 +4577,17 @@ $multipage
 </table>
 $quickreply
 
-|#*XMB TEMPLATE FILE*#|viewthread_invalid|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td colspan="8" bgcolor="$altbg1">$notexist</td>
+|#*XMB TEMPLATE FILE*#|viewthread_modlog|#*XMB TEMPLATE*#|
+<tr bgcolor="$thisbg">
+<td valign="top" class="tablerow" style="width: 18%;">
+<a href="./member.php?action=viewpro&amp;member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
+<br />
+<div class="smalltxt"><a name="pid$post[pid]"></a>
+$showtitle
+</div>
+</td>
+<td class="tablerow" valign="top" style="width: 82%" >
+<font class="mediumtxt">$post[message]</font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_modoptions|#*XMB TEMPLATE*#|
