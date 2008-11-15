@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -440,12 +440,17 @@ switch($action) {
         } else {
             $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
-                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1");
+                $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC, pid DESC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
                     $pid = $db->result($query, 0);
 
-                    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
-                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='".$onlinetime."|$xmbuser|$pid' WHERE fid=$fid");
+                    $where = "WHERE fid=$fid";
+                    if ($forums['type'] == 'sub') {
+                        $where .= " OR fid={$forums['fup']}";
+                    }
+
+                    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$onlinetime|$xmbuser|$pid' WHERE tid=$tid AND fid=$fid");
+                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$xmbuser|$pid' $where");
 
                     $mod->log($xmbuser, $action, $fid, $tid);
                 }
@@ -602,7 +607,7 @@ switch($action) {
             $db->free_result($query);
             $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+'$replyadd', subject='".$db->escape($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape($lastpost['author'])."|{$lastpost['pid']}' WHERE tid='$tid'");
 
-            $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
+            $mod->log($xmbuser, $action, $fid, $tid);
 
             if ($forums['type'] == 'sub') {
                 updateforumcount($fup['fid']);
@@ -714,7 +719,7 @@ switch($action) {
             }
             updateforumcount($fid);
 
-            $mod->log($xmbuser, $action, $fid, "$othertid, $tid");
+            $mod->log($xmbuser, $action, $fid, $tid);
 
             message($lang['complete_threadprune'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }

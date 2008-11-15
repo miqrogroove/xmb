@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -163,7 +163,7 @@ eval('$css = "'.template('css').'";');
 
 $posts = '';
 
-$query = $db->query("SELECT t.fid, t.subject, t.closed, t.topped, t.lastpost, t.replies, COUNT(pid) AS postcount, MAX(dateline) AS lastpostdate FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
+$query = $db->query("SELECT t.fid, t.subject, t.closed, t.topped, t.lastpost, t.replies, COUNT(pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
 if ($db->num_rows($query) != 1) {
     $db->free_result($query);
     header('HTTP/1.0 404 Not Found');
@@ -176,7 +176,7 @@ $db->free_result($query);
 $thislast = explode('|', $thread['lastpost']);
 
 // Perform automatic maintenance
-if ($thislast[0] != $thread['lastpostdate'] Or $thread['replies'] != $thread['postcount'] - 1) {
+if ($thread['replies'] != $thread['postcount'] - 1) {
     updatethreadcount($tid);
 }
 
@@ -672,10 +672,6 @@ if ($action == '') {
             eval('$reportlink = "'.template('viewthread_post_report').'";');
         }
 
-        if ($post['subject'] != '') {
-            $post['subject'] = rawHTMLsubject(stripslashes($post['subject'])).'<br />';
-        }
-
         $edit = '';
         if (modcheckPost($self['username'], $forum['moderator'], $post['status']) == 'Moderator' || ($thread['closed'] != 'yes' && $post['author'] == $xmbuser)) {
             eval('$edit = "'.template('viewthread_post_edit').'";');
@@ -748,12 +744,16 @@ if ($action == '') {
 
         if ($post['type'] == 'post') {
 
+            if ($post['subject'] != '') {
+                $post['subject'] = rawHTMLsubject(stripslashes($post['subject'])).'<br />';
+            }
+
             eval('$posts .= "'.template('viewthread_post').'";');
 
         } else {
 
             $poston = $date.' '.$lang['textat'].' '.$time;
-            $post['message'] = $poston.'<br />'.$post['subject'];
+            $post['message'] = $lang["modlog_{$post['subject']}"].'<br />'.$poston;
             eval('$posts .= "'.template('viewthread_modlog').'";');
 
         }

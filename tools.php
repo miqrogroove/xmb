@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -112,29 +112,86 @@ switch($action) {
 
     case 'fixlastposts':
         if (postedVar('scope', '', FALSE, FALSE, FALSE, 'g') == 'forumsonly') {
-            $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum'");
+            // Update all forums using as few queries as possible
+            $sql = 'SELECT f.fid, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
+                 . 'FROM '.X_PREFIX.'forums AS f '
+                 . 'LEFT JOIN '.X_PREFIX.'posts AS p ON f.fid=p.fid '
+                 . 'INNER JOIN ( '
+                 . '    SELECT p2.fid, MAX(pid) AS lastpid '
+                 . '    FROM '.X_PREFIX.'posts AS p2 '
+                 . '    INNER JOIN ( '
+                 . '        SELECT fid, MAX(dateline) AS lastdate '
+                 . '        FROM '.X_PREFIX.'posts '
+                 . '        GROUP BY fid '
+                 . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
+                 . '    GROUP BY p2.fid '
+                 . ') AS query2 ON p.pid=query2.lastpid '
+                 . 'LEFT JOIN '.X_PREFIX.'logs AS log ON f.fid=log.fid '
+                 . 'INNER JOIN ( '
+                 . '    SELECT fid, MAX(date) AS lastdate '
+                 . '    FROM '.X_PREFIX.'logs '
+                 . '    WHERE action = "bump" '
+                 . '    GROUP BY fid '
+                 . ') AS query4 ON log.fid=query4.fid AND log.date=query4.lastdate '
+                 . 'WHERE f.type="forum"';
+
+            $q = $db->query($sql);
             while($loner = $db->fetch_array($q)) {
                 $lastpost = array();
-                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$loner[fid]'");
+
+                // Update all subforums using as few queries as possible
+                $sql = 'SELECT f.fid, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
+                     . 'FROM '.X_PREFIX.'forums AS f '
+                     . 'LEFT JOIN '.X_PREFIX.'posts AS p ON f.fid=p.fid '
+                     . 'INNER JOIN ( '
+                     . '    SELECT p2.fid, MAX(pid) AS lastpid '
+                     . '    FROM '.X_PREFIX.'posts AS p2 '
+                     . '    INNER JOIN ( '
+                     . '        SELECT fid, MAX(dateline) AS lastdate '
+                     . '        FROM '.X_PREFIX.'posts '
+                     . '        GROUP BY fid '
+                     . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
+                     . '    GROUP BY p2.fid '
+                     . ') AS query2 ON p.pid=query2.lastpid '
+                     . 'LEFT JOIN '.X_PREFIX.'logs AS log ON f.fid=log.fid '
+                     . 'INNER JOIN ( '
+                     . '    SELECT fid, MAX(date) AS lastdate '
+                     . '    FROM '.X_PREFIX.'logs '
+                     . '    WHERE action = "bump" '
+                     . '    GROUP BY fid '
+                     . ') AS query4 ON log.fid=query4.fid AND log.date=query4.lastdate '
+                     . 'WHERE f.fup='.$loner['fid'];
+
+                $subq = $db->query($sql);
                 while($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$sub[fid]' ORDER BY dateline DESC LIMIT 1");
-                    if ($db->num_rows($pq) > 0) {
-                        $curr = $db->fetch_array($pq);
-                        $lastpost[] = $curr;
-                        $lp = $curr['dateline'].'|'.$curr['author'].'|'.$curr['pid'];
+                    if ($sub['pid'] !== NULL) {
+                        if ($sub['date'] !== NULL) {
+                            if ($sub['date'] > $sub['dateline']) {
+                                $sub['dateline'] = $sub['date'];
+                                $sub['author'] = $sub['username'];
+                            }
+                        }
+                        $lastpost[] = $sub;
+                        $lp = $sub['dateline'].'|'.$sub['author'].'|'.$sub['pid'];
                     } else {
                         $lp = '';
                     }
-                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid='$sub[fid]'");
-                    $db->free_result($pq);
+                    if ($sub['lastpost'] != $lp) {
+                        $lp = $db->escape($lp);
+                        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE tid={$sub['tid']}");
+                    }
                 }
                 $db->free_result($subq);
 
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$loner[fid]' ORDER BY dateline DESC LIMIT 1");
-                if ($db->num_rows($pq) > 0) {
-                    $lastpost[] = $db->fetch_array($pq);
+                if ($loner['pid'] !== NULL) {
+                    if ($loner['date'] !== NULL) {
+                        if ($loner['date'] > $loner['dateline']) {
+                            $loner['dateline'] = $loner['date'];
+                            $loner['author'] = $loner['username'];
+                        }
+                    }
+                    $lastpost[] = $loner;
                 }
-                $db->free_result($pq);
 
                 if (count($lastpost) == 0) {
                     $lastpost = '';
@@ -149,30 +206,43 @@ switch($action) {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='$loner[fid]'");
+                $lastpost = $db->escape($lastpost);
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='{$loner['fid']}'");
             }
             $db->free_result($q);
 
         } else { // Update all threads using as few queries as possible
-            $newsql = 'SELECT t.tid, t.lastpost, p.author, p.dateline, p.pid '
+            $newsql = 'SELECT t.tid, t.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
                     . 'FROM '.X_PREFIX.'threads AS t '
                     . 'LEFT JOIN '.X_PREFIX.'posts AS p ON t.tid=p.tid '
-                    . 'INNER JOIN ('
-                    . '    SELECT MAX(pid) AS lastpid '
-                    . '    FROM '.X_PREFIX.'posts AS p2'
-                    . '    INNER JOIN ('
+                    . 'INNER JOIN ( '
+                    . '    SELECT p2.tid, MAX(pid) AS lastpid '
+                    . '    FROM '.X_PREFIX.'posts AS p2 '
+                    . '    INNER JOIN ( '
                     . '        SELECT tid, MAX(dateline) AS lastdate '
                     . '        FROM '.X_PREFIX.'posts '
-                    . '        GROUP BY tid'
+                    . '        GROUP BY tid '
                     . '    ) AS query3 ON p2.tid=query3.tid AND p2.dateline=query3.lastdate '
-                    . '    GROUP BY p2.tid, p2.dateline'
-                    . ') AS query2 ON p.pid=query2.lastpid';
+                    . '    GROUP BY p2.tid '
+                    . ') AS query2 ON p.pid=query2.lastpid '
+                    . 'LEFT JOIN '.X_PREFIX.'logs AS log ON t.tid=log.tid '
+                    . 'INNER JOIN ( '
+                    . '    SELECT tid, MAX(date) AS lastdate '
+                    . '    FROM '.X_PREFIX.'logs '
+                    . '    WHERE action = "bump" '
+                    . '    GROUP BY tid '
+                    . ') AS query4 ON log.tid=query4.tid AND log.date=query4.lastdate';
 
             $lpquery = $db->query($newsql);
 
             while($thread = $db->fetch_array($lpquery)) {
                 if ($thread['pid'] !== NULL) {
                     $lp = $thread['dateline'].'|'.$thread['author'].'|'.$thread['pid'];
+                    if ($thread['date'] !== NULL) {
+                        if ($thread['date'] > $thread['dateline']) {
+                            $lp = $thread['date'].'|'.$thread['username'].'|'.$thread['pid'];
+                        }
+                    }
                 } else {
                     $lp = '';
                 }
@@ -291,7 +361,7 @@ switch($action) {
         if (noSubmit('yessubmit')) {
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['logsdump_confirm'].'<br /><form action="tools.php?action=logsdump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
         } else if ($lang['textyes'] == $yessubmit) {
-            $db->query("TRUNCATE ".X_PREFIX."logs");
+            $db->query("DELETE FROM ".X_PREFIX."logs WHERE fid=0");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';
             end_time();

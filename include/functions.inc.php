@@ -895,7 +895,8 @@ function updateforumcount($fid) {
 
     $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads AS t USING(fid) WHERE f.fid=$fid OR f.fup=$fid ORDER BY t.lastpost DESC LIMIT 0, 1");
     $lp = $db->fetch_array($query);
-    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lp[lastpost]' WHERE fid='$fid'");
+    $lastpost = $db->escape($lp['lastpost']);
+    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lastpost' WHERE fid='$fid'");
     $db->free_result($query);
 }
 
@@ -909,7 +910,16 @@ function updatethreadcount($tid) {
     $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 1");
     $lp = $db->fetch_array($query);
     $db->free_result($query);
+    $query = $db->query("SELECT date, username, pid FROM ".X_PREFIX."logs WHERE tid='$tid' AND action='bump' ORDER BY date DESC LIMIT 1");
+    if ($db->num_rows($query) == 1) {
+        $lb = $db->fetch_array($query);
+        $lp['dateline'] = $lb['date'];
+        $lp['author'] = $lb['username'];
+    }
+    $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
+    $lastpost = $db->escape($lastpost);
+
     $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
 
