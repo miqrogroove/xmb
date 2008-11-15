@@ -35,6 +35,7 @@ function url_to_text($url) {
     static $restrict, $rset, $fname, $tsub;
 
     if (!$rset) {
+        $fids = array();
         if (X_SADMIN) {
             $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE status = 'on'");
             while($f = $db->fetch_array($q)) {
@@ -42,7 +43,7 @@ function url_to_text($url) {
             }
         } else {
             $fCache = array();
-            $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+            $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
             while($forum = $db->fetch_array($q)) {
                 $perms = checkForumPermissions($forum);
                 $fCache[$forum['fid']] = $perms;
@@ -61,8 +62,12 @@ function url_to_text($url) {
             }
         }
 
-        $fids = implode(',', $fids);
-        $restrict = ' f.fid IN('.$fids.')';
+        if (count($fids) > 0) {
+            $fids = implode(',', $fids);
+            $restrict = ' f.fid IN('.$fids.')';
+        } else {
+            $restrict = ' 0=1';
+        }
 
         $rset = true;
     }

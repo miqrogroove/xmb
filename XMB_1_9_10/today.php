@@ -62,7 +62,7 @@ if (X_SADMIN) {
     }
 } else {
     $fCache = array();
-    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+    $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
     while($forum = $db->fetch_array($q)) {
         $perms = checkForumPermissions($forum);
         $fCache[$forum['fid']] = $perms;

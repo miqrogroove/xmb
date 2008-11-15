@@ -52,7 +52,7 @@ if (X_SADMIN) {
     }
 } else {
     $fCache = array();
-    $q = $db->query("SELECT fid, postperm, userlist, password, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
+    $q = $db->query("SELECT fid, postperm, userlist, password, moderator, type, fup FROM ".X_PREFIX."forums WHERE status = 'on' AND type != 'group' ORDER BY type ASC");
     while($forum = $db->fetch_array($q)) {
         $perms = checkForumPermissions($forum);
         $fCache[$forum['fid']] = $perms;
@@ -71,8 +71,12 @@ if (X_SADMIN) {
     }
 }
 
-$fids = implode(',', $fids);
-$restrict = ' fid IN ('.$fids.')';
+if (count($fids) > 0) {
+    $fids = implode(',', $fids);
+    $restrict = ' fid IN ('.$fids.')';
+} else {
+    $restrict = ' 0=1';
+}
 
 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
