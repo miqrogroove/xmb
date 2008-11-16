@@ -362,7 +362,7 @@ switch($action) {
             $headers[] = 'X-AntiAbuse: Username - '.$emailuname;
             $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
             $headers = implode("\r\n", $headers);
-            altMail($emailaddy, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $emailuname\n{$translate['textpassword']} $newpass", $headers);
+            altMail($emailaddy, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $emailuname\n{$translate['textpassword']} $newpass\n\n$full_url", $headers);
 
             $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
             $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';

@@ -551,7 +551,7 @@ switch($action) {
                 $headers[] = 'X-AntiAbuse: Username - '.$username;
                 $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
                 $headers = implode("\r\n", $headers);
-                altMail($rawemail, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2", $headers);
+                altMail($rawemail, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url", $headers);
             } else {
                 $username = postedVar('username', '', TRUE, FALSE);
                 $currtime = $onlinetime + (86400*30);

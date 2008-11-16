@@ -59,7 +59,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
 }
 
 function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
-    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $del, $oToken, $xmbuser, $full_url;
+    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
@@ -276,7 +276,7 @@ function u2u_view($u2uid, $folders) {
 }
 
 function u2u_print($u2uid, $eMail = false) {
-    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $full_url,
+    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $full_url, $cookiedomain, $adminemail,
            $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken, $xmbuser, $text;
 
     $mailHeader = '';
@@ -307,7 +307,7 @@ function u2u_print($u2uid, $eMail = false) {
         if ($eMail) {
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
-            $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".stripslashes($u2umessage).$mailFooter;
+            $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
             $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
             $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
             $headers = array();
@@ -317,10 +317,10 @@ function u2u_print($u2uid, $eMail = false) {
             $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
             $headers[] = 'Content-Type: text/html; charset='.$charset;
             $headers = implode("\r\n", $headers);
-            altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, $headers);
+            $result = altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, $headers);
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
-            eval('echo stripslashes("'.template('u2u_printable').'");');
+            eval('echo "'.template('u2u_printable').'";');
             exit;
         }
     } else {
