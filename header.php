@@ -564,7 +564,7 @@ if (count($pluglinks) == 0) {
 /* HTML Ready.  Issue Any Global Alerts To User. */
 
 // Check if the client is ip-banned
-if (!X_ADMIN) {
+if ($SETTINGS['ip_banning'] == 'on' And !X_ADMIN) {
     $ips = explode(".", $onlineip);
     $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
     $result = $db->num_rows($query);

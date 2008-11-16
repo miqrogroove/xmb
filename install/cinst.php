@@ -519,6 +519,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `file_url_format` TINYINT NOT NULL DEFAULT '1',
       `files_virtual_url` VARCHAR(60) NOT NULL,
       `filesperpost` TINYINT NOT NULL DEFAULT '10',
+      `ip_banning` SET('on','off') NOT NULL DEFAULT 'off',
       `max_image_size` => VARCHAR(9) NOT NULL DEFAULT '2000x2000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200'
    ) TYPE=MyISAM

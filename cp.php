@@ -1743,116 +1743,141 @@ if ($action == "members") {
 }
 
 if ($action == "ipban") {
-    if (noSubmit('ipbansubmit')) {
-        ?>
-        <tr bgcolor="<?php echo $altbg2?>">
-        <td align="center">
-        <form method="post" action="cp.php?action=ipban">
-        <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-        <tr><td bgcolor="<?php echo $bordercolor?>">
-        <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
-        <tr class="category">
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']?>:</font></strong></td>
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
-        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
-        </tr>
-        <?php
-        $query = $db->query("SELECT * FROM ".X_PREFIX."banned ORDER BY dateline");
-        while($ipaddress = $db->fetch_array($query)) {
-            for($i=1; $i<=4; ++$i) {
-                $j = "ip" . $i;
-                if ($ipaddress[$j] == -1) {
-                    $ipaddress[$j] = "*";
-                }
-            }
-            $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-            $theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
+    if ($SETTINGS['ip_banning'] == 'on') {
+        if (noSubmit('ipbansubmit') And noSubmit('ipbandisable')) {
             ?>
-            <tr class="tablerow" bgcolor="<?php echo $altbg1?>">
-            <td><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
-            <td><?php echo $theip?></td>
-            <td><?php echo @gethostbyaddr($theip)?></td>
-            <td><?php echo $ipdate?></td>
+            <tr bgcolor="<?php echo $altbg2?>">
+            <td align="center">
+            <form method="post" action="cp.php?action=ipban">
+            <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
+            <tr><td bgcolor="<?php echo $bordercolor?>">
+            <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
+            <tr class="category">
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']?>:</font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
+            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
             </tr>
             <?php
-        }
-
-        $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
-        $result = $db->fetch_array($query);
-        if ($result) {
-            $warning = $lang['ipwarning'];
-        } else {
-            $warning = '';
-        }
-        ?>
-        <tr bgcolor="<?php echo $altbg2?>">
-        <td colspan="4" class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $lang['textnewip']?>
-        <input type="text" name="newip1" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip2" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip3" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip4" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" /></td>
-        </tr>
-        </table>
-        </td>
-        </tr>
-        </table>
-        <br />
-        <span class="smalltxt"><?php echo $lang['currentip']?> <strong><?php echo $onlineip?></strong><?php echo $warning?><br /><?php echo $lang['multipnote']?></span><br />
-        <br /><div align="center"><input type="submit" class="submit" name="ipbansubmit" value="<?php echo $lang['textsubmitchanges']?>" /></div>
-        </form>
-        </td>
-        </tr>
-        <?php
-    } else {
-        $newip = array();
-        $newip[] = (is_numeric(postedVar('newip1')) Or postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
-        $newip[] = (is_numeric(postedVar('newip2')) Or postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
-        $newip[] = (is_numeric(postedVar('newip3')) Or postedVar('newip3') == '*') ? trim(postedVar('newip3')) : '0' ;
-        $newip[] = (is_numeric(postedVar('newip4')) Or postedVar('newip4') == '*') ? trim(postedVar('newip4')) : '0' ;
-        $delete = postedArray('delete', 'int');
-
-        if ($delete) {
-            $dels = array();
-            foreach($delete as $id => $del) {
-                if ($del == 1) {
-                    $dels[] = $id;
+            $query = $db->query("SELECT * FROM ".X_PREFIX."banned ORDER BY dateline");
+            while($ipaddress = $db->fetch_array($query)) {
+                for($i=1; $i<=4; ++$i) {
+                    $j = "ip" . $i;
+                    if ($ipaddress[$j] == -1) {
+                        $ipaddress[$j] = "*";
+                    }
                 }
+                $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                $theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
+                ?>
+                <tr class="tablerow" bgcolor="<?php echo $altbg1?>">
+                <td><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
+                <td><?php echo $theip?></td>
+                <td><?php echo @gethostbyaddr($theip)?></td>
+                <td><?php echo $ipdate?></td>
+                </tr>
+                <?php
             }
 
-            if (count($dels) > 0) {
-                $dels = implode(',', $dels);
-                $db->query("DELETE FROM ".X_PREFIX."banned WHERE id IN ($dels)");
-            }
-        }
-        $self['status'] = $lang['textipupdate'];
-
-        if ($newip[0] != '0' || $newip[1] != '0' || $newip[2] != '0' || $newip[3] != '0') {
-            $invalid = 0;
-            for($i=0; $i<=3 && !$invalid; ++$i) {
-                if ($newip[$i] == "*") {
-                    $ip[$i+1] = -1;
-                } else if (intval($newip[$i]) >=0 And intval($newip[$i]) <= 255) {
-                    $ip[$i+1] = intval($newip[$i]);
-                } else {
-                    $invalid = 1;
-                }
-            }
-
-            if ($invalid) {
-                $self['status'] = $lang['invalidip'];
+            $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
+            $result = $db->fetch_array($query);
+            if ($result) {
+                $warning = $lang['ipwarning'];
             } else {
-                if ($ip[1] == '-1' && $ip[2] == '-1' && $ip[3] == '-1' && $ip[4] == '-1') {
-                    $self['status'] = $lang['impossiblebanall'];
-                } else {
-                    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
-                    $result = $db->fetch_array($query);
-                    if ($result) {
-                        $self['status'] = $lang['existingip'];
+                $warning = '';
+            }
+            ?>
+            <tr bgcolor="<?php echo $altbg2?>">
+            <td colspan="4" class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $lang['textnewip']?>
+            <input type="text" name="newip1" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip2" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip3" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" />.<input type="text" name="newip4" size="3" maxlength="3" bgcolor="<?php echo $altbg2?>" /></td>
+            </tr>
+            </table>
+            </td>
+            </tr>
+            </table>
+            <br />
+            <span class="smalltxt"><?php echo $lang['currentip']?> <strong><?php echo $onlineip?></strong><?php echo $warning?><br /><?php echo $lang['multipnote']?></span><br />
+            <br /><div align="center">
+            <input type="submit" class="submit" name="ipbansubmit" value="<?php echo $lang['textsubmitchanges']; ?>" />
+            <input type="submit" class="submit" name="ipbandisable" value="<?php echo $lang['ipbandisable']; ?>" />
+            </div>
+            </form>
+            </td>
+            </tr>
+            <?php
+        } elseif (onSubmit('ipbandisable')) {
+            $db->query('UPDATE '.X_PREFIX.'settings SET ip_banning="off"');
+            echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
+        } else {
+            $newip = array();
+            $newip[] = (is_numeric(postedVar('newip1')) Or postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip2')) Or postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip3')) Or postedVar('newip3') == '*') ? trim(postedVar('newip3')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip4')) Or postedVar('newip4') == '*') ? trim(postedVar('newip4')) : '0' ;
+            $delete = postedArray('delete', 'int');
+
+            if ($delete) {
+                $dels = array();
+                foreach($delete as $id => $del) {
+                    if ($del == 1) {
+                        $dels[] = $id;
+                    }
+                }
+
+                if (count($dels) > 0) {
+                    $dels = implode(',', $dels);
+                    $db->query("DELETE FROM ".X_PREFIX."banned WHERE id IN ($dels)");
+                }
+            }
+            $self['status'] = $lang['textipupdate'];
+
+            if ($newip[0] != '0' || $newip[1] != '0' || $newip[2] != '0' || $newip[3] != '0') {
+                $invalid = 0;
+                for($i=0; $i<=3 && !$invalid; ++$i) {
+                    if ($newip[$i] == "*") {
+                        $ip[$i+1] = -1;
+                    } else if (intval($newip[$i]) >=0 And intval($newip[$i]) <= 255) {
+                        $ip[$i+1] = intval($newip[$i]);
                     } else {
-                        $query = $db->query("INSERT INTO ".X_PREFIX."banned (ip1, ip2, ip3, ip4, dateline) VALUES ('$ip[1]', '$ip[2]', '$ip[3]', '$ip[4]', $onlinetime)");
+                        $invalid = 1;
+                    }
+                }
+
+                if ($invalid) {
+                    $self['status'] = $lang['invalidip'];
+                } else {
+                    if ($ip[1] == '-1' && $ip[2] == '-1' && $ip[3] == '-1' && $ip[4] == '-1') {
+                        $self['status'] = $lang['impossiblebanall'];
+                    } else {
+                        $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
+                        $result = $db->fetch_array($query);
+                        if ($result) {
+                            $self['status'] = $lang['existingip'];
+                        } else {
+                            $query = $db->query("INSERT INTO ".X_PREFIX."banned (ip1, ip2, ip3, ip4, dateline) VALUES ('$ip[1]', '$ip[2]', '$ip[3]', '$ip[4]', $onlinetime)");
+                        }
                     }
                 }
             }
+            echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$self['status'].'</td></tr>';
         }
-        echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$self['status'].'</td></tr>';
+    } else {
+        if (noSubmit('ipbanenable')) {
+            ?>
+            <tr bgcolor="<?php echo $altbg2?>">
+            <td align="center">
+            <form method="post" action="cp.php?action=ipban">
+            <div align="center">
+            <input type="submit" class="submit" name="ipbanenable" value="<?php echo $lang['ipbanenable']; ?>" />
+            </div>
+            </form>
+            </td>
+            </tr>
+            <?php
+        } else {
+            $db->query('UPDATE '.X_PREFIX.'settings SET ip_banning="on"');
+            echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
+        }
     }
 }
 

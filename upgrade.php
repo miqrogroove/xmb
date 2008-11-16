@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -143,6 +143,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     'file_url_format' => "TINYINT NOT NULL DEFAULT '1'",
     'files_virtual_url' => "VARCHAR(60) NOT NULL",
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
+    'ip_banning' => "SET('on', 'off') NOT NULL DEFAULT 'on'",
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '2000x2000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
     foreach($columns as $colname => $coltype) {
