@@ -127,6 +127,7 @@ if (!defined('IN_CODE')) {
     / To enable logging of all MySQL errors (necessary in the case of registration, login, or captcha errors), comment first
     / line and uncomment second line.  Note the log file will be visible to the public unless it is protected
     / by your web server configuration.  The file name will be 'error_log' unless you change the PHP configuration.
+    / If the chmod settings of this directory prevent file Write then the log will not be created.
     */
     define('LOG_MYSQL_ERRORS', FALSE);
     // define('LOG_MYSQL_ERRORS', TRUE);

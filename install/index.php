@@ -1278,6 +1278,15 @@ Public License instead of this License.  But first, please read
                 error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.', TRUE);
             }
         }
+        
+        require '../include/debug.inc.php';
+        $array = parse_url($full_url);
+        if (!isset($array['path'])) {
+            $array['path'] = '/';
+        }
+        debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
+        unset($array);
+
 
         ?>
     <div id="sidebar">

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -899,29 +899,29 @@ $db->query("INSERT INTO ".$tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."words");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('cock', '<b>****</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('dick', '<b>****</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('fuck', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('shit', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('faggot', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('bitch', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('whore', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('mofo', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('shite', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('asshole', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('dumbass', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('blowjob', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('porn', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('masturbate', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('masturbation', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('jackoff', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('jack off', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('s h i t', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('f u c k', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('f a g g o t', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('b i t c h', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('cunt', '<b>[Censored]</b>');");
-$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('c u n t', '<b>[Censored]</b>');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('cock', '[b]****[/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('dick', '[b]****[/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('fuck', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('shit', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('faggot', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('bitch', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('whore', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('mofo', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('shite', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('asshole', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('dumbass', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('blowjob', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('porn', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('masturbate', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('masturbation', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('jackoff', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('jack off', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('s h i t', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('f u c k', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('f a g g o t', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('b i t c h', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('cunt', '[b][Censored][/b]');");
+$db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('c u n t', '[b][Censored][/b]');");
 $db->query("INSERT INTO ".$tablepre."words (`find`, `replace1`) VALUES ('damn', 'dang');");
 show_result(X_INST_OK);
 
