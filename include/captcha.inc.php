@@ -381,6 +381,16 @@ class Captcha {
     }
 
     function WriteFile() {
+        // Explicitly re-run XMB's output stream check
+        if (headers_sent()) {
+            if (DEBUG) {
+                headers_sent($filepath, $linenum);
+                exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
+            } else {
+                exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
+            }
+        }
+
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
         
