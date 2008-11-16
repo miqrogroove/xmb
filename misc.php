@@ -399,10 +399,16 @@ switch($action) {
         }
 
         if (X_ADMIN) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline ORDER BY username ASC LIMIT $start_limit, $tpp");
+            $where = "";
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."whosonline WHERE invisible='0' OR (invisible='1' AND username='$xmbuser') ORDER BY username ASC LIMIT $start_limit, $tpp");
+            $where = "WHERE invisible='0' OR username='$xmbuser'";
         }
+
+        $sql = "SELECT * FROM ".X_PREFIX."whosonline "
+             . "$where "
+             . "ORDER BY IF(username!='xguest123',CONCAT('1',username),'2') ASC, `time` DESC "
+             . "LIMIT $start_limit, $tpp";
+        $query = $db->query($sql);
 
         $onlineusers = '';
         while($online = $db->fetch_array($query)) {
