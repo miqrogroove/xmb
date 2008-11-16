@@ -425,7 +425,7 @@ if ($action == "settings") {
         printsetting1($lang['textbbrules'], 'bbrulesnew', $ruleson, $rulesoff);
         ?>
         <?php
-        printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', $SETTINGS['bbrulestxt'], 5, 50);
+        printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', cdataOut($SETTINGS['bbrulestxt']), 5, 50);
         printsetting1($lang['textbstatus'], 'bbstatusnew', $onselect, $offselect);
         printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
         printsetting1($lang['gzipcompression'], 'gzipcompressnew', $gzipcompresson, $gzipcompressoff);
@@ -619,7 +619,7 @@ if ($action == "settings") {
         $siteurlnew = postedVar('siteurlnew');
         $adminemailnew = postedVar('adminemailnew');
         $bbrulesnew = formOnOff('bbrulesnew');
-        $bbrulestxtnew = postedVar('bbrulestxtnew');
+        $bbrulestxtnew = postedVar('bbrulestxtnew', '', FALSE);
         $bbstatusnew = formOnOff('bbstatusnew');
         $bboffreasonnew = postedVar('bboffreasonnew');
         $gzipcompressnew = formOnOff('gzipcompressnew');
