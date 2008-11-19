@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -285,7 +285,7 @@ $db->query("CREATE TABLE ".$tablepre."lang_text (
     `langid` TINYINT UNSIGNED NOT NULL ,
     `phraseid` SMALLINT UNSIGNED NOT NULL ,
     `cdata` BLOB NOT NULL ,
-    UNIQUE `langid` ( `langid` , `phraseid` ) ,
+    PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
     INDEX ( `phraseid` )
   ) TYPE=MyISAM COMMENT = 'Translation Table'
 ");
@@ -719,12 +719,8 @@ show_result(X_INST_OK);
 
 // -- Insert Data -- //
 show_act("Inserting data into ".$tablepre."restricted");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('Anonymous', '1', '0');");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('xguest123', '1', '0');");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('||~|~||', '1', '1');");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('#|#', '1', '1');");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('//||//', '1', '1');");
-$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('<script', '1', '1');");
+$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('Anonymous', '0', '0');");
+$db->query("INSERT INTO ".$tablepre."restricted (`name`, `case_sensitivity`, `partial`) VALUES ('xguest123', '0', '0');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."forums");

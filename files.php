@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -27,8 +27,6 @@
  **/
 
 define('X_SCRIPT', 'files.php');
-
-// Dev Alpha Notes:  Need to implement same URL parsing used for cookies and $full_url to evaluate $virtual_path
 
 require 'header.php';
 

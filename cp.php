@@ -539,7 +539,11 @@ if ($action == "settings") {
         printsetting2($lang['textfilessizeh'], 'max_image_size_h_new', $max_image_sizes[1], 5);
         printsetting2($lang['textfilesthumbw'], 'max_thumb_size_w_new', $max_thumb_sizes[0], 5);
         printsetting2($lang['textfilesthumbh'], 'max_thumb_size_h_new', $max_thumb_sizes[1], 5);
-        printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
+        if (!ini_get('allow_url_fopen')) {
+            printsetting5($lang['attachimginpost'], $lang['no_url_fopen']);
+        } else {
+            printsetting1($lang['attachimginpost'], 'attachimgpostnew', $attachimgposton, $attachimgpostoff);
+        }
         printsetting1($lang['textremoteimages'], 'remoteimages', $remoteimageson, $remoteimagesoff);
         printsetting2($lang['textfilespath'], 'filespathnew', $SETTINGS['files_storage_path'], 50);
         printsetting2($lang['textfilesminsize'], 'filesminsizenew', ((int)$SETTINGS['files_min_disk_size']), 7);
@@ -562,8 +566,12 @@ if ($action == "settings") {
         printsetting2($lang['addtime'], 'addtimenew', $SETTINGS['addtime'], 3);
         printsetting1($lang['sigbbcode'], 'sigbbcodenew', $sigbbcodeon, $sigbbcodeoff);
         printsetting1($lang['sightml'], 'sightmlnew', $sightmlon, $sightmloff);
-        printsetting2($lang['max_avatar_size_w'], 'max_avatar_size_w_new', $max_avatar_sizes[0], 4);
-        printsetting2($lang['max_avatar_size_h'], 'max_avatar_size_h_new', $max_avatar_sizes[1], 4);
+        if (!ini_get('allow_url_fopen')) {
+            printsetting5($lang['max_avatar_size_w'], $lang['no_url_fopen']);
+        } else {
+            printsetting2($lang['max_avatar_size_w'], 'max_avatar_size_w_new', $max_avatar_sizes[0], 4);
+            printsetting2($lang['max_avatar_size_h'], 'max_avatar_size_h_new', $max_avatar_sizes[1], 4);
+        }
         printsetting1($lang['what_tickerstatus'], 'tickerstatusnew', $tickerstatuson, $tickerstatusoff);
         printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
         printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
@@ -576,12 +584,7 @@ if ($action == "settings") {
         </tr>
         <?php
         if (DEBUG) {
-            ?>
-            <tr class="tablerow">
-            <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $lang['captchastatus']; ?></td>
-            <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $lang['captchaindebug']; ?></td>
-            </tr>
-            <?php
+            printsetting5($lang['captchastatus'], $lang['captchaindebug']);
         } else {
             printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
             printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);

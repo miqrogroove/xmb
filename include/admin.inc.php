@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -307,7 +307,6 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="cp2.php?action=newsletter"><?php echo $lang['textnewsletter']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=search"><?php echo $lang['cpsearch']?></a><br />
     &raquo;&nbsp;<a href="cp.php?action=settings"><?php echo $lang['textsettings']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=lang"><?php echo $lang['translations']?></a><br />
     </td>
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
     &raquo;&nbsp;<a href="cp.php?action=forum"><?php echo $lang['textforums']?></a><br />
@@ -325,6 +324,7 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="cp2.php?action=smilies"><?php echo $lang['smilies']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=templates"><?php echo $lang['templates']?></a><br />
     &raquo;&nbsp;<a href="cp2.php?action=themes"><?php echo $lang['themes']?></a><br />
+    &raquo;&nbsp;<a href="cp2.php?action=lang"><?php echo $lang['translations']?></a><br />
     </td>
     </tr>
     <tr class="ctrcategory">
@@ -436,6 +436,17 @@ function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     <tr class="tablerow">
     <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc?></td>
     <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>"><?php echo $value?></textarea></td>
+    </tr>
+    <?php
+}
+
+function printsetting5($settingDesc, $errorMsg) {
+    global $THEME;
+
+    ?>
+    <tr class="tablerow">
+    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc; ?></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $errorMsg; ?></td>
     </tr>
     <?php
 }

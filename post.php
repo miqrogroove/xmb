@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -194,24 +194,32 @@ if ($forum['attachstatus'] == 'on') {
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
+$posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
+if (!isValidFilename($posticon)) {
+    $posticon = '';
+} elseif (!file_exists($smdir.'/'.$posticon)) {
+    $posticon = '';
+}
+
 $listed_icons = 0;
 $icons = '<input type="radio" name="posticon" value="" /> <img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
+$querysmilie = $db->query("SELECT url, code FROM ".X_PREFIX."smilies WHERE type='picon'");
+while($smilie = $db->fetch_array($querysmilie)) {
+    $icons .= ' <input type="radio" name="posticon" value="'.$smilie['url'].'" /><img src="'.$smdir.'/'.$smilie['url'].'" alt="'.$smilie['code'].'" border="0" />';
+    $listed_icons++;
+    if ($listed_icons == 9) {
+        $icons .= '<br />';
+        $listed_icons = 0;
+    }
+}
+$db->free_result($querysmilie);
+
 if ($action != 'edit') {
-    $captchapostcheck = '';
+    $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
+
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
         require ROOT.'include/captcha.inc.php';
     }
-
-    $querysmilie = $db->query("SELECT url, code FROM ".X_PREFIX."smilies WHERE type='picon'");
-    while($smilie = $db->fetch_array($querysmilie)) {
-        $icons .= ' <input type="radio" name="posticon" value="'.$smilie['url'].'" /><img src="'.$smdir.'/'.$smilie['url'].'" alt="'.$smilie['code'].'" border="0" />';
-        $listed_icons += 1;
-        if ($listed_icons == 9) {
-            $icons .= '<br />';
-            $listed_icons = 0;
-        }
-    }
-    $db->free_result($querysmilie);
 }
 
 eval('$bbcodescript = "'.template('functions_bbcode').'";');
@@ -250,13 +258,13 @@ if (isset($emailnotify) && $emailnotify == 'yes') {
     $emailnotify = 'no';
 }
 
-if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($spellcheckersubmit))) {
+if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
     $sc = true;
 } else {
     $sc = false;
 }
 
-if ((isset($previewpost) || $sc) && isset($usesig) && $usesig == 'yes') {
+if ((isset($previewpost) || $sc) && $usesig == 'yes') {
     $usesigcheck = $cheHTML;
 } else if (isset($previewpost) || $sc) {
     $usesigcheck = '';
@@ -285,21 +293,12 @@ if (X_STAFF) {
     $closecheck = '';
 }
 
-$posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
-if ($posticon != '') {
-    $thread['icon'] = (file_exists($smdir.'/'.$posticon)) ? "<img src=\"$smdir/$posticon\" />" : '';
-    $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
-} else {
-    $thread['icon'] = '';
-    $icons = str_replace('<input type="radio" name="posticon" value="" />', '<input type="radio" name="posticon" value="" checked="checked" />', $icons);
-}
-
 $messageinput = postedVar('message', '', TRUE, FALSE);  //postify() is responsible for DECODING if html is allowed.
 
 if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
     $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
-    if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
+    if ($sc) {
         if (isset($language) && !isset($updates_submit)) {
             require ROOT.'include/spelling.inc.php';
             $spelling = new spelling($language);
@@ -335,20 +334,6 @@ if ($SETTINGS['spellcheck'] == 'on') {
 $bbcodeinsert = bbcodeinsert();
 $smilieinsert = smilieinsert();
 
-//Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-$subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));  //per viewthread design of version 1.9.9, HTML is never allowed in subjects.
-$message = rawHTMLmessage($messageinput);
-
-if (isset($previewpost)) {
-    $currtime = $onlinetime;
-    $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-    $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-    $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-    $dissubject = $subject;
-    $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-    eval('$preview = "'.template('post_preview').'";');
-}
-
 switch($action) {
     case 'reply':
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
@@ -374,11 +359,10 @@ switch($action) {
                 $replyvalid = FALSE;
             }
             foreach($deletes as $aid) {
-                $message = str_replace("[file]{$aid}[/file]", '', $message);
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on') {
-                $result = extractRemoteImages(0, $message, $messageinput);
+                $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     softerror($attachmentErrors[$result]);
                     $replyvalid = FALSE;
@@ -483,10 +467,6 @@ switch($action) {
         }
 
         if ($replyvalid) {
-            if ($usesig != "yes") {
-                $usesig = "no";
-            }
-
             $thatime = $onlinetime;
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
@@ -557,6 +537,9 @@ switch($action) {
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     attachUploadedFile('attach', $pid);
+                    if ($SETTINGS['attach_remote_images'] == 'on') {
+                        extractRemoteImages($pid, $messageinput);
+                    }
                 } elseif ($username != 'Anonymous') {
                     claimOrphanedAttachments($pid);
                 }
@@ -568,6 +551,19 @@ switch($action) {
         }
 
         if (!$replyvalid) {
+            if (isset($repquote) && ($repquote = (int) $repquote)) {
+                $query = $db->query("SELECT p.message, p.fid, p.author, f.postperm, f.userlist, f.password, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
+                $thaquote = $db->fetch_array($query);
+                $db->free_result($query);
+                $quotefid = $thaquote['fid'];
+
+                $quoteperms = checkForumPermissions($thaquote);
+                if ($quoteperms[X_PERMS_VIEW]) {
+                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
+                    $messageinput = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
+                }
+            }
+
             // Fill $attachfile
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 $attachment = '';
@@ -581,9 +577,9 @@ switch($action) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strstr($message, $bbcode) === FALSE) {
                             if ($counter == 0) {
-                                $message .= "\r\n\r\n";
+                                $messageinput .= "\r\n\r\n";
                             }
-                            $message .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
+                            $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
                         }
                     }
@@ -594,6 +590,25 @@ switch($action) {
                     $attachfile = $attachment;
                 }
                 $db->free_result($query);
+            }
+
+            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
+            $subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));
+            $message = rawHTMLmessage($messageinput);
+
+            if (isset($previewpost)) {
+                if ($posticon != '') {
+                    $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
+                } else {
+                    $thread['icon'] = '';
+                }
+                $currtime = $onlinetime;
+                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+                $dissubject = $subject;
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                eval('$preview = "'.template('post_preview').'";');
             }
 
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
@@ -611,19 +626,6 @@ switch($action) {
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {
                 $closeoption = '';
-            }
-
-            if (isset($repquote) && ($repquote = (int) $repquote)) {
-                $query = $db->query("SELECT p.message, p.fid, p.author, f.postperm, f.userlist, f.password, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
-                $thaquote = $db->fetch_array($query);
-                $db->free_result($query);
-                $quotefid = $thaquote['fid'];
-
-                $quoteperms = checkForumPermissions($thaquote);
-                if ($quoteperms[X_PERMS_VIEW]) {
-                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
-                    $message = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
-                }
             }
 
             $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
@@ -694,11 +696,10 @@ switch($action) {
                 $topicvalid = FALSE;
             }
             foreach($deletes as $aid) {
-                $message = str_replace("[file]{$aid}[/file]", '', $message);
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on') {
-                $result = extractRemoteImages(0, $message, $messageinput);
+                $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     softerror($attachmentErrors[$result]);
                     $topicvalid = FALSE;
@@ -877,6 +878,9 @@ switch($action) {
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     attachUploadedFile('attach', $pid);
+                    if ($SETTINGS['attach_remote_images'] == 'on') {
+                        extractRemoteImages($pid, $messageinput);
+                    }
                 } elseif ($username != 'Anonymous') {
                     claimOrphanedAttachments($pid);
                 }
@@ -905,9 +909,9 @@ switch($action) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strstr($message, $bbcode) === FALSE) {
                             if ($counter == 0) {
-                                $message .= "\r\n\r\n";
+                                $messageinput .= "\r\n\r\n";
                             }
-                            $message .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
+                            $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
                         }
                     }
@@ -918,6 +922,25 @@ switch($action) {
                     $attachfile = $attachment;
                 }
                 $db->free_result($query);
+            }
+
+            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
+            $subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));
+            $message = rawHTMLmessage($messageinput);
+
+            if (isset($previewpost)) {
+                if ($posticon != '') {
+                    $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
+                } else {
+                    $thread['icon'] = '';
+                }
+                $currtime = $onlinetime;
+                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+                $dissubject = $subject;
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                eval('$preview = "'.template('post_preview').'";');
             }
 
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
@@ -982,7 +1005,7 @@ switch($action) {
         }
 
         if ($editvalid) {
-            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+            if ($forum['attachstatus'] == 'on') {
                 $result = attachUploadedFile('attach', $pid);
                 if ($result < 0 And $result != X_EMPTY_UPLOAD) {
                     softerror($attachmentErrors[$result]);
@@ -998,7 +1021,7 @@ switch($action) {
                 }
                 $temp = '';
                 if ($SETTINGS['attach_remote_images'] == 'on') {
-                    $result = extractRemoteImages($pid, $messageinput, $temp);
+                    $result = extractRemoteImages($pid, $messageinput);
                     if ($result < 0) {
                         softerror($attachmentErrors[$result]);
                         $editvalid = FALSE;
@@ -1085,46 +1108,13 @@ switch($action) {
         if (!$editvalid) {
             // Fill $postinfo
             $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
-            if (onSubmit('editsubmit') || isset($previewpost) || (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit)))) {
+            if (onSubmit('editsubmit') || isset($previewpost) || $sc) {
                 $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon);
             } else {
                 $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
             }
-
-            if ($postinfo['bbcodeoff'] == 'yes') {
-                $offcheck1 = $cheHTML;
-            } else {
-                $offcheck1 = '';
-            }
-
-            if ($postinfo['smileyoff'] == 'yes') {
-                $offcheck2 = $cheHTML;
-            } else {
-                $offcheck2 = '';
-            }
-
-            if ($postinfo['usesig'] == 'yes') {
-                $offcheck3 = $cheHTML;
-            } else {
-                $offcheck3 = '';
-            }
-
-            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='picon'");
-            while($smilie = $db->fetch_array($querysmilie)) {
-                if ($postinfo['icon'] == $smilie['url']) {
-                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" checked=\"checked\"/><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
-                } else {
-                    $icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" /><img src=\"$smdir/$smilie[url]\" alt=\"$smilie[code]\" />";
-                }
-                $listed_icons += 1;
-                if ($listed_icons == 9) {
-                    $icons .= '<br />';
-                    $listed_icons = 0;
-                }
-            }
-            $db->free_result($querysmilie);
 
             // Fill $attachment
             $attachment = '';
@@ -1152,6 +1142,49 @@ switch($action) {
                 $attachment .= $attachfile;
             }
             $db->free_result($query);
+
+            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
+            $subject = rawHTMLsubject($postinfo['subject']);
+            $message = rawHTMLmessage($postinfo['message']);
+
+            if (isset($previewpost)) {
+                if ($postinfo['icon'] != '') {
+                    $thread['icon'] = "<img src=\"$smdir/{$postinfo['icon']}\" />";
+                } else {
+                    $thread['icon'] = '';
+                }
+                $currtime = $onlinetime;
+                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+                $dissubject = $subject;
+                $message1 = $postinfo['message'];
+                if ($SETTINGS['editedby'] == 'on') {
+                    $message1 .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
+                }
+                $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                eval('$preview = "'.template('post_preview').'";');
+            }
+
+            if ($postinfo['bbcodeoff'] == 'yes') {
+                $offcheck1 = $cheHTML;
+            } else {
+                $offcheck1 = '';
+            }
+
+            if ($postinfo['smileyoff'] == 'yes') {
+                $offcheck2 = $cheHTML;
+            } else {
+                $offcheck2 = '';
+            }
+
+            if ($postinfo['usesig'] == 'yes') {
+                $offcheck3 = $cheHTML;
+            } else {
+                $offcheck3 = '';
+            }
+
+            $icons = str_replace('<input type="radio" name="posticon" value="'.$postinfo['icon'].'" />', '<input type="radio" name="posticon" value="'.$postinfo['icon'].'" checked="checked" />', $icons);
 
             $postinfo['message'] = rawHTMLmessage($postinfo['message']);
             $postinfo['subject'] = rawHTMLsubject($postinfo['subject']);

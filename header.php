@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -46,7 +46,7 @@ $alpha = 'Alpha Three';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081116;
+$versionbuild = 20081119;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -218,10 +218,11 @@ if (empty($full_url)) {
 
     $cookiesecure = ($array['scheme'] == 'https');
 
-    if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/i", $array['host'])) {
+    $cookiedomain = $array['host'];
+    if (strpos($cookiedomain, '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
         $cookiedomain = '';
-    } else {
-        $cookiedomain = str_replace('www', '', $array['host']);
+    } elseif (substr($cookiedomain, 0, 4) === 'www.') {
+        $cookiedomain = substr($cookiedomain, 3);
     }
 
     if (!isset($array['path'])) {
@@ -230,7 +231,7 @@ if (empty($full_url)) {
     $cookiepath = $array['path'];
 
     if (DEBUG) {
-        debugURLsettings($cookiesecure, $array['host'], $cookiepath);
+        debugURLsettings($cookiesecure, $cookiedomain, $cookiepath);
     }
     unset($array);
 }
@@ -238,7 +239,7 @@ if (empty($full_url)) {
 // Common XSS Protection: XMB disallows '<' in all URLs.
 $url_check = Array('%3c', '<');
 foreach($url_check as $name) {
-    if (strpos(strtolower($url), $name)) {
+    if (strpos(strtolower($url), $name) !== FALSE) {
         header('HTTP/1.0 403 Forbidden');
         exit('403 Forbidden - URL rejected by XMB');
     }
@@ -246,18 +247,16 @@ foreach($url_check as $name) {
 unset($url_check);
 
 // Check for double-slash problems in REQUEST_URI
-if ($url != $cookiepath) {
-    if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
-        $fixed_url = str_replace('//', '/', $url);
-        if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath Or substr($fixed_url, strlen($cookiepath), 1) == '/' Or $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
-            header('HTTP/1.0 404 Not Found');
-            exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
-        } else {
-            $fixed_url = $full_url.substr($fixed_url, strlen($cookiepath));
-            header('HTTP/1.0 301 Moved Permanently');
-            header("Location: $fixed_url");
-            exit('XMB detected an invalid URL');
-        }
+if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
+    $fixed_url = str_replace('//', '/', $url);
+    if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath Or substr($fixed_url, strlen($cookiepath), 1) == '/' Or $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
+        header('HTTP/1.0 404 Not Found');
+        exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
+    } else {
+        $fixed_url = $full_url.substr($fixed_url, strlen($cookiepath));
+        header('HTTP/1.0 301 Moved Permanently');
+        header("Location: $fixed_url");
+        exit('XMB detected an invalid URL');
     }
 }
 
@@ -322,9 +321,27 @@ if ($onlinetodaycount < 5) {
     $onlinetodaycount = 30;
 }
 
-if (ini_get('upload_max_filesize') < $SETTINGS['maxattachsize']) {
-    $SETTINGS['maxattachsize'] = ini_get('upload_max_filesize');
+// Validate maxattachsize with PHP configuration.
+$inimax = trim(ini_get('upload_max_filesize'));
+$rchr = strtoupper(substr($inimax, -1));
+switch ($rchr) {
+case 'G':
+    $inimax *= 1073741824;
+    break;
+case 'M':
+    $inimax *= 1048576;
+    break;
+case 'K':
+    $inimax *= 1024;
+    break;
+default:
+    $inimax = intval($inimax);
+    break;
 }
+if ($inimax < $SETTINGS['maxattachsize']) {
+    $SETTINGS['maxattachsize'] = $inimax;
+}
+unset($inimax, $rchr);
 
 
 /* Set Global HTTP Headers */
@@ -423,13 +440,12 @@ if (isset($tid) && is_numeric($tid) && $action != 'templates') {
     $db->free_result($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
- } else if (isset($fid) && is_numeric($fid)) {
-    $q = $db->query("SELECT theme FROM ".X_PREFIX."forums WHERE fid=$fid");
-    if ($db->num_rows($q) === 1) {
-        $forumtheme = $db->result($q, 0);
-        $db->free_result($q);
-    } else {
+} else if (isset($fid) && is_numeric($fid)) {
+    $forum = getForum($fid);
+    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
         $forumtheme = 0;
+    } else {
+        $forumtheme = $forum['theme'];
     }
 }
 

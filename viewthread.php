@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -504,6 +504,11 @@ if ($action == '') {
 
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
+        // Perform automatic maintenance
+        if ($post['type'] == 'post' And $post['fid'] != $thread['fid']) {
+            $db->query('UPDATE '.X_PREFIX.'posts SET fid='.$thread['fid'].' WHERE pid='.$post['pid']);
+        }
+
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
         $onlinenow = $lang['memberisoff'];

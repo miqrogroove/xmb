@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -471,6 +471,7 @@ $lang['nou2umsg'] = "You currently do not have any U2U Messages in your inbox.";
 $lang['no_buddies'] = "There are no addresses in your address book";
 $lang['no_poll'] = "This is not a poll!";
 $lang['no_templates'] = "templates.xmb was not found.";
+$lang['no_url_fopen'] = "This feature has been disabled by the allow_url_fopen directive in your server's PHP configuration.";
 $lang['numberusing'] = "Used:";
 $lang['onlinebuddy'] = "Viewing address book";
 $lang['onlinebuddyadd'] = "Adding user(s) to address book";

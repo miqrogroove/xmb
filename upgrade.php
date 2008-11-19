@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -251,7 +251,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         `langid` TINYINT UNSIGNED NOT NULL ,
         `phraseid` SMALLINT UNSIGNED NOT NULL ,
         `cdata` BLOB NOT NULL ,
-        UNIQUE `langid` ( `langid` , `phraseid` ) ,
+        PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
         INDEX ( `phraseid` )
       ) COMMENT = 'Translation Table'");
 

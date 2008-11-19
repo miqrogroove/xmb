@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -518,6 +518,7 @@ if ($action == 'lang') {
                     $db->query("DELETE FROM ".X_PREFIX."lang_base WHERE langid=$deleteid");
                 }
             }
+            $db->query('OPTIMIZE TABLE '.X_PREFIX.'lang_text');
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['translation_delete'].'</td></tr>';
     }

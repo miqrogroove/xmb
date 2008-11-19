@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -44,31 +44,30 @@ if ($show_full_info) {
 }
 
 function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
-    if (X_SCRIPT != 'files.php') {
-        $secure = FALSE;
-        if (isset($_SERVER['HTTPS'])) {
-            if ($_SERVER['HTTPS'] != 'off') {
-                $secure = TRUE;
-            }
+    $secure = FALSE;
+    if (isset($_SERVER['HTTPS'])) {
+        if ($_SERVER['HTTPS'] != 'off') {
+            $secure = TRUE;
         }
-        $host = $_SERVER['HTTP_HOST'];
-        $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
+    }
+    $host = $_SERVER['HTTP_HOST'];
+    $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
+    $success = FALSE;
+    if ($hostsetting != $host And $host != 'www'.$hostsetting) {
+        $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
+    } elseif ($securesetting != $secure) {
+        $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
+    } elseif ($pathsetting != $path) {
+        $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.path;
+    } elseif (substr($pathsetting, -1) != '/') {
+        $reason = 'A forward-slash is required at the end of the URL.';
+    } else {
         $success = TRUE;
-        if ($hostsetting != $host) {
-            $success = FALSE;
-            $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
-        } elseif ($securesetting != $secure) {
-            $success = FALSE;
-            $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-        } elseif ($pathsetting != $path) {
-            $success = FALSE;
-            $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.path;
-        }
+    }
 
-        if (!$success) {
-            exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
-        }
+    if (!$success) {
+        exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
     }
 }
 

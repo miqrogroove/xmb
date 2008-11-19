@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -30,15 +30,6 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-/**
-* MySQL 3.x, and 4.0 database access.
-*
-* Unless you have updated client libraries or turned on backwards compatible authentication
-* this class is not compatible with MySQL 4.1 or later (which includes MySQL 5.0)
-*
-* For generic access to MySQL databases, use this class.
-* Must be instantiated before first use.
-*/
 class dbstuff {
     var $querynum   = 0;
     var $querylist  = array();
@@ -61,7 +52,8 @@ class dbstuff {
             echo 'A connection to the Database could not be established.<br />';
             echo 'Please check your username, password, database name and host.<br />';
             echo 'Also make sure <i>config.php</i> is rightly configured!<br /><br />';
-            $this->panic();
+            $sql = '';
+            $this->panic($sql);
         }
 
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
@@ -131,7 +123,7 @@ class dbstuff {
         return mysql_field_name($query, $field);
     }
 
-    function panic($sql = '') {
+    function panic(&$sql) {
         // Check that we actually made a connection
         if ($this->link === FALSE) {
             $error = mysql_error();
@@ -142,7 +134,10 @@ class dbstuff {
         }
 
     	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
-			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />".'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />";
+            if ($sql != '') {
+                echo 'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+            }
         } else {
             echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
     	}
@@ -163,7 +158,15 @@ class dbstuff {
         exit;
     }
 
+    // Can be used to make any expression query-safe, but see below.  Example:
+    // $db->query('UPDATE a SET b = "'.$db->escape("Hello, my name is $rawinput").'"');
     function escape($rawstring) {
+        return mysql_real_escape_string($rawstring, $this->link);
+    }
+    
+    // Preferred for performance when escaping any string variable.  Example:
+    // $db->query('UPDATE a SET b = "Hello, my name is '.$db->escape_var($rawinput).'"');
+    function escape_var(&$rawstring) {
         return mysql_real_escape_string($rawstring, $this->link);
     }
 
@@ -175,7 +178,7 @@ class dbstuff {
         return mysql_real_escape_string(preg_quote($rawstring), $this->link);
     }
 
-    function query($sql, $overwriteErrorPerms=false) {
+    function query($sql) {
         $this->start_timer();
         $query = mysql_query($sql, $this->link);
         if ($query == false) {

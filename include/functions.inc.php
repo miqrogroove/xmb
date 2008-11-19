@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -178,6 +178,7 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         $onlineuser = 'xguest123';
         $self['ban'] = '';
         $self['sig'] = '';
+        $self['uid'] = 0;
         $self['username'] = '';
     }
 
@@ -910,7 +911,7 @@ function updatethreadcount($tid) {
     $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 1");
     $lp = $db->fetch_array($query);
     $db->free_result($query);
-    $query = $db->query("SELECT date, username, pid FROM ".X_PREFIX."logs WHERE tid='$tid' AND action='bump' ORDER BY date DESC LIMIT 1");
+    $query = $db->query("SELECT date, username FROM ".X_PREFIX."logs WHERE tid='$tid' AND action='bump' ORDER BY date DESC LIMIT 1");
     if ($db->num_rows($query) == 1) {
         $lb = $db->fetch_array($query);
         $lp['dateline'] = $lb['date'];
