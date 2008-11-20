@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1313,7 +1313,6 @@ if ($action == 'forum') {
         <?php
     } else if (onSubmit('forumsubmit') && !$fdetails) {
         $queryforum = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
-        $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
             $forum['status'] = formOnOff('status'.$forum['fid']);
@@ -1377,12 +1376,14 @@ if ($action == 'forum') {
 
             if ($delete == $group['fid']) {
                 $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup=$delete");
-                while($forum = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."forums SET fup=0 WHERE type='forum' AND fup=$delete");
+                if ($db->num_rows($query) > 0) {
+                    message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
+                } else {
+                    $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid=$delete");
                 }
-                $db->query("DELETE FROM ".X_PREFIX."forums WHERE type='group' AND fid=$delete");
+            } else {
+                $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=$displayorder, status='{$group['status']}' WHERE fid={$group['fid']}");
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET name='$name', displayorder=$displayorder, status='{$group['status']}' WHERE fid={$group['fid']}");
         }
 
         $newgname = addslashes(htmlspecialchars(postedVar('newgname', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
@@ -1454,12 +1455,29 @@ if ($action == 'forum') {
             attachstatus='$attachstatusnew',
             password='$passwordnew'
             WHERE fid='$fdetails'"
-       );
+        );
 
+        $dsuccess = TRUE;
         if ($delete) {
-            $db->query("DELETE FROM ".X_PREFIX."forums WHERE fid=$delete");
+            if ($delete == $fdetails) {
+                if ($db->num_rows($db->query('SELECT tid FROM '.X_PREFIX.'threads WHERE fid='.$fdetails)) > 0) {
+                    $dsuccess = FALSE;
+                } elseif ($db->num_rows($db->query('SELECT fid FROM '.X_PREFIX.'forums WHERE fup='.$fdetails)) > 0) {
+                    $dsuccess = FALSE;
+                } elseif ($db->num_rows($db->query('SELECT pid FROM '.X_PREFIX.'posts WHERE fid='.$fdetails)) > 0) {
+                    $dsuccess = FALSE;
+                } else {
+                    $db->query("DELETE FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub') AND fid=".$fdetails);
+                    $dsuccess = TRUE;
+                }
+                if (!$dsuccess) {
+                    message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
+                }
+            }
         }
-        echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
+        if ($dsuccess) {
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
+        }
     }
 }
 
