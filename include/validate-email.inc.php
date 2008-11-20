@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -45,7 +45,7 @@ class EmailAddressValidator {
      * @param   strEmailAddress     Email address to be checked
      * @return  True if email is valid, false if not
      */
-    function check_email_address($strEmailAddress) {
+    function check_email_address(&$strEmailAddress) {
         
         // If magic quotes is "on", email addresses with quote marks will
         // fail validation because of added escape characters. Uncommenting
@@ -101,7 +101,7 @@ class EmailAddressValidator {
      * @param   strLocalPortion     Text to be checked
      * @return  True if local portion is valid, false if not
      */
-    function check_local_portion($strLocalPortion) {
+    function check_local_portion(&$strLocalPortion) {
         // Local portion can only be from 1 to 64 characters, inclusive.
         // Please note that servers are encouraged to accept longer local
         // parts than 64 characters.
@@ -132,7 +132,7 @@ class EmailAddressValidator {
      * @param   strDomainPortion     Text to be checked
      * @return  True if domain portion is valid, false if not
      */
-    function check_domain_portion($strDomainPortion) {
+    function check_domain_portion(&$strDomainPortion) {
         // Total domain can only be from 1 to 255 characters, inclusive
         if (!$this->check_text_length($strDomainPortion, 1, 255)) {
             return false;
@@ -171,7 +171,7 @@ class EmailAddressValidator {
      * @param   intMaximum  Maximum acceptable length
      * @return  True if string is within bounds (inclusive), false if not
      */
-    function check_text_length($strText, $intMinimum, $intMaximum) {
+    function check_text_length(&$strText, $intMinimum, $intMaximum) {
         // Minimum and maximum are both inclusive
         $intTextLength = strlen($strText);
         if (($intTextLength < $intMinimum) || ($intTextLength > $intMaximum)) {

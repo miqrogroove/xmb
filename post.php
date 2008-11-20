@@ -468,6 +468,7 @@ switch($action) {
 
         if ($replyvalid) {
             $thatime = $onlinetime;
+            postLinkBBcode($messageinput);
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
@@ -552,15 +553,14 @@ switch($action) {
 
         if (!$replyvalid) {
             if (isset($repquote) && ($repquote = (int) $repquote)) {
-                $query = $db->query("SELECT p.message, p.fid, p.author, f.postperm, f.userlist, f.password, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."forums f WHERE p.pid=$repquote AND f.fid=p.fid");
+                $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM ".X_PREFIX."posts p WHERE p.pid=$repquote");
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
-                $quotefid = $thaquote['fid'];
-
-                $quoteperms = checkForumPermissions($thaquote);
-                if ($quoteperms[X_PERMS_VIEW]) {
+                $quoteperms = checkForumPermissions(getForum($thaquote['fid']));
+                if ($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
-                    $messageinput = "[quote][i]{$lang['origpostedby']} {$thaquote['author']}[/i]\n".rawHTMLmessage(stripslashes($thaquote['message']))." [/quote]"; //Messages are historically double-quoted.
+                    //Note this bbcode is a pseudo-link. Treat it as cdata.  Do not recode the author string.
+                    $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]".rawHTMLmessage(stripslashes($thaquote['message']))."[/rquote]"; //Messages are historically double-quoted.
                 }
             }
 
@@ -607,6 +607,7 @@ switch($action) {
                 $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
+                postLinkBBcode($messageinput);
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -814,6 +815,7 @@ switch($action) {
         if ($topicvalid) {
             $thatime = $onlinetime;
 
+            postLinkBBcode($messageinput);
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
@@ -939,6 +941,7 @@ switch($action) {
                 $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
+                postLinkBBcode($messageinput);
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -996,11 +999,7 @@ switch($action) {
         $status1 = modcheckPost($self['username'], $forum['moderator'], $orig['status']);
 
         if ($status1 != 'Moderator' And ($self['username'] != $orig['author'] Or $thread['closed'] != '')) {
-            if ($editvalid) {
-                softerror($lang['noedit']);
-            } else {
-                error($lang['noedit'], FALSE);
-            }
+            softerror($lang['noedit']);
             $editvalid = FALSE;
         }
 
@@ -1063,6 +1062,7 @@ switch($action) {
                     $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
                 }
 
+                postLinkBBcode($messageinput);
                 $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
                 $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
 
@@ -1162,6 +1162,7 @@ switch($action) {
                 if ($SETTINGS['editedby'] == 'on') {
                     $message1 .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
                 }
+                postLinkBBcode($message1);
                 $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -1209,6 +1210,37 @@ function bbcodeinsert() {
         eval('$bbcode = "'.template('functions_bbcodeinsert').'";');
     }
     return $bbcode;
+}
+
+function postLinkBBcode(&$message) {
+    global $db;
+    
+    $items = array();
+    $pattern = "@\\[pid](\\d+)\\[/pid]@si";
+    preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
+    if (count($results) == 0) {
+        return TRUE;
+    }
+    foreach($results as $result) {
+        $items[] = $result[1];
+    }
+
+    $pids = implode(', ', $items);
+    $query = $db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) WHERE pid IN ($pids)");
+    while($row = $db->fetch_array($query)) {
+        $perms = checkForumPermissions(getForum($row['fid']));
+        if ($perms[X_PERMS_VIEW] And $perms[X_PERMS_PASSWORD]) {
+            if ($row['subject'] != '') {
+                $subject = stripslashes($row['subject']);
+            } else {
+                $subject = stripslashes($row['tsubject']);
+            }
+            $pattern = "[pid]{$row['pid']}[/pid]";
+            $replacement = "[pid={$row['pid']}&amp;tid={$row['tid']}]{$subject}[/pid]";
+            $message = str_replace($pattern, $replacement, $message);
+        }
+    }
+    return TRUE;
 }
 
 function softerror($msg) {

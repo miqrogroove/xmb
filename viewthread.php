@@ -750,7 +750,10 @@ if ($action == '') {
         if ($post['type'] == 'post') {
 
             if ($post['subject'] != '') {
-                $post['subject'] = rawHTMLsubject(stripslashes($post['subject'])).'<br />';
+                $linktitle = rawHTMLsubject(stripslashes($post['subject']));
+                $post['subject'] = $linktitle.'<br />';
+            } else {
+                $linktitle = $thread['subject'];
             }
 
             eval('$posts .= "'.template('viewthread_post').'";');

@@ -486,7 +486,13 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode($message, $allowimgcode) {
-    global $lang;
+    global $lang, $full_url, $imgdir;
+
+    $patterns = array();
+    $replacements = array();
+    $patterns[] = "@\\[rquote=(\\d+)&amp;tid=(\\d+)&amp;author=(.+?)](.*?)\\[/rquote]@si";
+    $replacements[] = '[quote]<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><em><!-- /nobr -->'.$lang['origpostedby'].' $3</em><img src="'.$imgdir.'/lastpost.gif" border="0" alt="" /></a>'."\n".'$4[/quote]';
+    $message = preg_replace($patterns, $replacements, $message);
 
     $find = array(
         0 => '[b]',
@@ -513,8 +519,7 @@ function bbcode($message, $allowimgcode) {
         21 => '[/list=1]',
         22 => '[/list=a]',
         23 => '[/list=A]',
-        24 => '[*]',
-        25 => '<br />'
+        24 => '[*]'
     );
 
     $replace = array(
@@ -542,8 +547,7 @@ function bbcode($message, $allowimgcode) {
         21 => '</ol>',
         22 => '</ol>',
         23 => '</ol>',
-        24 => '<li />',
-        25 => '<br />'
+        24 => '<li />'
     );
 
     $message = str_replace($find, $replace, $message);
@@ -561,6 +565,8 @@ function bbcode($message, $allowimgcode) {
     $replacements[] = '<span style="font-family: $1;">$2</span>';
     $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
     $replacements[] = '<div style="text-align: $1;">$2</div>';
+    $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
+    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong><img src="'.$imgdir.'/lastpost.gif" border="0" alt="" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {

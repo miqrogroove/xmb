@@ -192,6 +192,7 @@ function attachRemoteFile($url, $pid=0) {
     // Verify that the file is actually an image.
     $result = getimagesize($filepath);
     if ($result === FALSE) {
+        unlink($filepath);
         return X_NOT_AN_IMAGE;
     }
     $filetype = $db->escape(image_type_to_mime_type($result[2]));
@@ -816,7 +817,7 @@ function extractRemoteImages($pid, &$message) {
     foreach($results as $result) {
         if (isset($result[4])) {
             $item['code'] = $result[0];
-            $item['url'] = $result[4];
+            $item['url'] = htmlspecialchars_decode($result[4], ENT_NOQUOTES);
             $items[] = $item;
         }
     }
