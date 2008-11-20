@@ -585,7 +585,7 @@ if ($action == '') {
                 $sr = $post['status'];
                 $rankinfo = explode(",", $specialrank[$sr]);
                 $rank['allowavatars'] = $rankinfo[4];
-                $rank['title'] = $rankinfo[1];
+                $rank['title'] = $lang[$status_translate[$status_enum[$sr]]];
                 $rank['stars'] = $rankinfo[3];
                 $rank['avatarrank'] = $rankinfo[5];
             } else if ($post['status'] == 'Banned') {

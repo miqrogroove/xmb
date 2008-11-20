@@ -183,7 +183,10 @@ function attachRemoteFile($url, $pid=0) {
     }
     
     $filesize = strlen($file);
-    
+    if ($filesize > $SETTINGS['maxattachsize']) {
+        return X_ATTACH_SIZE_EXCEEDED;
+    }
+
     // Write to disk
     $handle = fopen($filepath, 'wb');
     fwrite($handle, $file);

@@ -3355,7 +3355,7 @@ $bbcodescript
 <td bgcolor="$altbg1">$lang[attachment]</td>
 <td bgcolor="$altbg2">
 <input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
-<input type="file" name="attach" size="20" />
+<input type="file" name="attach" size="20" />$attachlimits
 </td>
 </tr>
 

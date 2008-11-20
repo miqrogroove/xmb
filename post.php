@@ -191,6 +191,7 @@ nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
 if ($forum['attachstatus'] == 'on') {
     require 'include/attach.inc.php';
+    $attachlimits = $lang['attachmaxsize'].' '.getSizeFormatted($SETTINGS['maxattachsize']).'.  '.$lang['attachmaxdims'].' '.$SETTINGS['max_image_size'].'.';
     eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
