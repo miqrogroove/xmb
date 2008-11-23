@@ -159,7 +159,7 @@ switch($action) {
         }
 
         if (!isset($searchsubmit) && !isset($page)) {
-            $forumselect = forumList('srchfid', FALSE, TRUE);
+            $forumselect = forumList('srchfid', FALSE, TRUE, getInt('fid'));
             eval('$search = "'.template('misc_search').'";');
             $misc = $search;
         } else {

@@ -240,6 +240,9 @@ if ($SETTINGS['subject_in_title'] == 'on') {
     $threadSubject = '- '.$thread['subject'];
 }
 
+// Search-link
+$searchlink = makeSearchLink($forum['fid']);
+
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];

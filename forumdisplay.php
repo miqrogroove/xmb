@@ -95,6 +95,9 @@ if ($forum['type'] == 'sub') {
 }
 nav(fnameOut($forum['name']));
 
+// Search-link
+$searchlink = makeSearchLink($forum['fid']);
+
 eval('echo "'.template('header').'";');
 
 if ($perms[X_PERMS_POLL]) {

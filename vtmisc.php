@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -112,6 +112,9 @@ if ($tid > 0) {
 if ($SETTINGS['subject_in_title'] == 'on') {
     $threadSubject = '- '.rawHTMLsubject(stripslashes($forum['subject']));
 }
+
+// Search-link
+$searchlink = makeSearchLink($forum['fid']);
 
 if ($action == 'report') {
     nav($lang['textreportpost']);

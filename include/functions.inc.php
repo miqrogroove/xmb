@@ -1840,4 +1840,21 @@ function createLangFileSelect($currentLangFile) {
     }
     return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
 }
+
+function makeSearchLink($fid=0) {
+    global $imgdir, $lang, $SETTINGS;
+
+    if ($SETTINGS['searchstatus'] == 'on') {
+        $fid = intval($fid);
+        if ($fid == 0) {
+            $fid = '';
+        } else {
+            $fid = "&amp;fid=$fid";
+        }
+        return '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a>';
+    } else {
+        return '';
+    }
+}
+
 ?>

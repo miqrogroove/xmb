@@ -1774,7 +1774,7 @@ $bbcodescript
 <td class="navtd">
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
-<td class="navtd"><font class="navtd">$links $pluglink</font></td>
+<td class="navtd"><font class="navtd">$searchlink $links $pluglink</font></td>
 <td align="right"><a href="$siteurl" title="$sitename"><font class="navtd">$lang[backto] <img src="$imgdir/top_home.gif" border="0" alt="$sitename" /></font></a></td>
 </tr>
 </table>

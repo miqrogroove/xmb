@@ -46,7 +46,7 @@ $alpha = 'Alpha Three';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081119;
+$versionbuild = 20081123;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -523,9 +523,7 @@ $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
 // Search-link
-if ($SETTINGS['searchstatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search"><font class="navtd">'.$lang['textsearch'].'</font></a>';
-}
+$searchlink = makeSearchLink();
 
 // Faq-link
 if ($SETTINGS['faqstatus'] == 'on') {
