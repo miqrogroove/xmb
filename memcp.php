@@ -30,6 +30,8 @@ define('X_SCRIPT', 'memcp.php');
 
 require 'header.php';
 
+header('X-Robots-Tag: noindex');
+
 loadtemplates(
 'buddylist_buddy_offline',
 'buddylist_buddy_online',

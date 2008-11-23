@@ -1853,9 +1853,9 @@ function makeSearchLink($fid=0) {
         if ($fid == 0) {
             $fid = '';
         } else {
-            $fid = "&amp;fid=$fid";
+            $fid = "?fid=$fid";
         }
-        return '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a>';
+        return '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="search.php'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a>';
     } else {
         return '';
     }

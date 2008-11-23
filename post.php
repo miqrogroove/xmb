@@ -190,9 +190,7 @@ if ($forum['type'] == 'sub') {
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 
 // Search-link
-if ($SETTINGS['searchstatus'] == 'on') {
-    $searchlink = '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="misc.php?action=search&amp;fid='.$forum['fid'].'"><font class="navtd">'.$lang['textsearch'].'</font></a>';
-}
+$searchlink = makeSearchLink($forum['fid']);
 
 if ($forum['attachstatus'] == 'on') {
     require 'include/attach.inc.php';

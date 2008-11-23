@@ -53,11 +53,6 @@ loadtemplates(
 'misc_online_row',
 'misc_online_row_admin',
 'misc_online_today',
-'misc_search',
-'misc_search_nextlink',
-'misc_search_results',
-'misc_search_results_none',
-'misc_search_results_row',
 'misc_smilies',
 'popup_footer',
 'popup_header'
@@ -75,7 +70,6 @@ switch($action) {
         nav($lang['textlogout']);
         break;
     case 'search':
-        nav($lang['textsearch']);
         break;
     case 'lostpw':
         nav($lang['textlostpw']);
@@ -148,175 +142,21 @@ switch($action) {
         break;
 
     case 'search':
-        header('X-Robots-Tag: noindex');
-
-        if ($SETTINGS['searchstatus'] != 'on') {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if (!isset($searchsubmit) && !isset($page)) {
-            $forumselect = forumList('srchfid', TRUE, TRUE, getInt('fid'));
-            eval('$search = "'.template('misc_search').'";');
-            $misc = $search;
+        $newurl = $url;
+        if (substr($newurl, -22) == 'misc.php?action=search') {
+            $newurl = substr($newurl, 0, -22).'search.php';
         } else {
-            $srchtxt = postedVar('srchtxt', '', FALSE, FALSE, FALSE, 'g');
-            $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
-            $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
-            $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
-            $srchfid = postedArray('srchfid', 'int', '', FALSE, FALSE, FALSE, 'g');
-            $srchfield = postedVar('srchfield', '', FALSE, FALSE, FALSE, 'g');
-            $page = getInt('page');
-            $srchfrom = getInt('srchfrom');
-            if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
-                error($lang['nosearchq']);
-            }
-
-            if (strlen($srchuname) < 3) {
-                $srchuname = '';
-            }
-
-            validatePpp();
-
-            $searchresults = '';
-
-            if ($page < 1) {
-                $page = 1;
-            }
-            $offset = ($page-1) * ($ppp);
-            $start = $offset;
-            $pagenum = $page+1;
-
-            $forums = permittedForums(forumCache(), 'thread', 'csv');
-            $sql = "SELECT p.*, t.subject AS tsubject "
-                 . "FROM ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING(tid) INNER JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid "
-                 . "WHERE f.fid IN($forums)";
-            unset($forums);
-
-            if ($srchfrom <= 0) {
-                $srchfrom = $onlinetime;
-                $srchfromold = 0;
-            } else {
-                $srchfromold = $srchfrom;
-            }
-            $srchfrom = $onlinetime - $srchfrom;
-
-            $ext = array();
-            if (!empty($srchtxt)) {
-                $sqlsrch = array();
-                $srchtxtsq = explode(' ', $srchtxt);
-                $sql .= ' AND (';
-                foreach($srchtxtsq as $stxt) {
-                    $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
-                    $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
-                    if ($srchfield == 'body') {
-                        $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
-                    } else {
-                        $sqlsrch[] = "p.subject LIKE '%$dblikesub%'";
-                    }
-                }
-
-                $sql .= implode(') AND (', $sqlsrch);
-                $sql .= ')';
-                $ext[] = 'srchtxt='.rawurlencode($srchtxt);
-            }
-
-            if ($srchuname != '') {
-                $sql .= " AND p.author='$srchuname'";
-                $ext[] = 'srchuname='.rawurlencode($rawsrchuname);
-            }
-
-            if (count($srchfid) > 0) {
-                if ($srchfid[0] != 'all') {
-                    $srchfidcsv = implode(',', $srchfid);
-                    $sql .= " AND f.fid IN ($srchfidcsv)";
-                    $ext[] = "srchfid=$srchfidcsv";
-                }
-            }
-
-            if ($srchfrom) {
-                $sql .= " AND p.dateline >= $srchfrom";
-                $ext[] = "srchfrom=$srchfromold";
-            }
-
-            $sql .=" ORDER BY dateline DESC LIMIT $start, $ppp";
-
-            $querysrch = $db->query($sql);
-            $results = 0;
-            $results = $db->num_rows($querysrch);
-
-            $temparray = array();
-            $searchresults = '';
-
-            while($post = $db->fetch_array($querysrch)) {
-                if ($filter_distinct != 'yes' Or !array_key_exists($post['tid'], $temparray)) {
-                    $temparray[$post['tid']] = true;
-                    $message = stripslashes($post['message']);
-
-                    if (empty($srchtxt)) {
-                        $position = 0;
-                    } else {
-                        $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
-                    }
-
-                    $show_num = 100;
-                    $msg_leng = strlen($message);
-
-                    if ($position <= $show_num) {
-                        $min = 0;
-                        $add_pre = '';
-                    } else {
-                        $min = $position - $show_num;
-                        $add_pre = '...';
-                    }
-
-                    if (($msg_leng - $position) <= $show_num) {
-                        $max = $msg_leng;
-                        $add_post = '';
-                    } else {
-                        $max = $position + $show_num;
-                        $add_post = '...';
-                    }
-
-                    if (trim($post['subject']) == '') {
-                        $post['subject'] = $post['tsubject'];
-                    }
-
-                    $show = substr($message, $min, $max - $min);
-                    $post['subject'] = stripslashes($post['subject']);
-                    if (!empty($srchtxt)) {
-                        foreach($srchtxtsq as $stxt) {
-                            $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
-                            $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
-                        }
-                    }
-
-                    $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
-                    $post['subject'] = rawHTMLsubject($post['subject']);
-
-                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-
-                    $poston = $date.' '.$lang['textat'].' '.$time;
-                    $postby = $post['author'];
-                    eval('$searchresults .= "'.template('misc_search_results_row').'";');
-                }
-            }
-
-            if ($results == 0) {
-                eval('$searchresults = "'.template('misc_search_results_none').'";');
-            } else if ($results == $ppp) {
-                // create a string containing the stuff to search for
-                $ext = implode('&', $ext);
-                eval('$nextlink = "'.template('misc_search_nextlink').'";');
-            }
-
-            eval('$search = "'.template('misc_search_results').'";');
-            $misc = $search;
+            $newurl = str_replace('misc.php?action=search&', 'search.php?', $newurl);
         }
+        if ($newurl == $url) { // Unexpected query string.
+            $newurl = str_replace('&action=search', '', $newurl);
+            $newurl = str_replace('/misc', '/search', $newurl);
+        }
+        $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
+        header('HTTP/1.0 301 Moved Permanently');
+        header('Location: '.$newurl);
+        exit;
+
         break;
 
     case 'lostpw':

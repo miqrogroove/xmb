@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -30,6 +30,8 @@ define('X_SCRIPT', 'u2u.php');
 
 require 'header.php';
 require ROOT.'include/u2u.inc.php';
+
+header('X-Robots-Tag: noindex');
 
 loadtemplates(
 'u2u_header',
