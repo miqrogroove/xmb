@@ -13,12 +13,15 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 <td bgcolor="$altbg2">{$member['username']}</td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textpassword]</td>
-<td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
 <td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://network-tools.com/default.asp?prog=validate&amp;host=$member[email]" onclick="window.open(this.href); return false;">$lang[adminverifyemail]</a></td>
+</tr>
+<tr>
+<td colspan="2" class="category"><font color="$cattext"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textnewpassword]</td>
+<td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
@@ -2632,16 +2635,27 @@ $favs
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textpassword]</td>
+<td bgcolor="$altbg1" width="22%">{$lang['textusername']}</td>
+<td bgcolor="$altbg2">{$self['username']}</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /></td>
+</tr>
+<tr>
+<td colspan="2" class="category"><font color="$cattext"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['textoldpassword']}</td>
+<td bgcolor="$altbg2"><input type="password" name="oldpassword" size="25" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textnewpassword]</td>
 <td bgcolor="$altbg2"><input type="password" name="newpassword" size="25" /> $lang[pwnote]</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textpasswordcf]</td>
 <td bgcolor="$altbg2"><input type="password" name="newpasswordcf" size="25" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>

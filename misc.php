@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -133,7 +133,6 @@ switch($action) {
             break;
         }
 
-        $currtime = $onlinetime - (86400*30);
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
 
         put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);

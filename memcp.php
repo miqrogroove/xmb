@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -370,17 +370,33 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        $newpassword = postedVar('newpassword', '', FALSE, FALSE);
-        $newpasswordcf = postedVar('newpasswordcf', '', FALSE, FALSE);
-        if ($newpassword && (!$newpassword || isset($_GET['newpassword']))) {
-            $auditaction = $_SERVER['REQUEST_URI'];
-            $aapos = strpos($auditaction, "?");
-            if ($aapos !== false) {
-                $auditaction = substr($auditaction, $aapos + 1);
+        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '') {
+            if (!isset($_POST['oldpassword'])) {
+                error($lang['textpwincorrect'], FALSE);
             }
-            $auditaction = addslashes("$onlineip|#|$auditaction");
-            audit($xmbuser, $auditaction, 0, 0, "Potential XSS exploit using newpassword");
-            die("Hack attempt recorded in audit logs.");
+            if (!elevateUser($xmbuser, md5($_POST['oldpassword']))) {
+                error($lang['textpwincorrect'], FALSE);
+            }
+            if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
+                error($lang['pwnomatch'], false);
+            }
+
+            $newpassword = md5($_POST['newpassword']);
+
+            $pwtxt = "password='$newpassword',";
+
+            $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
+
+            put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
+            put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
+
+            foreach($_COOKIE as $key=>$val) {
+                if (preg_match('#^fidpw([0-9]+)$#', $key)) {
+                    put_cookie($key, '', 0, $cookiepath, $cookiedomain);
+                }
+            }
+        } else {
+            $pwtxt = '';
         }
 
         $langfilenew = postedVar('langfilenew');
@@ -431,45 +447,47 @@ if ($action == 'profile') {
         $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
         $sig = postedVar('newsig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
-        if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
-            $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE email = '$email' AND username != '$xmbuser'");
-            $count1 = $db->result($query,0);
+        if ($email != $db->escape($self['email'])) {
+            if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
+                $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE email = '$email' AND username != '$xmbuser'");
+                $count1 = $db->result($query,0);
+                $db->free_result($query);
+                if ($count1 != 0) {
+                    error($lang['alreadyreg'], FALSE);
+                }
+            }
+
+            $efail = false;
+            $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
+            while($restriction = $db->fetch_array($query)) {
+                $t_email = $email;
+                if ($restriction['case_sensitivity'] == 0) {
+                    $t_email = strtolower($t_email);
+                    $restriction['name'] = strtolower($restriction['name']);
+                }
+
+                if ($restriction['partial'] == 1) {
+                    if (strpos($t_email, $restriction['name']) !== false) {
+                        $efail = true;
+                    }
+                } else {
+                    if ($t_email == $restriction['name']) {
+                        $efail = true;
+                    }
+                }
+            }
             $db->free_result($query);
-            if ($count1 != 0) {
-                error($lang['alreadyreg'], FALSE);
-            }
-        }
 
-        $efail = false;
-        $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
-        while($restriction = $db->fetch_array($query)) {
-            $t_email = $email;
-            if ($restriction['case_sensitivity'] == 1) {
-                $t_email = strtolower($t_email);
-                $restriction['name'] = strtolower($restriction['name']);
+            if ($efail) {
+                error($lang['emailrestricted'], FALSE);
             }
 
-            if ($restriction['partial'] == 1) {
-                if (strpos($t_email, $restriction['name']) !== false) {
-                    $efail = true;
-                }
-            } else {
-                if ($t_email == $restriction['name']) {
-                    $efail = true;
-                }
+            require ROOT.'include/validate-email.inc.php';
+            $test = new EmailAddressValidator();
+            $rawemail = postedVar('newemail', '', FALSE, FALSE);
+            if (false === $test->check_email_address($rawemail)) {
+                error($lang['bademail'], FALSE);
             }
-        }
-        $db->free_result($query);
-
-        if ($efail) {
-            error($lang['emailrestricted'], FALSE);
-        }
-
-        require ROOT.'include/validate-email.inc.php';
-        $test = new EmailAddressValidator();
-        $rawemail = postedVar('newemail', '', FALSE, FALSE);
-        if (false === $test->check_email_address($rawemail)) {
-            error($lang['bademail'], FALSE);
         }
 
         if ($SETTINGS['resetsigs'] == 'on') {
@@ -496,22 +514,6 @@ if ($action == 'profile') {
             }
         } else if ($newavatarcheck == "no") {
             $avatar = '';
-        }
-
-        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '') {
-            if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
-                error($lang['pwnomatch'], false);
-            }
-
-            $newpassword = md5($_POST['newpassword']);
-
-            $pwtxt = "password='$newpassword',";
-
-            $currtime = $onlinetime - (86400*30);
-            put_cookie("xmbuser", $self['username'], $currtime, $cookiepath, $cookiedomain);
-            put_cookie("xmbpw", $newpassword, $currtime, $cookiepath, $cookiedomain);
-        } else {
-            $pwtxt = '';
         }
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$xmbuser'");

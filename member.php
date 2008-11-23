@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -382,7 +382,7 @@ switch($action) {
             while($restriction = $db->fetch_array($query)) {
                 $t_username = $username;
                 $t_email = $email;
-                if ($restriction['case_sensitivity'] == 1) {
+                if ($restriction['case_sensitivity'] == 0) {
                     $t_username = strtolower($t_username);
                     $t_email = strtolower($t_email);
                     $restriction['name'] = strtolower($restriction['name']);
