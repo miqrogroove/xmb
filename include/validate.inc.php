@@ -110,19 +110,36 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
     return $retval;
 }
 
-function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE) {
-    $arrayItems = array();
+function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $dbescape=TRUE, $quoteencode=FALSE, $sourcearray='p') {
+
+    switch($sourcearray) {
+    case 'p':
+        $sourcearray =& $_POST;
+        break;
+    case 'g':
+        $sourcearray =& $_GET;
+        break;
+    case 'c':
+        $sourcearray =& $_COOKIE;
+        break;
+    case 'r':
+    default:
+        $sourcearray =& $_REQUEST;
+        break;
+    }
+
     // Convert a single or comma delimited list to an array
-    if (isset($_POST[$varname]) && !is_array($_POST[$varname])) {
-        if (strpos($_POST[$varname], ',') !== false) {
-            $_POST[$varname] = explode(',', $_POST[$varname]);
+    if (isset($sourcearray[$varname]) && !is_array($sourcearray[$varname])) {
+        if (strpos($sourcearray[$varname], ',') !== false) {
+            $sourcearray[$varname] = explode(',', $sourcearray[$varname]);
         } else {
-            $_POST[$varname] = array($_POST[$varname]);
+            $sourcearray[$varname] = array($sourcearray[$varname]);
         }
     }
 
-    if (isset($_POST[$varname]) && is_array($_POST[$varname]) && count($_POST[$varname]) > 0) {
-        $arrayItems = $_POST[$varname];
+    $arrayItems = array();
+    if (isset($sourcearray[$varname]) && is_array($sourcearray[$varname]) && count($sourcearray[$varname]) > 0) {
+        $arrayItems = $sourcearray[$varname];
         foreach($arrayItems as $item => $theObject) {
             $theObject =& $arrayItems[$item];
             switch($type) {

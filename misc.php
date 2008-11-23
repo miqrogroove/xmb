@@ -159,7 +159,7 @@ switch($action) {
         }
 
         if (!isset($searchsubmit) && !isset($page)) {
-            $forumselect = forumList('srchfid', FALSE, TRUE, getInt('fid'));
+            $forumselect = forumList('srchfid', TRUE, TRUE, getInt('fid'));
             eval('$search = "'.template('misc_search').'";');
             $misc = $search;
         } else {
@@ -167,7 +167,7 @@ switch($action) {
             $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
             $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
             $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
-            $srchfid = postedVar('srchfid', '', FALSE, FALSE, FALSE, 'g');
+            $srchfid = postedArray('srchfid', 'int', '', FALSE, FALSE, FALSE, 'g');
             $page = getInt('page');
             $srchfrom = getInt('srchfrom');
             if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
@@ -224,10 +224,12 @@ switch($action) {
                 $ext[] = 'srchuname='.rawurlencode($rawsrchuname);
             }
 
-            if ($srchfid != 'all' && $srchfid != '') {
-                $srchfid = intval($srchfid);
-                $sql .= " AND p.fid=$srchfid";
-                $ext[] = "srchfid=$srchfid";
+            if (count($srchfid) > 0) {
+                if ($srchfid[0] != 'all') {
+                    $srchfidcsv = implode(',', $srchfid);
+                    $sql .= " AND f.fid IN ($srchfidcsv)";
+                    $ext[] = "srchfid=$srchfidcsv";
+                }
             }
 
             if ($srchfrom) {
