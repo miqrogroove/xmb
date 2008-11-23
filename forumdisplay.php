@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -196,9 +196,9 @@ while($thread = $db->fetch_array($querytop)) {
     }
 
     if ($thread['topped'] == 1) {
-        $topimage = '<img src="./images/admin/untop.gif" alt="'.$lang['textuntopthread'].'" border="0" />';
+        $topimage = '<img src="'.$admdir.'/untop.gif" alt="'.$lang['textuntopthread'].'" border="0" />';
     } else {
-        $topimage = '<img src="./images/admin/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
+        $topimage = '<img src="'.$admdir.'/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
     }
 
     $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
@@ -347,7 +347,7 @@ if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
 
 if ($status1 == 'Moderator') {
     if (X_ADMIN) {
-        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="./images/admin/editforumsets.gif" border="0" /></a>';
+        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="'.$admdir.'/editforumsets.gif" border="0" /></a>';
     } else {
         $fadminlink = '';
     }

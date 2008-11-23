@@ -95,7 +95,7 @@ function setLangValue($phraseid, $cdata) {
 // installNewTranslation() handles all logic necessary to install an XMB translation file.
 // Parameter $upload must be a string containing the entire translation file.
 // Returns TRUE on success.
-function installNewTranslation($upload) {
+function installNewTranslation(&$upload) {
     global $db;
 
     // Perform sanity checks

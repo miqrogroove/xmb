@@ -354,6 +354,7 @@ $lang['ignoremsg'] = "Ignore List:<br /><span class=\"smalltxt\">Separate names 
 $lang['ignoreupdate'] = "Ignore list updated successfully!";
 $lang['imdeletedmsg'] = "U2U(s) successfully deleted. You will now be taken to your IM list.";
 $lang['imgdir'] = "Image Directory:";
+$lang['imgdiradm'] = "Admin Image Directory:";
 $lang['impossiblebanall'] = "You can not ban <strong>all</strong> ips from your board!!";
 $lang['imsavedmsg'] = "Your U2U message has been saved. You will now be taken to your drafts folder.";
 $lang['imsentmsg'] = "Your U2U message has been sent. You will now be taken back to your inbox.";

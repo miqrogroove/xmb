@@ -808,6 +808,10 @@ if ($action == 'themes') {
         <td colspan="2"><input type="text"  value="<?php echo $themestuff['imgdir']?>" name="imgdirnew" /></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+        <td><?php echo $lang['imgdiradm']?></td>
+        <td colspan="2"><input type="text"  value="<?php echo $themestuff['admdir']?>" name="admdirnew" /></td>
+        </tr>
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['smdir']?></td>
         <td colspan="2"><input type="text"  value="<?php echo $themestuff['smdir']?>" name="smdirnew" /></td>
         </tr>
@@ -912,8 +916,12 @@ if ($action == 'themes') {
         <td><input type="text" name="imgdirnew" value="images" /></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+        <td><?php echo $lang['imgdiradm']?></td>
+        <td><input type="text" name="admdirnew" value="images/admin" /></td>
+        </tr>
+        <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['smdir']?></td>
-        <td><input type="text" name="smdirnew" value="images" /></td>
+        <td><input type="text" name="smdirnew" value="images/smilies" /></td>
         </tr>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" value="<?php echo $lang['textsubmitchanges']?>" /><input type="hidden" name="newtheme" value="true" /></td>
@@ -947,9 +955,10 @@ if ($action == 'themes') {
         $fsizenew = postedVar('fsizenew');
         $boardlogonew = postedVar('boardlogonew');
         $imgdirnew = postedVar('imgdirnew');
+        $admdirnew = postedVar('admdirnew');
         $smdirnew = postedVar('smdirnew');
 
-        $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
+        $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig', admdir='$admdirnew'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } else if ($single_str == "submit" && $newtheme) {
         $namenew = postedVar('namenew');
@@ -972,9 +981,10 @@ if ($action == 'themes') {
         $fsizenew = postedVar('fsizenew');
         $boardlogonew = postedVar('boardlogonew');
         $imgdirnew = postedVar('imgdirnew');
+        $admdirnew = postedVar('admdirnew');
         $smdirnew = postedVar('smdirnew');
 
-        $db->query("INSERT INTO ".X_PREFIX."themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew')");
+        $db->query("INSERT INTO ".X_PREFIX."themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext, admdir) VALUES('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew', '$admdirnew')");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
 }

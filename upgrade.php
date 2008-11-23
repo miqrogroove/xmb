@@ -110,6 +110,11 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
             .'Please make sure to upload the templates.xmb file.<br />';
         trigger_error('Admin attempted upgrade with templates.xmb missing.', E_USER_ERROR);
     }
+    if (!is_file('lang/English.lang.php')) {
+        echo 'Files missing!<br />'
+            .'Please make sure to upload the lang/English.lang.php file.<br />';
+        trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
+    }
 
     echo 'Confirming forums are turned off...<br />';
     if ($SETTINGS['bbstatus'] != 'off') {
@@ -232,7 +237,31 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the members table...<br />';
+    echo 'Requesting to lock the themes table...<br />';
+    flush();
+    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
+
+    echo 'Gathering schema information from the themes table...<br />';
+    flush();
+    $sql = array();
+    $table = 'themes';
+    $columns = array(
+    'admdir' => "VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the themes table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the themes table...<br />';
     $db->query('UNLOCK TABLES');
 
     echo 'Adding new tables...<br />';
@@ -253,7 +282,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         `cdata` BLOB NOT NULL ,
         PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
         INDEX ( `phraseid` )
-      ) COMMENT = 'Translation Table'");
+      ) TYPE=MyISAM COMMENT = 'Translation Table'");
 
     echo 'Initializing the new translation system...<br />';
     require_once('include/translation.inc.php');

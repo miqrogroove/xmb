@@ -1603,7 +1603,7 @@ $forumlist
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
 <td bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
-<td bgcolor="$altbg1" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="./images/admin/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
+<td bgcolor="$altbg1" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="$admdir/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><input type="checkbox" name="tid[]" value="$thread[realtid]" /></td>
 </tr>
 
@@ -2902,7 +2902,7 @@ $header
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[fnasorry3]<br/></td>
 </tr>
 </table>
@@ -2919,7 +2919,7 @@ $header
 <td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[plogtuf]<br /></td>
 </tr>
 </table>
@@ -2970,7 +2970,7 @@ $header
 <td class="header" colspan="2"><font color="$cattext"><strong>$lang[textlogin_incorrect]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="8%" align="center"><img src="./images/admin/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="$altbg1" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[textpw1]</strong></span><br />$lang[textpw2]<br /></td>
 </tr>
 </table>

@@ -1053,6 +1053,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         <?php
     } else {
         if ($timeout == 0) {
+            header('HTTP/1.0 302 Found');
             header("Location: $path");
             exit;
         } else {
