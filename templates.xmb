@@ -3266,7 +3266,11 @@ $multipage
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsearchfor]</td>
-<td bgcolor="$altbg2"><input type="text" name="srchtxt" size="30" maxlength="40" /></td>
+<td bgcolor="$altbg2">
+  <input type="text" name="srchtxt" size="30" maxlength="40" /><br />
+  <input type="radio" name="srchfield" value="body" checked="checked" />{$lang['searchbody']}<br />
+  <input type="radio" name="srchfield" value="subject" />{$lang['searchsubject']}<br />
+</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsrchuname]</td>

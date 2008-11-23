@@ -1635,7 +1635,11 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     }
 
     if ($allowall) {
-        $forumselect[] = '<option value="all" selected="selected">'.$lang['textallforumsandsubs'].'</option>';
+        if ($currentfid == 0) {
+            $forumselect[] = '<option value="all" selected="selected">'.$lang['textallforumsandsubs'].'</option>';
+        } else {
+            $forumselect[] = '<option value="all">'.$lang['textallforumsandsubs'].'</option>';
+        }
     } else if (!$allowall && !$multiple) {
         $forumselect[] = '<option value="" disabled="disabled" selected="selected">'.$lang['textforum'].'</option>';
     }

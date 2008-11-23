@@ -168,6 +168,7 @@ switch($action) {
             $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
             $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
             $srchfid = postedArray('srchfid', 'int', '', FALSE, FALSE, FALSE, 'g');
+            $srchfield = postedVar('srchfield', '', FALSE, FALSE, FALSE, 'g');
             $page = getInt('page');
             $srchfrom = getInt('srchfrom');
             if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
@@ -211,7 +212,11 @@ switch($action) {
                 foreach($srchtxtsq as $stxt) {
                     $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
                     $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
-                    $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
+                    if ($srchfield == 'body') {
+                        $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
+                    } else {
+                        $sqlsrch[] = "p.subject LIKE '%$dblikesub%'";
+                    }
                 }
 
                 $sql .= implode(') AND (', $sqlsrch);
