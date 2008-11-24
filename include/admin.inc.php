@@ -270,7 +270,7 @@ function settingHTML($setting, &$on, &$off) {
     }
 }
 
-function printsetting1($setname, $varname, $check1, $check2) {
+function printsetting1(&$setname, $varname, &$check1, &$check2) {
     global $lang, $THEME;
 
     ?>
@@ -286,7 +286,7 @@ function printsetting1($setname, $varname, $check1, $check2) {
     <?php
 }
 
-function printsetting2($setname, $varname, $value, $size) {
+function printsetting2(&$setname, $varname, $value, $size) {
     global $THEME;
 
     ?>
@@ -297,7 +297,7 @@ function printsetting2($setname, $varname, $value, $size) {
     <?php
 }
 
-function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=true) {
+function printsetting3(&$setname, $boxname, $varnames, $values, $checked, $multi=true) {
     global $THEME, $selHTML;
 
     foreach($varnames as $key=>$val) {
@@ -316,7 +316,7 @@ function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=
     <?php
 }
 
-function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
+function printsetting4(&$settingDesc, $name, $value, $rows=5, $cols=50) {
     global $THEME;
 
     ?>
@@ -327,7 +327,7 @@ function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     <?php
 }
 
-function printsetting5($settingDesc, $errorMsg) {
+function printsetting5(&$settingDesc, &$errorMsg) {
     global $THEME;
 
     ?>
@@ -338,7 +338,7 @@ function printsetting5($settingDesc, $errorMsg) {
     <?php
 }
 
-function readFileAsINI($filename) {
+function readFileAsINI(&$filename) {
     $lines = file($filename);
     foreach($lines as $line_num => $line) {
         $temp = explode("=",$line);

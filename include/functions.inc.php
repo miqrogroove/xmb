@@ -361,7 +361,7 @@ function censor($txt) {
     return $txt;
 }
 
-function smile($txt) {
+function smile(&$txt) {
     global $smiliesnum, $smiliecache, $smdir;
 
     if ($smiliesnum > 0) {
@@ -371,7 +371,7 @@ function smile($txt) {
         }
     }
 
-    return $txt;
+    return TRUE;
 }
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
@@ -429,34 +429,30 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 if ($i == 0) {
                     $messagearray[$i] = rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
                     if ($smiliesallow) {
-                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
-                    } else {
-                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
+                        smile($messagearray[$i]);
                     }
+                    bbcode($messagearray[$i], $allowimgcode);
                 } else if ($i == sizeof($messagearray) - 1) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml);
                     if ($smiliesallow) {
-                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
-                    } else {
-                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
+                        smile($messagearray[$i]);
                     }
+                    bbcode($messagearray[$i], $allowimgcode);
                 } else if ($i % 2 == 0) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
                     if ($smiliesallow) {
-                        $messagearray[$i] = bbcode(smile($messagearray[$i]), $allowimgcode);
-                    } else {
-                        $messagearray[$i] = bbcode($messagearray[$i], $allowimgcode);
+                        smile($messagearray[$i]);
                     }
+                    bbcode($messagearray[$i], $allowimgcode);
                 } else { // Inside code block
                     $messagearray[$i] = censor($messagearray[$i]);
                 }
             } else {
                 $messagearray[0] = rawHTMLmessage($messagearray[0], $allowhtml);
                 if ($smiliesallow) {
-                    $messagearray[0] = bbcode(smile($messagearray[0]), $allowimgcode);
-                } else {
-                    $messagearray[0] = bbcode($messagearray[0], $allowimgcode);
+                    smile($messagearray[0]);
                 }
+                bbcode($messagearray[0], $allowimgcode);
             }
         }
         $message = implode("", $messagearray);
@@ -485,7 +481,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     return $message;
 }
 
-function bbcode($message, $allowimgcode) {
+function bbcode(&$message, $allowimgcode) {
     global $lang, $full_url, $imgdir, $SETTINGS;
 
     $patterns = array();
@@ -612,7 +608,7 @@ function bbcode($message, $allowimgcode) {
 
     $message = preg_replace_callback("#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssi", 'bbcodeSizeTags', $message);
 
-    return $message;
+    return TRUE;
 }
 
 function fixUrl($matches) {
@@ -670,7 +666,7 @@ function modcheck($username, $mods, $override=X_SMOD) {
     return $retval;
 }
 
-function modcheckPost($username, $mods, $origstatus) {
+function modcheckPost(&$username, &$mods, &$origstatus) {
     global $SETTINGS;
     $retval = modcheck($username, $mods);
 
@@ -1064,7 +1060,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     return true;
 }
 
-function get_extension($filename) {
+function get_extension(&$filename) {
     $a = explode('.', $filename);
     $count = count($a);
     if ($count == 1) {
