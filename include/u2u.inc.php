@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -68,7 +68,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
     if ($rcpt = $db->fetch_array($query)) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
-            $username = $rcpt['username'];
+            $username = $db->escape($rcpt['username']);
             db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
             if ($self['saveogu2u'] == 'yes') {
                 db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');

@@ -134,6 +134,7 @@ if ($action == 'report') {
         $postcount = intval($db->result($query, 0));
         $db->free_result($query);
 
+        require('include/u2u.inc.php');
         $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
         while($modusr = $db->fetch_array($modquery)) {
             $mod = $db->escape($modusr['username']);
@@ -144,7 +145,8 @@ if ($action == 'report') {
             $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
             $message = $db->escape(addslashes($message)); //Messages are historically double-slashed.
             $subject = $db->escape(addslashes($lang['reportsubject']));
-            $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$mod', '$xmbuser', 'incoming', '$mod', 'Inbox', '$subject', '$message', ".$db->time($onlinetime).", 'no', 'yes')");
+
+            u2u_send_recp($mod, $subject, $message);
         }
         $db->free_result($modquery);
 
