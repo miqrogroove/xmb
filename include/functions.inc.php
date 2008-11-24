@@ -482,7 +482,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode(&$message, $allowimgcode) {
-    global $lang, $full_url, $imgdir, $SETTINGS;
+    global $lang, $full_url, $imgdir;
 
     $patterns = array();
     $replacements = array();
@@ -570,10 +570,8 @@ function bbcode(&$message, $allowimgcode) {
         if (false == stripos($message, 'javascript:')) {
             $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
             $replacements[] = '<img <!-- nobr -->src="\1://\2\3"<!-- /nobr --> border="0" alt="" />';
-            if ($SETTINGS['attach_remote_images'] != 'on' Or !ini_get('allow_url_fopen')) {
-                $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
-                $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
-            }
+            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
         }
     }
 
