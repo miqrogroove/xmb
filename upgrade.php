@@ -187,7 +187,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $columns = array(
     'img_size' => "VARCHAR(9) NOT NULL",
     'parentid' => "INT NOT NULL DEFAULT '0'",
-    'subdir' => "VARCHAR(1 ) NOT NULL",
+    'subdir' => "VARCHAR(15) NOT NULL",
     'uid' => "INT NOT NULL DEFAULT '0'",
     'updatetime' => "TIMESTAMP NOT NULL default current_timestamp");
     foreach($columns as $colname => $coltype) {

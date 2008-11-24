@@ -119,116 +119,14 @@ class admin {
         }
         $db->free_result($query);
 
-        $this->fix_last_posts();
+        $query = $db->query("SELECT tid, lastpost FROM ".X_PREFIX."threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
+        while($result = $db->fetch_array($query)) {
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
+        }
+        $db->free_result($query);
 
         return (($self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
-    }
-
-    function fix_last_posts() {
-        global $db;
-
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE (fup='0' OR fup='') AND type='forum'");
-        while($loner = $db->fetch_array($q)) {
-            $lastpost = array();
-            $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup = '$loner[fid]'");
-            while($sub = $db->fetch_array($subq)) {
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$sub[fid]' ORDER BY pid DESC LIMIT 1");
-                if ($db->num_rows($pq) > 0) {
-                    $curr = $db->fetch_array($pq);
-                    $lastpost[] = $curr;
-                    $lp = $curr['dateline'].'|'.$curr['author'].'|'.$curr['pid'];
-                } else {
-                    $lp = '';
-                }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid='$sub[fid]'");
-                $db->free_result($pq);
-            }
-            $db->free_result($subq);
-
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$loner[fid]' ORDER BY pid DESC LIMIT 1");
-            if ($db->num_rows($pq) > 0) {
-                $lastpost[] = $db->fetch_array($pq);
-            }
-            $db->free_result($pq);
-
-            if (count($lastpost) == 0) {
-                $lastpost = '';
-            } else {
-                $top = 0;
-                $mkey = -1;
-                foreach($lastpost as $key => $v) {
-                    if ($v['dateline'] > $top) {
-                        $mkey = $key;
-                        $top = $v['dateline'];
-                    }
-                }
-                $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
-            }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='$loner[fid]'");
-        }
-        $db->free_result($q);
-
-        $q = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='group'");
-        while($cat = $db->fetch_array($q)) {
-            $fq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup='$cat[fid]'");
-            while($forum = $db->fetch_array($fq)) {
-                $lastpost = array();
-                $subq = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE fup='$forum[fid]'");
-                while($sub = $db->fetch_array($subq)) {
-                    $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$sub[fid]' ORDER BY pid DESC LIMIT 1");
-                    if ($db->num_rows($pq) > 0) {
-                        $curr = $db->fetch_array($pq);
-                        $lastpost[] = $curr;
-                        $lp = $curr['dateline'].'|'.$curr['author'].'|'.$curr['pid'];
-                    } else {
-                        $lp = '';
-                    }
-                    $db->free_result($pq);
-                    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid='$sub[fid]'");
-                }
-                $db->free_result($subq);
-
-                $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE fid='$forum[fid]' ORDER BY pid DESC LIMIT 1");
-                if ($db->num_rows($pq) > 0) {
-                    $lastpost[] = $db->fetch_array($pq);
-                }
-                $db->free_result($pq);
-
-                if (count($lastpost) == 0) {
-                    $lastpost = '';
-                } else {
-                    $top = 0;
-                    $mkey = -1;
-                    foreach($lastpost as $key => $v) {
-                        if ($v['dateline'] > $top) {
-                            $mkey = $key;
-                            $top = $v['dateline'];
-                        }
-                    }
-                    $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
-                }
-                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='$forum[fid]'");
-            }
-            $db->free_result($fq);
-        }
-        $db->free_result($q);
-
-        $q = $db->query("SELECT tid FROM ".X_PREFIX."threads");
-        while($thread = $db->fetch_array($q)) {
-            $lastpost = array();
-            $pq = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid='$thread[tid]' ORDER BY pid DESC LIMIT 1");
-            if ($db->num_rows($pq) > 0) {
-                $curr = $db->fetch_array($pq);
-                $lastpost[] = $curr;
-                $lp = $curr['dateline'].'|'.$curr['author'].'|'.$curr['pid'];
-            } else {
-                $lp = '';
-            }
-            $db->free_result($pq);
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost = '$lp' WHERE tid = '$thread[tid]'");
-        }
-        $db->free_result($q);
-        return true;
     }
 
     function check_restricted($userto) {
@@ -236,37 +134,24 @@ class admin {
 
         $nameokay = true;
 
-        $find = array('<', '>', '|', '"', '[', ']', '\\', ',', '@', '\'');
-        foreach($find as $needle) {
-            if (false !== strpos($userto, $needle)) {
-                return false;
-            }
+        if ($userto != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $userto)) {
+            return false;
         }
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
         while($restriction = $db->fetch_array($query)) {
-            if ($restriction['case_sensitivity'] == 1) {
-                if ($restriction['partial'] == 1) {
-                    if (strpos($userto, $restriction['name']) !== false) {
-                        $nameokay = false;
-                    }
-                } else {
-                    if ($userto == $restriction['name']) {
-                        $nameokay = false;
-                    }
-                }
-            } else {
+            if ($restriction['case_sensitivity'] == 0) {
                 $t_username = strtolower($userto);
                 $restriction['name'] = strtolower($restriction['name']);
+            }
 
-                if ($restriction['partial'] == 1) {
-                    if (strpos($t_username, $restriction['name']) !== false) {
-                        $nameokay = false;
-                    }
-                } else {
-                    if ($t_username == $restriction['name']) {
-                        $nameokay = false;
-                    }
+            if ($restriction['partial'] == 1) {
+                if (strpos($t_username, $restriction['name']) !== false) {
+                    $nameokay = false;
+                }
+            } else {
+                if ($t_username == $restriction['name']) {
+                    $nameokay = false;
                 }
             }
         }
