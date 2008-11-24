@@ -591,7 +591,18 @@ function getFullPathFromSubdir($subdir) {
     return $path;
 }
 
-function createThumbnail(&$filename, $filepath, $filesize, $imgSize, &$filetype, $aid, $pid, &$subdir) {
+// createThumbnail() will take in the path to an image and then create a resized image based on global settings.
+//  The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
+//  Otherwise, the thumbnail will be saved to disk at $filepath.'-thumb.jpg'
+// $filename (string) The original name of the input file.
+// $filepath (string) The current name and location (full path) of the input file.
+// $filesize (int)    The size, in bytes, that you want printed on the thumbnail.
+// $imgSize  (object) Caller must construct a CartesianSize object to specify the dimensions of the input image.
+// $filetype (string) The MIME type of the input image.
+// $aid      (int)    AID to be used as the parentid if attaching the thumbnail to a post.
+// $pid      (int)    PID to attach the thumbnail to.
+// $subdir   (string) Subdirectory to use inside the file storage path, or null string to store it in the database.
+function createThumbnail(&$filename, $filepath, $filesize, $imgSize, &$filetype, $aid=0, $pid=0, $subdir='') {
     global $db, $self, $SETTINGS;
 
     // Check if GD is available
@@ -676,30 +687,33 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, &$filetype,
     $filetype = 'image/jpeg';
     $sqlsize = $thumbSize->width.'x'.$thumbSize->height;
 
-    // Check minimum file size for disk storage
-    if ($filesize < $SETTINGS['files_min_disk_size']) {
-        $subdir = '';
-    }
+    // Attach thumbnail to the post
+    if ($aid != 0) {
 
-    // Add database record
-    if ($subdir == '') {
-        $file = $db->escape(file_get_contents($filepath));
-        unlink($filepath);
-    } else {
-        $file = '';
+        // Check minimum file size for disk storage
+        if ($filesize < $SETTINGS['files_min_disk_size']) {
+            $subdir = '';
+        }
+
+        // Add database record
+        if ($subdir == '') {
+            $file = $db->escape(file_get_contents($filepath));
+            unlink($filepath);
+        } else {
+            $file = '';
+        }
+        $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize', '$subdir')");
+        unset($file);
+        if ($db->affected_rows() == 1) {
+            $aid = $db->insert_id();
+        } else {
+            return FALSE;
+        }
+        if ($subdir != '') {
+            $newfilename = $aid;
+            rename($filepath, getFullPathFromSubdir($subdir).$newfilename);
+        }
     }
-    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize', '$subdir')");
-    unset($file);
-    if ($db->affected_rows() == 1) {
-        $aid = $db->insert_id();
-    } else {
-        return FALSE;
-    }
-    if ($subdir != '') {
-        $newfilename = $aid;
-        rename($filepath, getFullPathFromSubdir($subdir).$newfilename);
-    }
-    
     return TRUE;
 }
 
