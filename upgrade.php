@@ -151,7 +151,8 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     'filesperpost' => "TINYINT NOT NULL DEFAULT '10'",
     'ip_banning' => "SET('on', 'off') NOT NULL DEFAULT 'on'",
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '1000x1000'",
-    'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'");
+    'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'",
+    'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT '1'");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {

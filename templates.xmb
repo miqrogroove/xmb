@@ -2173,7 +2173,7 @@ $emailblock
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" /></td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" /> {$lang['usernamechars']}</td>
 </tr>
 $pwtd
 <tr class="tablerow">
