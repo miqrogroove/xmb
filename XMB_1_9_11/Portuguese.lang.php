@@ -1,7 +1,7 @@
-<?php // Translated By: Daniel Gouveia
-/**
+<?php
+/** // Translated By: Daniel Gouveia
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 31 November 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -110,6 +110,8 @@ $lang['attachmanwhereforum'] = "e o fórum é:";
 $lang['attachmanwherename'] = "onde o nome do arquivo contenha:";
 $lang['attachmanwheresizegreater'] = "e o tamanho seja maior que (bytes):";
 $lang['attachmanwheresizesmaller'] = "e o tamanho seja menor que (bytes):";
+$lang['attachmaxdims'] = "Image limit is";
+$lang['attachmaxsize'] = "Upload size limit is";
 $lang['attachment'] = "Anexo:";
 $lang['attachments'] = "Anexos";
 $lang['attachments_num_restored'] = "anexos restaurados";
@@ -181,9 +183,7 @@ $lang['byte'] = "byte(s)";
 $lang['cannotmergesamethread'] = 'Infelizmente é impossível fundir um tópico com ele mesmo.';
 $lang['cantsplit'] = "Este tópico não pode ser dividido, porque não há respostas.";
 $lang['cantthreadprune'] = "Este tópico não pode ser filtrado, porque não há respostas.";
-$lang['captchastatus'] = "Main Status:";
-$lang['captcharegstatus'] = "Status de Registro:";
-$lang['captchapoststatus'] = "Status Posting Anónimos:";
+$lang['captchacaseon'] = "This code is case-sensitive.";
 $lang['captchacharset'] = "Código Caráter:";
 $lang['captchacodelength'] = "Código Comprimento:";
 $lang['captchacodecase'] = "Código Sensível:";
@@ -199,6 +199,11 @@ $lang['captchaimageminfont'] = "Tamanho Min da Font:";
 $lang['captchaimagemaxfont'] = "Tamanho Max da Font:";
 $lang['captchaimagecolor'] = "Usar cores (Full):";
 $lang['captchaimageinvalid'] = "A imagem verificação código que você digitou estava incorrecto. Digite o código exactamente como ele aparece na imagem.";
+$lang['captchaindebug'] = "Captcha features are not available in DEBUG mode.";
+$lang['captchapoststatus'] = "Status Posting Anónimos:";
+$lang['captcharegstatus'] = "Status de Registro:";
+$lang['captchasearchstatus'] = 'Anonymous Searching Status:';
+$lang['captchastatus'] = "Main Status:";
 $lang['captchaverification'] = "Captcha imagem verificação";
 $lang['cb_advmode'] = "Avançado";
 $lang['cb_fomatting'] = "Modo Formatação:";
@@ -305,6 +310,8 @@ $lang['evalusercpwelcome'] = '$lang["usercpwelcome"] = "Olá $xmbuser, bem-vindo 
 $lang['existingip'] = "Este endereço IP já está bloqueado";
 $lang['export_fid_expl'] = "Para qual fórum (fid) todos os tópicos sem fórum devem ser movidos?";
 $lang['export_fid_not_there'] = "Nenhum fórum foi seleccionado para receber os tópicos sem fórum.";
+$lang['export_tid_expl'] = "To which thread (tid) should all orphaned posts be moved?";
+$lang['export_tid_not_there'] = "No thread was specified to send the orphaned posts to.";
 $lang['favaddedmsg'] = "O tópico foi adicionado a sua lista de favoritos com sucesso. Você será redireccionado para ele.";
 $lang['favonlistmsg'] = "O tópico seleccionado já está na sua lista de favoritos.";
 $lang['favsdeletedmsg'] = "Os tópicos seleccionados foram removidos com sucesso da sua lista de favoritos. Você será redireccionado para a sua lista de favoritos.";
@@ -351,6 +358,7 @@ $lang['ignoremsg'] = "Lista Ignorar:<br /><span class=\"smalltxt\">Separe os nom
 $lang['ignoreupdate'] = "A Lista Ignorar foi actualizada com sucesso!";
 $lang['imdeletedmsg'] = "As mensagens u2u foram apagadas com sucesso. Você será redireccionado para a sua lista de mensagens u2u.";
 $lang['imgdir'] = "Directório de Imagens:";
+$lang['imgdiradm'] = "Admin Image Directory:";
 $lang['impossiblebanall'] = "Não pode bloquear <strong>todos</strong> os endereços IP no fórum!";
 $lang['imsavedmsg'] = "A sua mensagen u2u foi gravada. Você será redireccionado para a Pasta de Rascunhos.";
 $lang['imsentmsg'] = "A sua mensagem u2u foi enviada. Você será redireccionado para a Caixa de Entrada.";
@@ -365,6 +373,8 @@ $lang['invalidtid'] = "Tópicos não podem ser fundidos. Inválido Thread ID (TID)"
 $lang['invalidforumpw'] = "A password introduzida não é válida.";
 $lang['invalidip'] = "O formato de endereço IP não é válido";
 $lang['invertselection'] = "Inverter Selecção";
+$lang['ipbandisable'] = "Disable IP Banning";
+$lang['ipbanenable'] = "Enable IP Banning";
 $lang['ipreg'] = "Permitir no máximo 1 utilizador a registar-se por ip por dia?";
 $lang['ipwarning'] = "<br /><strong>Aviso!</strong> O seu endereço IP está na lista. Você será permanentemente bloqueado se sair do Fórum (Sair).";
 $lang['key'] = 'Chave: ';
@@ -377,6 +387,7 @@ $lang['lastsadmin'] = "Você só tentou status de admin última superpotência do Ad
 $lang['lastyear'] = "ano passado";
 $lang['launchbuddylist'] = "Abrir Livro de Endereços";
 $lang['leaveuntouched'] = "&nbsp;Não alterar o arquivo actual";
+$lang['location'] = "Location";
 $lang['locktopic'] = "Tópico bloqueado";
 $lang['loggedin'] = "A aceder ao fórum como";
 $lang['loggedinuser'] = "utilizador:";
@@ -405,6 +416,17 @@ $lang['mergewithmsg'] = "TID do tópico vai ser fundido com:<br /><span class=\"s
 $lang['message'] = "Mensagem";
 $lang['misconlinetoday'] = "O seguinte ";
 $lang['misconlinetoday2'] = " utilizadores visitaram o $SETTINGS[bbname] hoje...";
+$lang['modlog_bump'] = "Thread Bumped";
+$lang['modlog_close'] = "Thread Closed";
+$lang['modlog_copy'] = "Thread Copied";
+$lang['modlog_empty'] = "Thread Emptied";
+$lang['modlog_merge'] = "Threads Merged";
+$lang['modlog_move'] = "Thread Moved";
+$lang['modlog_open'] = "Thread Opened";
+$lang['modlog_split'] = "Thread Split";
+$lang['modlog_threadprune'] = "Thread Pruned";
+$lang['modlog_top'] = "Thread Topped";
+$lang['modlog_untop'] = "Thread Untopped";
 $lang['month1'] = "1 mês";
 $lang['month3'] = "3 meses";
 $lang['month6'] = "6 meses";
@@ -434,6 +456,7 @@ $lang['nextsearch'] = "[Próxima Página]";
 $lang['no_buddies'] = "Não há endereços no seu livro de endereços";
 $lang['no_poll'] = "Isto não é uma pesquisa!";
 $lang['no_templates'] = "O arquivo templates.xmb não foi encontrado.";
+$lang['no_url_fopen'] = "This feature has been disabled by the allow_url_fopen directive in your server's PHP configuration.";
 $lang['noadminsession'] = "Nenhuma sessão de Login administrativo foi encontrada.";
 $lang['noadminsession2'] = "Bem-vindo ao painel de controlo administrativo do XMB 1.9, Fórum: $SETTINGS[bbname].";
 $lang['noadminsession3'] = "Introduza o seu nome de utilizador e password com status administrativo.";
@@ -460,6 +483,9 @@ $lang['nou2umsg'] = "Você não tem nenhuma mensagem u2u na sua Caixa de Entrada d
 $lang['numberusing'] = "Usado:";
 $lang['o_attach_submit'] = "Apagar todos os anexos sem mensagens";
 $lang['o_attachments_found'] = " anexos sem tópicos encontrados e apagados.";
+$lang['o_poll_submit'] = "Delete all orphaned polls";
+$lang['o_polls_found'] = " orphaned polls found and deleted.";
+$lang['o_posts_found'] = " orphaned posts found and reallocated.";
 $lang['o_threads_found'] = " tópicos sem fórum encontrados e movidos";
 $lang['onlinebuddy'] = "Vendo lista de endereços";
 $lang['onlinebuddyadd'] = "Adicionando usuário(s) a lista de endereços";
@@ -544,6 +570,7 @@ $lang['pruneposttypes'] = "Filtrar estes: ";
 $lang['prunetopped'] = "Mensagens Movidas para o Topo";
 $lang['pruneusers'] = "O número de dias depois que um novo usuário, que nunca tenha entrado no sistema, será excluído.<br />Defina 0 para desactivar.";
 $lang['pspell_needed'] = "(<strong>Esta opção não pode ser ligada até o seu Service Provider instalar a extensão pspell/aspell !</strong>)";
+$lang['pwchange'] = "Change Password";
 $lang['pwnomatch'] = "As passwords não são iguais";
 $lang['pwnote'] = "Introduza uma nova password se for modificá-la, ou deixe em branco.";
 $lang['queries'] = "Pesquisas";
@@ -582,7 +609,11 @@ $lang['restrictedname'] = "Não é permitido registar-se com o nome de utilizador 
 $lang['restrictedupdate'] = "Os nomes de utilizador restritos foram actualizados com sucesso!";
 $lang['rulesoninfo'] = "O <a href=\"mailto:$SETTINGS[adminemail]\"> administrador</a> solicitou que todos os utilizadores registados tivessem que concordar com os seguintes termos antes de efectuar registo e utilizar os serviços do \"$SETTINGS[bbname]\". Por favor, leia os termos e se concordar, seleccione o botão \"Concordo\".";
 $lang['search_advanced'] = "Pesquisa Avançada";
-$lang['searchusermsg'] = '<a href="misc.php?action=search&amp;srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Pesquisar</a> todas as mensagens deste utilizador';
+$lang['searchbody'] = "Post body and subject.";
+$lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
+$lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
+$lang['searchsubject'] = "Subject only.";
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Pesquisar</a> todas as mensagens deste utilizador';
 $lang['secure_login'] = "Login Seguro - segurança mais alta para uso em computadores públicos";
 $lang['selecttemplate'] = "Seleccione um modelo...";
 $lang['seperatebycomma'] = "Separe entradas múltiplas utilizando vírgulas";
@@ -793,6 +824,8 @@ $lang['textfixlastposts'] = "Corrigir Últimas Mensagens";
 $lang['textfixmemposts'] = "Corrigir Contagens Totais de Mensagens de utilizadors";
 $lang['textfixmoods'] = "Reiniciar os Tons em Branco";
 $lang['textfixoattachments'] = "Corrigir anexos sem mensagens";
+$lang['textfixopolls'] = "Fix Orphaned Polls";
+$lang['textfixoposts'] = "Fix Orphaned Posts";
 $lang['textfixothreads'] = "Corrigir Tópicos sem Fórum";
 $lang['textfixposts'] = "Corrigir Totais do Fórum";
 $lang['textfixthread'] = "Corrigir Totais de Tópicos";
@@ -921,6 +954,7 @@ $lang['textoct'] = "Outubro";
 $lang['textoff'] = "Desligado(s) (Off)";
 $lang['textoffline'] = "O utilizador não está online (Offline)";
 $lang['textoftotposts'] = "de mensagens totais";
+$lang['textoldpassword'] = "Old Password";
 $lang['texton'] = "Ligado(s) (On)";
 $lang['textonline'] = "Online";
 $lang['textopenthread'] = "Abrir Tópico";
@@ -1177,6 +1211,7 @@ $lang['upgradesuccess'] = "A Pesquisa foi realizada com sucesso!";
 $lang['uploadinstead'] = "&nbsp;Enviar este arquivo em vez do outro:";
 $lang['usercpeditpromsg'] = "Perfil editado com sucesso. Será redireccionado de volta ao painel de controlo do utilizador.";
 $lang['username_length_invalid'] = "O nome de usuário fornecido é inválido. Por favor, certifique-se de um mínimo de 3 caracteres e um máximo de 32 caracteres.";
+$lang['usernamechars'] = "Usernames may contain printable characters except []'&lt;&gt;\|&quot;,@";
 $lang['userip'] = "Pesquisa utilizador(es) com o seguinte endereço IP";
 $lang['userprofilemood'] = "Sentimento:";
 $lang['verificationnote'] = "Digite o texto contido na imagem no campo de texto abaixo dela. Este processo é utilizado para prevenir automatizado bots.";
