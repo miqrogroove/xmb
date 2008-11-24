@@ -175,6 +175,9 @@ if ($action == "settings") {
         $captchapostOn = $captchapostOff = '';
         settingHTML('captcha_post_status', $captchapostOn, $captchapostOff);
 
+        $captchasearchOn = $captchasearchOff = '';
+        settingHTML('captcha_search_status', $captchasearchOn, $captchasearchOff);
+
         $captchacodecaseOn = $captchacodecaseOff = '';
         settingHTML('captcha_code_casesensitive', $captchacodecaseOn, $captchacodecaseOff);
 
@@ -589,6 +592,7 @@ if ($action == "settings") {
             printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
             printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);
             printsetting1($lang['captchapoststatus'], 'captchapostnew', $captchapostOn, $captchapostOff);
+            printsetting1($lang['captchasearchstatus'], 'captchasearchnew', $captchasearchOn, $captchasearchOff);
             printsetting2($lang['captchacharset'], 'captchacharsetnew', $SETTINGS['captcha_code_charset'], 50);
             printsetting2($lang['captchacodelength'], 'captchacodenew', ((int)$SETTINGS['captcha_code_length']), 3);
             printsetting1($lang['captchacodecase'], 'captchacodecasenew', $captchacodecaseOn, $captchacodecaseOff);
@@ -803,6 +807,7 @@ if ($action == "settings") {
             $captchanew = formOnOff('captchanew');
             $captcharegnew = formOnOff('captcharegnew');
             $captchapostnew = formOnOff('captchapostnew');
+            $captchasearchnew = formOnOff('captchasearchnew');
             $captchacharsetnew = postedVar('captchacharsetnew');
             $captchacodenew = formInt('captchacodenew');
             $captchacodecasenew = formOnOff('captchacodecasenew');
@@ -822,6 +827,7 @@ if ($action == "settings") {
             captcha_status='$captchanew',
             captcha_reg_status='$captcharegnew',
             captcha_post_status='$captchapostnew',
+            captcha_search_status='$captchasearchnew',
             captcha_code_charset='$captchacharsetnew',
             captcha_code_length='$captchacodenew',
             captcha_code_casesensitive='$captchacodecasenew',

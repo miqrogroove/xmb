@@ -574,7 +574,12 @@ if ($action == '') {
                 eval('$yahoo = "'.template('viewthread_post_yahoo').'";');
             }
 
-            eval('$search = "'.template('viewthread_post_search').'";');
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+                $search = '';
+            } else {
+                eval('$search = "'.template('viewthread_post_search').'";');
+            }
+            
             eval('$profile = "'.template('viewthread_post_profile').'";');
             if (X_GUEST) {
                 $u2u = '';

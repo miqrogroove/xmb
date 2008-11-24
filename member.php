@@ -764,7 +764,11 @@ switch($action) {
                     $lastpost = $lang['textnopostsyet'];
                 }
 
-                $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
+                if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+                    $lang['searchusermsg'] = '';
+                } else {
+                    $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
+                }
                 eval('echo "'.template('member_profile').'";');
             }
         }

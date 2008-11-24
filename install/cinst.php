@@ -491,6 +491,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `captcha_status` set('on','off') NOT NULL default 'on',
       `captcha_reg_status` set('on','off') NOT NULL default 'on',
       `captcha_post_status` set('on','off') NOT NULL default 'on',
+      `captcha_search_status` set('on','off') NOT NULL default 'off',
       `captcha_code_charset` varchar(128) NOT NULL default 'A-Z,1-9',
       `captcha_code_length` int(2) NOT NULL default '10',
       `captcha_code_casesensitive` set('on','off') NOT NULL default 'on',

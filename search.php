@@ -34,11 +34,12 @@ header('X-Robots-Tag: noindex');
 
 loadtemplates(
 'misc_feature_notavailable',
-'misc_search',
-'misc_search_nextlink',
-'misc_search_results',
-'misc_search_results_none',
-'misc_search_results_row'
+'search',
+'search_captcha',
+'search_nextlink',
+'search_results',
+'search_results_none',
+'search_results_row'
 );
 
 smcwcache();
@@ -67,7 +68,20 @@ if (!isset($searchsubmit) && !isset($page)) {
     unset($url_check);
 
     $forumselect = forumList('srchfid', TRUE, TRUE, getInt('fid'));
-    eval('$search = "'.template('misc_search').'";');
+
+    $captchasearchcheck = '';
+    if (X_GUEST) {
+        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+            require ROOT.'include/captcha.inc.php';
+            $Captcha = new Captcha(250, 50);
+            if ($Captcha->bCompatible !== false) {
+                $imghash = $Captcha->GenerateCode();
+                eval('$captchasearchcheck = "'.template('search_captcha').'";');
+            }
+        }
+    }
+
+    eval('$search = "'.template('search').'";');
     $misc = $search;
 } else {
     $srchtxt = postedVar('srchtxt', '', FALSE, FALSE, FALSE, 'g');
@@ -98,6 +112,24 @@ if (!isset($searchsubmit) && !isset($page)) {
 
     if (strlen($srchuname) < 3) {
         $srchuname = '';
+    }
+
+    if (X_GUEST) {
+        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+            if ($page > 1) {
+                error($lang['searchguesterror']);
+            }
+            require ROOT.'include/captcha.inc.php';
+            $Captcha = new Captcha(250, 50);
+            if ($Captcha->bCompatible !== false) {
+                $imgcode = postedVar('imgcode', '', FALSE, FALSE, FALSE, 'g');
+                $imghash = postedVar('imghash', '', TRUE, TRUE, FALSE, 'g');
+                if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
+                    error($lang['captchaimageinvalid']);
+                }
+            }
+            unset($Captcha);
+        }
     }
 
     validatePpp();
@@ -223,19 +255,19 @@ if (!isset($searchsubmit) && !isset($page)) {
 
             $poston = $date.' '.$lang['textat'].' '.$time;
             $postby = $post['author'];
-            eval('$searchresults .= "'.template('misc_search_results_row').'";');
+            eval('$searchresults .= "'.template('search_results_row').'";');
         }
     }
 
     if ($results == 0) {
-        eval('$searchresults = "'.template('misc_search_results_none').'";');
+        eval('$searchresults = "'.template('search_results_none').'";');
     } else if ($results == $ppp) {
         // create a string containing the stuff to search for
         $ext = implode('&', $ext);
-        eval('$nextlink = "'.template('misc_search_nextlink').'";');
+        eval('$nextlink = "'.template('search_nextlink').'";');
     }
 
-    eval('$search = "'.template('misc_search_results').'";');
+    eval('$search = "'.template('search_results').'";');
     $misc = $search;
 }
 

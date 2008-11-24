@@ -3253,91 +3253,6 @@ $multipage
 </tr>
 </table>
 
-|#*XMB TEMPLATE FILE*#|misc_search|#*XMB TEMPLATE*#|
-<form method="get" action="search.php">
-<input type="hidden" name="token" value="" />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
-<tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textsearchfor]</td>
-<td bgcolor="$altbg2">
-  <input type="text" name="srchtxt" size="30" maxlength="40" /><br />
-  <input type="radio" name="srchfield" value="body" checked="checked" />{$lang['searchbody']}<br />
-  <input type="radio" name="srchfield" value="subject" />{$lang['searchsubject']}<br />
-</td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textsrchuname]</td>
-<td bgcolor="$altbg2"><input type="text" name="srchuname" size="30" maxlength="40" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[srchbyforum]</td>
-<td bgcolor="$altbg2">$forumselect</td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textlfrom]</td>
-<td bgcolor="$altbg2">
-<select name="srchfrom">
-<option value="86400">$lang[day1]</option>
-<option value="604800">$lang[aweek]</option>
-<option value="2592000">$lang[month1]</option>
-<option value="7948800">$lang[month3]</option>
-<option value="15897600">$lang[month6]</option>
-<option value="31536000">$lang[lastyear]</option>
-<option value="0" $selHTML>$lang[beginning]</option>
-</select>
-</td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[srchfilter_double]</td>
-<td bgcolor="$altbg2"><input type="checkbox" name="filter_distinct" value="yes" checked="checked" /></td>
-</tr>
-<tr class="ctrtablerow">
-<td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</form>
-
-|#*XMB TEMPLATE FILE*#|misc_search_nextlink|#*XMB TEMPLATE*#|
-<tr class="mediumtxt" bgcolor="$altbg1">
-<td colspan="3" align="right"><a href="search.php?page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct&amp;searchsubmit=a">$lang[nextsearch]</a></td>
-</tr>
-
-|#*XMB TEMPLATE FILE*#|misc_search_results|#*XMB TEMPLATE*#|
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
-<tr>
-<td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
-<tr>
-<td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
-</tr>
-$nextlink
-$searchresults
-$nextlink
-</table>
-</td>
-</tr>
-</table>
-
-|#*XMB TEMPLATE FILE*#|misc_search_results_none|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td bgcolor="$altbg2" colspan="3"><span class="mediumtxt">$lang[noresults]</span></td>
-</tr>
-
-|#*XMB TEMPLATE FILE*#|misc_search_results_row|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['subject']}</a></strong><br />$add_pre $show $add_post</td>
-<td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
-</tr>
-
 |#*XMB TEMPLATE FILE*#|misc_smilies|#*XMB TEMPLATE*#|
 <div align="center">
 <table border="0">
@@ -3702,6 +3617,98 @@ $posts
 |#*XMB TEMPLATE FILE*#|post_reply_review_toolong|#*XMB TEMPLATE*#|
 <tr bgcolor="$altbg2" class="tablerow">
 <td colspan="2" valign="top" width="19%">$lang[trevltmsg]</td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|search|#*XMB TEMPLATE*#|
+<form method="get" action="search.php">
+<input type="hidden" name="token" value="" />
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsearchfor]</td>
+<td bgcolor="$altbg2">
+  <input type="text" name="srchtxt" size="30" maxlength="40" /><br />
+  <input type="radio" name="srchfield" value="body" checked="checked" />{$lang['searchbody']}<br />
+  <input type="radio" name="srchfield" value="subject" />{$lang['searchsubject']}<br />
+</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsrchuname]</td>
+<td bgcolor="$altbg2"><input type="text" name="srchuname" size="30" maxlength="40" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[srchbyforum]</td>
+<td bgcolor="$altbg2">$forumselect</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlfrom]</td>
+<td bgcolor="$altbg2">
+<select name="srchfrom">
+<option value="86400">$lang[day1]</option>
+<option value="604800">$lang[aweek]</option>
+<option value="2592000">$lang[month1]</option>
+<option value="7948800">$lang[month3]</option>
+<option value="15897600">$lang[month6]</option>
+<option value="31536000">$lang[lastyear]</option>
+<option value="0" $selHTML>$lang[beginning]</option>
+</select>
+</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[srchfilter_double]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="filter_distinct" value="yes" checked="checked" /></td>
+</tr>
+$captchasearchcheck
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="searchsubmit" value="$lang[textsearch]" /></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+
+|#*XMB TEMPLATE FILE*#|search_captcha|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1">$lang[verificationnote]</td>
+<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|search_nextlink|#*XMB TEMPLATE*#|
+<tr class="mediumtxt" bgcolor="$altbg1">
+<td colspan="3" align="right"><a href="search.php?page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct&amp;searchsubmit=a">$lang[nextsearch]</a></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|search_results|#*XMB TEMPLATE*#|
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
+</tr>
+$nextlink
+$searchresults
+$nextlink
+</table>
+</td>
+</tr>
+</table>
+
+|#*XMB TEMPLATE FILE*#|search_results_none|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg2" colspan="3"><span class="mediumtxt">$lang[noresults]</span></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|search_results_row|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1"><strong><a href="viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}">{$post['subject']}</a></strong><br />$add_pre $show $add_post</td>
+<td bgcolor="$altbg1">$poston<br />$lang[textby]: $postby</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|spelling_suggestion|#*XMB TEMPLATE*#|
