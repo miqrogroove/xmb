@@ -183,6 +183,7 @@ $lang['byte'] = "byte(s)";
 $lang['cannotmergesamethread'] = 'I am sorry, but it is impossible to merge a thread with itself.';
 $lang['cantsplit'] = "This topic cannot be split as there are no replies.";
 $lang['cantthreadprune'] = "This topic cannot be pruned as there are no replies.";
+$lang['captchacaseon'] = "This code is case-sensitive.";
 $lang['captchacharset'] = 'Code Characters:';
 $lang['captchacodecase'] = 'Case Sensitive Code:';
 $lang['captchacodelength'] = 'Code Length:';

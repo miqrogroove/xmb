@@ -620,6 +620,9 @@ switch($action) {
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
+                    if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                        $lang['captchacaseon'] = '';
+                    }
                     eval('$captchapostcheck = "'.template('post_captcha').'";');
                 }
                 unset($Captcha);
@@ -954,6 +957,9 @@ switch($action) {
                 $Captcha = new Captcha(250, 50);
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
+                    if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                        $lang['captchacaseon'] = '';
+                    }
                     eval('$captchapostcheck = "'.template('post_captcha').'";');
                 }
                 unset($Captcha);

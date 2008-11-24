@@ -2335,7 +2335,11 @@ $captcharegcheck
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[verificationnote]</td>
-<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+<td bgcolor="$altbg2">
+ <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br />
+ <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /><br />
+ {$lang['captchacaseon']}
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_optional|#*XMB TEMPLATE*#|
@@ -3315,7 +3319,11 @@ $lang[textfilesize] <em>$postinfo[filesize] $lang[byte]</em>
 |#*XMB TEMPLATE FILE*#|post_captcha|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[verificationnote]</td>
-<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+<td bgcolor="$altbg2">
+ <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br />
+ <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /><br />
+ {$lang['captchacaseon']}
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|post_edit|#*XMB TEMPLATE*#|
@@ -3676,7 +3684,11 @@ $captchasearchcheck
 |#*XMB TEMPLATE FILE*#|search_captcha|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[verificationnote]</td>
-<td bgcolor="$altbg2"><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" /><br /><br /><input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /></td>
+<td bgcolor="$altbg2">
+ <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" /><br /><br />
+ <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /><br />
+ {$lang['captchacaseon']}
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|search_nextlink|#*XMB TEMPLATE*#|
@@ -4905,9 +4917,9 @@ $smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Windo
 <tr>
 <td bgcolor="$altbg1" />
 <td class="rghttablerow" bgcolor="$altbg2">
-<img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" />
-<br />
-<input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" />
+ <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br />
+ <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /><br />
+ {$lang['captchacaseon']}
 </td>
 <td class="tablerow" bgcolor="$altbg2">$lang[verificationnote]</td>
 </tr>

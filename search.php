@@ -76,6 +76,9 @@ if (!isset($searchsubmit) && !isset($page)) {
             $Captcha = new Captcha(250, 50);
             if ($Captcha->bCompatible !== false) {
                 $imghash = $Captcha->GenerateCode();
+                if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                    $lang['captchacaseon'] = '';
+                }
                 eval('$captchasearchcheck = "'.template('search_captcha').'";');
             }
         }

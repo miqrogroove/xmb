@@ -316,6 +316,9 @@ switch($action) {
                     $Captcha = new Captcha(250, 50);
                     if ($Captcha->bCompatible !== false) {
                         $imghash = $Captcha->GenerateCode();
+                        if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                            $lang['captchacaseon'] = '';
+                        }
                         eval('$captcharegcheck = "'.template('member_reg_captcha').'";');
                     }
                 }

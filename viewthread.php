@@ -304,6 +304,9 @@ if ($action == '') {
         $Captcha = new Captcha(250, 50);
         if ($Captcha->bCompatible !== false) {
             $imghash = $Captcha->GenerateCode();
+            if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                $lang['captchacaseon'] = '';
+            }
             eval('$captchapostcheck = "'.template('viewthread_quickreply_captcha').'";');
         }
     }
