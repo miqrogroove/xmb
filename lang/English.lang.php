@@ -603,7 +603,7 @@ $lang['restrictedname'] = "Current usernames &amp; e-mail addresses not allowed"
 $lang['restrictedupdate'] = "Restricted usernames updated successfully!";
 $lang['rulesoninfo'] = "The board administrator has requested that all new registered users must agree to the following terms before registering and using the services on this board. Please read the following terms and if you agree to them, select the \"I agree\" button found at the bottom of the terms.";
 $lang['searchbody'] = "Post body and subject.";
-$lang['searchguesterror'] = "Anonymous users are limited to only one page of search results."
+$lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
 $lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Search</a> for all posts by this user';

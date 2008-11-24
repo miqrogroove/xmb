@@ -100,7 +100,9 @@ function installNewTranslation(&$upload) {
 
     // Perform sanity checks
     $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
-    eval('return true; '.$upload); //This will safely error out if file is not valid PHP.
+    if (!eval('return true; '.$upload)) {
+        exit('XMB failed to parse the translation upload.  Valid PHP syntax is required.');
+    }
 
     // Parse the uploaded code
     $devname = '';

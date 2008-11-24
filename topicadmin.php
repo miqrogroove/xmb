@@ -203,12 +203,18 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid'");
                 deleteThreadAttachments($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$tid'");
+                
+                // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
+                $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
+                         . "USING ".X_PREFIX."vote_desc "
+                         . "LEFT JOIN ".X_PREFIX."vote_results ON ".X_PREFIX."vote_results.vote_id = ".X_PREFIX."vote_desc.vote_id "
+                         . "LEFT JOIN ".X_PREFIX."vote_voters  ON ".X_PREFIX."vote_voters.vote_id  = ".X_PREFIX."vote_desc.vote_id "
+                         . "WHERE ".X_PREFIX."vote_desc.topic_id = $tid");
 
-                $db->query("DELETE FROM ".X_PREFIX."threads WHERE closed='moved|$tid'");
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$tid' OR closed='moved|$tid'");
 
                 if ($forums['type'] == 'sub') {
                     updateforumcount($fup['fid']);
@@ -592,15 +598,23 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
 
+            $db->query("UPDATE ".X_PREFIX."threads SET closed='moved|$tid' WHERE closed='moved|$othertid'");
+
             $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='$othertid'");
 
-            $query = $db->query("SELECT * FROM ".X_PREFIX."favorites WHERE tid='$othertid' OR tid='$tid'");
-            if ($db->num_rows($query) == 2) {
-                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$othertid'");
-            } else {
-                $db->query("UPDATE ".X_PREFIX."favorites SET tid='$tid' WHERE tid='$othertid'");
-            }
-            $db->free_result($query);
+            // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
+            $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
+                     . "USING ".X_PREFIX."vote_desc "
+                     . "LEFT JOIN ".X_PREFIX."vote_results ON ".X_PREFIX."vote_results.vote_id = ".X_PREFIX."vote_desc.vote_id "
+                     . "LEFT JOIN ".X_PREFIX."vote_voters  ON ".X_PREFIX."vote_voters.vote_id  = ".X_PREFIX."vote_desc.vote_id "
+                     . "WHERE ".X_PREFIX."vote_desc.topic_id = $othertid");
+
+            $db->query("UPDATE ".X_PREFIX."favorites AS f "
+                     . "INNER JOIN ".X_PREFIX."members AS m ON m.username = f.username "
+                     . "INNER JOIN (SELECT username, COUNT(*) AS fcount FROM ".X_PREFIX"favorites AS f2 WHERE tid=$tid) AS query2 ON m.username = query2.username "
+                     . "SET f.tid=$tid "
+                     . "WHERE f.tid='$othertid' AND query2.fcount=0");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$othertid'");
 
             $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid='$tid' OR tid='$othertid' ORDER BY pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);

@@ -1725,15 +1725,29 @@ if ($action == "prune") {
                     $tids[] = $t['tid'];
                 }
                 $tids = implode(',', $tids);
-                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
                 deleteMultiThreadAttachments($tids); // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE IN ($tids)");
+
+                // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
+                $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
+                         . "USING ".X_PREFIX."vote_desc "
+                         . "LEFT JOIN ".X_PREFIX."vote_results ON ".X_PREFIX."vote_results.vote_id = ".X_PREFIX."vote_desc.vote_id "
+                         . "LEFT JOIN ".X_PREFIX."vote_voters  ON ".X_PREFIX."vote_voters.vote_id  = ".X_PREFIX."vote_desc.vote_id "
+                         . "WHERE ".X_PREFIX."vote_desc.topic_id IN ($tids)");
+
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
             }
         } else {
-            $db->query("TRUNCATE TABLE ".X_PREFIX."threads");
             $db->query("TRUNCATE TABLE ".X_PREFIX."attachments");
             $db->query("TRUNCATE TABLE ".X_PREFIX."posts");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."favorites");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."vote_results");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."vote_voters");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."vote_desc");
+            $db->query("TRUNCATE TABLE ".X_PREFIX."threads");
             $db->query("UPDATE ".X_PREFIX."members SET postnum=0");
+            $db->query("UPDATE ".X_PREFIX."forums SET posts=0, threads=0, lastpost=''");
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[forumpruned]</td></tr>";
     }
