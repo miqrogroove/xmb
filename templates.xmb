@@ -4825,6 +4825,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+$baseelement
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
 <style type="text/css">
 p {
@@ -4855,7 +4856,7 @@ font-family: arial, verdana;
 $logo
 <br />
 <br />
-<span class="16px">$thread[subject]</span>
+<span class="16px"><a href="$threadlink">$thread[subject]</a></span>
 $posts
 <hr />
 </body>

@@ -561,7 +561,7 @@ function bbcode(&$message, $allowimgcode) {
     $replacements[] = '<span style="color: rgb($1);">$2</span>';
     $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
     $replacements[] = '<span style="font-family: $1;">$2</span>';
-    $patterns[] = "#\[align=(left|center|right|justify)\](.+?)\[/align\]#Ssi";
+    $patterns[] = "#\[align=(left|center|right|justify)\](.*?)\[/align\]#Ssi";
     $replacements[] = '<div style="text-align: $1;">$2</div>';
     $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
     $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong><img src="'.$imgdir.'/lastpost.gif" border="0" alt="" /></a>';

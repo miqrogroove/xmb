@@ -810,6 +810,7 @@ if ($action == '') {
         error($lang['textnothread']);
     }
 } else if ($action == 'printable') {
+    $threadlink = "viewthread.php?tid=$tid";
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC, pid ASC");
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
@@ -819,6 +820,7 @@ if ($action == '') {
         $poston = "$date $lang[textat] $time";
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
+        $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
         eval('$posts .= "'.template('viewthread_printable_row').'";');
     }
