@@ -56,6 +56,16 @@ if ($SETTINGS['searchstatus'] != 'on') {
 }
 
 if (!isset($searchsubmit) && !isset($page)) {
+    // Common XSS Protection: XMB disallows '<' in all URLs.
+    $url_check = Array('%3c', '<');
+    foreach($url_check as $name) {
+        if (strpos(strtolower($url), $name) !== FALSE) {
+            header('HTTP/1.0 403 Forbidden');
+            exit('403 Forbidden - URL rejected by XMB');
+        }
+    }
+    unset($url_check);
+
     $forumselect = forumList('srchfid', TRUE, TRUE, getInt('fid'));
     eval('$search = "'.template('misc_search').'";');
     $misc = $search;
@@ -70,6 +80,20 @@ if (!isset($searchsubmit) && !isset($page)) {
     $srchfrom = getInt('srchfrom');
     if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
         error($lang['nosearchq']);
+    }
+    if (!X_STAFF) {
+        // Common XSS Protection: XMB disallows '<' in all URLs.
+        if ($srchtxt != censor($srchtxt) Or strpos($srchtxt, '<') !== FALSE Or strpos($srchuname, '<') !== FALSE) {
+            error($lang['searchinvalid']);
+        }
+        $url_check = Array('%3c', '<');
+        foreach($url_check as $name) {
+            if (strpos(strtolower($url), $name) !== FALSE) {
+                header('HTTP/1.0 403 Forbidden');
+                exit('403 Forbidden - URL rejected by XMB');
+            }
+        }
+        unset($url_check);
     }
 
     if (strlen($srchuname) < 3) {

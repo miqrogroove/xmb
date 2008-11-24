@@ -237,14 +237,16 @@ if (empty($full_url)) {
 }
 
 // Common XSS Protection: XMB disallows '<' in all URLs.
-$url_check = Array('%3c', '<');
-foreach($url_check as $name) {
-    if (strpos(strtolower($url), $name) !== FALSE) {
-        header('HTTP/1.0 403 Forbidden');
-        exit('403 Forbidden - URL rejected by XMB');
+if (X_SCRIPT != 'search.php') {
+    $url_check = Array('%3c', '<');
+    foreach($url_check as $name) {
+        if (strpos(strtolower($url), $name) !== FALSE) {
+            header('HTTP/1.0 403 Forbidden');
+            exit('403 Forbidden - URL rejected by XMB');
+        }
     }
+    unset($url_check);
 }
-unset($url_check);
 
 // Check for double-slash problems in REQUEST_URI
 if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
