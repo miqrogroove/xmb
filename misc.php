@@ -361,7 +361,7 @@ switch($action) {
             $page = 1;
         }
 
-        if ($order != 'username' && $order != 'postnum' && $order != 'status') {
+        if ($order != 'username' && $order != 'postnum' && $order != 'status' && $order != 'location') {
             $order = '';
             $orderby = 'regdate';
         } else if ($order == 'status') {

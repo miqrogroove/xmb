@@ -387,6 +387,7 @@ $lang['lastsadmin'] = "You just tried to de-admin the last remaining Super Admin
 $lang['lastyear'] = "last year";
 $lang['launchbuddylist'] = "Open Address Book";
 $lang['leaveuntouched'] = "&nbsp;Leave current file untouched";
+$lang['location'] = "Location";
 $lang['locktopic'] = "A closed topic";
 $lang['loggedin'] = "Logged in as";
 $lang['loggedinuser'] = "Logged In User:";

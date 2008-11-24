@@ -3032,13 +3032,14 @@ $header
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
+<td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
 <td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
@@ -3082,13 +3083,14 @@ $multipage
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td colspan="5" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
+<td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2" width="18%"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
 <td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
