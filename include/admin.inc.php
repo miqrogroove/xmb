@@ -347,6 +347,8 @@ function displayAdminPanel() {
     &raquo;&nbsp;<a href="tools.php?action=fixttotals"><?php echo $lang['textfixthread']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=fixorphanedthreads"><?php echo $lang['textfixothreads']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=fixorphanedattachments"><?php echo $lang['textfixoattachments']?></a><br />
+    &raquo;&nbsp;<a href="tools.php?action=fixorphanedpolls"><?php echo $lang['textfixopolls']?></a><br />
+    &raquo;&nbsp;<a href="tools.php?action=fixorphanedposts"><?php echo $lang['textfixoposts']?></a><br />
     &raquo;&nbsp;<a href="tools.php?action=updatemoods"><?php echo $lang['textfixmoods']?></a><br />
     </td>
     <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -270,7 +270,8 @@ switch($action) {
             echo '</form>';
         } else {
             $export_fid = formInt('export_fid');
-            if (!$export_fid) {
+            $export_forum = getForum($export_fid);
+            if ($export_forum['type'] != 'forum' And $export_forum['type'] != 'sub') {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
 
@@ -299,6 +300,47 @@ switch($action) {
         }
         break;
 
+    case 'fixorphanedposts':
+        if (noSubmit('orphpostsubmit')) {
+            echo '<form action="tools.php?action=fixorphanedposts" method="post">';
+            echo '<tr bgcolor="'.$altbg1.'" class="ctrtablerow"><td><input type="text" name="export_tid" size="4"/>&nbsp;'.$lang['export_tid_expl'].'</td></tr>';
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td><input class="submit" type="submit" name="orphpostsubmit" value="'.$lang['textsubmitchanges'].'" /></td></tr>';
+            echo '</form>';
+        } else {
+            // Validate Input
+            $export_tid = formInt('export_tid');
+            $query = $db->query("SELECT fid FROM ".X_PREFIX."threads WHERE tid=$export_tid");
+            if ($db->num_rows($query) != 1) {
+                error($lang['export_tid_not_there'], false, '</table></table><br />');
+            }
+            $row = $db->fetch_array($query);
+            $export_fid = $row['fid'];
+            $db->free_result($query);
+            
+            // Fix Invalid FIDs
+            $db->query("UPDATE ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING (tid) "
+                     . "SET p.fid = t.fid "
+                     . "WHERE p.fid != t.fid");
+            $i = $db->affected_rows();
+            
+            // Fix Invalid TIDs
+            $db->query("UPDATE ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) "
+                     . "SET p.fid = $export_fid, p.tid = $export_tid "
+                     . "WHERE t.tid IS NULL");
+            $i += $db->affected_rows();
+
+            updatethreadcount($export_tid);
+            updateforumcount($export_fid);
+            $forum = getForum($export_fid);
+            if ($forum['type'] == 'sub') {
+                updateforumcount($forum['fup']);
+            }
+            
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo $i.$lang['o_posts_found'].'</td></tr>';
+        }
+        break;
+
     case 'fixorphanedattachments':
         if (noSubmit('orphattachsubmit')) {
             echo '<form action="tools.php?action=fixorphanedattachments" method="post">';
@@ -311,6 +353,39 @@ switch($action) {
 
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_attachments_found'].'</td></tr>';
+        }
+        break;
+
+    case 'fixorphanedpolls':
+        if (noSubmit('orphpollsubmit')) {
+            echo '<form action="tools.php?action=fixorphanedpolls" method="post">';
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo '<input type="submit" name="orphpollsubmit" value="'.$lang['o_poll_submit'].'" /></td></tr>';
+            echo '</form>';
+        } else {
+            $q = $db->query("SELECT topic_id "
+                          . "FROM ".X_PREFIX."vote_desc AS v "
+                          . "LEFT JOIN ".X_PREFIX."threads AS t ON t.tid=v.topic_id "
+                          . "WHERE t.tid IS NULL");
+            $i = $db->num_rows($q);
+            if ($i > 0) {
+                $tids = array();
+                while($row = $db->fetch_array($q)) {
+                    $tids[] = $row['topic_id'];
+                }
+                $tids = implode(', ', $tids);
+                
+                // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
+                $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
+                         . "USING ".X_PREFIX."vote_desc "
+                         . "LEFT JOIN ".X_PREFIX."vote_results ON ".X_PREFIX."vote_results.vote_id = ".X_PREFIX."vote_desc.vote_id "
+                         . "LEFT JOIN ".X_PREFIX."vote_voters  ON ".X_PREFIX."vote_voters.vote_id  = ".X_PREFIX."vote_desc.vote_id "
+                         . "WHERE ".X_PREFIX."vote_desc.topic_id IN ($tids)");
+
+            }
+
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
+            echo $i.$lang['o_polls_found'].'</td></tr>';
         }
         break;
 
