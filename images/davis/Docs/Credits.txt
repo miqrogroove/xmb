@@ -1,0 +1,14 @@
+***Theme Credits***
+XMB Davis Theme
+©2008 Tanner J Ferguson
+Contributors: Daniel Schreiner
+http://www.anycolourweb.com
+tanner@anycolourweb.com
+This theme is released under the GPLv2 License
+
+***BBCode Icon Credits***
+The icons used in the BBCode buttons of this theme are derived from the FamFamFam.com Silk Icon Set by Mark James.
+Silk Icon Set URL: http://www.famfamfam.com/lab/icons/silk/
+The FamFamFam.com Silk Icon Set is released through the Creative Commons Attribution 2.5 License
+For license info, visit: http://creativecommons.org/licenses/by/2.5/
+For the full license, visit: http://creativecommons.org/licenses/by/2.5/legalcode

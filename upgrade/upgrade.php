@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Two - This software should not be used for any purpose after 30 November 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -37,30 +37,36 @@ $req['files'] = array(
     'config.php',
     'cp.php',
     'cp2.php',
+    'db/mysql.php',
     'editprofile.php',
-    'lang/English.lang.php',
     'faq.php',
     'files.php',
     'forumdisplay.php',
     'header.php',
-    'index.php',
-    'member.php',
-    'memcp.php',
-    'misc.php',
-    'post.php',
     'include/admin.inc.php',
     'include/attach.inc.php',
     'include/attach-admin.inc.php',
     'include/buddy.inc.php',
     'include/captcha.inc.php',
+    'include/debug.inc.php',
     'include/functions.inc.php',
     'include/global.inc.php',
-    'include/spelling.inc.php',
+    'include/online.inc.php',
     'include/smtp.inc.php',
+    'include/spelling.inc.php',
     'include/topicadmin.inc.php',
     'include/translation.inc.php',
     'include/u2u.inc.php',
     'include/validate.inc.php',
+    'include/validate-email.inc.php',
+    'index.php',
+    'lang/English.lang.php',
+    'member.php',
+    'memcp.php',
+    'misc.php',
+    'post.php',
+    'search.php',
+    'stats.php',
     'templates.xmb',
     'today.php',
     'tools.php',
@@ -1305,9 +1311,10 @@ Public License instead of this License.  But first, please read
 
         $u->deleteThemeByName(''); // delete blank themes
 
-        $newTheme = $u->findThemeIDByName('Oxygen XMB');
+        $newTheme = $u->findThemeIDByName('XMB Davis');
         if (!$newTheme) {
-            $db->query("INSERT INTO ".$u->tablepre."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF')");
+            $db->query("INSERT INTO ".$tablepre."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+                                               ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
             $newTheme = $db->insert_id();
         }
 

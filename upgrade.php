@@ -329,10 +329,11 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 
 
     echo 'Checking for new themes...';
-    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='Oxygen XMB'");
-    if ($db->num_rows($query) == 0 And is_dir('images/oxygen')) {
-        echo 'Adding Oxygen as the new default theme...<br />';
-        $db->query("INSERT INTO ".X_PREFIX."themes (`name`, `bgcolor`, `altbg1`, `altbg2`, `link`, `bordercolor`, `header`, `headertext`, `top`, `catcolor`, `tabletext`, `text`, `borderwidth`, `tablewidth`, `tablespace`, `font`, `fontsize`, `boardimg`, `imgdir`, `smdir`, `cattext`) VALUES ('Oxygen XMB', 'bg_loop.gif', '#fdfdfd', '#fdfdfd', '#000000', '#ddeef7', '#d1e5ef', '#000000', '#ffffff', 'catbg.png', '#343434', '#343434', '1px', '800px', '5px', 'Verdana, Arial, Helvetica', '10px', 'logo.png', 'images/oxygen', 'images/smilies', '#FFFFFF')");
+    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
+    if ($db->num_rows($query) == 0 And is_dir('images/davis')) {
+        echo 'Adding Davis as the new default theme...<br />';
+        $db->query("INSERT INTO ".$tablepre."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+                                           ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
         $newTheme = $db->insert_id();
         $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
     }
