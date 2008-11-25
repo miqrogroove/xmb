@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -81,7 +81,7 @@ if (onSubmit('gid')) {
     nav(fnameOut($cat['name']));
 }
 
-eval('echo "'.template('header').'";');
+eval('$header = "'.template('header').'";');
 
 $statsbar = '';
 if ($SETTINGS['index_stats'] == 'on') {
@@ -336,5 +336,5 @@ if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
 eval('$index = "'.template('index').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo $index.$footer;
+echo $header.$index.$footer;
 ?>

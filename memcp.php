@@ -80,46 +80,48 @@ switch($action) {
 
 function makenav($current) {
     global $THEME, $bordercolor, $tablewidth, $tablespacing, $altbg1, $altbg2, $lang;
-    ?>
-    <table cellpadding="0" cellspacing="0" border="0" bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>" align="center"><tr><td>
-    <table cellpadding="4" cellspacing="<?php echo $THEME['borderwidth']?>" border="0" width="100%">
-    <tr align="center" class="tablerow">
-    <?php
+    
+    $output =
+      '<table cellpadding="0" cellspacing="0" border="0" bgcolor="'.$bordercolor.'" width="'.$tablewidth.'" align="center"><tr><td>
+      <table cellpadding="4" cellspacing="'.$THEME['borderwidth'].'" border="0" width="100%">
+      <tr align="center" class="tablerow">';
+
     if ($current == '') {
-        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textmyhome']. "</td>";
+        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textmyhome']. "</td>";
     } else {
-        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php\">" .$lang['textmyhome']. "</a></td>";
+        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php\">" .$lang['textmyhome']. "</a></td>";
     }
 
     if ($current == 'profile') {
-        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['texteditpro']. "</td>";
+        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['texteditpro']. "</td>";
     } else {
-        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=profile\">" .$lang['texteditpro']. "</a></td>";
+        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=profile\">" .$lang['texteditpro']. "</a></td>";
     }
 
     if ($current == 'subscriptions') {
-        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textsubscriptions']. "</td>";
+        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textsubscriptions']. "</td>";
     } else {
-        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=subscriptions\">" .$lang['textsubscriptions']. "</a></td>";
+        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=subscriptions\">" .$lang['textsubscriptions']. "</a></td>";
     }
 
     if ($current == 'favorites') {
-        echo "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textfavorites']. "</td>";
+        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textfavorites']. "</td>";
     } else {
-        echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
+        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
     }
 
-    echo "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" .$lang['textu2umessenger']. "</a></td>";
-    echo "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"buddy.php\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">" .$lang['textbuddylist']. "</a></td>";
-    echo "<td bgcolor=\"$altbg2\" width=\"10%\" class=\"ctrtablerow\"><a href=\"faq.php\">" .$lang['helpbar']. "</a></td>";
-    ?>
-    </tr>
-    </table>
-    </td>
-    </tr>
-    </table>
-    <br />
-    <?php
+    $output .= "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" .$lang['textu2umessenger']. "</a></td>";
+    $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"buddy.php\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">" .$lang['textbuddylist']. "</a></td>";
+    $output .= "<td bgcolor=\"$altbg2\" width=\"10%\" class=\"ctrtablerow\"><a href=\"faq.php\">" .$lang['helpbar']. "</a></td>";
+    $output .=
+      '</tr>
+      </table>
+      </td>
+      </tr>
+      </table>
+      <br />';
+      
+    return $output;
 }
 
 if (X_GUEST) {
@@ -128,8 +130,8 @@ if (X_GUEST) {
 }
 
 if ($action == 'profile') {
-    eval('echo "'.template('header').'";');
-    makenav($action);
+    eval('$header = "'.template('header').'";');
+    $header .= makenav($action);
 
     if (noSubmit('editsubmit')) {
         $member = $self;
@@ -368,7 +370,7 @@ if ($action == 'profile') {
         }
 
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
-        eval('echo "'.template('memcp_profile').'";');
+        eval('$mempage = "'.template('memcp_profile').'";');
     }
 
     if (onSubmit('editsubmit')) {
@@ -520,11 +522,11 @@ if ($action == 'profile') {
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$xmbuser'");
 
-        message($lang['usercpeditpromsg'], false, '', '', $full_url.'memcp.php', true, false, true);
+        message($lang['usercpeditpromsg'], TRUE, '', '', $full_url.'memcp.php', true, false, true);
     }
 } else if ($action == 'favorites') {
-    eval('echo "'.template('header').'";');
-    makenav($action);
+    eval('$header = "'.template('header').'";');
+    $header .= makenav($action);
 
     $favadd = getInt('favadd');
     if (noSubmit('favsubmit') && $favadd) {
@@ -558,7 +560,7 @@ if ($action == 'profile') {
         }
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($favadd, '$xmbuser', 'favorite')");
-        message($lang['favaddedmsg'], false, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
+        message($lang['favaddedmsg'], TRUE, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
@@ -600,7 +602,7 @@ if ($action == 'profile') {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
         $db->free_result($query);
-        eval('echo "'.template('memcp_favs').'";');
+        eval('$mempage = "'.template('memcp_favs').'";');
     }
 
     if (!$favadd && onSubmit('favsubmit')) {
@@ -611,11 +613,11 @@ if ($action == 'profile') {
         }
         $db->free_result($query);
 
-        message($lang['favsdeletedmsg'], false, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
+        message($lang['favsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
     }
 } else if ($action == 'subscriptions') {
-    eval('echo "'.template('header').'";');
-    makenav($action);
+    eval('$header = "'.template('header').'";');
+    $header .= makenav($action);
 
     $subadd = getInt('subadd');
     if (!$subadd && noSubmit('subsubmit')) {
@@ -655,7 +657,7 @@ if ($action == 'profile') {
             eval('$subscriptions = "'.template('memcp_subscriptions_none').'";');
         }
         $db->free_result($query);
-        eval('echo "'.template('memcp_subscriptions').'";');
+        eval('$mempage = "'.template('memcp_subscriptions').'";');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
@@ -663,7 +665,7 @@ if ($action == 'profile') {
             error($lang['subonlistmsg'], false);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
-            message($lang['subaddedmsg'], false, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
+            message($lang['subaddedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
@@ -672,12 +674,12 @@ if ($action == 'profile') {
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
         }
         $db->free_result($query);
-        message($lang['subsdeletedmsg'], false, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
+        message($lang['subsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
     }
 } else {
-    eval('echo "'.template('header').'";');
+    eval('$header = "'.template('header').'";');
     eval($lang['evalusercpwelcome']);
-    makenav($action);
+    $header .= makenav($action);
 
     $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
     $buddys = array();
@@ -787,9 +789,10 @@ if ($action == 'profile') {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
     $db->free_result($query2);
-    eval('echo "'.template('memcp_home').'";');
+    eval('$mempage = "'.template('memcp_home').'";');
 }
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$mempage.$footer;
 ?>

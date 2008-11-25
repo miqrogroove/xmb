@@ -124,6 +124,7 @@ $attachfile = '';
 $attachment = '';
 $captchapostcheck = '';
 $dissubject = '';
+$errors = '';
 $imghash = '';
 $message = '';
 $message1 = '';
@@ -347,19 +348,19 @@ switch($action) {
             $threadSubject = '- '.$threadname;
         }
 
-        eval('echo "'.template('header').'";');
+        eval('$header = "'.template('header').'";');
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
             $result = attachUploadedFile('attach');
             if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                softerror($attachmentErrors[$result]);
+                $errors .= softerror($attachmentErrors[$result]);
                 $replyvalid = FALSE;
             }
             $result = doAttachmentEdits($deletes);
             if ($result < 0) {
-                softerror($attachmentErrors[$result]);
+                $errors .= softerror($attachmentErrors[$result]);
                 $replyvalid = FALSE;
             }
             foreach($deletes as $aid) {
@@ -368,7 +369,7 @@ switch($action) {
             if ($SETTINGS['attach_remote_images'] == 'on') {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
-                    softerror($attachmentErrors[$result]);
+                    $errors .= softerror($attachmentErrors[$result]);
                     $replyvalid = FALSE;
                 }
             }
@@ -380,9 +381,9 @@ switch($action) {
         //Check all replying permissions for this $tid.
         if (!X_SADMIN And $thread['closed'] != '') {
             if ($replyvalid) {
-                softerror($lang['closedmsg']);
+                $errors .= softerror($lang['closedmsg']);
             } else {
-                error($lang['closedmsg'], FALSE);
+                error($lang['closedmsg']);
             }
             $replyvalid = FALSE;
         }
@@ -393,10 +394,10 @@ switch($action) {
                 if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
                     if (loginUser(postedVar('username'), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
-                            softerror($lang['bannedmessage']);
+                            $errors .= softerror($lang['bannedmessage']);
                             $replyvalid = FALSE;
                         } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                            softerror($lang['textbanfrompost']);
+                            $errors .= softerror($lang['textbanfrompost']);
                             $replyvalid = FALSE;
                         } else {
                             $username = $xmbuser;
@@ -404,10 +405,10 @@ switch($action) {
                             // check permissions on this forum (and top forum if it's a sub?)
                             $perms = checkForumPermissions($forum);
                             if (!$perms[X_PERMS_VIEW]) {
-                                softerror($lang['privforummsg']);
+                                $errors .= softerror($lang['privforummsg']);
                                 $topicvalid = FALSE;
                             } else if (!$perms[X_PERMS_REPLY]) {
-                                softerror($lang['textnoaction']);
+                                $errors .= softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
 
@@ -415,13 +416,13 @@ switch($action) {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
                                 if (!$fupPerms[X_PERMS_VIEW]) {
-                                    softerror($lang['privforummsg']);
+                                    $errors .= softerror($lang['privforummsg']);
                                     $topicvalid = FALSE;
                                 }
                             }
                         }
                     } else {
-                        softerror($lang['textpw1']);
+                        $errors .= softerror($lang['textpw1']);
                         $replyvalid = FALSE;
                     }
                 } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
@@ -430,7 +431,7 @@ switch($action) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);
                         $imghash = postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
-                            softerror($lang['captchaimageinvalid']);
+                            $errors .= softerror($lang['captchaimageinvalid']);
                             $replyvalid = FALSE;
                         }
                     }
@@ -441,7 +442,7 @@ switch($action) {
 
         if ($replyvalid) {
             if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0) {
-                softerror($lang['postnothing']);
+                $errors .= softerror($lang['postnothing']);
                 $replyvalid = FALSE;
             }
         }
@@ -451,7 +452,7 @@ switch($action) {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if ($db->num_rows($query) == 0) {
                     $posticon = '';
-                    softerror($lang['error']);
+                    $errors .= softerror($lang['error']);
                     $replyvalid = FALSE;
                 }
                 $db->free_result($query);
@@ -464,7 +465,8 @@ switch($action) {
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
-                    softerror($lang['floodprotect'].' '.$floodlink.' '.$lang['tocont']);
+                    $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
+                    $errors .= softerror($errmsg);
                     $replyvalid = FALSE;
                 }
             }
@@ -673,7 +675,7 @@ switch($action) {
                 $loggedin = '';
             }
 
-            eval('echo "'.template('post_reply').'";');
+            eval('$postpage = "'.template('post_reply').'";');
         }
         break;
 
@@ -688,7 +690,7 @@ switch($action) {
             $threadSubject = '- '.$dissubject;
         }
 
-        eval('echo "'.template('header').'";');
+        eval('$header = "'.template('header').'";');
 
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -696,12 +698,12 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
             $result = attachUploadedFile('attach');
             if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                softerror($attachmentErrors[$result]);
+                $errors .= softerror($attachmentErrors[$result]);
                 $topicvalid = FALSE;
             }
             $result = doAttachmentEdits($deletes);
             if ($result < 0) {
-                softerror($attachmentErrors[$result]);
+                $errors .= softerror($attachmentErrors[$result]);
                 $topicvalid = FALSE;
             }
             foreach($deletes as $aid) {
@@ -710,7 +712,7 @@ switch($action) {
             if ($SETTINGS['attach_remote_images'] == 'on') {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
-                    softerror($attachmentErrors[$result]);
+                    $errors .= softerror($attachmentErrors[$result]);
                     $topicvalid = FALSE;
                 }
             }
@@ -725,10 +727,10 @@ switch($action) {
                 if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
                     if (loginUser(postedVar('username'), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
-                            softerror($lang['bannedmessage']);
+                            $errors .= softerror($lang['bannedmessage']);
                             $topicvalid = FALSE;
                         } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                            softerror($lang['textbanfrompost']);
+                            $errors .= softerror($lang['textbanfrompost']);
                             $topicvalid = FALSE;
                         } else {
                             $username = $xmbuser;
@@ -736,10 +738,10 @@ switch($action) {
                             // check permissions on this forum (and top forum if it's a sub?)
                             $perms = checkForumPermissions($forum);
                             if (!$perms[X_PERMS_VIEW]) {
-                                softerror($lang['privforummsg']);
+                                $errors .= softerror($lang['privforummsg']);
                                 $topicvalid = FALSE;
                             } else if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
-                                softerror($lang['textnoaction']);
+                                $errors .= softerror($lang['textnoaction']);
                                 $topicvalid = FALSE;
                             }
 
@@ -747,13 +749,13 @@ switch($action) {
                                 // prevent access to subforum when upper forum can't be viewed.
                                 $fupPerms = checkForumPermissions($fup);
                                 if (!$fupPerms[X_PERMS_VIEW]) {
-                                    softerror($lang['privforummsg']);
+                                    $errors .= softerror($lang['privforummsg']);
                                     $topicvalid = FALSE;
                                 }
                             }
                         }
                     } else {
-                        softerror($lang['textpw1']);
+                        $errors .= softerror($lang['textpw1']);
                         $topicvalid = FALSE;
                     }
                 } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
@@ -762,7 +764,7 @@ switch($action) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);
                         $imghash = postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
-                            softerror($lang['captchaimageinvalid']);
+                            $errors .= softerror($lang['captchaimageinvalid']);
                             $topicvalid = FALSE;
                         }
                     }
@@ -773,7 +775,7 @@ switch($action) {
 
         if ($topicvalid) {
             if (strlen(postedVar('subject')) == 0) {
-                softerror($lang['textnosubject']);
+                $errors .= softerror($lang['textnosubject']);
                 $topicvalid = FALSE;
             }
         }
@@ -783,7 +785,7 @@ switch($action) {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if ($db->num_rows($query) == 0) {
                     $posticon = '';
-                    softerror($lang['error']);
+                    $errors .= softerror($lang['error']);
                     $topicvalid = FALSE;
                 }
                 $db->free_result($query);
@@ -795,7 +797,7 @@ switch($action) {
                 $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
                 if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
-                    softerror($lang['floodprotect']);
+                    $errors .= softerror($lang['floodprotect']);
                     $topicvalid = FALSE;
                 }
             }
@@ -814,7 +816,7 @@ switch($action) {
                 $pnumnum = count($pollopts);
 
                 if ($pnumnum < 2) {
-                    softerror($lang['too_few_pollopts']);
+                    $errors .= softerror($lang['too_few_pollopts']);
                     $topicvalid = FALSE;
                 }
             }
@@ -983,9 +985,9 @@ switch($action) {
             }
 
             if (isset($poll) && $poll == 'yes') {
-                eval('echo "'.template('post_newpoll').'";');
+                eval('$postpage = "'.template('post_newpoll').'";');
             } else {
-                eval('echo "'.template('post_newthread').'";');
+                eval('$postpage = "'.template('post_newthread').'";');
             }
         }
         break;
@@ -998,7 +1000,7 @@ switch($action) {
             $threadSubject = '- '.$threadname;
         }
 
-        eval('echo "'.template('header').'";');
+        eval('$header = "'.template('header').'";');
 
         $editvalid = TRUE; // This new flag will indicate a message was submitted and successful.
 
@@ -1010,7 +1012,7 @@ switch($action) {
         $status1 = modcheckPost($self['username'], $forum['moderator'], $orig['status']);
 
         if ($status1 != 'Moderator' And ($self['username'] != $orig['author'] Or $thread['closed'] != '')) {
-            softerror($lang['noedit']);
+            $errors .= softerror($lang['noedit']);
             $editvalid = FALSE;
         }
 
@@ -1018,12 +1020,12 @@ switch($action) {
             if ($forum['attachstatus'] == 'on') {
                 $result = attachUploadedFile('attach', $pid);
                 if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                    softerror($attachmentErrors[$result]);
+                    $errors .= softerror($attachmentErrors[$result]);
                     $editvalid = FALSE;
                 }
                 $result = doAttachmentEdits($deletes, $pid);
                 if ($result < 0) {
-                    softerror($attachmentErrors[$result]);
+                    $errors .= softerror($attachmentErrors[$result]);
                     $editvalid = FALSE;
                 }
                 foreach($deletes as $aid) {
@@ -1033,7 +1035,7 @@ switch($action) {
                 if ($SETTINGS['attach_remote_images'] == 'on') {
                     $result = extractRemoteImages($pid, $messageinput);
                     if ($result < 0) {
-                        softerror($attachmentErrors[$result]);
+                        $errors .= softerror($attachmentErrors[$result]);
                         $editvalid = FALSE;
                     }
                 }
@@ -1047,7 +1049,7 @@ switch($action) {
                 $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
                 if ($db->num_rows($query) == 0) {
                     $posticon = '';
-                    softerror($lang['error']);
+                    $errors .= softerror($lang['error']);
                     $editvalid = FALSE;
                 }
                 $db->free_result($query);
@@ -1060,7 +1062,7 @@ switch($action) {
             $db->free_result($query);
 
             if ((strlen(postedVar('subject')) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
-                softerror($lang['textnosubject']);
+                $errors .= softerror($lang['textnosubject']);
                 $editvalid = FALSE;
             }
         }
@@ -1210,7 +1212,7 @@ switch($action) {
             $postinfo['message'] = rawHTMLmessage($postinfo['message']);
             $postinfo['subject'] = rawHTMLsubject($postinfo['subject']);
 
-            eval('echo "'.template('post_edit').'";');
+            eval('$postpage = "'.template('post_edit').'";');
         }
         break;
 
@@ -1220,7 +1222,8 @@ switch($action) {
 }
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$errors.$postpage.$footer;
 
 function bbcodeinsert() {
     global $imgdir, $bbinsert, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
@@ -1263,7 +1266,7 @@ function postLinkBBcode(&$message) {
     return TRUE;
 }
 
-function softerror($msg) {
-    error($msg, FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
+function softerror(&$msg) {
+    return error($msg, FALSE, '', '', FALSE, FALSE, TRUE, FALSE);
 }
 ?>

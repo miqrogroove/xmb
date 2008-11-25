@@ -69,22 +69,18 @@ switch($action) {
 switch($action) {
     case 'coppa':
         if (X_MEMBER) {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if ($SETTINGS['coppa'] != 'on') {
-            redirect($full_url.'member.php?action=reg', 0);
-        }
-
-        if (onSubmit('coppasubmit')) {
-            redirect($full_url.'member.php?action=reg', 0);
+            eval('$header = "'.template('header').'";');
+            eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
         } else {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('member_coppa').'";');
+            if ($SETTINGS['coppa'] != 'on') {
+                redirect($full_url.'member.php?action=reg', 0);
+            }
+            if (onSubmit('coppasubmit')) {
+                redirect($full_url.'member.php?action=reg', 0);
+            } else {
+                eval('$header = "'.template('header').'";');
+                eval('$memberpage = "'.template('member_coppa').'";');
+            }
         }
         break;
 
@@ -103,27 +99,16 @@ switch($action) {
             $db->free_result($query);
         }
 
+        eval('$header = "'.template('header').'";');
+
         if ($SETTINGS['regstatus'] == 'off') {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if (X_MEMBER) {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if (noSubmit('regsubmit')) {
-            eval('echo "'.template('header').'";');
+            eval('$memberpage = "'.template('misc_feature_notavailable').'";');
+        } elseif (X_MEMBER) {
+            eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
+        } elseif (noSubmit('regsubmit')) {
             if ($SETTINGS['bbrules'] == 'on' && noSubmit('rulesubmit')) {
                 $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
-                eval('echo "'.template('member_reg_rules').'";');
+                eval('$memberpage = "'.template('member_reg_rules').'";');
             } else {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
                 eval($lang['evaloffset']);
@@ -322,7 +307,7 @@ switch($action) {
                         eval('$captcharegcheck = "'.template('member_reg_captcha').'";');
                     }
                 }
-                eval('echo "'.template('member_reg').'";');
+                eval('$memberpage = "'.template('member_reg').'";');
             }
         } else {
             if ($_POST['username'] != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $_POST['username'])) {
@@ -561,8 +546,7 @@ switch($action) {
                 put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
                 put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
             }
-            eval('echo "'.template('header').'";');
-            echo ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
+            $memberpage = ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
 
             redirect($full_url, 2, X_REDIRECT_JS);
         }
@@ -599,7 +583,7 @@ switch($action) {
                 header('HTTP/1.0 404 Not Found');
                 error($lang['nomember']);
             } else {
-                eval('echo "'.template('header').'";');
+                eval('$header = "'.template('header').'";');
                 
                 $encodeuser = recodeOut($memberinfo['username']);
                 if (X_GUEST) {
@@ -772,7 +756,7 @@ switch($action) {
                 } else {
                     $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
                 }
-                eval('echo "'.template('member_profile').'";');
+                eval('$memberpage = "'.template('member_profile').'";');
             }
         }
         break;
@@ -783,5 +767,6 @@ switch($action) {
 }
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$memberpage.$footer;
 ?>

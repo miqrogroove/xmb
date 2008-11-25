@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -38,10 +38,10 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-eval('echo "'.template('header').'";');
+eval('$header = "'.template('header').'";');
 
 if ($SETTINGS['stats'] == 'off') {
-    error($lang['fnasorry3'], false);
+    error($lang['fnasorry3']);
 }
 
 $fids = permittedForums(forumCache(), 'thread', 'csv');
@@ -90,7 +90,7 @@ $db->free_result($query);
 
 // In case any of these is 0, the stats will show wrong info, take care of that
 if ($posts == 0 || $members == 0 || $threads == 0 || $forums == 0 || $days < 1) {
-    message($lang['stats_incomplete'], false);
+    message($lang['stats_incomplete']);
 }
 
 // Get amount of posts per user
@@ -194,8 +194,9 @@ eval($lang['evalstats13']);
 eval($lang['evalstats14']);
 eval($lang['evalstats15']);
 
-eval('echo "'.template('feature_statistics').'";');
+eval('$statspage = "'.template('feature_statistics').'";');
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$statspage.$footer;
 ?>

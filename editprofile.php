@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -41,7 +41,7 @@ nav($lang['texteditpro']);
 
 eval('$css = "'.template('css').'";');
 
-eval('echo "'.template('header').'";');
+eval('$header = "'.template('header').'";');
 
 if (!X_SADMIN) {
     error($lang['superadminonly'], false);
@@ -189,7 +189,7 @@ if (noSubmit('editsubmit')) {
 
     $userrecode = recodeOut($member['username']);
 
-    eval('echo "'.template('admintool_editprofile').'";');
+    eval('$editpage = "'.template('admintool_editprofile').'";');
 } else {
     $langfilenew = postedVar('langfilenew');
     $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
@@ -260,10 +260,11 @@ if (noSubmit('editsubmit')) {
         $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");
     }
 
-    echo '<div align="center"><span class="mediumtxt">'.$lang['adminprofilechange'].'</span></div>';
+    $editpage = '<div align="center"><span class="mediumtxt">'.$lang['adminprofilechange'].'</span></div>';
     redirect($full_url.'cp.php', 2, X_REDIRECT_JS);
 }
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$editpage.$footer;
 ?>

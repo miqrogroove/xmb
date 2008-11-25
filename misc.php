@@ -112,8 +112,7 @@ switch($action) {
             }
         } else {
             if ($self['status'] == "Banned") {
-                eval('echo "'.template('header').'";');
-                error($lang['bannedmessage'], FALSE);
+                error($lang['bannedmessage']);
             } else {
                 eval('$misc = "'.template('misc_login_incorrectdetails').'";');
                 eval('$misc .= "'.template('misc_login').'";');

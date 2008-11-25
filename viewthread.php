@@ -294,7 +294,7 @@ if ($action == '') {
         $usesig = true;
     }
 
-    eval('echo "'.template('header').'";');
+    eval('$header = "'.template('header').'";');
 
     $usesigcheck = $usesig ? 'checked="checked"' : '';
 
@@ -789,9 +789,10 @@ if ($action == '') {
     if ('Moderator' == $status1) {
         eval('$modoptions = "'.template('viewthread_modoptions').'";');
     }
-    eval('echo "'.template('viewthread').'";');
+    eval('$viewthread = "'.template('viewthread').'";');
     end_time();
-    eval('echo "'.template('footer').'";');
+    eval('$footer = "'.template('footer').'";');
+    echo $header.$viewthread.$footer;
     exit();
 } else if ($action == 'attachment' && $forum['attachstatus'] == 'on' && $pid > 0 && $tid > 0) {
     // Try to validate $pid

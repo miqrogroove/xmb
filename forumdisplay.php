@@ -98,7 +98,7 @@ nav(fnameOut($forum['name']));
 // Search-link
 $searchlink = makeSearchLink($forum['fid']);
 
-eval('echo "'.template('header').'";');
+eval('$header = "'.template('header').'";');
 
 if ($perms[X_PERMS_POLL]) {
     eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
@@ -354,11 +354,12 @@ if ($status1 == 'Moderator') {
     } else {
         $fadminlink = '';
     }
-    eval('echo "'.template('forumdisplay_admin').'";');
+    eval('$forumdisplay = "'.template('forumdisplay_admin').'";');
 } else {
-    eval('echo "'.template('forumdisplay').'";');
+    eval('$forumdisplay = "'.template('forumdisplay').'";');
 }
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$forumdisplay.$footer;
 ?>

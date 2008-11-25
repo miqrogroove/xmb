@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -42,10 +42,10 @@ smcwcache();
 nav($lang['navtodaysposts']);
 
 eval('$css = "'.template('css').'";');
-eval('echo "'.template('header').'";');
+eval('$header = "'.template('header').'";');
 
 if ($SETTINGS['todaysposts'] == 'off') {
-    error($lang['fnasorry3'], false);
+    error($lang['fnasorry3']);
 }
 
 $daysold = (isset($daysold) && is_numeric($daysold) ? (int) $daysold : 1);
@@ -177,8 +177,9 @@ if ($results == 0) {
     $db->free_result($query);
 }
 
-eval('echo "'.template('today').'";');
+eval('$todaypage = "'.template('today').'";');
 
 end_time();
-eval('echo "'.template('footer').'";');
+eval('$footer = "'.template('footer').'";');
+echo $header.$todaypage.$footer;
 ?>

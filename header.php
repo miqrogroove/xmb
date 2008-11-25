@@ -46,7 +46,7 @@ $alpha = 'Alpha Three';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081123;
+$versionbuild = 20081125;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -648,7 +648,10 @@ if (X_MEMBER) {
 /* Perform HTTP Connection Maintenance */
 
 // Gzip-compression
-if ($SETTINGS['gzipcompress'] == "on" && $action != "attachment" && X_SCRIPT != 'files.php') {
+if ($SETTINGS['gzipcompress'] == 'on'
+ && $action != 'captchaimage'
+ && X_SCRIPT != 'files.php'
+ && X_SCRIPT != 'upgrade.php') {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
     } else if ($res === false) {
