@@ -692,6 +692,8 @@ function modcheckPost(&$username, &$mods, &$origstatus) {
     return $retval;
 }
 
+// As of version 1.9.11, function forum() is not responsible for any permissions checking.
+// Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
 function forum($forum, $template, $index_subforums) {
     global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
@@ -731,39 +733,34 @@ function forum($forum, $template, $index_subforums) {
     }
 
     $foruminfo = '';
-    $perms = checkForumPermissions($forum);
-    if ($SETTINGS['hideprivate'] == 'off' || ($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
-        if (isset($forum['moderator']) && $forum['moderator'] != '') {
-            $moderators = explode(', ', $forum['moderator']);
-            $forum['moderator'] = array();
-            for($num = 0; $num < count($moderators); $num++) {
-                $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
-            }
-            $forum['moderator'] = implode(', ', $forum['moderator']);
-            $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
-        }
 
-        $subforums = array();
-        if (count($index_subforums) > 0) {
-            for($i=0; $i < count($index_subforums); $i++) {
-                $sub = $index_subforums[$i];
-                $subperms = checkForumPermissions($sub);
-                if ($sub['fup'] == $forum['fid']) {
-                    if ($SETTINGS['hideprivate'] == 'off' || $subperms[X_PERMS_VIEW] || $subperms[X_PERMS_USERLIST]) {
-                        $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
-                    }
-                }
-            }
+    if (isset($forum['moderator']) && $forum['moderator'] != '') {
+        $moderators = explode(', ', $forum['moderator']);
+        $forum['moderator'] = array();
+        for($num = 0; $num < count($moderators); $num++) {
+            $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
         }
-
-        if (!empty($subforums)) {
-            $subforums = implode(', ', $subforums);
-            $subforums = '<br /><strong>'.$lang['textsubforums'].'</strong> '.$subforums;
-        } else {
-            $subforums = '';
-        }
-        eval('$foruminfo = "'.template($template).'";');
+        $forum['moderator'] = implode(', ', $forum['moderator']);
+        $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
     }
+
+    $subforums = array();
+    if (count($index_subforums) > 0) {
+        for($i=0; $i < count($index_subforums); $i++) {
+            $sub = $index_subforums[$i];
+            if ($sub['fup'] == $forum['fid']) {
+                $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
+            }
+        }
+    }
+
+    if (!empty($subforums)) {
+        $subforums = implode(', ', $subforums);
+        $subforums = '<br /><strong>'.$lang['textsubforums'].'</strong> '.$subforums;
+    } else {
+        $subforums = '';
+    }
+    eval('$foruminfo = "'.template($template).'";');
 
     $dalast = '';
 
