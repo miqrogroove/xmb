@@ -56,6 +56,34 @@ if ($db->num_rows($query) != 1) {
 $member = $db->fetch_array($query);
 
 if (noSubmit('editsubmit')) {
+    $sadminselect = $adminselect = $smodselect = '';
+    $modselect = $memselect = $banselect = '';
+    switch($member['status']) {
+    case 'Super Administrator':
+        $sadminselect = $selHTML;
+        break;
+    case 'Administrator':
+        $adminselect = $selHTML;
+        break;
+    case 'Super Moderator':
+        $smodselect = $selHTML;
+        break;
+    case 'Moderator':
+        $modselect = $selHTML;
+        break;
+    case 'Member':
+        $memselect = $selHTML;
+        break;
+    case 'Banned':
+        $banselect = $selHTML;
+        break;
+    default:
+        $memselect = $selHTML;
+        break;
+    }
+
+    $custout = attrOut($member['customstatus']);
+
     $checked = '';
     if ($member['showemail'] == 'yes') {
         $checked = $cheHTML;
@@ -191,6 +219,8 @@ if (noSubmit('editsubmit')) {
 
     eval('$editpage = "'.template('admintool_editprofile').'";');
 } else {
+    $status = postedVar('status');
+    $cusstatus = postedVar('cusstatus', '', FALSE);
     $langfilenew = postedVar('langfilenew');
     $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
     if ($db->num_rows($result) == 0) {
@@ -253,7 +283,7 @@ if (noSubmit('editsubmit')) {
         $avatar = '';
     }
 
-    $db->query("UPDATE ".X_PREFIX."members SET email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$user'");
+    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$user'");
     $newpassword = $_POST['newpassword'];
     if ($newpassword) {
         $newpassword = md5($newpassword);

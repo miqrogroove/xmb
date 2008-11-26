@@ -148,12 +148,13 @@ $status_enum = array(
 ); //$status['Banned'] == 2^30
 // status bit to $lang key assignments
 $status_translate = array(
-1  => 'superadmin',
-2  => 'textadmin',
-4  => 'textsupermod',
-8  => 'textmod',
-16 => 'textmem',
-32 => 'textguest1'
+1         => 'superadmin',
+2         => 'textadmin',
+4         => 'textsupermod',
+8         => 'textmod',
+16        => 'textmem',
+32        => 'textguest1',
+(1 << 30) => 'textbanned'
 );
 
 // discover the most likely browser

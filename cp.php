@@ -1557,6 +1557,41 @@ if ($action == "mods") {
 
 if ($action == "members") {
     $members = postedVar('members', '', FALSE, FALSE, FALSE, 'g');
+
+    $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
+    $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
+    $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
+    $srchstatus = postedVar('srchstatus', 'javascript', TRUE, TRUE, TRUE);
+    $dblikemem = $db->like_escape($srchmem);
+    $dblikeemail = $db->like_escape($srchemail);
+    $dblikeip = $db->like_escape($srchip);
+
+    $where = '';
+
+    if ($srchmem != '') {
+        $where .= "username LIKE '%$dblikemem%' ";
+    }
+    if ($srchemail != '') {
+        $where .= "email LIKE '%$dblikeemail%' ";
+    }
+    if ($srchip != '') {
+        $where .= "regip LIKE '%$dblikeip%' ";
+    }
+    if ($srchstatus != '') {
+        if ($srchstatus == 'Pending') {
+            $where .= "lastvisit = 0 ";
+        } else {
+            $where .= "status = '$srchstatus' ";
+        }
+    }
+
+    if ($where == '') {
+        $where = 'WHERE FALSE ';
+    } else {
+        $where = 'WHERE '.$where;
+    }
+
+
     if (noSubmit('membersubmit')) {
         if (!$members) {
             ?>
@@ -1575,10 +1610,18 @@ if ($action == "members") {
             <td bgcolor="<?php echo $altbg2?>"><input type="text" name="srchmem" /></td>
             </tr>
             <tr class="tablerow">
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textsrchemail']?></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="text" name="srchemail" /></td>
+            </tr>
+            <tr class="tablerow">
+            <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textsrchip']?></td>
+            <td bgcolor="<?php echo $altbg2?>"><input type="text" name="srchip" /></td>
+            </tr>
+            <tr class="tablerow">
             <td bgcolor="<?php echo $altbg1?>" width="22%"><?php echo $lang['textwithstatus']?></td>
             <td bgcolor="<?php echo $altbg2?>">
             <select name="srchstatus">
-            <option value="0"><?php echo $lang['anystatus']?></option>
+            <option value=""><?php echo $lang['anystatus']?></option>
             <option value="Super Administrator"><?php echo $lang['superadmin']?></option>
             <option value="Administrator"><?php echo $lang['textadmin']?></option>
             <option value="Super Moderator"><?php echo $lang['textsupermod']?></option>
@@ -1620,16 +1663,8 @@ if ($action == "members") {
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textbanfrom']?></font></strong></td>
             </tr>
             <?php
-            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
-            $dblikemem = $db->like_escape($srchmem);
-            $srchstatus = postedVar('srchstatus');
-            if ($srchstatus == '0') {
-                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' ORDER BY username");
-            } else if ($srchstatus == "Pending") {
-                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE lastvisit=0 ORDER BY username");
-            } else {
-                $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND status='$srchstatus' ORDER BY username");
-            }
+            
+            $query = $db->query("SELECT * FROM ".X_PREFIX."members $where ORDER BY username");
 
             while($member = $db->fetch_array($query)) {
                 $sadminselect = $adminselect = $smodselect = '';
@@ -1683,7 +1718,10 @@ if ($action == "members") {
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>" /></td>
-                <td><a href="member.php?action=viewpro&amp;member=<?php echo recodeOut($member['username']);?>"><?php echo $member['username']?></a>
+                <td><a href="member.php?action=viewpro&amp;member=<?php echo recodeOut($member['username']); ?>"><?php echo $member['username']?></a>
+                <?php if (X_SADMIN) { ?>
+                <br /><a href="editprofile.php?user=<?php echo recodeOut($member['username']); ?>"><strong><?php echo $lang['admin_edituseraccount']; ?></strong></a>
+                <?php } ?>
                 <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo recodeJavaOut($member['username'])?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
                 </td>
                 <td><input type="text" size="12" name="pw<?php echo $member['uid']?>"></td>
@@ -1708,7 +1746,13 @@ if ($action == "members") {
             }
             ?>
             <tr>
-            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7"><input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']?>" onclick="return confirmUserDel('<?php echo $lang['confirmDeleteUser']?>');" /><input type="hidden" name="srchmem" value="<?php echo $srchmem?>" /><input type="hidden" name="srchstatus" value="<?php echo $srchstatus?>" /></td>
+            <td bgcolor="<?php echo $altbg2?>" class="ctrtablerow" colspan="7">
+             <input type="submit" class="submit" name="membersubmit" value="<?php echo $lang['textsubmitchanges']; ?>" onclick="return confirmUserDel('<?php echo $lang['confirmDeleteUser']; ?>');" />
+             <input type="hidden" name="srchmem" value="<?php echo $srchmem; ?>" />
+             <input type="hidden" name="srchemail" value="<?php echo $srchemail; ?>" />
+             <input type="hidden" name="srchip" value="<?php echo $srchip; ?>" />
+             <input type="hidden" name="srchstatus" value="<?php echo $srchstatus; ?>" />
+            </td>
             </tr>
             </table>
             </td>
@@ -1724,15 +1768,7 @@ if ($action == "members") {
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
 
-        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE));
-        $srchstatus = postedVar('srchstatus');
-        if ($srchstatus == '0') {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%'");
-        } else if ($srchstatus == "Pending") {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND lastvisit = 0");
-        } else {
-            $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members WHERE username LIKE '%$dblikemem%' AND status='$srchstatus'");
-        }
+        $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
 
         while($mem = $db->fetch_array($query)) {
             $origstatus = $mem['status'];
