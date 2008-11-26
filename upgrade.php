@@ -94,6 +94,8 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 
 } else if ($_GET['step'] == 2) {
 
+    define('XMB_SCHEMA_VER', 2);
+
     ?>
     <h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
     <h2>Status Information</h2>
@@ -116,16 +118,17 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
     }
 
-    echo 'Confirming forums are turned off...<br />';
-    if ($SETTINGS['bbstatus'] != 'off') {
-        echo 'Your board must be turned off before the upgrade can begin!<br />'
-            .'Please <a href="cp.php?action=settings">Go To The Admin Panel</a> first to begin the upgrade successfully.<br />';
-        trigger_error('Admin attempted upgrade without turning off the board.', E_USER_ERROR);
-    }
-
     echo 'Requesting to lock the settings table...<br />';
     flush();
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
+
+    echo 'Confirming forums are turned off...<br />';
+    if ($SETTINGS['bbstatus'] != 'off') {
+        $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+        echo '<b>Your forums were turned off by the upgrader to prevent damage.<br />'
+            .'They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.</b><br />';
+        trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
+    }
 
     echo 'Gathering schema information from the settings table...<br />';
     flush();
@@ -152,7 +155,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     'ip_banning' => "SET('on', 'off') NOT NULL DEFAULT 'on'",
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '1000x1000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'",
-    'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT '1'");
+    'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT ".XMB_SCHEMA_VER);
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -232,9 +235,42 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         }
         $db->free_result($query);
     }
+    $columns = array(
+    'postnum' => "postnum MEDIUMINT NOT NULL DEFAULT 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'CHANGE '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
 
     if (count($sql) > 0) {
         echo 'Adding/Deleting columns in the members table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the ranks table...<br />';
+    flush();
+    $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
+
+    echo 'Gathering schema information from the ranks table...<br />';
+    flush();
+    $sql = array();
+    $table = 'ranks';
+    $columns = array(
+    'posts' => "posts MEDIUMINT DEFAULT 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'CHANGE '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the ranks table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
@@ -263,7 +299,31 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the themes table...<br />';
+    echo 'Requesting to lock the vote_desc table...<br />';
+    flush();
+    $db->query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
+
+    echo 'Gathering schema information from the vote_desc table...<br />';
+    flush();
+    $sql = array();
+    $table = 'vote_desc';
+    $columns = array(
+    'topic_id' => "topic_id INT UNSIGNED NOT NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'CHANGE '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding/Deleting columns in the vote_desc table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the vote_desc table...<br />';
     $db->query('UNLOCK TABLES');
 
     echo 'Adding new tables...<br />';
@@ -285,6 +345,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
         PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
         INDEX ( `phraseid` )
       ) TYPE=MyISAM COMMENT = 'Translation Table'");
+
+    echo 'Resetting the schema version number...<br />';
+    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = ".XMB_SCHEMA_VER);
 
     echo 'Initializing the new translation system...<br />';
     require_once('include/translation.inc.php');
@@ -342,7 +405,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     echo 'Deleting the upgrade.php file...<br />';
     unlink('upgrade.php');
 
-    echo 'Done! :D<br />Now <a href="cp.php?action=forum">edit the forum permissions</a>.<br />';
+    echo '<b>Done! :D</b><br />Now <a href="cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
 }
 
 ?>

@@ -966,7 +966,7 @@ Array
                     [4] => Array
                         (
                             [name] => postnum
-                            [type] => smallint(5)
+                            [type] => mediumint(9)
                             [null] => NOT NULL
                             [default] => '0'
                             [extra] => 
@@ -1574,7 +1574,7 @@ Array
                     [1] => Array
                         (
                             [name] => posts
-                            [type] => smallint(5)
+                            [type] => mediumint(9)
                             [null] => 
                             [default] => '0'
                             [extra] => 
@@ -1714,7 +1714,7 @@ Array
                             [name] => langfile
                             [type] => varchar(34)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'English'
                             [extra] => 
                             [keys] => 
                         )
@@ -1724,7 +1724,7 @@ Array
                             [name] => bbname
                             [type] => varchar(32)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'Your Forums'
                             [extra] => 
                             [keys] => 
                         )
@@ -1734,7 +1734,7 @@ Array
                             [name] => postperpage
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '25'
                             [extra] => 
                             [keys] => 
                         )
@@ -1744,7 +1744,7 @@ Array
                             [name] => topicperpage
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '30'
                             [extra] => 
                             [keys] => 
                         )
@@ -1754,7 +1754,7 @@ Array
                             [name] => hottopic
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '20'
                             [extra] => 
                             [keys] => 
                         )
@@ -1774,7 +1774,7 @@ Array
                             [name] => bbstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1784,7 +1784,7 @@ Array
                             [name] => whosonlinestatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1794,7 +1794,7 @@ Array
                             [name] => regstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1814,7 +1814,7 @@ Array
                             [name] => regviewonly
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -1824,7 +1824,7 @@ Array
                             [name] => floodctrl
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '5'
                             [extra] => 
                             [keys] => 
                         )
@@ -1834,7 +1834,7 @@ Array
                             [name] => memberperpage
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '45'
                             [extra] => 
                             [keys] => 
                         )
@@ -1844,7 +1844,7 @@ Array
                             [name] => catsonly
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -1854,7 +1854,7 @@ Array
                             [name] => hideprivate
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1864,7 +1864,7 @@ Array
                             [name] => emailcheck
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -1874,7 +1874,7 @@ Array
                             [name] => bbrules
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -1894,7 +1894,7 @@ Array
                             [name] => searchstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1904,7 +1904,7 @@ Array
                             [name] => faqstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1914,7 +1914,7 @@ Array
                             [name] => memliststatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1924,7 +1924,7 @@ Array
                             [name] => sitename
                             [type] => varchar(50)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'YourDomain.com'
                             [extra] => 
                             [keys] => 
                         )
@@ -1944,7 +1944,7 @@ Array
                             [name] => avastatus
                             [type] => varchar(4)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1954,7 +1954,7 @@ Array
                             [name] => u2uquota
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '600'
                             [extra] => 
                             [keys] => 
                         )
@@ -1964,7 +1964,7 @@ Array
                             [name] => gzipcompress
                             [type] => varchar(30)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -1974,7 +1974,7 @@ Array
                             [name] => coppa
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -1984,7 +1984,7 @@ Array
                             [name] => timeformat
                             [type] => smallint(2)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '12'
                             [extra] => 
                             [keys] => 
                         )
@@ -1994,7 +1994,7 @@ Array
                             [name] => adminemail
                             [type] => varchar(60)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'webmaster@domain.ext'
                             [extra] => 
                             [keys] => 
                         )
@@ -2004,7 +2004,7 @@ Array
                             [name] => dateformat
                             [type] => varchar(10)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'dd-mm-yyyy'
                             [extra] => 
                             [keys] => 
                         )
@@ -2014,7 +2014,7 @@ Array
                             [name] => sigbbcode
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2024,7 +2024,7 @@ Array
                             [name] => sightml
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2034,7 +2034,7 @@ Array
                             [name] => reportpost
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2044,7 +2044,7 @@ Array
                             [name] => bbinsert
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2054,7 +2054,7 @@ Array
                             [name] => smileyinsert
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2064,7 +2064,7 @@ Array
                             [name] => doublee
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2074,7 +2074,7 @@ Array
                             [name] => smtotal
                             [type] => varchar(15)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => '16'
                             [extra] => 
                             [keys] => 
                         )
@@ -2084,7 +2084,7 @@ Array
                             [name] => smcols
                             [type] => varchar(15)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => '4'
                             [extra] => 
                             [keys] => 
                         )
@@ -2094,7 +2094,7 @@ Array
                             [name] => editedby
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2104,7 +2104,7 @@ Array
                             [name] => dotfolders
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2114,7 +2114,7 @@ Array
                             [name] => attachimgpost
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2124,7 +2124,7 @@ Array
                             [name] => todaysposts
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2134,7 +2134,7 @@ Array
                             [name] => stats
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2144,7 +2144,7 @@ Array
                             [name] => authorstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2154,7 +2154,7 @@ Array
                             [name] => tickerstatus
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2174,7 +2174,7 @@ Array
                             [name] => tickerdelay
                             [type] => int(6)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '4000'
                             [extra] => 
                             [keys] => 
                         )
@@ -2214,7 +2214,7 @@ Array
                             [name] => space_cats
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'no'
                             [extra] => 
                             [keys] => 
                         )
@@ -2234,7 +2234,7 @@ Array
                             [name] => allowrankedit
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'on'
                             [extra] => 
                             [keys] => 
                         )
@@ -2254,7 +2254,7 @@ Array
                             [name] => subject_in_title
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2284,7 +2284,7 @@ Array
                             [name] => resetsigs
                             [type] => char(3)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2374,7 +2374,7 @@ Array
                             [name] => captcha_code_charset
                             [type] => varchar(128)
                             [null] => NOT NULL
-                            [default] => 'A-Z,1-9'
+                            [default] => 'A-Z'
                             [extra] => 
                             [keys] => 
                         )
@@ -2384,7 +2384,7 @@ Array
                             [name] => captcha_code_length
                             [type] => int(2)
                             [null] => NOT NULL
-                            [default] => '10'
+                            [default] => '8'
                             [extra] => 
                             [keys] => 
                         )
@@ -2394,7 +2394,7 @@ Array
                             [name] => captcha_code_casesensitive
                             [type] => set('on','off')
                             [null] => NOT NULL
-                            [default] => 'on'
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2464,7 +2464,7 @@ Array
                             [name] => captcha_image_lines
                             [type] => int(2)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '70'
                             [extra] => 
                             [keys] => 
                         )
@@ -2504,7 +2504,7 @@ Array
                             [name] => captcha_image_color
                             [type] => set('on','off')
                             [null] => NOT NULL
-                            [default] => 'on'
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2564,7 +2564,7 @@ Array
                             [name] => onlinetodaycount
                             [type] => smallint(5)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => '50'
                             [extra] => 
                             [keys] => 
                         )
@@ -2684,7 +2684,7 @@ Array
                             [name] => schema_version
                             [type] => tinyint(3)
                             [null] => NOT NULL
-                            [default] => '1'
+                            [default] => '2'
                             [extra] => 
                             [keys] => 
                         )
@@ -3021,15 +3021,25 @@ Array
 
                     [20] => Array
                         (
-                            [name] => smdir
+                            [name] => admdir
                             [type] => varchar(120)
                             [null] => NOT NULL
-                            [default] => ''
+                            [default] => 'images/admin'
                             [extra] => 
                             [keys] => 
                         )
 
                     [21] => Array
+                        (
+                            [name] => smdir
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => 'images/smilies'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [22] => Array
                         (
                             [name] => cattext
                             [type] => varchar(15)
@@ -3412,9 +3422,9 @@ Array
                     [1] => Array
                         (
                             [name] => topic_id
-                            [type] => mediumint(8)
+                            [type] => int(10)
                             [null] => NOT NULL
-                            [default] => '0'
+                            [default] => 
                             [extra] => 
                             [keys] => 
                         )

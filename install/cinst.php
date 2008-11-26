@@ -318,7 +318,7 @@ $db->query("CREATE TABLE ".$tablepre."members (
       `username` varchar(32) NOT NULL default '',
       `password` varchar(32) NOT NULL default '',
       `regdate` int(10) NOT NULL default 0,
-      `postnum` smallint(5) NOT NULL default 0,
+      `postnum` MEDIUMINT NOT NULL DEFAULT 0,
       `email` varchar(60) NOT NULL default '',
       `site` varchar(75) NOT NULL default '',
       `aim` varchar(40) NOT NULL default '',
@@ -397,7 +397,7 @@ show_act("Creating ".$tablepre."ranks");
 $db->query("DROP TABLE IF EXISTS ".$tablepre."ranks");
 $db->query("CREATE TABLE ".$tablepre."ranks (
       `title` varchar(100) NOT NULL default '',
-      `posts` smallint(5) default 0,
+      `posts` MEDIUMINT DEFAULT 0,
       `id` smallint(5) NOT NULL auto_increment,
       `stars` smallint(6) NOT NULL default 0,
       `allowavatars` char(3) NOT NULL default '',
@@ -427,64 +427,64 @@ show_act("Creating ".$tablepre."settings");
 // ------------ xmb_settings ------------------------------
 $db->query("DROP TABLE IF EXISTS ".$tablepre."settings");
 $db->query("CREATE TABLE ".$tablepre."settings (
-      `langfile` varchar(34) NOT NULL default '',
-      `bbname` varchar(32) NOT NULL default '',
-      `postperpage` smallint(5) NOT NULL default 0,
-      `topicperpage` smallint(5) NOT NULL default 0,
-      `hottopic` smallint(5) NOT NULL default 0,
+      `langfile` varchar(34) NOT NULL default 'English',
+      `bbname` varchar(32) NOT NULL default 'Your Forums',
+      `postperpage` smallint(5) NOT NULL default 25,
+      `topicperpage` smallint(5) NOT NULL default 30,
+      `hottopic` smallint(5) NOT NULL default 20,
       `theme` smallint(3) NOT NULL default 1,
-      `bbstatus` char(3) NOT NULL default '',
-      `whosonlinestatus` char(3) NOT NULL default '',
-      `regstatus` char(3) NOT NULL default '',
+      `bbstatus` char(3) NOT NULL default 'on',
+      `whosonlinestatus` char(3) NOT NULL default 'on',
+      `regstatus` char(3) NOT NULL default 'on',
       `bboffreason` text NOT NULL,
-      `regviewonly` char(3) NOT NULL default '',
-      `floodctrl` smallint(5) NOT NULL default 0,
-      `memberperpage` smallint(5) NOT NULL default 0,
-      `catsonly` char(3) NOT NULL default '',
-      `hideprivate` char(3) NOT NULL default '',
-      `emailcheck` char(3) NOT NULL default '',
-      `bbrules` char(3) NOT NULL default '',
+      `regviewonly` char(3) NOT NULL default 'off',
+      `floodctrl` smallint(5) NOT NULL default 5,
+      `memberperpage` smallint(5) NOT NULL default 45,
+      `catsonly` char(3) NOT NULL default 'off',
+      `hideprivate` char(3) NOT NULL default 'on',
+      `emailcheck` char(3) NOT NULL default 'off',
+      `bbrules` char(3) NOT NULL default 'off',
       `bbrulestxt` text NOT NULL,
-      `searchstatus` char(3) NOT NULL default '',
-      `faqstatus` char(3) NOT NULL default '',
-      `memliststatus` char(3) NOT NULL default '',
-      `sitename` varchar(50) NOT NULL default '',
+      `searchstatus` char(3) NOT NULL default 'on',
+      `faqstatus` char(3) NOT NULL default 'on',
+      `memliststatus` char(3) NOT NULL default 'on',
+      `sitename` varchar(50) NOT NULL default 'YourDomain.com',
       `siteurl` varchar(60) NOT NULL default '',
-      `avastatus` varchar(4) NOT NULL default '',
-      `u2uquota` smallint(5) NOT NULL default 0,
-      `gzipcompress` varchar(30) NOT NULL default '',
-      `coppa` char(3) NOT NULL default '',
-      `timeformat` smallint(2) NOT NULL default 0,
-      `adminemail` varchar(60) NOT NULL default '',
-      `dateformat` varchar(10) NOT NULL default '',
-      `sigbbcode` char(3) NOT NULL default '',
-      `sightml` char(3) NOT NULL default '',
-      `reportpost` char(3) NOT NULL default '',
-      `bbinsert` char(3) NOT NULL default '',
-      `smileyinsert` char(3) NOT NULL default '',
-      `doublee` char(3) NOT NULL default '',
-      `smtotal` varchar(15) NOT NULL default '',
-      `smcols` varchar(15) NOT NULL default '',
-      `editedby` char(3) NOT NULL default '',
-      `dotfolders` char(3) NOT NULL default '',
-      `attachimgpost` char(3) NOT NULL default '',
-      `todaysposts` char(3) NOT NULL default '',
-      `stats` char(3) NOT NULL default '',
-      `authorstatus` char(3) NOT NULL default '',
-      `tickerstatus` char(3) NOT NULL default '',
+      `avastatus` varchar(4) NOT NULL default 'on',
+      `u2uquota` smallint(5) NOT NULL default 600,
+      `gzipcompress` varchar(30) NOT NULL default 'on',
+      `coppa` char(3) NOT NULL default 'off',
+      `timeformat` smallint(2) NOT NULL default 12,
+      `adminemail` varchar(60) NOT NULL default 'webmaster@domain.ext',
+      `dateformat` varchar(10) NOT NULL default 'dd-mm-yyyy',
+      `sigbbcode` char(3) NOT NULL default 'on',
+      `sightml` char(3) NOT NULL default 'off',
+      `reportpost` char(3) NOT NULL default 'on',
+      `bbinsert` char(3) NOT NULL default 'on',
+      `smileyinsert` char(3) NOT NULL default 'on',
+      `doublee` char(3) NOT NULL default 'off',
+      `smtotal` varchar(15) NOT NULL default '16',
+      `smcols` varchar(15) NOT NULL default '4',
+      `editedby` char(3) NOT NULL default 'off',
+      `dotfolders` char(3) NOT NULL default 'on',
+      `attachimgpost` char(3) NOT NULL default 'on',
+      `todaysposts` char(3) NOT NULL default 'on',
+      `stats` char(3) NOT NULL default 'on',
+      `authorstatus` char(3) NOT NULL default 'on',
+      `tickerstatus` char(3) NOT NULL default 'on',
       `tickercontents` text NOT NULL,
-      `tickerdelay` int(6) NOT NULL default 0,
+      `tickerdelay` int(6) NOT NULL default 4000,
       `addtime` DECIMAL(4,2) NOT NULL default 0,
       `max_avatar_size` varchar(9) NOT NULL default '100x100',
       `footer_options` varchar(45) NOT NULL default 'queries-phpsql-loadtimes-totaltime',
-      `space_cats` char(3) NOT NULL default '',
+      `space_cats` char(3) NOT NULL default 'no',
       `spellcheck` char(3) NOT NULL default 'off',
-      `allowrankedit` char(3) NOT NULL default '',
+      `allowrankedit` char(3) NOT NULL default 'on',
       `notifyonreg` SET('off','u2u','email') NOT NULL default 'off',
-      `subject_in_title` char(3) NOT NULL default '',
+      `subject_in_title` char(3) NOT NULL default 'off',
       `def_tz` decimal(4,2) NOT NULL default '0.00',
       `indexshowbar` tinyint(2) NOT NULL default 2,
-      `resetsigs` char(3) NOT NULL default '',
+      `resetsigs` char(3) NOT NULL default 'off',
       `pruneusers` smallint(3) NOT NULL default 0,
       `ipreg` char(3) NOT NULL default 'on',
       `maxdayreg` smallint(5) UNSIGNED NOT NULL default 25,
@@ -493,26 +493,26 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `captcha_reg_status` set('on','off') NOT NULL default 'on',
       `captcha_post_status` set('on','off') NOT NULL default 'on',
       `captcha_search_status` set('on','off') NOT NULL default 'off',
-      `captcha_code_charset` varchar(128) NOT NULL default 'A-Z,1-9',
-      `captcha_code_length` int(2) NOT NULL default '10',
-      `captcha_code_casesensitive` set('on','off') NOT NULL default 'on',
+      `captcha_code_charset` varchar(128) NOT NULL default 'A-Z',
+      `captcha_code_length` int(2) NOT NULL default '8',
+      `captcha_code_casesensitive` set('on','off') NOT NULL default 'off',
       `captcha_code_shadow` set('on','off') NOT NULL default 'off',
       `captcha_image_type` varchar(4) NOT NULL default 'png',
       `captcha_image_width` int(3) NOT NULL default '250',
       `captcha_image_height` int(3) NOT NULL default '50',
       `captcha_image_bg` varchar(128) NOT NULL default '',
       `captcha_image_dots` int(3) NOT NULL default '0',
-      `captcha_image_lines` int(2) NOT NULL default '0',
+      `captcha_image_lines` int(2) NOT NULL default '70',
       `captcha_image_fonts` varchar(128) NOT NULL default '',
       `captcha_image_minfont` int(2) NOT NULL default '16',
       `captcha_image_maxfont` int(2) NOT NULL default '25',
-      `captcha_image_color` set('on','off') NOT NULL default 'on',
+      `captcha_image_color` set('on','off') NOT NULL default 'off',
       `showsubforums` set('on','off') NOT NULL default 'off',
       `regoptional` set('on','off') NOT NULL default 'off',
       `quickreply_status` set('on','off') NOT NULL default 'on',
       `quickjump_status` set('on','off') NOT NULL default 'on',
       `index_stats` set('on','off') NOT NULL default 'on',
-      `onlinetodaycount` smallint(5) NOT NULL default 0,
+      `onlinetodaycount` smallint(5) NOT NULL default '50',
       `onlinetoday_status` set('on','off') NOT NULL default 'on',
       `attach_remote_images` SET('on','off') NOT NULL DEFAULT 'off',
       `files_min_disk_size` MEDIUMINT NOT NULL DEFAULT '9216',
@@ -524,7 +524,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `ip_banning` SET('on','off') NOT NULL DEFAULT 'off',
       `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
-      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '1'
+      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '2'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
@@ -582,7 +582,8 @@ $db->query("CREATE TABLE ".$tablepre."themes (
       `fontsize` varchar(40) NOT NULL default '',
       `boardimg` varchar(128) default NULL,
       `imgdir` varchar(120) NOT NULL default '',
-      `smdir` varchar(120) NOT NULL default '',
+      `admdir` VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin',
+      `smdir` varchar(120) NOT NULL default 'images/smilies',
       `cattext` varchar(15) NOT NULL default '',
       PRIMARY KEY  (`themeid`),
       KEY `name` (`name`)
@@ -647,7 +648,7 @@ show_act("Creating ".$tablepre."vote_desc");
 $db->query("DROP TABLE IF EXISTS ".$tablepre."vote_desc");
 $db->query("CREATE TABLE ".$tablepre."vote_desc (
       `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
-      `topic_id` mediumint(8) unsigned NOT NULL default '0',
+      `topic_id` INT UNSIGNED NOT NULL,
       `vote_text` text NOT NULL,
       `vote_start` int(11) NOT NULL default '0',
       `vote_length` int(11) NOT NULL default '0',
@@ -745,92 +746,8 @@ show_result(X_INST_OK);
 show_act("Inserting data into ".$tablepre."settings");
 $db->query(
  "INSERT INTO ".$tablepre."settings "
-."SET langfile = 'English', "
-    ."bbname = 'Your Forums', "
-    ."postperpage = 25, "
-    ."topicperpage = 30, "
-    ."hottopic = 20, "
-    ."theme = 1, "
-    ."bbstatus = 'on', "
-    ."whosonlinestatus = 'on', "
-    ."regstatus = 'on', "
-    ."bboffreason = '', "
-    ."regviewonly = 'off', "
-    ."floodctrl = 5, "
-    ."memberperpage = 45, "
-    ."catsonly = 'off', "
-    ."hideprivate = 'on', "
-    ."emailcheck = 'off', "
-    ."bbrules = 'off', "
-    ."bbrulestxt = '', "
-    ."searchstatus = 'on', "
-    ."faqstatus = 'on', "
-    ."memliststatus = 'on', "
-    ."sitename = 'YourDomain.com', "
-    ."siteurl = '$full_url', "
-    ."avastatus = 'on', "
-    ."u2uquota = 600, "
-    ."gzipcompress = 'on', "
-    ."coppa = 'off', "
-    ."timeformat = 12, "
-    ."adminemail = 'webmaster@domain.ext', "
-    ."dateformat = 'dd-mm-yyyy', "
-    ."sigbbcode = 'on', "
-    ."sightml = 'off', "
-    ."reportpost = 'on', "
-    ."bbinsert = 'on', "
-    ."smileyinsert = 'on', "
-    ."doublee = 'off', "
-    ."smtotal = '16', "
-    ."smcols = '4', "
-    ."editedby = 'off', "
-    ."dotfolders = 'on', "
-    ."attachimgpost = 'on', "
-    ."todaysposts = 'on', "
-    ."stats = 'on', "
-    ."authorstatus = 'on', "
-    ."tickerstatus = 'on', "
-    ."tickercontents = '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.', "
-    ."tickerdelay = '4000', "
-    ."addtime = '0', "
-    ."max_avatar_size = '100x100', "
-    ."footer_options = 'queries-phpsql-loadtimes-totaltime', "
-    ."space_cats = 'no', "
-    ."spellcheck = 'off', "
-    ."allowrankedit = 'on', "
-    ."notifyonreg = 'off', "
-    ."subject_in_title = 'off', "
-    ."def_tz = '0.00', "
-    ."indexshowbar = '2', "
-    ."resetsigs = 'off', "
-    ."pruneusers = '0', "
-    ."ipreg = 'on', "
-    ."maxdayreg = 25, "
-    ."maxattachsize = 256000, "
-    ."captcha_status = 'on', "
-    ."captcha_reg_status = 'on', "
-    ."captcha_post_status = 'on', "
-    ."captcha_code_charset = 'A-Z', "
-    ."captcha_code_length = '8', "
-    ."captcha_code_casesensitive = 'off', "
-    ."captcha_code_shadow = 'off', "
-    ."captcha_image_type = 'png', "
-    ."captcha_image_width = '250', "
-    ."captcha_image_height = '50', "
-    ."captcha_image_bg = '', "
-    ."captcha_image_dots = '0', "
-    ."captcha_image_lines = '70', "
-    ."captcha_image_fonts = '', "
-    ."captcha_image_minfont = '16', "
-    ."captcha_image_maxfont = '25', "
-    ."captcha_image_color = 'off', "
-    ."showsubforums = 'off', "
-    ."regoptional = 'off', "
-    ."quickreply_status = 'on', "
-    ."quickjump_status = 'on', "
-    ."index_stats = 'on', "
-    ."onlinetodaycount = '50', "
-    ."onlinetoday_status = 'on'"
+."SET siteurl = '$full_url', "
+    ."tickercontents = '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.'"
 );
 show_result(X_INST_OK);
 

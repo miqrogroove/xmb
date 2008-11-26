@@ -29,6 +29,7 @@
 // Script Parameters
 define('XMB_V', '1.9.11');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_11.xmb');
+define('XMB_SCHEMA_VER', 2);
 define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
@@ -72,6 +73,8 @@ $req['files'] = array(
     'tools.php',
     'topicadmin.php',
     'u2u.php',
+    'upgrade/upgrade.lib.php',
+    'upgrade/'.XMB_UPGRADE_FILE,
     'viewthread.php',
     'vtmisc.php'
 );
@@ -1011,6 +1014,7 @@ Public License instead of this License.  But first, please read
             }
         }
         
+        define('X_PREFIX', $tablepre);
         require ROOT."db/$database.php";
 
         // Increase the time limit for long running queries to five minutes. This should be enough, but if you need
@@ -1206,7 +1210,7 @@ Public License instead of this License.  But first, please read
             error('Could not upgrade U2U table.', true);
         }
 
-        // XMB 1.9.7 - remove u2uadmin spy tool
+        show_act("Removing u2uadmin spy tool");
         if (file_exists(ROOT . 'u2uadmin.php') && !@unlink(ROOT . 'u2uadmin.php')) {
             show_result(X_INST_SKIP);
             error('Permission Error', 'The u2uadmin spy tool ("u2uadmin.php") has been found on the server, but could not be removed. Please remove it as soon as possible.', false);
@@ -1306,6 +1310,9 @@ Public License instead of this License.  But first, please read
         show_act('Dropping temporary fields...');
         $u->dropTempFields();
         show_result(X_INST_OK);
+        
+        //Explicitly reset the schema version number
+        $db->query("UPDATE ".$u->tablepre."settings SET schema_version = ".XMB_SCHEMA_VER);
 
         show_act("Updating themes to ".XMB_V." themes");
 
@@ -1357,6 +1364,23 @@ Public License instead of this License.  But first, please read
         $db->query("INSERT INTO ".$u->tablepre."ranks (`title`, `posts`, `stars`, `allowavatars`, `avatarrank`) VALUES ('Super Administrator', -1, 9, 'yes', '');");
 
         show_result(X_INST_OK);
+
+        
+        show_act('Initializing the translation system');
+
+        require_once(ROOT.'include/translation.inc.php');
+        $upload = file_get_contents(ROOT.'lang/English.lang.php');
+
+        show_result(X_INST_OK);
+        show_act('Installing the '.XMB_V.' English Translation');
+
+        if (installNewTranslation($upload)) {
+            show_result(X_INST_OK);
+        } else {
+            show_result(X_INST_ERR);
+        }
+        unset($upload);
+
 
         show_act('Removing install and upgrade files.');
         $problem = false;
