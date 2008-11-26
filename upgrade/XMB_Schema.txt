@@ -1,0 +1,3444 @@
+/**
+ * XMB 1.9.9 Saigo
+ *
+ * Developed by the XMB Group Copyright (c) 2001-2008
+ * Sponsored by iEntry Inc. Copyright (c) 2007
+ *
+ * http://xmbgroup.com , http://ientry.com
+ *
+ * This software is released under the GPL License, you should
+ * have received a copy of this license with the download of this
+ * software. If not, you can obtain a copy by visiting the GNU
+ * General Public License website <http://www.gnu.org/licenses/>.
+ *
+ **/
+
+Array
+(
+    [attachments] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => aid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => tid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => pid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => filename
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => filetype
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => filesize
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => attachment
+                            [type] => longblob
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => downloads
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => aid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => tid
+                            [field] => tid
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => pid
+                            [field] => pid
+                        )
+
+                )
+
+        )
+
+    [banned] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => ip1
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => ip2
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => ip3
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => ip4
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => dateline
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => ip1
+                            [field] => ip1
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => ip2
+                            [field] => ip2
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => ip3
+                            [field] => ip3
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => ip4
+                            [field] => ip4
+                        )
+
+                )
+
+        )
+
+    [buddys] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => username
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => buddyname
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => username
+                            [field] => username
+                        )
+
+                )
+
+        )
+
+    [captchaimages] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => imagehash
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => imagestring
+                            [type] => varchar(12)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => dateline
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => dateline
+                            [field] => dateline
+                        )
+
+                )
+
+        )
+
+    [favorites] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => tid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => username
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => type
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => tid
+                            [field] => tid
+                        )
+
+                )
+
+        )
+
+    [forums] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => type
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => fid
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => name
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => status
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => lastpost
+                            [type] => varchar(54)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => moderator
+                            [type] => varchar(100)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => displayorder
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => description
+                            [type] => text
+                            [null] => 
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => allowhtml
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => allowsmilies
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => allowbbcode
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => userlist
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [12] => Array
+                        (
+                            [name] => theme
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [13] => Array
+                        (
+                            [name] => posts
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [14] => Array
+                        (
+                            [name] => threads
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [15] => Array
+                        (
+                            [name] => fup
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [16] => Array
+                        (
+                            [name] => postperm
+                            [type] => varchar(11)
+                            [null] => NOT NULL
+                            [default] => '0,0,0,0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [17] => Array
+                        (
+                            [name] => allowimgcode
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [18] => Array
+                        (
+                            [name] => attachstatus
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [19] => Array
+                        (
+                            [name] => password
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => fid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => fup
+                            [field] => fup
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => type
+                            [field] => type
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => displayorder
+                            [field] => displayorder
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => status
+                            [field] => status
+                        )
+
+                )
+
+        )
+
+    [logs] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => username
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => action
+                            [type] => varchar(64)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => fid
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => tid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => date
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => username
+                            [field] => username
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => action
+                            [field] => action
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => fid
+                            [field] => fid
+                        )
+
+                )
+
+        )
+
+    [members] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => uid
+                            [type] => int(12)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => username
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => password
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => regdate
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => postnum
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => email
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => site
+                            [type] => varchar(75)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => aim
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => status
+                            [type] => varchar(35)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => location
+                            [type] => varchar(50)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => bio
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => sig
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [12] => Array
+                        (
+                            [name] => showemail
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [13] => Array
+                        (
+                            [name] => timeoffset
+                            [type] => decimal(4,2)
+                            [null] => NOT NULL
+                            [default] => '0.00'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [14] => Array
+                        (
+                            [name] => icq
+                            [type] => varchar(30)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [15] => Array
+                        (
+                            [name] => avatar
+                            [type] => varchar(120)
+                            [null] => 
+                            [default] => NULL
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [16] => Array
+                        (
+                            [name] => yahoo
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [17] => Array
+                        (
+                            [name] => customstatus
+                            [type] => varchar(250)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [18] => Array
+                        (
+                            [name] => theme
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [19] => Array
+                        (
+                            [name] => bday
+                            [type] => varchar(10)
+                            [null] => NOT NULL
+                            [default] => '0000-00-00'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [20] => Array
+                        (
+                            [name] => langfile
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [21] => Array
+                        (
+                            [name] => tpp
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [22] => Array
+                        (
+                            [name] => ppp
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [23] => Array
+                        (
+                            [name] => newsletter
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [24] => Array
+                        (
+                            [name] => regip
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [25] => Array
+                        (
+                            [name] => timeformat
+                            [type] => int(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [26] => Array
+                        (
+                            [name] => msn
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [27] => Array
+                        (
+                            [name] => ban
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [28] => Array
+                        (
+                            [name] => dateformat
+                            [type] => varchar(10)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [29] => Array
+                        (
+                            [name] => ignoreu2u
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [30] => Array
+                        (
+                            [name] => lastvisit
+                            [type] => bigint(15)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [31] => Array
+                        (
+                            [name] => mood
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => 'Not Set'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [32] => Array
+                        (
+                            [name] => pwdate
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [33] => Array
+                        (
+                            [name] => invisible
+                            [type] => set('1','0')
+                            [null] => 
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [34] => Array
+                        (
+                            [name] => u2ufolders
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [35] => Array
+                        (
+                            [name] => saveogu2u
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [36] => Array
+                        (
+                            [name] => emailonu2u
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [37] => Array
+                        (
+                            [name] => useoldu2u
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => uid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => username
+                            [field] => username
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => status
+                            [field] => status
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => postnum
+                            [field] => postnum
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => password
+                            [field] => password
+                        )
+
+                    [5] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => email
+                            [field] => email
+                        )
+
+                    [6] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => regdate
+                            [field] => regdate
+                        )
+
+                    [7] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => invisible
+                            [field] => invisible
+                        )
+
+                )
+
+        )
+
+    [posts] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => fid
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => tid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => pid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => author
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => message
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => subject
+                            [type] => tinytext
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => dateline
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => icon
+                            [type] => varchar(50)
+                            [null] => 
+                            [default] => NULL
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => usesig
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => useip
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => bbcodeoff
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => smileyoff
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => pid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => fid
+                            [field] => fid
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => tid
+                            [field] => tid
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => dateline
+                            [field] => dateline
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => author
+                            [field] => author
+                        )
+
+                )
+
+        )
+
+    [ranks] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => title
+                            [type] => varchar(100)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => posts
+                            [type] => smallint(5)
+                            [null] => 
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => stars
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => allowavatars
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => avatarrank
+                            [type] => varchar(90)
+                            [null] => 
+                            [default] => NULL
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => title
+                            [field] => title
+                        )
+
+                )
+
+        )
+
+    [restricted] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => name
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => case_sensitivity
+                            [type] => enum('0','1')
+                            [null] => NOT NULL
+                            [default] => '1'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => partial
+                            [type] => enum('0','1')
+                            [null] => NOT NULL
+                            [default] => '1'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                )
+
+        )
+
+    [settings] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => langfile
+                            [type] => varchar(34)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => bbname
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => postperpage
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => topicperpage
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => hottopic
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => theme
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '1'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => bbstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => whosonlinestatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => regstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => bboffreason
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => regviewonly
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => floodctrl
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [12] => Array
+                        (
+                            [name] => memberperpage
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [13] => Array
+                        (
+                            [name] => catsonly
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [14] => Array
+                        (
+                            [name] => hideprivate
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [15] => Array
+                        (
+                            [name] => emailcheck
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [16] => Array
+                        (
+                            [name] => bbrules
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [17] => Array
+                        (
+                            [name] => bbrulestxt
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [18] => Array
+                        (
+                            [name] => searchstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [19] => Array
+                        (
+                            [name] => faqstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [20] => Array
+                        (
+                            [name] => memliststatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [21] => Array
+                        (
+                            [name] => sitename
+                            [type] => varchar(50)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [22] => Array
+                        (
+                            [name] => siteurl
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [23] => Array
+                        (
+                            [name] => avastatus
+                            [type] => varchar(4)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [24] => Array
+                        (
+                            [name] => u2uquota
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [25] => Array
+                        (
+                            [name] => gzipcompress
+                            [type] => varchar(30)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [26] => Array
+                        (
+                            [name] => boardurl
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [27] => Array
+                        (
+                            [name] => coppa
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [28] => Array
+                        (
+                            [name] => timeformat
+                            [type] => smallint(2)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [29] => Array
+                        (
+                            [name] => adminemail
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [30] => Array
+                        (
+                            [name] => dateformat
+                            [type] => varchar(10)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [31] => Array
+                        (
+                            [name] => sigbbcode
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [32] => Array
+                        (
+                            [name] => sightml
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [33] => Array
+                        (
+                            [name] => reportpost
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [34] => Array
+                        (
+                            [name] => bbinsert
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [35] => Array
+                        (
+                            [name] => smileyinsert
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [36] => Array
+                        (
+                            [name] => doublee
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [37] => Array
+                        (
+                            [name] => smtotal
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [38] => Array
+                        (
+                            [name] => smcols
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [39] => Array
+                        (
+                            [name] => editedby
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [40] => Array
+                        (
+                            [name] => dotfolders
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [41] => Array
+                        (
+                            [name] => attachimgpost
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [42] => Array
+                        (
+                            [name] => todaysposts
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [43] => Array
+                        (
+                            [name] => stats
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [44] => Array
+                        (
+                            [name] => authorstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [45] => Array
+                        (
+                            [name] => tickerstatus
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [46] => Array
+                        (
+                            [name] => tickercontents
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [47] => Array
+                        (
+                            [name] => tickerdelay
+                            [type] => int(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [48] => Array
+                        (
+                            [name] => addtime
+                            [type] => decimal(4,2)
+                            [null] => NOT NULL
+                            [default] => '0.00'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [49] => Array
+                        (
+                            [name] => max_avatar_size
+                            [type] => varchar(9)
+                            [null] => NOT NULL
+                            [default] => '100x100'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [50] => Array
+                        (
+                            [name] => footer_options
+                            [type] => varchar(45)
+                            [null] => NOT NULL
+                            [default] => 'queries-phpsql-loadtimes-totaltime'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [51] => Array
+                        (
+                            [name] => space_cats
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [52] => Array
+                        (
+                            [name] => spellcheck
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [53] => Array
+                        (
+                            [name] => allowrankedit
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [54] => Array
+                        (
+                            [name] => notifyonreg
+                            [type] => set('off','u2u','email')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [55] => Array
+                        (
+                            [name] => subject_in_title
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [56] => Array
+                        (
+                            [name] => def_tz
+                            [type] => decimal(4,2)
+                            [null] => NOT NULL
+                            [default] => '0.00'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [57] => Array
+                        (
+                            [name] => indexshowbar
+                            [type] => tinyint(2)
+                            [null] => NOT NULL
+                            [default] => '2'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [58] => Array
+                        (
+                            [name] => resetsigs
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [59] => Array
+                        (
+                            [name] => pruneusers
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [60] => Array
+                        (
+                            [name] => ipreg
+                            [type] => char(3)
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [61] => Array
+                        (
+                            [name] => maxdayreg
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '25'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [62] => Array
+                        (
+                            [name] => maxattachsize
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '256000'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [63] => Array
+                        (
+                            [name] => captcha_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [64] => Array
+                        (
+                            [name] => captcha_reg_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [65] => Array
+                        (
+                            [name] => captcha_post_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [66] => Array
+                        (
+                            [name] => captcha_code_charset
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => 'A-Z,1-9'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [67] => Array
+                        (
+                            [name] => captcha_code_length
+                            [type] => int(2)
+                            [null] => NOT NULL
+                            [default] => '10'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [68] => Array
+                        (
+                            [name] => captcha_code_casesensitive
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [69] => Array
+                        (
+                            [name] => captcha_code_shadow
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [70] => Array
+                        (
+                            [name] => captcha_image_type
+                            [type] => varchar(4)
+                            [null] => NOT NULL
+                            [default] => 'png'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [71] => Array
+                        (
+                            [name] => captcha_image_width
+                            [type] => int(3)
+                            [null] => NOT NULL
+                            [default] => '250'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [72] => Array
+                        (
+                            [name] => captcha_image_height
+                            [type] => int(3)
+                            [null] => NOT NULL
+                            [default] => '50'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [73] => Array
+                        (
+                            [name] => captcha_image_bg
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [74] => Array
+                        (
+                            [name] => captcha_image_dots
+                            [type] => int(3)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [75] => Array
+                        (
+                            [name] => captcha_image_lines
+                            [type] => int(2)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [76] => Array
+                        (
+                            [name] => captcha_image_fonts
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [77] => Array
+                        (
+                            [name] => captcha_image_minfont
+                            [type] => int(2)
+                            [null] => NOT NULL
+                            [default] => '16'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [78] => Array
+                        (
+                            [name] => captcha_image_maxfont
+                            [type] => int(2)
+                            [null] => NOT NULL
+                            [default] => '25'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [79] => Array
+                        (
+                            [name] => captcha_image_color
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [80] => Array
+                        (
+                            [name] => showsubforums
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [81] => Array
+                        (
+                            [name] => regoptional
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [82] => Array
+                        (
+                            [name] => quickreply_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [83] => Array
+                        (
+                            [name] => quickjump_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [84] => Array
+                        (
+                            [name] => index_stats
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [85] => Array
+                        (
+                            [name] => onlinetodaycount
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [86] => Array
+                        (
+                            [name] => onlinetoday_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                )
+
+        )
+
+    [smilies] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => type
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => code
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => url
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                )
+
+        )
+
+    [templates] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => name
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => template
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => name
+                            [field] => name
+                        )
+
+                )
+
+        )
+
+    [themes] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => themeid
+                            [type] => smallint(3)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => name
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => bgcolor
+                            [type] => varchar(25)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => altbg1
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => altbg2
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => link
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => bordercolor
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => header
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => headertext
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => top
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => catcolor
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => tabletext
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [12] => Array
+                        (
+                            [name] => text
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [13] => Array
+                        (
+                            [name] => borderwidth
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [14] => Array
+                        (
+                            [name] => tablewidth
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [15] => Array
+                        (
+                            [name] => tablespace
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [16] => Array
+                        (
+                            [name] => font
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [17] => Array
+                        (
+                            [name] => fontsize
+                            [type] => varchar(40)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [18] => Array
+                        (
+                            [name] => boardimg
+                            [type] => varchar(128)
+                            [null] => 
+                            [default] => NULL
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [19] => Array
+                        (
+                            [name] => imgdir
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [20] => Array
+                        (
+                            [name] => smdir
+                            [type] => varchar(120)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [21] => Array
+                        (
+                            [name] => cattext
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => themeid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => name
+                            [field] => name
+                        )
+
+                )
+
+        )
+
+    [threads] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => tid
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => fid
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => subject
+                            [type] => varchar(128)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => icon
+                            [type] => varchar(75)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => lastpost
+                            [type] => varchar(54)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => views
+                            [type] => bigint(32)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => replies
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => author
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => closed
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => topped
+                            [type] => tinyint(1)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => pollopts
+                            [type] => tinyint(1)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => tid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => fid
+                            [field] => fid
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => lastpost
+                            [field] => lastpost
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => author
+                            [field] => author
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => closed
+                            [field] => closed
+                        )
+
+                )
+
+        )
+
+    [u2u] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => u2uid
+                            [type] => bigint(10)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => msgto
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => msgfrom
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => type
+                            [type] => set('incoming','outgoing','draft')
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => owner
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [5] => Array
+                        (
+                            [name] => folder
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [6] => Array
+                        (
+                            [name] => subject
+                            [type] => varchar(64)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => message
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => dateline
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => readstatus
+                            [type] => set('yes','no')
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => sentstatus
+                            [type] => set('yes','no')
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => u2uid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => msgto
+                            [field] => msgto
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => msgfrom
+                            [field] => msgfrom
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => folder
+                            [field] => folder
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => readstatus
+                            [field] => readstatus
+                        )
+
+                    [5] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => owner
+                            [field] => owner
+                        )
+
+                )
+
+        )
+
+    [vote_desc] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => vote_id
+                            [type] => mediumint(8)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => topic_id
+                            [type] => mediumint(8)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => vote_text
+                            [type] => text
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => vote_start
+                            [type] => int(11)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => vote_length
+                            [type] => int(11)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => vote_id
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => topic_id
+                            [field] => topic_id
+                        )
+
+                )
+
+        )
+
+    [vote_results] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => vote_id
+                            [type] => mediumint(8)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => vote_option_id
+                            [type] => tinyint(4)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => vote_option_text
+                            [type] => varchar(255)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => vote_result
+                            [type] => int(11)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => vote_option_id
+                            [field] => vote_option_id
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => vote_id
+                            [field] => vote_id
+                        )
+
+                )
+
+        )
+
+    [vote_voters] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => vote_id
+                            [type] => mediumint(8)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => vote_user_id
+                            [type] => mediumint(8)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => vote_user_ip
+                            [type] => char(8)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => vote_id
+                            [field] => vote_id
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => vote_user_id
+                            [field] => vote_user_id
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => vote_user_ip
+                            [field] => vote_user_ip
+                        )
+
+                )
+
+        )
+
+    [whosonline] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => username
+                            [type] => varchar(32)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => ip
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => time
+                            [type] => int(10)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [3] => Array
+                        (
+                            [name] => location
+                            [type] => varchar(150)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [4] => Array
+                        (
+                            [name] => invisible
+                            [type] => set('1','0')
+                            [null] => 
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 8
+                            [type] => KEY
+                            [name] => username
+                            [field] => username
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => ip
+                            [field] => ip
+                        )
+
+                    [2] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => time
+                            [field] => time
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => invisible
+                            [field] => invisible
+                        )
+
+                )
+
+        )
+
+    [words] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => find
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => replace1
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => id
+                            [type] => smallint(6)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => id
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => find
+                            [field] => find
+                        )
+
+                )
+
+        )
+
+)
