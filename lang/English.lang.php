@@ -26,7 +26,9 @@
  *
  **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'English';

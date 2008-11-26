@@ -134,6 +134,7 @@ class dbstuff {
         }
 
     	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+            require_once(ROOT.'include/validate.inc.php');
 			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />";
             if ($sql != '') {
                 echo 'In the following query: <em>'.cdataOut($sql).'</em></pre>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -71,6 +71,8 @@ $req['files'] = array(
 
 // Script Constants
 define('ROOT', '../');
+define('DEBUG', TRUE);
+define('LOG_MYSQL_ERRORS', FALSE);
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
@@ -117,18 +119,18 @@ function show_act($act) {
 
 function show_result($type) {
     switch($type) {
-        case 0:
-            echo '<span class="progressErr">ERROR</span><br />';
-            break;
-        case 1:
-            echo '<span class="progressWarn">WARNING</span><br />';
-            break;
-         case 2:
-            echo '<span class="progressOk">OK</span><br />';
-            break;
-         case 3:
-            echo '<span class="progressSkip">SKIPPED</span><br />';
-            break;
+    case 0:
+        echo '<span class="progressErr">ERROR</span><br />';
+        break;
+    case 1:
+        echo '<span class="progressWarn">WARNING</span><br />';
+        break;
+    case 2:
+        echo '<span class="progressOk">OK</span><br />';
+        break;
+    case 3:
+        echo '<span class="progressSkip">SKIPPED</span><br />';
+        break;
     }
     echo "</span>\n";
 }
@@ -223,8 +225,8 @@ switch($vStep) {
             <h1>Version Check Information</h1>
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
-                <li>Your Version: XMB <?php echo X_VERSION_EXT;?></li>
-                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Install This Version: XMB <?php echo X_VERSION_EXT;?></li>
+                <li>Latest Available Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./index.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Install XMB <?php echo X_VERSION;?> &gt;" /></p>
@@ -1324,8 +1326,7 @@ Public License instead of this License.  But first, please read
                     </tr>
                     <tr>
                         <td>E-Mail Address:</td>
-                        <td><input type="text" name="frmEmail" size="32" />
-                        <input type="hidden" name="conf" value="<?php echo $conf?>" /></td>
+                        <td><input type="text" name="frmEmail" size="32" /></td>
                     </tr>
                 </table>
                 <p class="button"><input type="submit" value="Begin Installation &gt;" /></p>
@@ -1396,24 +1397,6 @@ Public License instead of this License.  But first, please read
         }
         show_result(X_INST_OK);
 
-        // seems all files are here... so let's build the config.php file
-        // ask if we should:
-        // a) help create a config.php file
-        // b) leave the configuration to be done manually offline
-        // c) just continue, the forum has already been configured.
-        if (isset($conf)) {
-            switch($conf['responce']) {
-                case 'create':
-                    // create one
-                    break;
-                case 'manual':
-                    // wait till the manual is done
-                    // timeout here
-                default:
-                    break;
-            }
-        }
-
         // check db-connection.
         require ROOT.'config.php';
 
@@ -1431,12 +1414,6 @@ Public License instead of this License.  But first, please read
         switch($database) {
             case 'mysql':
                 if (!defined('MYSQL_NUM')) {
-                    show_result(X_INST_ERR);
-                    $err = true;
-                }
-                break;
-            case 'mysql4':
-                if (!defined('MYSQLI_NUM')) {
                     show_result(X_INST_ERR);
                     $err = true;
                 }
@@ -1487,15 +1464,6 @@ Public License instead of this License.  But first, please read
             default:
                 show_result(X_INST_SKIP);
                 break;
-        }
-
-        show_act('Checking Full Url Compliance');
-        // let's check the $full_url :)
-        if (@file($full_url.'header.php') === false) {
-            show_result(X_INST_WARN);
-            error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured. If this is configured wrong, it will silently prevent logging in later on in the process.', false);
-        } else {
-            show_result(X_INST_OK);
         }
 
         // throw in all stuff then :)

@@ -28,7 +28,7 @@
 
 // Script Parameters
 define('XMB_V', '1.9.11');
-define('XMB_UPGRADE_FILE', 'XMB_1_9_9.xmb');
+define('XMB_UPGRADE_FILE', 'XMB_1_9_11.xmb');
 define('MYSQL_MIN_VER', '4.0.16');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
@@ -222,8 +222,8 @@ switch($step) {
             <h1>Version Check Information</h1>
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
-                <li>Your Version: XMB <?php echo XMB_V;?></li>
-                <li>Current Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Upgrade to Version: XMB <?php echo XMB_V;?></li>
+                <li>Latest Available Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./upgrade.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Upgrade to XMB <?php echo XMB_V;?> &gt;" /></p>

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,6 +26,7 @@
  *
  **/
 
+define('X_SCRIPT', 'createFile.php');
 define('ROOT', '../');
 require ROOT.'header.php';
 
@@ -35,7 +36,7 @@ if (!X_SADMIN) {
 
 require 'upgrade.lib.php';
 
-$upgrade = new Upgrade($db, 'XMB_1_9_9.xmb', $tablepre);
+$upgrade = new Upgrade($db, 'XMB_1_9_11.xmb', $tablepre);
 $tables = $upgrade->getTablesByTablepre($tablepre);
 $upgrade->loadTables($tables);
 $new = $upgrade->createUpgradeFile();

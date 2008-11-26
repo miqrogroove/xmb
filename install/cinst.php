@@ -93,6 +93,8 @@ require ROOT.'include/global.inc.php';
 require ROOT.'config.php';
 require ROOT.'db/'.$database.'.php';
 
+define('X_PREFIX', $tablepre);
+
 $db = new dbstuff;
 $tmphost = $dbhost; // dbhost gets cleared by the following method.
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, true);
@@ -153,7 +155,6 @@ $r = $db->query("CREATE TABLE ".$tablepre."attachments (
       `uid` INT NOT NULL DEFAULT '0',
       `updatetime` TIMESTAMP NOT NULL default current_timestamp,
       PRIMARY KEY  (`aid`),
-      KEY `tid` (`tid`),
       KEY `pid` (`pid`),
       KEY `parentid` (`parentid`),
       KEY `uid` (`uid`)
@@ -521,7 +522,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `files_virtual_url` VARCHAR(60) NOT NULL,
       `filesperpost` TINYINT NOT NULL DEFAULT '10',
       `ip_banning` SET('on','off') NOT NULL DEFAULT 'off',
-      `max_image_size` => VARCHAR(9) NOT NULL DEFAULT '1000x1000',
+      `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
       `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '1'
    ) TYPE=MyISAM
@@ -829,7 +830,7 @@ $db->query(
     ."quickjump_status = 'on', "
     ."index_stats = 'on', "
     ."onlinetodaycount = '50', "
-    ."onlinetoday_status = 'on');"
+    ."onlinetoday_status = 'on'"
 );
 show_result(X_INST_OK);
 
@@ -931,7 +932,7 @@ show_result(X_INST_OK);
 
 show_act("Inserting data into translation tables");
 require ROOT.'include/translation.inc.php';
-$upload = file_get_contents('lang/English.lang.php');
+$upload = file_get_contents(ROOT.'lang/English.lang.php');
 installNewTranslation($upload);
 show_result(X_INST_OK);
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.10 Karl
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -39,6 +39,9 @@ class Upgrade {
         'captchaimages',
         'favorites',
         'forums',
+        'lang_base',
+        'lang_keys',
+        'lang_text',
         'logs',
         'members',
         'posts',
@@ -174,7 +177,15 @@ class Upgrade {
                         $index['keylen'] = $this->decode_keylen($d[3]);
                     } else {
                         $index['keylen'] = '';
-                        $d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
+                        // Now make this utility aware of simple multi-column primary keys.
+                        $keyname = $d[3];
+                        $matches = array();
+                        preg_match('@\\(`([^)]*)`\\)@', $keyname, $matches);
+                        if (count($matches) == 2) {
+                            $d[3] = $matches[1];
+                        } else {
+                            $d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
+                        }
                     }
                     $index['type'] = 'PRIMARY KEY';
                     $index['field'] = $d[3];

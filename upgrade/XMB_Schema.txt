@@ -1,15 +1,27 @@
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2008, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
@@ -31,7 +43,7 @@ Array
 
                     [1] => Array
                         (
-                            [name] => tid
+                            [name] => pid
                             [type] => int(10)
                             [null] => NOT NULL
                             [default] => '0'
@@ -41,16 +53,6 @@ Array
 
                     [2] => Array
                         (
-                            [name] => pid
-                            [type] => int(10)
-                            [null] => NOT NULL
-                            [default] => '0'
-                            [extra] => 
-                            [keys] => 
-                        )
-
-                    [3] => Array
-                        (
                             [name] => filename
                             [type] => varchar(120)
                             [null] => NOT NULL
@@ -59,7 +61,7 @@ Array
                             [keys] => 
                         )
 
-                    [4] => Array
+                    [3] => Array
                         (
                             [name] => filetype
                             [type] => varchar(120)
@@ -69,7 +71,7 @@ Array
                             [keys] => 
                         )
 
-                    [5] => Array
+                    [4] => Array
                         (
                             [name] => filesize
                             [type] => varchar(120)
@@ -79,7 +81,7 @@ Array
                             [keys] => 
                         )
 
-                    [6] => Array
+                    [5] => Array
                         (
                             [name] => attachment
                             [type] => longblob
@@ -89,12 +91,62 @@ Array
                             [keys] => 
                         )
 
-                    [7] => Array
+                    [6] => Array
                         (
                             [name] => downloads
                             [type] => int(10)
                             [null] => NOT NULL
                             [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [7] => Array
+                        (
+                            [name] => img_size
+                            [type] => varchar(9)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [8] => Array
+                        (
+                            [name] => parentid
+                            [type] => int(11)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [9] => Array
+                        (
+                            [name] => subdir
+                            [type] => varchar(15)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [10] => Array
+                        (
+                            [name] => uid
+                            [type] => int(11)
+                            [null] => NOT NULL
+                            [default] => '0'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [11] => Array
+                        (
+                            [name] => updatetime
+                            [type] => timestamp
+                            [null] => NOT NULL
+                            [default] => CURRENT_TIMESTAMP
                             [extra] => 
                             [keys] => 
                         )
@@ -115,16 +167,24 @@ Array
                         (
                             [keylen] => 
                             [type] => KEY
-                            [name] => tid
-                            [field] => tid
+                            [name] => pid
+                            [field] => pid
                         )
 
                     [2] => Array
                         (
                             [keylen] => 
                             [type] => KEY
-                            [name] => pid
-                            [field] => pid
+                            [name] => parentid
+                            [field] => parentid
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => uid
+                            [field] => uid
                         )
 
                 )
@@ -635,6 +695,144 @@ Array
 
         )
 
+    [lang_base] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => langid
+                            [type] => tinyint(3)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => devname
+                            [type] => varchar(20)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => langid
+                            [name] => 
+                        )
+
+                )
+
+        )
+
+    [lang_keys] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => phraseid
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => auto_increment
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => langkey
+                            [type] => varchar(30)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => phraseid
+                            [name] => 
+                        )
+
+                )
+
+        )
+
+    [lang_text] => Array
+        (
+            [cols] => Array
+                (
+                    [0] => Array
+                        (
+                            [name] => langid
+                            [type] => tinyint(3)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [name] => phraseid
+                            [type] => smallint(5)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [2] => Array
+                        (
+                            [name] => cdata
+                            [type] => blob
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                )
+
+            [indices] => Array
+                (
+                    [0] => Array
+                        (
+                            [keylen] => 
+                            [type] => PRIMARY KEY
+                            [field] => langid`,`phraseid
+                            [name] => 
+                        )
+
+                    [1] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => phraseid
+                            [field] => phraseid
+                        )
+
+                )
+
+        )
+
     [logs] => Array
         (
             [cols] => Array
@@ -1101,6 +1299,16 @@ Array
                             [type] => char(3)
                             [null] => NOT NULL
                             [default] => ''
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [38] => Array
+                        (
+                            [name] => u2ualert
+                            [type] => tinyint(4)
+                            [null] => NOT NULL
+                            [default] => '0'
                             [extra] => 
                             [keys] => 
                         )
@@ -1763,16 +1971,6 @@ Array
 
                     [26] => Array
                         (
-                            [name] => boardurl
-                            [type] => varchar(60)
-                            [null] => NOT NULL
-                            [default] => ''
-                            [extra] => 
-                            [keys] => 
-                        )
-
-                    [27] => Array
-                        (
                             [name] => coppa
                             [type] => char(3)
                             [null] => NOT NULL
@@ -1781,7 +1979,7 @@ Array
                             [keys] => 
                         )
 
-                    [28] => Array
+                    [27] => Array
                         (
                             [name] => timeformat
                             [type] => smallint(2)
@@ -1791,7 +1989,7 @@ Array
                             [keys] => 
                         )
 
-                    [29] => Array
+                    [28] => Array
                         (
                             [name] => adminemail
                             [type] => varchar(60)
@@ -1801,7 +1999,7 @@ Array
                             [keys] => 
                         )
 
-                    [30] => Array
+                    [29] => Array
                         (
                             [name] => dateformat
                             [type] => varchar(10)
@@ -1811,7 +2009,7 @@ Array
                             [keys] => 
                         )
 
-                    [31] => Array
+                    [30] => Array
                         (
                             [name] => sigbbcode
                             [type] => char(3)
@@ -1821,7 +2019,7 @@ Array
                             [keys] => 
                         )
 
-                    [32] => Array
+                    [31] => Array
                         (
                             [name] => sightml
                             [type] => char(3)
@@ -1831,7 +2029,7 @@ Array
                             [keys] => 
                         )
 
-                    [33] => Array
+                    [32] => Array
                         (
                             [name] => reportpost
                             [type] => char(3)
@@ -1841,7 +2039,7 @@ Array
                             [keys] => 
                         )
 
-                    [34] => Array
+                    [33] => Array
                         (
                             [name] => bbinsert
                             [type] => char(3)
@@ -1851,7 +2049,7 @@ Array
                             [keys] => 
                         )
 
-                    [35] => Array
+                    [34] => Array
                         (
                             [name] => smileyinsert
                             [type] => char(3)
@@ -1861,7 +2059,7 @@ Array
                             [keys] => 
                         )
 
-                    [36] => Array
+                    [35] => Array
                         (
                             [name] => doublee
                             [type] => char(3)
@@ -1871,7 +2069,7 @@ Array
                             [keys] => 
                         )
 
-                    [37] => Array
+                    [36] => Array
                         (
                             [name] => smtotal
                             [type] => varchar(15)
@@ -1881,7 +2079,7 @@ Array
                             [keys] => 
                         )
 
-                    [38] => Array
+                    [37] => Array
                         (
                             [name] => smcols
                             [type] => varchar(15)
@@ -1891,7 +2089,7 @@ Array
                             [keys] => 
                         )
 
-                    [39] => Array
+                    [38] => Array
                         (
                             [name] => editedby
                             [type] => char(3)
@@ -1901,7 +2099,7 @@ Array
                             [keys] => 
                         )
 
-                    [40] => Array
+                    [39] => Array
                         (
                             [name] => dotfolders
                             [type] => char(3)
@@ -1911,7 +2109,7 @@ Array
                             [keys] => 
                         )
 
-                    [41] => Array
+                    [40] => Array
                         (
                             [name] => attachimgpost
                             [type] => char(3)
@@ -1921,7 +2119,7 @@ Array
                             [keys] => 
                         )
 
-                    [42] => Array
+                    [41] => Array
                         (
                             [name] => todaysposts
                             [type] => char(3)
@@ -1931,7 +2129,7 @@ Array
                             [keys] => 
                         )
 
-                    [43] => Array
+                    [42] => Array
                         (
                             [name] => stats
                             [type] => char(3)
@@ -1941,7 +2139,7 @@ Array
                             [keys] => 
                         )
 
-                    [44] => Array
+                    [43] => Array
                         (
                             [name] => authorstatus
                             [type] => char(3)
@@ -1951,7 +2149,7 @@ Array
                             [keys] => 
                         )
 
-                    [45] => Array
+                    [44] => Array
                         (
                             [name] => tickerstatus
                             [type] => char(3)
@@ -1961,7 +2159,7 @@ Array
                             [keys] => 
                         )
 
-                    [46] => Array
+                    [45] => Array
                         (
                             [name] => tickercontents
                             [type] => text
@@ -1971,7 +2169,7 @@ Array
                             [keys] => 
                         )
 
-                    [47] => Array
+                    [46] => Array
                         (
                             [name] => tickerdelay
                             [type] => int(6)
@@ -1981,7 +2179,7 @@ Array
                             [keys] => 
                         )
 
-                    [48] => Array
+                    [47] => Array
                         (
                             [name] => addtime
                             [type] => decimal(4,2)
@@ -1991,7 +2189,7 @@ Array
                             [keys] => 
                         )
 
-                    [49] => Array
+                    [48] => Array
                         (
                             [name] => max_avatar_size
                             [type] => varchar(9)
@@ -2001,7 +2199,7 @@ Array
                             [keys] => 
                         )
 
-                    [50] => Array
+                    [49] => Array
                         (
                             [name] => footer_options
                             [type] => varchar(45)
@@ -2011,7 +2209,7 @@ Array
                             [keys] => 
                         )
 
-                    [51] => Array
+                    [50] => Array
                         (
                             [name] => space_cats
                             [type] => char(3)
@@ -2021,7 +2219,7 @@ Array
                             [keys] => 
                         )
 
-                    [52] => Array
+                    [51] => Array
                         (
                             [name] => spellcheck
                             [type] => char(3)
@@ -2031,7 +2229,7 @@ Array
                             [keys] => 
                         )
 
-                    [53] => Array
+                    [52] => Array
                         (
                             [name] => allowrankedit
                             [type] => char(3)
@@ -2041,7 +2239,7 @@ Array
                             [keys] => 
                         )
 
-                    [54] => Array
+                    [53] => Array
                         (
                             [name] => notifyonreg
                             [type] => set('off','u2u','email')
@@ -2051,7 +2249,7 @@ Array
                             [keys] => 
                         )
 
-                    [55] => Array
+                    [54] => Array
                         (
                             [name] => subject_in_title
                             [type] => char(3)
@@ -2061,7 +2259,7 @@ Array
                             [keys] => 
                         )
 
-                    [56] => Array
+                    [55] => Array
                         (
                             [name] => def_tz
                             [type] => decimal(4,2)
@@ -2071,7 +2269,7 @@ Array
                             [keys] => 
                         )
 
-                    [57] => Array
+                    [56] => Array
                         (
                             [name] => indexshowbar
                             [type] => tinyint(2)
@@ -2081,7 +2279,7 @@ Array
                             [keys] => 
                         )
 
-                    [58] => Array
+                    [57] => Array
                         (
                             [name] => resetsigs
                             [type] => char(3)
@@ -2091,7 +2289,7 @@ Array
                             [keys] => 
                         )
 
-                    [59] => Array
+                    [58] => Array
                         (
                             [name] => pruneusers
                             [type] => smallint(3)
@@ -2101,7 +2299,7 @@ Array
                             [keys] => 
                         )
 
-                    [60] => Array
+                    [59] => Array
                         (
                             [name] => ipreg
                             [type] => char(3)
@@ -2111,7 +2309,7 @@ Array
                             [keys] => 
                         )
 
-                    [61] => Array
+                    [60] => Array
                         (
                             [name] => maxdayreg
                             [type] => smallint(5)
@@ -2121,7 +2319,7 @@ Array
                             [keys] => 
                         )
 
-                    [62] => Array
+                    [61] => Array
                         (
                             [name] => maxattachsize
                             [type] => int(10)
@@ -2131,7 +2329,7 @@ Array
                             [keys] => 
                         )
 
-                    [63] => Array
+                    [62] => Array
                         (
                             [name] => captcha_status
                             [type] => set('on','off')
@@ -2141,7 +2339,7 @@ Array
                             [keys] => 
                         )
 
-                    [64] => Array
+                    [63] => Array
                         (
                             [name] => captcha_reg_status
                             [type] => set('on','off')
@@ -2151,12 +2349,22 @@ Array
                             [keys] => 
                         )
 
-                    [65] => Array
+                    [64] => Array
                         (
                             [name] => captcha_post_status
                             [type] => set('on','off')
                             [null] => NOT NULL
                             [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [65] => Array
+                        (
+                            [name] => captcha_search_status
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
                             [extra] => 
                             [keys] => 
                         )
@@ -2367,6 +2575,116 @@ Array
                             [type] => set('on','off')
                             [null] => NOT NULL
                             [default] => 'on'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [87] => Array
+                        (
+                            [name] => attach_remote_images
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [88] => Array
+                        (
+                            [name] => files_min_disk_size
+                            [type] => mediumint(9)
+                            [null] => NOT NULL
+                            [default] => '9216'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [89] => Array
+                        (
+                            [name] => files_storage_path
+                            [type] => varchar(100)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [90] => Array
+                        (
+                            [name] => files_subdir_format
+                            [type] => tinyint(4)
+                            [null] => NOT NULL
+                            [default] => '1'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [91] => Array
+                        (
+                            [name] => file_url_format
+                            [type] => tinyint(4)
+                            [null] => NOT NULL
+                            [default] => '1'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [92] => Array
+                        (
+                            [name] => files_virtual_url
+                            [type] => varchar(60)
+                            [null] => NOT NULL
+                            [default] => 
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [93] => Array
+                        (
+                            [name] => filesperpost
+                            [type] => tinyint(4)
+                            [null] => NOT NULL
+                            [default] => '10'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [94] => Array
+                        (
+                            [name] => ip_banning
+                            [type] => set('on','off')
+                            [null] => NOT NULL
+                            [default] => 'off'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [95] => Array
+                        (
+                            [name] => max_image_size
+                            [type] => varchar(9)
+                            [null] => NOT NULL
+                            [default] => '1000x1000'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [96] => Array
+                        (
+                            [name] => max_thumb_size
+                            [type] => varchar(9)
+                            [null] => NOT NULL
+                            [default] => '200x200'
+                            [extra] => 
+                            [keys] => 
+                        )
+
+                    [97] => Array
+                        (
+                            [name] => schema_version
+                            [type] => tinyint(3)
+                            [null] => NOT NULL
+                            [default] => '1'
                             [extra] => 
                             [keys] => 
                         )
