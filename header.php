@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -42,11 +42,11 @@ $versioncompany = 'The XMB Group';
 $versionshort = '1.9.11';
 $versiongeneral = 'XMB 1.9.11';
 $copyright = '2001-2008';
-$alpha = 'Alpha Three';
-$beta = '';
+$alpha = '';
+$beta = 'Beta 1';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081125;
+$versionbuild = 20081128;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -276,7 +276,11 @@ if (file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
-    if (!@unlink('./upgrade.php')) {
+    if (X_SADMIN) {
+        if (!@unlink('./upgrade.php')) {
+            exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
+        }
+    } else {
         exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
     }
 }

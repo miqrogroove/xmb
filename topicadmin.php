@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -611,7 +611,7 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."favorites AS f "
                      . "INNER JOIN ".X_PREFIX."members AS m ON m.username = f.username "
-                     . "INNER JOIN (SELECT username, COUNT(*) AS fcount FROM ".X_PREFIX"favorites AS f2 WHERE tid=$tid) AS query2 ON m.username = query2.username "
+                     . "INNER JOIN (SELECT username, COUNT(*) AS fcount FROM ".X_PREFIX."favorites AS f2 WHERE tid=$tid) AS query2 ON m.username = query2.username "
                      . "SET f.tid=$tid "
                      . "WHERE f.tid='$othertid' AND query2.fcount=0");
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$othertid'");

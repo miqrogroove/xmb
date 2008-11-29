@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -81,12 +81,11 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <ol>
 <li>BACKUP YOUR DATABASE - This script cannot be undone!
 <li>Copy your config.php settings into the new file.
-<li>Confirm your forum database account is granted ALTER and LOCK privileges.
+<li>Confirm your forum database account is granted ALTER, CREATE, and LOCK privileges.
 <li>Disable your forums using the Board Status setting.
 <li>Upload the XMB 1.9.11 files.
 <li>Upload and run this script to complete your database upgrade.
 <li>Enable your forums using the Board Status setting.
-<li>Deny ALTER and LOCK privileges to the forum database account. (Optional, recommended)
 </ol>
 
 <p>When you are ready, <a href="?step=2">Click Here if you already have a backup and want to begin the upgrade</a>.

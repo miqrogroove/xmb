@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Three - This software should not be used for any purpose after 31 December 2008.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -41,7 +41,7 @@ if (!defined('IN_CODE')) {
 // Table Settings
     $tablepre       = 'TABLE/PRE'; // XMB will prefix each table name with the string you specify here.  'xmb_' is a common choice.
 
-// Path-settings
+// Address settings
     // In full_url, put the full URL you see when you go to your boards, WITHOUT the filename though!!
     // And please, remember to add the / at the end...
     $full_url       = 'FULLURL';

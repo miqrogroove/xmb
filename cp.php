@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -2000,7 +2000,7 @@ if ($action == "upgrade") {
             }
 
             if ($explode[$num] != '') {
-                $query = $db->query($explode[$num]." -- Injected by $xmbuser using cp.php", true);
+                $query = $db->query($explode[$num]." -- Injected by $xmbuser using cp.php");
 
                 if (is_bool($query)) {
                     $numfields = 1;

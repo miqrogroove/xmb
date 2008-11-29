@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -546,6 +546,10 @@ switch($action) {
                     attachUploadedFile('attach', $pid);
                     if ($SETTINGS['attach_remote_images'] == 'on') {
                         extractRemoteImages($pid, $messageinput);
+                        $newdbmessage = $db->escape(addslashes($messageinput));
+                        if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                            $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
+                        }
                     }
                 } elseif ($username != 'Anonymous') {
                     claimOrphanedAttachments($pid);
@@ -892,6 +896,10 @@ switch($action) {
                     attachUploadedFile('attach', $pid);
                     if ($SETTINGS['attach_remote_images'] == 'on') {
                         extractRemoteImages($pid, $messageinput);
+                        $newdbmessage = $db->escape(addslashes($messageinput));
+                        if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                            $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
+                        }
                     }
                 } elseif ($username != 'Anonymous') {
                     claimOrphanedAttachments($pid);

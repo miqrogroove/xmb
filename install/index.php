@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -953,11 +953,11 @@ Public License instead of this License.  But first, please read
         switch($vSubStep) {
         case 'create':
             // Open config.php
-            $configuration = file_get_contents('../config.php');
+            $configuration = file_get_contents(ROOT.'config.php');
 
             // Now, replace the main text values with those given by user
-            $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", "= 'mysql';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
-            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", "= '{$_REQUEST['db_type']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
+            $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
+            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
             $configuration = str_replace($find, $replace, $configuration);
 
             // Change Comment Output Option
@@ -1090,20 +1090,7 @@ Public License instead of this License.  But first, please read
 
         default:
         // Get the DB types...
-            $stream = opendir(ROOT.'db');
-            while(false !== ($file = readdir($stream))) {
-                if (strpos($file, '.php') && false === strpos($file, '.interface.php')) {
-                    $dbs[] = $configuration = str_replace('.php', '', $file);
-                }
-            }
-            foreach($dbs as $db) {
-                if ($db == 'mysql') {
-                    $types[] = "<option selected=\"selected\" name=\"$db\">$db</option>";
-                } else {
-                    $types[] = "<option name=\"$db\">$db</option>";
-                }
-            }
-            $types = '<select name="db_type">'.implode("\n", $types).'</select>';
+            $types = '<select name="db_type"><option selected="selected" value="mysql">mysql</option></select>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -1260,7 +1247,7 @@ Public License instead of this License.  But first, please read
 
     case 5: // Make the administrator set a username and password for the super admin user
 
-        require '../config.php';
+        require ROOT.'config.php';
 
         $config_array = array(
             'dbname' => 'DB/NAME',

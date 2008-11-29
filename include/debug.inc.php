@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -58,7 +58,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-    } elseif ($pathsetting != $path) {
+    } elseif ($pathsetting != $path And $pathsetting != '') {
         $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.path;
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';
@@ -69,6 +69,19 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     if (!$success) {
         exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
     }
+}
+
+function printAllQueries() {
+    $stuff = array();
+    if (X_SADMIN) {
+        $stuff[] = '<table cols="2" style="width: 97%;"><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
+        foreach($db->querylist as $key=>$val) {
+            $val = mysql_syn_highlight(cdataOut($val));
+            $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($db->querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
+        }
+        $stuff[] = '</table>';
+    }
+    return implode("\n", $stuff);
 }
 
 function mysql_syn_highlight($query) {
