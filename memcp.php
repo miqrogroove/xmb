@@ -761,7 +761,7 @@ if ($action == 'profile') {
     $db->free_result($u2uquery);
 
     $fids = permittedForums(forumCache(), 'thread', 'csv');
-    $query2 = $db->query("SELECT t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
+    $query2 = $db->query("SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
     $favnum = $db->num_rows($query2);
     $favs = '';
     $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
