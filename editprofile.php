@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -44,14 +44,14 @@ eval('$css = "'.template('css').'";');
 eval('$header = "'.template('header').'";');
 
 if (!X_SADMIN) {
-    error($lang['superadminonly'], false);
+    error($lang['superadminonly']);
 }
 
 $user = postedVar('user', '', TRUE, TRUE, FALSE, 'g');
 
 $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
 if ($db->num_rows($query) != 1) {
-    error($lang['nomember'], false);
+    error($lang['nomember']);
 }
 $member = $db->fetch_array($query);
 
@@ -276,7 +276,7 @@ if (noSubmit('editsubmit')) {
             if ($size === false) {
                 $avatar = '';
             } else if ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
-                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
             }
         }
     } else if ($newavatarcheck == "no") {

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -376,13 +376,13 @@ if ($action == 'profile') {
     if (onSubmit('editsubmit')) {
         if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '') {
             if (!isset($_POST['oldpassword'])) {
-                error($lang['textpwincorrect'], FALSE);
+                error($lang['textpwincorrect']);
             }
             if (!elevateUser($xmbuser, md5($_POST['oldpassword']))) {
-                error($lang['textpwincorrect'], FALSE);
+                error($lang['textpwincorrect']);
             }
             if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
-                error($lang['pwnomatch'], false);
+                error($lang['pwnomatch']);
             }
 
             $newpassword = md5($_POST['newpassword']);
@@ -457,7 +457,7 @@ if ($action == 'profile') {
                 $count1 = $db->result($query,0);
                 $db->free_result($query);
                 if ($count1 != 0) {
-                    error($lang['alreadyreg'], FALSE);
+                    error($lang['alreadyreg']);
                 }
             }
 
@@ -483,14 +483,14 @@ if ($action == 'profile') {
             $db->free_result($query);
 
             if ($efail) {
-                error($lang['emailrestricted'], FALSE);
+                error($lang['emailrestricted']);
             }
 
             require ROOT.'include/validate-email.inc.php';
             $test = new EmailAddressValidator();
             $rawemail = postedVar('newemail', '', FALSE, FALSE);
             if (false === $test->check_email_address($rawemail)) {
-                error($lang['bademail'], FALSE);
+                error($lang['bademail']);
             }
         }
 
@@ -513,7 +513,7 @@ if ($action == 'profile') {
                 if ($size === false) {
                     $avatar = '';
                 } else if ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
-                    error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px', false);
+                    error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                 }
             }
         } else if ($newavatarcheck == "no") {
@@ -531,23 +531,23 @@ if ($action == 'profile') {
     $favadd = getInt('favadd');
     if (noSubmit('favsubmit') && $favadd) {
         if ($favadd == 0) {
-            error($lang['generic_missing'], false);
+            error($lang['generic_missing']);
         }
 
         $query = $db->query("SELECT fid FROM ".X_PREFIX."threads WHERE tid=$favadd");
         if ($db->num_rows($query) == 0) {
-            error($lang['privforummsg'], FALSE);
+            error($lang['privforummsg']);
         }
         $row = $db->fetch_array($query);
         $forum = getForum($row['fid']);
         $perms = checkForumPermissions($forum);
         if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
-            error($lang['privforummsg'], FALSE);
+            error($lang['privforummsg']);
         }
         if ($forum['type'] == 'sub') {
             $perms = checkForumPermissions(getForum($forum['fup']));
             if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
-                error($lang['privforummsg'], FALSE);
+                error($lang['privforummsg']);
             }
         }
 
@@ -556,7 +556,7 @@ if ($action == 'profile') {
         $db->free_result($query);
 
         if ($favthread) {
-            error($lang['favonlistmsg'], false);
+            error($lang['favonlistmsg']);
         }
 
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($favadd, '$xmbuser', 'favorite')");
@@ -662,7 +662,7 @@ if ($action == 'profile') {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             $db->free_result($query);
-            error($lang['subonlistmsg'], false);
+            error($lang['subonlistmsg']);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
             message($lang['subaddedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
