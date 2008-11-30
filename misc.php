@@ -335,9 +335,9 @@ switch($action) {
         $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
         $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
         $page = getInt('page');
-        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE));
-        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE));
-        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE));
+        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE, FALSE, 'g'));
+        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE, 'g'));
+        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE, TRUE, 'g'));
 
         if ($SETTINGS['memliststatus'] == 'off') {
             eval('echo "'.template('header').'";');
@@ -390,8 +390,8 @@ switch($action) {
             } else {
                 $where[] = " email LIKE '%$dblikeemail%'";
             }
-            $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE));
-            $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
+            $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE, FALSE, 'g'));
+            $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE, 'g');
             /* Warning: $srchemail is used for template output */
         } else {
             $srchemail = '';
@@ -399,8 +399,8 @@ switch($action) {
 
         if ($dblikeip != '') {
             $where[] = " regip LIKE '%$dblikeip%'";
-            $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE));
-            $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
+            $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE, FALSE, 'g'));
+            $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE, 'g');
             /* Warning: $srchip is used for template output */
         } else {
             $srchip = '';
@@ -408,8 +408,8 @@ switch($action) {
 
         if ($dblikemem != '') {
             $where[] = " username LIKE '%$dblikemem%'";
-            $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE));
-            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
+            $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE, FALSE, 'g'));
+            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE, 'g');
             /* Warning: $srchmem is used for template output */
         } else {
             $srchmem = '';

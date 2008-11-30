@@ -3062,8 +3062,9 @@ $header
 </tr>
 </table>
 <br />
-<form method="post" action="misc.php?action=list">
+<form method="get" action="misc.php">
 <input type="hidden" name="token" value="" />
+<input type="hidden" name="action" value="list" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -3113,8 +3114,9 @@ $multipage
 </tr>
 </table>
 <br />
-<form method="post" action="misc.php?action=list">
+<form method="get" action="misc.php">
 <input type="hidden" name="token" value="" />
+<input type="hidden" name="action" value="list" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
