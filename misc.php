@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -226,7 +226,7 @@ switch($action) {
         }
 
         $page = getInt('page');
-        $count = $db->num_rows($db->query("SELECT * FROM ".X_PREFIX."whosonline"));
+        $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."whosonline"), 0);
         $max_page = (int) ($count / $tpp) + 1;
         if ($page && $page >= 1 && $page <= $max_page) {
             $start_limit = ($page-1) * $tpp;
@@ -235,7 +235,7 @@ switch($action) {
             $page = 1;
         }
 
-        if (($multipage = multi($count, $tpp, $page, 'misc.php?action=online&amp;page='.$page)) !== false) {
+        if (($multipage = multi($count, $tpp, $page, 'misc.php?action=online')) !== false) {
             if (X_ADMIN) {
                 eval('$multipage = "'.template('misc_online_multipage_admin').'";');
             } else {

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -558,7 +558,7 @@ switch($action) {
 
             $topicpages = quickpage($posts, $ppp);
             $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-            message($lang['replymsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+            message($lang['replymsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
         }
 
         if (!$replyvalid) {
@@ -912,7 +912,7 @@ switch($action) {
 
             $topicpages = quickpage($posts, $ppp);
             $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-            message($lang['postmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+            message($lang['postmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
         }
 
         if (!$topicvalid) {
@@ -1129,9 +1129,9 @@ switch($action) {
                 $db->free_result($query);
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-                message($lang['editpostmsg'], false, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+                message($lang['editpostmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
             } else {
-                message($lang['editpostmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
+                message($lang['editpostmsg'], TRUE, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
             }
         }
 
