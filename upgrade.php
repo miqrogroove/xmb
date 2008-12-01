@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -52,7 +52,7 @@ if (!defined('X_SADMIN') Or !X_SADMIN) {
 }
 
 //Check Server Version
-define('MYSQL_MIN_VER', '4.0.16');
+define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 $current = explode('.', phpversion());
 $min = explode('.', PHP_MIN_VER);
@@ -138,7 +138,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     foreach($columns as $colname) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
-            $sql[] = 'DROP COLUMN '.$colname.' '.$coltype;
+            $sql[] = 'DROP COLUMN '.$colname;
         }
         $db->free_result($query);
     }
@@ -182,7 +182,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     foreach($columns as $colname) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
-            $sql[] = 'DROP COLUMN '.$colname.' '.$coltype;
+            $sql[] = 'DROP COLUMN '.$colname;
         }
         $db->free_result($query);
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -29,7 +29,7 @@
 // Script Parameters
 define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
-define('MYSQL_MIN_VER', '4.0.16');
+define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(

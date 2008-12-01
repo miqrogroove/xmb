@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -377,13 +377,10 @@ if ($action == '') {
     $db->free_result($queryranks);
 
     $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid='$tid'");
-    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-    $num = $db->result($query, 0);
-    $db->free_result($query);
 
     $mpurl = 'viewthread.php?tid='.$tid;
     $multipage = '';
-    if (($multipage = multi($num, $ppp, $page, $mpurl)) !== false) {
+    if (($multipage = multi($thread['postcount'], $ppp, $page, $mpurl)) !== false) {
         eval('$multipage = "'.template('viewthread_multipage').'";');
     }
 
