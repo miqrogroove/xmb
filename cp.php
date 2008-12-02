@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1566,29 +1566,29 @@ if ($action == "members") {
     $dblikeemail = $db->like_escape($srchemail);
     $dblikeip = $db->like_escape($srchip);
 
-    $where = '';
+    $where = array();
 
     if ($srchmem != '') {
-        $where .= "username LIKE '%$dblikemem%' ";
+        $where[] = "username LIKE '%$dblikemem%' ";
     }
     if ($srchemail != '') {
-        $where .= "email LIKE '%$dblikeemail%' ";
+        $where[] = "email LIKE '%$dblikeemail%' ";
     }
     if ($srchip != '') {
-        $where .= "regip LIKE '%$dblikeip%' ";
+        $where[] = "regip LIKE '%$dblikeip%' ";
     }
     if ($srchstatus != '') {
         if ($srchstatus == 'Pending') {
-            $where .= "lastvisit = 0 ";
+            $where[] = "lastvisit = 0 ";
         } else {
-            $where .= "status = '$srchstatus' ";
+            $where[] = "status = '$srchstatus' ";
         }
     }
 
-    if ($where == '') {
-        $where = 'WHERE FALSE ';
+    if (count($where) == 0) {
+        $where = '';
     } else {
-        $where = 'WHERE '.$where;
+        $where = 'WHERE '.implode('AND ', $where);
     }
 
 
