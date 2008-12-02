@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -79,15 +79,17 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
     //$self['username'] is a good alternative for future template use.
     //$xmbpw was historically abused and will no longer contain a value.
 
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
-    if ($db->num_rows($query) == 1) {
-        $self = $db->fetch_array($query); //The self array will remain available, global.
-        if ($self['password'] == $xmbpwinput) {
-            $xmbuser = $db->escape($self['username']);
+    if (strlen($xmbuserinput) >= 3) {
+        $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
+        if ($db->num_rows($query) == 1) {
+            $self = $db->fetch_array($query); //The self array will remain available, global.
+            if ($self['password'] == $xmbpwinput) {
+                $xmbuser = $db->escape($self['username']);
+            }
+            $self['password'] = '';
         }
-        $self['password'] = '';
+        $db->free_result($query);
     }
-    $db->free_result($query);
 
     $xmbuserinput = '';
     $xmbpwinput = '';

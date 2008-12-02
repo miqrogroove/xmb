@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -122,7 +122,7 @@ if ($gid == 0) {
     if ($SETTINGS['whosonlinestatus'] == 'on') {
         $guestcount = $membercount = $hiddencount = 0;
         $member = array();
-        $query  = $db->query("SELECT m.status, m.username, m.invisible, w.* FROM ".X_PREFIX."whosonline w LEFT JOIN ".X_PREFIX."members m ON m.username=w.username ORDER BY w.username");
+        $query  = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
             switch($online['username']) {
                 case 'xguest123':

@@ -243,14 +243,17 @@ switch($action) {
             }
         }
 
-        if (X_ADMIN) {
-            $where = "";
-        } else {
-            $where = "WHERE invisible='0' OR username='$xmbuser'";
+        $where = "WHERE username != 'xguest123'";
+        if (!X_ADMIN) {
+            $where .= " AND (invisible='0' OR username='$xmbuser')";
         }
 
-        $sql = "SELECT * FROM ".X_PREFIX."whosonline "
-             . "$where "
+        // UNION Syntax Reminder: "Use of ORDER BY for individual SELECT statements implies nothing about the order in which the rows appear."
+        $sql = "SELECT username, MAX(ip) AS ip, MAX(`time`) as `time`, MAX(location) AS location, MAX(invisible) AS invisible "
+             . "FROM xmb_whosonline $where GROUP BY username "
+             . "UNION ALL "
+             . "SELECT username, ip, `time`, location, invisible "
+             . "FROM xmb_whosonline WHERE username = 'xguest123' "
              . "ORDER BY IF(username!='xguest123',CONCAT('1',username),'2') ASC, `time` DESC "
              . "LIMIT $start_limit, $tpp";
         $query = $db->query($sql);
