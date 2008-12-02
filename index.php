@@ -120,25 +120,20 @@ if ($gid == 0) {
 
     $whosonline = $whosonlinetoday = '';
     if ($SETTINGS['whosonlinestatus'] == 'on') {
-        $guestcount = $membercount = $hiddencount = 0;
+        $hiddencount = 0;
+        $membercount = 0;
+        $guestcount = $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM ".X_PREFIX."whosonline WHERE username = 'xguest123'"), 0);
         $member = array();
         $query  = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
-            switch($online['username']) {
-                case 'xguest123':
-                    $guestcount++;
-                    break;
-                default:
-                    if ($online['invisible'] != 0 && X_ADMIN) {
-                        $member[] = $online;
-                        $hiddencount++;
-                    } else if ($online['invisible'] != 0) {
-                        $hiddencount++;
-                    } else {
-                        $member[] = $online;
-                        $membercount++;
-                    }
-                    break;
+            if ($online['invisible'] != 0 && X_ADMIN) {
+                $member[] = $online;
+                $hiddencount++;
+            } else if ($online['invisible'] != 0) {
+                $hiddencount++;
+            } else {
+                $member[] = $online;
+                $membercount++;
             }
         }
         $db->free_result($query);
