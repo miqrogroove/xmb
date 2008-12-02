@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -42,9 +42,11 @@ function setNewLangValue($langkey, $cdata) {
 
     $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE langkey='$langkey'");
     if ($db->num_rows($result) == 0) {
+        $newkey = TRUE;
         $db->query("INSERT INTO ".X_PREFIX."lang_keys SET langkey='$langkey'");
         $phraseid = $db->insert_id();
     } else {
+        $newkey = FALSE;
         $row = $db->fetch_array($result);
         $db->free_result($result);
         $phraseid = $row['phraseid'];
@@ -58,7 +60,9 @@ function setNewLangValue($langkey, $cdata) {
     $db->free_result($result);
     $langid = $row['langid'];
 
-    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
+    if (!$newkey) {
+        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
+    }
     $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
 
     return TRUE;
@@ -92,6 +96,65 @@ function setLangValue($phraseid, $cdata) {
     return TRUE;
 }
 
+// setManyLangValues() will add an array of new $lang values to the current translation.
+// Parameter $lang is an associative array of new key/value pairs.  Values should be raw cdata.
+// Parameter $langfile is the devname of the translation to add to.
+// Returns TRUE on success, FALSE if the devname does not exist.
+function setManyLangValues(&$lang, &$langfile) {
+    global $db;
+    
+    // Ensure devname is present in the database.
+    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
+    if ($db->num_rows($result) == 0) {
+        return FALSE;
+    }
+    $row = $db->fetch_array($result);
+    $db->free_result($result);
+    $langid = $row['langid'];
+
+    // Ensure all new keys are present in the database.
+    $newkeys = array_keys($lang);
+    $oldkeys = array();
+    $phraseids = array();
+    $result = $db->query("SELECT langkey FROM ".X_PREFIX."lang_keys");
+    while ($row = $db->fetch_array($result)) {
+        $oldkeys[] = $row['langkey'];
+    }
+    $db->free_result($result);
+    $newkeys = array_diff($newkeys, $oldkeys);
+    if (count($newkeys) > 0) {
+        $sql = implode("'), ('", $newkeys);
+        $sql = "INSERT INTO ".X_PREFIX."lang_keys (langkey) VALUES ('$sql')";
+        $db->query($sql);
+    }
+
+    // Query Key IDs
+    $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys");
+    while ($row = $db->fetch_array($result)) {
+        $phraseids[$row['langkey']] = $row['phraseid'];
+    }
+    $db->free_result($result);
+
+    // Save the new values
+    $flag = FALSE;
+    $sql = '';
+    foreach($lang as $key=>$value) {
+        $phraseid = $phraseids[$key];
+        $value = $db->escape($value);
+        if ($flag) {
+            $sql .= ", ($langid, $phraseid, '$value')";
+        } else {
+            $sql .= "($langid, $phraseid, '$value')";
+            $flag = TRUE;
+        }
+    }
+    $query = $db->query("REPLACE ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
+
+    $db->query('OPTIMIZE TABLE '.X_PREFIX.'lang_text');
+
+    return TRUE;
+}
+
 // installNewTranslation() handles all logic necessary to install an XMB translation file.
 // Parameter $upload must be a string containing the entire translation file.
 // Returns TRUE on success.
@@ -101,7 +164,7 @@ function installNewTranslation(&$upload) {
     // Perform sanity checks
     $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
     if (!eval('return true; '.$upload)) {
-        exit('XMB failed to parse the translation upload.  Valid PHP syntax is required.');
+        exit('XMB failed to parse the translation file.  Valid PHP syntax is required.');
     }
 
     // Parse the uploaded code
@@ -160,30 +223,6 @@ function installNewTranslation(&$upload) {
         $newlang[$key] = $phrase;
     }
 
-    // Ensure all new keys are present in the database.
-    $newkeys = array_keys($newlang);
-    $oldkeys = array();
-    $phraseids = array();
-    $result = $db->query("SELECT langkey FROM ".X_PREFIX."lang_keys");
-    while ($row = $db->fetch_array($result)) {
-        $oldkeys[] = $row['langkey'];
-    }
-    $db->free_result($result);
-    $newkeys = array_diff($newkeys, $oldkeys);
-    if (count($newkeys) > 0) {
-        $sql = implode("'), ('", $newkeys);
-        $sql = "INSERT INTO ".X_PREFIX."lang_keys (langkey) VALUES ('$sql')";
-        $db->query($sql);
-    }
-
-    // Query Key IDs
-    $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys");
-    while ($row = $db->fetch_array($result)) {
-        $oldkeys[] = $row['langkey'];
-        $phraseids[$row['langkey']] = $row['phraseid'];
-    }
-    $db->free_result($result);
-
     // Ensure $devname is present in the database.
     $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$devname'");
     if ($db->num_rows($result) == 0) {
@@ -197,19 +236,7 @@ function installNewTranslation(&$upload) {
 
     // Install the new translation
     $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid");
-    $flag = FALSE;
-    $sql = '';
-    foreach($newlang as $key=>$value) {
-        $phraseid = $phraseids[$key];
-        $value = $db->escape($value);
-        if ($flag) {
-            $sql .= ", ($langid, $phraseid, '$value')";
-        } else {
-            $sql .= "($langid, $phraseid, '$value')";
-            $flag = TRUE;
-        }
-    }
-    $query = $db->query("INSERT INTO ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
+    setManyLangValues($newlang, $devname);
 
     // Cleanup unused keys.
     $oldids = array();
@@ -227,9 +254,7 @@ function installNewTranslation(&$upload) {
         $db->query("DELETE FROM ".X_PREFIX."lang_keys WHERE phraseid IN ($oldids)");
     }
     
-    $db->query('OPTIMIZE TABLE '.X_PREFIX.'lang_text');
-
-    return $query;
+    return TRUE;
 }
 
 // exportTranslation() creates a PHP file of a single translation.
