@@ -249,12 +249,12 @@ switch($action) {
         }
 
         // UNION Syntax Reminder: "Use of ORDER BY for individual SELECT statements implies nothing about the order in which the rows appear."
-        $sql = "SELECT username, MAX(ip) AS ip, MAX(`time`) as `time`, MAX(location) AS location, MAX(invisible) AS invisible "
-             . "FROM xmb_whosonline $where GROUP BY username "
+        $sql = "SELECT username, 1 AS sort_col, MAX(ip) AS ip, MAX(`time`) as `time`, MAX(location) AS location, MAX(invisible) AS invisible "
+             . "FROM ".X_PREFIX."whosonline $where GROUP BY username, sort_col "
              . "UNION ALL "
-             . "SELECT username, ip, `time`, location, invisible "
-             . "FROM xmb_whosonline WHERE username = 'xguest123' "
-             . "ORDER BY IF(username!='xguest123',CONCAT('1',username),'2') ASC, `time` DESC "
+             . "SELECT username, 2 AS sort_col, ip, `time`, location, invisible "
+             . "FROM ".X_PREFIX."whosonline WHERE username = 'xguest123' "
+             . "ORDER BY sort_col, username, `time` DESC "
              . "LIMIT $start_limit, $tpp";
         $query = $db->query($sql);
 
