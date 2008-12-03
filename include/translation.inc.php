@@ -278,7 +278,7 @@ function exportTranslation($langid, &$devname) {
     $query = "SELECT k.langkey, t.cdata "
            . "FROM ".X_PREFIX."lang_keys AS k "
            . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
-           . "WHERE t.langid=$download "
+           . "WHERE t.langid=$langid "
            . "GROUP BY k.langkey ORDER BY k.langkey";
     $query = $db->query($query);
     $contents = '';
