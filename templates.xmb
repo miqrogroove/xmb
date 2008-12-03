@@ -4789,7 +4789,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <img src="{$post['fileurl']}" title="$post[filename] - $attachsize" alt="$post[filename] - $attachsize" {$post['filedims']} />
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachmentthumb|#*XMB TEMPLATE*#|
-<a href="{$post['fileurl']}" title="$post[filename] - $attachsize"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
+<a href="{$post['fileurl']}" title="$post[filename] - $attachsize" onclick="window.open(this.href); return false;"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|
 <a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
