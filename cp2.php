@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1729,12 +1729,11 @@ if ($action == "prune") {
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE IN ($tids)");
 
-                // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
-                $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
-                         . "USING ".X_PREFIX."vote_desc "
-                         . "LEFT JOIN ".X_PREFIX."vote_results ON ".X_PREFIX."vote_results.vote_id = ".X_PREFIX."vote_desc.vote_id "
-                         . "LEFT JOIN ".X_PREFIX."vote_voters  ON ".X_PREFIX."vote_voters.vote_id  = ".X_PREFIX."vote_desc.vote_id "
-                         . "WHERE ".X_PREFIX."vote_desc.topic_id IN ($tids)");
+                $db->query("DELETE FROM d, r, v "
+                         . "USING ".X_PREFIX."vote_desc AS d "
+                         . "LEFT JOIN ".X_PREFIX."vote_results AS r ON r.vote_id = d.vote_id "
+                         . "LEFT JOIN ".X_PREFIX."vote_voters AS v  ON v.vote_id = d.vote_id "
+                         . "WHERE d.topic_id IN ($tids)");
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
             }
