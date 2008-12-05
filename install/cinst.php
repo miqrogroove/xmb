@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -794,20 +794,19 @@ $db->query("INSERT INTO ".$tablepre."smilies VALUES ('picon', '', 'question.gif'
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".$tablepre."templates");
-$stream = fopen(ROOT.'templates.xmb','r');
-$file = fread($stream, filesize(ROOT.'templates.xmb'));
-fclose($stream);
-
-$templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
-foreach($templates as $key=>$val) {
+$templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
+$values = array();
+foreach($templates as $val) {
     $template = explode("|#*XMB TEMPLATE*#|", $val);
-    if (isset($template[1])) {
-        $template[1] = addslashes($template[1]);
-    } else {
-        $template[1] = '';
-    }
-    $db->query("INSERT INTO ".$tablepre."templates (`name`, `template`) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
+    $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
+    $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
 }
+unset($templates);
+if (count($values) > 0) {
+    $values = implode(', ', $values);
+    $db->query("INSERT INTO ".$tablepre."templates (name, template) VALUES $values");
+}
+unset($values);
 $db->query("DELETE FROM ".$tablepre."templates WHERE name=''");
 show_result(X_INST_OK);
 

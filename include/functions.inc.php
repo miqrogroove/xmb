@@ -31,18 +31,24 @@ if (!defined('IN_CODE')) {
 }
 
 //loginUser() is responsible for accepting credentials for new sessions.
-//$xmbuserinput must be html escaped & db escaped username input.
-//$xmbpwinput must be raw password hash input.
-function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FALSE) {
+//$xmbuserinput (string) must be html escaped & db escaped username input.
+//$xmbpwinput   (string) must be raw password hash input.
+//$invisible    (bool)  (optional)
+//$tempcookie   (bool)  (optional)
+function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALSE) {
     global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
-    if (elevateUser($xmbuserinput, $xmbpwinput)) {
+    if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
         $dbname = $db->escape($self['username']);
 
-        if ($invisible) {
-            $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
-        } else {
-            $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
+        if (!is_null($invisible)) {
+            if ($invisible And $self['invisible'] == 0) {
+                $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
+                $self['invisible'] = 1;
+            } elseif (!$invisible And $self['invisible'] == 1) {
+                $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
+                $self['invisible'] = 0;
+            }
         }
 
         if ($tempcookie) {
@@ -65,9 +71,10 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=FALSE, $tempcookie=FAL
 }
 
 //elevateUser() is responsible for authenticating established sessions and setting up session variables.
-//$xmbuserinput must be html escaped & db escaped username input.
-//$xmbpwinput must be raw password hash input.
-function elevateUser($xmbuserinput, $xmbpwinput) {
+//$xmbuserinput (string) must be html escaped & db escaped username input.
+//$xmbpwinput   (string) must be raw password hash input.
+//$force_inv    (bool)  (optional)
+function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
     global $xmbuser, $xmbpw, $self, $db, $SETTINGS, $status_enum;
 
     $xmbuser = '';
@@ -182,6 +189,10 @@ function elevateUser($xmbuserinput, $xmbpwinput) {
         $self['sig'] = '';
         $self['uid'] = 0;
         $self['username'] = '';
+    }
+    
+    if ($force_inv === TRUE) {
+        $invisible = 1;
     }
 
     if ($memtime == 24) {

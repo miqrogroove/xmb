@@ -1334,22 +1334,22 @@ Public License instead of this License.  But first, please read
 
         show_act('Inserting '.XMB_V.' templates');
 
-        $stream = fopen(ROOT.'templates.xmb','r');
-        $file = fread($stream, filesize(ROOT.'templates.xmb'));
-        fclose($stream);
+        $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
 
         $db->query("TRUNCATE TABLE `".$u->tablepre."templates`");
 
-        $templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
-        foreach($templates as $key=>$val) {
+        $values = array();
+        foreach($templates as $val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
-            if (isset($template[1])) {
-                $template[1] = addslashes($template[1]);
-            } else {
-                $template[1] = '';
-            }
-            $db->query("INSERT INTO `".$u->tablepre."templates` (`name`, `template`) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
+            $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
         }
+        unset($templates);
+        if (count($values) > 0) {
+            $values = implode(', ', $values);
+            $db->query("INSERT INTO ".$u->tablepre."templates (name, template) VALUES $values");
+        }
+        unset($values);
         $db->query("DELETE FROM `".$u->tablepre."templates` WHERE name=''");
 
         show_result(X_INST_OK);

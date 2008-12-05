@@ -100,11 +100,17 @@ $misc = $multipage = $nextlink = '';
 switch($action) {
     case 'login':
         $password = '';
+        $invisible = formInt('hide');
+        if ($invisible == 2) { // '2' may be set explicitly when we want to ignore this input.
+            $invisible = NULL;
+        } else {
+            $invisible = ($invisible == 1);
+        }
         if (X_MEMBER) {
             eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
         } elseif (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
-        } elseif (loginUser(postedVar('username'), md5($_POST['password']), (formInt('hide') == 1), (formYesNo('secure') == 'yes'))) {
+        } elseif (loginUser(postedVar('username'), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
             if ($server == 'Mic') {
                 $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
             } else {

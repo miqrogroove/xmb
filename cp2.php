@@ -1774,7 +1774,7 @@ if ($action == "templates") {
         <tr>
         <td bgcolor="<?php echo $altbg2?>" class="tablerow">
         <?php
-        $query = $db->query("SELECT * FROM ".X_PREFIX."templates ORDER BY name");
+        $query = $db->query("SELECT id, name FROM ".X_PREFIX."templates ORDER BY name");
         echo '<select name="tid"><option value="default">'.$lang['selecttemplate'].'</option>';
         while($template = $db->fetch_array($query)) {
             if (!empty($template['name'])) {
@@ -1836,18 +1836,21 @@ if ($action == "templates") {
         if (!file_exists('./templates.xmb')) {
             error($lang['no_templates'], false, '</td></tr></table></td></tr></table><br />');
         }
+
+        $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
+
         $db->query("TRUNCATE ".X_PREFIX."templates");
 
-        $filesize=filesize('templates.xmb');
-        $fp=fopen('templates.xmb','r');
-        $templatesfile=fread($fp,$filesize);
-        fclose($fp);
-
-        $templates = explode("|#*XMB TEMPLATE FILE*#|", $templatesfile);
-        while(list($key,$val) = each($templates)) {
+        $values = array();
+        foreach($templates as $val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
-            $template[1] = isset($template[1]) ? addslashes($template[1]) : '';
-            $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
+            $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
+            $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
+        }
+        unset($templates);
+        if (count($values) > 0) {
+            $values = implode(', ', $values);
+            $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES $values");
         }
 
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
@@ -1881,7 +1884,10 @@ if ($action == "templates") {
         <td><?php echo $lang['templatename']?>&nbsp;<strong><?php echo $template['name']; ?></strong></td>
         </tr>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
-        <td><textarea cols="100" rows="30" name="templatenew"><?php echo stripslashes(htmlspecialchars($template['template']))?></textarea></td>
+        <td><textarea cols="100" rows="30" name="templatenew">
+<?php // Linefeed required here - Do not edit!
+        echo cdataOut(stripslashes($template['template']));
+        ?></textarea></td>
         </tr>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
         <td><input type="submit" name="editsubmit" class="submit" value="<?php echo $lang['textsubmitchanges']?>" /></strong></td>

@@ -357,9 +357,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     unset($upload);
 
     echo 'Opening the templates file...<br />';
-    $stream = fopen('templates.xmb','r');
-    $file = fread($stream, filesize('templates.xmb'));
-    fclose($stream);
+    $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents('templates.xmb'));
 
     echo 'Resetting the templates table...<br />';
     $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
@@ -369,18 +367,23 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
     echo 'Saving the new templates...<br />';
-    $templates = explode("|#*XMB TEMPLATE FILE*#|", $file);
-    foreach($templates as $key=>$val) {
+    $values = array();
+    foreach($templates as $val) {
         $template = explode("|#*XMB TEMPLATE*#|", $val);
         if (isset($template[1])) {
-            $template[1] = addslashes($template[1]);
+            $template[1] = addslashes(ltrim($template[1]));
         } else {
             $template[1] = '';
         }
-        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES ('".addslashes($template[0])."', '".addslashes($template[1])."')");
+        $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
     }
+    unset($templates);
+    if (count($values) > 0) {
+        $values = implode(', ', $values);
+        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
+    }
+    unset($values);
     $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
-    unset($file);
     flush();
 
     echo 'Releasing the lock on the templates table...<br />';
