@@ -708,7 +708,7 @@ if ($action == '') {
 
                     $post['filedims'] = '';
                     $output = '';
-                    $extention = get_extension($post['filename']);
+                    $extention = strtolower(get_extension($post['filename']));
                     if ($attachimgpost == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
                         if (intval($attach['thumbid'] > 0)) {
                             $post['thumburl'] = getAttachmentURL($attach['thumbid'], $post['pid'], $attach['thumbname']);

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -201,16 +201,17 @@ function attachRemoteFile($url, $pid=0) {
     $filetype = $db->escape(image_type_to_mime_type($result[2]));
 
     // Try to make sure the filename extension is okay
-    $extention = get_extension($filename);
+    $extention = strtolower(get_extension($filename));
     if (!($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
         $extension = '';
-        if (strpos($filetype, 'jpeg') !== FALSE) {
+        $filetypei = strtolower($filetype);
+        if (strpos($filetypei, 'jpeg') !== FALSE) {
             $extension = '.jpg';
-        } elseif (strpos($filetype, 'gif') !== FALSE) {
+        } elseif (strpos($filetypei, 'gif') !== FALSE) {
             $extension = '.gif';
-        } elseif (strpos($filetype, 'bmp') !== FALSE) {
+        } elseif (strpos($filetypei, 'bmp') !== FALSE) {
             $extension = '.bmp';
-        } elseif (strpos($filetype, 'png') !== FALSE) {
+        } elseif (strpos($filetypei, 'png') !== FALSE) {
             $extension = '.png';
         }
         $filename .= $extension;
@@ -239,7 +240,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     global $db, $self, $SETTINGS;
 
     // Check if we can store image metadata
-    $extention = get_extension($rawfilename);
+    $extention = strtolower(get_extension($rawfilename));
     if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
         $result = getimagesize($filepath);
     } else {
@@ -346,7 +347,7 @@ function renameAttachment($aid, $pid, $rawnewname) {
         $dbrename = $db->escape_var($rawnewname);
         $pid = intval($pid);
         $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid=$aid AND pid=$pid");
-        $extention = get_extension($rawnewname);
+        $extention = strtolower(get_extension($rawnewname));
         if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
             $query = $db->query("SELECT aid FROM ".X_PREFIX."attachments WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
             if ($db->num_rows($query) == 0) {
@@ -629,15 +630,16 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, &$filetype,
         $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
     }
     
-    $extension = get_extension($filename);
+    $extension = strtolower(get_extension($filename));
     if ($extension == '') {
-        if (strpos($filetype, 'jpeg') !== FALSE) {
+        $filetypei = $strtolower($filetype);
+        if (strpos($filetypei, 'jpeg') !== FALSE) {
             $extension = 'jpg';
-        } elseif (strpos($filetype, 'gif') !== FALSE) {
+        } elseif (strpos($filetypei, 'gif') !== FALSE) {
             $extension = 'gif';
-        } elseif (strpos($filetype, 'bmp') !== FALSE) {
+        } elseif (strpos($filetypei, 'bmp') !== FALSE) {
             $extension = 'bmp';
-        } elseif (strpos($filetype, 'png') !== FALSE) {
+        } elseif (strpos($filetypei, 'png') !== FALSE) {
             $extension = 'png';
         }
     }
