@@ -58,7 +58,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
 // orphaned attachments that the registered user will be allowed to manage.
 // Storage responsibilities include subdirectory and thumbnail creation.
 function attachUploadedFile($varname, $pid=0) {
-    global $db, $self, $SETTINGS;
+    global $attachmentErrors, $db, $self, $SETTINGS;
     
     $path = getFullPathFromSubdir('');
     $pid = intval($pid);
@@ -104,27 +104,20 @@ function attachUploadedFile($varname, $pid=0) {
 }
 
 function attachRemoteFile($url, $pid=0) {
-    global $db, $self, $SETTINGS;
+    global $attachmentErrors, $db, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
     $pid = intval($pid);
     $usedb = TRUE;
 
-    $filepath = FALSE;
     if ($path !== FALSE) {
         if (is_dir($path)) {
             $usedb = FALSE;
         } else {
             exit($attachmentErrors[X_BAD_STORAGE_PATH]);
         }
-        $filepath = tempnam($path, 'xmb-');
     }
-    if ($filepath === FALSE) {
-        $filepath = tempnam('', 'xmb-');
-        if ($filepath === FALSE) {
-            exit($attachmentErrors[X_NO_TEMP_FILE]);
-        }
-    }
+    $filepath = getTempFile($path);
 
     // Sanity checks
     if (substr($url, 0, 7) != 'http://' And substr($url, 0, 6) != 'ftp://') {
@@ -592,6 +585,22 @@ function getFullPathFromSubdir($subdir) {
     return $path;
 }
 
+function getTempFile($path=FALSE) {
+    global $attachmentErrors;
+    
+    $filepath = FALSE;
+    if ($path !== FALSE) {
+        $filepath = tempnam($path, 'xmb-');
+    }
+    if ($filepath === FALSE) {
+        $filepath = tempnam('', 'xmb-');
+    }
+    if ($filepath === FALSE) {
+        exit($attachmentErrors[X_NO_TEMP_FILE]);
+    }
+    return $filepath;
+}
+
 // createThumbnail() will take in the path to an image and then create a resized image based on global settings.
 //  The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
 //  Otherwise, the thumbnail will be saved to disk at $filepath.'-thumb.jpg'
@@ -603,7 +612,7 @@ function getFullPathFromSubdir($subdir) {
 // $aid      (int)    AID to be used as the parentid if attaching the thumbnail to a post.
 // $pid      (int)    PID to attach the thumbnail to.
 // $subdir   (string) Subdirectory to use inside the file storage path, or null string to store it in the database.
-function createThumbnail(&$filename, $filepath, $filesize, $imgSize, &$filetype, $aid=0, $pid=0, $subdir='') {
+function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, $aid=0, $pid=0, $subdir='') {
     global $db, $self, $SETTINGS;
 
     // Check if GD is available
@@ -742,11 +751,15 @@ function regenerateThumbnail($aid, $pid) {
         }
         $subdir = getNewSubdir($attach['updatestamp']);
         $path = getFullPathFromSubdir($subdir);
-        if (!is_dir($path)) {
-            mkdir($path, 0777, TRUE);
+        if ($path === FALSE) {
+            $path = getTempFile();
+        } else {
+            if (!is_dir($path)) {
+                mkdir($path, 0777, TRUE);
+            }
+            $newfilename = $aid;
+            $path .= $newfilename;
         }
-        $newfilename = $aid;
-        $path .= $newfilename;
         $file = fopen($path, 'wb');
         fwrite($file, $attach['attachment']);
         fclose($file);

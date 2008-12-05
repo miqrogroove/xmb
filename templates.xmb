@@ -389,14 +389,14 @@ $buddys[offline]
 <style type="text/css">
 /*<![CDATA[*/
 body {
-    scrollbar-arrow-color: $header;
-    scrollbar-base-color: $altbg1;
+    scrollbar-arrow-color: {$THEME['header']};
+    scrollbar-base-color: {$THEME['altbg1']};
     text-align: left;
-    $bgcode
+    {$THEME['bgcode']}
 }
 
 a {
-    color: $link;
+    color: {$THEME['link']};
     text-decoration: none;
 }
 
@@ -405,7 +405,7 @@ a:hover, .category a:hover {
 }
 
 .category a {
-    color: $cattext;
+    color: {$THEME['cattext']};
     text-decoration: none;
 }
 
@@ -414,71 +414,71 @@ form {
 }
 
 hr {
-    color:  $bordercolor;
-    background-color: $bordercolor;
+    color:  {$THEME['bordercolor']};
+    background-color: {$THEME['bordercolor']};
     border: 0px;
     height: 1px;
 }
 
 #tickertoggle {
-    color: $cattext;
+    color: {$THEME['cattext']};
 }
 
 table.code {
-    border: 1px solid $bordercolor;
+    border: 1px solid {$THEME['bordercolor']};
     margin: 15px auto 10px auto;
     width: 80%;
 }
 
 td.code {
-    background-color: $header;
-    border-bottom: 1px solid $bordercolor;
-    color: $headertext;
-    font-family: $font;
-    font-size: $fontsize;
+    background-color: {$THEME['header']};
+    border-bottom: 1px solid {$THEME['bordercolor']};
+    color: {$THEME['headertext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     font-weight: bold;
     height: 20px;
     padding-left: 5px;
 }
 
 td.codemessage {
-    background-color: $altbg2;
-    color: $tabletext;
+    background-color: {$THEME['altbg2']};
+    color: {$THEME['tabletext']};
     font-family: Courier New;
-    font-size: $fontsize;
+    font-size: {$THEME['fontsize']};
     padding: 10px 5px 10px 5px;
     white-space: pre;
 }
 
 table.quote {
-    border: 1px solid $bordercolor;
+    border: 1px solid {$THEME['bordercolor']};
     margin: 15px 5% 10px 5%;
     width: 80%;
 }
 
 td.quote {
-    background-color: $header;
-    border-bottom: 1px solid $bordercolor;
-    color: $headertext;
-    font-family: $font;
-    font-size: $fontsize;
+    background-color: {$THEME['header']};
+    border-bottom: 1px solid {$THEME['bordercolor']};
+    color: {$THEME['headertext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     font-weight: bold;
     height: 20px;
     padding-left: 5px;
 }
 
 td.quotemessage {
-    background-color: $altbg2;
-    color: $tabletext;
-    font-family: $font;
-    font-size: $fontsize;
+    background-color: {$THEME['altbg2']};
+    color: {$THEME['tabletext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     padding: 10px 0 20px 5px;
 }
 
 textarea, select, input, object {
-    background-color: $altbg1;
-    border: 1px solid $bordercolor;
-    color: $tabletext;
+    background-color: {$THEME['altbg1']};
+    border: 1px solid {$THEME['bordercolor']};
+    color: {$THEME['tabletext']};
     font-family: Verdana, arial, helvetica, sans-serif;
     font-size: 12px;
     font-weight: normal;
@@ -487,31 +487,31 @@ textarea, select, input, object {
 
 .category {
     $catcss
-    font-family: $font;
-    font-size: $fontsize;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     table-layout: fixed;
     text-align: left;
 }
 
 .ctrcategory {
     $catcss
-    font-family: $font;
-    font-size: $fontsize;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     table-layout: fixed;
     text-align: center;
 }
 
 .ctrtablerow {
-    color: $tabletext;
-    font-family: $font;
-    font-size: $fontsize;
+    color: {$THEME['tabletext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     table-layout: fixed;
     text-align: center;
 }
 
 .header {
-    background-color: $header;
-    color: $headertext;
+    background-color: {$THEME['header']};
+    color: {$THEME['headertext']};
     font-family: Verdana;
     font-size: 10px;
     font-weight: bold;
@@ -519,7 +519,7 @@ textarea, select, input, object {
 }
 
 .header2 {
-    background-color: $altbg1;
+    background-color: {$THEME['altbg1']};
     font-family: Verdana;
     font-size: 11px;
     font-weight: bold;
@@ -527,74 +527,74 @@ textarea, select, input, object {
 }
 
 .mediumtxt {
-    color: $tabletext;
-    font-family: $font;
-    font-size: $fontsize;
+    color: {$THEME['tabletext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     font-weight: normal;
     table-layout: fixed;
 }
 
 .multi {
-    font-family: $font;
+    font-family: {$THEME['font']};
     font-size: 11px;
     table-layout: fixed;
 }
 
 .nav {
-    font-family: $font;
-    font-size: $fontsize;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     font-weight: bold;
     table-layout: fixed;
 }
 
 .navtd {
-    background-color: $header;
-    color: $headertext;
-    font-family: $font;
+    background-color: {$THEME['header']};
+    color: {$THEME['headertext']};
+    font-family: {$THEME['font']};
     font-size: 11px;
     table-layout: fixed;
     text-decoration: none;
 }
 
 .navtd2 {
-    background-color: $header;
-    color: $headertext;
-    font-family: $font;
+    background-color: {$THEME['header']};
+    color: {$THEME['headertext']};
+    font-family: {$THEME['font']};
     font-size: 9px;
     table-layout: fixed;
     text-decoration: none;
 }
 
 .post {
-    font-family: $font;
-    font-size: $font3;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['font3']};
     font-weight: normal;
 }
 
 .rghttablerow {
-    color: $tabletext;
-    font-family: $font;
-    font-size: $fontsize;
+    color: {$THEME['tabletext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     table-layout: fixed;
     text-align: right;
 }
 
 .sig {
-    border-top: 1px dashed $bordercolor;
+    border-top: 1px dashed {$THEME['bordercolor']};
     padding: 13px 0 0 3px;
-    font-family: $font;
-    font-size: $fontsize;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
 }
 
 .smalltxt {
-    font-family: $font;
-    font-size: $font1;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['font1']};
     table-layout: fixed;
 }
 
 .subject {
-    font-family: $font;
-    font-size: $fontsize;
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     font-weight: bold;
 }
 
@@ -603,16 +603,16 @@ textarea, select, input, object {
 }
 
 .tablerow {
-    color: $tabletext;
-    font-family: $font;
-    font-size: $fontsize;
+    color: {$THEME['tabletext']};
+    font-family: {$THEME['font']};
+    font-size: {$THEME['fontsize']};
     table-layout: fixed;
 }
 
 .status_Super_Administrator {
     text-decoration: underline;
     font-weight: bold;
-    color: $tabletext;
+    color: {$THEME['tabletext']};
     font-family: Verdana;
     font-size: 10px;
     font-style: italic;
@@ -621,7 +621,7 @@ textarea, select, input, object {
 .status_Administrator {
     text-decoration: underline;
     font-weight: bold;
-    color: $tabletext;
+    color: {$THEME['tabletext']};
     font-family: Verdana;
     font-size: 10px;
 }
@@ -629,7 +629,7 @@ textarea, select, input, object {
 .status_Super_Moderator {
     text-decoration: none;
     font-weight: bold;
-    color: $tabletext;
+    color: {$THEME['tabletext']};
     font-family: Verdana;
     font-size: 10px;
     font-style: italic;
@@ -638,7 +638,7 @@ textarea, select, input, object {
 .status_Moderator {
     text-decoration: none;
     font-weight: bold;
-    color: $tabletext;
+    color: {$THEME['tabletext']};
     font-family: Verdana;
     font-size: 10px;
 }
@@ -646,7 +646,7 @@ textarea, select, input, object {
 .status_Member, .status_Banned {
     text-decoration: none;
     font-weight: normal;
-    color: $tabletext;
+    color: {$THEME['tabletext']};
     font-family: Verdana;
     font-size: 10px;
 }
@@ -671,15 +671,15 @@ $css
 
 |#*XMB TEMPLATE FILE*#|error|#*XMB TEMPLATE*#|
 $header
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="{$THEME['bordercolor']}">
 <tr>
 <td>
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[error]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[error]</strong></font></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1">$message</td>
+<td class="tablerow" bgcolor="{$THEME['altbg1']}">$message</td>
 </tr>
 </table>
 </td>
@@ -1761,7 +1761,7 @@ $smilies
 <head>
 $baseelement
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<title>$bbname $threadSubject - $versionlong</title>
+<title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js"></script>
 </head>
@@ -2911,15 +2911,15 @@ $subsbtn
 
 |#*XMB TEMPLATE FILE*#|message|#*XMB TEMPLATE*#|
 $header
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="{$THEME['bordercolor']}">
 <tr>
 <td>
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[message]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[message]</strong></font></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="$altbg1">$message</td>
+<td class="tablerow" bgcolor="{$THEME['altbg1']}">$message</td>
 </tr>
 </table>
 </td>

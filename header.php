@@ -515,6 +515,11 @@ $fontsuf = preg_replace('#(\d)#', '', $fontsize);
 $font1 = $fontedit-1 . $fontsuf;
 $font3 = $fontedit+2 . $fontsuf;
 
+// Set Extra Theme Keys
+$THEME['bgcode'] = $bgcode;
+$THEME['font1'] = $font1;
+$THEME['font3'] = $font3;
+
 // Search-link
 $searchlink = makeSearchLink();
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -41,15 +41,11 @@ if (!isset($_SERVER)) {
     $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
 }
 
-$global = @array(0 => $_REQUEST, 1 => $_FILES, 2 => $_SERVER, 3 => $_SESSION, 4 => $_ENV);
-
 // make sure magic_quotes_runtime doesn't kill XMB
 @set_magic_quotes_runtime(0);
 
 // force registerglobals
-foreach($global as $num => $array) {
-    if (is_array($array)) {
-        extract($array, EXTR_SKIP);
-    }
+if (is_array($_REQUEST)) {
+    extract($_REQUEST, EXTR_SKIP);
 }
 ?>

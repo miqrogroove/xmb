@@ -971,8 +971,7 @@ if (!function_exists('htmlspecialchars_decode')) {
 }
 
 function end_time() {
-    global $footerstuff, $starttime, $SETTINGS;
-    extract($GLOBALS);
+    global $db, $footerstuff, $lang, $starttime, $SETTINGS;
 
     $mtime2 = explode(' ', microtime());
     $endtime = $mtime2[1] + $mtime2[0];
@@ -1074,10 +1073,10 @@ function ServerLoad() {
 }
 
 function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation, $THEME;
+    global $footerstuff, $navigation; // Used by nav() and end_time()
 
     if (isset($GLOBALS)) {
-        extract($GLOBALS);
+        extract($GLOBALS, EXTR_SKIP);
     }
 
     $args = func_get_args();
@@ -1136,10 +1135,10 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
 }
 
 function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
-    global $footerstuff, $lang, $navigation, $THEME;
+    global $footerstuff, $navigation; // Used by nav() and end_time()
 
     if (isset($GLOBALS)) {
-        extract($GLOBALS);
+        extract($GLOBALS, EXTR_SKIP);
     }
 
     $args = func_get_args();
