@@ -3313,7 +3313,7 @@ $bbcodescript
   <input type="file" name="attach1" size="20" />$attachlimits
  </td>
 </tr>
-<tr class="tablerow" id="multiattachrow">
+<tr class="tablerow" id="multiattachrow" style="display: none;">
  <td bgcolor="#FFFFFF">{$lang['attachmentm']}</td>
  <td bgcolor="#f4f7f8">
   <a href="javascript:multiAttach()" id="multiattachlink">Click here to upload another file</a>
@@ -3325,7 +3325,9 @@ $bbcodescript
   var uploadBoxMax = $maxuploads;
   var uploadTotalLimits = '{$lang['attachmaxtotal']}';
 
-  if (uploadBoxMax <= 1) noMoreMultiAttach();
+  if (uploadBoxMax > 1) {
+    document.getElementById('multiattachrow').removeAttribute('style');
+  }
 
   function multiAttach() {
     var uploadBoxCode = '';
@@ -3341,6 +3343,7 @@ $bbcodescript
       noMoreMultiAttach();
     }
   }
+
   function noMoreMultiAttach() {
     var multiAttachRow;
     if (uploadBoxCount == 1) {

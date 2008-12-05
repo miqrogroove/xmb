@@ -46,7 +46,7 @@ $alpha = '';
 $beta = 'Beta 1';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081204;
+$versionbuild = 20081205;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -276,11 +276,11 @@ if (file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
+    $flag = FALSE;
     if (X_SADMIN) {
-        if (!@unlink('./upgrade.php')) {
-            exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-        }
-    } else {
+        $flag |= @unlink('./upgrade.php');
+    }
+    if (!$flag) {
         exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
     }
 }
