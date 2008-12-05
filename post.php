@@ -592,7 +592,7 @@ switch($action) {
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bbcodeoff = 'no') {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strstr($message, $bbcode) === FALSE) {
+                        if (strpos($messageinput, $bbcode) === FALSE) {
                             if ($counter == 0) {
                                 $messageinput .= "\r\n\r\n";
                             }
@@ -947,7 +947,7 @@ switch($action) {
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bbcodeoff = 'no') {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strstr($message, $bbcode) === FALSE) {
+                        if (strpos($messageinput, $bbcode) === FALSE) {
                             if ($counter == 0) {
                                 $messageinput .= "\r\n\r\n";
                             }
@@ -1188,7 +1188,7 @@ switch($action) {
                 eval('$attachment .= "'.template('post_edit_attachment').'";');
                 if ($bbcodeoff = 'no') {
                     $bbcode = "[file]{$attach['aid']}[/file]";
-                    if (strstr($postinfo['message'], $bbcode) === FALSE) {
+                    if (strpos($postinfo['message'], $bbcode) === FALSE) {
                         if ($counter == 0) {
                             $postinfo['message'] .= "\r\n\r\n";
                         }
