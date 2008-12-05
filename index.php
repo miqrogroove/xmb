@@ -79,6 +79,9 @@ if (onSubmit('gid')) {
         error($lang['textnocat']);
     }
     nav(fnameOut($cat['name']));
+    if ($SETTINGS['subject_in_title'] == 'on') {
+        $threadSubject = '- '.fnameOut($cat['name']);
+    }
 }
 
 eval('$header = "'.template('header').'";');
