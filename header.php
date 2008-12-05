@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -46,7 +46,7 @@ $alpha = '';
 $beta = 'Beta 1';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081202;
+$versionbuild = 20081204;
 $versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
@@ -329,26 +329,11 @@ if ($onlinetodaycount < 5) {
 }
 
 // Validate maxattachsize with PHP configuration.
-$inimax = trim(ini_get('upload_max_filesize'));
-$rchr = strtoupper(substr($inimax, -1));
-switch ($rchr) {
-case 'G':
-    $inimax *= 1073741824;
-    break;
-case 'M':
-    $inimax *= 1048576;
-    break;
-case 'K':
-    $inimax *= 1024;
-    break;
-default:
-    $inimax = intval($inimax);
-    break;
-}
+$inimax = phpShorthandValue('upload_max_filesize');
 if ($inimax < $SETTINGS['maxattachsize']) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
-unset($inimax, $rchr);
+unset($inimax);
 
 
 /* Set Global HTTP Headers */
@@ -409,6 +394,7 @@ $querystring = strstr($url, '?');
 if ($querystring === FALSE) {
     $querystring = '';
 }
+$querystring = preg_replace('#[\\x00-\\x1F\\x7F-\\xFF]#', '', $querystring);
 $baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
 
 // login/logout links

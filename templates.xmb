@@ -3307,12 +3307,51 @@ $bbcodescript
 
 |#*XMB TEMPLATE FILE*#|post_attachmentbox|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[attachment]</td>
-<td bgcolor="$altbg2">
-<input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
-<input type="file" name="attach" size="20" />$attachlimits
-</td>
+ <td bgcolor="$altbg1">$lang[attachment]</td>
+ <td bgcolor="$altbg2" id="uploads">
+  <input type="hidden" name="MAX_FILE_SIZE" value="$SETTINGS[maxattachsize]" />
+  <input type="file" name="attach1" size="20" />$attachlimits
+ </td>
 </tr>
+<tr class="tablerow" id="multiattachrow">
+ <td bgcolor="#FFFFFF">{$lang['attachmentm']}</td>
+ <td bgcolor="#f4f7f8">
+  <a href="javascript:multiAttach()" id="multiattachlink">Click here to upload another file</a>
+ </td>
+</tr>
+<script type="text/javascript">
+ <!--//--><![CDATA[//><!--
+  var uploadBoxCount = 1;
+  var uploadBoxMax = $maxuploads;
+  var uploadTotalLimits = '{$lang['attachmaxtotal']}';
+
+  if (uploadBoxMax <= 1) noMoreMultiAttach();
+
+  function multiAttach() {
+    var uploadBoxCode = '';
+    if (uploadBoxCount < uploadBoxMax) {
+      uploadBoxCount++;
+      uploadBoxCode = '<br /><input type="file" name="attach' + uploadBoxCount + '" size="20" />';
+      document.getElementById('uploads').innerHTML += uploadBoxCode;
+      if (uploadBoxCount == 2 && uploadTotalLimits != '') {
+        document.getElementById('multiattachlink').parentNode.innerHTML += '<br />' + uploadTotalLimits;
+      }
+    }
+    if (uploadBoxCount >= uploadBoxMax) {
+      noMoreMultiAttach();
+    }
+  }
+  function noMoreMultiAttach() {
+    var multiAttachRow;
+    if (uploadBoxCount == 1) {
+      multiAttachRow = document.getElementById('multiattachrow');
+      multiAttachRow.parentNode.removeChild(multiAttachRow);
+    } else {
+      document.getElementById('multiattachlink').parentNode.innerHTML = uploadTotalLimits;
+    }
+  }
+ //--><!]]>
+</script>
 
 |#*XMB TEMPLATE FILE*#|post_attachment_orphan|#*XMB TEMPLATE*#|
 <tr class="tablerow">

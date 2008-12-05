@@ -1847,4 +1847,23 @@ function makeSearchLink($fid=0) {
     }
 }
 
+function phpShorthandValue($ininame) {
+    $rawstring = trim(ini_get($ininame));
+    $rchr = strtoupper(substr($rawstring, -1));
+    switch ($rchr) {
+    case 'G':
+        $rawstring *= 1073741824;
+        break;
+    case 'M':
+        $rawstring *= 1048576;
+        break;
+    case 'K':
+        $rawstring *= 1024;
+        break;
+    default:
+        $rawstring = intval($rawstring);
+        break;
+    }
+    return $rawstring;
+}
 ?>

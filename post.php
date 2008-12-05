@@ -196,7 +196,6 @@ $searchlink = makeSearchLink($forum['fid']);
 if ($forum['attachstatus'] == 'on') {
     require 'include/attach.inc.php';
     $attachlimits = $lang['attachmaxsize'].' '.getSizeFormatted($SETTINGS['maxattachsize']).'.  '.$lang['attachmaxdims'].' '.$SETTINGS['max_image_size'].'.';
-    eval('$attachfile = "'.template("post_attachmentbox").'";');
 }
 
 $posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
@@ -353,10 +352,14 @@ switch($action) {
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-            $result = attachUploadedFile('attach');
-            if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                $errors .= softerror($attachmentErrors[$result]);
-                $replyvalid = FALSE;
+            for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
+                if (isset($_FILES['attach'.$i])) {
+                    $result = attachUploadedFile('attach'.$i);
+                    if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                        $errors .= softerror($attachmentErrors[$result]);
+                        $replyvalid = FALSE;
+                    }
+                }
             }
             $result = doAttachmentEdits($deletes);
             if ($result < 0) {
@@ -543,7 +546,11 @@ switch($action) {
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
-                    attachUploadedFile('attach', $pid);
+                    for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
+                        if (isset($_FILES['attach'.$i])) {
+                            attachUploadedFile('attach'.$i, $pid);
+                        }
+                    }
                     if ($SETTINGS['attach_remote_images'] == 'on') {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = $db->escape(addslashes($messageinput));
@@ -576,13 +583,13 @@ switch($action) {
 
             // Fill $attachfile
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-                $attachment = '';
+                $attachfile = '';
                 $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
                 $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-                    eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                    eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bbcodeoff = 'no') {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strstr($message, $bbcode) === FALSE) {
@@ -594,10 +601,15 @@ switch($action) {
                         }
                     }
                 }
-                if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
-                    $attachfile = $attachment.$attachfile;
+                $maxtotal = phpShorthandValue('post_max_size');
+                if ($maxtotal > 0) {
+                    $lang['attachmaxtotal'] .= ' '.getSizeFormatted($maxtotal);
                 } else {
-                    $attachfile = $attachment;
+                    $lang['attachmaxtotal'] = '';
+                }
+                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                if ($maxuploads > 0) {
+                    eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
             }
@@ -700,10 +712,14 @@ switch($action) {
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-            $result = attachUploadedFile('attach');
-            if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                $errors .= softerror($attachmentErrors[$result]);
-                $topicvalid = FALSE;
+            for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
+                if (isset($_FILES['attach'.$i])) {
+                    $result = attachUploadedFile('attach'.$i);
+                    if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                        $errors .= softerror($attachmentErrors[$result]);
+                        $topicvalid = FALSE;
+                    }
+                }
             }
             $result = doAttachmentEdits($deletes);
             if ($result < 0) {
@@ -893,7 +909,11 @@ switch($action) {
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
-                    attachUploadedFile('attach', $pid);
+                    for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
+                        if (isset($_FILES['attach'.$i])) {
+                            attachUploadedFile('attach'.$i, $pid);
+                        }
+                    }
                     if ($SETTINGS['attach_remote_images'] == 'on') {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = $db->escape(addslashes($messageinput));
@@ -918,13 +938,13 @@ switch($action) {
         if (!$topicvalid) {
             // Fill $attachfile
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
-                $attachment = '';
+                $attachfile = '';
                 $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
                 $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
-                    eval('$attachment .= "'.template('post_attachment_orphan').'";');
+                    eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bbcodeoff = 'no') {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strstr($message, $bbcode) === FALSE) {
@@ -936,10 +956,15 @@ switch($action) {
                         }
                     }
                 }
-                if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
-                    $attachfile = $attachment.$attachfile;
+                $maxtotal = phpShorthandValue('post_max_size');
+                if ($maxtotal > 0) {
+                    $lang['attachmaxtotal'] .= ' '.getSizeFormatted($maxtotal);
                 } else {
-                    $attachfile = $attachment;
+                    $lang['attachmaxtotal'] = '';
+                }
+                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                if ($maxuploads > 0) {
+                    eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
             }
@@ -1026,10 +1051,14 @@ switch($action) {
 
         if ($editvalid) {
             if ($forum['attachstatus'] == 'on') {
-                $result = attachUploadedFile('attach', $pid);
-                if ($result < 0 And $result != X_EMPTY_UPLOAD) {
-                    $errors .= softerror($attachmentErrors[$result]);
-                    $editvalid = FALSE;
+                for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
+                    if (isset($_FILES['attach'.$i])) {
+                        $result = attachUploadedFile('attach'.$i, $pid);
+                        if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                            $errors .= softerror($attachmentErrors[$result]);
+                            $editvalid = FALSE;
+                        }
+                    }
                 }
                 $result = doAttachmentEdits($deletes, $pid);
                 if ($result < 0) {
@@ -1168,8 +1197,15 @@ switch($action) {
                     }
                 }
             }
-            if ($db->num_rows($query) < $SETTINGS['filesperpost']) {
-                $attachment .= $attachfile;
+            $maxtotal = phpShorthandValue('post_max_size');
+            if ($maxtotal > 0) {
+                $lang['attachmaxtotal'] .= ' '.getSizeFormatted($maxtotal);
+            } else {
+                $lang['attachmaxtotal'] = '';
+            }
+            $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+            if ($maxuploads > 0) {
+                eval('$attachment .= "'.template("post_attachmentbox").'";');
             }
             $db->free_result($query);
 
