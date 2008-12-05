@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -448,62 +448,38 @@ switch($action) {
         break;
 
     case 'repairtables':
-        $start = true;
+        $start = TRUE;
         @set_time_limit(180);
-        $tables = $db->fetch_tables($dbname);
-        $q = array();
-        foreach($tables as $key=>$val) {
-            if ($start) {
-                dump_query($db->query('REPAIR TABLE `'.$val.'`'));
-                $start = false;
-            } else {
-                dump_query($db->query('REPAIR TABLE `'.$val.'`'), false);
-            }
+        foreach($tables as $val) {
+            dump_query($db->query('REPAIR TABLE `'.X_PREFIX.$val.'`'), $start);
+            $start = FALSE;
         }
         break;
 
     case 'optimizetables':
-        $start = true;
+        $start = TRUE;
         @set_time_limit(180);
-        $tables = $db->fetch_tables($dbname);
-        $q = array();
-        foreach($tables as $key=>$val) {
-            if ($start) {
-                dump_query($db->query('OPTIMIZE TABLE `'.$val.'`'));
-                $start = false;
-            } else {
-                dump_query($db->query('OPTIMIZE TABLE `'.$val.'`'), false);
-            }
+        foreach($tables as $val) {
+            dump_query($db->query('OPTIMIZE TABLE `'.X_PREFIX.$val.'`'), $start);
+            $start = FALSE;
         }
         break;
 
     case 'analyzetables':
-        $start = true;
+        $start = TRUE;
         @set_time_limit(180);
-        $tables = $db->fetch_tables($dbname);
-        $q = array();
-        foreach($tables as $key=>$val) {
-            if ($start) {
-                dump_query($db->query('ANALYZE TABLE `'.$val.'`'));
-                $start = false;
-            } else {
-                dump_query($db->query('ANALYZE TABLE `'.$val.'`'), false);
-            }
+        foreach($tables as $val) {
+            dump_query($db->query('ANALYZE TABLE `'.X_PREFIX.$val.'`'), $start);
+            $start = FALSE;
         }
         break;
 
     case 'checktables':
-        $start = true;
+        $start = TRUE;
         @set_time_limit(180);
-        $tables = $db->fetch_tables($dbname);
-        $q = array();
-        foreach($tables as $key=>$val) {
-            if ($start) {
-                dump_query($db->query('CHECK TABLE `'.$val.'`'));
-                $start = false;
-            } else {
-                dump_query($db->query('CHECK TABLE `'.$val.'`'), false);
-            }
+        foreach($tables as $val) {
+            dump_query($db->query('CHECK TABLE `'.X_PREFIX.$val.'`'), $start);
+            $start = FALSE;
         }
         break;
 }
