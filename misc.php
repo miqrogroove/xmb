@@ -224,6 +224,7 @@ switch($action) {
         require ROOT.'include/online.inc.php';
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');
             end_time();
@@ -306,6 +307,7 @@ switch($action) {
 
     case 'onlinetoday':
         if ($SETTINGS['whosonlinestatus'] == 'off' || $SETTINGS['onlinetoday_status'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');
             end_time();
@@ -349,6 +351,7 @@ switch($action) {
         $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE, TRUE, 'g'));
 
         if ($SETTINGS['memliststatus'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
             eval('echo "'.template('header').'";');
             eval('echo "'.template('misc_feature_notavailable').'";');
             end_time();

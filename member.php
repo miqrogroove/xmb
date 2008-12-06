@@ -102,6 +102,7 @@ switch($action) {
         eval('$header = "'.template('header').'";');
 
         if ($SETTINGS['regstatus'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
             eval('$memberpage = "'.template('misc_feature_notavailable').'";');
         } elseif (X_MEMBER) {
             eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
