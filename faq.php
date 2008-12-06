@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -33,6 +33,7 @@ require 'header.php';
 $page = postedVar('page', '', FALSE, FALSE, FALSE, 'g');
 
 if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
+    header('HTTP/1.0 403 Forbidden');
     loadtemplates('misc_feature_notavailable');
     eval('$css = "'.template('css').'";');
     nav('<a href="faq.php">'.$lang['textfaq']. '</a>');

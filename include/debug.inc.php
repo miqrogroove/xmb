@@ -27,6 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
 
@@ -67,6 +68,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     }
 
     if (!$success) {
+        header('HTTP/1.0 500 Internal Server Error');
         exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
     }
 }

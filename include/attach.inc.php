@@ -27,6 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
 
@@ -68,6 +69,7 @@ function attachUploadedFile($varname, $pid=0) {
         if (is_dir($path)) {
             $usedb = FALSE;
         } else {
+            header('HTTP/1.0 500 Internal Server Error');
             exit($attachmentErrors[X_BAD_STORAGE_PATH]);
         }
     }
@@ -114,6 +116,7 @@ function attachRemoteFile($url, $pid=0) {
         if (is_dir($path)) {
             $usedb = FALSE;
         } else {
+            header('HTTP/1.0 500 Internal Server Error');
             exit($attachmentErrors[X_BAD_STORAGE_PATH]);
         }
     }
@@ -596,6 +599,7 @@ function getTempFile($path=FALSE) {
         $filepath = tempnam('', 'xmb-');
     }
     if ($filepath === FALSE) {
+        header('HTTP/1.0 500 Internal Server Error');
         exit($attachmentErrors[X_NO_TEMP_FILE]);
     }
     return $filepath;

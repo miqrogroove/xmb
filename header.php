@@ -29,10 +29,13 @@
 
 /* Front Matter */
 
+if (!defined('X_SCRIPT')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
+if (!defined('ROOT')) define('ROOT', './');
 error_reporting(E_ALL&~E_NOTICE);
 define('IN_CODE', TRUE);
-if (!defined('X_SCRIPT')) exit("Not allowed to run this file directly.");
-if (!defined('ROOT')) define('ROOT', './');
 require ROOT.'include/global.inc.php';
 
 
@@ -204,6 +207,7 @@ $config_array = array(
 );
 foreach($config_array as $key => $value) {
     if (${$key} === $value) {
+        header('HTTP/1.0 500 Internal Server Error');
         exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
     }
 }
@@ -213,6 +217,7 @@ unset($config_array);
 /* Validate URL Configuration and Security */
 
 if (empty($full_url)) {
+    header('HTTP/1.0 500 Internal Server Error');
     exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
 } else {
     $array = parse_url($full_url);
@@ -266,13 +271,13 @@ if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($
 
 /* Assert Additional Security */
 
-if (file_exists('./install/') && !@rmdir('./install/')) {
-    exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server, but could not be removed. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
+if (file_exists('./install/')) {
+    header('HTTP/1.0 500 Internal Server Error');
+    exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
 }
-if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/')) {
-    exit('<h1>Error:</h1><br />The upgrade tool ("./Upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-}
-if (file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
+if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/') Or file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
+    header('HTTP/1.0 503 Service Unavailable');
+    header('Retry-After: 3600');
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
@@ -281,6 +286,8 @@ if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
         $flag |= @unlink('./upgrade.php');
     }
     if (!$flag) {
+        header('HTTP/1.0 503 Service Unavailable');
+        header('Retry-After: 3600');
         exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
     }
 }
@@ -288,6 +295,7 @@ if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
 //Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
 if ($ipcheck == 'on') {
     if (!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
+        header('HTTP/1.0 403 Forbidden');
         exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
     }
 }
@@ -667,6 +675,7 @@ if ($SETTINGS['gzipcompress'] == 'on'
 
 // catch all unexpected output
 if (headers_sent()) {
+    header('HTTP/1.0 500 Internal Server Error');
     if (DEBUG) {
         headers_sent($filepath, $linenum);
         exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));

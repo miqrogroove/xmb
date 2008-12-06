@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -27,6 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
 
@@ -64,6 +65,7 @@ class dbstuff {
     function select_db($database, $force=true) {
         if ($force) {
             if (!mysql_select_db($database, $this->link)) {
+                header('HTTP/1.0 500 Internal Server Error');
                 exit('Could not locate database "'.$database.'". Please make sure it exists before trying again!');
                 return false;
             }
@@ -124,6 +126,8 @@ class dbstuff {
     }
 
     function panic(&$sql) {
+        header('HTTP/1.0 500 Internal Server Error');
+
         // Check that we actually made a connection
         if ($this->link === FALSE) {
             $error = mysql_error();

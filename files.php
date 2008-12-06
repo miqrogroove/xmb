@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -144,6 +144,7 @@ if ($size != $file['filesize']) {
 
 // Verify output stream is empty
 if (headers_sent()) {
+    header('HTTP/1.0 500 Internal Server Error');
     if (DEBUG) {
         headers_sent($filepath, $linenum);
         exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));

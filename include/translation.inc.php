@@ -27,6 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
 
@@ -159,11 +160,17 @@ function setManyLangValues(&$lang, &$langfile) {
 // Parameter $upload must be a string containing the entire translation file.
 // Returns TRUE on success.
 function installNewTranslation(&$upload) {
-    global $db;
+    global $db, $SETTINGS;
 
     // Perform sanity checks
     $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
     if (!eval('return true; '.$upload)) {
+        if ($SETTINGS['bbstatus'] == 'off') { // Possible upgrade in progress
+            header('HTTP/1.0 503 Service Unavailable');
+            header('Retry-After: 3600');
+        } else {
+            header('HTTP/1.0 500 Internal Server Error');
+        }
         exit('XMB failed to parse the translation file.  Valid PHP syntax is required.');
     }
 
@@ -302,6 +309,8 @@ function exportTranslation($langid, &$devname) {
 
 // langPanic() handles any unexpected configuration that prevented the translation database from loading.
 function langPanic() {
+    global $SETTINGS;
+
     if (X_SCRIPT == 'upgrade.php') {
         return TRUE;
     }
@@ -313,8 +322,13 @@ function langPanic() {
                 return TRUE;
             }
         }
+        if ($SETTINGS['bbstatus'] == 'off') { // Possible upgrade in progress
+            header('HTTP/1.0 503 Service Unavailable');
+            header('Retry-After: 3600');
+        } else {
+            header('HTTP/1.0 500 Internal Server Error');
+        }
         exit ('Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.');
     }
 }
-
 ?>

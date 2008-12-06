@@ -49,6 +49,7 @@ nav($lang['textsearch']);
 $misc = $multipage = $nextlink = '';
 
 if ($SETTINGS['searchstatus'] != 'on') {
+    header('HTTP/1.0 403 Forbidden');
     eval('echo "'.template('header').'";');
     eval('echo "'.template('misc_feature_notavailable').'";');
     end_time();
