@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,10 @@
  *
  **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'Dutch';
@@ -112,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "de groote groter is dan  (bytes):";
 $lang['attachmanwheresizesmaller'] = "de groote kleiner is dan  (bytes):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Bijlage:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Bijlagen";
 $lang['attachments_num_restored'] = "Bijlage verwerkt";
 $lang['attachments_num_stored'] = "Bijlage opgeslagen";
@@ -1242,6 +1247,6 @@ $lang['whosonline_on'] = "wie is online in de index:";
 $lang['whosonlinetoday'] = "Wie is er vandaag op het forum";
 $lang['whoview'] = "Kan dit forum bekijken?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "De XMB Group";
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**Made by:    Kurt    Last mod:   21.8.2008
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,10 @@
  *
 **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'Czech';
@@ -112,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "a velikost vìt¹í ne¾ (bytù):";
 $lang['attachmanwheresizesmaller'] = "a velikost men¹í ne¾ (bytù):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Pøíloha:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Pøílohy";
 $lang['attachments_num_restored'] = "obnovených pøíloh";
 $lang['attachments_num_stored'] = "ulo¾ených pøíloh";
@@ -1242,6 +1247,6 @@ $lang['whosonline_on'] = "Kdo je online na hlavní stranì:";
 $lang['whosonlinetoday'] = "Kdo je dnes online";
 $lang['whoview'] = "Kdo mù¾e prohlí¾et?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
 ?>

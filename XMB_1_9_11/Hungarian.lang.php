@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,10 @@
  *
  **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'Hungarian';
@@ -112,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "és nagyobb mint (bytes):";
 $lang['attachmanwheresizesmaller'] = "és kisebb mint (bytes):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Csatolt:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Csatoltak";
 $lang['attachments_num_restored'] = "csatolt fájl helyreállítva";
 $lang['attachments_num_stored'] = "csatolt fájl tárolva";
@@ -1244,6 +1249,6 @@ $lang['whosonline_on'] = "Aktív felhasználók listája látható a címlapon?";
 $lang['whosonlinetoday'] = "Mai látogatók";
 $lang['whoview'] = "Ki olvashatja ezt a fórumot?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = " XMB Csoport";
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -27,6 +27,7 @@
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
 
@@ -114,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "and size is greater than (bytes):";
 $lang['attachmanwheresizesmaller'] = "and size is smaller than (bytes):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Attachment:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Attachments";
 $lang['attachments_num_restored'] = "attachments restored";
 $lang['attachments_num_stored'] = "attachments stored";
@@ -1244,6 +1247,6 @@ $lang['whosonlinetoday'] = "Who's Online Today";
 $lang['whosonline_on'] = "Who's online in index status:";
 $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
 ?>

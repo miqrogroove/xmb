@@ -1,7 +1,7 @@
 <?php
 /**    Made by:    Adrian Kajda, c0rvus
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,10 @@
  *
  **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'Polish';
@@ -112,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "rozmiar jest wiêkszy od (bitów):";
 $lang['attachmanwheresizesmaller'] = "rozmiar jest mniejszy od (bitów):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Za³±cznik:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Za³±czniki";
 $lang['attachments_num_restored'] = "za³±czniki przywrócone";
 $lang['attachments_num_stored'] = "za³±czniki zosta³y zapisane";
@@ -1244,6 +1249,6 @@ $lang['whosonline_on'] = "Kto jest online w indeksie:";
 $lang['whosonlinetoday'] = "Kto jest/by³ dzi¶ Online";
 $lang['whoview'] = "Kto mo¿e przegl±daæ to forum?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**    Made by:    yueyang
  * eXtreme Message Board
- * XMB 1.9.11 Alpha Four - This software should not be used for any purpose after 31 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -26,7 +26,10 @@
  *
  **/
 
-exit("Not allowed to run lang files.");
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
 
 // Name assigned by XMB for internal use.
 $devname = 'SimplifiedChinese';
@@ -112,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "文件大于 (bytes):";
 $lang['attachmanwheresizesmaller'] = "文件小于 (bytes):";
 $lang['attachmaxdims'] = "Image limit is";
 $lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "附件:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "附件";
 $lang['attachments_num_restored'] = "附件修复";
 $lang['attachments_num_stored'] = "附件保存";
@@ -1243,6 +1248,6 @@ $lang['whosonline_on'] = " 谁目前在主页面：";
 $lang['whosonlinetoday'] = "今日谁在线上";
 $lang['whoview'] = "谁可以浏览这个讨论区？";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "XMB Group";
 ?>

@@ -1,7 +1,7 @@
 <?php
 /** // Translated By: Daniel Gouveia
  * eXtreme Message Board
- * XMB 1.9.11 Beta 1 - This software should not be used for any purpose after 15 January 2009.
+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -27,6 +27,7 @@
  **/
  
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("Não tem permissão para executar este arquivo directamente.");
 }
 
@@ -114,7 +115,9 @@ $lang['attachmanwheresizegreater'] = "e o tamanho seja maior que (bytes):";
 $lang['attachmanwheresizesmaller'] = "e o tamanho seja menor que (bytes):";
 $lang['attachmaxdims'] = "Imagem limite é";
 $lang['attachmaxsize'] = "Tamanho limite de envio é";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Anexo:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Anexos";
 $lang['attachments_num_restored'] = "anexos restaurados";
 $lang['attachments_num_stored'] = "anexos arquivados";
@@ -1244,6 +1247,6 @@ $lang['whosonline_on'] = "Quem está online no index:";
 $lang['whosonlinetoday'] = "Quem está online hoje";
 $lang['whoview'] = "Quem pode ver este fórum?";
 $lang['xmb'] = "XMB";
-$lang['xmbforum'] = "XMB Forum Software";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
 ?>
