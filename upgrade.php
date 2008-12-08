@@ -73,9 +73,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
 
-<p>This script is compatible with XMB 1.9.10.
+<p>This script is also compatible with XMB 1.9.9 as well as XMB 1.9.11 Betas.
 
-<p>This script is NOT compatible with XMB 1.9.8 or 1.9.9.
+<p>This script is NOT compatible with XMB 1.9.8.
 
 <h2>Instructions</h2>
 <ol>
