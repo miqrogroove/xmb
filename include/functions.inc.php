@@ -580,7 +580,7 @@ function bbcode(&$message, $allowimgcode) {
     $patterns[] = "#\[align=(left|center|right|justify)\](.*?)\[/align\]#Ssi";
     $replacements[] = '<div style="text-align: $1;">$2</div>';
     $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
-    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong><img src="'.$imgdir.'/lastpost.gif" border="0" alt="" /></a>';
+    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
