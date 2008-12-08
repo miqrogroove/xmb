@@ -32,7 +32,7 @@ if (!defined('IN_CODE')) {
 }
 
 // Name assigned by XMB for internal use.
-$devname = 'Indonesian';
+$devname = 'Indonesia';
 
 // Meta Data
 $lang['charset'] = 'ISO-8859-1';
