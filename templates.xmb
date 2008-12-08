@@ -4863,7 +4863,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="post.php?action=reply&amp;fid=$fid&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_search|#*XMB TEMPLATE*#|
-<a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
+<a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_sig|#*XMB TEMPLATE*#|
 </font>

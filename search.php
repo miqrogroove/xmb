@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -68,7 +68,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
     unset($url_check);
 
-    $forumselect = forumList('srchfid', TRUE, TRUE, getInt('fid'));
+    $forumselect = forumList('f', TRUE, TRUE, getInt('fid'));
 
     $captchasearchcheck = '';
     if (X_GUEST) {
@@ -92,7 +92,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
     $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
     $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
-    $srchfid = postedArray('srchfid', 'int', '', FALSE, FALSE, FALSE, 'g');
+    $srchfid = postedArray('f', 'int', '', FALSE, FALSE, FALSE, 'g');
     $srchfield = postedVar('srchfield', '', FALSE, FALSE, FALSE, 'g');
     $page = getInt('page');
     $srchfrom = getInt('srchfrom');
@@ -171,6 +171,7 @@ if (!isset($searchsubmit) && !isset($page)) {
             $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
             if ($srchfield == 'body') {
                 $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
+                $ext[] = 'srchfield=body';
             } else {
                 $sqlsrch[] = "p.subject LIKE '%$dblikesub%'";
             }
@@ -190,7 +191,7 @@ if (!isset($searchsubmit) && !isset($page)) {
         if ($srchfid[0] != 'all') {
             $srchfidcsv = implode(',', $srchfid);
             $sql .= " AND f.fid IN ($srchfidcsv)";
-            $ext[] = "srchfid=$srchfidcsv";
+            $ext[] = "f=$srchfidcsv";
         }
     }
 
