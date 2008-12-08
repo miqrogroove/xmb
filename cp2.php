@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -337,7 +337,7 @@ if ($action == 'lang') {
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
-        <tr class="header">
+        <tr class="category">
         <td colspan="2"><?php echo $lang['translation_import']; ?></td>
         </tr>
         <tr class="tablerow">
@@ -506,8 +506,9 @@ if ($action == 'lang') {
 
     if (onSubmit('deletesubmit')) {
         $theme_delete = postedArray('lang_delete', 'int');
-        $result = $db->result($db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile' OR devname='{$SETTINGS['langfile']}'"), 0);
-        while($row = $db->result($result)) {
+        $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile' OR devname='{$SETTINGS['langfile']}'");
+        $lockIDs = array();
+        while($row = $db->fetch_array($result)) {
             $lockIDs[] = $row['langid'];
         }
 
