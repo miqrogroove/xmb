@@ -293,15 +293,9 @@ if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/') Or file_exists('./upgrade
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
 }
 if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
-    $flag = FALSE;
-    if (X_SADMIN) {
-        $flag |= @unlink('./upgrade.php');
-    }
-    if (!$flag) {
-        header('HTTP/1.0 503 Service Unavailable');
-        header('Retry-After: 3600');
-        exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-    }
+    header('HTTP/1.0 503 Service Unavailable');
+    header('Retry-After: 3600');
+    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server. Please remove it as soon as possible.');
 }
 
 //Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....

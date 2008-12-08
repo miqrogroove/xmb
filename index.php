@@ -250,10 +250,12 @@ if ($gid == 0) {
 
     $forums = getStructuredForums(TRUE);
     $fquery = array();
-    foreach($forums['forum'][$cat['fid']] as $forum) {
-        $forum['cat_fid'] = $cat['fid'];
-        $forum['cat_name'] = $cat['name'];
-        $fquery[] = $forum;
+    if (isset($forums['forum'][$cat['fid']])) {
+        foreach($forums['forum'][$cat['fid']] as $forum) {
+            $forum['cat_fid'] = $cat['fid'];
+            $forum['cat_name'] = $cat['name'];
+            $fquery[] = $forum;
+        }
     }
 }
 
