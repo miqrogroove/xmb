@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -363,10 +363,12 @@ function getIndexForums(&$forums) {
             $sorted[] = $forum;
         }
         foreach($groups as $group) {
-            foreach($forums['forum'][$group['fid']] as $forum) {
-                $forum['cat_fid'] = $group['fid'];
-                $forum['cat_name'] = $group['name'];
-                $sorted[] = $forum;
+            if (isset($forums['forum'][$group['fid']])) {
+                foreach($forums['forum'][$group['fid']] as $forum) {
+                    $forum['cat_fid'] = $group['fid'];
+                    $forum['cat_name'] = $group['name'];
+                    $sorted[] = $forum;
+                }
             }
         }
     }
