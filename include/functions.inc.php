@@ -1630,7 +1630,7 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     if (!$multiple) {
         $forumselect[] = '<select name="'.$selectname.'">';
     } else {
-        $forumselect[] = '<select name="'.$selectname.'[]" multiple="multiple">';
+        $forumselect[] = '<select name="'.$selectname.'[]" size="10" multiple="multiple">';
     }
 
     if ($allowall) {
