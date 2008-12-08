@@ -1885,6 +1885,8 @@ if ($action == "modlog") {
     $old = (($page-1)*100);
     $current = ($page*100);
 
+    $firstpage = '';
+    $lastpage = '';
     $prevpage = '';
     $nextpage = '';
     $random_var = '';
