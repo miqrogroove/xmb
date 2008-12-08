@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -50,7 +50,6 @@ $beta = 'Beta 2';
 $gamma = '';
 $service_pack = '';
 $versionbuild = 20081207;
-$versionlong = 'Powered by '.$versiongeneral.' '.$alpha.$beta.$gamma.$service_pack;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -182,6 +181,19 @@ define('IS_IE', ($browser == 'ie'));
 /* Load the Configuration Created by Install */
 
 require ROOT.'config.php';
+
+if (!$show_full_info) {
+    $versionshort = '';
+    $versiongeneral = 'XMB';
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = '[HIDDEN]';
+} else {
+    $versiongeneral .= ' ';
+}
+$versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
 
 if (!defined('DEBUG')) {
     define('DEBUG', FALSE);
