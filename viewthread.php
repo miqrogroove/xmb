@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -110,7 +110,12 @@ if ($goto == 'lastpost') {
         $post = $db->fetch_array($tidtest);
         $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND dateline <= {$post['dateline']}"), 0);
         $page = quickpage(($posts), $ppp);
-        redirect("{$full_url}viewthread.php?tid=$tid&page=$page#pid$pid", 0);
+        if ($page == 1) {
+            $page = '';
+        } else {
+            $page = "&page=$page";
+        }
+        redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", 0);
     } else {
         header('HTTP/1.0 404 Not Found');
         eval('$css = "'.template('css').'";');
