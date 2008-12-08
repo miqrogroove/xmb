@@ -338,7 +338,7 @@ if ($action == 'lang') {
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td colspan="2"><?php echo $lang['translation_import']; ?></td>
+        <td colspan="2" align="center"><strong><font color="<?php echo $cattext?>"><?php echo $lang['translation_import']; ?></font></strong></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['generic_file']; ?></td>
