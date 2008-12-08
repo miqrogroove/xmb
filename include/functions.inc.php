@@ -503,7 +503,7 @@ function bbcode(&$message, $allowimgcode) {
     $patterns = array();
     $replacements = array();
     $patterns[] = "@\\[rquote=(\\d+)&amp;tid=(\\d+)&amp;author=(.+?)]@si";
-    $replacements[] = '[quote]<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow"><em><!-- /nobr -->'.$lang['origpostedby'].' $3</em><img src="'.$imgdir.'/lastpost.gif" border="0" alt="" /></a>'."\n";
+    $replacements[] = '[quote]<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow"><em><!-- /nobr -->'.$lang['origpostedby'].' $3</em> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>'."\n";
     $patterns[] = "@\\[/rquote]@si";
     $replacements[] = '[/quote]';
     $message = preg_replace($patterns, $replacements, $message);
