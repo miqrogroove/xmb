@@ -595,23 +595,23 @@ function bbcode(&$message, $allowimgcode) {
 
     //[url]http://www.example.com/[/url]
     $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-    $replacements[] = '<a href="\1\2" onclick="window.open(this.href); return false;">\1\2</a>';
+    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
     $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{61})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 61 chars
     $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
 
     //[url]www.example.com[/url]
     $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-    $replacements[] = '<a href="http://\1" onclick="window.open(this.href); return false;">\1</a>';
+    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
     $patterns[] = "#\[url\]([^\"'<>\[\]]{61})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 61 chars
     $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
 
     //[url=http://www.example.com]Lorem Ipsum[/url]
     $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a <!-- nobr -->href="\1\2"<!-- /nobr --> onclick="window.open(this.href); return false;">\3</a>';
+    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
 
     //[url=www.example.com]Lorem Ipsum[/url]
     $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a <!-- nobr -->href="http://\1"<!-- /nobr --> onclick="window.open(this.href); return false;">\2</a>';
+    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
 
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
