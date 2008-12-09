@@ -671,6 +671,7 @@ if ($action == 'profile') {
         $db->free_result($q);
     } else {
         while($buddy = $db->fetch_array($q)) {
+            $recodename = recodeOut($buddy['buddyname']);
             if (strlen($buddy['username']) > 0) {
                 if ($buddy['invisible'] == 1) {
                    eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
