@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -702,6 +702,7 @@ if ($action == 'profile') {
         $db->free_result($q);
     } else {
         while($buddy = $db->fetch_array($q)) {
+            $recodename = recodeOut($buddy['buddyname']);
             if (strlen($buddy['username']) > 0) {
                 if ($buddy['invisible'] == 1) {
                    eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
