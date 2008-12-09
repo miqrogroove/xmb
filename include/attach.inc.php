@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -215,10 +215,12 @@ function attachRemoteFile($url, $pid=0) {
     }
 
     // Check minimum file size for disk storage
-    if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
-        $usedb = TRUE;
-    } else {
-        $file = '';
+    if (!$usedb) {
+        if ($filesize < $SETTINGS['files_min_disk_size']) {
+            $usedb = TRUE;
+        } else {
+            $file = '';
+        }
     }
 
     $file = $db->escape_var($file);
