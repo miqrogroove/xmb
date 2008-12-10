@@ -58,8 +58,8 @@ if ($SETTINGS['searchstatus'] != 'on') {
 }
 
 if (!isset($searchsubmit) && !isset($page)) {
-    // Common XSS Protection: XMB disallows '<' in all URLs.
-    $url_check = Array('%3c', '<');
+// Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
+    $url_check = Array('%3c', '<', ':/');
     foreach($url_check as $name) {
         if (strpos(strtolower($url), $name) !== FALSE) {
             header('HTTP/1.0 403 Forbidden');
@@ -100,11 +100,11 @@ if (!isset($searchsubmit) && !isset($page)) {
         error($lang['nosearchq']);
     }
     if (!X_STAFF) {
-        // Common XSS Protection: XMB disallows '<' in all URLs.
+        // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
         if ($srchtxt != censor($srchtxt) Or strpos($srchtxt, '<') !== FALSE Or strpos($srchuname, '<') !== FALSE) {
             error($lang['searchinvalid']);
         }
-        $url_check = Array('%3c', '<');
+        $url_check = Array('%3c', '<', ':/');
         foreach($url_check as $name) {
             if (strpos(strtolower($url), $name) !== FALSE) {
                 header('HTTP/1.0 403 Forbidden');
