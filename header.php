@@ -49,7 +49,7 @@ $alpha = '';
 $beta = 'Beta 2';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20081207;
+$versionbuild = 20081210;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -408,7 +408,7 @@ $querystring = strstr($url, '?');
 if ($querystring === FALSE) {
     $querystring = '';
 }
-$querystring = preg_replace('#[\\x00-\\x1F\\x7F-\\xFF]#', '', $querystring);
+$querystring = preg_replace('/[^\x20-\x7e]/', '', $querystring);
 $baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
 
 // login/logout links

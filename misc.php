@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -147,7 +147,7 @@ switch($action) {
         break;
 
     case 'search':
-        $newurl = $url;
+        $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
         if (substr($newurl, -22) == 'misc.php?action=search') {
             $newurl = substr($newurl, 0, -22).'search.php';
         } else {
