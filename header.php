@@ -590,7 +590,7 @@ if (count($pluglinks) == 0) {
 /* HTML Ready.  Issue Any Global Alerts To User. */
 
 // Check if the client is ip-banned
-if ($SETTINGS['ip_banning'] == 'on' And !X_ADMIN) {
+if ($SETTINGS['ip_banning'] == 'on' And !X_ADMIN And X_SCRIPT != 'upgrade.php') {
     $ips = explode(".", $onlineip);
     $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
     $result = $db->num_rows($query);
@@ -603,7 +603,7 @@ if ($SETTINGS['ip_banning'] == 'on' And !X_ADMIN) {
 }
 
 // Check if the board is offline
-if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
+if ($SETTINGS['bbstatus'] == 'off' And !X_ADMIN And X_SCRIPT != 'upgrade.php') {
     $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
         header('HTTP/1.0 503 Service Unavailable');
@@ -618,7 +618,7 @@ if ($SETTINGS['bbstatus'] == 'off' && !(X_ADMIN)) {
 }
 
 // Check if the board is set to 'reg-only'
-if ($SETTINGS['regviewonly'] == 'on' && X_GUEST) {
+if ($SETTINGS['regviewonly'] == 'on' And X_GUEST And X_SCRIPT != 'upgrade.php') {
     $SETTINGS['quickjump_status'] = 'off';
     if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
         $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
@@ -660,8 +660,7 @@ if (X_MEMBER) {
 // Gzip-compression
 if ($SETTINGS['gzipcompress'] == 'on'
  && $action != 'captchaimage'
- && X_SCRIPT != 'files.php'
- && X_SCRIPT != 'upgrade.php') {
+ && X_SCRIPT != 'files.php') {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
     } else if ($res === false) {

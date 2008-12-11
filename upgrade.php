@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -88,7 +88,21 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <li>Enable your forums using the Board Status setting.
 </ol>
 
-<p>When you are ready, <a href="?step=2">Click Here if you already have a backup and want to begin the upgrade</a>.
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+function disableButton() {
+    var newAttr = document.createAttribute("disabled");
+    newAttr.nodeValue = "disabled"
+    document.getElementById("submit1").setAttributeNode(newAttr);
+    return true;
+}
+//--><!]]>
+</script>
+
+<form method="get" onsubmit="disableButton();">
+<input type="hidden" name="step" value="2" />
+<p>When you are ready, <input type="submit" value="Click Here if you already have a backup and want to begin the upgrade" id="submit1" />.
+</form>
 <?php
 
 } else if ($_GET['step'] == 2) {
@@ -118,7 +132,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the settings table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
     echo 'Confirming forums are turned off...<br />';
@@ -130,7 +143,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Gathering schema information from the settings table...<br />';
-    flush();
     $sql = array();
     $table = 'settings';
     $columns = array(
@@ -170,11 +182,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the attachments table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
     echo 'Gathering schema information from the attachments table...<br />';
-    flush();
     $sql = array();
     $table = 'attachments';
     $columns = array(
@@ -218,11 +228,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the members table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
 
     echo 'Gathering schema information from the members table...<br />';
-    flush();
     $sql = array();
     $table = 'members';
     $columns = array(
@@ -251,11 +259,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the ranks table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
 
     echo 'Gathering schema information from the ranks table...<br />';
-    flush();
     $sql = array();
     $table = 'ranks';
     $columns = array(
@@ -275,11 +281,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the themes table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
 
     echo 'Gathering schema information from the themes table...<br />';
-    flush();
     $sql = array();
     $table = 'themes';
     $columns = array(
@@ -299,11 +303,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
 
     echo 'Requesting to lock the vote_desc table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
 
     echo 'Gathering schema information from the vote_desc table...<br />';
-    flush();
     $sql = array();
     $table = 'vote_desc';
     $columns = array(
@@ -326,7 +328,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query('UNLOCK TABLES');
 
     echo 'Adding new tables...<br />';
-    flush();
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_base (
         `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         `devname` VARCHAR( 20 ) NOT NULL ,
@@ -363,7 +364,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
 
     echo 'Requesting to lock the templates table...<br />';
-    flush();
     $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
     echo 'Saving the new templates...<br />';
@@ -384,7 +384,6 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
     }
     unset($values);
     $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
-    flush();
 
     echo 'Releasing the lock on the templates table...<br />';
     $db->query('UNLOCK TABLES');
