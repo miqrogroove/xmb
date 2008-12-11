@@ -411,7 +411,10 @@ if ($action == 'lang') {
         <td><?php echo $lang['translation_phrase'].':'; ?>&nbsp;<strong><?php echo "$langkey ($langfile)"; ?></strong></td>
         </tr>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg1?>">
-        <td><textarea cols="100" rows="15" name="templatenew"><?php echo $value; ?></textarea></td>
+        <td><textarea cols="100" rows="15" name="templatenew">
+<?php // Linefeed required here - Do not edit!
+        echo $value;
+        ?></textarea></td>
         </tr>
         <tr class="ctrtablerow" bgcolor="<?php echo $altbg2?>">
         <td>

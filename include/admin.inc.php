@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -323,7 +323,10 @@ function printsetting4(&$settingDesc, $name, $value, $rows=5, $cols=50) {
     ?>
     <tr class="tablerow">
     <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>"><?php echo $value?></textarea></td>
+    <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>">
+<?php // Linefeed required here - Do not edit!
+    echo $value;
+    ?></textarea></td>
     </tr>
     <?php
 }

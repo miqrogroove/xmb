@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1243,7 +1243,10 @@ if ($action == 'forum') {
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textdesc']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew"><?php echo $forum['description']; ?></textarea></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="descnew">
+<?php // Linefeed required here - Do not edit!
+        echo $forum['description'];
+        ?></textarea></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>" valign="top"><?php echo $lang['textallow']?></td>
@@ -1296,7 +1299,10 @@ if ($action == 'forum') {
 
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['textuserlist']?></td>
-        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="userlistnew"><?php echo $forum['userlist']?></textarea></td>
+        <td bgcolor="<?php echo $altbg2?>"><textarea rows="4" cols="30" name="userlistnew">
+<?php // Linefeed required here - Do not edit!
+        echo $forum['userlist'];
+        ?></textarea></td>
         </tr>
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>"><?php echo $lang['forumpw']?></td>
