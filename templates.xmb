@@ -72,11 +72,13 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 $avatar
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">
+$member[bio]</textarea></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">
+$member[sig]</textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
@@ -2712,11 +2714,13 @@ $favs
 $avatar
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">$member[bio]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">
+$member[bio]</textarea></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">$member[sig]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">
+$member[sig]</textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
@@ -3418,7 +3422,8 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 <td bgcolor="$altbg2" class="tablerow">
 <table width="100%">
 <tr>
-<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$postinfo[message]</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
+$postinfo[message]</textarea></td>
 $smilieinsert
 </tr>
 <tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
@@ -3503,7 +3508,8 @@ $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
-<td width="70%"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
+<td width="70%"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
+$message</textarea></td>
 $smilieinsert
 </tr>
 </table>
@@ -3515,7 +3521,8 @@ $smilieinsert
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" valign="top">$lang[pollanswers]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="40" name="pollanswers">$pollanswers</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="40" name="pollanswers">
+$pollanswers</textarea></td>
 </tr>
 $attachfile
 $captchapostcheck
@@ -3559,7 +3566,8 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2">
 <table width="100%">
 <tr>
-<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
+$message</textarea></td>
 $smilieinsert
 </tr>
 <tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
@@ -3640,7 +3648,8 @@ $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
-<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">$message</textarea></td>
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
+$message</textarea></td>
 $smilieinsert
 </tr>
 <tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
@@ -4256,7 +4265,8 @@ $u2usdraft
 
 <tr class="tablerow">
 <td bgcolor="$altbg1" valign="top">$lang[foldermsg]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="u2ufolders">$self[u2ufolders]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="u2ufolders">
+$self[u2ufolders]</textarea></td>
 </tr>
 <tr>
 <td class="ctrtablerow" colspan="2" bgcolor="$altbg2"><input type="submit" name="folderssubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
@@ -4324,7 +4334,8 @@ $css
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" valign="top">$lang[ignoremsg]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="ignorelist">$self[ignoreu2u]</textarea></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="30" name="ignorelist">
+$self[ignoreu2u]</textarea></td>
 </tr>
 <tr>
 <td class="ctrtablerow" bgcolor="$altbg2" colspan="2"><input type="submit" name="ignoresubmit" class="submit" value="$lang[textsubmitchanges]" /></td>
@@ -4544,7 +4555,8 @@ $u2upreview
 </tr>
 <tr class="tablerow">
 <td valign="top" bgcolor="$altbg1">$lang[textmessage]</td>
-<td bgcolor="$altbg2"><textarea rows="10" name="message" id="message" cols="50">$message</textarea><br /></td>
+<td bgcolor="$altbg2"><textarea rows="10" name="message" id="message" cols="50">
+$message</textarea><br /></td>
 </tr>
 <tr>
 <td valign="top" class="ctrtablerow" bgcolor="$altbg1" colspan="2">
