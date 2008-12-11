@@ -4897,14 +4897,18 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="http://profiles.yahoo.com/$post[yahoo]" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<?xml version="1.0" encoding="$charset"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- $versionlong  -->
+<!-- Build: $versionbuild -->
+<!-- $versioncompany -->
 <head>
 $baseelement
-<meta http-equiv="Content-Type" content="text/html; charset=$charset">
+<meta http-equiv="Content-Type" content="text/html; charset=$charset" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 <style type="text/css">
-p {
+.mediumtxt {
 font-size: 14px;
 font-family: arial, verdana;
 }
@@ -4926,7 +4930,6 @@ font-size: 14px;
 font-family: arial, verdana;
 }
 </style>
-<title>$bbname - $lang[textpowered]</title>
 </head>
 <body>
 $logo
@@ -4939,8 +4942,8 @@ $posts
 </html>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable_row|#*XMB TEMPLATE*#|
-<hr /><span class="14px">$post[author]</span> - <span class="13px">$poston</span>
-<p>$post[message]</p>
+<hr /><span class="14px">$post[author]</span> - <span class="13px">$poston</span><br /><br />
+<font class="mediumtxt">$post[message]</font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
 <br />
