@@ -561,13 +561,15 @@ if ($action == 'themes') {
 
             if ($themeinfo['themeid'] == $SETTINGS['theme']) {
                 $members = ($themeMem[$themeid]+$themeMem[0]);
+                $disable = 'disabled="disabled"';
             } else {
                 $members = $themeMem[$themeid];
+                $disable = '';
             }
 
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['themeid']?>" /></td>
+            <td align="center"><input type="checkbox" name="theme_delete[]" value="<?php echo $themeinfo['themeid']?>" <?php echo $disable; ?> /></td>
             <td>
             <input type="text" name="theme_name[<?php echo $themeinfo['themeid']?>]" value="<?php echo $themeinfo['name']?>" />
             <a href="cp2.php?action=themes&amp;single=<?php echo $themeinfo['themeid']?>">
@@ -687,14 +689,11 @@ if ($action == 'themes') {
 
         if ($theme_delete) {
             foreach($theme_delete as $themeid) {
-                $otherid = $db->result($db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE themeid != $themeid ORDER BY rand() LIMIT 1"), 0);
-                $db->query("UPDATE ".X_PREFIX."members SET theme='$otherid' WHERE theme='$themeid'");
-                $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE theme='$themeid'");
-
-                if ($SETTINGS['theme'] == $themeid) {
-                    $db->query("UPDATE ".X_PREFIX."settings SET theme='$otherid'");
+                if ($themeid != $SETTINGS['theme']) {
+                    $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE theme='$themeid'");
+                    $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE theme='$themeid'");
+                    $db->query("DELETE FROM ".X_PREFIX."themes WHERE themeid='$themeid'");
                 }
-                $db->query("DELETE FROM ".X_PREFIX."themes WHERE themeid='$themeid'");
             }
         }
 
