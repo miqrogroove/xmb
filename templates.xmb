@@ -1387,7 +1387,6 @@ $multipage
 <td width="19%">$lang[textlastpost]</td>
 </tr>
 $threadlist
-</form>
 $sortby
 $multipage
 </table>
@@ -1756,11 +1755,12 @@ $smilies
 <td valign="top"><a style="cursor:hand" onclick="javascript:icon('$smilie[code]')"><img src="$smdir/$smilie[url]" border="0" alt="$smilie[code]"/></a></td>
 
 |#*XMB TEMPLATE FILE*#|header|#*XMB TEMPLATE*#|
+<?xml version="1.0" encoding="$charset"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <!-- $versionlong  -->
 <!-- Build: $versionbuild -->
 <!-- $versioncompany -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
 <head>
 $baseelement
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
@@ -1908,15 +1908,17 @@ $statsbar
 |#*XMB TEMPLATE FILE*#|index_ticker|#*XMB TEMPLATE*#|
 <script type="text/javascript" language="JavaScript" src="./js/ticker.js"></script>
 <script type="text/javascript" language="JavaScript">
+<!--//--><![CDATA[//><!--
 var stopticker = "$lang[stopticker]";
 var startticker = "$lang[startticker]";
-var delay = $tickerdelay;;
+var delay = $tickerdelay;
 var node = '';
 var current = 0;
 var running = false;
 var contents = new Array();
 $contents
 window.onload = tickerstart;
+//--><!]]>
 </script>
 <table border="0" cellpadding="0" cellspacing="0" width="$tablewidth" align="center">
 <tr>

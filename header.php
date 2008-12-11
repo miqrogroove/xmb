@@ -569,7 +569,7 @@ $pluglinks = array();
 foreach($plugname as $plugnum => $item) {
     if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum])) {
         if (trim($plugimg[$plugnum]) != '') {
-            $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" />&nbsp;';
+            $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" alt="'.$plugname[$plugnum].'" />&nbsp;';
         } else {
             $img = '';
         }
