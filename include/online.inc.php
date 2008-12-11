@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -64,11 +64,6 @@ function url_to_text($url) {
                     $tsub[$tid] = $locate['subject'];
                 }
                 $db->free_result($query);
-            }
-
-            if (false !== strpos($url, 'action=attachment')) {
-                $url = substr($url, 0, strpos($url, '?'));
-                $url .= '?tid='.$tid;
             }
         } else {
             $location = $lang['onlinenothread'];
@@ -174,8 +169,6 @@ function url_to_text($url) {
             $location = $lang['onlinelogin'];
         } else if (false !== strpos($url, 'logout')) {
             $location = $lang['onlinelogout'];
-        } else if (false !== strpos($url, 'search')) {
-            $location = $lang['onlinesearch'];
         } else if (false !== strpos($url, 'lostpw')) {
             $location = $lang['onlinelostpw'];
         } else if (false !== strpos($url, 'online')) {
@@ -199,6 +192,8 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineunknown'];
         }
+    } else if (false !== strpos($url, '/search.php')) {
+        $location = $lang['onlinesearch'];
     } else if (false !== strpos($url, '/stats.php')) {
         $location = $lang['onlinestats'];
     } else if (false !== strpos($url, '/today.php')) {
