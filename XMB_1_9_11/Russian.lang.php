@@ -1,5 +1,5 @@
 <?php
-/**
+/** Modded by Sergey aka Porutchik * http://forum.aeroion.ru
  * eXtreme Message Board
  * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
  *
@@ -865,7 +865,6 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "Использованный вами запрос не разрешен.";
 $lang['textimgcode'] = "IMG код";
 $lang['textimgcodeis'] = "[img] код -";
-$lang['textimportsubmit'] = "Импортировать тему в XMB";
 $lang['textimporttheme'] = "Импортировать тему:";
 $lang['textinforum'] = "в форуме:";
 $lang['textinthread'] = "В теме форума:";
