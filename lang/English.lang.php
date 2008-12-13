@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Attachments";
 $lang['attachments_num_restored'] = "attachments restored";
 $lang['attachments_num_stored'] = "attachments stored";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "The attachment you are trying to upload is too big.";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";

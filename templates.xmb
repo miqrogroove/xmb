@@ -3324,7 +3324,7 @@ $bbcodescript
 <tr class="tablerow" id="multiattachrow" style="display: none;">
  <td bgcolor="{$THEME['altbg1']}">{$lang['attachmentm']}</td>
  <td bgcolor="{$THEME['altbg2']}">
-  <a href="javascript:multiAttach()" id="multiattachlink">Click here to upload another file</a>
+  <a href="javascript:multiAttach()" id="multiattachlink">{$lang['attachmore']}</a>
  </td>
 </tr>
 <script type="text/javascript">
