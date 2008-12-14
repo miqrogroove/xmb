@@ -136,7 +136,8 @@ if ($goto == 'lastpost') {
 }
 
 loadtemplates(
-'functions_bbcode',
+'functions_bbcode_quickreply',
+'functions_smilieinsert',
 'functions_smilieinsert_smilie',
 'viewthread_reply',
 'viewthread_quickreply',
