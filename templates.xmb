@@ -1678,6 +1678,13 @@ var messageElement;
 <script language="JavaScript" type="text/javascript" src="./js/bbcodefns-$browser.js"></script>
 <script language="JavaScript" type="text/javascript">window.onload = loadEls;</script>
 
+|#*XMB TEMPLATE FILE*#|functions_bbcode_quickreply|#*XMB TEMPLATE*#|
+<script type="text/javascript" src="./js/bbcodefns-$browser.js"></script>
+<script type="text/javascript">
+var messageElement;
+loadEls();
+</script>
+
 |#*XMB TEMPLATE FILE*#|functions_bbcodeinsert|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[cb_fomatting]<br /><span class="smalltxt">
@@ -3428,7 +3435,7 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 $postinfo[message]</textarea></td>
 $smilieinsert
 </tr>
-<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
+<tr><td class="ctrtablerow smalltxt">$moresmilies</td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $offcheck2 /> $lang[textdissmileys]<br />
@@ -3510,10 +3517,11 @@ $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
-<td width="70%"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
+<td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
 $message</textarea></td>
 $smilieinsert
 </tr>
+<tr><td class="ctrtablerow smalltxt">$moresmilies</td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
@@ -3572,7 +3580,7 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 $message</textarea></td>
 $smilieinsert
 </tr>
-<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
+<tr><td class="ctrtablerow smalltxt">$moresmilies</td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
@@ -3654,7 +3662,7 @@ $lang[textimgcodeis] $allowimgcode</span></td>
 $message</textarea></td>
 $smilieinsert
 </tr>
-<tr><td class="ctrtablerow smalltxt"><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 175, 250); return false;">[$lang[moresmilies]]</a></td></tr>
+<tr><td class="ctrtablerow smalltxt">$moresmilies</td></tr>
 </table>
 <br />
 <input type="checkbox" name="smileyoff" value="yes" $smileoffcheck /> $lang[textdissmileys]<br />
@@ -4962,9 +4970,10 @@ $captchapostcheck
 <td width="8%" height="101" bgcolor="$altbg1" class="tablerow"> <div align="left"><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span><hr /></div><div align="center">
-$smilies<br /><a href="misc.php?action=smilies" onclick="Popup(this.href, 'Window', 200, 250); return false;">{$lang['moresmilies']}</a></div></td>
+$lang[textimgcodeis] $allowimgcode</span></div>
+$smilies
 <td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
+$quickbbcode
 <td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
 <tr>

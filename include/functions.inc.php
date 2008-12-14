@@ -851,49 +851,57 @@ function quickpage($things, $thingsperpage) {
     return ((($things > 0) && ($thingsperpage > 0) && ($things > $thingsperpage)) ? ceil($things / $thingsperpage) : 1);
 }
 
-function smilieinsert() {
-    global $imgdir, $smdir, $db, $smileyinsert, $smcols, $smtotal;
+function smilieinsert($type='normal') {
+    global $imgdir, $smdir, $db, $SETTINGS, $smiliesnum, $smiliecache;
 
+    $counter = 0;
     $sms = array();
-    $smilienum = 0;
     $smilies = '';
     $smilieinsert = '';
+    
+    if ($type == 'normal') {
+        $smcols = intval($SETTINGS['smcols']);
+        $smtotal = intval($SETTINGS['smtotal']);
+    } elseif ($type == 'quick') {
+        $smcols = 4;
+        $smtotal = 16;
+    } elseif ($type == 'full') {
+        $smcols = intval($SETTINGS['smcols']);
+        $smtotal = 0;
+    }
 
-    if ($smileyinsert == 'on' && $smcols != '') {
-        if ($smtotal == 0) {
-            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='smiley' ORDER BY code DESC");
-        } else {
-            $querysmilie = $db->query("SELECT * FROM ".X_PREFIX."smilies WHERE type='smiley' ORDER BY code DESC LIMIT 0, ".$smtotal);
+    if ($SETTINGS['smileyinsert'] == 'on' And $smcols > 0 And $smiliesnum > 0) {
+        foreach($smiliecache as $key=>$val) {
+            $smilie['code'] = $key;
+            $smilie['url'] = $val;
+            eval('$sms[] = "'.template('functions_smilieinsert_smilie').'";');
+            if ($smtotal > 0) {
+                $counter++;
+                if ($counter >= $smtotal) {
+                    break;
+                }
+            }
         }
 
-        if (($smilienum = $db->num_rows($querysmilie)) > 0) {
-            while($smilie = $db->fetch_array($querysmilie)) {
-                eval('$sms[] = "'.template('functions_smilieinsert_smilie').'";');
-            }
-            $db->free_result($querysmilie);
-
-            $smilies = '<tr>';
-            for($i=0;$i<count($sms);$i++) {
-                $smilies .= $sms[$i];
-                if (($i+1)%$smcols == 0) {
-                    $smilies .= '</tr>';
-                    if (($i+1) < $smtotal) {
-                        $smilies .= '<tr>';
-                    }
-                }
-            }
-
-            if ($smilienum%$smcols > 0) {
-                $left = $smcols-($smilienum%$smcols);
-                for($i=0;$i<$left;$i++) {
-                    $smilies .= '<td>&nbsp;</td>';
-                }
+        $smilies = '<tr>';
+        for($i=0;$i<count($sms);$i++) {
+            $smilies .= $sms[$i];
+            if (($i+1)%$smcols == 0) {
                 $smilies .= '</tr>';
+                if (($i+1) < $smtotal) {
+                    $smilies .= '<tr>';
+                }
             }
-            eval('$smilieinsert = "'.template('functions_smilieinsert').'";');
-        } else {
-            $smilieinsert = '';
         }
+
+        if ($smiliesnum%$smcols > 0) {
+            $left = $smcols-($smiliesnum%$smcols);
+            for($i=0;$i<$left;$i++) {
+                $smilies .= '<td>&nbsp;</td>';
+            }
+            $smilies .= '</tr>';
+        }
+        eval('$smilieinsert = "'.template('functions_smilieinsert').'";');
     }
 
     return $smilieinsert;

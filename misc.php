@@ -510,8 +510,7 @@ switch($action) {
         eval('$css = "'.template('css').'";');
         eval('$header = "'.template('popup_header').'";');
         eval('$footer = "'.template('popup_footer').'";');
-        $smtotal = 0;
-        $smilies = smilieinsert();
+        $smilies = smilieinsert('full');
         eval('$misc = "'.template('misc_smilies').'";');
         echo $header;
         echo $misc;

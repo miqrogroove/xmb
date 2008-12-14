@@ -265,90 +265,57 @@ $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 
-eval('$bbcodescript = "'.template('functions_bbcode').'";');
-
-if ($smileyinsert == 'on' && $smiliesnum > 0) {
-    $max = ($smiliesnum > 16) ? 16 : $smiliesnum;
-    srand((double)microtime() * 1000000);
-    // Fix for Invalid argument supplied for foreach()
-    // Provided by JDaniels
-    if ($max == 1) {
-        $keys = array_keys($smiliecache, $max);
-    } else {
-        $keys = array_rand($smiliecache, $max);
-    }
-    $smilies = array();
-    $smilies[] = '<table border="0"><tr>';
-    $i = 0;
-    $total = 0;
-    $pre = 'opener.';
-    foreach($keys as $key) {
-        if ($total == 16) {
-            break;
-        }
-        $smilie['code'] = $key;
-        $smilie['url'] = $smiliecache[$key];
-
-        if ($i >= 4) {
-            $smilies[] = '</tr><tr>';
-            $i = 0;
-        }
-        eval('$smilies[] = "'.template('functions_smilieinsert_smilie').'";');
-        $i++;
-        $total++;
-    }
-    $smilies[] = '</tr></table>';
-    $smilies = implode("\n", $smilies);
-}
-
-$usesig = false;
 $replylink = $quickreply = '';
 
 $status1 = modcheck($self['username'], $forum['moderator']);
 
 if ($action == '') {
-    if (X_MEMBER && $self['sig'] != '') {
-        $usesig = true;
-    }
-
     eval('$header = "'.template('header').'";');
 
-    $usesigcheck = $usesig ? 'checked="checked"' : '';
-
-    $captchapostcheck = '';
-    if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-        require ROOT.'include/captcha.inc.php';
-        $Captcha = new Captcha(250, 50);
-        if ($Captcha->bCompatible !== false) {
-            $imghash = $Captcha->GenerateCode();
-            if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
-                $lang['captchacaseon'] = '';
+    if ($perms[X_PERMS_REPLY] And ($thread['closed'] == '' Or X_SADMIN)) {
+        eval('$replylink = "'.template('viewthread_reply').'";');
+        if ($SETTINGS['quickreply_status'] == 'on') {
+            $usesigcheck = '';
+            if (X_MEMBER) {
+                if ($self['sig'] != '') {
+                    $usesigcheck = 'checked="checked"';
+                }
             }
-            eval('$captchapostcheck = "'.template('viewthread_quickreply_captcha').'";');
+
+            $captchapostcheck = '';
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+                require ROOT.'include/captcha.inc.php';
+                $Captcha = new Captcha(250, 50);
+                if ($Captcha->bCompatible !== false) {
+                    $imghash = $Captcha->GenerateCode();
+                    if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                        $lang['captchacaseon'] = '';
+                    }
+                    eval('$captchapostcheck = "'.template('viewthread_quickreply_captcha').'";');
+                }
+            }
+
+            if ($SETTINGS['smileyinsert'] == 'on' And $forum['allowsmilies'] == 'yes' And $smiliesnum > 0) {
+                eval('$quickbbcode = "'.template('functions_bbcode_quickreply').'";');
+
+                $smilies = '<div align="center"><hr /><table border="0"><tr>';
+                $smilies .= smilieinsert('quick');
+                $smilies .= '</tr></table>';
+                $smilies .= "<a href=\"misc.php?action=smilies\" onclick=\"Popup(this.href, 'Window', 200, 250); return false;\">{$lang['moresmilies']}</a>";
+                $smilies .= "</div></td>";
+            } else {
+                $quickbbcode = '';
+                $smilies = '';
+            }
+
+            eval('$quickreply = "'.template('viewthread_quickreply').'";');
         }
     }
-
-    if ($thread['closed'] == 'yes') {
-        if (X_SADMIN) {
-            eval('$replylink = "'.template('viewthread_reply').'";');
-            $quickreply = '';
-            if ($SETTINGS['quickreply_status'] == 'on') {
-                eval('$quickreply = "'.template('viewthread_quickreply').'";');
-            }
-        }
-        $closeopen = $lang['textopenthread'];
-    } else {
+    
+    if ($thread['closed'] == '') {
         $closeopen = $lang['textclosethread'];
-        if ($perms[X_PERMS_REPLY]) {
-            eval('$replylink = "'.template('viewthread_reply').'";');
-            $quickreply = '';
-            if ($SETTINGS['quickreply_status'] == 'on') {
-                eval('$quickreply = "'.template('viewthread_quickreply').'";');
-            }
-        } else {
-            $replylink = '';
-            $quickreply = '';
-        }
+    } else {
+        $closeopen = $lang['textopenthread'];
     }
 
     if (X_GUEST) {

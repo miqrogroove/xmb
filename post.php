@@ -236,10 +236,10 @@ if ($usesig != 'yes') {
     $usesig = 'no';
 }
 
-$allowimgcode = (isset($forum['allowimgcode']) && $forum['allowimgcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowhtml = (isset($forum['allowhtml']) && $forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowsmilies = (isset($forum['allowsmilies']) && $forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowbbcode = (isset($forum['allowbbcode']) && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
 if (isset($smileyoff) && $smileyoff == 'yes') {
     $smileoffcheck = $cheHTML;
@@ -335,8 +335,16 @@ if ($SETTINGS['spellcheck'] == 'on') {
     }
 }
 
-$bbcodeinsert = bbcodeinsert();
-$smilieinsert = smilieinsert();
+$bbcodeinsert = '';
+$moresmilies = '';
+$smilieinsert = '';
+if ($forum['allowbbcode'] == 'yes') {
+    $bbcodeinsert = bbcodeinsert();
+}
+if ($forum['allowsmilies'] == 'yes') {
+    $smilieinsert = smilieinsert();
+    $moresmilies = "<a href=\"misc.php?action=smilies\" onclick=\"Popup(this.href, 'Window', 175, 250); return false;\">[{$lang['moresmilies']}]</a>";
+}
 
 switch($action) {
     case 'reply':
