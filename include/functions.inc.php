@@ -894,10 +894,10 @@ function smilieinsert($type='normal') {
             }
         }
 
-        if ($smiliesnum%$smcols > 0) {
-            $left = $smcols-($smiliesnum%$smcols);
+        if ($smtotal%$smcols > 0) {
+            $left = $smcols-($smtotal%$smcols);
             for($i=0;$i<$left;$i++) {
-                $smilies .= '<td>&nbsp;</td>';
+                $smilies .= '<td />';
             }
             $smilies .= '</tr>';
         }
