@@ -1,7 +1,7 @@
 <?php
 /**    Made by:    Adrian Kajda, c0rvus
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Za³±czniki";
 $lang['attachments_num_restored'] = "za³±czniki przywrócone";
 $lang['attachments_num_stored'] = "za³±czniki zosta³y zapisane";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Za³±cznik ma zbyt du¿y rozmiar.";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -619,7 +620,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Szukaj</a> wszystkich wiadomo¶ci tego u¿ytkownika';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Szukaj</a> wszystkich wiadomo¶ci tego u¿ytkownika';
 $lang['secure_login'] = "Chroniony login - zwiêkszona ochrona na publicznych komputerach";
 $lang['selecttemplate'] = "Wybierz ustawienie....";
 $lang['seperatebycomma'] = " Oddziel poszczególne wyrazy przecinkami";

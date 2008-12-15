@@ -1,7 +1,7 @@
 <?php
 /**    Made by:    yueyang
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "附件";
 $lang['attachments_num_restored'] = "附件修复";
 $lang['attachments_num_stored'] = "附件保存";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "您上传的附件容量过大。";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">搜索</a> 这名会员登录的所有文章';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">搜索</a> 这名会员登录的所有文章';
 $lang['secure_login'] = " 安全登陆 - 增加在公众的计算机上登陆的安全";
 $lang['selecttemplate'] = "请选择一个模板....";
 $lang['seperatebycomma'] = "用逗号分隔";

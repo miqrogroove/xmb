@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Liitetiedostot";
 $lang['attachments_num_restored'] = "liitetiedostoa palautettu";
 $lang['attachments_num_stored'] = "liitetiedostoa tallennettu";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Liitetiedosto on liian suuri.";
 $lang['autoinsertsmilies'] = "Lisää kaikki hymiöt hymiö kansiosta";
 $lang['autoinsertposticons'] = "Lisää kaikki viestikuvakkeet hymiö kansiosta";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Etsi kaikki</a> tämän käyttäjän viestit';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Etsi kaikki</a> tämän käyttäjän viestit';
 $lang['secure_login'] = "Turvallinen kirjautuminen - parempi tietoturva kirjauduttaessa julkisista tietokoneista";
 $lang['selecttemplate'] = "Valitse sivupohja.";
 $lang['seperatebycomma'] = "Erota pilkulla";
@@ -1034,7 +1035,7 @@ $lang['textsep'] = "Syyskuu";
 $lang['textserverload'] = "Palvelimen Kuorma:";
 $lang['textsettings'] = "Asetukset";
 $lang['textsettingsupdate'] = "Asetukset päivitetty.";
-$lang['textshowemail'] = "Näytä sähköpostiosoite kaikille (myös <FONT COLOR=#FF0000>roskapostittajille)</FONT>";
+$lang['textshowemail'] = "Näytä sähköpostiosoite kaikille (myös roskapostittajille)";
 $lang['textsig'] = "Allekirjoitus";
 $lang['textsite'] = "Kotisivu";
 $lang['textsitename'] = "Sivuston nimi";

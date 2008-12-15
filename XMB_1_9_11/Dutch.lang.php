@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Bijlagen";
 $lang['attachments_num_restored'] = "Bijlage verwerkt";
 $lang['attachments_num_stored'] = "Bijlage opgeslagen";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "De  bijlage die u probeert te uploaden is te groot.";
 $lang['autoinsertsmilies'] = "Voeg alle smilies toe die er zijn";
 $lang['autoinsertposticons'] = "Voeg alle post icons uit smilies de directory toe";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">zoek</a> naar alle berichten van deze gebruiker';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">zoek</a> naar alle berichten van deze gebruiker';
 $lang['secure_login'] = "hogere beveiliging - (Selecteer deze optie als u een openbare computer gebruikt.(";
 $lang['selecttemplate'] = "kies je template....";
 $lang['seperatebycomma'] = "Scheid meerdere items dmv komma's";

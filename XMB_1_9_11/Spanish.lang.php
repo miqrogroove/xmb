@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Adjuntar:";
 $lang['attachments'] = "Adjuntos";
 $lang['attachments_num_restored'] = "adjuntos restaurados";
 $lang['attachments_num_stored'] = "adjuntos almacenados";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "El tamaño del archivo que está intentando subir es mayor al permitido.";
 $lang['autoinsertsmilies'] = "Añadir cada carita en la carpeta \"Smilies\"";
 $lang['autoinsertposticons'] = "Añadir cada PostIcon en la carpeta \"Smilies\"";

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "夾帶檔";
 $lang['attachments_num_restored'] = "夾帶檔修復";
 $lang['attachments_num_stored'] = "夾帶檔儲存";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "您上傳的夾帶檔容量過大。";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">搜索</a> 這名會員登錄的所有文章';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">搜索</a> 這名會員登錄的所有文章';
 $lang['secure_login'] = " 安全登陸 - 增加在公眾的計算機上登陸的安全";
 $lang['selecttemplate'] = "請選擇一個模版....";
 $lang['seperatebycomma'] = "用逗號分隔";

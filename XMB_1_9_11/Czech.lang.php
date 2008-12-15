@@ -1,7 +1,7 @@
 <?php
 /**Made by:    Kurt    Last mod:   21.8.2008
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Pøílohy";
 $lang['attachments_num_restored'] = "obnovenıch pøíloh";
 $lang['attachments_num_stored'] = "ulo¾enıch pøíloh";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Pøíloha, kterou vkládáte, je pøíli¹ velká.";
 $lang['autoinsertsmilies'] = "Vlo¾it v¹echny smilies z adresáøe smilies";
 $lang['autoinsertposticons'] = "Vlo¾it v¹echny ikony pøíspìvkù z adresáøe smilies";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Hledat</a> v¹echny pøíspìvky tohoto èlena';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Hledat</a> v¹echny pøíspìvky tohoto èlena';
 $lang['secure_login'] = "Bezpeèné pøihlá¹ení - lep¹í zabezpeèení na veøejnıch poèítaèích";
 $lang['selecttemplate'] = "Vyberte prosím ¹ablonu...";
 $lang['seperatebycomma'] = "Oddìlte záznamy èárkami";

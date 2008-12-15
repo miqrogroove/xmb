@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = 'Lisatud failid';
 $lang['attachments_num_restored'] = 'Lisatud failid taastatud';
 $lang['attachments_num_stored'] = 'Lisatud failid lisatud';
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = 'Fail, mida sa üritad oma postitusele lisada, on liiga suur.';
 $lang['autoinsertsmilies'] = 'Lisa kõik emotikonid emotikonide kaustast';
 $lang['autoinsertposticons'] = 'Lisa kõik postitusikoonid emotikonide kaustast';
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Otsi postitusi sellelt kasutajalt.</a>';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Otsi postitusi sellelt kasutajalt.</a>';
 $lang['secure_login'] = 'Turvaline login - kui arvutil on rohkem kasutajaid peale teie';
 $lang['selecttemplate'] = '- Palun vali templeit -';
 $lang['seperatebycomma'] = 'Eralda sisestus kasutades komasid';

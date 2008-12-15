@@ -7,7 +7,7 @@ Index: English.lang.php
  /**
   * eXtreme Message Board
 - * XMB 1.9.10 Karl
-+ * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
++ * XMB 1.9.11
   *
   * Developed And Maintained By The XMB Group
   * Copyright (c) 2001-2008, The XMB Group
@@ -75,7 +75,7 @@ Index: English.lang.php
  $lang['attachmanwhereauthor'] = "and author is:";
  $lang['attachmanwheredaysold'] = "and where post is this many days old:";
  $lang['attachmanwheredlcountgreater'] = "and download count is greater than:";
-@@ -103,13 +113,17 @@
+@@ -103,13 +113,18 @@
  $lang['attachmanwherename'] = "Where filename contains:";
  $lang['attachmanwheresizegreater'] = "and size is greater than (bytes):";
  $lang['attachmanwheresizesmaller'] = "and size is smaller than (bytes):";
@@ -87,6 +87,7 @@ Index: English.lang.php
  $lang['attachments'] = "Attachments";
  $lang['attachments_num_restored'] = "attachments restored";
  $lang['attachments_num_stored'] = "attachments stored";
++$lang['attachmore'] = "Click here to upload another file";
  $lang['attachtoobig'] = "The attachment you are trying to upload is too big.";
 +$lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
  $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -94,7 +95,7 @@ Index: English.lang.php
  $lang['avatar_too_big'] = "Your avatar is too big! The maximum allowed avatar size on this board is: ";
  $lang['aweek'] = "a week";
  $lang['backto'] = "Back to:";
-@@ -123,7 +137,10 @@
+@@ -123,7 +138,10 @@
  $lang['bannedmessage'] = "You are banned. You may not view the forums, post, make new topics, send U2U's or edit your posts.";
  $lang['banpost'] = "Posting";
  $lang['banu2u'] = "U2U";
@@ -105,7 +106,7 @@ Index: English.lang.php
  $lang['bbcode_help_bold'] = "Bold Tag\\nMakes the enclosed text bold.\\nUsage: [b]This is some bold text[/b]";
  $lang['bbcode_help_center'] = "Centered tag\\nCenters the enclosed text.\\nUsage: [align=center]This text is centered[/align]";
  $lang['bbcode_help_code'] = "Code Tag\\nBlockquotes the text you reference and preserves the formatting.\\nuseful for posting code.\\nUsage: [code]This is formatted text[/code]";
-@@ -135,9 +152,8 @@
+@@ -135,9 +153,8 @@
  $lang['bbcode_help_link'] = "Hyperlink Tag\\nTurns an URL into a hyperlink.\\nUsage: [url]http://www.anywhere.com[/url]\\nUsage: [url=http://www.anywhere.com]link text[/url]";
  $lang['bbcode_help_list'] = "List Tag\\nBuilds a bulleted, numbered, or alphabetical list.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";
  $lang['bbcode_help_quote'] = "Quote tag\\nQuotes the enclosed text to reference something specific that someone has posted.\\nUsage: [quote]This is a quote[/quote]";
@@ -116,7 +117,7 @@ Index: English.lang.php
  $lang['bbcode_normode'] = "Normal Mode\\nPopups will bring you step by step through the process of inserting BB Code.";
  $lang['bbcode_prompt_bold'] = "Please enter the text that should be bolded.";
  $lang['bbcode_prompt_center'] = "Please enter the text that should be centered.";
-@@ -159,8 +175,6 @@
+@@ -159,8 +176,6 @@
  $lang['bbcode_prompt_quote'] = "Please enter the text you want quoted.";
  $lang['bbcode_prompt_size'] = "Please enter the text to be size ";
  $lang['bbcode_prompt_underline'] = "Please enter the text that should be underlined.";
@@ -125,7 +126,7 @@ Index: English.lang.php
  $lang['bbinsert'] = "Auto BB Code Inserter:";
  $lang['bbname'] = "Forum Name:";
  $lang['beenfound'] = "accounts have been found, matching the given query:";
-@@ -174,24 +188,27 @@
+@@ -174,24 +189,27 @@
  $lang['cannotmergesamethread'] = 'I am sorry, but it is impossible to merge a thread with itself.';
  $lang['cantsplit'] = "This topic cannot be split as there are no replies.";
  $lang['cantthreadprune'] = "This topic cannot be pruned as there are no replies.";
@@ -164,7 +165,7 @@ Index: English.lang.php
  $lang['captchaverification'] = "Captcha Image Verification";
  $lang['cb_advmode'] = "Advanced";
  $lang['cb_fomatting'] = "Formatting Mode:";
-@@ -221,11 +238,11 @@
+@@ -221,11 +239,11 @@
  $lang['copythread'] = "Copy Thread";
  $lang['copythreadmsg'] = "This thread has been copied. Redirecting you to the original forum.";
  $lang['copythreadto'] = "Copy thread to";
@@ -178,7 +179,7 @@ Index: English.lang.php
  $lang['currentip'] = "Your current IP Address is";
  $lang['dateformat'] = "Date Format (mm/dd/yyyy, dd-mm-yy, etc):";
  $lang['day1'] = "last day";
-@@ -237,12 +254,13 @@
+@@ -237,12 +255,13 @@
  $lang['daysold'] = "Days Old";
  $lang['db_backup'] = "Database Backup";
  $lang['defaultTimezoneDesc'] = "Default TimeZone";
@@ -193,7 +194,7 @@ Index: English.lang.php
  $lang['desc'] = "Descending";
  $lang['developedby'] = "Developed By";
  $lang['dotfolders'] = "'dot' Folders:<br /><span class=\"smalltxt\">Do you want to show dots on folders for the users that have posted in them?</span>";
-@@ -290,23 +308,33 @@
+@@ -290,23 +309,33 @@
  $lang['evalstats8'] = '$lang["stats8"] = "The most popular forum is $popforum with $pop[posts] posts and $pop[threads] topics";';
  $lang['evalstats9'] = '$lang["stats9"] = "$mempost posts per member";';
  $lang['evaltrevlt'] = '$lang["trevltmsg"] = "This is a long topic, click <a href=\"$threadlink\">here</a> to review it.";';
@@ -232,7 +233,7 @@ Index: English.lang.php
  $lang['folderlist'] = "Manage Folders";
  $lang['foldermsg'] = "Separate all folders by commas (i.e. \"Folder 1, Folder 2\").";
  $lang['foldersupdate'] = "Folders list successfully updated.";
-@@ -314,25 +342,28 @@
+@@ -314,25 +343,28 @@
  $lang['footer_options'] = 'Footer Options:';
  $lang['forgotpw'] = "Forgot password?";
  $lang['forumjumpselect'] = "Select A Forum";
@@ -264,7 +265,7 @@ Index: English.lang.php
  $lang['impossiblebanall'] = "You can not ban <strong>all</strong> ips from your board!!";
  $lang['imsavedmsg'] = "Your U2U message has been saved. You will now be taken to your drafts folder.";
  $lang['imsentmsg'] = "Your U2U message has been sent. You will now be taken back to your inbox.";
-@@ -342,20 +373,26 @@
+@@ -342,20 +374,26 @@
  $lang['indexShowBarTop'] = "Top of the page only";
  $lang['index_stats'] = "Index Stats Bar Status:<br /><span class=\"smalltxt\">This option will enable/disable the stats bar on index.</span>";
  $lang['insertdata'] = "Insert your Data";
@@ -293,7 +294,7 @@ Index: English.lang.php
  $lang['locktopic'] = "A closed topic";
  $lang['loggedin'] = "Logged in as";
  $lang['loggedinuser'] = "Logged In User:";
-@@ -365,7 +402,7 @@
+@@ -365,7 +403,7 @@
  $lang['lostpw_in24hrs'] = "You have already requested your password once in the last 24 hours.<br />You can not rerequest it in the same 24-hour period.";
  $lang['lpoststats'] = "last post";
  $lang['max_addresses_per_entry'] = "Due to server-protection, it is not allowed to save more than 10 addresses at one time.";
@@ -302,7 +303,7 @@ Index: English.lang.php
  $lang['max_avatar_size_h'] = "The maximum avatar Height (in pixels):";
  $lang['max_avatar_size_w'] = "The maximum avatar Width (in pixels):";
  $lang['max_daily_regs'] = "Maximum number of new registrations per day.<br />Set to 0 for unlimited registrations per day.";
-@@ -375,15 +412,26 @@
+@@ -375,15 +413,26 @@
  $lang['mcpuid'] = "UID";
  $lang['memberisoff'] = "Member Is Offline";
  $lang['memberison'] = "Member Is <strong>Online</strong>";
@@ -332,7 +333,7 @@ Index: English.lang.php
  $lang['month1'] = "a month";
  $lang['month3'] = "3 months";
  $lang['month6'] = "6 months";
-@@ -392,6 +440,8 @@
+@@ -392,6 +441,8 @@
  $lang['moved'] = "Moved:";
  $lang['moveques'] = "Move?";
  $lang['movethreadmsg'] = "Thank you, the topic has been moved. You are now being forwarded back to the thread list.";
@@ -341,7 +342,7 @@ Index: English.lang.php
  $lang['multipnote'] = "Note: To ban multiple IP addresses at once, replace any of the 4 parts of the IP with a * (ex: 220.194.45.*)";
  $lang['multmodnote'] = "Note: To make multiple moderators, separate moderators with a comma (including a space) (ex: Moderator 1, Moderator 2)";
  $lang['mysql_tools'] = "Database Tools";
-@@ -408,13 +458,10 @@
+@@ -408,13 +459,10 @@
  $lang['newu2u1'] = "You have";
  $lang['newu2u2'] = "new U2U message(s)";
  $lang['nextsearch'] = "[Next Page]";
@@ -357,7 +358,7 @@ Index: English.lang.php
  $lang['noban'] = "Nothing";
  $lang['nobuddyselected'] = "You did not select a user to add to your address book.";
  $lang['noedit'] = "Sorry, you are not allowed to edit or delete this post.";
-@@ -434,12 +481,20 @@
+@@ -434,12 +482,20 @@
  $lang['notloggedin'] = "Not logged in";
  $lang['notpermitted'] = "You are not permitted to perform this operation.";
  $lang['nou2umsg'] = "You currently do not have any U2U Messages in your inbox.";
@@ -381,7 +382,7 @@ Index: English.lang.php
  $lang['onlineeditprofile'] = 'Editing $user\'s profile';
  $lang['onlinefaq'] = "Reading the FAQ";
  $lang['onlineforumdisplay'] = "Viewing forum: ";
-@@ -449,7 +504,13 @@
+@@ -449,7 +505,13 @@
  $lang['onlinelostpw'] = "Recovering lost password";
  $lang['onlinemanagefolders'] = "Managing U2U folders";
  $lang['onlinememcp'] = "Viewing user control panel";
@@ -395,7 +396,7 @@ Index: English.lang.php
  $lang['onlineonlinetoday'] = "Viewing members who have been online today";
  $lang['onlineother'] = "Other";
  $lang['onlinepostedit'] = "Editing a post";
-@@ -464,32 +525,25 @@
+@@ -464,32 +526,25 @@
  $lang['onlinetopicadmin'] = "Moderating the board";
  $lang['onlineu2udelete'] = "Deleting a U2U";
  $lang['onlineu2uignore'] = "Adding user to ignore list";
@@ -437,7 +438,7 @@ Index: English.lang.php
  $lang['parenopt'] = "(optional)";
  $lang['piconexists'] = 'PostIcon already exists';
  $lang['picons'] = "Post Icons";
-@@ -521,6 +575,7 @@
+@@ -521,6 +576,7 @@
  $lang['prunetopped'] = "Topped Posts";
  $lang['pruneusers'] = "The number of days after which a new user, who has never logged in, will be deleted.<br />Set to 0 to disable.";
  $lang['pspell_needed'] = "(<strong>This feature can not be turned on until your host installs the pspell/aspell extension!</strong>)";
@@ -445,7 +446,7 @@ Index: English.lang.php
  $lang['pwnomatch'] = "Passwords do not match";
  $lang['pwnote'] = "Enter new password if changing, otherwise leave blank.";
  $lang['queries'] = "Queries";
-@@ -532,14 +587,15 @@
+@@ -532,14 +588,15 @@
  $lang['raw_mysql'] = "Insert Raw SQL";
  $lang['reason'] = "Reason:";
  $lang['refreshbuddylist'] = "Refresh Address Book";
@@ -465,7 +466,7 @@ Index: English.lang.php
  $lang['renamefile'] = "&nbsp;Rename current file to:";
  $lang['repair'] = 'Repair Tables';
  $lang['replace'] = "Replace";
-@@ -556,9 +612,13 @@
+@@ -556,9 +613,13 @@
  $lang['restricted'] = "Sorry, you are unable to register this name as it is currently reserved. Please try again..";
  $lang['restrictedname'] = "Current usernames &amp; e-mail addresses not allowed";
  $lang['restrictedupdate'] = "Restricted usernames updated successfully!";
@@ -475,13 +476,13 @@ Index: English.lang.php
 +$lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 +$lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 +$lang['searchsubject'] = "Subject only.";
-+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Search</a> for all posts by this user';
++$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Search</a> for all posts by this user';
  $lang['search_advanced'] = "Advanced Search";
 -$lang['searchusermsg'] = '<a href="misc.php?action=search&amp;srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Search</a> for all posts by this user';
  $lang['secure_login'] = "Secure Login - increased security on public computers";
  $lang['selecttemplate'] = "Please select a template...";
  $lang['seperatebycomma'] = "Seperate multiple entries using commas";
-@@ -577,12 +637,12 @@
+@@ -577,12 +638,12 @@
  $lang['smtotal'] = "Total Visible Clickable Smilies:";
  $lang['sortby'] = " and sort them by";
  $lang['space_cats'] = "Spaced Categories Status:";
@@ -496,7 +497,7 @@ Index: English.lang.php
  $lang['startticker'] = "Resume";
  $lang['statistics'] = "Statistics";
  $lang['stats4'] = "Please welcome our newest member";
-@@ -657,6 +717,7 @@
+@@ -657,6 +718,7 @@
  $lang['textborderwidth'] = "Border Width:";
  $lang['textbriefsummary'] = "Brief Account Summary For";
  $lang['textbstatus'] = "Board Status:";
@@ -504,7 +505,7 @@ Index: English.lang.php
  $lang['textbuddylist'] = "Address Book";
  $lang['textbumpthread'] = "Bump Thread";
  $lang['textby'] = "by";
-@@ -732,7 +793,7 @@
+@@ -732,7 +794,7 @@
  $lang['textfaqans16'] = "Smilies are the little faces to the right of the input for message. They display graphical faces instead of simply a <strong>:)</strong>.<br />Here is a list of current supported smilies:";
  $lang['textfaqans17'] = "You can create a poll by visiting the forum you want to post the poll in and click on Start Poll. The screen following after you click the button is just like a normal new thread page but has an extra box for Poll Answers. You should enter one answer per line.<br /><br />You can vote on polls in threads by visiting the thread with the poll in it and selecting the option you want to vote for, then clicking the submit button. You can only vote on a poll once, so once you vote, you cant change your mind.<br /><br />The Administrator could have disabled this option for each forum.";
  $lang['textfaqans19'] = "Most of the time the answer is no, but ask your Admin.";
@@ -513,7 +514,7 @@ Index: English.lang.php
  $lang['textfaqans21'] = "You can logout by clicking Logout at the top of the page. When you logout the cookies that store your username and password will be removed and you will become a Guest or Anonymous user.";
  $lang['textfaqans3'] = "To add a signature to your posts you have to log into your <a href=\"memcp.php\">profile</a> and insert into the signature text box the signature you wish to use.<br /><br />BB Code and HTML maybe turned off or on. This can effect what you can insert into your signature.";
  $lang['textfaqans4'] = "Again in your <a href=\"memcp.php\">profile</a> there is a place for an 'Avatar' and avatar is the image under your name. Check with your Admin about the size of your avatar, it's usually considered common courtesy to use one under 150 pixels wide.";
-@@ -746,11 +807,30 @@
+@@ -746,11 +808,30 @@
  $lang['textfavorites'] = "Favorites";
  $lang['textfeb'] = "February";
  $lang['textfilename'] = "Filename:";
@@ -544,7 +545,7 @@ Index: English.lang.php
  $lang['textfixothreads'] = "Fix Orphaned Threads";
  $lang['textfixposts'] = "Fix Forum Totals";
  $lang['textfixthread'] = "Fix Thread Totals";
-@@ -785,8 +865,7 @@
+@@ -785,8 +866,7 @@
  $lang['textillegalquery'] = "The query you used is not allowed.";
  $lang['textimgcode'] = "IMG Code";
  $lang['textimgcodeis'] = "[img] Code is";
@@ -554,7 +555,7 @@ Index: English.lang.php
  $lang['textinforum'] = "in forum:";
  $lang['textinthread'] = "In Thread:";
  $lang['textinvisible'] = "Browse the board invisible";
-@@ -810,7 +889,7 @@
+@@ -810,7 +890,7 @@
  $lang['textlogin'] = "Login";
  $lang['textlogin_incorrect'] = "Login Details Incorrect";
  $lang['textlogout'] = "Logout";
@@ -563,7 +564,7 @@ Index: English.lang.php
  $lang['textlostpw'] = "Recover Lost Password";
  $lang['textlostpwnote'] = "Please enter both your <strong>Username</strong> and your <strong>e-mail</strong>.";
  $lang['textmanagefolders'] = "Manage Folders";
-@@ -858,7 +937,7 @@
+@@ -858,7 +938,7 @@
  $lang['textnewsmilie'] = "New Smilie";
  $lang['textnewsubf'] = "New Sub-Forum";
  $lang['textnewtheme'] = "New Theme";
@@ -572,7 +573,7 @@ Index: English.lang.php
  $lang['textnewu2uemail'] = "You received a new U2U";
  $lang['textno'] = "No";
  $lang['textnoaction'] = "Sorry, you are not authorized to perform this action";
-@@ -880,6 +959,7 @@
+@@ -880,6 +960,7 @@
  $lang['textoff'] = "Off";
  $lang['textoffline'] = "Offline";
  $lang['textoftotposts'] = "of total posts";
@@ -580,7 +581,7 @@ Index: English.lang.php
  $lang['texton'] = "On";
  $lang['textonline'] = "Online";
  $lang['textopenthread'] = "Open Thread";
-@@ -917,7 +997,7 @@
+@@ -917,7 +998,7 @@
  $lang['textprune'] = "Prune";
  $lang['textprunethread'] = "Prune Thread";
  $lang['textpw1'] = "Sorry, the username/password you have entered appears to be incorrect.";
@@ -589,7 +590,7 @@ Index: English.lang.php
  $lang['textpwincorrect'] = 'You entered an incorrect password';
  $lang['textquote'] = "Quote:";
  $lang['textre'] = "Re:";
-@@ -927,6 +1007,7 @@
+@@ -927,6 +1008,7 @@
  $lang['textreggedonly'] = "Allow only registered users to view boards?";
  $lang['textregister'] = "Register";
  $lang['textregistered'] = "Registered:";
@@ -597,7 +598,7 @@ Index: English.lang.php
  $lang['textreplies'] = "Replies:";
  $lang['textreply'] = "Reply";
  $lang['textreplytrash'] = "Reply and delete";
-@@ -974,21 +1055,21 @@
+@@ -974,21 +1056,21 @@
  $lang['textstats'] = "Stats";
  $lang['textstatsstatus'] = "Statistics Status:";
  $lang['textstatus'] = "Avatar &amp; Member Status:";
@@ -624,7 +625,7 @@ Index: English.lang.php
  $lang['textthemename'] = "Theme Name:";
  $lang['texttime'] = "Time:";
  $lang['texttimeformat'] = "Time Format:";
-@@ -1042,14 +1123,14 @@
+@@ -1042,14 +1124,14 @@
  $lang['textyes'] = "Yes";
  $lang['textyesip'] = "This user had an ip of";
  $lang['textyourpw'] = "Your Login Information";
@@ -642,7 +643,7 @@ Index: English.lang.php
  $lang['timemsg'] = "Processed in";
  $lang['timezone1'] = "(GMT -12:00) Eniwetok, Kwajalein";
  $lang['timezone10'] = "(GMT -3:30) Newfoundland";
-@@ -1085,10 +1166,10 @@
+@@ -1085,10 +1167,10 @@
  $lang['timezone8'] = "(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima, Quito";
  $lang['timezone9'] = "(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz, Santiago";
  $lang['tocont'] = "to continue.";
@@ -655,7 +656,7 @@ Index: English.lang.php
  $lang['tool_completed'] = "Tool Request Completed!";
  $lang['tool_forumtotal'] = 'Fixed Forum Totals';
  $lang['tool_lastpost'] = 'Fixed Last Posts';
-@@ -1098,13 +1179,26 @@
+@@ -1098,13 +1180,26 @@
  $lang['tool_threadtotal'] = 'Fixed Thread Totals';
  $lang['tool_u2u'] = 'U2Us Cleared';
  $lang['tool_whosonline'] = 'Whos Online Cleared';
@@ -683,7 +684,7 @@ Index: English.lang.php
  $lang['u2ublocked'] = "The would-be recipient of this U2U has blocked you, so you can't send this message.";
  $lang['u2udump'] = "Clear All U2Us";
  $lang['u2udump_confirm'] = 'Are you sure you want to Delete all u2u\'s?';
-@@ -1122,6 +1216,7 @@
+@@ -1122,6 +1217,7 @@
  $lang['uploadinstead'] = "&nbsp;Upload this file instead:";
  $lang['usercpeditpromsg'] = "You have successfully edited your profile. Taking you back to the user control panel.";
  $lang['userip'] = "Search for user with the following IP address";
@@ -691,7 +692,7 @@ Index: English.lang.php
  $lang['username_length_invalid'] = 'The length of the username you supplied is invalid. Please ensure it is a minimum of 3 characters and a maximum of 32 characters.';
  $lang['userprofilemood'] = "Current Mood:";
  $lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
-@@ -1148,9 +1243,10 @@
+@@ -1148,9 +1244,10 @@
  $lang['whoodump_confirm'] = 'Are you sure you want to empty the whosonline?';
  $lang['whosoneval'] = '$lang["whosonmsg"] = "There are currently $guestn, $membern and $hiddenn browsing $bbname";';
  $lang['whosonline'] = "Who's Online";

@@ -1,7 +1,7 @@
 <?php
 /** // Translated By: Daniel Gouveia
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Anexos:";
 $lang['attachments'] = "Anexos";
 $lang['attachments_num_restored'] = "anexos restaurados";
 $lang['attachments_num_stored'] = "anexos arquivados";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "O anexo que você está a tentar enviar é demasiado grande.";
 $lang['autoinsertsmilies'] = "Inserir todos os smilies do directório smilies";
 $lang['autoinsertposticons'] = "Inserir todos os post icons do directório smilies";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Inserir mensagem e título.";
 $lang['searchguesterror'] = "Usuários Anónimos estão limitados a apenas uma página de resultados de pesquisa.";
 $lang['searchinvalid'] = "Esse texto de pesquisa não é permitido. Por favor, tente outra palavra-chave.";
 $lang['searchsubject'] = "Título Apenas.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Pesquisar</a> todas as mensagens deste utilizador';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Pesquisar</a> todas as mensagens deste utilizador';
 $lang['secure_login'] = "Login Seguro - segurança mais alta para uso em computadores públicos";
 $lang['selecttemplate'] = "Seleccione um modelo...";
 $lang['seperatebycomma'] = "Separe entradas múltiplas utilizando vírgulas";

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Csatoltak";
 $lang['attachments_num_restored'] = "csatolt fájl helyreállítva";
 $lang['attachments_num_stored'] = "csatolt fájl tárolva";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Sajnálom de a fájl túl nagy.";
 $lang['autoinsertsmilies'] = "Illeszd be az összes emotikont a 'smilies' mappából";
 $lang['autoinsertposticons'] = "Illeszd be az összes hozzásszólás ikont a 'smilies' mappából";
@@ -620,7 +621,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Keresés:</a> A fórum felhasználó összes hozzászólásainak listázása';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Keresés:</a> A fórum felhasználó összes hozzászólásainak listázása';
 $lang['secure_login'] = "Emelt biztonságú belépés - emelt biztonsági szintû beállítások használata javasolt minden nyilvános számitógépen";
 $lang['selecttemplate'] = "Kérlek válassz ki egy mintát....";
 $lang['seperatebycomma'] = "Vesszõkkel válaszd el az egyes fórumok neveit.";

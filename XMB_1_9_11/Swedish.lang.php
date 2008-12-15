@@ -1,7 +1,7 @@
 <?php
 /**    Made by:    Edquist
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Bifogade filer";
 $lang['attachments_num_restored'] = "Bifogade filer återställda";
 $lang['attachments_num_stored'] = "Bifogade filer sparade";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Din bifogade fil är för stor.";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -620,7 +621,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Sök</a> efter alla inlägg av denna användare';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Sök</a> efter alla inlägg av denna användare';
 $lang['secure_login'] = "Säker login - ökad säkerhet på offentliga datorer";
 $lang['selecttemplate'] = "Var vänlig välj en utseende fil....";
 $lang['seperatebycomma'] = "Seperate multiple entries using commas";

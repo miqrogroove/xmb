@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Ngjitur";
 $lang['attachments_num_restored'] = "Bashkngjitja u rivendos";
 $lang['attachments_num_stored'] = "Bashkngjitja u vendos";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Bashkngjitja qe po tenton te ngjitesh eshte shume i madh.";
 $lang['autoinsertposticons'] = "Insert all post icons from smilies directory";
 $lang['autoinsertsmilies'] = "Insert all smilies from smilies directory";
@@ -618,7 +619,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Search</a> for all posts by this user';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Search</a> for all posts by this user';
 $lang['secure_login'] = "I sigurise se larte - duhet zgjedhur patjeter nese je ne nje kompjuter publik";
 $lang['selecttemplate'] = "Zgjidhni nje Template...";
 $lang['seperatebycomma'] = "Ndah hyrjet e shumta duke perdoru komat, ";

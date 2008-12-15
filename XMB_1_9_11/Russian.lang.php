@@ -1,7 +1,7 @@
 <?php
 /** Modded by Sergey aka Porutchik * http://forum.aeroion.ru
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Мульти-вложения:";
 $lang['attachments'] = "Вложения:";
 $lang['attachments_num_restored'] = "восстановленные вложения";
 $lang['attachments_num_stored'] = "вложения сохранены";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Прикрепляемый вами файл слишком велик.";
 $lang['autoinsertposticons'] = "Вставить все иконки сообщений из директории со смайликами";
 $lang['autoinsertsmilies'] = "Вставить все смайлики из директории со смайликами";

@@ -1,7 +1,7 @@
 <?php
 /** Made by:    SmOkInQC - webmaster@smokinteam.info
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Fichiers joints";
 $lang['attachments_num_restored'] = "Fichiers joints restaurés";
 $lang['attachments_num_stored'] = "Fichiers joints sauvegardés";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Le fichier joint que vous essayez d'uploader dépasse la limite maximum autorisée.";
 $lang['autoinsertsmilies'] = "Insérer tous les smilies d'après le dossier des smilies";
 $lang['autoinsertposticons'] = "Insérer toutes les icônes d'après le dossier des smilies";
@@ -619,7 +620,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Chercher</a> tous les messages de cet utilisateur';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Chercher</a> tous les messages de cet utilisateur';
 $lang['secure_login'] = "Connexion sécurisée - Augmente la sécurité sur les ordinateurs publics";
 $lang['selecttemplate'] = "SVP sélectionnez un Template...";
 $lang['seperatebycomma'] = "Séparez de multiples choix par une virgule";

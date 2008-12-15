@@ -1,7 +1,7 @@
 <?php
 /**     Authors: Yudi Hidayat, Asep Sutisna
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Attachment";
 $lang['attachments_num_restored'] = "attachment dikembalikan";
 $lang['attachments_num_stored'] = "attachment disimpan";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Attachment yang Anda masukkan terlalu besar.";
 $lang['autoinsertsmilies'] = "Masukkan semua smilies dari direktori smilies";
 $lang['autoinsertposticons'] = "Masukkan semua icon kiriman dari direktori smilies";
@@ -619,7 +620,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">Pencarian</a> untuk semua kiriman dengan user ini';
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">Pencarian</a> untuk semua kiriman dengan user ini';
 $lang['secure_login'] = "Secure Login - meningkatkan keamanan pada komputer umum";
 $lang['selecttemplate'] = "Silahkan pilih template ...";
 $lang['seperatebycomma'] = "Pemisah multiple data dengan menggunakan koma";

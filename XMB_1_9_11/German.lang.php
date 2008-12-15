@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,6 +121,7 @@ $lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "Anhänge";
 $lang['attachments_num_restored'] = "Wiederhergestellte Anhänge";
 $lang['attachments_num_stored'] = "Gespeicherte Anhänge";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "Der Anhang, den Sie hochladen möchten, ist zu groß!";
 $lang['autoinsertsmilies'] = "Alle Smilies aus dem Smilieverzeichnis einfügen";
 $lang['autoinsertposticons'] = "Alle Posticons aus dem Smilieverzeichnis einfügen";
@@ -619,7 +620,7 @@ $lang['searchbody'] = "Post body and subject.";
 $lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
 $lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
 $lang['searchsubject'] = "Subject only.";
-$lang['searchusermsg'] = 'Nach allen Beiträgen dieses Benutzers <a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">suchen</a> ';
+$lang['searchusermsg'] = 'Nach allen Beiträgen dieses Benutzers <a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">suchen</a> ';
 $lang['secure_login'] = "Sichere Anmeldung:<br /><span class=\"smalltxt\">erhöhte Sicherheit auf öffentlichen Computern</span>";
 $lang['selecttemplate'] = "Bitte wählen Sie ein Vorlage ...";
 $lang['seperatebycomma'] = "Mehrere Einträge mit Kommas unterteilen.";
