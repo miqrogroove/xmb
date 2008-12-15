@@ -384,17 +384,23 @@ if ($action == 'lang') {
     
     if (onSubmit('edit') && noSubmit('editsubmit')) {
         $phraseid = getInt('phraseid', 'r');
-        $result = $db->query("SELECT k.*, t.cdata "
-                           . "FROM ".X_PREFIX."lang_keys AS k "
-                           . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
-                           . "LEFT JOIN ".X_PREFIX."lang_base AS b USING (langid) "
-                           . "WHERE k.phraseid=$phraseid AND (b.devname='$langfile' OR b.devname IS NULL)");
+        $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
         if ($db->num_rows($result) == 0) {
             error($lang['generic_missing'], FALSE);
         }
         $row = $db->fetch_array($result);
         $langkey = $row['langkey'];
-        $value = cdataOut($row['cdata']); //Escape for use in the form field.
+
+        $result = $db->query("SELECT t.cdata "
+                           . "FROM ".X_PREFIX."lang_text AS t "
+                           . "LEFT JOIN ".X_PREFIX."lang_base AS b USING (langid) "
+                           . "WHERE t.phraseid=$phraseid AND b.devname='$langfile'");
+        if ($db->num_rows($result) == 1) {
+            $row = $db->fetch_array($result);
+            $value = cdataOut($row['cdata']); //Escape for use in the form field.
+        } else {
+            $value = '';
+        }
         
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
