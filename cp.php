@@ -2211,7 +2211,7 @@ if ($action == "search") {
         ?>
         <br />
         <br />
-        <div align="center"><br /><input type="submit" class="submit" name="searchsubmit" value="Search now" /><br /><br /></div>
+        <div align="center"><br /><input type="submit" class="submit" name="searchsubmit" value="<?php echo $lang['cpsearch']; ?>" /><br /><br /></div>
         </td>
         </tr>
         </table>

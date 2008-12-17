@@ -150,6 +150,7 @@ switch($action) {
         nav($lang['textmovemethod1']);
         break;
     case 'getip':
+        $kill |= !X_ADMIN;
         nav($lang['textgetip']);
         break;
     case 'bump':
@@ -400,44 +401,44 @@ switch($action) {
         <tr bgcolor="<?php echo $altbg2?>">
         <td class="tablerow"><?php echo $lang['textyesip']?> <strong><?php echo $ipinfo['useip']?></strong> - <?php echo gethostbyaddr($ipinfo['useip'])?>
         <?php
-        if (X_ADMIN) {
-            $ip = explode('.', $ipinfo['useip']);
-            $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
-            $result = $db->fetch_array($query);
-            $db->free_result($query);
-            if ($result) {
-                $buttontext = $lang['textunbanip'];
-                for($i=1; $i<=4; ++$i) {
-                    $j = "ip$i";
-                    if ($result[$j] == -1) {
-                        $result[$j] = "*";
-                        $foundmask = 1;
-                    }
-                }
 
-                if ($foundmask) {
-                    $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
-                    eval($lang['evalipmask']);
-                    $lang['bannedipmask'] = stripslashes($lang['bannedipmask']);
-                    echo $lang['bannedipmask'];
-                } else {
-                    $lang['textbannedip'] = stripslashes($lang['textbannedip']);
-                    echo $lang['textbannedip'];
-                }
-                echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
-            } else {
-                $buttontext = $lang['textbanip'];
-                for($i=1; $i<=4; ++$i) {
-                    $j = $i - 1;
-                    echo "<input type=\"hidden\" name=\"newip$i\" value=\"$ip[$j]\" />";
+        $ip = explode('.', $ipinfo['useip']);
+        $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
+        $result = $db->fetch_array($query);
+        $db->free_result($query);
+        if ($result) {
+            $buttontext = $lang['textunbanip'];
+            for($i=1; $i<=4; ++$i) {
+                $j = "ip$i";
+                if ($result[$j] == -1) {
+                    $result[$j] = "*";
+                    $foundmask = 1;
                 }
             }
-            ?>
-            </td>
-            </tr>
-            <tr bgcolor="<?php echo $altbg1?>"><td class="ctrtablerow"><input type="submit" name="ipbansubmit" value="<?php echo $buttontext?>" />
-            <?php
+
+            if ($foundmask) {
+                $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
+                eval($lang['evalipmask']);
+                $lang['bannedipmask'] = stripslashes($lang['bannedipmask']);
+                echo $lang['bannedipmask'];
+            } else {
+                $lang['textbannedip'] = stripslashes($lang['textbannedip']);
+                echo $lang['textbannedip'];
+            }
+            echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
+        } else {
+            $buttontext = $lang['textbanip'];
+            for($i=1; $i<=4; ++$i) {
+                $j = $i - 1;
+                echo "<input type=\"hidden\" name=\"newip$i\" value=\"$ip[$j]\" />";
+            }
         }
+        ?>
+        </td>
+        </tr>
+        <tr bgcolor="<?php echo $altbg1?>"><td class="ctrtablerow"><input type="submit" name="ipbansubmit" value="<?php echo $buttontext?>" />
+        <?php
+
         echo '</td></tr></table></td></tr></table></form>';
         break;
 
