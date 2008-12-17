@@ -1824,7 +1824,6 @@ if ($action == "ipban") {
             <tr class="category">
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textdeleteques']?></font></strong></td>
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']?>:</font></strong></td>
-            <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textipresolve']?>:</font></strong></td>
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textadded']?></font></strong></td>
             </tr>
             <?php
@@ -1842,12 +1841,12 @@ if ($action == "ipban") {
                 <tr class="tablerow" bgcolor="<?php echo $altbg1?>">
                 <td><input type="checkbox" name="delete[<?php echo $ipaddress['id']?>]" value="1" /></td>
                 <td><?php echo $theip?></td>
-                <td><?php echo @gethostbyaddr($theip)?></td>
                 <td><?php echo $ipdate?></td>
                 </tr>
                 <?php
             }
 
+            $ips = explode(".", $onlineip);
             $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
             $result = $db->fetch_array($query);
             if ($result) {
