@@ -133,6 +133,7 @@ switch($action) {
         nav($lang['textmovemethod1']);
         break;
     case 'getip':
+        $kill |= !X_ADMIN;
         nav($lang['textgetip']);
         break;
     case 'bump':
