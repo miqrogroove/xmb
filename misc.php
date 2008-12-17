@@ -177,18 +177,23 @@ switch($action) {
             eval('$misc = "'.template('misc_lostpw').'";');
         } else {
             $username = postedVar('username');
+            if (strlen($username) < 3) {
+                error($lang['badinfo']);
+            }
             $email = postedVar('email');
-            $query = $db->query("SELECT username, email, pwdate, langfile FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
+            $query = $db->query("SELECT username, email, pwdate, langfile, status FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
+            if ($db->num_rows($query) != 1) {
+                error($lang['badinfo']);
+            }
             $member = $db->fetch_array($query);
             $db->free_result($query);
+            if ($member['status'] == 'Banned') {
+                error($lang['bannedmessage']);
+            }
 
             $time = $onlinetime - 86400;
             if ($member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
-            }
-
-            if (!$member['username']) {
-                error($lang['badinfo']);
             }
 
             $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
@@ -275,6 +280,8 @@ switch($action) {
             if (X_STAFF) {
                 $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
                 $online['location'] = stripslashes($online['location']);
+            } else {
+                $online['location'] = '';
             }
 
             if ($online['invisible'] == 1 && (X_ADMIN || $online['username'] == $xmbuser)) {
@@ -292,6 +299,8 @@ switch($action) {
             if (X_ADMIN) {
                 eval('$onlineusers .= "'.template('misc_online_row_admin').'";');
             } else {
+                $online['invisible'] = '';
+                $online['ip'] = '';
                 eval('$onlineusers .= "'.template('misc_online_row').'";');
             }
         }
