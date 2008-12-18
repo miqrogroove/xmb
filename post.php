@@ -685,7 +685,7 @@ switch($action) {
 
             $posts = '';
 
-            if (X_STAFF) {
+            if (modcheck($username, $forum['moderator']) == 'Moderator') {
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {
                 $closeoption = '';
@@ -1040,7 +1040,7 @@ switch($action) {
                 unset($Captcha);
             }
 
-            if (X_STAFF) {
+            if (modcheck($username, $forum['moderator']) == 'Moderator') {
                 $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {

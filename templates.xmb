@@ -1678,13 +1678,6 @@ var messageElement;
 <script language="JavaScript" type="text/javascript" src="./js/bbcodefns-$browser.js"></script>
 <script language="JavaScript" type="text/javascript">window.onload = loadEls;</script>
 
-|#*XMB TEMPLATE FILE*#|functions_bbcode_quickreply|#*XMB TEMPLATE*#|
-<script type="text/javascript" src="./js/bbcodefns-$browser.js"></script>
-<script type="text/javascript">
-var messageElement;
-loadEls();
-</script>
-
 |#*XMB TEMPLATE FILE*#|functions_bbcodeinsert|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[cb_fomatting]<br /><span class="smalltxt">
@@ -1750,6 +1743,13 @@ $spelling_lang
 <a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
 <a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a></td>
 </tr>
+
+|#*XMB TEMPLATE FILE*#|functions_bbcode_quickreply|#*XMB TEMPLATE*#|
+<script type="text/javascript" src="./js/bbcodefns-$browser.js"></script>
+<script type="text/javascript">
+var messageElement;
+loadEls();
+</script>
 
 |#*XMB TEMPLATE FILE*#|functions_smilieinsert|#*XMB TEMPLATE*#|
 <td>
