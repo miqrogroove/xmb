@@ -106,7 +106,12 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
 // Check attachment permissions
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW]) {
-    error($lang['privforummsg']);
+    if (X_GUEST) {
+        redirect("{$full_url}misc.php?action=login", 0);
+        exit;
+    } else {
+        error($lang['privforummsg']);
+    }
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
@@ -117,7 +122,12 @@ if ($forum['type'] == 'sub') {
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
-        error($lang['privforummsg']);
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['privforummsg']);
+        }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     }
@@ -136,11 +146,13 @@ if ($file['subdir'] == '') {
     }
     $path = $path.$file['subdir'].'/'.$file['aid'];
     if (!is_file($path)) {
+        header('HTTP/1.0 500 Internal Server Error');
         error($lang['filecorrupt']);
     }
     $size = intval(filesize($path));
 }
 if ($size != $file['filesize']) {
+    header('HTTP/1.0 500 Internal Server Error');
     error($lang['filecorrupt']);
 }
 

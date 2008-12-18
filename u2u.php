@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -68,7 +68,7 @@ eval('$u2uheader = "'.template('u2u_header').'";');
 eval('$u2ufooter = "'.template('u2u_footer').'";');
 
 if (X_GUEST) {
-    error($lang['u2unotloggedin'], false, $u2uheader, $u2ufooter, false, true, false, false);
+    redirect("{$full_url}misc.php?action=login", 0);
     exit;
 }
 

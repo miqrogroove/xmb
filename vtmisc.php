@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -37,8 +37,9 @@ loadtemplates(
 
 eval('$css = "'.template('css').'";');
 
-if (!X_MEMBER) {
-    error($lang['notpermitted']);
+if (X_GUEST) {
+    redirect("{$full_url}misc.php?action=login", 0);
+    exit;
 }
 
 //Validate $action, $pid, $tid, and $fid
@@ -50,6 +51,7 @@ if ($action == 'report') {
     $pid = getRequestInt('pid');
     $query = $db->query("SELECT f.*, t.tid, t.subject FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) LEFT JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid WHERE p.pid=$pid");
     if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
     $forum = $db->fetch_array($query);
@@ -60,16 +62,19 @@ if ($action == 'report') {
     $tid = getRequestInt('tid');
     $query = $db->query("SELECT f.*, t.subject FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid) WHERE t.tid=$tid");
     if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
     $forum = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $forum['fid'];
 } else {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoaction']);
 }
 
 if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
 

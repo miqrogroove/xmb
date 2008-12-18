@@ -74,6 +74,7 @@ if ($action == 'edit') {
     $pid = getRequestInt('pid');
     $query = $db->query("SELECT f.*, t.tid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) LEFT JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid WHERE p.pid=$pid");
     if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
     $forum = $db->fetch_array($query);
@@ -85,6 +86,7 @@ if ($action == 'edit') {
     $repquote = getInt('repquote');
     $query = $db->query("SELECT f.* FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."forums AS f USING (fid) WHERE t.tid=$tid");
     if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
     $forum = $db->fetch_array($query);
@@ -94,13 +96,16 @@ if ($action == 'edit') {
     $fid = getRequestInt('fid');
     $forum = getForum($fid);
     if ($forum === FALSE) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnoforum']);
     }
 } else {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoaction']);
 }
 
 if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
 
@@ -109,6 +114,7 @@ smcwcache();
 if ($tid > 0) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
     $thread = $db->fetch_array($query);
@@ -151,7 +157,12 @@ if ($poll != 'yes') {
 // check permissions on this forum (and top forum if it's a sub?)
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW]) {
-    error($lang['privforummsg']);
+    if (X_GUEST) {
+        redirect("{$full_url}misc.php?action=login", 0);
+        exit;
+    } else {
+        error($lang['privforummsg']);
+    }
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
@@ -159,11 +170,21 @@ if (!$perms[X_PERMS_VIEW]) {
 // check posting permissions specifically
 if ($action == 'newthread') {
     if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
-        error($lang['textnoaction']);
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['textnoaction']);
+        }
     }
 } else if ($action == 'reply') {
     if (!$perms[X_PERMS_REPLY]) {
-        error($lang['textnoaction']);
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['textnoaction']);
+        }
     }
 } else if ($action == 'edit') {
     // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
@@ -176,7 +197,14 @@ if ($forum['type'] == 'sub') {
     $fup = getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!($fupPerms[X_PERMS_VIEW] && $fupPerms[X_PERMS_PASSWORD])) {
+    if (!$fupPerms[X_PERMS_VIEW]) {
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['privforummsg']);
+        }
+    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
     } else if ($fup['fup'] > 0) {
         $fupup = getForum($fup['fup']);
@@ -491,7 +519,8 @@ switch($action) {
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
             $pid = $db->insert_id();
 
-            if ((X_STAFF) && $closetopic == 'yes') {
+            $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
+            if ($moderator && $closetopic == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
@@ -907,12 +936,14 @@ switch($action) {
 
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
-            if ((X_STAFF) && $toptopic == 'yes') {
-                $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
-            }
-
-            if ((X_STAFF) && $closetopic == 'yes') {
-                $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+            $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
+            if ($moderator) {
+                if ($toptopic == 'yes') {
+                    $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
+                }
+                if ($closetopic == 'yes') {
+                    $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+                }
             }
 
             if ($forum['attachstatus'] == 'on') {

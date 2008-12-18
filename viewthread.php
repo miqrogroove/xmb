@@ -220,12 +220,18 @@ $fid = $thread['fid'];
 $forum = getForum($fid);
 
 if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
 
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW]) {
-    error($lang['privforummsg']);
+    if (X_GUEST) {
+        redirect("{$full_url}misc.php?action=login", 0);
+        exit;
+    } else {
+        error($lang['privforummsg']);
+    }
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
@@ -236,7 +242,12 @@ if ($forum['type'] == 'sub') {
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
-        error($lang['privforummsg']);
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['privforummsg']);
+        }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ($fup['fup'] > 0) {

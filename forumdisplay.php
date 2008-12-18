@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -67,7 +67,12 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
 
 $perms = checkForumPermissions($forum);
 if (!$perms[X_PERMS_VIEW]) {
-    error($lang['privforummsg']);
+    if (X_GUEST) {
+        redirect("{$full_url}misc.php?action=login", 0);
+        exit;
+    } else {
+        error($lang['privforummsg']);
+    }
 } else if (!$perms[X_PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
@@ -78,7 +83,12 @@ if ($forum['type'] == 'sub') {
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
-        error($lang['privforummsg']);
+        if (X_GUEST) {
+            redirect("{$full_url}misc.php?action=login", 0);
+            exit;
+        } else {
+            error($lang['privforummsg']);
+        }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ($fup['fup'] > 0) {

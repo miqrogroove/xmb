@@ -31,6 +31,11 @@ define('X_SCRIPT', 'topicadmin.php');
 require 'header.php';
 require ROOT.'include/topicadmin.inc.php';
 
+if (X_GUEST) {
+    redirect("{$full_url}misc.php?action=login", 0);
+    exit;
+}
+
 $_tid = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
 $fid = getInt('fid', 'p');
 if ($fid == 0) {
@@ -90,6 +95,7 @@ if ($tid && !is_array($tid) && false === strstr($tid, ',')) {
 $forums = getForum($fid);
 
 if (($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
+    header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
 
