@@ -280,8 +280,6 @@ switch($action) {
             if (X_STAFF) {
                 $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
                 $online['location'] = stripslashes($online['location']);
-            } else {
-                $online['location'] = '';
             }
 
             if ($online['invisible'] == 1 && (X_ADMIN || $online['username'] == $xmbuser)) {
