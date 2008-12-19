@@ -204,7 +204,7 @@ if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER) {
     $db->free_result($query);
 }
 
-$querytop = $db->query("SELECT t.* FROM ".X_PREFIX."threads t WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT $start_limit, $tpp");
+$querytop = $db->query("SELECT t.*, m.uid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."members AS m ON t.author=m.username WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT $start_limit, $tpp");
 while($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
@@ -220,7 +220,7 @@ while($thread = $db->fetch_array($querytop)) {
 
     $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
-    if ($thread['author'] == $lang['textanonymous']) {
+    if ($thread['author'] == $lang['textanonymous'] Or is_null($thread['uid'])) {
         $authorlink = $thread['author'];
     } else {
         $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';

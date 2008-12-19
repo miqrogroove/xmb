@@ -546,6 +546,7 @@ if ($action == '') {
             }
 
             $encodename = recodeOut($post['author']);
+            $profilelink = "<a href=\"./member.php?action=viewpro&amp;member=$encodename\">{$post['author']}</a>";
 
             $icq = '';
             if ($post['icq'] != '' && $post['icq'] > 0) {
@@ -664,6 +665,7 @@ if ($action == '') {
             $location = '';
             $mood = '';
             $encodename = '';
+            $profilelink = $post['author'];
         }
 
         $ip = '';

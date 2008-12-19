@@ -4701,7 +4701,7 @@ $quickreply
 |#*XMB TEMPLATE FILE*#|viewthread_modlog|#*XMB TEMPLATE*#|
 <tr bgcolor="$thisbg">
 <td valign="top" class="tablerow" style="width: 18%;">
-<a href="./member.php?action=viewpro&amp;member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
+<font class="mediumtxt"><strong>$profilelink</strong></font>
 <br />
 <div class="smalltxt"><a name="pid$post[pid]"></a>
 $showtitle
@@ -4785,7 +4785,7 @@ $buttoncode
 |#*XMB TEMPLATE FILE*#|viewthread_post|#*XMB TEMPLATE*#|
 <tr bgcolor="$thisbg">
 <td rowspan="3" valign="top" class="tablerow" style="width: 18%;">
-<a href="./member.php?action=viewpro&amp;member=$encodename"><font class="mediumtxt"><strong>$post[author]</strong></font></a>
+<font class="mediumtxt"><strong>$profilelink</strong></font>
 <br />
 <div class="smalltxt"><a name="pid$post[pid]"></a>
 $showtitle
