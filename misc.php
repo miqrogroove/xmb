@@ -372,11 +372,21 @@ switch($action) {
 
         $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
         $max_page = (int) ($result / $memberperpage) + 1;
-        if ($page && $page >= 1 && $page <= $max_page) {
+        if ($page > 1 && $page <= $max_page) {
             $start_limit = ($page-1) * $SETTINGS['memberperpage'];
-        } else {
+        } elseif ($page == 0 And !isset($_GET['page'])) {
             $start_limit = 0;
             $page = 1;
+        } elseif ($page == 1) {
+            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
+            $newurl = str_replace('&page=1', '', $newurl);
+            $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
+            header('HTTP/1.0 301 Moved Permanently');
+            header('Location: '.$newurl);
+            exit;
+        } else {
+            header('HTTP/1.0 404 Not Found');
+            error($lang['generic_missing']);
         }
 
         if ($order != 'username' && $order != 'postnum' && $order != 'status' && $order != 'location') {

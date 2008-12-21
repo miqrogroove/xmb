@@ -3070,7 +3070,7 @@ $header
 <td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
 <td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
 <td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
@@ -3122,7 +3122,7 @@ $multipage
 <td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
 <td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
 <td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]&amp;page=$page$ext"><strong>$ascdesc</strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
