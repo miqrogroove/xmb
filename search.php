@@ -30,8 +30,6 @@ define('X_SCRIPT', 'search.php');
 
 require 'header.php';
 
-header('X-Robots-Tag: noindex');
-
 loadtemplates(
 'misc_feature_notavailable',
 'search',
@@ -88,6 +86,8 @@ if (!isset($searchsubmit) && !isset($page)) {
     eval('$search = "'.template('search').'";');
     $misc = $search;
 } else {
+    header('X-Robots-Tag: noindex');
+
     $srchtxt = postedVar('srchtxt', '', FALSE, FALSE, FALSE, 'g');
     $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
     $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');

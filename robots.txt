@@ -9,5 +9,5 @@ User-agent: *
 Disallow: /buddy.php
 Disallow: /memcp.php
 Disallow: /post.php
-Disallow: /search.php
+Disallow: /search.php?
 Disallow: /u2u.php
