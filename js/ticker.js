@@ -40,3 +40,8 @@ function tickerstart() {
     runid = window.setInterval(tickerrun, delay, '');
     running = true;
 }
+
+function setTickerEvent() {
+    var old = (window.onload) ? window.onload : function () {};
+    window.onload = function () {old(); tickerstart()};
+}
