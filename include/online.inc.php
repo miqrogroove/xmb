@@ -88,7 +88,7 @@ function url_to_text($url) {
                 $locate = getForum($fid);
                 $perms = checkForumPermissions($locate);
                 if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
-                    $location = $lang['onlineforumdisplay'].' '.$locate['name'];
+                    $location = $lang['onlineforumdisplay'].' '.fnameOut($locate['name']);
                     $fname[$fid] = $locate['name'];
                 }
             }
@@ -111,20 +111,9 @@ function url_to_text($url) {
             $url = 'index.php';
         }
     } else if (false !== strpos($url, '/editprofile.php')) {
-        $temp = explode('?', $url);
+        $location = $lang['onlinecp'];
         if (!X_SADMIN) {
             $url = 'index.php';
-        }
-
-        if (false!== strpos($temp[1], 'user=')) {
-            if (isset($temp[1]) && !empty($temp[1]) && $temp[1] != 'user=') {
-                $user = str_replace('user=', '', $temp[1]);
-                eval("\$location = \"$lang[onlineeditprofile]\";");
-            } else {
-                $location = $lang['onlineeditnoprofile'];
-            }
-        } else {
-            $location = $lang['onlineeditnoprofile'];
         }
     } else if (false !== strpos($url, '/faq.php')) {
         $location = $lang['onlinefaq'];
@@ -138,7 +127,7 @@ function url_to_text($url) {
             } elseif ($cat['type'] != 'group') {
                 $location = $lang['onlinecatunknown'];
             } else {
-                $location = $lang['onlineviewcat'].$cat['name'];
+                $location = $lang['onlineviewcat'].fnameOut($cat['name']);
             }
         } else {
             $location = $lang['onlineindex'];
@@ -147,22 +136,25 @@ function url_to_text($url) {
         if (false !== strpos($url, 'action=reg')) {
             $location = $lang['onlinereg'];
         } else if (false !== strpos($url, 'action=viewpro')) {
+            $location = $lang['onlinenoprofile']; // initialize
             $temp = explode('?', $url);
             $urls = explode('&', $temp[1]);
             if (isset($urls[1]) && !empty($urls[1]) && $urls[1] != 'member=') {
                 foreach($urls as $argument) {
-                    if (strpos($argument, 'member') !== false) {
+                    if (strpos($argument, 'member=') !== false) {
                         $member = str_replace('member=', '', $argument);
+                        $member = rawurldecode(str_replace('+', ' ', $member));
+                        $member = preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $member);
+                        $member = cdataOut(censor($member));
+                        eval('$location = "'.$lang['onlineviewpro'].'";');
+                        break;
                     }
                 }
-                eval("\$location = \"$lang[onlineviewpro]\";");
-            } else {
-                $location = $lang['onlinenoprofile'];
             }
         } else if (false !== strpos($url, 'action=coppa')) {
             $location = $lang['onlinecoppa'];
         } else {
-            $location = $lang['onlinenoprofile'];
+            $location = $lang['onlineunknown'];
         }
     } else if (false !== strpos($url, 'misc.php')) {
         if (false !== strpos($url, 'login')) {
@@ -235,8 +227,6 @@ function url_to_text($url) {
     } else {
         $location = $lang['onlineindex'];
     }
-
-    $location = html_entity_decode(str_replace('%20', '&nbsp;', htmlspecialchars($location)));
 
     $return = array();
     $return['url'] = attrOut($url, 'javascript');
