@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.8 Engage Final SP3
+ * XMB 1.9.8 Engage Final SP3 // Including 2008-12-23 Security Patch
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -146,6 +146,7 @@ function url_to_text($url) {
             if (isset($temp[1]) && !empty($temp[1]) && $temp[1] != 'user=') {
                 $user = str_replace('user=', '', $temp[1]);
                 eval("\$location = \"$lang[onlineeditprofile]\";");
+                $location = cdataOut($location);
             } else {
                 $location = $lang['onlineeditnoprofile'];
             }
@@ -181,6 +182,7 @@ function url_to_text($url) {
                     }
                 }
                 eval("\$location = \"$lang[onlineviewpro]\";");
+                $location = cdataOut($location);
             } else {
                 $location = $lang['onlinenoprofile'];
             }
