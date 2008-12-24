@@ -2034,7 +2034,7 @@ if ($action == "upgrade") {
                 <td bgcolor="<?php echo $bordercolor?>">
                 <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td colspan="<?php echo $numfields; ?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo $explode[$num]?>
+                <td colspan="<?php echo $numfields; ?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo cdataOut($explode[$num]); ?>
                 <?php
                 $xn = strtoupper($explode[$num]);
                 if (!is_bool($query)) {
