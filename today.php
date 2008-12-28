@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -108,8 +108,8 @@ if ($results == 0) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
         $thread['name'] = fnameOut($thread['name']);
 
-        if ($thread['author'] == $lang['textanonymous']) {
-            $authorlink = $thread['author'];
+        if ($thread['author'] == 'Anonymous') {
+            $authorlink = $lang['textanonymous'];
         } else {
             $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
 
@@ -119,7 +119,7 @@ if ($results == 0) {
         $dalast = $lastpost[0];
         $lastPid = $lastpost[2];
 
-        if ($lastpost[1] != $lang['textanonymous']) {
+        if ($lastpost[1] != 'Anonymous') {
             $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
         }
 

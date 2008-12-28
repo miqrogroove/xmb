@@ -145,7 +145,7 @@ function chsize(size) {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_size+size, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[size='+size+']', '[/size]', messageElement);
             } else if (text != null) {
                 AddText('[size='+size+']', '[/size]', text, messageElement);
@@ -173,7 +173,7 @@ function chfont(font) {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_font+font, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[font='+font+']', '[/font]', messageElement);
             } else if (text != null) {
                 AddText('[font='+font+']', '[/font]', text, messageElement);
@@ -201,7 +201,7 @@ function bold() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_bold, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[b]', '[/b]', messageElement);
             } else if (text != null) {
                 AddText('[b]', '[/b]', text, messageElement);
@@ -227,7 +227,7 @@ function italicize() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_italic, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[i]', '[/i]', messageElement);
             } else if (text != null) {
                 AddText('[i]', '[/i]', text, messageElement);
@@ -253,7 +253,7 @@ function underline() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_underline, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[u]', '[/u]', messageElement);
             } else if (text != null) {
                 AddText('[u]', '[/u]', text, messageElement);
@@ -279,7 +279,7 @@ function center() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_center, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[align=center]', '[/align]', messageElement);
             } else if (text != null) {
                 AddText('[align=center]', '[/align]', text, messageElement);
@@ -331,7 +331,7 @@ function quote() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_quote, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", messageElement);
             } else if (text != null) {
                 AddText("\r\n"+'[quote]'+"\r\n", '[/quote]'+"\r\n", text, messageElement);
@@ -357,7 +357,7 @@ function code() {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_code, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText("\r\n"+'[code]', '[/code]'+"\r\n", messageElement);
             } else if (text != null) {
                 AddText("\r\n"+'[code]', '[/code]'+"\r\n", text, messageElement);
@@ -383,7 +383,7 @@ function chcolor(color) {
     } else {
         if (hasSelection(messageElement)) {
             text = prompt(bbcode_prompt_color+color, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
+            if (text == fetchSelection(messageElement).replace(/\n/g, ' ')) {
                 wrapText('[color='+color+']', '[/color]', messageElement);
             } else if (text != null) {
                 AddText('[color='+color+']', '[/color]', text, messageElement);
