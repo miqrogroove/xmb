@@ -164,7 +164,14 @@ switch($p_extension) {
 validateTpp();
 validatePpp();
 
-$max_page = (int) ($forum['threads'] / $tpp) + 1;
+$threadcount = $db->result($db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
+
+// Perform automatic maintenance
+if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
+    updateforumcount($fid);
+}
+
+$max_page = ceil($threadcount / $tpp);
 if ($page > 1 && $page <= $max_page) {
     $start_limit = ($page-1) * $tpp;
 } elseif ($page == 0 And !isset($_GET['page'])) {

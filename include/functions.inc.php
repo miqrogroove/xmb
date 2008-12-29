@@ -911,11 +911,11 @@ function updateforumcount($fid) {
     global $db;
     $fid = intval($fid);
 
-    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
+    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
+    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $threadcount = $db->result($query, 0);
     $db->free_result($query);
 
