@@ -201,7 +201,9 @@ if ($thread['replies'] != $thread['postcount'] - 1) {
 if (strpos($thread['closed'], '|') !== false) {
     $moved = explode('|', $thread['closed']);
     if ($moved[0] == 'moved') {
-        redirect($full_url.'viewthread.php?tid='.$moved[1], 0);
+        header('HTTP/1.0 301 Moved Permanently');
+        header('Location: '.$full_url.'viewthread.php?tid='.$moved[1]);
+        exit();
     }
 }
 
