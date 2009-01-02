@@ -1,7 +1,7 @@
 <?php
 /** // Translated By: Daniel Gouveia
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -121,7 +121,7 @@ $lang['attachmentm'] = "Multi-Anexos:";
 $lang['attachments'] = "Anexos";
 $lang['attachments_num_restored'] = "anexos restaurados";
 $lang['attachments_num_stored'] = "anexos arquivados";
-$lang['attachmore'] = "Click here to upload another file";
+$lang['attachmore'] = "Clique aqui para enviar outro ficheiro";
 $lang['attachtoobig'] = "O anexo que você está a tentar enviar é demasiado grande.";
 $lang['autoinsertsmilies'] = "Inserir todos os smilies do directório smilies";
 $lang['autoinsertposticons'] = "Inserir todos os post icons do directório smilies";
