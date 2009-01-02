@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -1030,8 +1030,8 @@ Public License instead of this License.  But first, please read
 
         show_act('Checking PHP version');
         $current = phpversion();
-        $current = explode('.', $current);
-        $min = explode('.', PHP_MIN_VER);
+        $current = array_map('intval', explode('.', $current));
+        $min = array_map('intval', explode('.', PHP_MIN_VER));
         if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
             show_result(X_INST_ERR);
             error('Version mismatch', 'XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.', true);
@@ -1129,8 +1129,8 @@ Public License instead of this License.  But first, please read
                 $sqlver = mysql_get_server_info($link);
                 mysql_close();
                 show_act('Checking Database Version');
-                $current = explode('.', $sqlver);
-                $min = explode('.', MYSQL_MIN_VER);
+                $current = array_map('intval', explode('.', $sqlver));
+                $min = array_map('intval', explode('.', MYSQL_MIN_VER));
                 if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
                     show_result(X_INST_ERR);
                     error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);

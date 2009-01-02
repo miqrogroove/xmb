@@ -54,15 +54,15 @@ if (!defined('X_SADMIN') Or !X_SADMIN) {
 //Check Server Version
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
-$current = explode('.', phpversion());
-$min = explode('.', PHP_MIN_VER);
+$current = array_map('intval', explode('.', phpversion()));
+$min = array_map('intval', explode('.', PHP_MIN_VER));
 if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
     echo '<br /><br />XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.';
     trigger_error('Admin attempted upgrade with obsolete PHP engine.', E_USER_ERROR);
 }
 $sqlver = mysql_get_server_info($db->link);
-$current = explode('.', $sqlver);
-$min = explode('.', MYSQL_MIN_VER);
+$current = array_map('intval', explode('.', $sqlver));
+$min = array_map('intval', explode('.', MYSQL_MIN_VER));
 if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
     echo '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.';
     trigger_error('Admin attempted upgrade with obsolete MySQL engine.', E_USER_ERROR);
