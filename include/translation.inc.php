@@ -31,11 +31,16 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-// setNewLangValue() will add a new $lang value to the current translation and also add a new key if not found.
-// Parameter $langkey is the new translation key.
-// Parameter $cdata is the new value and it must be db-escaped!
-// Returns TRUE on success, FALSE if no translation has been loaded.
-// In other words, setNewLangValue('stats1', 'Statistics'); is equivalent to importing $lang['stats1'] = 'Statistics';
+/**
+ * Adds a new $lang value to the current translation and also adds a new key if not found.
+ *
+ * In other words, setNewLangValue('stats1', 'Statistics'); is equivalent to importing $lang['stats1'] = 'Statistics';
+ *
+ * @param string $langkey New translation key name.
+ * @param string $cdata New value and it must be db-escaped!
+ * @return bool TRUE on success, FALSE if no translation has been loaded.
+ * @author Robert Chapin (miqrogroove)
+ */
 function setNewLangValue($langkey, $cdata) {
     global $db, $langfile;
 
@@ -69,10 +74,13 @@ function setNewLangValue($langkey, $cdata) {
     return TRUE;
 }
 
-// setLangValue() will set a $lang value in the current translation for an existing key.
-// Parameter $phraseid is an integer, primary key of the lang_keys table.
-// Parameter $cdata is the new value and it must be db-escaped!
-// Returns TRUE on success.
+/**
+ * Sets a $lang value in the current translation for an existing key.
+ *
+ * @param int $phraseid is the primary key value of the lang_keys table.
+ * @param string $cdata is the new value and it must be db-escaped!
+ * @return bool TRUE on success.
+ */
 function setLangValue($phraseid, $cdata) {
     global $db, $langfile;
     
@@ -97,10 +105,13 @@ function setLangValue($phraseid, $cdata) {
     return TRUE;
 }
 
-// setManyLangValues() will add an array of new $lang values to the current translation.
-// Parameter $lang is an associative array of new key/value pairs.  Values should be raw cdata.
-// Parameter $langfile is the devname of the translation to add to.
-// Returns TRUE on success, FALSE if the devname does not exist.
+/**
+ * Adds an array of new $lang values to the current translation.
+ *
+ * @param array $lang Read-Only Variable. Associative array of new key/value pairs.  Values should be raw cdata.
+ * @param string $langfile Read-Only Variable. Devname of the translation to add to.
+ * @return bool TRUE on success, FALSE if the devname does not exist.
+ */
 function setManyLangValues(&$lang, &$langfile) {
     global $db;
     
@@ -156,9 +167,12 @@ function setManyLangValues(&$lang, &$langfile) {
     return TRUE;
 }
 
-// installNewTranslation() handles all logic necessary to install an XMB translation file.
-// Parameter $upload must be a string containing the entire translation file.
-// Returns TRUE on success.
+/**
+ * Handles all logic necessary to install an XMB translation file.
+ *
+ * @param string $upload Read/Write Variable. Must contain the entire translation file.
+ * @return bool TRUE on success.
+ */
 function installNewTranslation(&$upload) {
     global $db, $SETTINGS;
 
@@ -264,11 +278,15 @@ function installNewTranslation(&$upload) {
     return TRUE;
 }
 
-// exportTranslation() creates a PHP file of a single translation.
-// String literals are always expressed in double quotes because the original quoting was not saved during installation.
-// Parameter $langid must be an integer, primary key of the lang_base table.
-// Parameter $devname will be modified by this function to return the lang_base.devname value.
-// Returns the entire file as a string on success, FALSE otherwise.
+/**
+ * Creates a PHP file of a single translation.
+ *
+ * String literals are always expressed in double quotes because the original quoting was not saved during installation.
+ *
+ * @param int $langid Primary key value of the lang_base table.
+ * @param string $devname Write-Only Variable. Returns the lang_base.devname value.
+ * @return string|bool Entire file on success, FALSE otherwise.
+ */
 function exportTranslation($langid, &$devname) {
     global $db;
     
@@ -307,7 +325,9 @@ function exportTranslation($langid, &$devname) {
     return $contents;
 }
 
-// langPanic() handles any unexpected configuration that prevented the translation database from loading.
+/**
+ * Handles any unexpected configuration that prevented the translation database from loading.
+ */
 function langPanic() {
     global $SETTINGS;
 

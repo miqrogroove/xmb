@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 2 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2008, The XMB Group
@@ -110,7 +110,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $db, $self, $lang, $xmbuser, $SETTINGS, $del, $full_url;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
-    global $forward, $reply, $sendsubmit, $savesubmit, $previewsubmit;
+    global $forward, $reply, $previewsubmit;
 
     $dbsubject = $db->escape(addslashes($subject)); //message and subject were historically double-slashed
     $dbmessage = $db->escape(addslashes($message));

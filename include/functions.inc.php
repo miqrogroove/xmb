@@ -711,7 +711,7 @@ function modcheckPost(&$username, &$mods, &$origstatus) {
 // As of version 1.9.11, function forum() is not responsible for any permissions checking.
 // Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
 function forum($forum, $template, $index_subforums) {
-    global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $hideprivate, $addtime, $oldtopics, $lastvisit;
+    global $timecode, $dateformat, $lang, $xmbuser, $self, $lastvisit2, $timeoffset, $addtime, $oldtopics, $lastvisit;
     global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);

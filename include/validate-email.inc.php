@@ -31,18 +31,16 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-/*
-    EmailAddressValidator Class
-    http://code.google.com/p/php-email-address-validation/
-
-    Released under New BSD license
-    http://www.opensource.org/licenses/bsd-license.php
-    
-    Retrieved 4 November 2008 @ Revision 5 dated 15 July 2008
-    Ported to PHP 4 for use with XMB
-
-*/
-
+/**
+ * EmailAddressValidator Class
+ * http://code.google.com/p/php-email-address-validation/
+ *
+ * Retrieved 4 November 2008
+ * Ported to PHP 4 for use with XMB
+ *
+ * @license http://www.opensource.org/licenses/bsd-license.php New BSD license
+ * @version Revision 5 dated 15 July 2008
+ */
 class EmailAddressValidator {
 
     /**

@@ -719,7 +719,7 @@ if ($action == '') {
                     $post['filedims'] = '';
                     $output = '';
                     $extention = strtolower(get_extension($post['filename']));
-                    if ($attachimgpost == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+                    if ($SETTINGS['attachimgpost'] == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
                         if (intval($attach['thumbid'] > 0)) {
                             $post['thumburl'] = getAttachmentURL($attach['thumbid'], $post['pid'], $attach['thumbname']);
                             $result = explode('x', $attach['thumbsize']);

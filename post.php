@@ -1308,7 +1308,7 @@ eval('$footer = "'.template('footer').'";');
 echo $header.$errors.$postpage.$footer;
 
 function bbcodeinsert() {
-    global $imgdir, $bbinsert, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
+    global $imgdir, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
 
     $bbcode = '';
     if ($SETTINGS['bbinsert'] == 'on') {

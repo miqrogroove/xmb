@@ -53,11 +53,20 @@ X_NO_TEMP_FILE          => $lang['fileuploaderror7'],
 X_GENERIC_ATTACH_ERROR  => $lang['fileuploaderror8'],
 X_INVALID_FILENAME      => $lang['invalidFilename']);
 
-// attachUploadedFile() checks for the presence of $_FILES[$varname].
-// If found, the file will be stored and attached to the specified $pid.
-// The $pid can be omitted in post preview mode, thus creating
-// orphaned attachments that the registered user will be allowed to manage.
-// Storage responsibilities include subdirectory and thumbnail creation.
+/**
+ * Attaches a single uploaded file to a specific forum post.
+ *
+ * attachUploadedFile() checks for the presence of $_FILES[$varname].
+ * If found, the file will be stored and attached to the specified $pid.
+ * The $pid can be omitted in post preview mode, thus creating
+ * orphaned attachments that the registered user will be allowed to manage.
+ * Storage responsibilities include subdirectory and thumbnail creation.
+ *
+ * @param string $varname Form variable name, used in the $_FILES associative index.
+ * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
+ * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
+ * @author Robert Chapin (miqrogroove)
+ */
 function attachUploadedFile($varname, $pid=0) {
     global $attachmentErrors, $db, $self, $SETTINGS;
     
@@ -557,7 +566,12 @@ function getSizeFormatted($attachsize) {
     return $attachsize;
 }
 
-// getNewSubdir returns the value that should be stored in the subdir column of a new row in the attachment table.
+/**
+ * Generates the value that should be stored in the subdir column of a new row in the attachment table.
+ *
+ * @param string $date Optional. Unix timestamp of the attachment, if not now.
+ * @return string
+ */
 function getNewSubdir($date='') {
     global $SETTINGS;
     if ($date == '') {
@@ -570,10 +584,16 @@ function getNewSubdir($date='') {
     }
 }
 
-// getFullPathFromSubdir() returns the concatenation of
-// the file storage path and a specified subdir value.
-// A trailing forward-slash is guaranteed in the return value.
-// Returns FALSE if the file storage path is empty.
+/**
+ * Retrieve the full path given just a subdirectory name.
+ *
+ * getFullPathFromSubdir() returns the concatenation of
+ * the file storage path and a specified subdir value.
+ * A trailing forward-slash is guaranteed in the return value.
+ *
+ * @param string $subdir The name typically has no leading or trailing slashes, e.g. 'dir1' or 'dir2/sub3'
+ * @return string|bool FALSE if the file storage path is empty.
+ */
 function getFullPathFromSubdir($subdir) {
     global $SETTINGS;
     $path = $SETTINGS['files_storage_path'];
@@ -607,17 +627,22 @@ function getTempFile($path=FALSE) {
     return $filepath;
 }
 
-// createThumbnail() will take in the path to an image and then create a resized image based on global settings.
-//  The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
-//  Otherwise, the thumbnail will be saved to disk at $filepath.'-thumb.jpg'
-// $filename (string) The original name of the input file.
-// $filepath (string) The current name and location (full path) of the input file.
-// $filesize (int)    The size, in bytes, that you want printed on the thumbnail.
-// $imgSize  (object) Caller must construct a CartesianSize object to specify the dimensions of the input image.
-// $filetype (string) The MIME type of the input image.
-// $aid      (int)    AID to be used as the parentid if attaching the thumbnail to a post.
-// $pid      (int)    PID to attach the thumbnail to.
-// $subdir   (string) Subdirectory to use inside the file storage path, or null string to store it in the database.
+/**
+ * Uses the path to an image to create a resized image based on global settings.
+ *
+ * The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
+ * Otherwise, the thumbnail will simply be saved to disk at $filepath.'-thumb.jpg'
+ *
+ * @param string $filename Original name of the input file.
+ * @param string $filepath Current name and location (full path) of the input file.
+ * @param int    $filesize The size, in bytes, that you want printed on the thumbnail.
+ * @param object $imgSize  Caller must construct a CartesianSize object to specify the dimensions of the input image.
+ * @param string $filetype MIME type of the input image.
+ * @param int    $aid      Optional. AID to be used as the parentid if attaching the thumbnail to a post.
+ * @param int    $pid      Optional. PID to attach the thumbnail to.
+ * @param string $subdir   Optional. Subdirectory to use inside the file storage path, or null string to store it in the database.
+ * @return bool
+ */
 function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, $aid=0, $pid=0, $subdir='') {
     global $db, $self, $SETTINGS;
 
@@ -647,7 +672,7 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
     
     $extension = strtolower(get_extension($filename));
     if ($extension == '') {
-        $filetypei = $strtolower($filetype);
+        $filetypei = strtolower($filetype);
         if (strpos($filetypei, 'jpeg') !== FALSE) {
             $extension = 'jpg';
         } elseif (strpos($filetypei, 'gif') !== FALSE) {
@@ -816,20 +841,23 @@ function deleteThumbnail($aid, $pid) {
     private_deleteAttachments("WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
 }
 
+/**
+ * Rectangluar dimension object for simple operations and properties.
+ */
 class CartesianSize {
     var $height;
     var $width;
-    
+
     function CartesianSize($width, $height) {
         $this->height = intval($height);
         $this->width = intval($width);
     }
-    
+
     function aspect() {
         // Read-Only Property
         return $this->width / $this->height;
     }
-    
+
     function isBiggerThan($otherSize) {
         // Would overload '>' operator
         return ($this->width > $otherSize->width Or $this->height > $otherSize->height);

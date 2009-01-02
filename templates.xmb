@@ -1918,7 +1918,7 @@ $statsbar
 <!--//--><![CDATA[//><!--
 var stopticker = "$lang[stopticker]";
 var startticker = "$lang[startticker]";
-var delay = $tickerdelay;
+var delay = {$SETTINGS['tickerdelay']};
 var node = '';
 var current = 0;
 var running = false;

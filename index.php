@@ -52,7 +52,7 @@ eval('$css = "'.template('css').'";');
 $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
     $contents = '';
-    $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $tickercontents));
+    $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $SETTINGS['tickercontents']));
     for($i=0;$i<count($news);$i++) {
         if (strlen(trim($news[$i])) == 0) {
             continue;
@@ -340,8 +340,10 @@ end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header.$index.$footer;
 
-// getIndexForums() returns a two-dimensional array of forums sorted by the group's displayorder, then the forum's displayorder.
-// The $forums parameter must be a return value from the function getStructuredForums()
+/**
+ * @param array $forums Read-Only Variable. Must be a return value from the function getStructuredForums()
+ * @return array Two-dimensional array of forums sorted by the group's displayorder, then the forum's displayorder.
+ */
 function getIndexForums(&$forums) {
     global $db, $SETTINGS;
 

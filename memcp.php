@@ -79,7 +79,7 @@ switch($action) {
 }
 
 function makenav($current) {
-    global $THEME, $bordercolor, $tablewidth, $tablespacing, $altbg1, $altbg2, $lang;
+    global $THEME, $bordercolor, $tablewidth, $altbg1, $altbg2, $lang;
     
     $output =
       '<table cellpadding="0" cellspacing="0" border="0" bgcolor="'.$bordercolor.'" width="'.$tablewidth.'" align="center"><tr><td>
