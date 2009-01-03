@@ -272,7 +272,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     if ($usedb) {
         $subdir = '';
     } else {
-        $file = '';
+        $dbfile = '';
         $subdir = getNewSubdir();
         $path = getFullPathFromSubdir($subdir);
         if (!is_dir($path)) {
@@ -280,7 +280,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
         }
     }
     $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$dbfilename', '$dbfiletype', $dbfilesize, '$dbfile', {$self['uid']}, '$sqlsize', '$subdir')");
-    unset($file);
+    $dbfile = '';
     if ($db->affected_rows() == 1) {
         $aid = $db->insert_id();
     } else {
