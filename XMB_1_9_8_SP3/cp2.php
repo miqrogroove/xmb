@@ -1641,6 +1641,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('new')) {
+        $newtemplatename = postedVar('newtemplatename', 'javascript', TRUE, FALSE, TRUE);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
