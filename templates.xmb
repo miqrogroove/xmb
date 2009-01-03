@@ -3915,21 +3915,14 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|today_row|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td width="4%" bgcolor="$altbg1" align="center">$folder</td>
-<td width="4%" bgcolor="$altbg2" align="center">$thread[icon]</td>
-<td width="43%" bgcolor="$altbg1"><font class="12px">$prefix <a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a> $multipage2</font></td>
-<td width="14%" bgcolor="$altbg2" align="center">$authorlink</td>
-<td width="14%" bgcolor="$altbg1" align="center"><font class="11px"><a href="forumdisplay.php?fid=$thread[fid]">$thread[name]</a></font></td>
-<td width="5%" bgcolor="$altbg2" align="center"><font class="11px">$thread[replies]</font></td>
-<td width="5%" bgcolor="$altbg1" align="center"><font class="11px">$thread[views]</font></td>
-<td width="23%" bgcolor="$altbg2">
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr class="tablerow" align="right">
-<td bgcolor="$altbg2" nowrap="nowrap"><font size="1" face="verdana">$lastpost</font></td>
-<td bgcolor="$altbg2" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
-</tr>
-</table>
-</td>
+<td width="4%" bgcolor="$altbg1" class="ctrtablerow">$folder</td>
+<td width="4%" bgcolor="$altbg2" class="ctrtablerow">$thread[icon]</td>
+<td width="43%" bgcolor="$altbg1" class="tablerow"><font class="12px">$prefix <a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a> $multipage2</font></td>
+<td width="14%" bgcolor="$altbg2" class="ctrtablerow">$authorlink</td>
+<td width="14%" bgcolor="$altbg1" class="ctrtablerow"><font class="11px"><a href="forumdisplay.php?fid=$thread[fid]">$thread[name]</a></font></td>
+<td width="5%" bgcolor="$altbg2" class="ctrtablerow"><font class="11px">$thread[replies]</font></td>
+<td width="5%" bgcolor="$altbg1" class="ctrtablerow"><font class="11px">$thread[views]</font></td>
+<td width="23%" bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_bump|#*XMB TEMPLATE*#|

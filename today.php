@@ -31,6 +31,7 @@ define('X_SCRIPT', 'today.php');
 require 'header.php';
 
 loadtemplates(
+'forumdisplay_thread_lastpost',
 'today',
 'today_noposts',
 'today_row',
@@ -140,7 +141,7 @@ if ($results == 0) {
 
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-        $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
+        $lastpost = $lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
 
         if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
             $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
@@ -170,6 +171,8 @@ if ($results == 0) {
                 continue;
             }
         }
+
+        eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
         $prefix = '';
         if ($thread['pollopts'] == 1) {
