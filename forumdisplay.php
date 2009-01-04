@@ -56,7 +56,6 @@ eval($lang['hottopiceval']);
 
 $tid = getInt('tid');
 $fid = getInt('fid');
-$page = getInt('page');
 
 $forum = getForum($fid);
 
@@ -171,23 +170,7 @@ if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
     updateforumcount($fid);
 }
 
-$max_page = ceil($threadcount / $tpp);
-if ($page > 1 && $page <= $max_page) {
-    $start_limit = ($page-1) * $tpp;
-} elseif ($page == 0 And !isset($_GET['page'])) {
-    $start_limit = 0;
-    $page = 1;
-} elseif ($page == 1) {
-    $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-    $newurl = str_replace('&page=1', '', $newurl);
-    $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
-    header('HTTP/1.0 301 Moved Permanently');
-    header('Location: '.$newurl);
-    exit;
-} else {
-    header('HTTP/1.0 404 Not Found');
-    error($lang['generic_missing']);
-}
+$mpage = multipage($threadcount, $tpp, 'forumdisplay.php?fid='.$fid);
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
@@ -221,7 +204,7 @@ if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER) {
     $db->free_result($query);
 }
 
-$querytop = $db->query("SELECT t.*, m.uid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."members AS m ON t.author=m.username WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT $start_limit, $tpp");
+$querytop = $db->query("SELECT t.*, m.uid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."members AS m ON t.author=m.username WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT {$mpage['start']}, $tpp");
 while($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
@@ -312,13 +295,12 @@ while($thread = $db->fetch_array($querytop)) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
-    $postnum = $thread['replies']+1;
-    if ($postnum > $ppp) {
-        $pagelinks = multi($postnum, $ppp, 0, 'viewthread.php?tid='.intval($thread['tid']));
-        $multipage2 = '(<small>'.$pagelinks.'</small>)';
-    } else {
-        $pagelinks = $multipage2 = '';
+    $mpurl = 'viewthread.php?tid='.$thread['tid'];
+    $multipage2 = multi(1, quickpage($thread['replies']+1, $ppp), $mpurl, FALSE);
+    if (strlen($multipage2) != 0) {
+        $multipage2 = "(<small>$multipage2</small>)";
     }
+    unset($mpurl);
 
     eval('$threadlist .= "'.template($forumdisplay_thread).'";');
 
@@ -368,10 +350,8 @@ $db->free_result($query);
 
 eval('$sortby = "'.template('forumdisplay_sortby').'";');
 
-$mpurl = 'forumdisplay.php?fid='.$fid;
-if (($multipage = multi($topicsnum, $tpp, $page, $mpurl)) === false) {
-    $multipage = '';
-} else {
+$multipage =& $mpage['html'];
+if (strlen($mpage['html']) != 0) {
     if ($status1 == 'Moderator') {
         eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
     } else {

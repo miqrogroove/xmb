@@ -92,32 +92,13 @@ if ($results == 0) {
     validateTpp();
     validatePpp();
 
-    $max_page = ceil($results / $tpp);
-    $page = getInt('page');
-    if ($page > 1 && $page <= $max_page) {
-        $start_limit = ($page-1) * $tpp;
-    } elseif ($page == 0 And !isset($_GET['page'])) {
-        $start_limit = 0;
-        $page = 1;
-    } elseif ($page == 1) {
-        $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-        $newurl = str_replace('&page=1', '', $newurl);
-        $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
-        header('HTTP/1.0 301 Moved Permanently');
-        header('Location: '.$newurl);
-        exit;
-    } else {
-        header('HTTP/1.0 404 Not Found');
-        error($lang['generic_missing']);
-    }
-
-    $mpurl = 'today.php?daysold='.$daysold;
-    $multipage = '';
-    if (($multipage = multi($results, $tpp, $page, $mpurl)) !== false) {
+    $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
+    $multipage =& $mpage['html'];
+    if (strlen($mpage['html']) != 0) {
         eval('$multipage = "'.template('today_multipage').'";');
     }
 
-    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.topped, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT $start_limit, $tpp");
+    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.topped, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
@@ -183,12 +164,12 @@ if ($results == 0) {
             $prefix = $lang['toppedprefix'].' '.$prefix;
         }
 
-        if ($thread['posts'] > $ppp) {
-            $pagelinks = multi($thread['posts'], $ppp, 0, 'viewthread.php?tid='.$thread['tid']);
-            $multipage2 = '(<small>'.$pagelinks.'</small>)';
-        } else {
-            $pagelinks = $multipage2 = '';
+        $mpurl = 'viewthread.php?tid='.$thread['tid'];
+        $multipage2 = multi(1, quickpage($thread['replies']+1, $ppp), $mpurl, FALSE);
+        if (strlen($multipage2) != 0) {
+            $multipage2 = "(<small>$multipage2</small>)";
         }
+        unset($mpurl);
 
         eval('$today_row[] = "'.template('today_row').'";');
     }

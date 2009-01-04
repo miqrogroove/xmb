@@ -35,7 +35,6 @@ validatePpp();
 $pid = getInt('pid');
 $tid = getInt('tid');
 $fid = getInt('fid');
-$page = getInt('page');
 $goto = postedVar('goto', '', FALSE, FALSE, FALSE, 'g');
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
@@ -286,6 +285,12 @@ $status1 = modcheck($self['username'], $forum['moderator']);
 if ($action == '') {
     eval('$header = "'.template('header').'";');
 
+    $mpage = multipage($thread['postcount'], $ppp, 'viewthread.php?tid='.$tid);
+    $multipage =& $mpage['html'];
+    if (strlen($mpage['html']) != 0) {
+        eval('$multipage = "'.template('viewthread_multipage').'";');
+    }
+
     if ($perms[X_PERMS_REPLY] And ($thread['closed'] == '' Or X_SADMIN)) {
         eval('$replylink = "'.template('viewthread_reply').'";');
         if ($SETTINGS['quickreply_status'] == 'on') {
@@ -352,24 +357,6 @@ if ($action == '') {
 
     $topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
-    $max_page = ceil($thread['postcount'] / $ppp);
-    if ($page > 1 && $page <= $max_page) {
-        $start_limit = ($page-1) * $ppp;
-    } elseif ($page == 0 And !isset($_GET['page'])) {
-        $start_limit = 0;
-        $page = 1;
-    } elseif ($page == 1) {
-        $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-        $newurl = str_replace('&page=1', '', $newurl);
-        $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
-        header('HTTP/1.0 301 Moved Permanently');
-        header('Location: '.$newurl);
-        exit;
-    } else {
-        header('HTTP/1.0 404 Not Found');
-        error($lang['generic_missing']);
-    }
-
     $specialrank = array();
     $rankposts = array();
     $queryranks = $db->query("SELECT id, title, posts, stars, allowavatars, avatarrank FROM ".X_PREFIX."ranks");
@@ -385,12 +372,6 @@ if ($action == '') {
     $db->free_result($queryranks);
 
     $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid='$tid'");
-
-    $mpurl = 'viewthread.php?tid='.$tid;
-    $multipage = '';
-    if (($multipage = multi($thread['postcount'], $ppp, $page, $mpurl)) !== false) {
-        eval('$multipage = "'.template('viewthread_multipage').'";');
-    }
 
     $pollhtml = $poll = '';
     $vote_id = $voted = 0;
@@ -470,7 +451,7 @@ if ($action == '') {
          . "FROM ".X_PREFIX."posts "
          . "WHERE tid=$tid "
          . "ORDER BY dateline ASC, pid ASC "
-         . "LIMIT $start_limit, ".($ppp + 1);
+         . "LIMIT {$mpage['start']}, ".($ppp + 1);
     $query1 = $db->query($sql);
     $rowcount = $db->num_rows($query1);
     if ($rowcount > 0) {
@@ -494,7 +475,7 @@ if ($action == '') {
          . "    FROM ".X_PREFIX."posts "
          . "    WHERE tid=$tid "
          . "    ORDER BY dateline ASC, pid ASC "
-         . "    LIMIT $start_limit, $ppp "
+         . "    LIMIT {$mpage['start']}, $ppp "
          . "  ) "
          . "  UNION ALL "
          . "  ( "

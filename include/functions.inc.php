@@ -783,65 +783,136 @@ function forum($forum, $template, $index_subforums) {
     return $foruminfo;
 }
 
-function multi($num, $perpage, $page, $mpurl, $strict = false) {
-    $multipage = $GLOBALS['lang']['textpages'];
+/**
+ * Handles most of the I/O tasks to create a collection of numbered pages
+ * from an ordered collection of items.
+ *
+ * Caller must echo the returned html directly or in a template variable.
+ *
+ * @param int $num Total number of items in the collection.
+ * @param int $perpage Number of items to display on each page.
+ * @param string $baseurl Relative URL of the first page in the collection.
+ * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
+ */
+function multipage($num, $perpage, $baseurl) {
+    global $cookiepath, $full_url, $lang, $url;
+    
+    // Initialize
+    $return = array();
+    $page = getInt('page');
+    $max_page = quickpage(intval($num), intval($perpage));
 
-    $pages = quickpage($num, $perpage);
+    // Calculate the LIMIT start number for queries
+    if ($page > 1 && $page <= $max_page) {
+        $return['start'] = ($page-1) * $perpage;
+    } elseif ($page == 0 And !isset($_GET['page'])) {
+        $return['start'] = 0;
+        $page = 1;
+    } elseif ($page == 1) {
+        $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
+        $newurl = str_replace('&page=1', '', $newurl);
+        $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
+        header('HTTP/1.0 301 Moved Permanently');
+        header('Location: '.$newurl);
+        exit;
+    } else {
+        header('HTTP/1.0 404 Not Found');
+        error($lang['generic_missing']);
+    }
+    
+    // Generate the multipage link bar.
+    $return['html'] = multi($page, $max_page, $baseurl);
+    
+    return $return;
+}
 
-    if ($pages > 1) {
-        if ($page == 0) {
-            if ($pages < 4) {
-                $to = $pages;
-            } else {
-                $to = 3;
-            }
-        } else if ($page == $pages) {
-            $to = $pages;
-        } else if ($page == $pages-1) {
-            $to = $page+1;
-        } else if ($page == $pages-2) {
-            $to = $page+2;
+/**
+ * Generates an HTML page-selection bar for any collection of numbered pages.
+ *
+ * The link to each page in the collection will have the "page" variable added
+ * to its query string, except for page number one.
+ *
+ * @param int $page Current page number, must be >= 0.
+ * @param int $lastpage Total number of pages in the collection.
+ * @param string $mpurl Read-Only Variable. Relative URL of the first page in the collection.
+ * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
+ * @return string Null string if the $lastpage parameter was <= 1 or $page was invalid.
+ */
+function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
+    global $lang;
+
+    $multipage = $lang['textpages'];
+
+    if ($page >= 1 And $lastpage > 1 And $page <= $lastpage) {
+        if ($page >= $lastpage - 3) {
+            $to = $lastpage;
         } else {
-            $to = $page+3;
+            $to = $page + 3;
         }
 
-        if ($page >= 0 && $page <= 3) {
+        if ($page <= 4) {
             $from = 1;
         } else {
             $from = $page - 3;
         }
-
+        
         $to--;
         $from++;
 
         $string = (strpos($mpurl, '?') !== false) ? '&amp;' : '?';
-        if (1 != $page) {
-            $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.'">1</a></u>';
-            if (2 < $from) {
-                $multipage .= '&nbsp;&nbsp;..';
+
+        // Link to first page
+        $multipage .= "\n";
+        if ($page != 1 Or !$isself) {
+            $extra = '';
+            if ($isself) {
+                $extra = ' rel="start"';
+            }
+            $multipage .= '&nbsp;<u><a href="'.$mpurl.'"'.$extra.'>1</a></u>';
+            if ($from > 2) {
+                $multipage .= "\n&nbsp;..";
             }
         } else {
-            $multipage .= '&nbsp;&nbsp;<strong>1</strong>';
+            $multipage .= '&nbsp;<strong>1</strong>';
         }
 
+        // Link to current page and up to 2 prev and 2 next pages.
+        $multipage .= "\n";
         for($i = $from; $i <= $to; $i++) {
             if ($i != $page) {
-                $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.$string.'page='.$i.'">'.$i.'</a></u>';
+                $extra = '';
+                if ($isself) {
+                    if ($i == $page - 1) {
+                        $extra = ' rel="prev"';
+                    } else if ($i == $page + 1) {
+                        $extra = ' rel="next"';
+                    }
+                    if ($page == 1) {
+                        $extra .= ' rev="start"';
+                    }
+                }
+                $multipage .= '&nbsp;<u><a href="'.$mpurl.$string.'page='.$i.'"'.$extra.'>'.$i.'</a></u>';
             } else {
-                $multipage .= '&nbsp;&nbsp;<strong>'.$i.'</strong>';
+                $multipage .= '&nbsp;<strong>'.$i.'</strong>';
             }
+            $multipage .= "\n";
         }
 
-        if ($pages != $page) {
-            if (($pages - 1) > $to) {
-                $multipage .= '&nbsp;&nbsp;..';
+        // Link to last page
+        if ($lastpage != $page) {
+            if (($lastpage - 1) > $to) {
+                $multipage .= "&nbsp;..\n";
             }
-            $multipage .= '&nbsp;&nbsp;<u><a href="'.$mpurl.$string.'page='.$pages.'">'.$pages.'</a></u>';
+            $extra = '';
+            if ($isself And $page == 1) {
+                $extra = ' rev="start"';
+            }
+            $multipage .= '&nbsp;<u><a href="'.$mpurl.$string.'page='.$lastpage.'"'.$extra.'>'.$lastpage.'</a></u>';
         } else {
-            $multipage .= '&nbsp;&nbsp;<strong>'.$pages.'</strong>';
+            $multipage .= '&nbsp;<strong>'.$lastpage.'</strong>';
         }
-    } else if ($strict !== true) {
-        return false;
+    } else {
+        $multipage = '';
     }
 
     return $multipage;

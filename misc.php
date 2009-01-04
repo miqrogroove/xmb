@@ -237,27 +237,10 @@ switch($action) {
             exit();
         }
 
-        $page = getInt('page');
         $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."whosonline"), 0);
-        $max_page = ceil($count / $tpp);
-        if ($page > 1 && $page <= $max_page) {
-            $start_limit = ($page-1) * $tpp;
-        } elseif ($page == 0 And !isset($_GET['page'])) {
-            $start_limit = 0;
-            $page = 1;
-        } elseif ($page == 1) {
-            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-            $newurl = str_replace('&page=1', '', $newurl);
-            $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
-            header('HTTP/1.0 301 Moved Permanently');
-            header('Location: '.$newurl);
-            exit;
-        } else {
-            header('HTTP/1.0 404 Not Found');
-            error($lang['generic_missing']);
-        }
-
-        if (($multipage = multi($count, $tpp, $page, 'misc.php?action=online')) !== false) {
+        $mpage = multipage($count, $tpp, 'misc.php?action=online');
+        $multipage =& $mpage['html'];
+        if (strlen($mpage['html']) != 0) {
             if (X_ADMIN) {
                 eval('$multipage = "'.template('misc_online_multipage_admin').'";');
             } else {
@@ -277,7 +260,7 @@ switch($action) {
              . "SELECT username, 2 AS sort_col, ip, `time`, location, invisible "
              . "FROM ".X_PREFIX."whosonline WHERE username = 'xguest123' "
              . "ORDER BY sort_col, username, `time` DESC "
-             . "LIMIT $start_limit, $tpp";
+             . "LIMIT {$mpage['start']}, $tpp";
         $query = $db->query($sql);
 
         $onlineusers = '';
@@ -360,13 +343,6 @@ switch($action) {
         break;
 
     case 'list':
-        $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
-        $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
-        $page = getInt('page');
-        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE, FALSE, 'g'));
-        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE, 'g'));
-        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE, TRUE, 'g'));
-
         if ($SETTINGS['memliststatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
             eval('echo "'.template('header').'";');
@@ -376,27 +352,18 @@ switch($action) {
             exit();
         }
 
+
+        /* Validate All Inputs */
+
+        $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
+        $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
+        $page = getInt('page');
+        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE, FALSE, 'g'));
+        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE, 'g'));
+        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE, TRUE, 'g'));
+
         if (strtolower($desc) != 'desc') {
             $desc = 'asc';
-        }
-
-        $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
-        $max_page = ceil($result / $memberperpage);
-        if ($page > 1 && $page <= $max_page) {
-            $start_limit = ($page-1) * $SETTINGS['memberperpage'];
-        } elseif ($page == 0 And !isset($_GET['page'])) {
-            $start_limit = 0;
-            $page = 1;
-        } elseif ($page == 1) {
-            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-            $newurl = str_replace('&page=1', '', $newurl);
-            $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
-            header('HTTP/1.0 301 Moved Permanently');
-            header('Location: '.$newurl);
-            exit;
-        } else {
-            header('HTTP/1.0 404 Not Found');
-            error($lang['generic_missing']);
         }
 
         if ($order != 'username' && $order != 'postnum' && $order != 'status' && $order != 'location') {
@@ -454,17 +421,26 @@ switch($action) {
             $srchmem = '';
         }
 
-        $where[] = " lastvisit!=0 ";
-
-        $q = implode(' AND', $where);
-        $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT $start_limit, $memberperpage");
-        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
-
         if (count($ext) > 0) {
             $ext = '&amp;'.implode('&amp;', $ext);
         } else {
             $ext = '';
         }
+
+        $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
+        $mpage = multipage($result, $memberperpage, 'misc.php?action=list&amp;desc='.$desc.$ext);
+        $multipage =& $mpage['html'];
+        if (strlen($mpage['html']) != 0) {
+            eval('$multipage = "'.template('misc_mlist_multipage').'";');
+        }
+
+
+        /* Generate Output */
+
+        $where[] = " lastvisit!=0 ";
+        $q = implode(' AND', $where);
+        $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
+        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
 
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 
@@ -510,18 +486,7 @@ switch($action) {
             $db->free_result($querymem);
         }
 
-        if (!isset($memberperpage)) {
-            $memberperpage = $postperpage;
-        }
-
-        $mpurl = 'misc.php?action=list&amp;desc='.$desc.$ext;
-        if (($multipage = multi($num, $memberperpage, $page, $mpurl)) === false) {
-            $multipage = '';
-        } else {
-            eval('$multipage = "'.template('misc_mlist_multipage').'";');
-        }
-
-        if ($desc == 'desc') {
+        if (strtolower($desc) == 'desc') {
             $init['ascdesc'] = 'asc';
             $ascdesc = $lang['asc'];
         } else {
