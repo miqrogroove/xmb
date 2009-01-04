@@ -832,7 +832,7 @@ function multipage($num, $perpage, $baseurl) {
  * The link to each page in the collection will have the "page" variable added
  * to its query string, except for page number one.
  *
- * @param int $page Current page number, must be >= 0.
+ * @param int $page Current page number, must be >= 1.
  * @param int $lastpage Total number of pages in the collection.
  * @param string $mpurl Read-Only Variable. Relative URL of the first page in the collection.
  * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
