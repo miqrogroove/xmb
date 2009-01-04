@@ -506,10 +506,16 @@ if ($action == 'profile') {
             }
         }
 
+        $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+        if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
+            $avatar = '';
+            $rawavatar = '';
+        }
+
         $max_size = explode('x', $SETTINGS['max_avatar_size']);
         if (ini_get('allow_url_fopen')) {
-            if ($max_size[0] > 0 && $max_size[1] > 0) {
-                $size = @getimagesize($_POST['newavatar']);
+            if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
+                $size = @getimagesize($rawavatar);
                 if ($size === false) {
                     $avatar = '';
                 } else if ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
@@ -519,6 +525,7 @@ if ($action == 'profile') {
         } else if ($newavatarcheck == "no") {
             $avatar = '';
         }
+        unset($rawavatar);
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$xmbuser'");
 

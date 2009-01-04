@@ -52,9 +52,9 @@ function icon(theicon) {
 
 function avatarCheck(input, max_size) {
     var image = new Image();
+    var avatarCheck = document.getElementById('avatarCheck');
+    var isValid = document.getElementById('newavatarcheck');
     image.onload = function() {
-        var avatarCheck = document.getElementById('avatarCheck');
-        var isValid = document.getElementById('newavatarcheck');
         max_size = max_size.split("x");
 
         if (input.value == "") {
@@ -74,7 +74,17 @@ function avatarCheck(input, max_size) {
             avatarCheck.innerHTML = "Valid Image";
         }
     }
-    image.src = input.value;
+    if (input.value.substring(0, 7) == 'http://' || input.value.substring(0, 6) == 'ftp://') {
+        image.src = input.value;
+    } else {
+        if (input.value == '') {
+            avatarCheck.innerHTML = "";
+        } else {
+            avatarCheck.style.color = "#ff0000";
+            avatarCheck.innerHTML = "Invalid: Invalid Image";
+        }
+        isValid.value = "no";
+    }
 }
 
 self.name = 'mainwindow';

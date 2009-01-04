@@ -489,10 +489,16 @@ switch($action) {
                 $mood = postedVar('mood', 'javascript', TRUE, TRUE, TRUE);
                 $sig = postedVar('sig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
+                $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+                if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
+                    $avatar = '';
+                    $rawavatar = '';
+                }
+                
                 $max_size = explode('x', $SETTINGS['max_avatar_size']);
                 if (ini_get('allow_url_fopen')) {
-                    if ($max_size[0] > 0 && $max_size[1] > 0) {
-                        $size = @getimagesize($_POST['avatar']);
+                    if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
+                        $size = @getimagesize($rawavatar);
                         if ($size === false) {
                             $avatar = '';
                         } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
@@ -502,6 +508,7 @@ switch($action) {
                 } else if ($newavatarcheck == "no") {
                     $avatar = '';
                 }
+                unset($rawavatar);
 
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]', '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
             }
