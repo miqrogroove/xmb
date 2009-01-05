@@ -31,11 +31,15 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-//loginUser() is responsible for accepting credentials for new sessions.
-//$xmbuserinput (string) must be html escaped & db escaped username input.
-//$xmbpwinput   (string) must be raw password hash input.
-//$invisible    (bool)  (optional)
-//$tempcookie   (bool)  (optional)
+/**
+ * Responsible for accepting credentials for new sessions.
+ *
+ * @param  string $xmbuserinput Must be html escaped & db escaped username input.
+ * @param  string $xmbpwinput   Must be raw password hash input.
+ * @param  bool   $invisible    Optional.
+ * @param  bool   $tempcookie   Optional.
+ * @return bool
+ */
 function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALSE) {
     global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
@@ -71,10 +75,14 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALS
     }
 }
 
-//elevateUser() is responsible for authenticating established sessions and setting up session variables.
-//$xmbuserinput (string) must be html escaped & db escaped username input.
-//$xmbpwinput   (string) must be raw password hash input.
-//$force_inv    (bool)  (optional)
+/**
+ * Responsible for authenticating established sessions and setting up session variables.
+ *
+ * @param  string $xmbuserinput Must be html escaped & db escaped username input.
+ * @param  string $xmbpwinput Must be raw password hash input.
+ * @param  int    $force_inv Optional.
+ * @return bool
+ */
 function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
     global $xmbuser, $xmbpw, $self, $db, $SETTINGS, $status_enum;
 
@@ -218,10 +226,16 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
     return ($xmbuser != '');
 }
 
-// loadLang() uses the new translation database to populate the old $lang and $langfile variables.
-// Parameter $devname is the name specified by XMB for internal use (usually written in English).
+/**
+ * Uses the new translation database to populate the old $lang and $langfile variables.
+ *
+ * @param string $devname Name specified by XMB for internal use (usually written in English).
+ * @return bool
+ */
 function loadLang($devname = "English") {
     global $charset, $db, $lang, $langfile;
+
+    $devname = $db->escape($devname);
 
     // Query The Translation Database
     $sql = 'SELECT k.langkey, t.cdata '
@@ -246,9 +260,12 @@ function loadLang($devname = "English") {
     }
 }
 
-// loadPhrases uses the new translation database to retrieve a single phrase in all available languages.
-// Parameter $langkeys is an array of strings used as the $lang array key.
-// Returns an associative array in which lang_base.devname and lang_keys.langkey are the keys.
+/**
+ * Uses the new translation database to retrieve a single phrase in all available languages.
+ *
+ * @param array $langkeys Of strings, used as the $lang array key.
+ * @return array Associative indexes lang_base.devname and lang_keys.langkey.
+ */
 function loadPhrases($langkeys) {
     global $db;
 
@@ -288,18 +305,20 @@ function nav($add=false, $raquo=true) {
 function template($name) {
     global $db, $comment_output;
 
+    $name = $db->escape($name);
+
     if (($template = templatecache(X_CACHE_GET, $name)) === false) {
         $query = $db->query("SELECT template FROM ".X_PREFIX."templates WHERE name='$name'");
         if ($db->num_rows($query) == 1) {
             if (X_SADMIN && DEBUG) {
-                trigger_error('Efficiency Notice: The template `'.$name.'` was not preloaded.', E_USER_NOTICE);
+                trigger_error('Efficiency Notice: The template "'.$name.'" was not preloaded.', E_USER_NOTICE);
             }
             $gettemplate = $db->fetch_array($query);
             templatecache(X_CACHE_PUT, $name, $gettemplate['template']);
             $template = $gettemplate['template'];
         } else {
             if (X_SADMIN && DEBUG) {
-                trigger_error('Efficiency Warning: The template `'.$name.'` could not be found.', E_USER_WARNING);
+                trigger_error('Efficiency Warning: The template "'.$name.'" could not be found.', E_USER_WARNING);
             }
         }
         $db->free_result($query);
@@ -999,6 +1018,7 @@ function updateforumcount($fid) {
 
 function updatethreadcount($tid) {
     global $db;
+    $tid = intval($tid);
 
     $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid='$tid'");
     $replycount = $db->num_rows($query);
@@ -1565,8 +1585,13 @@ function month2text($num) {
     return $months[$num-1];
 }
 
-// forumCache() returns a db query result containing all active forums and forum categories.
-// Important: The return value is passed by reference.  There is only one query object.  This cannot be used in nested functions.
+/**
+ * Creates a db query result containing all active forums and forum categories.
+ *
+ * Important: The return value is passed by reference.  There is only one query object.  This cannot be used in nested functions.
+ *
+ * @return object
+ */
 function forumCache() {
     global $db;
     static $cache = FALSE;
@@ -1584,7 +1609,9 @@ function forumCache() {
     return $cache;
 }
 
-// getForum() returns an associative array for the specified forum.
+/**
+ * Creates an associative array for the specified forum.
+ */
 function getForum($fid) {
     global $db;
     
@@ -1597,14 +1624,21 @@ function getForum($fid) {
     return FALSE;
 }
 
-// getStructuredForums() returns a multi-dimensional array containing the following associative subscripts:
-//  0:forums.type
-//  1:forums.fup (always '0' for groups)
-//  2:forums.fid
-//  3:forums.*
-// Usage example:
-//  $forums = getStructuredForums();
-//  echo fnameOut($forums['forum']['9']['14']['name']);
+/**
+ * Creates a multi-dimensional array of forums.
+ *
+ * The array uses the following associative subscripts:
+ *  0:forums.type
+ *  1:forums.fup (always '0' for groups)
+ *  2:forums.fid
+ *  3:forums.*
+ * Usage example:
+ *  $forums = getStructuredForums();
+ *  echo fnameOut($forums['forum']['9']['14']['name']);
+ *
+ * @param bool $usePerms If TRUE then not all forums are returned, only visible forums.
+ * @return array
+ */
 function getStructuredForums($usePerms=FALSE) {
     global $db;
     
@@ -1632,12 +1666,16 @@ function getStructuredForums($usePerms=FALSE) {
     return $structured;
 }
 
-// permittedForums() returns an array of permitted forum arrays
-// $forums is a db query result, preferably from forumCache()
-// $mode is a string designating whether to check for forum listing permissions or thread listing permissions
-// $output if set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an array of arrays.
-// $check_parents is a bool indicating whether each forum's permissions depend on the parent forum also being permitted.
-// $user_status is an optional masquerade value passed to checkForumPermissions()
+/**
+ * Creates an array of permitted forum arrays.
+ *
+ * @param object $forums DB query result, preferably from forumCache().
+ * @param string $mode Whether to check for 'forum' listing permissions or 'thread' listing permissions.
+ * @param string $output If set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an 'array' of arrays.
+ * @param bool $check_parents Indicates whether each forum's permissions depend on the parent forum also being permitted.
+ * @param bool $user_status Optional masquerade value passed to checkForumPermissions().
+ * @return array
+ */
 function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE) {
     global $db, $SETTINGS;
     
@@ -1792,20 +1830,27 @@ function forumJump() {
     return implode("\n", $forumselect);
 }
 
-// checkForumPermissions - Returns a set of boolean permissions for a specific forum.
-// Normal Usage Example
-//  $fid = 1;
-//  $forum = getForum($fid);
-//  $perms = checkForumPermissions($forum);
-//  if ($perms[X_PERMS_VIEW]) { //$self is allowed to view $forum }
-// Masquerade Example
-//  $result = $db->query('SELECT * FROM '.X_PREFIX.'members WHERE uid=1');
-//  $user = $db->fetch_array($result);
-//  $perms = checkForumPermissions($forum, $user['status']);
-//  if ($perms[X_PERMS_VIEW]) { //$user is allowed to view $forum }
-// Masquerade Example 2
-//  $perms = checkForumPermissions($forum, 'Moderator');
-//  if ($perms[X_PERMS_VIEW]) { //Moderators are allowed to view $forum }
+/**
+ * Creates a set of boolean permissions for a specific forum.
+ *
+ * Normal Usage Example
+ *  $fid = 1;
+ *  $forum = getForum($fid);
+ *  $perms = checkForumPermissions($forum);
+ *  if ($perms[X_PERMS_VIEW]) { //$self is allowed to view $forum }
+ * Masquerade Example
+ *  $result = $db->query('SELECT * FROM '.X_PREFIX.'members WHERE uid=1');
+ *  $user = $db->fetch_array($result);
+ *  $perms = checkForumPermissions($forum, $user['status']);
+ *  if ($perms[X_PERMS_VIEW]) { //$user is allowed to view $forum }
+ * Masquerade Example 2
+ *  $perms = checkForumPermissions($forum, 'Moderator');
+ *  if ($perms[X_PERMS_VIEW]) { //Moderators are allowed to view $forum }
+ *
+ * @param array $forum One query row from the forums table, preferably provided by getForum().
+ * @param string $user_status_in Optional. Masquerade as this user status, e.g. 'Guest'
+ * @return array Of bools, indexed by X_PERMS_* constants.
+ */
 function checkForumPermissions($forum, $user_status_in=FALSE) {
     global $self, $status_enum;
 
@@ -1866,14 +1911,21 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
     return $ret;
 }
 
-// getOneForumPerm - Enables you to do complex comparisons without string parsing.  Valid with X_PERMS_RAW* indexes only!
-// Normal Usage Example
-//  $fid = 1;
-//  $forum = getForum($fid);
-//  $viewperms = getOneForumPerm($forum, X_PERMS_RAWVIEW);
-//  if ($viewperms >= $status_enum['Member']) { //Some non-staff status has perms to view $forum }
-//  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
-//  if ($viewperms == $status_enum['Member'] - 1) { //$forum is staff-only }
+/**
+ * Enables you to do complex comparisons without string parsing.
+ *
+ * Normal Usage Example
+ *  $fid = 1;
+ *  $forum = getForum($fid);
+ *  $viewperms = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+ *  if ($viewperms >= $status_enum['Member']) { //Some non-staff status has perms to view $forum }
+ *  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
+ *  if ($viewperms == $status_enum['Member'] - 1) { //$forum is staff-only }
+ *
+ * @param array $forum
+ * @param int $bitfield Enumerated by X_PERMS_RAW* constants.  Other X_PERMS_* values will not work!
+ * @return bool
+ */
 function getOneForumPerm($forum, $bitfield) {
     $pp = explode(',', $forum['postperm']);
     return $pp[$bitfield];
@@ -1883,9 +1935,11 @@ function handlePasswordDialog($fid) {
     global $db, $full_url, $url, $cookiepath, $cookiedomain;  // function vars
     global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
 
+    $fid = intval($fid);
+
     $pwform = '';
     $pwinput = postedVar('pw', '', FALSE, FALSE);
-    $query = $db->query("SELECT password FROM ".X_PREFIX."forums WHERE fid=$fid");
+    $query = getForum($fid);
     if ($pwinput != '' And $db->num_rows($query) == 1) {
         $pass = $db->result($query, 0);
 
@@ -1925,6 +1979,8 @@ function createLangFileSelect($currentLangFile) {
 
 function makeSearchLink($fid=0) {
     global $imgdir, $lang, $SETTINGS;
+
+    $fid = intval($fid);
 
     if ($SETTINGS['searchstatus'] == 'on') {
         $fid = intval($fid);

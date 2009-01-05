@@ -113,7 +113,7 @@ if (!$perms[X_PERMS_VIEW]) {
         error($lang['privforummsg']);
     }
 } else if (!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid);
+    handlePasswordDialog($forum['fid']);
 }
 
 $fup = array();
