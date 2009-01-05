@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
+ * Copyright (c) 2001-2009, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -38,7 +38,7 @@ if (!(is_file('header.php') And is_dir('include'))) {
 //Authenticate Browser
 define('X_SCRIPT', 'upgrade.php');
 require('header.php');
-echo 'Database Connection Established<br />';
+echo "<html><head><title>XMB Upgrade Script</title><body>Database Connection Established<br />\n";
 if (DEBUG) {
     echo 'Debug Mode Enabled';
 } else {
@@ -131,9 +131,6 @@ function disableButton() {
         trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
     }
 
-    echo 'Requesting to lock the settings table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
-
     echo 'Confirming forums are turned off...<br />';
     if ($SETTINGS['bbstatus'] != 'off') {
         $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
@@ -141,6 +138,107 @@ function disableButton() {
             .'They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.</b><br />';
         trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
     }
+
+    echo 'Determining the database schema version...<br />';
+    if (!isset($SETTINGS['schema_version'])) {
+        $SETTINGS['schema_version'] = 0;
+    }
+    switch ($SETTINGS['schema_version']) {
+    case XMB_SCHEMA_VER:
+        echo 'Database schema is current, skipping ALTER commands...<br />';
+        break;
+    case 0:
+    case 1:
+        upgrade_schema_to_v2();
+        //No break.
+    case 2:
+        //Future use. Break only before case default.
+        break;
+    default:
+        echo 'Unrecognized Database!<br />'
+            .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prvent damage.<br />';
+        trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
+        break;
+    }
+    echo 'Database schema is now current...<br />';
+
+    echo 'Initializing the new translation system...<br />';
+    require_once('include/translation.inc.php');
+    $upload = file_get_contents('lang/English.lang.php');
+
+    echo 'Installing English.lang.php...<br />';
+    installNewTranslation($upload);
+    unset($upload);
+
+    echo 'Opening the templates file...<br />';
+    $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents('templates.xmb'));
+
+    echo 'Resetting the templates table...<br />';
+    $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
+
+    echo 'Requesting to lock the templates table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
+
+    echo 'Saving the new templates...<br />';
+    $values = array();
+    foreach($templates as $val) {
+        $template = explode("|#*XMB TEMPLATE*#|", $val);
+        if (isset($template[1])) {
+            $template[1] = addslashes(ltrim($template[1]));
+        } else {
+            $template[1] = '';
+        }
+        $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
+    }
+    unset($templates);
+    if (count($values) > 0) {
+        $values = implode(', ', $values);
+        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
+    }
+    unset($values);
+    $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
+
+    echo 'Releasing the lock on the templates table...<br />';
+    $db->query('UNLOCK TABLES');
+
+    echo 'Deleting the templates.xmb file...<br />';
+    unlink('templates.xmb');
+
+
+    echo 'Checking for new themes...';
+    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
+    if ($db->num_rows($query) == 0 And is_dir('images/davis')) {
+        echo 'Adding Davis as the new default theme...<br />';
+        $db->query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+                                          ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
+        $newTheme = $db->insert_id();
+        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
+    }
+    $db->free_result($query);
+
+    echo 'Deleting the upgrade.php file...<br />';
+    unlink('upgrade.php');
+
+    echo '<b>Done! :D</b><br />Now <a href="cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
+}
+
+echo "\n</body></html>";
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 2.
+ *
+ * This function is officially compatible with schema_version 1 as well as the following
+ * XMB versions that did not have a schema_version number: 1.9.9, 1.9.10, and 1.9.11 Alpha (all).
+ *
+ * @author Robert Chapin (miqrogroove)
+ */
+function upgrade_schema_to_v2() {
+    global $db;
+    
+    echo 'Beginning schema upgrade to version number 2...<br />';
+
+    echo 'Requesting to lock the settings table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
     echo 'Gathering schema information from the settings table...<br />';
     $sql = array();
@@ -347,66 +445,6 @@ function disableButton() {
       ) TYPE=MyISAM COMMENT = 'Translation Table'");
 
     echo 'Resetting the schema version number...<br />';
-    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = ".XMB_SCHEMA_VER);
-
-    echo 'Initializing the new translation system...<br />';
-    require_once('include/translation.inc.php');
-    $upload = file_get_contents('lang/English.lang.php');
-
-    echo 'Installing English.lang.php...<br />';
-    installNewTranslation($upload);
-    unset($upload);
-
-    echo 'Opening the templates file...<br />';
-    $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents('templates.xmb'));
-
-    echo 'Resetting the templates table...<br />';
-    $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
-
-    echo 'Requesting to lock the templates table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
-
-    echo 'Saving the new templates...<br />';
-    $values = array();
-    foreach($templates as $val) {
-        $template = explode("|#*XMB TEMPLATE*#|", $val);
-        if (isset($template[1])) {
-            $template[1] = addslashes(ltrim($template[1]));
-        } else {
-            $template[1] = '';
-        }
-        $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
-    }
-    unset($templates);
-    if (count($values) > 0) {
-        $values = implode(', ', $values);
-        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
-    }
-    unset($values);
-    $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
-
-    echo 'Releasing the lock on the templates table...<br />';
-    $db->query('UNLOCK TABLES');
-
-    echo 'Deleting the templates.xmb file...<br />';
-    unlink('templates.xmb');
-
-
-    echo 'Checking for new themes...';
-    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
-    if ($db->num_rows($query) == 0 And is_dir('images/davis')) {
-        echo 'Adding Davis as the new default theme...<br />';
-        $db->query("INSERT INTO ".$tablepre."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
-                                           ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
-        $newTheme = $db->insert_id();
-        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
-    }
-    $db->free_result($query);
-
-    echo 'Deleting the upgrade.php file...<br />';
-    unlink('upgrade.php');
-
-    echo '<b>Done! :D</b><br />Now <a href="cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
+    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
 }
-
 ?>
