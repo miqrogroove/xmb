@@ -918,7 +918,7 @@ switch($action) {
                 $vote_id =  $db->insert_id();
                 $i = 1;
                 foreach($pollopts as $p) {
-                    $p = $db->escape($p);
+                    $p = $db->escape_var($p);
                     $db->query("INSERT INTO ".X_PREFIX."vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ($vote_id, $i, '$p', 0)");
                     $i++;
                 }
@@ -1162,7 +1162,7 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid=$pid");
             } else {
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape_var($orig['author'])."'");
                 deleteAllAttachments($pid);
 
                 if ($isfirstpost['pid'] == $pid) {
@@ -1183,7 +1183,7 @@ switch($action) {
 
                         $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid OR closed='moved|$tid'");
                     } else {
-                        $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
+                        $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape_var($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
                     }
                 }
                 updatethreadcount($tid);

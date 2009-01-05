@@ -44,7 +44,7 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALS
     global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
     if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
-        $dbname = $db->escape($self['username']);
+        $dbname = $db->escape_var($self['username']);
 
         if (!is_null($invisible)) {
             if ($invisible And $self['invisible'] == 0) {
@@ -100,7 +100,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
         if ($db->num_rows($query) == 1) {
             $self = $db->fetch_array($query); //The self array will remain available, global.
             if ($self['password'] == $xmbpwinput) {
-                $xmbuser = $db->escape($self['username']);
+                $xmbuser = $db->escape_var($self['username']);
             }
             $self['password'] = '';
         }
@@ -218,7 +218,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
     // Save This Session
     global $onlineip, $onlinetime, $url;
 
-    $wollocation = $db->escape($url);
+    $wollocation = $db->escape_var($url);
     $newtime = $onlinetime - 600;
     $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
     $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
@@ -235,7 +235,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
 function loadLang($devname = "English") {
     global $charset, $db, $lang, $langfile;
 
-    $devname = $db->escape($devname);
+    $devname = $db->escape_var($devname);
 
     // Query The Translation Database
     $sql = 'SELECT k.langkey, t.cdata '
@@ -305,7 +305,7 @@ function nav($add=false, $raquo=true) {
 function template($name) {
     global $db, $comment_output;
 
-    $name = $db->escape($name);
+    $name = $db->escape_var($name);
 
     if (($template = templatecache(X_CACHE_GET, $name)) === false) {
         $query = $db->query("SELECT template FROM ".X_PREFIX."templates WHERE name='$name'");
@@ -1011,7 +1011,7 @@ function updateforumcount($fid) {
 
     $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads AS t USING(fid) WHERE f.fid=$fid OR f.fup=$fid ORDER BY t.lastpost DESC LIMIT 0, 1");
     $lp = $db->fetch_array($query);
-    $lastpost = $db->escape($lp['lastpost']);
+    $lastpost = $db->escape_var($lp['lastpost']);
     $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lastpost' WHERE fid='$fid'");
     $db->free_result($query);
 }
@@ -1035,7 +1035,7 @@ function updatethreadcount($tid) {
     }
     $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
-    $lastpost = $db->escape($lastpost);
+    $lastpost = $db->escape_var($lastpost);
 
     $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }

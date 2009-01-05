@@ -69,7 +69,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
     if ($rcpt = $db->fetch_array($query)) {
         $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
         if (!in_array($self['username'], $ilist) || X_ADMIN) {
-            $username = $db->escape($rcpt['username']);
+            $username = $db->escape_var($rcpt['username']);
             db_u2u_insert($username, $xmbuser, 'incoming', $username, 'Inbox', $subject, $message, 'no', 'yes');
             if ($self['saveogu2u'] == 'yes') {
                 db_u2u_insert($username, $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');
@@ -114,7 +114,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     $dbsubject = $db->escape(addslashes($subject)); //message and subject were historically double-slashed
     $dbmessage = $db->escape(addslashes($message));
-    $dbto = $db->escape($msgto);
+    $dbto = $db->escape_var($msgto);
 
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
@@ -130,7 +130,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     if (onSubmit('savesubmit')) {
         // fixed by John Briggs
-        $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
+        $dbsubject = (empty($dbsubject) ? $db->escape_var($lang['textnosub']) : $dbsubject);
 
         if (empty($message)) {
             error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
@@ -142,7 +142,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     if (onSubmit('sendsubmit')) {
         $errors = '';
         // fixed by John Briggs
-        $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
+        $dbsubject = (empty($dbsubject) ? $db->escape_var($lang['textnosub']) : $dbsubject);
 
         // fixed lang variable use by John Briggs
         if (empty($message)) {
@@ -383,7 +383,7 @@ function u2u_move($u2uid, $tofolder) {
             error($lang['textcantmove'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
         }
 
-        $dbfolder = $db->escape($tofolder);
+        $dbfolder = $db->escape_var($tofolder);
         $db->query("UPDATE ".X_PREFIX."u2u SET folder='$dbfolder' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
 
         u2u_msg($lang['textmovesucc'], $full_url.'u2u.php?folder='.recodeOut($folder));
@@ -409,7 +409,7 @@ function u2u_mod_move($tofolder, $u2u_select) {
         return;
     }
 
-    $dbfolder = $db->escape($tofolder);
+    $dbfolder = $db->escape_var($tofolder);
     $db->query("UPDATE ".X_PREFIX."u2u SET folder='$dbfolder' WHERE u2uid IN($in) AND owner='$xmbuser'");
 
     u2u_msg($lang['textmovesucc'], $full_url.'u2u.php?folder='.recodeOut($folder));
@@ -533,7 +533,7 @@ function u2u_display($folder, $folders) {
     $u2usdraft = '';
     $leftpane = '';
     $folderrecode = recodeOut($folder);
-    $folder = $db->escape($folder);
+    $folder = $db->escape_var($folder);
 
     if (empty($folder)) {
         $folder = "Inbox";

@@ -44,7 +44,7 @@ if (!defined('IN_CODE')) {
 function setNewLangValue($langkey, $cdata) {
     global $db, $langfile;
 
-    $langkey = $db->escape($langkey);
+    $langkey = $db->escape_var($langkey);
 
     $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE langkey='$langkey'");
     if ($db->num_rows($result) == 0) {
@@ -152,7 +152,7 @@ function setManyLangValues(&$lang, &$langfile) {
     $sql = '';
     foreach($lang as $key=>$value) {
         $phraseid = $phraseids[$key];
-        $value = $db->escape($value);
+        $value = $db->escape_var($value);
         if ($flag) {
             $sql .= ", ($langid, $phraseid, '$value')";
         } else {

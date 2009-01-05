@@ -451,7 +451,7 @@ if ($action == 'profile') {
         $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
         $sig = postedVar('newsig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
-        if ($email != $db->escape($self['email'])) {
+        if ($email != $db->escape_var($self['email'])) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
                 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE email = '$email' AND username != '$xmbuser'");
                 $count1 = $db->result($query,0);

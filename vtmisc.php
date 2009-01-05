@@ -143,7 +143,7 @@ if ($action == 'report') {
         require('include/u2u.inc.php');
         $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
         while($modusr = $db->fetch_array($modquery)) {
-            $mod = $db->escape($modusr['username']);
+            $mod = $db->escape_var($modusr['username']);
             $page = quickpage($postcount, $modusr['ppp']);
 
             $posturl = $full_url."viewthread.php?tid=$tid&page=$page#pid$pid";

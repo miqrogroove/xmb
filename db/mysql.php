@@ -31,6 +31,10 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+define('SQL_NUM', MYSQL_NUM);
+define('SQL_BOTH', MYSQL_BOTH);
+define('SQL_ASSOC', MYSQL_ASSOC);
+
 class dbstuff {
     var $querynum   = 0;
     var $querylist  = array();
@@ -39,6 +43,7 @@ class dbstuff {
     var $db         = '';
     var $duration   = 0;
     var $timer      = 0;
+    var $errcallb   = 'xmb_mysql_error';
 
     function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
 
@@ -113,16 +118,24 @@ class dbstuff {
     }
 
     function free_result($query) {
-        return mysql_free_result($query);
+        set_error_handler($this->errcallb);
+        $return = mysql_free_result($query);
+        restore_error_handler();
+        return $return;
     }
 
     function fetch_array($query, $type=SQL_ASSOC) {
+        set_error_handler($this->errcallb);
         $array = mysql_fetch_array($query, $type);
+        restore_error_handler();
         return $array;
     }
 
     function field_name($query, $field) {
-        return mysql_field_name($query, $field);
+        set_error_handler($this->errcallb);
+        $return = mysql_field_name($query, $field);
+        restore_error_handler();
+        return $return;
     }
 
     function panic(&$sql) {
@@ -143,46 +156,68 @@ class dbstuff {
             require_once(ROOT.'include/validate.inc.php');
 			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />";
             if ($sql != '') {
-                echo 'In the following query: <em>'.cdataOut($sql).'</em></pre>';
+                echo 'In the following query: <em>'.cdataOut($sql);
             }
+            echo '</em></pre>';
         } else {
-            echo '<pre>The system has failed to process your request. If you\'re an administrator, please set the DEBUG flag to true in config.php.</pre>';
+            echo "<pre>The system has failed to process your request. If you're an administrator, please set the DEBUG flag to true in config.php.</pre>";
     	}
         if (LOG_MYSQL_ERRORS) {
-            if (ini_get('display_errors') Or !ini_get('log_errors')) {
+            $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
+            if ($sql != '') {
+                $log .= "In the following query:\n$sql";
+            }
+            if (!ini_get('log_errors')) {
                 ini_set('log_errors', TRUE);
                 ini_set('error_log', 'error_log');
-                ini_set('display_errors', FALSE);
             }
-            if (!ini_get('display_errors')) {
-                $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
-                if ($sql != '') {
-                    $log .= "In the following query:\n$sql";
-                }
-                trigger_error($log, E_USER_ERROR);
-            }
+            error_log($log);
         }
         exit;
     }
 
-    // Can be used to make any expression query-safe, but see below.  Example:
-    // $db->query('UPDATE a SET b = "'.$db->escape("Hello, my name is $rawinput").'"');
+    /**
+     * Can be used to make any expression query-safe, but see next function.
+     *
+     * Example: $db->query('UPDATE a SET b = "'.$db->escape("Hello, my name is $rawinput").'"');
+     *
+     * @param string $rawstring
+     * @return string
+     */
     function escape($rawstring) {
-        return mysql_real_escape_string($rawstring, $this->link);
+        set_error_handler($this->errcallb);
+        $return = mysql_real_escape_string($rawstring, $this->link);
+        restore_error_handler();
+        return $return;
     }
     
-    // Preferred for performance when escaping any string variable.  Example:
-    // $db->query('UPDATE a SET b = "Hello, my name is '.$db->escape_var($rawinput).'"');
+    /**
+     * Preferred for performance when escaping any string variable.
+     *
+     * Example: $db->query('UPDATE a SET b = "Hello, my name is '.$db->escape_var($rawinput).'"');
+     *
+     * @param string $rawstring
+     * @return string
+     */
     function escape_var(&$rawstring) {
-        return mysql_real_escape_string($rawstring, $this->link);
+        set_error_handler($this->errcallb);
+        $return = mysql_real_escape_string($rawstring, $this->link);
+        restore_error_handler();
+        return $return;
     }
 
     function like_escape($rawstring) {
-        return str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($rawstring, $this->link));
+        set_error_handler($this->errcallb);
+        $return = str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($rawstring, $this->link));
+        restore_error_handler();
+        return $return;
     }
 
     function regexp_escape($rawstring) {
-        return mysql_real_escape_string(preg_quote($rawstring), $this->link);
+        set_error_handler($this->errcallb);
+        $return = mysql_real_escape_string(preg_quote($rawstring), $this->link);
+        restore_error_handler();
+        return $return;
     }
 
     function query($sql) {
@@ -227,35 +262,52 @@ class dbstuff {
     }
 
     function result($query, $row, $field=NULL) {
+        set_error_handler($this->errcallb);
         $query = mysql_result($query, $row, $field);
+        restore_error_handler();
         return $query;
     }
 
     function num_rows($query) {
+        set_error_handler($this->errcallb);
         $query = mysql_num_rows($query);
+        restore_error_handler();
         return $query;
     }
 
     function num_fields($query) {
-        return mysql_num_fields($query);
+        set_error_handler($this->errcallb);
+        $return = mysql_num_fields($query);
+        restore_error_handler();
+        return $return;
     }
 
     function insert_id() {
+        set_error_handler($this->errcallb);
         $id = mysql_insert_id($this->link);
+        restore_error_handler();
         return $id;
     }
 
     function fetch_row($query) {
+        set_error_handler($this->errcallb);
         $query = mysql_fetch_row($query);
+        restore_error_handler();
         return $query;
     }
     
     function data_seek($query, $row) {
-        return mysql_data_seek($query, $row);
+        set_error_handler($this->errcallb);
+        $return = mysql_data_seek($query, $row);
+        restore_error_handler();
+        return $return;
     }
     
     function affected_rows() {
-        return mysql_affected_rows($this->link);
+        set_error_handler($this->errcallb);
+        $return = mysql_affected_rows($this->link);
+        restore_error_handler();
+        return $return;
     }
 
     function time($time=NULL) {
@@ -281,7 +333,42 @@ class dbstuff {
     }
 }
 
-define('SQL_NUM', MYSQL_NUM);
-define('SQL_BOTH', MYSQL_BOTH);
-define('SQL_ASSOC', MYSQL_ASSOC);
+/**
+ * Proper error reporting for abstracted mysql_* function calls.
+ *
+ * @param int $errno
+ * @param string $errstr
+ * @author Robert Chapin (miqrogroove)
+ */
+function xmb_mysql_error($errno, $errstr) {
+    $output = '';
+    {
+        $trace = debug_backtrace();
+        if (isset($trace[2]['function'])) { // Catch MySQL error
+            $depth = 2;
+        } else { // Catch syntax error
+            $depth = 1;
+        }
+        $functionname = $trace[$depth]['function'];
+        $filename = $trace[$depth]['file'];
+        $linenum = $trace[$depth]['line'];
+        $output = "MySQL encountered the following error: $errstr in \$db->{$functionname}() called by {$filename} on line {$linenum}";
+        unset($trace, $functionname, $filename, $linenum);
+    }
+
+	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+        require_once(ROOT.'include/validate.inc.php');
+		echo "<pre>".cdataOut($output)."</pre>";
+    } else {
+        echo "<pre>The system has failed to process your request. If you're an administrator, please set the DEBUG flag to true in config.php.</pre>";
+	}
+    if (LOG_MYSQL_ERRORS) {
+        if (!ini_get('log_errors')) {
+            ini_set('log_errors', TRUE);
+            ini_set('error_log', 'error_log');
+        }
+        error_log($output);
+    }
+    exit;
+}
 ?>

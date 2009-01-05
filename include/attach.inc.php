@@ -827,7 +827,7 @@ function regenerateThumbnail($aid, $pid) {
         $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
     }
 
-    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $db->escape($attach['filetype']), $aid, $pid, $attach['subdir']);
+    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $db->escape_var($attach['filetype']), $aid, $pid, $attach['subdir']);
 
     // Clean up temp files
     if ($attach['subdir'] == '') {

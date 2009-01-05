@@ -662,10 +662,10 @@ if ($action == 'themes') {
             if ($key == 'themeid') {
                 $val = '';
             } else if ($key == 'name') {
-                $dbname = $db->escape($val);
+                $dbname = $db->escape_var($val);
             }
-            $keysql[] = $db->escape($key);
-            $valsql[] = "'".$db->escape($val)."'";
+            $keysql[] = $db->escape_var($key);
+            $valsql[] = "'".$db->escape_var($val)."'";
         }
 
         $keysql = implode(', ', $keysql);
@@ -1490,7 +1490,7 @@ if ($action == "newsletter") {
 
         if ($sendvia == "u2u") {
             while($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".$db->escape($memnews['username'])."', '$xmbuser', 'incoming', '".$db->escape($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".$db->escape_var($memnews['username'])."', '$xmbuser', 'incoming', '".$db->escape_var($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
         } else {
             $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
@@ -1854,7 +1854,7 @@ if ($action == "templates") {
         foreach($templates as $val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
-            $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
+            $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
         }
         unset($templates);
         if (count($values) > 0) {

@@ -88,7 +88,7 @@ if ($aid <= 0 Or ($pid <= 0 And $filename == '')) {
 if ($pid > 0) {
     $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.aid=$aid AND a.pid=$pid");
 } else {
-    $filename = $db->escape($filename);
+    $filename = $db->escape_var($filename);
     $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.aid=$aid AND a.filename='$filename'");
 }
 if ($db->num_rows($query) != 1) {

@@ -39,8 +39,8 @@ class admin {
             return $lang['username_length_invalid'];
         }
 
-        $dbuserfrom = $db->escape($userfrom);
-        $dbuserto = $db->escape($userto);
+        $dbuserfrom = $db->escape_var($userfrom);
+        $dbuserto = $db->escape_var($userto);
         $dblikeuserfrom = $db->like_escape($userfrom);
         $dbregexuserfrom = $db->regexp_escape($userfrom);
         $userfrom = '';
@@ -78,14 +78,14 @@ class admin {
 
         $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
-            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape_var($result['lastpost']));
             $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
         }
         $db->free_result($query);
 
         $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($usr = $db->fetch_array($query)) {
-            $parts = explode(',', $db->escape($usr['ignoreu2u']));
+            $parts = explode(',', $db->escape_var($usr['ignoreu2u']));
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(',', $parts);
@@ -95,7 +95,7 @@ class admin {
 
         $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
-            $parts = explode(',', $db->escape($list['moderator']));
+            $parts = explode(',', $db->escape_var($list['moderator']));
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
@@ -105,7 +105,7 @@ class admin {
 
         $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
-            $parts = array_unique(array_map('trim', explode(',', $db->escape($list['userlist']))));
+            $parts = array_unique(array_map('trim', explode(',', $db->escape_var($list['userlist']))));
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
@@ -115,14 +115,14 @@ class admin {
 
         $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
-            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape_var($result['lastpost']));
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
         }
         $db->free_result($query);
 
         $query = $db->query("SELECT tid, lastpost FROM ".X_PREFIX."threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
-            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape($result['lastpost']));
+            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape_var($result['lastpost']));
             $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
         }
         $db->free_result($query);

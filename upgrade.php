@@ -188,7 +188,7 @@ function disableButton() {
         } else {
             $template[1] = '';
         }
-        $values[] = "('".$db->escape($template[0])."', '".$db->escape($template[1])."')";
+        $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
     }
     unset($templates);
     if (count($values) > 0) {
