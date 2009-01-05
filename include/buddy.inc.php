@@ -101,7 +101,7 @@ function buddy_edit() {
 }
 
 function buddy_delete($delete) {
-    global $db, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken, $full_url;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     foreach($delete as $key=>$buddy) {
