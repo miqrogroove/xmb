@@ -562,213 +562,217 @@ switch($action) {
         break;
 
     case 'viewpro':
-        $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
-        if ($member == '') {
+        $member = postedVar('member', '', TRUE, FALSE, FALSE, 'g');
+        if (strlen($member) < 3 || strlen($member) > 32) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
-        } else {
-            $memberinfo = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'"));
-            $memberinfo['password'] = '';
-            if ($memberinfo['status'] == 'Banned') {
-                $memberinfo['avatar'] = '';
-                $rank = array(
-                'title' => 'Banned',
-                'posts' => 0,
-                'id' => 0,
-                'stars' => 0,
-                'allowavatars' => 'no',
-                'avatarrank' => ''
-                );
-            } else {
-                if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
-                    $limit = "title = '$memberinfo[status]'";
-                } else {
-                    $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Super Moderator' AND title != 'Moderator'";
-                }
+        }
 
-                $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+        $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
+
+        $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'");
+        if ($db->num_rows($query) != 1) {
+            header('HTTP/1.0 404 Not Found');
+            error($lang['nomember']);
+        }
+        $memberinfo = $db->fetch_array($query);
+        $memberinfo['password'] = '';
+        $db->free_result($query);
+
+        if ($memberinfo['status'] == 'Banned') {
+            $memberinfo['avatar'] = '';
+            $rank = array(
+            'title' => 'Banned',
+            'posts' => 0,
+            'id' => 0,
+            'stars' => 0,
+            'allowavatars' => 'no',
+            'avatarrank' => ''
+            );
+        } else {
+            if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
+                $limit = "title = '$memberinfo[status]'";
+            } else {
+                $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Super Moderator' AND title != 'Moderator'";
             }
 
-            if ($memberinfo['uid'] == '') {
-                header('HTTP/1.0 404 Not Found');
-                error($lang['nomember']);
+            $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+        }
+
+        eval('$header = "'.template('header').'";');
+        
+        $encodeuser = recodeOut($memberinfo['username']);
+        if (X_GUEST) {
+            $memberlinks = '';
+        } else {
+            $memberlinks = " <small>(<a href=\"u2u.php?action=send&amp;username=$encodeuser\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href=\"buddy.php?action=add&amp;buddys=$encodeuser\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['addtobuddies']}</a>)</small>";
+        }
+
+        $daysreg = ($onlinetime - $memberinfo['regdate']) / (24*3600);
+        if ($daysreg > 1) {
+            $ppd = $memberinfo['postnum'] / $daysreg;
+            $ppd = round($ppd, 2);
+        } else {
+            $ppd = $memberinfo['postnum'];
+        }
+
+        $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
+
+        if (strpos($memberinfo['site'], 'http') === false) {
+            $memberinfo['site'] = "http://$memberinfo[site]";
+        }
+
+        if ($memberinfo['site'] != 'http://') {
+            $site = $memberinfo['site'];
+        } else {
+            $site = '';
+        }
+
+        if (X_MEMBER && $memberinfo['email'] != '' && $memberinfo['showemail'] == 'yes') {
+            $email = $memberinfo['email'];
+        } else {
+            $email = '';
+        }
+
+        $rank['avatarrank'] = trim($rank['avatarrank']);
+        $memberinfo['avatar'] = trim($memberinfo['avatar']);
+
+        if ($rank['avatarrank'] != '') {
+            $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
+        }
+        
+        if ($memberinfo['avatar'] != '') {
+            $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
+        }
+
+        if ($rank['avatarrank'] || $memberinfo['avatar']) {
+            if (isset($site) && strlen(trim($site)) > 0) {
+                $sitelink = $site;
             } else {
-                eval('$header = "'.template('header').'";');
-                
-                $encodeuser = recodeOut($memberinfo['username']);
-                if (X_GUEST) {
-                    $memberlinks = '';
-                } else {
-                    $memberlinks = " <small>(<a href=\"u2u.php?action=send&amp;username=$encodeuser\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href=\"buddy.php?action=add&amp;buddys=$encodeuser\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['addtobuddies']}</a>)</small>";
-                }
+                $sitelink = "about:blank";
+            }
+        } else {
+            $sitelink = "about:blank";
+        }
 
-                $daysreg = ($onlinetime - $memberinfo['regdate']) / (24*3600);
-                if ($daysreg > 1) {
-                    $ppd = $memberinfo['postnum'] / $daysreg;
-                    $ppd = round($ppd, 2);
-                } else {
-                    $ppd = $memberinfo['postnum'];
-                }
+        $showtitle = $rank['title'];
+        $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']);
 
-                $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
+        if ($memberinfo['customstatus'] != '') {
+            $showtitle = $rank['title'];
+            $customstatus = '<br />'.censor($memberinfo['customstatus']);
+        } else {
+            $showtitle = $rank['title'];
+            $customstatus = '';
+        }
 
-                if (strpos($memberinfo['site'], 'http') === false) {
-                    $memberinfo['site'] = "http://$memberinfo[site]";
-                }
+        if (!($memberinfo['lastvisit'] > 0)) {
+            $lastmembervisittext = $lang['textpendinglogin'];
+        } else {
+            $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+            $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+            $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
+        }
 
-                if ($memberinfo['site'] != 'http://') {
-                    $site = $memberinfo['site'];
-                } else {
-                    $site = '';
-                }
+        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+        $posts = $db->result($query, 0);
+        $db->free_result($query);
 
-                if (X_MEMBER && $memberinfo['email'] != '' && $memberinfo['showemail'] == 'yes') {
-                    $email = $memberinfo['email'];
-                } else {
-                    $email = '';
-                }
+        $posttot = $posts;
+        if ($posttot == 0) {
+            $percent = '0';
+        } else {
+            $percent = $memberinfo['postnum']*100/$posttot;
+            $percent = round($percent, 2);
+        }
 
-                $rank['avatarrank'] = trim($rank['avatarrank']);
-                $memberinfo['avatar'] = trim($memberinfo['avatar']);
+        $memberinfo['bio'] = censor($memberinfo['bio']);
+        $memberinfo['bio'] = nl2br($memberinfo['bio']);
 
-                if ($rank['avatarrank'] != '') {
-                    $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
-                }
-                
-                if ($memberinfo['avatar'] != '') {
-                    $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
-                }
+        $emailblock = '';
+        if ($memberinfo['showemail'] == 'yes') {
+            eval('$emailblock = "'.template('member_profile_email').'";');
+        }
 
-                if ($rank['avatarrank'] || $memberinfo['avatar']) {
-                    if (isset($site) && strlen(trim($site)) > 0) {
-                        $sitelink = $site;
-                    } else {
-                        $sitelink = "about:blank";
-                    }
-                } else {
-                    $sitelink = "about:blank";
-                }
+        if (X_SADMIN) {
+            $admin_edit = "<br />$lang[adminoption] <a href=\"./editprofile.php?user=$encodeuser\">$lang[admin_edituseraccount]</a>";
+        } else {
+            $admin_edit = NULL;
+        }
 
-                $showtitle = $rank['title'];
-                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']);
+        if ($memberinfo['mood'] != '') {
+            $memberinfo['mood'] = postify($memberinfo['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
+        } else {
+            $memberinfo['mood'] = '';
+        }
 
-                if ($memberinfo['customstatus'] != '') {
-                    $showtitle = $rank['title'];
-                    $customstatus = '<br />'.censor($memberinfo['customstatus']);
-                } else {
-                    $showtitle = $rank['title'];
-                    $customstatus = '';
-                }
+        $memberinfo['location'] = censor($memberinfo['location']);
+        $memberinfo['aim'] = censor($memberinfo['aim']);
+        $memberinfo['aimrecode'] = recodeOut($memberinfo['aim']);
+        $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
+        $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
+        $memberinfo['yahoorecode'] = recodeOut($memberinfo['yahoo']);
+        $memberinfo['msn'] = censor($memberinfo['msn']);
+        $memberinfo['msnrecode'] = recodeOut($memberinfo['msn']);
 
-                if (!($memberinfo['lastvisit'] > 0)) {
-                    $lastmembervisittext = $lang['textpendinglogin'];
-                } else {
-                    $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
-                }
+        if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
+            $memberinfo['bday'] = $lang['textnone'];
+        } else {
+            $memberinfo['bday'] = gmdate($dateformat, gmmktime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)));
+        }
 
-                $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
-                $posts = $db->result($query, 0);
-                $db->free_result($query);
-
-                $posttot = $posts;
-                if ($posttot == 0) {
-                    $percent = '0';
-                } else {
-                    $percent = $memberinfo['postnum']*100/$posttot;
-                    $percent = round($percent, 2);
-                }
-
-                $memberinfo['bio'] = censor($memberinfo['bio']);
-                $memberinfo['bio'] = nl2br($memberinfo['bio']);
-
-                $emailblock = '';
-                if ($memberinfo['showemail'] == 'yes') {
-                    eval('$emailblock = "'.template('member_profile_email').'";');
-                }
-
-                if (X_SADMIN) {
-                    $admin_edit = "<br />$lang[adminoption] <a href=\"./editprofile.php?user=$encodeuser\">$lang[admin_edituseraccount]</a>";
-                } else {
-                    $admin_edit = NULL;
-                }
-
-                if ($memberinfo['mood'] != '') {
-                    $memberinfo['mood'] = postify($memberinfo['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
-                } else {
-                    $memberinfo['mood'] = '';
-                }
-
-                $memberinfo['location'] = censor($memberinfo['location']);
-                $memberinfo['aim'] = censor($memberinfo['aim']);
-                $memberinfo['aimrecode'] = recodeOut($memberinfo['aim']);
-                $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
-                $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
-                $memberinfo['yahoorecode'] = recodeOut($memberinfo['yahoo']);
-                $memberinfo['msn'] = censor($memberinfo['msn']);
-                $memberinfo['msnrecode'] = recodeOut($memberinfo['msn']);
-
-                if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
-                    $memberinfo['bday'] = $lang['textnone'];
-                } else {
-                    $memberinfo['bday'] = gmdate($dateformat, gmmktime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)));
-                }
-
-                // Forum most active in
-                $found = false;
-                $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.moderator, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
-                while($f = $db->fetch_array($query)) {
-                    $pp = checkForumPermissions($f);
-                    if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD]) {
-                        $forum = $f;
-                        $found = true;
-                        break;
-                    }
-                }
-
-                if (!$found || $forum['posts'] < 1) {
-                    $topforum = $lang['textnopostsyet'];
-                } else if ($memberinfo['postnum'] <= 0) {
-                    $topforum = $lang['textnopostsyet'];
-                } else {
-                    $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">".fnameOut($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
-                }
-
-                // Last post
-                $lpfound = false;
-                $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
-                while($post = $db->fetch_array($pq)) {
-                    $pp = checkForumPermissions($post);
-                    if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD])) {
-                        continue;
-                    }
-                    $lpfound = true;
-                    $posts = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1; // +1 is faster than doing <= !
-                    validatePpp();
-
-                    $page = quickpage($posts, $ppp);
-
-                    $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-                    $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-
-                    $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
-                    $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
-                    $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
-                    break;
-                }
-                if (!$lpfound) {
-                    $lastpost = $lang['textnopostsyet'];
-                }
-
-                if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
-                    $lang['searchusermsg'] = '';
-                } else {
-                    $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
-                }
-                eval('$memberpage = "'.template('member_profile').'";');
+        // Forum most active in
+        $found = false;
+        $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.moderator, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
+        while($f = $db->fetch_array($query)) {
+            $pp = checkForumPermissions($f);
+            if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD]) {
+                $forum = $f;
+                $found = true;
+                break;
             }
         }
+
+        if (!$found || $forum['posts'] < 1) {
+            $topforum = $lang['textnopostsyet'];
+        } else if ($memberinfo['postnum'] <= 0) {
+            $topforum = $lang['textnopostsyet'];
+        } else {
+            $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">".fnameOut($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
+        }
+
+        // Last post
+        $lpfound = false;
+        $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
+        while($post = $db->fetch_array($pq)) {
+            $pp = checkForumPermissions($post);
+            if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD])) {
+                continue;
+            }
+            $lpfound = true;
+            $posts = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1; // +1 is faster than doing <= !
+            validatePpp();
+
+            $page = quickpage($posts, $ppp);
+
+            $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+
+            $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
+            $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
+            $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
+            break;
+        }
+        if (!$lpfound) {
+            $lastpost = $lang['textnopostsyet'];
+        }
+
+        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+            $lang['searchusermsg'] = '';
+        } else {
+            $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
+        }
+        eval('$memberpage = "'.template('member_profile').'";');
         break;
 
     default:
