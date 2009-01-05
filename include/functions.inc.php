@@ -1936,16 +1936,14 @@ function handlePasswordDialog($fid) {
     global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
 
     $fid = intval($fid);
-
-    $pwform = '';
     $pwinput = postedVar('pw', '', FALSE, FALSE);
-    $query = getForum($fid);
-    if ($pwinput != '' And $db->num_rows($query) == 1) {
-        $pass = $db->result($query, 0);
 
-        if ($pwinput == $pass) {
-            put_cookie('fidpw'.$fid, $pass, (time() + (86400*30)), $cookiepath, $cookiedomain);
-            redirect($full_url.substr($url, strlen($cookiepath)), 0);
+    $forum = getForum($fid);
+    if (strlen($pwinput) != 0 And $forum !== FALSE) {
+        if ($pwinput == $forum['password']) {
+            put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)), $cookiepath, $cookiedomain);
+            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
+            redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
         } else {
             eval('$pwform = "'.template('forumdisplay_password').'";');
             error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);
