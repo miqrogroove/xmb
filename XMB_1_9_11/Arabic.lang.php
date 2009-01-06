@@ -1,30 +1,49 @@
 <?php
 /**
- * XMB 1.9.9 Saigo
+ * eXtreme Message Board
+ * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
  *
- * Developed by the XMB Group Copyright (c) 2001-2008
- * Sponsored by iEntry Inc. Copyright (c) 2007
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2009, The XMB Group
+ * http://www.xmbforum.com
  *
- * http://xmbgroup.com , http://ientry.com
+ * Sponsored By iEntry, Inc.
+ * Copyright (c) 2007, iEntry, Inc.
+ * http://www.ientry.com
  *
- * This software is released under the GPL License, you should
- * have received a copy of this license with the download of this
- * software. If not, you can obtain a copy by visiting the GNU
- * General Public License website <http://www.gnu.org/licenses/>.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * Translated by: Mowaffak Ali ( www.alburak.net ) based on MemoriesDisc.com translation
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
 
 if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
     exit("<div align='right'>áÇ íãßäß ÇáæÕæá Åáì åĞÇ Çáãáİ ãÈÇÔÑÉ</div>");
 }
 
-$charset = 'windows-1256';
+// Name assigned by XMB for internal use.
+$devname = 'Arabic';
 
+// Meta Data
+$lang['charset'] = 'windows-1256';
+$lang['iso639'] = 'ar';
+$lang['language'] = '&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;';
+
+// Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
 $lang['add_buddy'] = "ÅÖÇİÉ ÃßËÑ ãä ÚäæÇä";
 $lang['addressname'] = "ÇáÚäÇæíä:";
+$lang['addressupdate'] = "Update";
 $lang['addtime'] = "áÊÚÏíá ÇáÊæŞíÊ ÇáÃÓÇÓí áÈÑäÇãÌ ÇáãäÊÏì, ÇÏÎá İÇÑŞ ÇáæŞÊ ÈÇáÃÑŞÇã ãËÇá: (1 Ãæ -1)";
 $lang['addtoaddresses'] = "ÅÖÇİÉ Åáì ÏİÊÑ ÇáÃÕÏŞÇÁ";
 $lang['addtobuddies'] = "ÅÖÇİÉ Åáì ÏİÊÑ ÚäÇæíä ÇáÃÕÏŞÇÁ";
@@ -36,6 +55,7 @@ $lang['admin_main_settings4'] = "ÎíÇÑÇÊ ÇáÔßá";
 $lang['admin_main_settings5'] = "ÇáÊÍßã İí ÇáãÓÊÎÏãíä";
 $lang['admin_main_settings6'] = "ÃÎÑì";
 $lang['admin_main_settings7'] = 'ÅÚÏÇÏÇÊ ÕæÑÉ ßæÏ ÇáÃãÇä';
+$lang['admin_main_settings8'] = 'File Attachment Settings';
 $lang['admin_rename_fail'] = "áÇ íÓÊØíÚ ÇáÈÑäÇãÌ ÅÚÇÏÉ ÊÓãíÉ ÇÓã ÇáãÓÊÎÏã, ÑÈãÇ íßæä ÇÓã ÇáãÓÊÎÏã ÛíÑ ãæÌæÏ Ãæ æÌæÏ ÃßËÑ ãä ÇÓã ãÓÊÎÏã.";
 $lang['admin_rename_success'] = "Êã ÊÛííÑ ÇÓã ÇáãÓÊÎÏã ÈäÌÇÍ.";
 $lang['admin_rename_txt'] = "ÅÚÇÏÉ ÊÓãíÉ ÇÓã ãÓÊÎÏã";
@@ -46,10 +66,9 @@ $lang['adminemail'] = "ÇáÈÑíÏ ÇáÅáßÊÑæäí ÇáÎÇÕ ÈÇáãäÊÏì:";
 $lang['adminoption'] = "ÎíÇÑÊ ÇáÅÏÇÑÉ:";
 $lang['adminprofilechange'] = "ÔßÑÇğ áß, Êã ÊÍÑíÑ Çáãáİ ÇáÔÎÕí áåĞÇ ÇáÚÖæ ÈäÌÇÍ.";
 $lang['adminverifyemail'] = "ÇáÊÍŞŞ ãä ÚäæÇä ÇáÈÑíÏ ÇáÅáßÊÑæäí";
-$lang['allowrankedit'] = "ÇáÓãÇÍ ÈÊÈÇÏá ÊÍÑíÑ ÇáãÔÇÑßÇÊ Èíä ØÇŞã ÇáÅÏÇÑÉ / ÇáãÔÑİíä¿<br />
-<span class=\"smalltxt\">(åĞÇ ÇáÎíÇÑ íÓãÍ áÌãíÚ ØÇŞã ÇáÅÏÇÑÉ / ÇáãÔÑİíä ÈÊÈÇÏá ÊÍÑíÑ ÇáãÔÇÑßÇÊ İíãÇ Èíäåã).</span>";
+$lang['allowrankedit'] = "ÇáÓãÇÍ ÈÊÈÇÏá ÊÍÑíÑ ÇáãÔÇÑßÇÊ Èíä ØÇŞã ÇáÅÏÇÑÉ / ÇáãÔÑİíä¿<br /><span class=\"smalltxt\">(åĞÇ ÇáÎíÇÑ íÓãÍ áÌãíÚ ØÇŞã ÇáÅÏÇÑÉ / ÇáãÔÑİíä ÈÊÈÇÏá ÊÍÑíÑ ÇáãÔÇÑßÇÊ İíãÇ Èíäåã).</span>";
 $lang['alreadyreg'] = "ÇÓã ÇáãÓÊÎÏã æ / Ãæ ÇáÈÑíÏ ÇáÅáßÊÑæäí ãÓÌá ÓÇÈŞÇğ áÃÍÏ ÃÚÖÇÁ ÇáãäÊÏì, ãä İÖáß ÍÇæá ÇáÊÓÌíá ãÑÉ ÃÎÑì.";
-$lang['alreadyvoted']  = 'áŞÏ ŞãÊ ÈÇáÊÕæíÊ İí åĞÇ ÇáÇÓÊİÊÇÁ ÓÇÈŞÇğ!';
+$lang['alreadyvoted'] = 'áŞÏ ŞãÊ ÈÇáÊÕæíÊ İí åĞÇ ÇáÇÓÊİÊÇÁ ÓÇÈŞÇğ!';
 $lang['altadmintools'] = "áæÍÉ ÇáÊÍßã ÇáÎÇÕÉ ÈÅÏÇÑÉ ÇáãæÖæÚ";
 $lang['altavatar'] = "ÇáÕæÑÉ ÇáÔÎÕíÉ";
 $lang['altboardlogo'] = 'ÔÚÇÑ ÇáãäÊÏì';
@@ -70,10 +89,7 @@ $lang['altnormalfolder'] = "áÇ íæÌÏ ãÔÇÑßÇÊ ÌÏíÏÉ";
 $lang['altpollpercentage'] = "-";
 $lang['altpostmood'] = "ÍÇáÉ ÇáãÔÇÑßÉ";
 $lang['altpostnewthread'] = "ßÊÇÈÉ ãæÖæÚ ÌÏíÏ";
-$lang['altpoweredbymysql'] = "Powered by MySQL";
-$lang['altpoweredbyphp'] = "Powered by PHP";
 $lang['altquote'] = "ßÊÇÈÉ ÑÏ ÌÏíÏ ãÚ ÇŞÊÈÇÓ äÕ ãä åĞå ÇáãÔÇÑßÉ";
-
 $lang['altredfolder'] = "ãÔÇÑßÉ ÌÏíÏÉ";
 $lang['altreportpost'] = "ÊäÈíÉ ÇáãÔÑİ Úä åĞå ÇáãÔÇÑßÉ";
 $lang['altrules'] = "ŞæÇäíä ÇáãäÊÏì";
@@ -81,9 +97,7 @@ $lang['altsearch'] = "ÇáÈÍË İí ÇáãäÊÏì";
 $lang['altstats'] = "ÅÍÕÇÆíÇÊ ÇáãäÊÏì";
 $lang['alttodayposts'] = "ãÔÇÑßÇÊ Çáíæã";
 $lang['alttopthread'] = "ÊËÈíÊ ÇáãæÖæÚ";
-
 $lang['altu2umember'] = "ÇÑÓÇá ÑÓÇáÉ ÎÇÕÉ Åáì åĞÇ ÇáÚÖæ";
-
 $lang['altviewprofile'] = "ÚÑÖ Çáãáİ ÇáÔÎÕí ÇáÎÇÕ ÈåĞÇ ÇáÚÖæ";
 $lang['altvisitsite'] = "ãæŞÚ ÇáæíÈ";
 $lang['analyze'] = 'ÊÍáíá ÇáÌÏÇæá (Analyze)';
@@ -99,15 +113,19 @@ $lang['attachmanwhereforum'] = "æÇáãäÊÏì åæ:";
 $lang['attachmanwherename'] = "ÇÓã Çáãáİ íÍÊæí Úáì:";
 $lang['attachmanwheresizegreater'] = "æÍÌã Çáãáİ ÃßÈÑ ãä (ÈÇíÊ) :";
 $lang['attachmanwheresizesmaller'] = "æÍÌã Çáãáİ ÃÕÛÑ ãä (ÈÇíÊ) :";
+$lang['attachmaxdims'] = "Image limit is";
+$lang['attachmaxsize'] = "Upload size limit is";
+$lang['attachmaxtotal'] = "Multiple upload size limit per submission is";
 $lang['attachment'] = "Çáãáİ ÇáãÑİŞ:";
+$lang['attachmentm'] = "Multi-Attach:";
 $lang['attachments'] = "ÇáãÑİŞÇÊ";
 $lang['attachments_num_restored'] = "Êã ÅÓÊÚÇÏÉ ÇáãÑİŞÇÊ";
 $lang['attachments_num_stored'] = "Êã ÊÎÒíä / ÍİÙ ÇáãÑİŞÇÊ";
+$lang['attachmore'] = "Click here to upload another file";
 $lang['attachtoobig'] = "ÍÌã Çáãáİ ÇáĞí ÊÍÇæá ÅÖÇİÊå Åáì ÇáãÔÇÑßÉ ÌÏÇğ ßÈíÑ.";
 $lang['autoinsertsmilies'] = "ÅÏÑÇÌ ßá ÇáÅÈÊÓÇãÇÊ ãä ãÌáÏ ÇáÅÈÊÓÇãÇÊ";
 $lang['autoinsertposticons'] = "ÅÏÑÇÌ ßá ÃíŞæäÇÊ ÇáãÔÇÑßÉ ãä ãÌáÏ ÇáÅÈÊÓÇãÇÊ";
 $lang['avatar_too_big'] = "ãŞÇÓ ÇáÕæÑÉ ÇáÔÎÕíÉ ÌÏÇğ ßÈíÑ! ÇáãŞÇÓ ÇáãÓãæÍ Èå åæ: ";
-
 $lang['aweek'] = "ÃÓÈæÚ";
 $lang['backto'] = "ÇáÚæÏÉ Åáì:";
 $lang['backtovote'] = "ÇáÚæÏÉ Åáì ÇáÊÕæíÊ";
@@ -156,27 +174,7 @@ $lang['bbcode_prompt_list_start'] = "ÇáÑÌÇÁ ÇÎÊíÇÑ äæÚ ÇáŞÇÆãÉ\\nÇßÊÈ ÍÑİ A ááÊÑ
 $lang['bbcode_prompt_quote'] = "ÇáÑÌÇÁ ßÊÇÈÉ ÇáäÕ ÇáĞí ÊÑíÏ ÅŞÊÈÇÓå.";
 $lang['bbcode_prompt_size'] = "ÇáÑÌÇÁ ßÊÇÈÉ ÇáäÕ ÇáĞí ÊÑíÏ Çä íßæä ÈÍÌã ";
 $lang['bbcode_prompt_underline'] = "Please enter the text that should be underlined.";
-$lang['bbcodeinfo'] = "ÊÓÊØíÚ ÅÓÊÚãÇá ÃßæÏ ÇáÜ BB æåí ÔÈíåÉ ÈÇáÜ HTML áßäåÇ ÃßËÑ ÃãÇäÇ æ ÃßËÑ ÓåæáÉ.<br /><br />
-[b]ÇáäÕ åäÇ[/b] &nbsp; (äÕ ãËÎä)<br /><br />
-[i]ÇáäÕ åäÇ[/i] &nbsp; (äÕ ãÇÆá)<br /><br />
-[u]ÇáäÕ åäÇ[/u] &nbsp; (äÕ ÇÓİá ãäå ÎØ)<br /><br />
-[url]http://www.alburak.net[/url] &nbsp; (ÑÇÈØ ÊÔÚÈí)<br /><br />
-[url=http://www.alburak.net]ÇáäÕ[/url] &nbsp; (ÑÇÈØ ÊÔÚÈí)<br /><br />
-[email]info@alburak.net[/email] &nbsp; (ÑÇÈØ ÊÔÚÈí áÈÑíÏ ÅáíßÊÑæäí)<br /><br />
-[email=info@alburak.net]ÇáÅÊÕÇá ÈäÇ[/email] &nbsp; (ÑÇÈØ ÊÔÚÈí áÈÑíÏ ÅáíßÊÑæäí)<br /><br />
-[quote]ÇáäÕ åäÇ[/quote] &nbsp; (äÕ ãŞÊÈÓ)<br /><br />
-[code]ÇáäÕ åäÇ[/code] &nbsp; (ßæÏ ÈÑäÇãÌ)<br /><br />
-[img]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (ÕæÑÉ)<br /><br />
-[img=50x50]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (ÕæÑÉ ÇÈÚÇÏåÇ 50 × 50)<br /><br />
-[color=red]áæä ÇáäÕ ÇÍãÑ[/color] &nbsp; (äÕ ãáæä)<br /><br />
-[size=3]ÍÌã åĞÇ ÇáäÕ åæ 3[/size] &nbsp; (äÕ ãÚ ÊÛííÑ ÍÌãå)<br /><br />
-[font=Tahoma]ÇÓã ÇáÎØ áåĞÇ ÇáäÕ Tahoma[/font] &nbsp; (ÊÛííÑ ÎØ ÇáäÕ ÈÎáÇİ ÇáÎØ ÇáÇİÊÑÇÖí)<br /><br />
-[align=center]åĞÇ ÇáäÕ İí ÇáãäÊÕİ[/align] &nbsp; (ÊÍÏíÏ ÇÊÌÇå ÇáäÕ)<br /><br />
-[list]<br />
-[*]ÇáÈäÏ #1<br />
-[*]ÇáÈäÏ #2<br />
-[*]ÇáÈäÏ #3<br />
-[/list] &nbsp; (ŞÇÆãÉ)";
+$lang['bbcodeinfo'] = "ÊÓÊØíÚ ÅÓÊÚãÇá ÃßæÏ ÇáÜ BB æåí ÔÈíåÉ ÈÇáÜ HTML áßäåÇ ÃßËÑ ÃãÇäÇ æ ÃßËÑ ÓåæáÉ.<br /><br />[b]ÇáäÕ åäÇ[/b] &nbsp; (äÕ ãËÎä)<br /><br />[i]ÇáäÕ åäÇ[/i] &nbsp; (äÕ ãÇÆá)<br /><br />[u]ÇáäÕ åäÇ[/u] &nbsp; (äÕ ÇÓİá ãäå ÎØ)<br /><br />[url]http://www.xmbforum.com[/url] &nbsp; (ÑÇÈØ ÊÔÚÈí)<br /><br />[url=http://www.xmbforum.com]ÇáäÕ[/url] &nbsp; (ÑÇÈØ ÊÔÚÈí)<br /><br /> [pid]12345[/pid] &nbsp; (Post Link)<br /><br /> [email]someone@xmbforum.com[/email] &nbsp; (ÑÇÈØ ÊÔÚÈí áÈÑíÏ ÅáíßÊÑæäí)<br /><br />[email=someone@xmbforum.com]ÇáÅÊÕÇá ÈäÇ[/email] &nbsp; (ÑÇÈØ ÊÔÚÈí áÈÑíÏ ÅáíßÊÑæäí)<br /><br />[quote]ÇáäÕ åäÇ[/quote] &nbsp; (äÕ ãŞÊÈÓ)<br /><br />[code]ÇáäÕ åäÇ[/code] &nbsp; (ßæÏ ÈÑäÇãÌ)<br /><br />[img]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (ÕæÑÉ)<br /><br />[img=50x50]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (ÕæÑÉ ÇÈÚÇÏåÇ 50 × 50)<br /><br />[color=red]áæä ÇáäÕ ÇÍãÑ[/color] &nbsp; (äÕ ãáæä)<br /><br />[size=3]ÍÌã åĞÇ ÇáäÕ åæ 3[/size] &nbsp; (äÕ ãÚ ÊÛííÑ ÍÌãå)<br /><br />[font=Tahoma]ÇÓã ÇáÎØ áåĞÇ ÇáäÕ Tahoma[/font] &nbsp; (ÊÛííÑ ÎØ ÇáäÕ ÈÎáÇİ ÇáÎØ ÇáÇİÊÑÇÖí)<br /><br />[align=center]åĞÇ ÇáäÕ İí ÇáãäÊÕİ[/align] &nbsp; (ÊÍÏíÏ ÇÊÌÇå ÇáäÕ)<br /><br />[list]<br />[*]ÇáÈäÏ #1<br />[*]ÇáÈäÏ #2<br />[/list] &nbsp; (ŞÇÆãÉ)";
 $lang['bbcodeoff'] = "ÊÚØíá ßæÏ ÇáÜ BB¿";
 $lang['bbinsert'] = "ÅÏÑÇÌ ßæÏ ÇáÜ BB ÈÔßá ÊáŞÇÆí:";
 $lang['bbname'] = "ÇÓã ÇáãäÊÏì:";
@@ -191,24 +189,27 @@ $lang['byte'] = "ÈÇíÊ";
 $lang['cannotmergesamethread'] = 'ÇáãÚĞÑÉ, áÇ íãßä ÏãÌ ÇáãæÖæÚ ãÚ äİÓ ÇáãæÖæÚ.';
 $lang['cantsplit'] = "åĞÇ ÇáãæÖæÚ áÇ íÍÊæì Úáì ÑÏæÏ, áÇ ÊÓÊØíÚ ÊŞÓíãÉ.";
 $lang['cantthreadprune'] = "åĞÇ ÇáãæÖæÚ áÇ íÍÊæì Úáì ÑÏæÏ, áÇ ÊÓÊØíÚ ÇáŞíÇã ÈÚãáíÉ ÇáÍĞİ ÇáÇÎÊíÇÑí.";
-$lang['captchastatus'] = 'ÇáæÖÚ ÇáÚÇã:';
-$lang['captcharegstatus'] = 'ÃËäÇÁ ÇáÊÓÌíá:';
-$lang['captchapoststatus'] = 'ãÔÇÑßÇÊ ÇáÒæÇÑ:';
+$lang['captchacaseon'] = "This code is case-sensitive.";
 $lang['captchacharset'] = 'ÑãæÒ ÇáßæÏ:';
-$lang['captchacodelength'] = 'Øæá ÇáßæÏ:';
 $lang['captchacodecase'] = 'ÍÓÇÓíÉ ÇáßæÏ:';
 $lang['captchacodeshadow'] = 'Ùá ÇáßæÏ:';
+$lang['captchacodelength'] = 'Øæá ÇáßæÏ:';
+$lang['captchaimagebg'] = 'ÎáİíÉ ÇáÕæÑÉ:';
+$lang['captchaimagecolor'] = 'ÅÓÊÎÏÇã ßÇãá Çááæä:';
+$lang['captchaimagedots'] = 'ÚÏÏ ÇáäŞÇØ ÇáÚÔæÇÆíÉ:';
+$lang['captchaimageheight'] = 'ÅÑÊİÇÚ ÇáÕæÑÉ:';
+$lang['captchaimagefonts'] = 'äæÚ ÇáÎØ:';
+$lang['captchaimageinvalid'] = "ßæÏ ÇáÊÍŞŞ ÇáĞí ÃÏÎáÊå ÛíÑ ÕÍíÍ. ÇáÑÌÇÁ ÅÚÇÏÉ ÅÏÎÇáå ãä ÌÏíÏ ßãÇ íÙåÑ İí ÇáÕæÑÉ.";
+$lang['captchaimagelines'] = 'ÚÏÏ ÇáÎØæØ ÇáÚÔæÇÆíÉ:';
+$lang['captchaimagemaxfont'] = 'ÃßÈÑ ãŞÇÓ ááÎØ:';
+$lang['captchaimageminfont'] = 'ÃŞá ãŞÇÓ ááÎØ:';
 $lang['captchaimagetype'] = 'äæÚ ÇáÕæÑÉ:';
 $lang['captchaimagewidth'] = 'ÚÑÖ ÇáÕæÑÉ:';
-$lang['captchaimageheight'] = 'ÅÑÊİÇÚ ÇáÕæÑÉ:';
-$lang['captchaimagebg'] = 'ÎáİíÉ ÇáÕæÑÉ:';
-$lang['captchaimagedots'] = 'ÚÏÏ ÇáäŞÇØ ÇáÚÔæÇÆíÉ:';
-$lang['captchaimagelines'] = 'ÚÏÏ ÇáÎØæØ ÇáÚÔæÇÆíÉ:';
-$lang['captchaimagefonts'] = 'äæÚ ÇáÎØ:';
-$lang['captchaimageminfont'] = 'ÃŞá ãŞÇÓ ááÎØ:';
-$lang['captchaimagemaxfont'] = 'ÃßÈÑ ãŞÇÓ ááÎØ:';
-$lang['captchaimagecolor'] = 'ÅÓÊÎÏÇã ßÇãá Çááæä:';
-$lang['captchaimageinvalid'] = "ßæÏ ÇáÊÍŞŞ ÇáĞí ÃÏÎáÊå ÛíÑ ÕÍíÍ. ÇáÑÌÇÁ ÅÚÇÏÉ ÅÏÎÇáå ãä ÌÏíÏ ßãÇ íÙåÑ İí ÇáÕæÑÉ.";
+$lang['captchaindebug'] = "Captcha features are not available in DEBUG mode.";
+$lang['captchapoststatus'] = 'ãÔÇÑßÇÊ ÇáÒæÇÑ:';
+$lang['captcharegstatus'] = 'ÃËäÇÁ ÇáÊÓÌíá:';
+$lang['captchasearchstatus'] = 'Anonymous Searching Status:';
+$lang['captchastatus'] = 'ÇáæÖÚ ÇáÚÇã:';
 $lang['captchaverification'] = "ßæÏ ÇáÃãÇä";
 $lang['cb_advmode'] = "ãÊŞÏãÉ";
 $lang['cb_fomatting'] = "ØÑíŞÉ ÇáÇÓÊÎÏÇã:";
@@ -235,13 +236,11 @@ $lang['confirmDeletePosts'] = "ÇäÊ Úáì æÔß ÍĞİ ÇáãÓÊÎÏã ãÚ ÌãíÚ ÇáãÔÇÑßÇÊ ÇáÎÇÕÉ
 $lang['confirmDeleteUser'] = "ÊÃÔíÑ ÇáÕäÏæŞ íÚäí ÍĞİ ÇáãÓÊÎÏã. ÅĞÇ ÊÑíÏ ÈÇáİÚá ÍĞİ åĞÇ ÇáãÓÊÎÏã, ÇÖÛØ (ãæÇİŞ - OK) æİí ÍÇáÉ ÚÏã ÇáÑÛÈÉ ÇÖÛØ Úáì ( ÅáÛÇÁ ÇáÃãÑ - Cancel)";
 $lang['coppaagree'] = "ãæÇİŞ æÚãÑí İæŞ ÇáÜ 13 ÚÇã";
 $lang['coppastatus'] = "ÍãÇíÉ ÎÕæÕíÉ ÇáØİá Úáì ÔÈßÉ ÇáÅäÊÑäÊ (COPPA):";
-
 $lang['copythread'] = "äÓÎ ÇáãæÖæÚ";
 $lang['copythreadmsg'] = "ÔßÑÇğ áß, Êã ÅÖÇİÉ äÓÎÉ ãä åĞÇ ÇáãæÖæÚ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ.";
 $lang['copythreadto'] = "äÓÎ ÇáãæÖæÚ Åáì";
 $lang['cp_deleteposts'] = "ÍĞİ ÇáãÔÇÑßÇÊ";
 $lang['cp_subscription'] = "ÇáÅÔÊÑÇß İí ÇáŞÇÆãÉ ÇáÈÑíÏíÉ¿";
-
 $lang['cprestricted'] = "ÅÏÇÑÉ ÇáÃÓãÇÁ ÇáãÍÖæÑÉ";
 $lang['cpsearch'] = "ÈÍË";
 $lang['cpwodump'] = "ÊİÑíÛ ÓÌá ÇáãÊæÇÌÏæä ÇáÂä";
@@ -257,6 +256,7 @@ $lang['daysold'] = "ÇáÃíÇã ÇáãÇÖíÉ";
 $lang['db_backup'] = "äÓÎ ŞÇÚÏÉ ÇáÈíÇäÇÊ";
 $lang['defaultTimezoneDesc'] = "ÇáÊæŞíÊ ÇáÅİÊÑÇÖí";
 $lang['delete_all_themes'] = "áÇ ÊÓÊØíÚ ÍĞİ ÂÎöÑ ÊÕãíã! áÃä ÇáãäÊÏì áä íÚãá ÈÏæäå!";
+$lang['deleteaborted'] = 'The delete action was aborted due to a protection error.';
 $lang['deletebutton'] = "ÍĞİ";
 $lang['deletecolon'] = "ÍĞİ:";
 $lang['deletecurrent'] = "&nbsp;ÍĞİ Çáãáİ ÇáÍÇáí.";
@@ -264,7 +264,6 @@ $lang['deletethread'] = "ÍĞİ ÇáãæÖæÚ";
 $lang['deletethreadmsg'] = "ÔßÑÇğ áß, Êã ÍĞİ ÇáãæÖæÚ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ.";
 $lang['desc'] = "ÊäÇÒáíÇğ";
 $lang['developedby'] = "Developed By";
-
 $lang['dotfolders'] = "'äŞØÉ' ÇáãÌáÏÇÊ:<br /><small>åá ÊÑíÏ ÚÑÖ äŞØÉ İí ãÌáÏÇÊ ÇáãÓÊÎÏãíä ÇáÊí ÔÇÑßæÇ ÈåÇ¿</small>";
 $lang['doublee'] = "ÊÓÌíá ÃßËÑ ãä ÚÖæ ÈÓÊÎÏÇã ÚäæÇä ÈÑíÏ ÅáíßÊÑæäí æÇÍÏ¿";
 $lang['dump_attachments'] = "äÓÎ ÇáãÑİŞÇÊ";
@@ -288,7 +287,6 @@ $lang['Enable_PHP_SQL'] = "Enable PHP/SQL Calculation";
 $lang['Enable_Queries'] = "Enable Queries";
 $lang['Enable_Server_Load'] = "Enable Server Load";
 $lang['error'] = "ÎØÃ";
-
 $lang['errormovingthreads'] = "áã ÊŞã ÈÇÎÊíÇÑ ÇáãäÊÏì Ãæ ÇáãäÊÏì ÇáİÑÚí ÈÔßá ÕÍíÍ. ãä İÖáß ÍÇæá ãÑÉ ÃÎÑì.";
 $lang['evalbestmember'] = '$lang["bestmember"] = "ÃİÖá ÚÖæ áåĞÇ Çáíæã åæ <strong>$membesthtml</strong> æĞáß ÈÜ <strong>$bestmemberpost</strong> ãä ÇáãÔÇÑßÇÊ";';
 $lang['evalindexstats'] = '$lang["indexstats"] = "<strong>$threads</strong> ãä ÇáãæÇÖíÚ ~ <strong>$posts</strong> ãä ÇáãÔÇÑßÇÊ ~ <strong>$members</strong> ãä ÇáÃÚÖÇÁ";';
@@ -306,10 +304,8 @@ $lang['evalstats2'] = '$lang["stats2"] = "$posts ãä ÇáãÔÇÑßÇÊ";';
 $lang['evalstats3'] = '$lang["stats3"] = "$threads ãä ÇáãæÇÖíÚ";';
 $lang['evalstats4'] = '$lang["stats4"] = "$forums ãä ÇáãäÊÏíÇÊ ($forumsa äÔØÉ)";';
 $lang['evalstats5'] = '$lang["stats5"] = "$members ãä ÇáÃÚÖÇÁ";';
-$lang['evalstats6'] = '$lang["stats6"] = "<font class=\"smalltxt\"><strong>ÇáãæÇÖíÚ ÇáÎãÓÉ ÇáÃßËÑ ãä ÍíË ÚÏÏ ÇáŞÑÇÁ:</strong></font>
-<br /> $viewmost";';
-$lang['evalstats7'] = '$lang["stats7"] = "<font class=\"smalltxt\"><strong>ÇáãæÇÖíÚ ÇáÎãÓÉ ÇáÃßËÑ ãä ÍíË ÚÏÏ ÇáãÔÇÑßÇÊ:</strong></font>
-<br /> $replymost";';
+$lang['evalstats6'] = '$lang["stats6"] = "<font class=\"smalltxt\"><strong>ÇáãæÇÖíÚ ÇáÎãÓÉ ÇáÃßËÑ ãä ÍíË ÚÏÏ ÇáŞÑÇÁ:</strong></font><br /> $viewmost";';
+$lang['evalstats7'] = '$lang["stats7"] = "<font class=\"smalltxt\"><strong>ÇáãæÇÖíÚ ÇáÎãÓÉ ÇáÃßËÑ ãä ÍíË ÚÏÏ ÇáãÔÇÑßÇÊ:</strong></font><br /> $replymost";';
 $lang['evalstats8'] = '$lang["stats8"] = "ÃİÖá ãäÊÏì åæ $popforum æĞáß ÈÜ $pop[posts] ãä ÇáãÔÇÑßÇÊ æ $pop[threads] ãä ÇáãæÇÖíÚ";';
 $lang['evalstats9'] = '$lang["stats9"] = "$mempost ãä ÇáãÔÇÑßÇÊ áßá ÚÖæ";';
 $lang['evaltrevlt'] = '$lang["trevltmsg"] = "åĞÇ ÇáãæÖæÚ íÍÊæí Úáì ÕİÍÇÊ ÚÏíÏÉ, <a href=\"$threadlink\">ÃÖÛØ åäÇ</a> áãÚÇíäÉ ÇáãæÖæÚ.";';
@@ -320,11 +316,21 @@ $lang['evalusercpwelcome'] = '$lang["usercpwelcome"] = "ãÑÍÈÇğ $xmbuser, áæÍÉ Çá
 $lang['existingip'] = "ÑŞã ÇáÂí Èí ããäæÚ ÓÇÈŞÇğ";
 $lang['export_fid_expl'] = "ãÇåæ ÑŞã ÇáãäÊÏì (fid) ÇáĞí ÊÑíÏ äŞá ÌãíÚ ÇáãæÇÖíÚ ÇáãİŞæÏÉ Åáíå¿<br />ÇáãæÇÖíÚ ÇáãİŞæÏÉ: åí ÇáãæÇÖíÚ ÇáÛíÑ ãÏÑÌÉ Öãä ãäÊÏì ãÍÏÏ, æÑŞã ÇáãäÊÏì ãËáÇ ÑŞã (15) íæÌÏ İí ÇáÑÇÈØ ÇáÊÔÚÈí áÇÓã ÇáãäÊÏì.";
 $lang['export_fid_not_there'] = "áã ÊÍÏÏ ÇáãäÊÏì (ÑŞã ÇáãäÊÏì) ÇáĞí ÊÑíÏ äŞá ÇáãæÇÖíÚ ÇáãİŞæÏÉ Åáíå.";
+$lang['export_tid_expl'] = "To which thread (tid) should all orphaned posts be moved?";
+$lang['export_tid_not_there'] = "No thread was specified to send the orphaned posts to.";
 $lang['favaddedmsg'] = "Êã ÅÖÇİÉ ÇáãæÖæÚ Åáì ŞÇÆãÉ ÇáãæÇÖíÚ ÇáãİÖáÉ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ ÇáãİÖáÉ.";
 $lang['favonlistmsg'] = "ÇáãæÖæÚ ÇáãÍÏÏ ãæÌæÏ ÓÇÈŞÇğ İí ŞÇÆãÉ ÇáãæÇÖíÚ ÇáãİÖáÉ.";
 $lang['favsdeletedmsg'] = "ÇáãæÖæÚ ÇáãÍÏÏ Êã ÍĞİå ãä ŞÇÆãÉ ÇáãæÇÖíÚ ÇáãİÖáÉ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ ÇáãİÖáÉ.";
 $lang['featurewarning'] = "ÊäÈíå";
 $lang['filecorrupt'] = "íÈÏæ Ãä Çáãáİ ÇáĞí ÊŞæã ÈÊäÒíáå ÛíÑ ÕÇáÍ. Êã ÅíŞÇİ ÇáÊäÒíá.";
+$lang['fileuploaderror1'] = 'XMB Error: The Attachment Storage Path setting appears to be invalid.';
+$lang['fileuploaderror2'] = 'You have attached the maximum number of files allowed per post.';
+$lang['fileuploaderror3'] = 'There appears to be an invalid URL in one of the IMG links in your message.';
+$lang['fileuploaderror4'] = 'One of the IMG links in your message points to a non-image file.';
+$lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height limits.  Please re-size the image and try again.';
+$lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
+$lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
+$lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
 $lang['floodprotect'] = "ÇáãÔÇÑßÉ ÇáÓÇÈŞÉ ãÖì ÚáíåÇ ÃŞá ãä $SETTINGS[floodctrl] (ËÇäíÉ), ÛíÑ ãÓãæÍ áß ÈÅÖÇİÉ ãÔÇÑßÉ ÃÎÑì Ãæ ÊßÑÇÑ ÅÖÇİÉ åĞå ÇáãÔÇÑßÉ ÍÊì ÅäÊåÇÁ ÇáæŞÊ ÇáãÍÏÏ. ÇáãÔÇÑßÉ ÇáÃæáì ÇÑÓáÊ ÈäÌÇÍ.";
 $lang['floodprotect_u2u'] = "ÇáÑÓÇáÉ ÇáÓÇÈŞÉ ãÖì ÚáíåÇ ÃŞá ãä $SETTINGS[floodctrl] (ËÇäíÉ), ÛíÑ ãÓãæÍ áß ÈÅÖÇİÉ ÑÓÇáÉ ÃÎÑì Ãæ ÊßÑÇÑ ÅÖÇİÉ åĞå ÇáÑÓÇáÉ ÍÊì ÅäÊåÇÁ ÇáæŞÊ ÇáãÍÏÏ. ÇáÑÓÇáÉ ÇáÃæáì ÇÑÓáÊ ÈäÌÇÍ.";
 $lang['fnasorry'] = "ÇáãÚĞÑÉ, åĞå ÇáãíÒÉ İí ÇáæŞÊ ÇáÍÇáí ÛíÑ ãÊÇÍÉ ...";
@@ -338,24 +344,27 @@ $lang['footer_options'] = 'ÎíÇÑÇÊ ÃÓİá ÇáÕİÍÉ (footer):';
 $lang['forgotpw'] = "äÓíÊ ßáãÉ ÇáãÑæÑ¿";
 $lang['forumjumpselect'] = "ÃÎÊÑ ÇáãäÊÏì";
 $lang['forumpruned'] = "ÊãÊ ÚãáíÉ ÇáÍĞİ ÇáÊáŞÇÆí ÈäÌÇÍ";
+$lang['forumnotempty'] = 'The selected forum is not empty.  A forum must be empty to perform this action.';
 $lang['forumpermissions'] = 'ÕáÇÍíÇÊ ÇáãäÊÏì:';
 $lang['forumpw'] = "ßáãÉ ÇáãÑæÑ ÇáÌÏíÏÉ:<br /><span class=\"smalltxt\">(ÃÊÑß ÇáÍŞá İÇÑÛ ÅĞÇ áÇ ÊÑÛÈ İí ÊÛííÑåÇ)</span>";
 $lang['forumpwinfo'] = "åĞÇ ÇáãäÊÏì ãÍãí ÈßáãÉ ãÑæÑ. áãÔÇåÏÉ åĞÇ ÇáãäÊÏì íÌÈ ÅÏÎÇá ßáãÉ ÇáãÑæÑ ÈÇáÃÓİá.";
 $lang['found'] = "æÌÏ";
 $lang['general'] = 'ÚÇã';
+$lang['generic_file'] = 'File to Upload:';
+$lang['generic_missing'] = 'The item you requested could not be found.';
 $lang['gotobottom'] = "ÃĞåÈ áÃÓİá ÇáÕİÍÉ";
 $lang['gototop'] = "ÃĞåÈ áÃÚáì ÇáÕİÍÉ";
 $lang['guestpostingonmsg'] = "<br />ãÔÇÑßÇÊ ÇáÒæÇÑ ãÓãæÍ ÈåÇ İí åĞÇ ÇáãäÊÏì<br /><small> áÇ ÊÏÎá ÇÓã ãÓÊÎÏã Ãæ ßáãÉ ãÑæÑ ÚäÏ ßÊÇÈÉ ÇáãÔÇÑßÉ.</small>";
 $lang['gzipcompression'] = "ÇÓÊÎÏÇã Gzip ÖÛØ ÇáÕİÍÇÊ:<br /><small>íÊØáÈåÇ PHP 4.0.4 Ãæ ÃÚáì</small>";
 $lang['helpbar'] = "ÇáãÓÇÚÏÉ";
 $lang['hidden'] = "ãÎİí";
-$lang['hottopic'] = "ÃßËÑ ãä $hottopic ÑÏ";
-$lang['ipreg'] = "ÇáÓãÇÍ ÈÊÓÌíá ÚÖæ æÇÍÏ ãä ÚäæÇä Âí Èí æÇÍÏ İí ßá íæã ¿";
+$lang['hottopiceval'] = "\$lang['hopttopic'] = \"ÃßËÑ ãä \$hottopic ÑÏ\";";
 $lang['ignorelist'] = "ŞÇÆãÉ ÇáÊÌÇåá";
 $lang['ignoremsg'] = "ŞÇÆãÉ ÇáÊÌÇåá:<br /><small> İí ÍÇáÉ æÌæÏ ÚÏÉ ÇÓãÇÁ (ãËÇá: \"ÇáÇÓã ÇáÃæá, ÇáÇÓã ÇáËÇäí,\") ÃÖİ İÇÕáÉ ÈÚÏ ßá ÇÓã æÊÃßÏ ãä ÅÖÇİÉ İÇÕáÉ ÈÚÏ ÇáÇÓã ÇáÃÎíÑ.</small>";
 $lang['ignoreupdate'] = "Êã ÊÍÏíË ŞÇÆãÉ ÇáÊÌÇåá ÈäÌÇÍ!";
 $lang['imdeletedmsg'] = "Êã ÍĞİ ÇáÑÓÇÆá ÇáÎÇÕÉ ÈäÌÇÍ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáÑÓÇÆá ÇáÎÇÕÉ.";
 $lang['imgdir'] = "ãÌáÏ ÇáÕæÑ:";
+$lang['imgdiradm'] = "Admin Image Directory:";
 $lang['impossiblebanall'] = "ÇäÊ áÇ ÊÓÊØíÚ ãäÚ <strong>ÌãíÚ</strong> ÃÑŞÇã ÇáÂí Èí ãä ÏÎæá ÇáãäÊÏì!!";
 $lang['imsavedmsg'] = "Êã ÍİÙ ÇáÑÓÇáÉ ÇáÎÇÕÉ. ÇáÂä Óæİ ÊäÊŞá Åáì ãÌáÏ ÇáãÓæÏÉ.";
 $lang['imsentmsg'] = "Êã ÅÑÓÇá ÇáÑÓÇáÉ ÇáÎÇÕÉ. ÇáÂä Óæİ ÊäÊŞá Åáì ÕäÏæŞ ÇáÑÓÇÆá ÇáÎÇÕÉ.";
@@ -370,15 +379,21 @@ $lang['invalidip'] = "ÕíÛÉ / ÊÑßíÈÉ ÑŞã ÇáÂí Èí ÛíÑ ÕÍíÍÉ";
 $lang['invalidFilename'] = "ÇÓã ãáİ ÛíÑ ÕÍíÍ";
 $lang['invalidtid'] = "ÇáãÔÇÑßÉ áÇ íãßä ÏãÌåÇ.  ÑŞã ãÔÇÑßÉ ÛíÑ ÕÍíÍ (tid)";
 $lang['invertselection'] = "ÚßÓ ÇáÊÍÏíÏ";
+$lang['ipbandisable'] = "Disable IP Banning";
+$lang['ipbanenable'] = "Enable IP Banning";
+$lang['ipreg'] = "ÇáÓãÇÍ ÈÊÓÌíá ÚÖæ æÇÍÏ ãä ÚäæÇä Âí Èí æÇÍÏ İí ßá íæã ¿";
 $lang['ipwarning'] = "<br /><strong>ÊäÈíå:</strong> ÚäæÇä ÇáÂí Èí ÇáÎÇÕ Èß İí ŞÇÆãÉ ÇáãäÚ. Óæİ íŞæã ÈÑäÇãÌ ÇáãäÊÏì ÈãäÚ ÑŞã ÇáÂí Èí ãä ÏÎæá ÇáãäÊÏì ÈÔßá ÊáŞÇÆí æÏÇÆã ÈÚÏ ÊÓÌíá ÎÑæÌß ãä ÇáãäÊÏì.";
 $lang['key'] = 'ÇáÇÎÊÕÇÑÇÊ: ';
-$lang['last50today'] = "ÇáÃÚÖÇÁ ÇáãÊæÇÌÏæä Çáíæã İí $bbname. (ÂÎöÑ 50 ÚÖæ)";
+$lang['langimportfail'] = "The language could not be imported.";
+$lang['langimportsuccess'] = "The language imported successfully.";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"ÇáÃÚÖÇÁ ÇáãÊæÇÌÏæä Çáíæã İí \$bbname. (ÂÎöÑ \$onlinetodaycount ÚÖæ)\";";
 $lang['lastactive'] = "ÂÎöÑ ÒíÇÑÉ ÈÊÇÑíÎ:";
 $lang['lastreply1'] = "İí";
 $lang['lastsadmin'] = "áÇ íæÌÏ Óæì ãÏíÑ ÚÇã æÇÍÏ, æáä ÊÓÊØíÚ ÊÍæíáÉ Åáì Ãí ÑÊÈÉ ÍÊì ÊõæÌÏ ÈÏíá ÂÎÑ áå.";
 $lang['lastyear'] = "ÇáÓäÉ ÇáãÇÖíÉ";
 $lang['launchbuddylist'] = "ÏİÊÑ ÚäÇæíä ÇáÃÕÏŞÇÁ";
 $lang['leaveuntouched'] = "&nbsp;ÅÈŞÇÁ Çáãáİ ÇáÍÇáí ßãÇ åæ";
+$lang['location'] = "Location";
 $lang['locktopic'] = "ãæÖæÚ ãÛáŞ";
 $lang['loggedin'] = "Êã ÊÓÌíá ÏÎæáß ÈÅÓã";
 $lang['loggedinuser'] = "Êã ÊÓÌíá ÏÎæáß ÈÅÓã:";
@@ -396,7 +411,6 @@ $lang['max_onlinetodaycount'] = "ÃŞÕì ÚÏÏ ãä ÇáÃÚÖÇÁ íãßä ãÔÇåÏÊåã İí ÎÇäÉ ãä Êæ
 $lang['max_regs'] = 'ÚÏÏ ÇáÃÚÖÇÁ ÇáãäÊÓÈíä Çáíæã Åáì ÇáãäÊÏì æÕá Åáì ÇáÍÏ ÇáãÓãæÍ Èå, ãä İÖáß ÃäÊÙÑ ÍÊì ÅäÊåÇÁ 24 ÓÇÚÉ.';
 $lang['mcpread'] = "ãŞÑæÁÉ¿";
 $lang['mcpuid'] = "ÇáÚÖæ ÑŞã";
-
 $lang['memberisoff'] = "ÇáÍÇáÉ: ÛíÑ ãÊÕá";
 $lang['memberison'] = "ÇáÍÇáÉ: <strong>ãÊÕá ÇáÂä</strong>";
 $lang['memcp_otherinfo'] = "ãÚáæãÇÊ ÃÎÑì";
@@ -408,6 +422,17 @@ $lang['mergethreadmsg'] = "ÔßÑÇğ áß, Êã ÏãÌ ÇáãæÇÖíÚ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ Ç
 $lang['mergewithmsg'] = "ÍÏÏ (ÇáÜTID) ÑŞã ÇáãæÖæÚ ÇáĞí ÊÑíÏ ÏãÌ åĞÇ ÇáãæÖæÚ ãÚå:<br /><small>viewthread.php?tid=48, Óæİ íÏãÌ åĞÇ ÇáãæÖæÚ ãÚ ÇáãæÖæÚ ÑŞã 48</small>";
 $lang['misconlinetoday'] = "ÚÏÏ ÇáÃÚÖÇÁ ";
 $lang['misconlinetoday2'] = " ÚÖæ ÊæÇÌÏæÇ Çáíæã İí $bbname ...";
+$lang['modlog_bump'] = "Thread Bumped";
+$lang['modlog_close'] = "Thread Closed";
+$lang['modlog_copy'] = "Thread Copied";
+$lang['modlog_empty'] = "Thread Emptied";
+$lang['modlog_merge'] = "Threads Merged";
+$lang['modlog_move'] = "Thread Moved";
+$lang['modlog_open'] = "Thread Opened";
+$lang['modlog_split'] = "Thread Split";
+$lang['modlog_threadprune'] = "Thread Pruned";
+$lang['modlog_top'] = "Thread Topped";
+$lang['modlog_untop'] = "Thread Untopped";
 $lang['month1'] = "ÔåÑ";
 $lang['month3'] = "3 ÃÔåÑ";
 $lang['month6'] = "6 ÃÔåÑ";
@@ -416,6 +441,8 @@ $lang['moresmilies'] = "ÇáãÒíÏ ãä ÇáÕæÑ";
 $lang['moved'] = "ãäŞæá:";
 $lang['moveques'] = "äŞá¿";
 $lang['movethreadmsg'] = "ÔßÑÇğ áß, Êã äŞá ÇáãæÖæÚ. ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ.";
+$lang['movetodb'] = 'Move to Database';
+$lang['movetodisk'] = 'Move to Disk';
 $lang['multipnote'] = "ãáÇÍÙÉ: áãäÚ ÚäÇæíä ãÊÚÏÏÉ İí ãÌÇá æÇÍÏ, ÇÓÊÈÏá ÇáÌÒÁ ÇáÃÎíÑ ãä ÑŞã ÇáÂí Èí ÈÚáÇãÉ * (ãËÇá: 127.12.23.*)";
 $lang['multmodnote'] = "ãáÇÍÙÉ: áÅÖÇİÉ ÃßËÑ ãä ãÔÑİ Úáì ãäÊÏì æÇÍÏ, ÃÖİ İÇÕáÉ Èíä ÇáÇÓãÇÁ ãÚ ãÓÇİÉ ÈÚÏ ÇáİÇÕáÉ (ãËÇá: ÇáãÔÑİ1, ÇáãÔÑİ2)";
 $lang['mysql_tools'] = "ÃÏæÇÊ ŞÇÚÏÉ ÇáÈíÇäÇÊ";
@@ -435,6 +462,7 @@ $lang['nextsearch'] = "[ÇáÕİÍÉ ÇáÊÇáíÉ]";
 $lang['no_buddies'] = "áÇ íæÌÏ ÚäÇæíä İí ÏİÊÑ ÇáÃÕÏŞÇÁ";
 $lang['no_poll'] = "åĞÇ áíÓ ãæÖæÚ ÇÓÊİÊÇÁ!";
 $lang['no_templates'] = "ãáİ templates.xmb ÛíÑ ãæÌæÏ.";
+$lang['no_url_fopen'] = "This feature has been disabled by the allow_url_fopen directive in your server's PHP configuration.";
 $lang['noadminsession'] = "áã ÊŞã ÈÊÓÌíá ÇáÏÎæá.";
 $lang['noadminsession2'] = "ãÑÍÈÇğ Èßã İí áæÍÉ ÇáÊÍßã ÇáÎÇÕÉ ÈÅÏÇÑÉ  $bbname.";
 $lang['noadminsession3'] = "ãä İÖáß ÇÏÎá ÇÓã ÇáãÓÊÎÏã æßáãÉ ÇáãÑæÑ.";
@@ -461,6 +489,9 @@ $lang['nou2umsg'] = "ÍÇáíÇğ áÇ íæÌÏ áÏíß Ãí ÑÓÇáÉ ÎÇÕÉ İí ÕäÏæŞ ÇáÑÓÇÆá.";
 $lang['numberusing'] = "ÚÏÏ ÇáãÓÊÎÏãíä:";
 $lang['o_attach_submit'] = "ÍĞİ ßá ÇáãÑİŞÇÊ ÇáãİŞæÏÉ";
 $lang['o_attachments_found'] = " ÇáãÑİŞÇÊ ÇáãİŞæÏÉ ÇáÊí æÌÏåÇ ÇáÈÑäÇãÌ æŞÇã ÈÍĞİåÇ.";
+$lang['o_poll_submit'] = "Delete all orphaned polls";
+$lang['o_polls_found'] = " orphaned polls found and deleted.";
+$lang['o_posts_found'] = " orphaned posts found and reallocated.";
 $lang['o_threads_found'] = " ÇáãæÇÖíÚ ÇáãİŞæÏÉ ÇáÊí æÌÏåÇ ÇáÈÑäÇãÌ æÊã ÅÖÇİÊåÇ Åáì ÇáãäÊÏì ÇáãÍÏÏ";
 $lang['onlinecoppa'] = "ŞÑÇÁÉ ÕİÍÉ ÍãÇíÉ ÎÕæÕíÉ ÇáØİá Úáì ÔÈßÉ ÇáÅäÊÑäÊ";
 $lang['onlinecp'] = "ÇÓÊÎÏÇã áæÍÉ ÇáÊÍßã ÇáÎÇÕÉ ÈÅÏÇÑÉ ÇáãäÊÏì";
@@ -545,6 +576,7 @@ $lang['pruneposttypes'] = "ÊÔãá ÇáÚãáíÉ: ";
 $lang['prunetopped'] = "ÇáãÔÇÑßÇÊ ÇáãËÈÊÉ";
 $lang['pruneusers'] = "ÚÏÏ ÇáÃíÇã ÈÚÏ ÚÏã ÊÓÌíá ÚÖæ ÌÏíÏ æ áã íÓÌá ÇáÏÎæá áßí íÊã ÍĞİå.<br />ÖÚ 0 áÅáÛÇÁ Ğáß.";
 $lang['pspell_needed'] = "(<strong>åĞå ÇáãíÒÉ áÇ íãßä Çä ÊÚãá ÍÊì íŞæã ãÓÊÖíİ ãæŞÚß ÈÊäÕíÈ ÈÑäÇãÌ pspell/aspell</strong>)";
+$lang['pwchange'] = "Change Password";
 $lang['pwnomatch'] = "ßáãÇÊ ÇáãÑæÑ ÛíÑ ãÊØÇÈŞÉ";
 $lang['pwnote'] = "ÇÏÎá ßáãÉ ÇáãÑæÑ ÇáÌÏíÏÉ ÅĞÇ ÊÑíÏ ÊÛííÑåÇ, ÇÊÑß ÇáÍŞá İÇÑÛ ÅĞÇ áÇ ÊÑíÏ ÊÛííÑåÇ.";
 $lang['queries'] = "Queries";
@@ -557,6 +589,7 @@ $lang['raw_mysql'] = "ÇÏÎÇá äÕ Åáì ÇáÜ SQL  ";
 $lang['reason'] = "ÇáÓÈÈ:";
 $lang['refreshbuddylist'] = "ÊÍÏíË ÏİÊÑ ÚäÇæíä ÇáÃÕÏŞÇÁ";
 $lang['reg_on'] = "ÊÓÌíá ÚÖæ ÌÏíÏ, (ÇáÊÓÌíá ÈÇáãäÊÏì¿)";
+$lang['regeneratethumbnail'] = "Regenerate Thumbnail";
 $lang['regoptional'] = "ÇáÎÇäÇÊ ÇáÅÖÇİíÉ İí ÇáÊÓÌíá:<br /><span class=\"smalltxt\">åĞÇ ÇáÎíÇÑ áÅÙåÇÑ Ãæ ÅÎİÇÁ ÇáÎÇäÇÊ ÇáÅÖÇİíÉ İí ÕİÍÉ ÇáÊÓÌíá ãËá AIM, BIO, ICQ, ÇáÊæŞíÚ æ ÛíÑåÇ.</span>";
 $lang['reg_today'] = "áŞÏ ŞãÊ ÈÇáÊÓÌíá ÓÇÈŞÇğ İí åĞÇ Çáíæã, ÛíÑ ãÓãæÍ áß ÈÇáÊÓÌíá ãÑÉ ÃÎÑì ÍÊì ÅäÊåÇÁ İÊÑÉ ÇáÜ 24 ÓÇÚÉ.<br />";
 $lang['regged'] = "ÔßÑÇğ áß, áŞÏ Êã ÊÓÌíáß ÈäÌÇÍ İí $bbname. ÇáÂä Óæİ ÊäÊŞá Åáì ÕİÍÉ ÇáãäÊÏì ÇáÑÆíÓÉ.";
@@ -582,7 +615,11 @@ $lang['restrictedname'] = "ÇáÇÓãÇÁ æ ÚäÇæíä ÇáÈÑíÏ ÇáÅáßÊÑæäí ÇáÛíÑ ãÓãæÍ ÈÇÓÊÎÏ
 $lang['restrictedupdate'] = "Êã ÊÍÏíË ÅÏÇÑÉ ÇáÇÓãÇÁ ÇáãÍÖæÑÉ!";
 $lang['rulesoninfo'] = "ÅÏÇÑÉ <a href=\"mailto:$adminemail\">$bbname</a> ÊİÑÖ ŞæÇäíä áÊÓÌíá æÇáãÔÇÑßÉ İíåÇ<br />ãä İÖáß ÃŞÑÁ ßÇãá ÇáŞæÇäíä æÇáÊÒã ÈåÇ İí ÍÇáÉ ÇáãæÇİŞÉ ÚáíåÇ ÃÖÛØ Úáì ÒÑ \"ãæÇİŞ\" ÈÇáÃÓİá.";
 $lang['search_advanced'] = "ÈÍË ãÊŞÏã";
-$lang['searchusermsg'] = '<a href="misc.php?action=search&amp;srchuname=*USER*&amp;searchsubmit=a&amp;srchfid=all&amp;srchfrom=0">ÚÑÖ ÌãíÚ ãÔÇÑßÇÊ åĞÇ ÇáÚÖæ.</a>';
+$lang['searchbody'] = "Post body and subject.";
+$lang['searchguesterror'] = "Anonymous users are limited to only one page of search results.";
+$lang['searchinvalid'] = "That search text is not allowed.  Please try a different keyword.";
+$lang['searchsubject'] = "Subject only.";
+$lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0">ÚÑÖ ÌãíÚ ãÔÇÑßÇÊ åĞÇ ÇáÚÖæ.</a>';
 $lang['secure_login'] = "ÊÓÌíá ÏÎæá Âãä<br />(ÍÇÓÈ Âáí ãÔÊÑß)";
 $lang['selecttemplate'] = "ãä İÖáß ÃÎÊÑ ÇáŞÇáÈ ...";
 $lang['seperatebycomma'] = "ÇáÇÏÎÇáÇÊ ÇáãÊÚÏÏÉ ÊÓÊÎÏã İæÇÕá İíãÇ ÈíäåÇ";
@@ -641,7 +678,6 @@ $lang['textagree'] = "ãæÇİŞ";
 $lang['textaim'] = "ãÑÓÇá ÇáÜ Aim:";
 $lang['textall'] = "Çáßá";
 $lang['textallforumsandsubs'] = 'ÌãíÚ ÇáãäÊÏíÇÊ ÇáÑÆíÓÉ æÇáãäÊÏíÇÊ ÇáİÑÚíÉ';
-
 $lang['textallow'] = "ãÓãæÍ:";
 $lang['textallowavatars'] = "ÇáÕæÑ ÇáÔÎÕíÉ:";
 $lang['textalpha'] = "ÃÈÌÏí";
@@ -682,6 +718,7 @@ $lang['textborder'] = "áæä ÍÏæÏ ÇáÌÏÇæá:";
 $lang['textborderwidth'] = "ÚÑÖ ÇáÍÏæÏ ÇáÌÏÇæá:";
 $lang['textbriefsummary'] = "ãÚáæãÇÊ ÚÇãÉ";
 $lang['textbstatus'] = "ÍÇáÉ ÇáãäÊÏì:";
+$lang['textbstatusdefault'] = "This message board is currently turned off.";
 $lang['textbuddylist'] = "ÏİÊÑ ÚäÇæíä ÇáÃÕÏŞÇÁ";
 $lang['textbumpthread'] = "ÑİÚ ÇáãæÖæÚ";
 $lang['textby'] = "ÈæÇÓØÉ";
@@ -771,11 +808,30 @@ $lang['textfaqstatus'] = "ÚÑÖ ÕİÍÉ ÇáãÓÇÚÏÉ:";
 $lang['textfavorites'] = "ÇáãæÇÖíÚ ÇáãİÖáÉ";
 $lang['textfeb'] = "İÈÑÇíÑ";
 $lang['textfilename'] = "ÇÓã Çáãáİ:";
+$lang['textfilesbase'] = 'Attachment Virtual URL:<br /><span class="smalltxt">Optional, base URL if different from $full_url.</span>';
 $lang['textfilesize'] = "ÍÌã Çáãáİ:";
+$lang['textfilesminsize'] = 'Attachment Minimum Storage Size:<br /><span class="smalltxt">Storage Path is ignored for files<br />smaller than this many bytes.</span>';
+$lang['textfilespath'] = 'Attachment Storage Path:<br /><span class="smalltxt">Optional, disk storage location for new files.</span>';
+$lang['textfilesperpost'] = 'Maximum Files Per Post:';
+$lang['textfilessizeh'] = 'Maximum Image Height:';
+$lang['textfilessizew'] = 'Maximum Image Width:';
+$lang['textfilessubdir'] = 'Attachment Subdirectory Scheme:';
+$lang['textfilessubdir1'] = 'Year/Month';
+$lang['textfilessubdir2'] = 'Year/Month/Day';
+$lang['textfilesthumbh'] = 'Maximum Thumbnail Height:';
+$lang['textfilesthumbw'] = 'Maximum Thumbnail Width:';
+$lang['textfilesurlpath'] = 'Attachment URL Format:<br /><span class="smalltxt">For Advanced Webmasters Only</span>';
+$lang['textfilesurlpath1'] = '____(default) /files.php?pid=$pid&amp;aid=$aid';
+$lang['textfilesurlpath2'] = '(+MultiViews) /files/$pid/$aid/';
+$lang['textfilesurlpath3'] = '(+MultiViews) /files/$aid/$filename';
+$lang['textfilesurlpath4'] = '(mod_rewrite) /$pid/$aid/';
+$lang['textfilesurlpath5'] = '(mod_rewrite) /$aid/$filename';
 $lang['textfixlastposts'] = "ÅÕáÇÍ ÂÎöÑ ÇáãÔÇÑßÇÊ";
 $lang['textfixmemposts'] = "ÅÕáÇÍ ÅÌãÇáí ÚÏÏ ãÔÇÑßÇÊ ÇáÃÚÖÇÁ";
 $lang['textfixmoods'] = "ÊİÑíÛ ÍŞæá ÇáãÒÇÌ";
 $lang['textfixoattachments'] = "ÅÙåÇÑ ÇáãÑİŞÇÊ ÇáãİŞæÏÉ";
+$lang['textfixopolls'] = "Fix Orphaned Polls";
+$lang['textfixoposts'] = "Fix Orphaned Posts";
 $lang['textfixothreads'] = "ÅÙåÇÑ ÇáãæÇÖíÚ ÇáãİŞæÏÉ";
 $lang['textfixposts'] = "ÅÕáÇÍ ÚÏÏ ãæÇÖíÚ æãÔÇÑßÇÊ ÇáãäÊÏíÇÊ";
 $lang['textfixthread'] = "ÅÕáÇÍ ÅÌãÇáí ÚÏÏ ÇáãæÇÖíÚ";
@@ -810,7 +866,6 @@ $lang['texticq'] = "ÑŞã ãÑÓÇá ÇáÜ ICQ:";
 $lang['textillegalquery'] = "ÇáãÇÏÉ ÇáÊí ÇÏÎáÊåÇ áã íÓãÍ áåÇ.";
 $lang['textimgcode'] = "ßæÏ ÇáÕæÑÉ";
 $lang['textimgcodeis'] = "ßæÏ [ÇáÕæÑÉ]";
-$lang['textimportsubmit'] = "ÇÓÊíÑÇÏ ÇáÊÕãíã Åáí XMB";
 $lang['textimporttheme'] = "ÇÓÊíÑÇÏ ÊÕãíã:";
 $lang['textinforum'] = "İí ÇáãäÊÏì:";
 $lang['textinthread'] = "İí ÇáãæÖæÚ:";
@@ -853,7 +908,6 @@ $lang['textmergethread'] = "ÏãÌ ÇáãæÖæÚ";
 $lang['textmesperday'] = "ãÔÇÑßÉ áßá íæã";
 $lang['textmessage'] = "ÇáÑÓÇáÉ:";
 $lang['textminilogout'] = "<span class=\"smalltxt\">[ <a href=\"misc.php?action=logout\">ÎÑæÌ</a> ]</span>";
-
 $lang['textmod'] = "ãÔÑİ ãäÊÏì";
 $lang['textmodby'] = "ÇáãäÊÏì ÈÅÔÑÇİ:";
 $lang['textmoderator'] = "ÇáãÔÑİ:";
@@ -906,6 +960,7 @@ $lang['textoct'] = "ÃßÊæÈÑ";
 $lang['textoff'] = "ÛíÑ ãÓãæÍ";
 $lang['textoffline'] = "ÛíÑ ãÊÕá";
 $lang['textoftotposts'] = "ãä ÅÌãÇáí ÇáãÔÇÑßÇÊ";
+$lang['textoldpassword'] = "Old Password";
 $lang['texton'] = "ãÓãæÍ";
 $lang['textonline'] = "ãÊÕá";
 $lang['textopenthread'] = "İÊÍ ÇáãæÖæÚ";
@@ -953,6 +1008,7 @@ $lang['textregdate'] = "ÊÇÑíÎ ÇáÊÓÌíá";
 $lang['textreggedonly'] = "ÇáÓãÇÍ İŞØ ááÃÚÖÇÁ ÇáãÓÌáíä ÈãÔÇåÏÉ ÇáãäÊÏì¿";
 $lang['textregister'] = "ÇáÊÓÌíá";
 $lang['textregistered'] = "ÇáÊÓÌíá:";
+$lang['textremoteimages'] = 'Attach Remote Images:<br /><span class="smalltxt">Convert new [img] BBCodes to attachments.</span>';
 $lang['textreplies'] = "ÇáÑÏæÏ:";
 $lang['textreply'] = "ßÊÇÈÉ ÑÏ ÌÏíÏ";
 $lang['textreplytrash'] = "ßÊÇÈÉ ÑÏ ÌÏíÏ æÍĞİ ÇáÑÓÇáÉ";
@@ -1062,7 +1118,6 @@ $lang['textusesig'] = "ÅÖÇİÉ ÇáÊæŞíÚ¿";
 $lang['textviewpro'] = "ÚÑÖ Çáãáİ ÇáÔÎÕí";
 $lang['textviews'] = "ÇáŞÑÇÁ:";
 $lang['textvote'] = "ÊÕæíÊ:";
-
 $lang['textwidth'] = "ÚÑÖ ÇáÌÏæá:";
 $lang['textwithstatus'] = "ãÚ åĞå ÇáÑÊÈÉ:";
 $lang['textyahoo'] = "ÈÑíÏ æãÑÓÇá ÇáÜ Yahoo:";
@@ -1074,9 +1129,9 @@ $lang['theme_already_exists'] = "íæÌÏ ÊÕãíã ÓÇÈŞ ÈåĞÇ ÇáÇÓã!";
 $lang['themes'] = "ÇáÊÕãíã";
 $lang['themeupdate'] = "Êã ÊÍÏíË ÇáÊÕãíã ÈäÌÇÍ!";
 $lang['threads'] = 'ãÔÇÑßÇÊ';
+$lang['thumbnail'] = 'Thumbnail';
 $lang['tickercontents'] = "äÕ ÇáÑÓÇáÉ:";
 $lang['tickername'] = "ÇáÃÎÈÇÑ æÇáÅÚáÇäÇÊ";
-$lang['tidnoexist'] = "áÇ íãßä ÏãÌ ÇáãÔÇÑßÉ.  ÇáãÔÇÑßÉ ($othertid) ÛíÑ ãæÌæÏÉ";
 $lang['timemsg'] = "ÊãÊ İí";
 $lang['timezone1'] = "(GMT -12:00) ÅíäæíÊæß, ßæÇÌÇáíä";
 $lang['timezone10'] = "(GMT -3:30) äíæİÇæäÏ áÇäÏ";
@@ -1131,7 +1186,20 @@ $lang['toppedpost'] = "ãæÖæÚ ãËÈÊ";
 $lang['toppedprefix'] = "pin.gif";
 $lang['topthreadmsg'] = "Êã ÈäÌÇÍ ÊËÈíÊ / ÅáÛÇÁ ÊËÈíÊ ÇáãæÖæÚ ÇáÂä Óæİ ÊäÊŞá Åáì ŞÇÆãÉ ÇáãæÇÖíÚ.";
 $lang['topuntop'] = "ÊËÈíÊ / ÅáÛÇÁ ÇáÊËÈíÊ";
+$lang['translations'] = "Translations";
+$lang['translation_delete'] = "Translation(s) deleted.";
+$lang['translation_import'] = "Install New Language";
+$lang['translation_name'] = "Translation Name";
+$lang['translation_phrase'] = "Phrase Name";
+$lang['translation_select'] = "Please select a phrase...";
+$lang['translation_update'] = "Phrase text saved successfully.";
 $lang['u2uadmin_noperm'] = "áÇ Êãáß ÊÕÑíÍ áÇÓÊÎÏÇã åĞå ÇáãíÒÉ.";
+$lang['u2ualert1'] = "U2U Alert Feature";
+$lang['u2ualert2'] = "On Every Page";
+$lang['u2ualert3'] = "On Index Only";
+$lang['u2ualert4'] = "No Alert";
+$lang['u2ualert5'] = " unread U2U message. Would you like to view it now?";
+$lang['u2ualert6'] = " unread U2U messages. Would you like to view them now?";
 $lang['u2ublocked'] = "ãÓÊáã åĞå ÇáÑÓÇáÉ ŞÏ ŞÇã ÈÅÖÇİÊß Åáì ŞÇÆãÉ ÇáÊÌÇåá æáÇ ÊÓÊØíÚ ÅÑÓÇá åĞå ÇáÑÓÇáÉ Åáíå.";
 $lang['u2udump'] = "ÍĞİ ÌãíÚ ÇáÑÓÇÆá ÇáÎÇÕÉ";
 $lang['u2udump_confirm'] = 'åá ÊÑíÏ ÈÇáİÚá ÍĞİ ÌãíÚ ÇáÑÓÇÆá ÇáÎÇÕÉ¿';
@@ -1149,6 +1217,7 @@ $lang['upgradesuccess'] = "ÊãÊ ÇáÚãáíÉ ÈäÌÇÍ!";
 $lang['uploadinstead'] = "&nbsp;ÅÖÇİÉ åĞÇ Çáãáİ ÈÏáÇ ãä Çáãáİ ÇáÍÇáí:";
 $lang['usercpeditpromsg'] = "Êã ÊÍÑíÑ ãáİß ÇáÔÎÕí ÈäÌÇÍ, ÇáÂä Óæİ ÊäÊŞá Åáì áæÍÉ ÇáÊÍßã ÇáÎÇÕÉ Èß.";
 $lang['userip'] = "ÇÈÍË Úä ÇáÚÖæ ÇáĞí íãáß ÑŞã ÇáÂí Èí ÇáÊÇáí:";
+$lang['usernamechars'] = "Usernames may contain printable characters except []'&lt;&gt;\|&quot;,@";
 $lang['username_length_invalid'] = 'Øæá ÇÓã ÇáãÓÊÎÏã ÛíÑ ÕÇáÍ. ÇáÑÌÇÁ ÇáÊÃßÏ ãä Ãäå áíÓ ÃŞá ãä 3 ÍÑæİ æ áÇ ÃßËÑ ãä 32 ÍÑİ.';
 $lang['userprofilemood'] = "Çáíæã:";
 $lang['verificationnote'] = "ÇáÑÌÇÁ ßÊÇÈÉ ÇáßæÏ ÇáãæÌæÏ İí ÇáÕæÑÉ İí ÕäÏæŞ ÇáßÊÇÈÉ. åĞå ÇáÚãáíÉ ÊÓÊÎÏã áãäÚ ÇáÊÓÌíá ÇáÊáŞÇÆí ááÏÚÇíÇÊ ÇáãÒÚÌÉ.";
@@ -1156,7 +1225,6 @@ $lang['viaemail'] = 'ÈæÇÓØÉ ÇáÈÑíÏ ÇáÅáßÊÑæäí';
 $lang['viau2u'] = 'ÈæÇÓØÉ ÇáÑÓÇÆá ÇáÎÇÕÉ';
 $lang['view'] = 'ãÔÇåÏÉ';
 $lang['viewcompleteinbox'] = "ÚÑÖ ÕäÏæŞ ÇáÑÓÇÆá";
-
 $lang['viewresults'] = "ÚÑÖ ÇáäÊÇÆÌ";
 $lang['votemsg'] = "ÔßÑÇğ áß, ÊãÊ ÅÖÇİÉ ÇáÊÕæíÊ. ÇáÂä Óæİ ÊäÊŞá Åáì ÇáãæÖæÚ.";
 $lang['welcomelogout'] = "[ ÎÑæÌ ]";
@@ -1164,7 +1232,6 @@ $lang['welcomeunreg'] = "<div style=\"text-align: justify\">ãÑÍÈÇğ Èßã İí $bbnam
 $lang['welcomeunregnotify'] = "ÛíÑ ãÓÌá Ãæ áã ÊŞã ÈÊÓÌíá ÇáÏÎæá";
 $lang['what_tickerdelay'] = "ÓÑÚÉ ÇáÚÑÖ:";
 $lang['what_tickerstatus'] = "áæÍÉ ÇáÃÎÈÇÑ æÇáÅÚáÇäÇÊ:";
-
 $lang['whocanpost'] = "ãä íÓÊØíÚ ÇáãÔÇÑßÉ¿";
 $lang['whocanpost11'] = "ÌãíÚ ÇáÃÚÖÇÁ ãÓãæÍ áåã ÈßÊÇÈÉ ãæÇÖíÚ ÌÏíÏÉ";
 $lang['whocanpost12'] = "<strong>ÇáãÏÑÇÁ</strong> ãÓãæÍ áåã ÈßÊÇÈÉ ãæÇÖíÚ ÌÏíÏÉ";
@@ -1175,13 +1242,12 @@ $lang['whocanpost22'] = "ÇáãÏÑÇÁ ãÓãæÍ áåã ÈßÊÇÈÉ ÑÏ ÌÏíÏ.";
 $lang['whocanpost23'] = "ÇáãÏÑÇÁ æÇáãÔÑİíä ãÓãæÍ áåã ÈßÊÇÈÉ ÑÏ ÌÏíÏ.";
 $lang['whocanpost24'] = "ÛíÑ ãÓãæÍ ÈÅÖÇİÉ ÑÏæÏ.";
 $lang['whoodump_confirm'] = 'åá ÊÑíÏ ÈÇáİÚá ÊİÑíÛ ÓÌá ÇáãÊæÇÌÏæä ÇáÂä¿';
-
-
 $lang['whosoneval'] = '$lang["whosonmsg"] = "íæÌÏ ÍÇáíÇ $guestn, $membern æ $hiddenn ãÊæÇÌÏæä ÇáÂä İí $bbname";';
 $lang['whosonline'] = "ÇáãÊæÇÌÏæä ÇáÂä";
 $lang['whosonline_on'] = "ÚÑÖ ÇáãÊæÇÌÏæä ÇáÂä ÈÇáÕİÍÉ ÇáÑÆíÓÉ:";
 $lang['whosonlinetoday'] = "ÇáÃÚÖÇÁ ÇáãÊæÇÌÏæä Çáíæã İí $bbname";
 $lang['whoview'] = "ãä íÓÊØíÚ ãÔÇåÏÉ åĞÇ ÇáãäÊÏì¿";
 $lang['xmb'] = "XMB";
+$lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
 ?>
