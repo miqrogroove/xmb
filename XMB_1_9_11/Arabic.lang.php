@@ -1,5 +1,5 @@
 <?php
-/**
+/** Translated by: Mowaffak Ali ( www.alburak.net ) based on MemoriesDisc.com translation
  * eXtreme Message Board
  * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
  *
