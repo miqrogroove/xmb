@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
+ * Copyright (c) 2001-2009, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
