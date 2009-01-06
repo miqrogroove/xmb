@@ -8,7 +8,6 @@
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
  * http://www.ientry.com
  *
  * This program is free software; you can redistribute it and/or
