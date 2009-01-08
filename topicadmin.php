@@ -695,6 +695,16 @@ switch($action) {
             }
             eval('echo "'.template('topicadmin_threadprune').'";');
         } else {
+            $postcount = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
+            $delcount = 0;
+            foreach($_POST as $key=>$val) {
+                if (substr($key, 0, 4) == 'move') {
+                    $delcount++;
+                }
+            }
+            if ($delcount >= $postcount) {
+                error($lang['cantthreadprune'], false);
+            }
             require('include/attach.inc.php');
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
@@ -730,7 +740,6 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            // Dev Note: The situation where all posts were pruned has not been handled above. (Issue #245)
             $firstauthor = $db->result($db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1"), 0);
             $firstauthor = $db->escape_var($firstauthor);
 
