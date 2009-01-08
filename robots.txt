@@ -10,4 +10,5 @@ Disallow: /buddy.php
 Disallow: /memcp.php
 Disallow: /post.php
 Disallow: /search.php?
+Disallow: /today.php?daysold=
 Disallow: /u2u.php

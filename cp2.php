@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -1491,6 +1491,7 @@ if ($action == "newsletter") {
             while($memnews = $db->fetch_array($query)) {
                 $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".$db->escape_var($memnews['username'])."', '$xmbuser', 'incoming', '".$db->escape_var($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
+            echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit]</td></tr>";
         } else {
             $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
             $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
@@ -1504,6 +1505,7 @@ if ($action == "newsletter") {
             $headers = implode("\r\n", $headers);
 
             $i = 0;
+            $total = 0;
             @ignore_user_abort(1);
             @set_time_limit(0);
             @ob_implicit_flush(1);
@@ -1513,14 +1515,19 @@ if ($action == "newsletter") {
                     sleep(3);
                     $i = 0;
                 } else {
+                    if ($total % 250 == 0) {
+                        error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");
+                    }
                     $i++;
                 }
 
                 $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
                 altMail($rawemail, '['.$bbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
+                $total++;
             }
+            error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");
+            echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit] {$lang['textsent']} $total</td></tr>";
         }
-        echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit]</td></tr>";
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -426,20 +426,20 @@ switch($action) {
             $ext = '';
         }
 
-        $result = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE lastvisit!=0"), 0);
-        $mpage = multipage($result, $memberperpage, 'misc.php?action=list&amp;desc='.$desc.$ext);
+        $where[] = " lastvisit!=0 ";
+        $q = implode(' AND', $where);
+        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
+        $mpage = multipage($num, $memberperpage, 'misc.php?action=list&amp;desc='.$desc.$ext);
         $multipage =& $mpage['html'];
         if (strlen($mpage['html']) != 0) {
             eval('$multipage = "'.template('misc_mlist_multipage').'";');
         }
+        unset($num, $where);
 
 
         /* Generate Output */
 
-        $where[] = " lastvisit!=0 ";
-        $q = implode(' AND', $where);
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
-        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
 
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 

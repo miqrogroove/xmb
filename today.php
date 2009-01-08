@@ -49,7 +49,10 @@ if ($SETTINGS['todaysposts'] == 'off') {
     error($lang['fnasorry3']);
 }
 
-$daysold = (isset($daysold) && is_numeric($daysold) ? (int) $daysold : 1);
+$daysold = getInt('daysold', 'r');
+if ($daysold < 1) {
+    $daysold = 1;
+}
 $srchfrom = $onlinetime - (86400 * $daysold);
 
 $tids = array();
@@ -91,7 +94,11 @@ if ($results == 0) {
     validateTpp();
     validatePpp();
 
-    $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
+    if ($daysold == 1) {
+        $mpage = multipage($results, $tpp, 'today.php');
+    } else {
+        $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
+    }
     $multipage =& $mpage['html'];
     if (strlen($mpage['html']) != 0) {
         eval('$multipage = "'.template('today_multipage').'";');
