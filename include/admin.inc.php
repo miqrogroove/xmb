@@ -75,13 +75,6 @@ class admin {
         $db->query("UPDATE ".X_PREFIX."u2u SET owner='$dbuserto' WHERE owner='$dbuserfrom'");
         $db->query("UPDATE ".X_PREFIX."whosonline SET username='$dbuserto' WHERE username='$dbuserfrom'");
 
-        $query = $db->query("SELECT tid, lastpost from ".X_PREFIX."threads WHERE lastpost like '%|$dblikeuserfrom|%'");
-        while($result = $db->fetch_array($query)) {
-            $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape_var($result['lastpost']));
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
-        }
-        $db->free_result($query);
-
         $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($usr = $db->fetch_array($query)) {
             $parts = explode(',', $db->escape_var($usr['ignoreu2u']));
