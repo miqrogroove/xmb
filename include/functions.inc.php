@@ -415,7 +415,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
     if ($bballow) {
         if ($ismood == 'yes') {
-            $message = str_replace(array('[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
+            $message = str_replace(array('[rquote=', '[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
         }
 
         $begin = array(
@@ -516,15 +516,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode(&$message, $allowimgcode) {
-    global $lang, $full_url, $imgdir;
-
-    $patterns = array();
-    $replacements = array();
-    $patterns[] = "@\\[rquote=(\\d+)&amp;tid=(\\d+)&amp;author=(.+?)]@si";
-    $replacements[] = '[quote]<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow"><em><!-- /nobr -->'.$lang['origpostedby'].' $3</em> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>'."\n";
-    $patterns[] = "@\\[/rquote]@si";
-    $replacements[] = '[/quote]';
-    $message = preg_replace($patterns, $replacements, $message);
+    global $lang, $imgdir;
 
     $find = array(
         0 => '[b]',
@@ -583,6 +575,21 @@ function bbcode(&$message, $allowimgcode) {
     );
 
     $message = str_replace($find, $replace, $message);
+
+    // Convert and balance [rquote] tags.
+    $rquotecount1 = 0;
+    $rquotecount2 = 0;
+    $pattern = "@\\[rquote=(\\d+)&amp;tid=(\\d+)&amp;author=(.+?)]@si";
+    $replacement = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
+    $message = preg_replace($pattern, $replacement, $message, -1, $rquotecount1);
+    $rquotecount1 = intval($rquotecount1);
+    $pattern = "@\\[/rquote]@si";
+    $replacement = ' </td></tr></table><font class="mediumtxt">';
+    $message = preg_replace($pattern, $replacement, $message, $rquotecount1, $rquotecount2);
+    $rquotecount1 -= $rquotecount2;
+    if ($rquotecount1 > 0) {
+        $message .= str_repeat($replacement, $rquotecount1);
+    }
 
     $patterns = array();
     $replacements = array();
