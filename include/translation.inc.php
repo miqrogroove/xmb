@@ -105,7 +105,7 @@ function setLangValue($phraseid, $cdata) {
 }
 
 /**
- * Adds an array of new $lang values to the current translation.
+ * Adds an array of new $lang values to the specified translation.
  *
  * @param array $lang Read-Only Variable. Associative array of new key/value pairs.  Values should be raw cdata.
  * @param string $langfile Read-Only Variable. Devname of the translation to add to.

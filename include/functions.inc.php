@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -621,13 +621,13 @@ function bbcode(&$message, $allowimgcode) {
     //[url]http://www.example.com/[/url]
     $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
     $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{61})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 61 chars
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
     $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
 
     //[url]www.example.com[/url]
     $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
     $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
-    $patterns[] = "#\[url\]([^\"'<>\[\]]{61})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 61 chars
+    $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
     $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
 
     //[url=http://www.example.com]Lorem Ipsum[/url]
