@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -527,7 +527,7 @@ switch($action) {
                 $bbcodeoff = $post['bbcodeoff'];
                 $smileyoff = $post['smileyoff'];
                 $post['message'] = stripslashes($post['message']);
-                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
+                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
