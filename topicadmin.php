@@ -671,7 +671,7 @@ switch($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);
@@ -688,7 +688,7 @@ switch($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, "", "", X_PREFIX."words", X_PREFIX."forums", X_PREFIX."smilies");
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);
@@ -773,12 +773,10 @@ switch($action) {
 
             $newfid = getRequestInt('newfid');
             
-            $query = $db->query("SELECT type, fup FROM ".X_PREFIX."forums WHERE fid=$newfid");
-            if ($db->num_rows($query) != 1) {
+            $otherforum = getForum($newfid);
+            if ($otherforum === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
-            $otherforum = $db->fetch_array($query);
-            $db->free_result($query);
 
             if (!$mod->statuscheck($newfid)) {
                 error($lang['notpermitted'], false);
