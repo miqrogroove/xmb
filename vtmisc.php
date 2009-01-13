@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -135,17 +135,12 @@ if ($action == 'report') {
     if (noSubmit('reportsubmit')) {
         eval('echo "'.template('vtmisc_report').'";');
     } else {
-        $query = $db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $postcount = intval($db->result($query, 0));
-        $db->free_result($query);
-
         require('include/u2u.inc.php');
         $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
         while($modusr = $db->fetch_array($modquery)) {
             $mod = $db->escape_var($modusr['username']);
-            $page = quickpage($postcount, $modusr['ppp']);
 
-            $posturl = $full_url."viewthread.php?tid=$tid&page=$page#pid$pid";
+            $posturl = $full_url."viewthread.php?tid=$tid&amp;goto=search&amp;pid=$pid";
             $reason = postedVar('reason', '', TRUE, FALSE);
             $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
             $message = $db->escape(addslashes($message)); //Messages are historically double-slashed.
@@ -155,8 +150,7 @@ if ($action == 'report') {
         }
         $db->free_result($modquery);
 
-        $page = quickpage($postcount, $tpp);
-        message($lang['reportmsg'], false, '', '', $full_url.'viewthread.php?tid='.$tid.'&page='.$page.'#pid'.$pid, true, false, true);
+        message($lang['reportmsg'], false, '', '', $full_url.'viewthread.php?tid='.$tid.'&goto=search&pid='.$pid, true, false, true);
     }
 
 } else if ($action == 'votepoll') {
