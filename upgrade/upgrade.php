@@ -1324,10 +1324,8 @@ Public License instead of this License.  But first, please read
             $newTheme = $db->insert_id();
         }
 
-        // Force everyone back to default theme as we know it exists.
+        // Update default theme.
         $db->query("UPDATE `".$u->tablepre."settings` SET theme=$newTheme");
-        $db->query("UPDATE `".$u->tablepre."members` SET theme=0");
-        $db->query("UPDATE `".$u->tablepre."forums` SET theme=0");
 
         show_result(X_INST_OK);
 
