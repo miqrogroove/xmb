@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -310,14 +310,14 @@ switch($action) {
                 eval('$memberpage = "'.template('member_reg').'";');
             }
         } else {
-            if ($_POST['username'] != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $_POST['username'])) {
-                error($lang['restricted']);
-            }
-
             $username = postedVar('username', '', TRUE, FALSE);
 
             if (strlen($username) < 3 || strlen($username) > 32) {
                 error($lang['username_length_invalid']);
+            }
+
+            if ($_POST['username'] != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $_POST['username'])) {
+                error($lang['restricted']);
             }
 
             $username = postedVar('username');
@@ -355,7 +355,9 @@ switch($action) {
                     $password .= $chars[mt_rand(0, $get)];
                 }
                 $password2 = $password;
-                } else {
+            } elseif (!isset($_POST['password']) Or !isset($_POST['password2'])) {
+                error($lang['textpw1']);
+            } else {
                 $password = $_POST['password'];
                 $password2 = $_POST['password2'];
             }
