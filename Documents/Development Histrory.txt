@@ -1,0 +1,422 @@
+## XMB History Information ##
+www.xmbforum.com
+
+1.60 v2c Magic Lantern -
+	
+	"PID" issue fixed
+	 PHP 4.2.0+ Issues Corrected
+	Whos Online ,,,,, Issue Corrected
+
+
+1.60 v2b Magic Lantern Final -
+
+	Coppa Button replaced
+	HTML/Smilie Function Fixed
+	Forum password now saved
+	Extra Spaces in search fixed
+	Installation screen image changed
+
+	On release date samspade.org which is used for traces etc is offline if the site does not come back
+	you may wish to use another site such as network-tools.com or geektools.com simply change the url in the templates.
+	Header/control panel security hole fixed
+
+
+1.60 Magic Lantern Final -
+
+	Index logs, log IP/xmbusername/hostname/referral/browser information added into control panel
+	Index log clears after 300KB of data or around 2500 logs. 
+	Administrators can now choose to ban users from accessing the forum, sending U2Us, posting or all 3. 
+	Administrators can now edit users profiles, view signup IP, current IP, user ID/number/posts etc 
+	When a post is closed, if it has a poll, the poll is also closed. 
+
+	Whos Online - IPs are displayed in the format of "WTAL 123.123.45.6" 
+
+	W = Perform Whois
+	T = Perform Tracert
+	A = Perform All Tasks (whois, tracert, dns lookup, ping)
+	L = Lookup
+	M = Map
+
+	Multi Page Todays Posts & Forum Stats Added 
+	Language Files Updated 
+	Viewthread, shows whether the author is offline or online 
+	U2Us, you can now see which messages you have read/unread. 
+	You can also see the status of your sent messages, to see if the person has read them. 
+
+	Header.php, FAQ.php, Today.php, Config.php security holes fixed. 
+	Javascript Alert bug fixed within bb img code fixed
+	Viewing private forums/edit hole fixed 
+
+	Email Newsletter, emails are now received from "board name <email@domain>" instead of from email 
+	Administrators can now send newsletters to members, admins, mods, supper mods or all team members. 
+	U2U Newsletter Bug fixed
+	New installer and full documentation in Word format (.doc) and text format (.txt). 
+	Whos online admin/mod/smod appearance changed. 
+	Restriction Manager, admins can ban user names or email addresses. 
+	Ability to choose whether users use a preset list of avatars or their own urls. 
+	Drop down time zone instead of input box 
+	Link on user profiles / only visible to admins 
+	User Moods added, users can change their mood in their member control panel
+	Users mood from profile is added into viewthread under each post they make
+	Admins can see how many users are using a certain theme. 
+	Turn stats, todays post off via control panel.
+	BBCode - Marquee, Strikethrough, Blink Added
+	MSN icon added in viewpost if the author has msn details in their profile
+
+
+1.50 RC5.1 -
+	Fixed a possible problem with zip file attachments.
+	Fixed some problems with polls.
+	Fixed signature bugs.
+	Fixed some tempalte bugs.
+	Made the codebuttons.js a tempalte, and added lang file support to it.
+	Fixed the Guest Time, problem. SO it jsut says 'never'
+	Fixed sub forum ordering.
+	Fixed the calculations done for the percent of posts a member has.
+	Dot folders can not be turnd of properly.
+	BBCode now isnerts where your cursor last was in posts.(Smilies in final)
+	Merging threads now removes one thread from the forums count.
+	Removed [img=http://www.xmbforum.com]http://forums.xmbforum.com/xmb/images/xp/logo1.jpg[/img] Deemed useless/caused bug.
+	Fixed pruning.
+
+1.50 RC5 -
+	Anonymous Posting Fixed
+	Attachments
+	Forum Multipaging
+	Limited Searches to last 30 results.
+	Fixed the install script a bit.
+	Fixed the CP problem with the templates.
+	Outbox now works properly.
+	Report post Column Count bug fixed.
+	Turned off auto selection of notify.
+	Took care of some other template bugs.
+	Favorites fixed in the User CP.
+	Fixed the Move w/Redirection Column count error.
+	Removed the 'go' button from moderator options.
+	Fxed the bug that let moderators 'auto-top' whether they were a mod in that forum or not.
+	Included several lang.php files.
+	Fixed BBCode problems when multiple [url=http://www.xmbforum.com]XMB Forum[/url] Code's were used.
+	Added [img=http://www.xmbforum.com]http://forums.xmbforum.com/xmb/images/xp/logo1.jpg[/img] to allow linked images properly.
+	Query reductions on viewthread.php
+	Made the signature tempalte based
+	Last post fixed on viewthread.php
+	Some redirection and other changes to u2u.php
+
+1.50 RC4 - 
+	Theme importer/exporter
+	Ability to turn off edited by messages
+	Category Text colors
+	Show threads from the past 30 days by default
+	Better [url=] code
+	'dot' Folders
+	Better attachments system, including download count
+	Redirect to post after posting
+	Lastpost icons on index and forumdisplay
+	Option to view attached images inline
+	New Code Buttons
+	
+1.50 -
+	Added [code] and [list] buttons in automatic bb code inserter
+	Cleaned up FAQ, added some tags to the bb code section
+	Fixed small member editing bug
+	You can now add subjects for replies if you wish
+	Fixed some modcheck() errors
+	Fixed some small quote bugs
+	Fixed private forum bug on forumdisplay
+	Fixed bug where it let topics with just spaces as the whole subject be posted
+	Split/Merge Topics
+	Removed Forum Jump (boooo!)
+	Option to turn auto bb code inserter and auto smiley inserter on/off
+	XMB is now under the BSD license
+	Cleaned up the auto smiley inserter table
+	Valid e-mail address required
+	Whos online list now alphabetized
+	You can now make the background an image instead of a color
+	Polls
+	Option use drop down list of avatars (upload to /avatars) or Avatar URL
+	Fixed security issue with cp2.php 
+	User CP (Thanks surfi!) Including Favorites and Subscriptions (email notification)
+	Option to not allow the same e-mail registered more than once
+	Small bug with deleting posts
+	Plugin System
+	U2U is now completely secure
+	File attachments
+	Database wrapper (no more mysql_query, its now $db->query)
+	Template Support
+	General Code Cleaning
+	Image Directory and Smilie Directories per theme (surfi for smilie directory)
+	Moved: and Poll: prefixes applied to moved threads and threads that contain polls
+	Option to chose how many smilies and columns you want for the smilie inserter
+	Forum Passwords
+	New readme and config.php instructions
+	
+1.05 -
+	If announcements are off, they don't show up in forum jump
+	Fixed multiple bugs with navigation and turning sections off
+	Option to turn off stats on index in CP
+	You can edit your post icon now when editing a post
+	You can now send a newsletter via U2U.
+	Whos online displays IPs to Admins and is now sorted by time
+	Option to disable report post feature
+	Fixed bug that prevented modification of post icons in CP
+	Option to disable processing time below copyright in CP
+	Fixed the time/date formatting on post review (when replying)
+	Added some new things to stats
+	Option to top topic right from post form if you are Admin, Super Mod, or Mod
+	Fixed small bug with multiple pages on viewthread
+	Search now searches subject too instead of just messages on topics
+	New option in search to search topics, replies, or both
+	If categories only on index is on, category is displayed in navigation now
+	GMT time instead of server time
+	Fixed small display order bug
+	Fixed user access list bug
+	New Topic/Reply links are smaller now
+	Stats doesnt show topics from private forums that user doesnt have access to
+	Fixed a bug with No Reg Required option and blank usernames
+	Cleaned up forum jump, added sub forums and categories
+	Fixed minor bug regarding posting in non existant forums
+	Cleaned up the move topic drop down menu as well
+	Moving topics from sub forums to forums finally work
+
+1.0 F -
+	Automatic smilie inserter is back!
+	LOTS of small bug fixes that I was too lazy to document
+	Delete forum in More Options... page
+	Time/Date Format options in CP and profile
+	U2U icon isnt displayed when U2Us are off on viewthread.php
+	Stats
+	Did a lot of tidying up around the layout, more organized
+	make prune subtract from forum total posts/topics
+	Preview Post is now perfect
+	Search memberlist feature
+	Fixed links (some links only show when you're logged in, some when your logged out)
+	All members option in CP taken out, added Search by status
+	Improved multipage links (coder)
+	You can resize images via bb code
+	Fonts, images, and font sizes can be edited via themes section in CP now
+	Fixed up topicadmin messages
+	Avatars per rank
+	Changed all "blob" columns over to "text" (no binary data involved, no need for "blob")
+	Fixed themes per forum bug
+	Took out favorites list (to be re-written later)
+	Forums with new posts now show it on forumdisplay (completely fixed new post image thingies)
+	Sub forums are back baby!
+	Email Notification!
+	Many more small feature additions/bug fixes/code cleanings that I'm too lazy to document
+	Took out thread ratings
+	Unlimited moderators
+
+1.0 B3 -
+	Fixed bug with tpp and ppp for profile
+	Started using indexes in MySQL
+	Dropped category table, categories now uses forums table and is completely OPTIONAL
+	UsErNaMe CaSe bug is all fixed no
+	Search link below each users profile is now actually a link
+	Change password bug fixes
+	BB Code is now FLAWLESS thanks to mysticflash!
+	Better Netscape compatibility
+	Now takes out all spaces before and after a username
+	Increased U2U security 
+	U2U outbox
+	Multi page fix on forumdisplay
+	Who's online record
+	No cache page headers
+	U2U not available to users not logged in
+	Avatars are toggleable in cp
+	Changed all times to 24 hour format
+	Fixed navigation on post.php and topicadmin.php
+	Report Post feature added
+	Fixed smileys in numerous places
+	Gzip Compression options
+	Scrapped prune option, it didn't work
+	New bb code options
+	Turn forum/forum group on and off
+	New bb code/smiley parsing technique
+	Many other small bugs fixed
+
+1.0 B2 -
+	Fixed bug with U2U on thread starters in viewthread
+	Count optimization on index and forumdisplay
+	Text mode
+	Fixed bug with slashes on print thread
+	Icons are centered in forumdisplay
+	Fixed slash bug on favorites
+	Fixed slash bug on rules and bboffreason
+	Fixed multiple bugs with quoting
+	Fixed member list
+	Cleaned up the HTML for the member list
+	Fixed favorite threads
+	Site Name and URL fields in settings, header has link back to site.
+	Fixed slashes bug on topic review when replyiing
+	Link to last post on index.php
+	Fixed bug with reply with quote on private forums when not authorized
+	Took out URL tags, board automatically tags URLs now
+	Re-designed sub-forums
+
+1.0 B1 -
+	Private sub forums
+	Color preview of what current color is in CP
+	Link to edit profile for member in CP
+	Folder icons for sub-forums
+	Made online page (link is the "Who's Online" in index.php)
+	Added the buddy list and U2U links to pages on misc.php
+	Move topics from forum to sub-forum and vice-versa
+	Re-formatted changelog again.
+	You can no longer enter a blank password
+	Fixed bug for making new themes
+	Fixed multiple bugs in U2U and Buddy List
+	Fixed bug with username CaSe
+	Turn U2U on or off
+	Prune posts (and delete all topics by username)
+	Fixed bug with location in profile
+	Username is linked in announcements
+	Table width in themes
+	You can now specify a list of users with access to a forum
+	Fixed a bug with censoring
+	Now traces IP on registration
+	Fixed a bug involving the member list and passwords
+	Cleaned up some HTML in header.html
+	Stripped slashes from subject title in viewthread.php
+	New Topic, Reply can no be either text or images.
+	When you delete a forum, all posts and topics are now deleted too.
+	You can toggle Search, FAQ, and Member List on and off
+	You can toggle the board logo now
+	Fixed a bug with "reply with quote" on closed topics
+	Favorite threads!
+	You can now turn post icons on or off in control panel
+
+1.0 A3 -
+	Fixed "Last active" bug on misc.php
+	Option to post out of sub forums
+	Greatly optimized viewthread.php
+	Fixed multipage bug in forumdisplay.php
+	Fixed private forum bug in viewthread.php
+	Fixed "The topic you have chosen..." bug
+	Fixed bug for replying with quote to messages with ' or "
+	Topics with multiple pages now have multi page thing in forumdisplay
+	Shows a summary of topic below the posting form when replying
+
+1.0 A2 -
+	Smileys now sort in rows when posting (thanks xarph)
+	Smileys in FAQ now in a neat little box (again, thanks xarph!)
+	Re-formatted changelog (it looks pretty now)
+	Fixed fairly big U2U bug (won't go into specifics)
+	Combined 5 queries into one in header.inc (should be blazing now on large sites)
+	Fixed bug when editing profiles (postify function bug)
+	Took out karma, you can ban people by username and its much more efficient (sorry bond).
+	You can't post in non existant forums/sub forums anymore, nor can you reply to non existant threads
+	Fixed forum jump so hidden private forums are now actually hidden.
+
+ 
+1.0 A1 -
+	Many bug fixes (didn't keep track, sorry)
+	Toggle sort options in forumdisplay.php
+	Topics/Posts per page in profile
+	Avatar URL
+	Show categories only in index.php option
+	Hide private forums from non-authorized users
+	Search members in CP
+	Cookie path no longer in effect
+	Dropped xmb_settings, its now in a text file
+	Newsletter option (email all members)
+	Dropped multiple queries throughout the script
+	Anonymous posting options
+	Banning by username
+
+
+0.75 -
+	Topped thread message on forumdisplay
+	Stars per user rank
+	Automatic smilie inserter (like the bb code buttons on UBB and vB)
+	Moderators can only perform actions in forums they moderate
+	Edit post message appears all edited posts
+	Fixed smiley bug when replying with quotes to posts with smileys
+	You can now edit member's passwords via CP
+	Moderators can now make announcements
+	Took out aim, icq, and yahoo icons on memberlist and posts
+	Buddy list
+	You can now delete multiple announcements
+	Put smilies.php into misc2.php
+	Re-organized settings page in cp
+	Put U2U and buddy list links in header
+	New post icons
+	Flood control now in effect
+	Sub forums
+	Super mods
+	Countless (I really do mean countless) other small features and fixes
+
+
+0.5 -
+	Too many to count and remember, but NUMEROUS changes to both db structure and coding.
+
+
+0.25 -
+	Fixed category link for announcements
+	Ordered member list by registration date
+	Reply with quote
+	Private message icon on posts
+	Numerous bug fixes involving reply with quote and editing
+	Deleted search.php, put it in misc.php
+	Options to turn Who's Online, Announcements, and PMs on or off (bondman again!)
+	Preview post feature
+	Optimized header system
+	Fixed thread subject bug (users could use blank subjects)
+	Got rid of hacks folder, no hacks in there yet
+	Added ICQ image to member list
+	Fixed bug where it shows all users having websites
+	Forum jump (navigation)
+	Fixed some stuff in FAQ
+	Improvements on newest registered member (index.php)
+	Fixed up the memberlist 
+	Announcement category doesnt show up when viewing single category
+	New theme!
+
+
+0.2 -
+	Added upgrade file
+	Fixed small folder image bug (forumdisplay.php)
+	Fixed some stuff in the FAQ
+	Fixed the copyright (bad link)
+	Who's online
+	Announcements
+	Fixed cp link on misc.php (admins only!)
+	FINALLY squashed that "HUGE tid bug" for good (I think).
+	Added "hacks" folder for future hacks
+	Added Online Status for viewing members profiles (thanks again bond)
+
+0.11 -
+	Fixed bug corrupting smileys when editing a post
+	Fixed red folders on index.php
+	Fixed member uid bug (similar to tid bug)
+
+
+0.1 -
+	Move thread options
+	Message appears when theres no posts in a forum
+	Private Messages, optimized pw checking for replies
+	"last post by" on index and forumdisplay
+	Fixed bug that shows incorrect reply numbers
+	Fixed a fairly large thread indexing bug
+	Added options in cp to modify member statuses
+	Avatars					
+	New posts (red folder hack) on index.php
+	Ability to turn board on/off
+	Renamed all tables with an "xmb_" prefix
+	Fixed small themes bug
+	Added "search by forum" to search feature
+	Up to 5 moderators for each forum
+	Fixed 2 flaws for viewing single categories in index.php
+
+
+0.02 -
+	ICQ support
+	Closing/opening threads
+	Improved cp functions
+	Validated xhtml coding
+	Optimized timer script
+	"No members bug" fixed
+	Some other stuff I forgot.
+
+
+0.01 -
+	Initial release

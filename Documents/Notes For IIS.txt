@@ -1,0 +1,18 @@
+extrememessageboard
+Notes For IIS Users
+
+The file index_add.php which is used to collect information for the admin raw logs uses
+commands which IIS does not support. Using this will cause major errors to show on the
+top of all forum pages. To fix this, you must disable raw logs.
+
+To disable logging, please follow these steps.
+
+
+
+ 1) Open index.php
+ 2) You will see around line 11, when you find these 3 lines, select and delete them.
+
+ 
+		 include "index_add.php"
+		?>
+		<?

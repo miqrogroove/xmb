@@ -1,0 +1,63 @@
+extrememessageboard
+
+How to use BBCode
+BBCode is based on HTML, some examples and what they are below.
+
+
+
+[b] Text Here [/b]
+
+ - This makes the text between the tags bold.
+
+
+
+
+[i] Text Here [/i]
+
+ - This makes the text between the tags italic.
+
+
+
+[u] Text Here [/u]
+
+ - This will underline the text between the tags.
+
+
+
+[marquee] Text Here [/marquee]
+
+ - This will scroll the text between the tags the width of the table post.
+
+
+
+
+[blink] Text Here [/blink]
+
+ - This will make the text between the tags blink. This will only work in netscape.
+
+
+
+[strike] Text Here [/strike]
+
+ - This will make the text between the tags have a strike through line.
+
+
+
+
+[quote] Text Here [/quote]
+
+ - This is used when replying to a users post, it will make their text italic, and place it in a box.
+
+
+
+
+[list] Text Here [/list]
+
+ - This will create a list from the text, in bullet points.
+
+
+
+[code] Text Here [/code]
+
+ - This is used when posting up HTML/PHP etc code, it will make the text smaller.
+
