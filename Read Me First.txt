@@ -1,0 +1,3 @@
+XMB 1.6 Magic Lantern Read Me
+
+ - Before installation of XMB 1.6 please read the documents found in /Documents

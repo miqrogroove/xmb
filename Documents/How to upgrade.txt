@@ -1,0 +1,16 @@
+XMB 1.6 Magic How to Upgrade
+
+ - This only works for 1.5 and above.
+ - Upload upgrade.php to your old directory.
+ - Run upgrade.php
+
+     - This will drop your old templates table, create a new table and alter 2 tables.
+
+ - Then copy all your old php files and lang files to an old folder called "OLD"
+ - Leave config.php behind
+
+ - Upload the new files except the image folder.
+ - Once all the files are uploaded try and run your forums
+
+ - If you get a blank screen rename your English.lang.php file to english.lang.php in your /lang
+   directory.

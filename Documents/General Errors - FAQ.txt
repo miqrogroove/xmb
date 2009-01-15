@@ -1,0 +1,28 @@
+extrememessageboard
+General Errors - FAQ
+
+# Problem #
+
+Warning: fopen("index_log.log", "w+") - Permission denied in /home/username/public_html/forums/index_add.php on line 29 
+
+Warning: Supplied argument is not a valid File-Handle resource in /home/username/public_html/forums/index_add.php on line 30 
+
+Warning: Supplied argument is not a valid File-Handle resource in /home/username/public_html/forums/index_add.php on line 31 
+
+Warning: Cannot add header information - headers already sent by (output started at /home/username/public_html/forums/index_add.php :29) in /home/username/public_html/forums/index_add.php on line 32 
+
+
+
+# Fix #
+
+Chmod the files cplogfile.log and index_log.log to 777. For help on how to do this, check your FTP programs help guide.
+
+
+# Problem #
+
+Can't login or logout
+
+
+# Fix #
+Verifiy your config.php file, make sure your cookiedomain is .yoursite.com and your cookiepath is /forum etc
+If that doesn't work, do not enter a cookiepath, use only cookiedomain.
