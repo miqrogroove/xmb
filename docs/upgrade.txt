@@ -1,0 +1,314 @@
+----------#--- XMB UPGRADE NOTES ---#----------
+
+To upgrade, post the code changes for each version
+that you're upgrading in the Upgrade section of the cp.
+For example, if you have Alpha 1 and your upgrading to
+Beta 1, insert the Alpha 2, Alpha 3, and Beta 1 upgrade code.
+If you have any questions, please post at xmbforum.com
+
+YOU SHOULD INPUT THE CODE IN FIRST, THEN UPLOAD ALL FILES FOR A BUG FREE
+UPGRADE.
+
+If your database prefix is something other than "xmb_", you'll have to 
+change all the SQL commands to reflect your settings so upgrade works.
+
+1.5 RC3: Firestorm
+---------------------------------------------
+1. Upload all of the files.(including templates.xmb)
+
+2. Go to your control panel and go to the templates manager and restore the default templates
+
+1.5 RC2: Sandstorm
+---------------------------------------------
+UPDATE xmb_threads SET pollopts='';
+CREATE TABLE xmb_buddys ( 
+username varchar(40) NOT NULL, 
+buddyname varchar(40) NOT NULL
+);
+1.5 RC1: Duststorm
+---------------------------------------------
+ALTER TABLE xmb_threads ADD icon varchar(75) NOT NULL AFTER subject;
+
+1.5
+---------------------------------------------
+1. Edit the new config.php to your details
+
+2. Upload the new config.php, upgrade.php, templates.xmb, and the whole db folder to your forums directory
+
+3. Run upgrade.php?action=1_50 (just visit that url).  On your forums
+
+4.  Then paste the rest of the stuff from upgrade.txt (below) into the upgrade center in the cp.
+
+5. Upload the rest of the files and visit upgrade.php?action=1_50&convpasses=yes
+
+6. Your upgrade was successful
+
+--- Upgrade Stuff for Upgrade Center ---
+
+ALTER TABLE xmb_threads DROP message;
+ALTER TABLE xmb_threads DROP dateline;
+ALTER TABLE xmb_threads DROP icon;
+ALTER TABLE xmb_threads DROP usesig;
+ALTER TABLE xmb_threads DROP useip;
+ALTER TABLE xmb_threads DROP bbcodeoff;
+ALTER TABLE xmb_threads DROP smileyoff;
+ALTER TABLE xmb_threads DROP emailnotify;
+ALTER TABLE xmb_posts DROP emailnotify;
+UPDATE xmb_forums SET private='1' WHERE private='';
+UPDATE xmb_forums SET private='3' WHERE private='staff';
+ALTER TABLE xmb_themes ADD imgdir varchar(120) NOT NULL;
+ALTER TABLE xmb_themes ADD smdir varchar(120) NOT NULL;
+UPDATE xmb_themes SET imgdir='images/';
+ALTER TABLE xmb_themes DROP newtopicimg;
+ALTER TABLE xmb_themes DROP replyimg;
+ALTER TABLE xmb_threads ADD pollopts text NOT NULL;
+ALTER TABLE xmb_themes CHANGE bgcolor bgcolor varchar(25) NOT NULL;
+ALTER TABLE xmb_settings CHANGE avastatus avastatus varchar(4) NOT NULL;
+ALTER TABLE xmb_ranks CHANGE posts posts SMALLINT (6);
+ALTER TABLE xmb_posts ADD attach mediumblob;
+ALTER TABLE xmb_forums DROP guestposting;
+DELETE FROM xmb_whosonline WHERE username='onlinerecord';
+ALTER TABLE xmb_themes DROP altfont;
+ALTER TABLE xmb_themes DROP altfontsize;
+ALTER TABLE xmb_forums ADD attachstatus varchar(15) NOT NULL;
+ALTER TABLE xmb_forums ADD pollstatus varchar(15) NOT NULL;
+UPDATE xmb_forums SET attachstatus='on', pollstatus='on';
+ALTER TABLE xmb_themes DROP postscol;
+ALTER TABLE xmb_members CHANGE password password varchar(40) NOT NULL;
+ALTER TABLE xmb_posts CHANGE pid pid int(10) NOT NULL auto_increment;
+ALTER TABLE xmb_threads CHANGE tid tid int(10) NOT NULL auto_increment;
+ALTER TABLE xmb_members CHANGE postnum postnum int(10) NOT NULL;
+ALTER TABLE xmb_forums ADD password varchar(30) NOT NULL;
+
+
+CREATE TABLE xmb_favorites (
+tid smallint(6) NOT NULL,
+username varchar(40) NOT NULL,
+type varchar(20) NOT NULL,
+PRIMARY KEY(tid)
+);
+
+---------------------------------------------
+
+
+1.05
+---------------------------------------------
+ALTER TABLE xmb_forums ADD allowimgcode varchar(3) NOT NULL;
+DROP TABLE xmb_announce;
+ALTER TABLE xmb_forums CHANGE displayorder displayorder smallint(6) NOT NULL;
+ALTER TABLE xmb_members ADD lastvisit varchar(30);
+ALTER TABLE xmb_posts DROP INDEX fid;
+ALTER TABLE xmb_posts DROP INDEX pid;
+ALTER TABLE xmb_posts DROP INDEX tid;
+ALTER TABLE xmb_threads DROP INDEX tid;
+ALTER TABLE xmb_threads DROP INDEX fid;
+ALTER TABLE xmb_forums DROP INDEX fid;
+---------------------------------------------
+
+
+1.0 Final
+---------------------------------------------
+ALTER TABLE xmb_members ADD timeformat int(5) NOT NULL;
+ALTER TABLE xmb_members ADD msn varchar(40) NOT NULL;
+ALTER TABLE xmb_smilies ADD type varchar(15) NOT NULL FIRST;
+ALTER TABLE xmb_forums ADD postperm varchar(3) NOT NULL;
+UPDATE xmb_forums SET postperm='1';
+ALTER TABLE xmb_members CHANGE username username varchar(25) NOT NULL;
+ALTER TABLE xmb_threads CHANGE views views int(100) NOT NULL;
+ALTER TABLE xmb_threads ADD replies int(100) NOT NULL AFTER views;
+UPDATE xmb_members SET timeformat='12';
+ALTER TABLE xmb_members ADD dateformat varchar(10) NOT NULL;
+UPDATE xmb_members SET dateformat='mm/dd/yy';
+UPDATE xmb_threads SET icon='';
+UPDATE xmb_posts SET icon='';
+DELETE FROM xmb_smilies;
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':)', 'smilies/smile.gif', '1');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':(', 'smilies/sad.gif', '2');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':D', 'smilies/bigsmile.gif', '3');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':cool:', 'smilies/cool.gif', '4');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':mad:', 'smilies/mad.gif', '5');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':o', 'smilies/shocked.gif', '6');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':P', 'smilies/tongue.gif', '7');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/smile.gif', '8');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/sad.gif', '9');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/bigsmile.gif', '10');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/wink.gif', '11');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/cool.gif', '12');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/mad.gif', '13');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/shocked.gif', '14');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/tongue.gif', '15');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/exclamation.gif', '16');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/question.gif', '17');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/thumbup.gif', '18');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/thumbdown.gif', '19');
+ALTER TABLE xmb_threads CHANGE icon icon varchar(50);
+ALTER TABLE xmb_posts CHANGE icon icon varchar(50);
+ALTER TABLE xmb_members CHANGE customstatus customstatus varchar(100) NOT NULL;
+ALTER TABLE xmb_themes ADD font varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD fontsize varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD altfont varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD altfontsize varchar(40) NOT NULL;
+UPDATE xmb_themes SET font='Arial', fontsize='12px', altfont='Verdana', altfontsize='10px';
+ALTER TABLE xmb_ranks ADD avatarrank varchar(90);
+UPDATE xmb_forums SET postperm='1|1';
+ALTER TABLE xmb_themes ADD replyimg varchar(50);
+ALTER TABLE xmb_themes ADD newtopicimg varchar(50);
+ALTER TABLE xmb_themes ADD boardimg varchar(50);
+ALTER TABLE xmb_announce CHANGE announcement announcement text NOT NULL;
+ALTER TABLE xmb_forums CHANGE description description text;
+ALTER TABLE xmb_forums CHANGE userlist userlist text NOT NULL;  
+ALTER TABLE xmb_members CHANGE bio bio text;
+ALTER TABLE xmb_members CHANGE sig sig text;
+ALTER TABLE xmb_posts CHANGE message message text NOT NULL;
+ALTER TABLE xmb_threads CHANGE message message text NOT NULL;
+ALTER TABLE xmb_threads DROP rating;
+ALTER TABLE xmb_members ADD ignoreu2u text;
+INSERT INTO xmb_themes VALUES ( 'blue', '#ffffff', '#b0c0d0', '#d0e0f0', '#cc6600', '#000000', '#e0f0f9', '#000000', '#d0e0f0', '#b0c0d4', '#000000', '#000000', '1', '97%', '6', 'Arial', '12px', 'Verdana', '10px', '', '', 'images/logo1.png');
+DROP TABLE xmb_favthreads;
+ALTER TABLE xmb_threads ADD emailnotify varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD emailnotify varchar(15) NOT NULL;
+ALTER TABLE xmb_forums CHANGE moderator moderator varchar(100) NOT NULL;
+ALTER TABLE xmb_themes ADD postscol varchar(5) NOT NULL;
+UPDATE xmb_themes SET postscol='2col';
+ALTER TABLE xmb_words CHANGE find find varchar(60) NOT NULL;
+ALTER TABLE xmb_words CHANGE replace1 replace1 varchar(60) NOT NULL;
+ALTER TABLE xmb_threads CHANGE subject subject varchar(100) NOT NULL;
+---------------------------------------------
+
+
+1.0 Beta 3
+---------------------------------------------
+ALTER TABLE xmb_forums DROP cid;
+ALTER TABLE xmb_posts DROP sid;
+ALTER TABLE xmb_threads DROP sid;
+ALTER TABLE xmb_forums ADD type varchar(15) NOT NULL FIRST;
+ALTER TABLE xmb_forums ADD status varchar(15) NOT NULL AFTER name;
+ALTER TABLE xmb_threads ADD bbcodeoff varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD bbcodeoff varchar(15) NOT NULL;
+ALTER TABLE xmb_threads ADD smileyoff varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD smileyoff varchar(15) NOT NULL;
+ALTER TABLE xmb_forums ADD fup smallint(6) NOT NULL;
+ALTER TABLE xmb_posts ADD INDEX(pid);
+ALTER TABLE xmb_posts ADD INDEX(tid);
+ALTER TABLE xmb_posts ADD INDEX(fid);
+ALTER TABLE xmb_threads ADD INDEX(tid);
+ALTER TABLE xmb_threads ADD INDEX(fid);
+ALTER TABLE xmb_forums ADD INDEX(fid);
+ALTER TABLE xmb_u2u ADD folder varchar(40) NOT NULL;
+UPDATE xmb_u2u SET folder='inbox';
+UPDATE xmb_forums SET type='forum' WHERE type='';
+UPDATE xmb_threads SET icon='';
+DROP TABLE xmb_category;
+DROP TABLE xmb_subforums;
+INSERT INTO xmb_whosonline VALUES ('onlinerecord', '-1', '', '');
+
+CREATE TABLE xmb_banned ( 
+ip1 smallint(3) NOT NULL, 
+ip2 smallint(3) NOT NULL, 
+ip3 smallint(3) NOT NULL, 
+ip4 smallint(3) NOT NULL, 
+dateline VARCHAR(30) NOT NULL, 
+id SMALLINT(6) NOT NULL, 
+PRIMARY KEY(id) 
+);
+---------------------------------------------
+
+
+1.0 Beta 2
+---------------------------------------------
+ALTER TABLE xmb_forums ADD posts INT(100) NOT NULL;
+ALTER TABLE xmb_forums ADD threads INT(100) NOT NULL;
+ALTER TABLE xmb_subforums ADD posts INT(100) NOT NULL;
+ALTER TABLE xmb_subforums ADD threads INT(100) NOT NULL;
+ALTER TABLE xmb_favthreads DROP PRIMARY KEY;
+ALTER TABLE xmb_themes ADD tablespace varchar(15) NOT NULL;
+---------------------------------------------
+
+
+1.0 Beta 1
+---------------------------------------------
+ALTER TABLE xmb_whosonline ADD location VARCHAR (150) not null;
+ALTER TABLE xmb_forums ADD theme VARCHAR (30) not null;
+ALTER TABLE xmb_themes ADD tablewidth varchar(15) NOT NULL;
+ALTER TABLE xmb_forums ADD userlist blob NOT NULL;
+ALTER TABLE xmb_members ADD regip varchar(40) NOT NULL;
+DROP TABLE xmb_buddys;
+
+CREATE TABLE xmb_favthreads ( 
+tid smallint(6) NOT NULL, 
+username varchar(40) NOT NULL, 
+PRIMARY KEY(tid) 
+);
+---------------------------------------------
+
+
+1.0 Alpha 3
+---------------------------------------------
+ALTER TABLE xmb_subforums ADD outsub VARCHAR (3) not null;
+ALTER TABLE xmb_themes CHANGE border bordercolor VARCHAR (15) not null;
+ALTER TABLE xmb_themes ADD borderwidth VARCHAR (15) not null;
+---------------------------------------------
+
+
+1.0 Alpha 2
+---------------------------------------------
+ALTER TABLE xmb_members DROP warnings
+---------------------------------------------
+
+
+1.0 Alpha 1
+---------------------------------------------
+ALTER TABLE xmb_settings ADD showforums varchar(3) NOT NULL;
+ALTER TABLE xmb_settings ADD privatehide varchar(3) NOT NULL;
+ALTER TABLE xmb_members ADD tpp SMALLINT (6) NOT NULL;
+ALTER TABLE xmb_members ADD ppp SMALLINT (6) NOT NULL;
+ALTER TABLE xmb_members CHANGE avatar avatar VARCHAR (90);
+ALTER TABLE xmb_settings ADD showsort VARCHAR (3) not null;
+ALTER TABLE xmb_forums ADD guestposting varchar(3) NOT NULL;
+ALTER TABLE xmb_settings ADD emailcheck varchar(3) NOT NULL;
+ALTER TABLE xmb_members ADD newsletter VARCHAR (3) not null;
+ALTER TABLE xmb_settings DROP cookiepath;
+DROP TABLE xmb_settings;
+UPDATE xmb_members SET tpp=20;
+UPDATE xmb_members SET ppp=35;
+UPDATE xmb_settings SET privatehide=on, showforums=off, modsannouce=on, regviewonly=off;
+ALTER TABLE xmb_ranks ADD allowavatars varchar(3) NOT NULL;
+---------------------------------------------
+
+
+0.75
+---------------------------------------------
+ALTER TABLE xmb_ranks ADD stars SMALLINT (6) not null;
+ALTER TABLE xmb_settings ADD floodctrl SMALLINT (6) not null;
+ALTER TABLE xmb_settings CHANGE postperpage postperpage SMALLINT (6) not null;
+ALTER TABLE xmb_settings CHANGE topicperpage topicperpage SMALLINT (6) not null;
+ALTER TABLE xmb_settings CHANGE hottopic hottopic SMALLINT (6) not null;
+ALTER TABLE xmb_settings CHANGE regviewonly regviewonly CHAR (3) not null;
+ALTER TABLE xmb_settings ADD COLUMN modsannouce varchar(3) NOT NULL AFTER regviewonly;
+ALTER TABLE xmb_members ADD COLUMN langfile varchar(40) NOT NULL AFTER bday;
+UPDATE xmb_members SET langfile='english';
+UPDATE xmb_threads SET rating='';
+ALTER TABLE xmb_threads ADD sid SMALLINT (6) not null AFTER fid;
+ALTER TABLE xmb_settings ADD COLUMN memberperpage varchar(10) NOT NULL AFTER floodctrl;
+ALTER TABLE xmb_posts ADD sid SMALLINT (6) not null;
+
+
+CREATE TABLE xmb_buddys ( 
+username varchar(40) NOT NULL, 
+buddyname varchar(40) NOT NULL,
+id smallint(6) NOT NULL auto_increment,
+PRIMARY KEY(id)
+);
+
+CREATE TABLE xmb_subforums (
+sid smallint(6) NOT NULL auto_increment,
+fid smallint(6) NOT NULL,
+name varchar(50) NOT NULL,
+lastpost varchar(30) NOT NULL,
+moderator varchar(40) NOT NULL,
+displayorder varchar(10) NOT NULL,
+private varchar(30),
+description blob,
+PRIMARY KEY(sid)
+);
+---------------------------------------------
