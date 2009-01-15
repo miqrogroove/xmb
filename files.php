@@ -101,7 +101,7 @@ if ($db->num_rows($query) != 1) {
 $file = $db->fetch_array($query);
 $db->free_result($query);
 
-if ($pid > 0) {
+if ($pid > 0 Or $filename != '') {
     $forum = getForum($file['fid']);
 
     if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || $forum['attachstatus'] != 'on') {

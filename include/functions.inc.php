@@ -668,7 +668,7 @@ function fixUrl($matches) {
 /**
  * Replaces createAbsFSizeFromRel() to eliminate the /e in size bbcode regex.
  *
- * @since 1.9.11
+ * @since 1.9.11 Alpha Three
  */
 function bbcodeSizeTags($matches) {
     global $fontsize;
