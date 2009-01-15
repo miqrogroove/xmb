@@ -4937,13 +4937,12 @@ $logo
 <br />
 <h2><a href="$threadlink" rev="alternate">$thread[subject]</a></h2>
 $posts
-<hr />
 </body>
 </html>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable_row|#*XMB TEMPLATE*#|
 <h3>$subject</h3><span class="s14px">$post[author]</span> - <span class="s13px">$poston</span><br /><br />
-<font class="mediumtxt">$post[message]</font>
+<font class="mediumtxt">$post[message]</font><hr />
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
 <br />
