@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -253,17 +253,7 @@ if ($action != 'edit') {
     }
 }
 
-eval('$bbcodescript = "'.template('functions_bbcode').'";');
-
-if (!isset($usesig)) {
-    $usesig = 'no';
-}
-
-if ($usesig != 'yes') {
-    $usesig = 'no';
-}
-
-$allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowimgcode = ($forum['allowimgcode'] == 'yes' And $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
@@ -289,10 +279,21 @@ if (isset($emailnotify) && $emailnotify == 'yes') {
     $emailnotify = 'no';
 }
 
+// New bool vars to clear up the confusion about effective settings.
+$bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' And $forum['allowbbcode'] == 'yes');
+$bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no');
+$bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
+$bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' And $forum['allowsmilies'] == 'yes');
+$bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $smileyoff = 'no');
+
 if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
-    $sc = true;
+    $sc = TRUE;
 } else {
-    $sc = false;
+    $sc = FALSE;
+}
+
+if (!(isset($usesig) && $usesig == 'yes')) {
+    $usesig = 'no';
 }
 
 if ((isset($previewpost) || $sc) && $usesig == 'yes') {
@@ -363,14 +364,18 @@ if ($SETTINGS['spellcheck'] == 'on') {
 }
 
 $bbcodeinsert = '';
+$bbcodescript = '';
 $moresmilies = '';
 $smilieinsert = '';
-if ($forum['allowbbcode'] == 'yes') {
-    $bbcodeinsert = bbcodeinsert();
-}
-if ($forum['allowsmilies'] == 'yes') {
-    $smilieinsert = smilieinsert();
-    $moresmilies = "<a href=\"misc.php?action=smilies\" onclick=\"Popup(this.href, 'Window', 175, 250); return false;\">[{$lang['moresmilies']}]</a>";
+if ($bBBcodeInserterEnabled Or $bSmilieInserterEnabled) {
+    eval('$bbcodescript = "'.template('functions_bbcode').'";');
+    if ($bBBcodeInserterEnabled) {
+        eval('$bbcodeinsert = "'.template('functions_bbcodeinsert').'";'); // Uses $spelling_lang
+    }
+    if ($bSmilieInserterEnabled) {
+        $smilieinsert = smilieinsert();
+        $moresmilies = "<a href=\"misc.php?action=smilies\" onclick=\"Popup(this.href, 'Window', 175, 250); return false;\">[{$lang['moresmilies']}]</a>";
+    }
 }
 
 switch($action) {
@@ -404,7 +409,7 @@ switch($action) {
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
-            if ($SETTINGS['attach_remote_images'] == 'on') {
+            if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
@@ -512,7 +517,9 @@ switch($action) {
 
         if ($replyvalid) {
             $thatime = $onlinetime;
-            postLinkBBcode($messageinput);
+            if ($bBBcodeOnForThisPost) {
+                postLinkBBcode($messageinput);
+            }
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
@@ -587,7 +594,7 @@ switch($action) {
                             attachUploadedFile('attach'.$i, $pid);
                         }
                     }
-                    if ($SETTINGS['attach_remote_images'] == 'on') {
+                    if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = $db->escape(addslashes($messageinput));
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
@@ -626,7 +633,7 @@ switch($action) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
-                    if ($bbcodeoff = 'no') {
+                    if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
                             if ($counter == 0) {
@@ -665,7 +672,9 @@ switch($action) {
                 $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
-                postLinkBBcode($messageinput);
+                if ($bBBcodeOnForThisPost) {
+                    postLinkBBcode($messageinput);
+                }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -765,7 +774,7 @@ switch($action) {
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
-            if ($SETTINGS['attach_remote_images'] == 'on') {
+            if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
@@ -881,7 +890,9 @@ switch($action) {
         if ($topicvalid) {
             $thatime = $onlinetime;
 
-            postLinkBBcode($messageinput);
+            if ($bBBcodeOnForThisPost) {
+                postLinkBBcode($messageinput);
+            }
             $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
@@ -952,7 +963,7 @@ switch($action) {
                             attachUploadedFile('attach'.$i, $pid);
                         }
                     }
-                    if ($SETTINGS['attach_remote_images'] == 'on') {
+                    if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = $db->escape(addslashes($messageinput));
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
@@ -983,7 +994,7 @@ switch($action) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
-                    if ($bbcodeoff = 'no') {
+                    if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
                             if ($counter == 0) {
@@ -1022,7 +1033,9 @@ switch($action) {
                 $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
-                postLinkBBcode($messageinput);
+                if ($bBBcodeOnForThisPost) {
+                    postLinkBBcode($messageinput);
+                }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -1107,7 +1120,7 @@ switch($action) {
                     $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
                 }
                 $temp = '';
-                if ($SETTINGS['attach_remote_images'] == 'on') {
+                if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                     $result = extractRemoteImages($pid, $messageinput);
                     if ($result < 0) {
                         $errors .= softerror($attachmentErrors[$result]);
@@ -1150,7 +1163,9 @@ switch($action) {
                     $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
                 }
 
-                postLinkBBcode($messageinput);
+                if ($bBBcodeOnForThisPost) {
+                    postLinkBBcode($messageinput);
+                }
                 $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
                 $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
 
@@ -1210,6 +1225,9 @@ switch($action) {
                 $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
+                $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $postinfo['bbcodeoff'] == 'no');
+                $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
+                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $postinfo['smileyoff'] = 'no');
             }
 
             // Fill $attachment
@@ -1223,7 +1241,7 @@ switch($action) {
                 $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
                 $postinfo['url'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
                 eval('$attachment .= "'.template('post_edit_attachment').'";');
-                if ($bbcodeoff = 'no') {
+                if ($bBBcodeOnForThisPost) {
                     $bbcode = "[file]{$attach['aid']}[/file]";
                     if (strpos($postinfo['message'], $bbcode) === FALSE) {
                         if ($counter == 0) {
@@ -1265,7 +1283,9 @@ switch($action) {
                 if ($SETTINGS['editedby'] == 'on') {
                     $message1 .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
                 }
-                postLinkBBcode($message1);
+                if ($bBBcodeOnForThisPost) {
+                    postLinkBBcode($message1);
+                }
                 $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
                 eval('$preview = "'.template('post_preview').'";');
             }
@@ -1305,16 +1325,6 @@ switch($action) {
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header.$errors.$postpage.$footer;
-
-function bbcodeinsert() {
-    global $imgdir, $altbg1, $altbg2, $lang, $SETTINGS, $spelling_lang;
-
-    $bbcode = '';
-    if ($SETTINGS['bbinsert'] == 'on') {
-        eval('$bbcode = "'.template('functions_bbcodeinsert').'";');
-    }
-    return $bbcode;
-}
 
 function postLinkBBcode(&$message) {
     global $db;

@@ -77,6 +77,8 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
     error($lang['textnoforum']);
 }
 
+smcwcache();
+
 // check permissions on this forum
 $perms = checkForumPermissions($forum);
 if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {

@@ -35,6 +35,8 @@ if (X_GUEST) {
     exit;
 }
 
+smcwcache();
+
 $_tid = isset($_POST['tid']) ? $_POST['tid'] : (isset($_GET['tid']) ? $_GET['tid'] : 0);
 $fid = getInt('fid', 'p');
 if ($fid == 0) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -72,12 +72,15 @@ $navigation = '';
 $newu2umsg = '';
 $othertid = '';
 $quickjump = '';
+$smiliesnum = 0;
 $status = '';
+$wordsnum = 0;
 $xmbuser = '';
 $xmbpw = '';
 
 $SETTINGS = array();
 $THEME = array();
+$censorcache = array();
 $footerstuff = array();
 $links = array();
 $lang = array();
@@ -86,6 +89,7 @@ $plugadmin = array();
 $plugimg = array();
 $plugname = array();
 $plugurl = array();
+$smiliecache = array();
 $tables = array(
 'attachments',
 'banned',
