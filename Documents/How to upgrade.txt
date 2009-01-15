@@ -1,0 +1,21 @@
+XMB 1.8 Magic How to Upgrade
+
+ - This only works for XMB 1.6 and above.
+ - Upload upgrade.php to your old directory.
+ - Upload English.lang.php into your /lang folder.
+ - Upload the admin folder in your images directory into /images/ (so /images/admin will be created)
+
+     - This will drop your old templates table, create a new table and upload the templates.
+     - YOU WILL LOSE ALL TEMPLATE CHANGES - HACKS ETC
+
+
+ - Then copy all your old php files and lang files to an old folder called "OLD"
+ - Leave config.php behind
+
+ - Once all the files are uploaded run upgrade.php
+ - Remove the files upgrade.php and cinst.php
+
+ - If you get a blank screen rename your English.lang.php file to english.lang.php in your /lang
+   directory.
+
+ - Problems? Check the XMB support forums http://www.xmbforum.com/community/forums

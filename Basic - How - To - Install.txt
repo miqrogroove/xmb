@@ -1,0 +1,9 @@
+How to install XMB.
+
+	1) Upload all files found in the Partagium folder into your FTP space.
+		- Create a folder such as /forum to store the files
+	2) Edit config.php with the information it asks for.
+	3) Upload the edited config.php file
+	4) Run install.html
+	5) When completed, delete the installation files, including cinst.php
+

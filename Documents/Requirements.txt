@@ -1,0 +1,12 @@
+XMB Magic Lantern 1.8 Hosting Information
+
+To install and run XMB your website must have SQL and PHP abilities.
+If your site does not have these abilities check the "Hosting" forum on XMB
+http://www.xmbforum.com/community/forums
+
+Also try searching on Google (google.com) or Yahoo.com for a free PHP/SQL Host.
+
+If you still cannot find what your looking for, please contact sales@aventure-media.co.uk
+for a custom XMB hosting package starting from $40 yearly.
+
+http://www.xmbforum.com/hosting

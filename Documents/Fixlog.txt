@@ -1,0 +1,107 @@
+[b]Build 2120211PM[/b]
+- time problems fixed - SPECIAL VERSION ONLY!!
+- you can not make templates without a name anymore
+- fixed non-visible author in lastpost
+- fixed lastpost problems on Topic deletions in subforums
+- Blanc U2U bug fixed
+
+[b]Build 1120206PM[/b]
+- Fixed typo in config.php
+- fixed sigs in editprofile.php
+- subscriptions work again
+- bbcode and html in signatures fixed
+- mood can be set during registartion again
+- signatures can be set during registration again
+- dateformat can be set during registration again
+- laspost in forums is now updated upon delete and move.
+- repeated username in whosonline fixed.
+- fixed merge problems
+- fixed Split Thread
+- Today's posts don't show password-forum posts anymore, unless you have that forum's password saved.
+- Fixed 0-posts best member in stats
+- fixed  all known u2uadmin bugs
+- Fixed non-ISO problems with forum names.
+
+[b]Build 29110210PM[/b]
+- <, >, |, [, ], ", \ are now being restricted from use in usernames.
+- A way has been added to disable the 1x per 24 hour registration, this can be done using the new config.php.
+- fixed u2u-quota bug
+- missing yahoo image added
+- Fixed all errors with posting HTML
+- Fixed HTML in signatures
+
+[b]Build 27110210PM[/b]
+- fixed not working bbcode when using [code ]'hi'[/code ] formats...
+- Changed "Todays Posts" to "Today's Posts"
+- non ISO-8859-1 errors fixed.
+- fixed all foreach errors
+- bbcode won't get broken up anymore when added more than 15 times in a row.
+- Moved redirects can now be deleted using the 'trash icon' to the right of the redirect.
+- black background with whosonline fixes (appeared from time to time)
+- langfile can be changed again
+
+[b]Build 20110207PM[/b]
+- fixed registration problem
+- cplogfile concealed
+- faq.php optimized
+- header.php was optimized
+- fixed long loadingtimes in tools.php - thanks to Basc
+- fixed footer problems in tools.php
+- fixed registration errors
+- redirect in post.php fixed
+
+[b]Build 17110208PM[/b]
+- lastpost re-re-adjusted
+- fixed some minor glitches in the html
+- fixed occasional logout error
+- bbcode in edit-screen fixed
+- &gt; converted to &raquo; in every file.
+- laspost readjusted
+
+[b]Build 17110202PM[/b]
+- slashes are now stripped from the navigation bars in post.php
+- themes-upload now works
+- redfolders are propably fixed.....
+- avatarlist bugs fixed - thanks to fixato
+- lastpost also works with subforums
+- You can still log in when a board is closed
+- After deleting a post you will be redirected to the thredlist
+
+[b]Build 16110211PM[/b]
+- stats show normal again
+- censor now censors all
+- a few templatefixes added.
+- after edditing post, you go to post, even if there's multiple pages
+- laspost goes to last page automatically
+- rename themes fixed
+- delete themes fixed
+
+[b]Build 16110200AM[/b]
+- invisible categories can't be seen anymore if there are no visible forums in them
+- fixed '>' in post.php
+- fixed 'logged in as ' (no username)
+- missing yahoo images added
+- memcp template updated slightly
+- Forums and categories containing ' or " can now easily be added and modified.
+
+[b]Build 15110204PM[/b]
+ - Text in bbcode buttons fixed
+ - When upgrading, all admins will become Super Admins
+ - process-time showed right when noaccess messages appear
+ - HTML allowed now works in messages, and vice-versa
+ - HTML in sigs works aswell
+ - Super-admin rank added in upgrade
+ - Sigs show normally again, and are independent from any post settings (eg. smilies off and bbcode off, etc.)
+- Invisible subforums fixed
+- unordered subforums fixed
+
+[b]Build 14110210PM[/b]
+ - use sig is now auto-ticked if you have a sig
+ - all profile problems fixed, including:
+ - - Wrong info
+ - - All text gone when updating
+ - - editprofile by admins didn't work
+ -  fixed 'blocked u2u' problem
+ - fixed 'unable to delete from outbox'-problems
+ 
+[b]No logs present before this version[/b]

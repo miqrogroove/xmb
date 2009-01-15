@@ -1,0 +1,93 @@
+extrememessageboard
+how to install xmb 1.8 partagium
+
+
+Thank you for choosing XMB 1.8 Magic Lantern created by Aventure Media & The XMB Group.
+To install XMB 1.8 you need to make several changes to a file config.php, these changes
+include you're website username and password, a detailed explanation is found below.
+
+Open config.php you will see…
+
+<?
+/*
+
+XMB 1.8 Partagium
+© 2001 - 2002 Aventure Media & The XMB Developement Team
+http://www.aventure-media.co.uk
+http://www.xmbforum.com
+
+For license information, please read the license file which came with this edition of XMB
+
+*/
+
+$dbname = "";			// Name of your database
+$dbuser = "";			// Username used to access it
+$dbpw = "";			// Password used to access it
+$dbhost = "localhost";		// Database host, usually 'localhost'
+
+$tablepre = "xmb_";		// Table-pre
+
+$cookiepath = "";		// The path to your board - domain, eg: http://your-domain/forum/index.php, path will be: '/forum'
+$cookiedomain = "";		// The domain this forum is on, eg: http://your-domain/forum/index.php, domain will be: 'your-domain'
+
+$database = "mysql";		// Database type, currently only mysql is supported.
+$pconnect = 0;			// Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
+
+$plugname[1] = "";		// Added plugin name, to create another plugin, copy and change [1] to [2] etc
+$plugurl[1] = "";		// This is the location, link, or URL to the plugin
+$plugadmin[1] = "no";		// Is this plugin only for admins? Set to yes for admins, no for public
+?>
+
+
+$dbname = "";
+This is you're SQL database name, if you're using a control panel such as Cpanel you
+need to go to SQL Databases,
+and select to add a new database.
+
+$dbuser = "";
+This is you're SQL database username that you connect to; each database can have different
+users and passwords
+
+$dbpw = "";
+This is you're SQL database password which is needed to make a successful connection
+
+$dbhost = "localhost";
+The location of you're database, normally localhost or you'redomain.com
+
+$tablepre = "xmb_";
+All tables in you're database will start with xmb_  such as xmb_members etc
+
+
+$pconnect = 0;
+Ignore this option
+
+$cookiepath = ""; // "" if you're installing locally
+This option can normally be left out, but if you're forum is at /mysite/forum you can change the
+cookiepath to /mysite/forum
+
+$cookiedomain = ""; // "" if you're installing locally
+You must enter the information for this option, if you're site is domain.com enter .domain.com if its yahoo.com
+enter .yahoo.com
+
+If you do not enter the information, you will not be able to login or logout.
+
+
+$database = "mysql";
+This is the type of database to use, this option is standard.
+
+
+
+
+
+How to install…
+
+To install you're board run the file install.html from you're website
+http://www.site.com/forum/install.html and follow the onscreen instructions.
+
+
+
+Last updated: 13th October 2002
+By Richard / Aventure Media / XMB
+Richard@aventuremedia.com
+www.aventure-media.co.uk
+www.xmbforum.com

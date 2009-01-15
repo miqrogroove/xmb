@@ -1,0 +1,45 @@
+XMB 1.8 Partagium License
+Use in source and binary forms, with or without modification, are permitted provided that the following conditions are met.
+
+You are provided with these scripts for personal and commercial use at no charge.
+You may modify the code for your own use on your server, but may not redistribute this package.
+
+All copyright must remain in the footer no matter what modifications are used.
+
+		Powered by [link]XMB 1.8 Partagium Final
+		Developed By [link]Aventure Media & [link]The XMB Group © 2002
+
+
+Template:
+
+<font style="font-size: 10px; font-family: Verdana">
+$versionlong<br></b>
+Developed By <a href="http://www.aventuremedia.com" target="blank">Aventure Media</a> & <a 	href="http://www.xmbforum.com" target=blank>The XMB Group</a> © 2002<br>
+<font style="font-size: 11px; font-family: arial, verdana">$lang_timemsg $totaltime $lang_textseconds, $db->querynum 	$lang_queries<br><br>
+
+
+All copyright tags must remain the header template.
+
+By using XMB you agree to this terms and accept full responsibility for the removal of copyright material.  Neither the names Aventure Media, Aventure Studios nor The XMB Group or its contributors may be used without permission.
+
+This software is provided by the copyright holders and contributors "as is" and any express or implied
+warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+purpose are disclaimed. In no event shall the regents or contributors be liable for any direct, indirect,
+incidental, special, exemplary or consequential damages. Including but not limited to, procurement of substitute
+goods or services, loss of data, profits or business interruption.
+
+By using this software you are granted a basic license, XMB/Aventure Media reserve the right to revoke this license on any website that it feels necessary. You may not however use the software for.
+
+	- Distribution with a paid/free product without permission
+		- mail@aventure-media.co.uk
+	- Offer hosting with preinstalled XMB without permission
+		- mail@aventure-media.co.uk
+	- Charge for the use of XMB
+	- Create profit resulting from the use of the XMB software
+	- You may only distribute the software WITHOUT MODIFICATION
+	- You must not remove the embedded html or copyright footer
+	- You cannot copyright the board in any format
+
+
+To report abuse of material please email abuse@aventure-media.co.uk
+For other enquiries please contact mail@aventure-media.co.uk

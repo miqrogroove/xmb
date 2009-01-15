@@ -1,0 +1,13 @@
+This file will upgrade your current XMB 1.6 board to XMB 1.8
+
+To upgrade do the following.
+
+	1) Upload the new XMB 1.8 files into your forum directory
+	2) Modify the config.php file with your current settings as before
+	3) Run upgrade.php
+		- (via yoursite.com/forum/upgrade.php) etc
+	4) This will reset your templates to the new files and modify your database with the new tables
+	5) Completed, your board should now be XMB 1.8
+
+If you have problems please refer to our forums
+http://www.xmbforum.com/community/boards
