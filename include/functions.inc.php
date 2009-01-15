@@ -579,7 +579,7 @@ function bbcode(&$message, $allowimgcode) {
     // Convert and balance [rquote] tags.
     $rquotecount1 = 0;
     $rquotecount2 = 0;
-    $pattern = "@\\[rquote=(\\d+)&amp;tid=(\\d+)&amp;author=(.+?)]@si";
+    $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
     $replacement = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
     $message = preg_replace($pattern, $replacement, $message, -1, $rquotecount1);
     $rquotecount1 = intval($rquotecount1);
