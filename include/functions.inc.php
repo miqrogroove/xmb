@@ -665,6 +665,11 @@ function fixUrl($matches) {
     return ' [url]'.$fullurl.'[/url]';
 }
 
+/**
+ * Replaces createAbsFSizeFromRel() to eliminate the /e in size bbcode regex.
+ *
+ * @since 1.9.11
+ */
 function bbcodeSizeTags($matches) {
     global $fontsize;
     static $cachedFs;
@@ -684,6 +689,73 @@ function bbcodeSizeTags($matches) {
     $html = "<span style=\"font-size: $o;\">{$matches[2]}</span>";
 
     return $html;
+}
+
+/**
+ * Processes tags like [file]1234[/file]
+ *
+ * Caller must include attach.inc.php, query the attachments table,
+ * and load the needed templates.
+ *
+ * @param string $message Read/Write Variable.  Returns the processed HTML.
+ * @param array  $files   Read-Only Variable.  Contains the result rows from an attachment query.
+ * @param int    $pid     Pass zero when in newthread or reply preview.
+ * @param bool   $bBBcodeOnForThisPost
+ */
+function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
+    global $lang, $SETTINGS;
+    
+    $pid = intval($pid);
+    $count = 0;
+    $seperator = '';
+    foreach($files as $attach) {
+        $post = array();
+        $post['filename'] = attrOut($attach['filename']);
+        $post['filetype'] = attrOut($attach['filetype']);
+        $post['fileurl'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
+        $attachsize = getSizeFormatted($attach['filesize']);
+
+        $post['filedims'] = '';
+        $output = '';
+        $prefix = '';
+        $extention = strtolower(get_extension($post['filename']));
+        if ($SETTINGS['attachimgpost'] == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+            if (intval($attach['thumbid'] > 0)) {
+                $post['thumburl'] = getAttachmentURL($attach['thumbid'], $pid, $attach['thumbname']);
+                $result = explode('x', $attach['thumbsize']);
+                $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
+                eval('$output = "'.template('viewthread_post_attachmentthumb').'";');
+            } else {
+                if ($attach['img_size'] != '') {
+                    $result = explode('x', $attach['img_size']);
+                    $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
+                }
+                eval('$output = "'.template('viewthread_post_attachmentimage').'";');
+            }
+            $seperator = '';
+        } else {
+            $downloadcount = $attach['downloads'];
+            if ($downloadcount == '') {
+                $downloadcount = 0;
+            }
+            eval('$output = "'.template('viewthread_post_attachment').'";');
+            if ($seperator == '') {
+                $prefix = "<br /><br />";
+            }
+            $seperator = "<br /><br />";
+        }
+        if ($count == 0) {
+            $prefix = "<br /><br />";
+        }
+        $matches = 0;
+        if ($bBBcodeOnForThisPost) {
+            $message = preg_replace('@\\[file]'.$attach['aid'].'\\[/file]@', $output, $message, 1, $matches);
+        }
+        if ($matches == 0) {
+            $message .= $prefix.$output.$seperator; // Do we need some sort of a seperator template here?
+            $count++;
+        }
+    }
 }
 
 function modcheck($username, $mods, $override=X_SMOD) {

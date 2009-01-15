@@ -49,7 +49,12 @@ loadtemplates(
 'forumdisplay_password',
 'functions_bbcode',
 'post_newpoll',
-'post_edit_attachment'
+'post_edit_attachment',
+'viewthread_post_attachmentthumb',
+'viewthread_post_attachmentimage',
+'viewthread_post_attachment',
+'viewthread_post_nosig',
+'viewthread_post_sig'
 );
 
 eval('$css = "'.template('css').'";');
@@ -625,22 +630,25 @@ switch($action) {
             }
 
             // Fill $attachfile
+            $files = array();
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 $attachfile = '';
-                $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
                 $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
+                    $files[] = $postinfo;
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
-                            if ($counter == 0) {
+                            if ($counter == 0 Or $postinfo['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
                                 $messageinput .= "\r\n\r\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
+                            $prevsize = $postinfo['img_size'];
                         }
                     }
                 }
@@ -676,6 +684,18 @@ switch($action) {
                     postLinkBBcode($messageinput);
                 }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+
+                if (count($files) > 0) {
+                    bbcodeFileTags($message1, $files, 0, $bBBcodeOnForThisPost);
+                }
+
+                if ($usesig == 'yes') {
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    eval('$message1 .= "'.template('viewthread_post_sig').'";');
+                } else {
+                    eval('$message1 .= "'.template('viewthread_post_nosig').'";');
+                }
+
                 eval('$preview = "'.template('post_preview').'";');
             }
 
@@ -986,22 +1006,25 @@ switch($action) {
 
         if (!$topicvalid) {
             // Fill $attachfile
+            $files = array();
             if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
                 $attachfile = '';
-                $query = $db->query("SELECT aid, filename, filesize FROM ".X_PREFIX."attachments WHERE uid={$self['uid']} AND pid=0 AND parentid=0");
+                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
                 $counter = 0;
                 while ($postinfo = $db->fetch_array($query)) {
+                    $files[] = $postinfo;
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
                     eval('$attachfile .= "'.template('post_attachment_orphan').'";');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
-                            if ($counter == 0) {
+                            if ($counter == 0 Or $postinfo['img_size'] == '' Or $prevsize == '' Or $SETTINGS['attachimgpost'] == 'off') {
                                 $messageinput .= "\r\n\r\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
+                            $prevsize = $postinfo['img_size'];
                         }
                     }
                 }
@@ -1037,6 +1060,18 @@ switch($action) {
                     postLinkBBcode($messageinput);
                 }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+
+                if (count($files) > 0) {
+                    bbcodeFileTags($message1, $files, 0, $bBBcodeOnForThisPost);
+                }
+
+                if ($usesig == 'yes') {
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    eval('$message1 .= "'.template('viewthread_post_sig').'";');
+                } else {
+                    eval('$message1 .= "'.template('viewthread_post_nosig').'";');
+                }
+
                 eval('$preview = "'.template('post_preview').'";');
             }
 
@@ -1232,9 +1267,11 @@ switch($action) {
 
             // Fill $attachment
             $attachment = '';
-            $query = $db->query("SELECT aid, filename, filesize, downloads FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0");
+            $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid=$pid AND a.parentid=0");
             $counter = 0;
+            $files = array();
             while ($attach = $db->fetch_array($query)) {
+                $files[] = $attach;
                 $postinfo['aid'] = $attach['aid'];
                 $postinfo['downloads'] = $attach['downloads'];
                 $postinfo['filename'] = attrOut($attach['filename']);
@@ -1244,11 +1281,12 @@ switch($action) {
                 if ($bBBcodeOnForThisPost) {
                     $bbcode = "[file]{$attach['aid']}[/file]";
                     if (strpos($postinfo['message'], $bbcode) === FALSE) {
-                        if ($counter == 0) {
+                        if ($counter == 0 Or $attach['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
                             $postinfo['message'] .= "\r\n\r\n";
                         }
                         $postinfo['message'] .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                         $counter++;
+                        $prevsize = $attach['img_size'];
                     }
                 }
             }
@@ -1287,6 +1325,18 @@ switch($action) {
                     postLinkBBcode($message1);
                 }
                 $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+
+                if (count($files) > 0) {
+                    bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
+                }
+
+                if ($usesig == 'yes') {
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    eval('$message1 .= "'.template('viewthread_post_sig').'";');
+                } else {
+                    eval('$message1 .= "'.template('viewthread_post_nosig').'";');
+                }
+
                 eval('$preview = "'.template('post_preview').'";');
             }
 

@@ -3623,7 +3623,7 @@ $suggestions
 <td>$thread[icon]&nbsp;$poston</td>
 </tr>
 <tr bgcolor="$altbg1" class="tablerow">
-<td><strong><font class="subject">$dissubject</font></strong><br /><br /><font class="mediumtxt">$message1</font><br /></td>
+<td><strong><font class="subject">$dissubject</font></strong><br /><br /><font class="mediumtxt">$message1</td>
 </tr>
 </table>
 </td>
@@ -4914,19 +4914,18 @@ font-size: 14px;
 font-family: arial, verdana;
 }
 
-.16px {
-font-size: 16px;
-font-family: arial, verdana;
-font-weight: bold;
+h2, h3 {
+margin-bottom: 0px;
+margin-top: 0px;
 }
 
-.14px {
+.s14px {
 font-size: 14px;
 font-family: arial, verdana;
 font-weight: bold;
 }
 
-.13px {
+.s13px {
 font-size: 14px;
 font-family: arial, verdana;
 }
@@ -4936,14 +4935,14 @@ font-family: arial, verdana;
 $logo
 <br />
 <br />
-<span class="16px"><a href="$threadlink" rev="alternate">$thread[subject]</a></span>
+<h2><a href="$threadlink" rev="alternate">$thread[subject]</a></h2>
 $posts
 <hr />
 </body>
 </html>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable_row|#*XMB TEMPLATE*#|
-<hr /><span class="14px">$post[author]</span> - <span class="13px">$poston</span><br /><br />
+<h3>$subject</h3><span class="s14px">$post[author]</span> - <span class="s13px">$poston</span><br /><br />
 <font class="mediumtxt">$post[message]</font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|

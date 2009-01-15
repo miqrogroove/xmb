@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -79,58 +79,65 @@ default:
     break;
 }
 
-if ($aid <= 0 Or ($pid <= 0 And $filename == '')) {
+// Sanity Checks
+if ($aid <= 0 Or $pid < 0 Or ($pid == 0 And $filename == '' And $self['uid'] == 0)) {
     fileError();
 }
 
 // Retrieve attachment metadata
-if ($pid > 0) {
-    $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.aid=$aid AND a.pid=$pid");
+if ($filename == '') {
+    $where = "WHERE a.aid=$aid AND a.pid=$pid";
+    if ($pid == 0 And !X_ADMIN) {
+        $where .= " AND a.uid={$self['uid']}"; // Allow preview of own attachments when URL format requires a PID.
+    }
 } else {
     $filename = $db->escape_var($filename);
-    $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.aid=$aid AND a.filename='$filename'");
+    $where = "WHERE a.aid=$aid AND a.filename='$filename'";
 }
+$query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) $where");
 if ($db->num_rows($query) != 1) {
     fileError();
 }
 $file = $db->fetch_array($query);
 $db->free_result($query);
 
-$forum = getForum($file['fid']);
+if ($pid > 0) {
+    $forum = getForum($file['fid']);
 
-if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || $forum['attachstatus'] != 'on') {
-    fileError();
-}
-
-// Check attachment permissions
-$perms = checkForumPermissions($forum);
-if (!$perms[X_PERMS_VIEW]) {
-    if (X_GUEST) {
-        redirect("{$full_url}misc.php?action=login", 0);
-        exit;
-    } else {
-        error($lang['privforummsg']);
+    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || $forum['attachstatus'] != 'on') {
+        fileError();
     }
-} else if (!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($forum['fid']);
-}
 
-$fup = array();
-if ($forum['type'] == 'sub') {
-    $fup = getForum($forum['fup']);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    // Check attachment permissions
+    $perms = checkForumPermissions($forum);
+    if (!$perms[X_PERMS_VIEW]) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
         } else {
             error($lang['privforummsg']);
         }
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid']);
+    } else if (!$perms[X_PERMS_PASSWORD]) {
+        handlePasswordDialog($forum['fid']);
     }
-    unset($fup);
+
+    $fup = array();
+    if ($forum['type'] == 'sub') {
+        $fup = getForum($forum['fup']);
+        // prevent access to subforum when upper forum can't be viewed.
+        $fupPerms = checkForumPermissions($fup);
+        if (!$fupPerms[X_PERMS_VIEW]) {
+            if (X_GUEST) {
+                redirect("{$full_url}misc.php?action=login", 0);
+                exit;
+            } else {
+                error($lang['privforummsg']);
+            }
+        } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+            handlePasswordDialog($fup['fid']);
+        }
+        unset($fup);
+    }
 }
 
 // Verify file is available

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -684,53 +684,16 @@ if ($action == '') {
         $smileyoff = $post['smileyoff'];
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
-        if ($forum['attachstatus'] == 'on') {
-            $count = 0;
-            if ($db->num_rows($queryattach) > 0) {
-                $db->data_seek($queryattach, 0);
-            }
+        if ($forum['attachstatus'] == 'on' And $db->num_rows($queryattach) > 0) {
+            $files = array();
+            $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
                 if ($attach['pid'] == $post['pid']) {
-                    $post['filename'] = attrOut($attach['filename']);
-                    $post['filetype'] = attrOut($attach['filetype']);
-                    $post['fileurl'] = getAttachmentURL($attach['aid'], $post['pid'], $attach['filename']);
-                    $attachsize = getSizeFormatted($attach['filesize']);
-
-                    $post['filedims'] = '';
-                    $output = '';
-                    $extention = strtolower(get_extension($post['filename']));
-                    if ($SETTINGS['attachimgpost'] == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
-                        if (intval($attach['thumbid'] > 0)) {
-                            $post['thumburl'] = getAttachmentURL($attach['thumbid'], $post['pid'], $attach['thumbname']);
-                            $result = explode('x', $attach['thumbsize']);
-                            $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
-                            eval('$output = "'.template('viewthread_post_attachmentthumb').'";');
-                        } else {
-                            if ($attach['img_size'] != '') {
-                                $result = explode('x', $attach['img_size']);
-                                $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
-                            }
-                            eval('$output = "'.template('viewthread_post_attachmentimage').'";');
-                        }
-                        $seperator = '';
-                    } else {
-                        $downloadcount = $attach['downloads'];
-                        if ($downloadcount == '') {
-                            $downloadcount = 0;
-                        }
-                        eval('$output = "'.template('viewthread_post_attachment').'";');
-                        $seperator = "<br /><br />";
-                    }
-                    if ($count == 0) {
-                        $post['message'] .= "<br /><br />";
-                    }
-                    $matches = 0;
-                    $post['message'] = preg_replace('@\\[file\\]'.$attach['aid'].'\\[/file\\]@', $output, $post['message'], 1, $matches);
-                    if ($matches == 0) {
-                        $post['message'] .= $output.$seperator; // Do we need some sort of a seperator template here?
-                    }
-                    $count++;
+                    $files[] = $attach;
                 }
+            }
+            if (count($files) > 0) {
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no'));
             }
         }
 
@@ -799,7 +762,14 @@ if ($action == '') {
     }
 } else if ($action == 'printable') {
     $threadlink = "viewthread.php?tid=$tid";
+
     $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC, pid ASC");
+    if ($forum['attachstatus'] == 'on') {
+        require('include/attach.inc.php');
+        $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
+    }
+
+    $counter = 0;
     $posts = '';
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
@@ -808,9 +778,26 @@ if ($action == '') {
         $poston = "$date $lang[textat] $time";
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
-        $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
+        if ($counter == 0) {
+            $subject = '';
+        } else {
+            $subject = rawHTMLsubject(stripslashes($post['subject']));
+        }
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+        if ($forum['attachstatus'] == 'on' And $db->num_rows($queryattach) > 0) {
+            $files = array();
+            $db->data_seek($queryattach, 0);
+            while($attach = $db->fetch_array($queryattach)) {
+                if ($attach['pid'] == $post['pid']) {
+                    $files[] = $attach;
+                }
+            }
+            if (count($files) > 0) {
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no'));
+            }
+        }
         eval('$posts .= "'.template('viewthread_printable_row').'";');
+        $counter++;
     }
     $db->free_result($querypost);
     eval('echo "'.template('viewthread_printable').'";');
