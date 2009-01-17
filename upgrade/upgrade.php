@@ -28,7 +28,7 @@
 // Script Parameters
 define('XMB_V', '1.9.11');
 define('XMB_UPGRADE_FILE', 'XMB_1_9_11.xmb');
-define('XMB_SCHEMA_VER', 2);
+define('XMB_SCHEMA_VER', 3);
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');

@@ -48,7 +48,7 @@ $alpha = '';
 $beta = 'Beta 3';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090107;
+$versionbuild = 20090117;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -383,7 +383,6 @@ put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $coo
 put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb =
 
 $lastvisit = $thetime;
-$lastvisit2 = $lastvisit - 540;
 
 if (isset($oldtopics)) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime+600), $cookiepath, $cookiedomain);

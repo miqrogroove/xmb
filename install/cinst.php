@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -303,7 +303,9 @@ $db->query("CREATE TABLE ".$tablepre."logs (
       `date` int(10) NOT NULL default 0,
       KEY `username` (username (8)),
       KEY `action` (action (8)),
-      KEY `fid` (`fid`)
+      INDEX ( `fid` ),
+      INDEX ( `tid` ),
+      INDEX ( `date` )
    ) TYPE=MyISAM
 ");
 // ---------------------------------------------------------
@@ -523,7 +525,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `ip_banning` SET('on','off') NOT NULL DEFAULT 'off',
       `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
-      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '2'
+      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '3'
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------

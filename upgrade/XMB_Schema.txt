@@ -1,6 +1,6 @@
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -912,6 +912,22 @@ Array
                             [type] => KEY
                             [name] => fid
                             [field] => fid
+                        )
+
+                    [3] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => tid
+                            [field] => tid
+                        )
+
+                    [4] => Array
+                        (
+                            [keylen] => 
+                            [type] => KEY
+                            [name] => date
+                            [field] => date
                         )
 
                 )
@@ -2683,7 +2699,7 @@ Array
                             [name] => schema_version
                             [type] => tinyint(3)
                             [null] => NOT NULL
-                            [default] => '2'
+                            [default] => '3'
                             [extra] => 
                             [keys] => 
                         )

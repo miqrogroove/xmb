@@ -321,8 +321,11 @@ switch($action) {
 
                     $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape_var($info['subject'])."', '', '".$db->escape_var($info['lastpost'])."', 0, 0, '".$db->escape_var($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
                     $ntid = $db->insert_id();
+                    
+                    $lastpost = explode('|', $info['lastpost']);
+                    $lastposttime = intval($lastpost[0]);
 
-                    $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape_var($info['author'])."', '{$info['tid']}', '".$db->escape_var($info['subject'])."', 0, '', '', '', '', '')");
+                    $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape_var($info['author'])."', '{$info['tid']}', '".$db->escape_var($info['subject'])."', $lastposttime, '', '', '', '', '')");
                     $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
                     $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid='$tid' AND fid='$fid'");
                 }

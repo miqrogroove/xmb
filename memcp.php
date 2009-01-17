@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -496,11 +496,11 @@ if ($action == 'profile') {
         if ($SETTINGS['resetsigs'] == 'on') {
             if (strlen(trim($self['sig'])) == 0) {
                 if (strlen($sig) > 0) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='yes' WHERE author='".$self['username']."'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='yes' WHERE author='$xmbuser'");
                 }
             } else {
                 if (strlen(trim($sig)) == 0) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='no' WHERE author='".$self['username']."'");
+                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='no' WHERE author='$xmbuser'");
                 }
             }
         }

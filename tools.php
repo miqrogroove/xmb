@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -125,13 +125,16 @@ switch($action) {
                  . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
                  . '    GROUP BY p2.fid '
                  . ') AS query2 ON p.pid=query2.lastpid '
-                 . 'LEFT JOIN '.X_PREFIX.'logs AS log ON f.fid=log.fid '
-                 . 'INNER JOIN ( '
-                 . '    SELECT fid, MAX(date) AS lastdate '
-                 . '    FROM '.X_PREFIX.'logs '
-                 . '    WHERE action = "bump" '
-                 . '    GROUP BY fid '
-                 . ') AS query4 ON log.fid=query4.fid AND log.date=query4.lastdate '
+                 . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
+                 . '    SELECT log2.fid, log2.date, log2.username '
+                 . '    FROM '.X_PREFIX.'logs AS log2 '
+                 . '    INNER JOIN ( '
+                 . '        SELECT fid, MAX(`date`) AS lastdate '
+                 . '        FROM '.X_PREFIX.'logs '
+                 . '        WHERE `action` = "bump" '
+                 . '        GROUP BY fid '
+                 . '    ) AS query4 ON log2.fid=query4.fid AND log2.date=query4.lastdate '
+                 . ') AS log ON f.fid=log.fid '
                  . 'WHERE f.type="forum"';
 
             $q = $db->query($sql);
@@ -152,13 +155,16 @@ switch($action) {
                      . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
                      . '    GROUP BY p2.fid '
                      . ') AS query2 ON p.pid=query2.lastpid '
-                     . 'LEFT JOIN '.X_PREFIX.'logs AS log ON f.fid=log.fid '
-                     . 'INNER JOIN ( '
-                     . '    SELECT fid, MAX(date) AS lastdate '
-                     . '    FROM '.X_PREFIX.'logs '
-                     . '    WHERE action = "bump" '
-                     . '    GROUP BY fid '
-                     . ') AS query4 ON log.fid=query4.fid AND log.date=query4.lastdate '
+                     . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
+                     . '    SELECT log2.fid, log2.date, log2.username '
+                     . '    FROM '.X_PREFIX.'logs AS log2 '
+                     . '    INNER JOIN ( '
+                     . '        SELECT fid, MAX(`date`) AS lastdate '
+                     . '        FROM '.X_PREFIX.'logs '
+                     . '        WHERE `action` = "bump" '
+                     . '        GROUP BY fid '
+                     . '    ) AS query4 ON log2.fid=query4.fid AND log2.date=query4.lastdate '
+                     . ') AS log ON f.fid=log.fid '
                      . 'WHERE f.fup='.$loner['fid'];
 
                 $subq = $db->query($sql);
@@ -211,7 +217,7 @@ switch($action) {
             $db->free_result($q);
 
         } else { // Update all threads using as few queries as possible
-            $newsql = 'SELECT t.tid, t.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
+            $newsql = 'SELECT t.tid, t.lastpost, t.closed, p.author, p.dateline, p.pid, log.username, log.date '
                     . 'FROM '.X_PREFIX.'threads AS t '
                     . 'LEFT JOIN '.X_PREFIX.'posts AS p ON t.tid=p.tid '
                     . 'INNER JOIN ( '
@@ -224,20 +230,35 @@ switch($action) {
                     . '    ) AS query3 ON p2.tid=query3.tid AND p2.dateline=query3.lastdate '
                     . '    GROUP BY p2.tid '
                     . ') AS query2 ON p.pid=query2.lastpid '
-                    . 'LEFT JOIN '.X_PREFIX.'logs AS log ON t.tid=log.tid '
-                    . 'INNER JOIN ( '
-                    . '    SELECT tid, MAX(date) AS lastdate '
-                    . '    FROM '.X_PREFIX.'logs '
-                    . '    WHERE action = "bump" '
-                    . '    GROUP BY tid '
-                    . ') AS query4 ON log.tid=query4.tid AND log.date=query4.lastdate';
+                    . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
+                    . '    SELECT log2.tid, log2.date, log2.username '
+                    . '    FROM '.X_PREFIX.'logs AS log2 '
+                    . '    INNER JOIN ( '
+                    . '        SELECT tid, MAX(`date`) AS lastdate '
+                    . '        FROM '.X_PREFIX.'logs '
+                    . '        WHERE `action` = "bump" '
+                    . '        GROUP BY tid '
+                    . '    ) AS query4 ON log2.tid=query4.tid AND log2.date=query4.lastdate '
+                    . ') AS log ON t.tid=log.tid';
 
             $lpquery = $db->query($newsql);
 
             while($thread = $db->fetch_array($lpquery)) {
-                if ($thread['pid'] !== NULL) {
+                if (!is_null($thread['pid'])) {
+                    if ($thread['dateline'] == '0' And substr($thread['closed'], 0, 6) == 'moved|') {
+                        // Handle situation where versions before 1.9.11 set posts.dateline=0 when redirecting threads.
+                        $newtid = intval(substr($thread['closed'], 6));
+                        $lastdate = $db->result($db->query("SELECT MAX(dateline) AS lastdate FROM ".X_PREFIX."posts WHERE tid=$newtid"), 0);
+                        if (is_null($lastdate)) {
+                            // Redirector is orphaned.  Set dateline to some non-zero value.
+                            $db->query("UPDATE ".X_PREFIX."posts SET dateline=1 WHERE tid={$thread['tid']} AND dateline = 0");
+                        } else {
+                            $thread['dateline'] = $lastdate;
+                            $db->query("UPDATE ".X_PREFIX."posts SET dateline=$lastdate WHERE tid={$thread['tid']} AND dateline = 0");
+                        }
+                    }
                     $lp = $thread['dateline'].'|'.$thread['author'].'|'.$thread['pid'];
-                    if ($thread['date'] !== NULL) {
+                    if (!is_null($thread['date'])) {
                         if ($thread['date'] > $thread['dateline']) {
                             $lp = $thread['date'].'|'.$thread['username'].'|'.$thread['pid'];
                         }

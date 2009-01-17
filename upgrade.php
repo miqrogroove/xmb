@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -27,6 +27,12 @@
 
 ignore_user_abort(TRUE);
 
+//Script constants
+define('MYSQL_MIN_VER', '4.1.7');
+define('PHP_MIN_VER', '4.3.0');
+define('X_SCRIPT', 'upgrade.php');
+define('XMB_SCHEMA_VER', 3);
+
 //Check location
 if (!(is_file('header.php') And is_dir('include'))) {
     echo 'Could not find XMB!<br />'
@@ -35,7 +41,6 @@ if (!(is_file('header.php') And is_dir('include'))) {
 }
 
 //Authenticate Browser
-define('X_SCRIPT', 'upgrade.php');
 require('header.php');
 echo "<html><head><title>XMB Upgrade Script</title><body>Database Connection Established<br />\n";
 if (DEBUG) {
@@ -51,8 +56,6 @@ if (!defined('X_SADMIN') Or !X_SADMIN) {
 }
 
 //Check Server Version
-define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '4.3.0');
 $current = array_map('intval', explode('.', phpversion()));
 $min = array_map('intval', explode('.', PHP_MIN_VER));
 if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
@@ -106,8 +109,6 @@ function disableButton() {
 
 } else if ($_GET['step'] == 2) {
 
-    define('XMB_SCHEMA_VER', 2);
-
     ?>
     <h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
     <h2>Status Information</h2>
@@ -151,6 +152,8 @@ function disableButton() {
         upgrade_schema_to_v2();
         //No break.
     case 2:
+        upgrade_schema_to_v3();
+    case 3:
         //Future use. Break only before case default.
         break;
     default:
@@ -230,6 +233,7 @@ echo "\n</body></html>";
  * XMB versions that did not have a schema_version number: 1.9.9, 1.9.10, and 1.9.11 Alpha (all).
  *
  * @author Robert Chapin (miqrogroove)
+ * @since 1.9.11 Beta 3
  */
 function upgrade_schema_to_v2() {
     global $db;
@@ -445,5 +449,47 @@ function upgrade_schema_to_v2() {
 
     echo 'Resetting the schema version number...<br />';
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
+}
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 3.
+ *
+ * This function is officially compatible with schema_version 2 only.
+ *
+ * @since 1.9.11 Beta 4
+ */
+function upgrade_schema_to_v3() {
+    global $db;
+
+    echo 'Beginning schema upgrade to version number 3...<br />';
+
+    echo 'Requesting to lock the logs table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."logs WRITE");
+
+    echo 'Gathering schema information from the logs table...<br />';
+    $sql = array();
+    $table = 'logs';
+    $columns = array(
+    'date',
+    'tid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding indexes to the logs table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the logs table...<br />';
+    $db->query('UNLOCK TABLES');
+
+    echo 'Resetting the schema version number...<br />';
+    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
 }
 ?>
