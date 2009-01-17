@@ -183,7 +183,7 @@ switch($action) {
                     }
                     if ($sub['lastpost'] != $lp) {
                         $lp = $db->escape_var($lp);
-                        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE tid={$sub['tid']}");
+                        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid={$sub['fid']}");
                     }
                 }
                 $db->free_result($subq);
