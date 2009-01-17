@@ -457,6 +457,20 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             }
         }
 
+        // Balance [rquote] tags.
+        $rquotecount1 = 0;
+        $rquotecount2 = 0;
+        $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
+        $rquotecount1 = preg_match_all($pattern, $message, $matches);
+        $pattern = "@\\[/rquote]@si";
+        $rquotecount2 = preg_match_all($pattern, $message, $matches);
+        $rquotecount1 -= $rquotecount2;
+        if ($rquotecount1 > 0) {
+            $message .= str_repeat('[/rquote]', $rquotecount1);
+        } elseif ($rquotecount1 < 0) {
+            $message = preg_replace('@\\[/rquote]@si', '[/ rquote]', $message, -$rquotecount1);
+        }
+
         $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
         for($i = 0; $i < sizeof($messagearray); $i++) {
             if (sizeof($messagearray) != 1) {
@@ -576,23 +590,13 @@ function bbcode(&$message, $allowimgcode) {
 
     $message = str_replace($find, $replace, $message);
 
-    // Convert and balance [rquote] tags.
-    $rquotecount1 = 0;
-    $rquotecount2 = 0;
-    $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
-    $replacement = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
-    $message = preg_replace($pattern, $replacement, $message, -1, $rquotecount1);
-    $rquotecount1 = intval($rquotecount1);
-    $pattern = "@\\[/rquote]@si";
-    $replacement = ' </td></tr></table><font class="mediumtxt">';
-    $message = preg_replace($pattern, $replacement, $message, $rquotecount1, $rquotecount2);
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat($replacement, $rquotecount1);
-    }
-
     $patterns = array();
     $replacements = array();
+
+    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
+    $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
+    $patterns[] = "@\\[/rquote]@si";
+    $replacements[] = ' </td></tr></table><font class="mediumtxt">';
 
     $patterns[] = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\](.*?)\[/color\]@Ssi";
     $replacements[] = '<span style="color: $1;">$2</span>';
