@@ -2888,6 +2888,7 @@ $dayselect
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textsubscriptions]</font></strong></td>
 </tr>
+$multipage
 <tr class="header">
 <td width="4%" align="center">$lang[deletebutton]</td>
 <td width="4%" align="center">$lang[texticon]</td>
@@ -2897,6 +2898,7 @@ $dayselect
 <td width="19%">$lang[textlastpost]</td>
 </tr>
 $subscriptions
+$multipage
 $subsbtn
 </table>
 </td>
@@ -2907,6 +2909,11 @@ $subsbtn
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_button|#*XMB TEMPLATE*#|
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" colspan="6"><input type="submit" class="submit" name="subsubmit" value="$lang[textdeleteselectedsubs]" /></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|memcp_subscriptions_multipage|#*XMB TEMPLATE*#|
+<tr class="tablerow" bgcolor="$altbg2">
+<td colspan="6" class="multi">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions_none|#*XMB TEMPLATE*#|

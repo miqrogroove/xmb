@@ -48,6 +48,7 @@ loadtemplates(
 'memcp_profile_avatarurl',
 'memcp_subscriptions',
 'memcp_subscriptions_button',
+'memcp_subscriptions_multipage',
 'memcp_subscriptions_none',
 'memcp_subscriptions_row'
 );
@@ -576,9 +577,7 @@ if ($action == 'profile') {
         $favs = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
         while($fav = $db->fetch_array($query)) {
-            $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
-            $forum = $db->fetch_array($query2);
-            $db->free_result($query2);
+            $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -613,12 +612,18 @@ if ($action == 'profile') {
 
     if (!$favadd && onSubmit('favsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='favorite'");
+        $tids = array();
         while($fav = $db->fetch_array($query)) {
             $delete = formInt('delete'.$fav['tid']);
-            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid=$delete AND type='favorite'");
+            if ($delete == intval($fav['tid'])) {
+                $tids[] = $delete;
+            }
         }
         $db->free_result($query);
-
+        if (count($tids) > 0) {
+            $tids = implode(', ', $tids);
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid IN ($tids) AND type='favorite'");
+        }
         message($lang['favsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
     }
 } else if ($action == 'subscriptions') {
@@ -627,14 +632,19 @@ if ($action == 'profile') {
 
     $subadd = getInt('subadd');
     if (!$subadd && noSubmit('subsubmit')) {
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f, ".X_PREFIX."threads t WHERE f.tid=t.tid AND f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC");
+        $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'"), 0);
+        $mpage = multipage($num, $tpp, 'memcp.php?action=subscriptions');
+        $multipage =& $mpage['html'];
+        if (strlen($mpage['html']) != 0) {
+            eval('$multipage = "'.template('memcp_subscriptions_multipage').'";');
+        }
+
+        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");
         $subnum = 0;
         $subscriptions = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
         while($fav = $db->fetch_array($query)) {
-            $query2 = $db->query("SELECT name, fup, fid FROM ".X_PREFIX."forums WHERE fid='$fav[fid]'");
-            $forum = $db->fetch_array($query2);
-            $db->free_result($query2);
+            $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -675,11 +685,18 @@ if ($action == 'profile') {
         }
     } else if (!$subadd && onSubmit('subsubmit')) {
         $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'");
+        $tids = array();
         while($sub = $db->fetch_array($query)) {
             $delete = formInt('delete'.$sub['tid']);
-            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid='$delete' AND type='subscription'");
+            if ($delete == intval($sub['tid'])) {
+                $tids[] = $delete;
+            }
         }
         $db->free_result($query);
+        if (count($tids) > 0) {
+            $tids = implode(', ', $tids);
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND tid IN ($tids) AND type='subscription'");
+        }
         message($lang['subsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
     }
 } else {
