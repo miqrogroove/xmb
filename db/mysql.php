@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -355,6 +355,9 @@ function xmb_mysql_error($errno, $errstr) {
         unset($trace, $functionname, $filename, $linenum);
     }
 
+    if (!headers_sent()) {
+        header('HTTP/1.0 500 Internal Server Error');
+    }
 	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
         require_once(ROOT.'include/validate.inc.php');
 		echo "<pre>".cdataOut($output)."</pre>";
