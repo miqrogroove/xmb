@@ -316,7 +316,20 @@ switch($action) {
                 error($lang['username_length_invalid']);
             }
 
-            if ($_POST['username'] != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $_POST['username'])) {
+            $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
+            $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
+            $icharset = strtoupper($charset);
+            if (substr($icharset, 0, 8) == 'ISO-8859') {
+                if ($icharset == 'ISO-8859-11') {
+                    $nonprinting .= '-\\x9F\\xDB-\\xDE\\xFC-\\xFF';  //More chars invalid for the Thai set.
+                } else {
+                    $nonprinting .= '-\\x9F\\xAD';  //More chars invalid for all ISO 8859 sets except Part 11 (Thai).
+                }
+            } elseif (substr($icharset, 0, 11) == 'WINDOWS-125') {
+                $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
+            }
+                        
+            if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]#", '', $_POST['username'])) {
                 error($lang['restricted']);
             }
 

@@ -8,7 +8,9 @@
 User-agent: *
 Disallow: /buddy.php
 Disallow: /memcp.php
+Disallow: /misc.php?action=search&
 Disallow: /post.php
 Disallow: /search.php?
 Disallow: /today.php?daysold=
 Disallow: /u2u.php
+Disallow: /viewthread.php?fid=
