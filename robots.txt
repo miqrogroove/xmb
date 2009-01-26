@@ -8,6 +8,9 @@
 User-agent: *
 Disallow: /buddy.php
 Disallow: /memcp.php
+Disallow: /misc.php?action=list&desc=asc&order=
+Disallow: /misc.php?action=list&desc=desc
+Disallow: /misc.php?action=list&order=
 Disallow: /misc.php?action=search&
 Disallow: /post.php
 Disallow: /search.php?
