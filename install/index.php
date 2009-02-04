@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 30 February 2009.
+ * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -36,6 +36,7 @@ $req['files'] = array(
     'config.php',
     'cp.php',
     'cp2.php',
+    'db/mysql.php',
     'editprofile.php',
     'faq.php',
     'files.php',
@@ -57,11 +58,13 @@ $req['files'] = array(
     'include/validate.inc.php',
     'include/validate-email.inc.php',
     'index.php',
+    'install/cinst.php',
     'lang/English.lang.php',
     'member.php',
     'memcp.php',
     'misc.php',
     'post.php',
+    'search.php',
     'stats.php',
     'templates.xmb',
     'today.php',
