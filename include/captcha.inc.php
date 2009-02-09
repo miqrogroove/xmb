@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -381,15 +381,11 @@ class Captcha {
     }
 
     function WriteFile() {
-        // Explicitly re-run XMB's output stream check
+        // Explicitly re-run XMB's output stream check, and do not rely on the DEBUG constant.
         if (headers_sent()) {
             header('HTTP/1.0 500 Internal Server Error');
-            if (DEBUG) {
-                headers_sent($filepath, $linenum);
-                exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
-            } else {
-                exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
-            }
+            headers_sent($filepath, $linenum);
+            exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
         }
 
         // tell browser that data is jpeg
