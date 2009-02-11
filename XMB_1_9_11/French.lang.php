@@ -1,14 +1,13 @@
 <?php
 /** Made by:    SmOkInQC - webmaster@smokinteam.info
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
+ * Copyright (c) 2001-2009, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
  * http://www.ientry.com
  *
  * This program is free software; you can redistribute it and/or
@@ -104,7 +103,7 @@ $lang['analyze'] = 'Analyser les tables';
 $lang['and'] = 'Et';
 $lang['anystatus'] = "Aucun statut";
 $lang['asc'] = "Ascendant";
-$lang['attachimginpost'] = "Pièce jointe (image) :<br /><span class=\"smalltxt\">Voulez-vous voir l'image jointe avec le message ?</span>";
+$lang['attachimginpost'] = "Afficher les Miniatures dans les Posts:";
 $lang['attachmanwhereauthor'] = "Auteur :";
 $lang['attachmanwheredaysold'] = "Durée de vie :";
 $lang['attachmanwheredlcountgreater'] = "Taux de téléchargement supérieur à   :";
@@ -174,7 +173,7 @@ $lang['bbcode_prompt_list_start'] = "S.V.P sélectionnez le type de liste\\n ('A'
 $lang['bbcode_prompt_quote'] = "S.V.P entrez le texte que vous voulez en citation.";
 $lang['bbcode_prompt_size'] = "S.V.P entrez le texte dont vous voulez changer la taille";
 $lang['bbcode_prompt_underline'] = "S.V.P entrez le texte que va être souligné.";
-$lang['bbcodeinfo'] = "Vous pouvez utiliser le BBCode, une version simplifiée de HTML, dans vos messages pour créer certains effets.<br /><br />[b]Exemple de texte[/b]&nbsp; <b>Exemple de texte</b> (Texte gras)<br /><br /> [i]Exemple de texte[/i] &nbsp; <i>Exemple de texte</i> (Texte italique)<br /><br /> [u]Exemple de texte[/u] &nbsp; <u>Exemple de texte</u> (Texte souligné)<br /><br /> [url]http://hexagones.net[/url] &nbsp; <a href=\"http://www.hexagones.net\">http://hexagones.net</a> (Lien)<br /><br /> [url=http://www.hexagones.net]Page d'accueil de Hex@Gones.net[/url] &nbsp; <a href=\"http://hexagones.net\">Page d'accueil de Hex@Gones.net</a> (Lien avec descriptif)<br /><br /> [email]lochness@hexagones.net[/email] &nbsp; <a href=\"mailto:lochness@hexagones.net\">lochness@hexagones.net</a> (lien vers un E-mail)<br /><br /> [email=lochness@hexagones.net]Envoie moi un E-mail ![/email] &nbsp; <a href=\"lochness@hexagones.net\">Envoie moi un E-mail !</a> (lien avec descriptif ver un E-mail)<br /><br /> [quote]Exemple de texte[/quote] &nbsp; <blockquote><smallfont>citation:</smallfont><hr />Exemple de texte<hr /></blockquote> (Citation)<br /><br /> [img]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; <img src=\"http://www.php.net/gifs/php_logo.gif\" /> (Image)<br /><br /> [img=50x50]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; <img src=\"http://www.php.net/gifs/php_logo.gif\" height=\"50\" width=\"50\" /> (Image redimensionnée) <br /><br />[color=red]Cette couleur est rouge[/color] &nbsp; <font color=\"red\">Cette couleur est rouge</font> (Texte de couleur)<br /><br /> [size=3]Cette police est taille 3[/size] &nbsp; <font size=\"3\">Cette police est taille 3</font> (taille du texte)<br /><br /> [font=Tahoma]Voici la police Tahoma[/font] &nbsp; <font face\"Tahoma\">Voici la police Tahoma</font> (police différente Different de celle utilisée par défaut)<br /><br /> [center]Texte centré[/center] &nbsp; <p align=\"center\">Texte centré</p> (Texte centré)<br /><br /> [list]<br /> [*]Exemple de texte en mode liste (ligne 1)<br /> [*]Exemple de texte en mode liste (ligne 2)<br /> [*]Exemple de texte en mode liste (ligne 3)<br /> [/list] &nbsp; (List)";
+$lang['bbcodeinfo'] = "Vous pouvez utiliser le BBCode, une version simplifiée de HTML, dans vos messages pour créer certains effets.<br /><br />[b]Exemple de texte[/b] &nbsp; (Texte en Gras)<br /><br /> [i]Exemple de texte[/i] &nbsp; (Texte en Italique)<br /><br /> [u]Exemple de texte[/u] &nbsp; (Texte souligné)<br /><br /> [url]http://www.php.net[/url] &nbsp; (Link)<br /><br /> [url=http://www.php.net]Page accueil PHP[/url] &nbsp; (Link)<br /><br /> [pid]12345[/pid] &nbsp; (Lien vers un post)<br /><br /> [email]mail@xmbforum.com[/email] &nbsp; (Lien vers un E-Mail)<br /><br /> [email=mail@xmbforum.com]E-mail Me![/email] &nbsp; (Lien vers un E-mail)<br /><br /> [quote]Exemple de texte[/quote] &nbsp; (Citation de Texte)<br /><br /> [code]Exemple de texte[/code] &nbsp; (Texte Formaté)<br /><br /> [img]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (Image)<br /><br /> [img=50x50]http://www.php.net/gifs/php_logo.gif[/img] &nbsp; (Image Redimensionnée)<br /><br /> [color=red]Ce texte est en rouge[/color] &nbsp; (Texte en couleu)<br /><br /> [size=3]La taille de cette police est 3[/size] &nbsp; (Texte à une taille donnée)<br /><br /> [font=Tahoma]Cette polie est Tahoma[/font] &nbsp; (Police de caractère)<br /><br /> [align=center]Ce texte est centré[/align] &nbsp; (Texte Aligné)<br /><br /> [list]<br /> [*]Objet #1<br /> [*]Objet #2<br /> [/list] &nbsp; (Liste)";
 $lang['bbcodeoff'] = "Désactiver le BBCode ?";
 $lang['bbinsert'] = "Activer l'insertion automatique du BBCode ?";
 $lang['bbname'] = "Nom du forum:";
@@ -205,7 +204,7 @@ $lang['captchaimageminfont'] = 'Grandeur de fond minimum:';
 $lang['captchaimagemaxfont'] = 'Grandeur de fond maximum:';
 $lang['captchaimagecolor'] = 'Utiliser toutes les couleurs:';
 $lang['captchaimageinvalid'] = "Le code de vérification que vous avez entré est incorrect. S.V.P entrez le code exactement comme il est écrit.";
-$lang['captchaindebug'] = "Captcha features are not available in DEBUG mode.";
+$lang['captchaindebug'] = "Les fonctionnalités Captcha ne sont pas disponibles en mode DEBUG.";
 $lang['captchapoststatus'] = 'Statut de post anonyme:';
 $lang['captcharegstatus'] = 'Statut d\'enregistrement:';
 $lang['captchasearchstatus'] = 'Statut de recherche Anonyme:';
@@ -331,11 +330,11 @@ $lang['fileuploaderror5'] = "L'image que vous avez uploadée dépasse en largeur e
 $lang['fileuploaderror6'] = "Désolé, le fichier que vous avez uploadé dépasse la taille limite fixée.";
 $lang['fileuploaderror7'] = "XMB Error: Impossible de trouver un répertoire temporaire pour vos attachements.";
 $lang['fileuploaderror8'] = "Désolé, un problème est survenu lors de l'attachement d'un ou plusieurs de vos fichiers ou images à votre message.";
-$lang['floodprotect'] = "Votre dernier message a été envoyé moins de $SETTINGS[floodctrl] secondes auparavant. Vous n'êtes pas autorisé à publier à cette cadence ! Si vous avez effectué une erreur de manipulation (double click), votre premier message a déjà été pris en compte.";
-$lang['floodprotect_u2u'] = "Votre dernier message U2U a été envoyé il y a moins de $SETTINGS[floodctrl] secondes, il n'est pas permis de l'utiliser si fréquemment. Si vous envoyez le même message 2 fois par erreur, votre premier message U2U a été envoyé avec succês, seul le second U2U a été annulé.";
+$lang['floodprotect'] = "Il n'est pas permis de poster des réponses aussi fréquemment. Une protection contre les réponses à répétition est activée lorsque plus d'un message est envoyé d'une manière inattendue. Contrôlez que votre réponse est bien prise en compte ou réessayez dans quelques instants..";
+$lang['floodprotect_u2u'] = "Il n'est pas permis d'envoyer des messages aussi fréquemment. Une protection contre les envois à répétition est activée lorsque plus d'un message est envoyé d'une manière inattendue. Contrôlez que votre message est bien sauvegardé ou réessayez dans quelques instants.";
 $lang['fnasorry'] = "Désolé, cette opération n'est pas possible actuellement.";
-$lang['fnasorry2'] = "Veuillez nous excusez pour la gêne occasionnée.";
-$lang['fnasorry3'] = "L'administrateur du forum a désactivé cette option pour le moment. Si vous pensez que ce message n'a pas lieu d'être, veuillez contacter le <a href=\"mailto:$SETTINGS[adminemail]\"><b>webmaster</b></a>";
+$lang['fnasorry2'] = "Veuillez nous excuser pour la gêne occasionnée.";
+$lang['fnasorry3'] = "Veuillez nous excuser pour la gêne occasionnée.<bt />L'administrateur du forum a désactivé cette option pour le moment. Si vous pensez que ce message n'a pas lieu d'être, veuillez contacter le l'administrateur du forum";
 $lang['folderlist'] = "Gérer les dossiers";
 $lang['foldermsg'] = "Séparer les dossiers par une virgule (\",\") (ex: \"Dossier 1, Dossier 2\").";
 $lang['foldersupdate'] = "La liste des dossiers a été mise à jour.";
@@ -359,7 +358,6 @@ $lang['gzipcompression'] = "Utiliser la compression de Page Gzip<br /><span clas
 $lang['helpbar'] = "Aide";
 $lang['hidden'] = "Invisible";
 $lang['hottopiceval'] = "\$lang['hottopic'] = \"plus de \$SETTINGS[hottopic] réponses\";";
-$lang['ipreg'] = "Autoriser maximum 1 utilisateur à s'enregistrer par jour ?";
 $lang['ignorelist'] = "Liste à ignorer";
 $lang['ignoremsg'] = "Liste à ignorer :<br /><span class=\"smalltxt\">Séparer les noms par des virgules (i.e. \"Nessie, TSUNAMI, coco,\"). Ne pas oublier la virgule après le dernier nom.</span>";
 $lang['ignoreupdate'] = "Liste à Ignorer mise à jour avec succès !";
@@ -382,11 +380,12 @@ $lang['invalidtid'] = "Le Sujet ne peut pas être fusionné. Mauvais ID Sujet (tid
 $lang['invertselection'] = "Inverser la sélection";
 $lang['ipbandisable'] = "Désactiver le Bannissement d'IP";
 $lang['ipbanenable'] = "Activer le Bannissement d'IP";
+$lang['ipreg'] = "Autoriser par jour au maximum 1 utilisateur par IP à s'enregistrer ?";
 $lang['ipwarning'] = "<br /><b>Attention!</b> Votre adresse IP a été interdite sur ce forum. Il vous est dorénavant définitivement interdit de vous connecter ici.";
 $lang['key'] = 'Clé: ';
 $lang['langimportfail'] = "La langue n'a pu être importée.";
 $lang['langimportsuccess'] = "Langue importée avec succès.";
-$lang['last50todayeval'] = "\$lang['last50today'] = \"Les \$onlinetodaycount membres qui nous ont rendu visite aujourd'hui </b>(si possible) \";";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"Les \$onlinetodaycount derniers membres qui nous ont rendu visite aujourd'hui </b>(si possible) \";";
 $lang['lastactive'] = "Dernière connexion:";
 $lang['lastreply1'] = "le";
 $lang['lastsadmin'] = "Vous venez d'essayer d'enlever le dernier Super Administrateur de l'administration. Ceci est dangereux. Une fois exclu de l'administration, il n'est plus possible de remettre le statut de Super Administrateur à quiconque.";
@@ -403,7 +402,7 @@ $lang['look_feel'] = 'Apparence &amp; smilies';
 $lang['lostpw_in24hrs'] = "Vous avez déjà adressé une demande de mot de passe durant ces dernières 24 heures.<br />Vous ne pouvez le faire qu'une fois par tranche de 24 heures.";
 $lang['lpoststats'] = "Dernier message";
 $lang['max_addresses_per_entry'] = "Pour des raisons de sécurité, il n'est pas possible de sauvegarder plus de 10 adresses en une seule fois.";
-$lang['max_attachment_size'] = "Taille maximum de l'attachement (en octets):";
+$lang['max_attachment_size'] = "Taille maximum du fichier (en octets):";
 $lang['max_avatar_size_h'] = "Hauteur maximale de l'avatar (en pixel)";
 $lang['max_avatar_size_w'] = "Largeur maximale de l'avatar (en pixel)";
 $lang['max_daily_regs'] = "Nombre maximum de nouvelles inscriptions par jour.<br />Mettre a 0 pour rendre illimité.";
@@ -421,7 +420,7 @@ $lang['mergethreadmsg'] = "Les sujets ont été fusionnés. Maintenant, vous allez 
 $lang['mergewithmsg'] = "Numéro TID du Sujet que vous voulez fusionner avec :<br /><span class=\"smalltxt\">viewthread.php?tid=48, Le Numéro TID sera 48</span>";
 $lang['message'] = "Message";
 $lang['misconlinetoday'] = "Le(s) ";
-$lang['misconlinetoday2'] = " membre(s) suivant(s) ont visité $SETTINGS[bbname] aujourd'hui...";
+$lang['misconlinetoday2'] = " membres ont visité le forum aujourd'hui...";
 $lang['modlog_bump'] = "Sujet Remonté";
 $lang['modlog_close'] = "Sujet Fermé";
 $lang['modlog_copy'] = "Sujet Copié";
@@ -441,8 +440,8 @@ $lang['moresmilies'] = "Plus de smilies";
 $lang['moved'] = "Déplacé :";
 $lang['moveques'] = "Déplacer ?";
 $lang['movethreadmsg'] = "Le sujet a été déplacé. Maintentant, vous allez être redirigé vers la liste des sujets";
-$lang['movetodb'] = "Déplacé vers la base de données";
-$lang['movetodisk'] = "Déplacé vers le disque";
+$lang['movetodb'] = "Déplacer vers la base de données";
+$lang['movetodisk'] = "Déplacer vers le disque";
 $lang['multipnote'] = "Astuce: Pour interdire plusieurs adresses IP en une seule fois, utilisez le joker * (ex: 220.194.45.*)";
 $lang['multmodnote'] = "Remarque: pour créer plusieurs modérateurs, séparer les noms avec des virgules, (en y incluant un espace) (ex: Moderateur 1, Moderateur 2)";
 $lang['mysql_tools'] = "Outils de base de données";
@@ -461,12 +460,12 @@ $lang['newu2u2'] = "nouveau[x] message[s]";
 $lang['nextsearch'] = "[20 suivantes]";
 $lang['no_buddies'] = "Aucune adresse";
 $lang['no_poll'] = "Ce n'est pas un sondage !";
-$lang['no_templates'] = "templates.xmb non trouvé";
-$lang['no_url_fopen'] = "Cette fonctionnalité a été désactivée par la directive allow_url_fopen directive de la configuration PHP de votre serveur.";
+$lang['no_templates'] = "templates.xmb non trouvé.";
+$lang['no_url_fopen'] = "Cette fonctionnalité a été désactivée par la directive allow_url_fopen de la configuration PHP de votre serveur.";
 $lang['noadminsession'] = "Vous n'êtes pas connecté en tant qu'administrateur.";
-$lang['noadminsession2'] = "Bienvenue</b> sur le Panneau de Configuration de $SETTINGS[bbname].";
+$lang['noadminsession2'] = "Bienvenue sur le Panneau de Contrôle de l'Administrateur, le forum est actuellement ouvert.";
 $lang['noadminsession3'] = "Veuillez saisir votre nom d'utilisateur et votre mot de passe d'administrateur.";
-$lang['noadminsession4'] = "Si vous rencontrez des problèmes pour vous connecter, veuillez contacter le <b><a href=\"mailto:$SETTINGS[adminemail]?subject=Admin Login Failure At $SETTINGS[bbname]\">webmaster</b></a>";
+$lang['noadminsession4'] = "Si vous rencontrez des problèmes pour vous connecter, veuillez contacter le webmaster du forum";
 $lang['noban'] = "Rien";
 $lang['nobuddyselected'] = "Vous n'avez pas sélectionné de membre à ajouter dans votre liste d'amis.";
 $lang['noedit'] = "Désolé, vous n'êtes pas autorisé à supprimer ce message.";
@@ -613,7 +612,7 @@ $lang['restore_attachments'] = "Restaurer les fichiers joints";
 $lang['restricted'] = "Désolé, ce nom d'utilisateur a déja été utilisé. Veuillez recommencer.";
 $lang['restrictedname'] = "Noms d'utilisateur et e-mails non-autorisés actuellement";
 $lang['restrictedupdate'] = "La mise à jour de restriction des membres a été effectuée avec succès !";
-$lang['rulesoninfo'] = "L' <a href=\"mailto:$SETTINGS[adminemail]\"> administrateur des forums</a> exige que tous les nouveaux membres acceptent le règlement du forum avant de s'enregistrer et d'utiliser les services du forum \"$SETTINGS[bbname]\". Veuillez lire le règlement suivant. Si vous l'acceptez, appuyez sur le bouton \"J'accepte\" au bas du règlement.";
+$lang['rulesoninfo'] = "L'administrateur de ce forum a demandé à ce que tous les nouveaux membres acceptent le règlement suivant avant de s'enregistrer et d'utiliser les services de celui-ci. Veuillez lire le règlement suivant et pour l'accepter, appuyez sur le bouton \"J'accepte\" au bas de ce dernier.";
 $lang['search_advanced'] = "Recherche avancée";
 $lang['searchbody'] = "Titre et contenu du Sujet.";
 $lang['searchguesterror'] = "Les utilisateurs anonymes sont limités à une page de résultats de recherche..";
@@ -642,7 +641,7 @@ $lang['spellingchecker'] = "Contrôle d'orthographe";
 $lang['spellingcomplete'] = "Contrôle d'orthographe accompli";
 $lang['splitthreadmsg'] = "Le sujet a été coupé. Maintenant, vous allez être redirigé vers la liste des sujets.";
 $lang['srchbyforum'] = "dans (forum) :";
-$lang['srchfilter_double'] = "Filtrer les posts doublons ?";
+$lang['srchfilter_double'] = "Afficher uniquement un post par sujet?";
 $lang['startticker'] = "Redémarrer";
 $lang['statistics'] = "Statistiques";
 $lang['stats4'] = "Nous souhaitons la bienvenue au nouveau membre !";
@@ -794,7 +793,7 @@ $lang['textfaqans15'] = "Vous pouvez insérer une pièce jointe quelque soit votre
 $lang['textfaqans16'] = "Les Smiliess sont de petits visages qui agrémentent vos messages et qui servent à représenter des émotions. Ils sont activés par l'emploi d'un code. Par exemple, un smiley souriant apparaîtra à la place de <b>:)</b>. Lors de la rédaction d'un message, la liste des smilies disponibles est affichée à droite du champ de saisi. <br />Vous trouverez ci-dessous la liste des Smilies utilisés sur ce forum :";
 $lang['textfaqans17'] = "Vous pouvez créer un sondage sur un forum en cliquant sur 'Nouveau Sondage'. Il vous suffit de rentrer le titre du sondage, un petit explicatif le décrivant, et les différents choix que vous proposerez aux lecteurs (un par ligne et au maximun 10) pour l'activer (en cliquant sur 'Valider le message').<br /><br />Vous ne pouvez voter qu'une seule fois par sondage et vous ne pouvez pas modifier votre avis.<br /><br /> Notez aussi que l'administrateur peut désactiver cette fonction.";
 $lang['textfaqans19'] = "Pour le savoir, posez la question à l'Administrateur, lui seul décide des modérateurs présents sur son forum.";
-$lang['textfaqans2'] = "Oui. XMB utilise les cookies pour stocker vos informations de connexion, dernière visite, et les sujets que vous avez lus. Cela nous est nécessaire pour vous rendre l'utilisation de ce forum plus agréable. Par exemple, une fois connecté(e), vous n'avez plus besoin de saisir votre pseudo/mot de passe à chaque fois que vous voulez publier un message.<br /><br />Si vous vous déconnectez, vos cookies sont vidés. Pour vous déconnecter <a href=\"misc.php?action=logout\">Cliquez ici</a>.";
+$lang['textfaqans2'] = "Oui. XMB utilise les cookies pour stocker vos informations de connexion, dernière visite, et les sujets que vous avez lus. Cela nous est nécessaire pour vous rendre l'utilisation de ce forum plus agréable. Ainsi, vous pouvez voir quels sujets contiennent de nouvelles réponses et vous n'avez pas besoin de saisir de nouveau votre pseudo/mot de passe pour publier une réponse ou effectuer toute autre action.<br /><br />Si vous vous déconnectez, vos cookies sont vidés. Pour vous déconnecter <a href=\"misc.php?action=logout\">Cliquez ici</a>.";
 $lang['textfaqans21'] = "Vous pouvez vous déconnecter en cliquant sur la fonction 'Déconnexion' du menu supérieur. Quand vous êtes déconnecté(e) les cookies enregistrant votre Pseudo et votre Mot de passe sont éffacés et vous devenez un utilisateur Anonyme.";
 $lang['textfaqans3'] = "Pour ajouter une signature à vos messages, vous devez vous rendre dans <a href=\"memcp.php\"> vos préférences</a> et remplir le champ Signature.<br /><br />Le BBCode et l'HTML peuvent être désactivés. Cela peut bien évidemment influencer la manière dont votre signature sera affichée.";
 $lang['textfaqans4'] = "l'Avatar est la petite image qui apparait sous votre nom. Il se configure dans <a href=\"memcp.php\">vos préférences</a>. Si votre Avatar n'apparaît pas, vérifiez son URL (qui doit commencer par http). Il se peut aussi que l'administrateur est désactivé cette fonction. Suivant la Netiquette, il est conseillé de choisir un avatar dont la largeur est inférieure à 150 pixels.";
@@ -866,7 +865,7 @@ $lang['texticq'] = "ICQ:";
 $lang['textillegalquery'] = "La requête demandée est illégale.";
 $lang['textimgcode'] = "Code IMG";
 $lang['textimgcodeis'] = "Activer fonction [img] ?";
-$lang['textimporttheme'] = "Importer thème:";
+$lang['textimporttheme'] = "Importer thème";
 $lang['textinforum'] = "Dans forum :";
 $lang['textinthread'] = "Dans sujet :";
 $lang['textinvisible'] = "Parcourir le forum en mode invisible";
@@ -890,7 +889,7 @@ $lang['textloggedinas'] = "Connecté sous ";
 $lang['textlogin'] = "Connexion";
 $lang['textlogin_incorrect'] = "Informations de connexion incorrectes";
 $lang['textlogout'] = "Déconnexion";
-$lang['textlogsdump'] = "Effacer les fichiers logs";
+$lang['textlogsdump'] = "Effacer les fichiers logs du Panneau de Contrôle";
 $lang['textlostpw'] = "Mot de passe perdu ?";
 $lang['textlostpwnote'] = "Veuillez remplir votre <strong>Nom d'utilisateur</strong> et votre <strong>adresse e-mail</strong>.";
 $lang['textmanagefolders'] = "Gérer les dossiers";
@@ -938,7 +937,7 @@ $lang['textnewsletter'] = "Newsletter";
 $lang['textnewsmilie'] = "Nouveau Smilie";
 $lang['textnewsubf'] = "Nouveau Sous-Forum";
 $lang['textnewtheme'] = "Nouveau Thème";
-$lang['textnewu2ubody'] = "vous a envoyé un U2U sur $SETTINGS[bbname].\nPour ne plus recevoir cette notification, merci de vous connecter sur votre Panneau de Contrôle Personnel.\n\nVous pouvez aller le lire ici:\n\n";
+$lang['textnewu2ubody'] = "vous a envoyé un nouveau U2U.\nAfin de ne plus recevoir ces notifications, connectez vous sur votre Panneau de Contrôle Personnel.\n\nVous pouvez lire ce nouveau U2U ici\n\n";
 $lang['textnewu2uemail'] = "Vous avez un nouveau U2U";
 $lang['textno'] = "Non";
 $lang['textnoaction'] = "Désolé, vous n'êtes pas autorisé à réaliser cette action.";
@@ -998,7 +997,7 @@ $lang['textprofor'] = "Préférences de";
 $lang['textprune'] = "Maintenance des vieux messages";
 $lang['textprunethread'] = "Sujet purgé";
 $lang['textpw1'] = "Désolé, le nom d'utilisateur/mot de passe saisi semble incorrecte.";
-$lang['textpw2'] = "Veuillez appuyer sur le bouton \"précédent\". de votre navigateur et essayez de nouveau.";
+$lang['textpw2'] = "Merci de réessayer.";
 $lang['textpwincorrect'] = "Mot de passe incorrect";
 $lang['textquote'] = "Citation:";
 $lang['textre'] = "Re:";
@@ -1008,7 +1007,7 @@ $lang['textregdate'] = "Date d'inscription";
 $lang['textreggedonly'] = "Autoriser seulement les utilisateurs inscris à voir le forum ?";
 $lang['textregister'] = "Inscription";
 $lang['textregistered'] = "Inscrit le:";
-$lang['textremoteimages'] = 'Attacher les images externes:<br /><span class="smalltxt">Convertit les nouveaux BBCodes [img] en attachements.</span>';
+$lang['textremoteimages'] = 'Attacher des images externes:<br /><span class="smalltxt">Convertit les nouveaux BBCodes [img] en attachements.</span>';
 $lang['textreplies'] = "Réponses:";
 $lang['textreply'] = "Répondre";
 $lang['textreplytrash'] = "Répondre et effacer";
@@ -1056,20 +1055,20 @@ $lang['textstars'] = "Étoiles :";
 $lang['textstats'] = "Stats";
 $lang['textstatsstatus'] = "Activer les stats ?";
 $lang['textstatus'] = "Statut du membre:";
-$lang['textsubbody'] = " vous a suggéré de répondre au message souscrit à $SETTINGS[bbname].\n\nVous pouvez lire le sujet en allant à\n\n";
+$lang['textsubbody'] = "a répondu sur un sujet auquel vous êtes abonné.\nAfin de ne plus recevoir ces notifications, connectez vous sur votre Panneau de Contrôle Personnel.\n\nVous pouvez afficher le sujet ici\n\n";
 $lang['textsubject'] = "Titre:";
 $lang['textsubmit'] = "Appliquer";
 $lang['textsubmitchanges'] = "Appliquer";
 $lang['textsubscribe'] = "S'abonner";
 $lang['textsubscriptions'] = "Abonnements";
-$lang['textsubsubject'] = "Nouvelle réponse à :";
+$lang['textsubsubject'] = "Nouvelle réponse à un sujet auquel vous êtes abonné";
 $lang['textsupermod'] = "Super Modérateur";
 $lang['texttabletext'] = "Couleur du texte du tableau:";
 $lang['texttext'] = "Couleur du texte:";
 $lang['texttheme'] = "Thème:";
-$lang['textthemefile'] = "Fichier de thème XMB :<br /><span class=\"smalltxt\">( doit être valide ! )</span>";
-$lang['textthemeimportfail'] = "Le thème ne peut être importé !";
-$lang['textthemeimportsuccess'] = "Le thème a été importé avec succès !";
+$lang['textthemefile'] = "Fichier de thème XMB :<br /><span class=\"smalltxt\">(doit être valide!)</span>";
+$lang['textthemeimportfail'] = "Le thème n'a pas pu être importé.";
+$lang['textthemeimportsuccess'] = "Le thème a été importé avec succès.";
 $lang['textthemename'] = "Nom du sujet:";
 $lang['texttime'] = "Heure:";
 $lang['texttimeformat'] = "Format de l'heure:";
@@ -1123,7 +1122,7 @@ $lang['textyahoo'] = "Yahoo :";
 $lang['textyes'] = "Oui";
 $lang['textyesip'] = "Cet utilisateur a l'IP :";
 $lang['textyourpw'] = "Votre mot de Passe";
-$lang['textyourpwis'] = "Bonjour !\n\n Toute l'équipe de <b>$SETTINGS[sitename]</b> vous souhaite la bienvenue sur notre forum. \nPour y accéder et publier votre premier message, vous devez d'abord cliquer sur l'option Inscription/Connexion du menu supérieur, afin de vous identifier. Dès que vous arriverez sur cette page, il suffira d'entrer le nom d'utilisateur et le mot de passe suivant :";
+$lang['textyourpwis'] = "Ceci est un mail généré automatiquement. Votre nouveau mot de paase se trouve ci-dessous:";
 $lang['textsubforums'] = "Sous-Forums:";
 $lang['theme_already_exists'] = "Un thème portant ce nom existe déjà!";
 $lang['themes'] = "Thèmes";
