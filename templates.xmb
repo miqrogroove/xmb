@@ -1772,6 +1772,7 @@ $smilies
 $baseelement
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
+$canonical_link
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js"></script>
 </head>
@@ -1813,7 +1814,7 @@ $bbcodescript
 <tr>
 <td><table width="100%" cellspacing="0" cellpadding="$tablespace" align="center">
 <tr>
-<td class="nav"> <a href="index.php">$bbname</a> $navigation</td>
+<td class="nav"> <a href="./">$bbname</a> $navigation</td>
 <td align="right">$quickjump</td>
 <td align="right" width="1"><a href="#bottom" title="$lang[gotobottom]"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
 </tr>
@@ -4942,7 +4943,7 @@ font-family: arial, verdana;
 $logo
 <br />
 <br />
-<h2><a href="$threadlink" rev="alternate">$thread[subject]</a></h2>
+<h2><a href="$threadlink" rel="canonical" rev="alternate">$thread[subject]</a></h2>
 $posts
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -41,12 +41,9 @@ smcwcache();
 
 nav($lang['navtodaysposts']);
 
-eval('$css = "'.template('css').'";');
-eval('$header = "'.template('header').'";');
-
 if ($SETTINGS['todaysposts'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
-    error($lang['fnasorry3']);
+    error($lang['fnasorry3'], TRUE);
 }
 
 $daysold = getInt('daysold', 'r');
@@ -66,11 +63,29 @@ while($t = $db->fetch_array($query)) {
 $db->free_result($query);
 $tids = implode(', ', $tids);
 
+eval('$css = "'.template('css').'";');
+
 if ($results == 0) {
+    eval('$header = "'.template('header').'";');
     $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
     $multipage = '';
     eval('$rows = "'.template('today_noposts').'";');
 } else {
+    validateTpp();
+    validatePpp();
+
+    if ($daysold == 1) {
+        $mpage = multipage($results, $tpp, 'today.php');
+    } else {
+        $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
+    }
+    $multipage =& $mpage['html'];
+    if (strlen($mpage['html']) != 0) {
+        eval('$multipage = "'.template('today_multipage').'";');
+    }
+
+    eval('$header = "'.template('header').'";');
+
     $t_extension = get_extension($lang['toppedprefix']);
     switch($t_extension) {
         case 'gif':
@@ -89,19 +104,6 @@ if ($results == 0) {
         case 'png':
             $lang['pollprefix'] = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
             break;
-    }
-
-    validateTpp();
-    validatePpp();
-
-    if ($daysold == 1) {
-        $mpage = multipage($results, $tpp, 'today.php');
-    } else {
-        $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
-    }
-    $multipage =& $mpage['html'];
-    if (strlen($mpage['html']) != 0) {
-        eval('$multipage = "'.template('today_multipage').'";');
     }
 
     $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.topped, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");

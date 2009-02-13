@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -384,8 +384,13 @@ switch($action) {
 
         $where = array();
         $ext = array();
+        
+        if ($desc != 'asc') {
+            $ext[] = "desc=$desc";
+        }
+        
         if ($order != '') {
-            $ext = array('order='.$order);
+            $ext[] = 'order='.$order;
         }
         
         if ($dblikeemail != '') {
@@ -429,7 +434,9 @@ switch($action) {
         $where[] = " lastvisit!=0 ";
         $q = implode(' AND', $where);
         $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
-        $mpage = multipage($num, $memberperpage, 'misc.php?action=list&amp;desc='.$desc.$ext);
+        $canonical = 'misc.php?action=list';
+        $baseurl = $canonical.$ext;
+        $mpage = multipage($num, $memberperpage, $baseurl, $canonical);
         $multipage =& $mpage['html'];
         if (strlen($mpage['html']) != 0) {
             eval('$multipage = "'.template('misc_mlist_multipage').'";');

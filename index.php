@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -63,7 +63,6 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     eval('$ticker = "'.template('index_ticker').'";');
 }
 
-$gid = 0;
 if (onSubmit('gid')) {
     $gid = getInt('gid');
     $SETTINGS['tickerstatus'] = 'off';
@@ -77,10 +76,14 @@ if (onSubmit('gid')) {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnocat']);
     }
+    setCanonicalLink("index.php?gid=$gid");
     nav(fnameOut($cat['name']));
     if ($SETTINGS['subject_in_title'] == 'on') {
         $threadSubject = '- '.fnameOut($cat['name']);
     }
+} else {
+    $gid = 0;
+    setCanonicalLink('./');
 }
 
 eval('$header = "'.template('header').'";');

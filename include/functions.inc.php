@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -893,22 +893,26 @@ function forum($forum, $template, $index_subforums) {
  * @param int $num Total number of items in the collection.
  * @param int $perpage Number of items to display on each page.
  * @param string $baseurl Relative URL of the first page in the collection.
+ * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
  * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
  */
-function multipage($num, $perpage, $baseurl) {
+function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
     global $cookiepath, $full_url, $lang, $url;
     
     // Initialize
     $return = array();
     $page = getInt('page');
     $max_page = quickpage(intval($num), intval($perpage));
+    if ($canonical === TRUE) $canonical =& $baseurl;
 
     // Calculate the LIMIT start number for queries
     if ($page > 1 && $page <= $max_page) {
         $return['start'] = ($page-1) * $perpage;
+        if ($canonical !== FALSE) setCanonicalLink($canonical.((strpos($baseurl, '?') !== FALSE) ? '&amp;' : '?').'page='.$page);
     } elseif ($page == 0 And !isset($_GET['page'])) {
         $return['start'] = 0;
         $page = 1;
+        if ($canonical !== FALSE) setCanonicalLink($canonical);
     } elseif ($page == 1) {
         $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
         $newurl = str_replace('&page=1', '', $newurl);
@@ -2057,6 +2061,12 @@ function createLangFileSelect($currentLangFile) {
     return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
 }
 
+/**
+ * Creates an XHTML link to the forum search page.
+ *
+ * @param int $fid Optional. Current FID number used to create a context-sensitive search.
+ * @return string Empty string if the forum search page is disabled.
+ */
 function makeSearchLink($fid=0) {
     global $imgdir, $lang, $SETTINGS;
 
@@ -2073,6 +2083,16 @@ function makeSearchLink($fid=0) {
     } else {
         return '';
     }
+}
+
+/**
+ * Sets an SEO variable used in the header template to indicate the proper current relative URI.
+ *
+ * @param string $relURI Path to the current page, relative to the base href (see header.php).
+ */
+function setCanonicalLink($relURI) {
+    global $canonical_link;
+    $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
 }
 
 function phpShorthandValue($ininame) {

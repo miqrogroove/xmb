@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -57,7 +57,11 @@ smcwcache();
 
 eval('$css = "'.template('css').'";');
 
-$favs = $buddys = NULL;
+$buddys = array();
+$favs = '';
+$footer = '';
+$header = '';
+$mempage = '';
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
@@ -627,9 +631,6 @@ if ($action == 'profile') {
         message($lang['favsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=favorites', true, false, true);
     }
 } else if ($action == 'subscriptions') {
-    eval('$header = "'.template('header').'";');
-    $header .= makenav($action);
-
     $subadd = getInt('subadd');
     if (!$subadd && noSubmit('subsubmit')) {
         $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'"), 0);
@@ -638,6 +639,9 @@ if ($action == 'profile') {
         if (strlen($mpage['html']) != 0) {
             eval('$multipage = "'.template('memcp_subscriptions_multipage').'";');
         }
+
+        eval('$header = "'.template('header').'";');
+        $header .= makenav($action);
 
         $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");
         $subnum = 0;
@@ -678,7 +682,7 @@ if ($action == 'profile') {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
         if ($db->result($query,0) == 1) {
             $db->free_result($query);
-            error($lang['subonlistmsg']);
+            error($lang['subonlistmsg'], TRUE);
         } else {
             $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
             message($lang['subaddedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);

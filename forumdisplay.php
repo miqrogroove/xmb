@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -53,7 +53,6 @@ smcwcache();
 eval('$css = "'.template('css').'";');
 eval($lang['hottopiceval']);
 
-$tid = getInt('tid');
 $fid = getInt('fid');
 
 $forum = getForum($fid);
@@ -110,6 +109,18 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 // Search-link
 $searchlink = makeSearchLink($forum['fid']);
 
+validateTpp();
+validatePpp();
+
+$threadcount = $db->result($db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
+
+// Perform automatic maintenance
+if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
+    updateforumcount($fid);
+}
+
+$mpage = multipage($threadcount, $tpp, 'forumdisplay.php?fid='.$fid);
+
 eval('$header = "'.template('header').'";');
 
 if ($perms[X_PERMS_POLL]) {
@@ -158,18 +169,6 @@ switch($p_extension) {
         $lang['pollprefix'] = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
         break;
 }
-
-validateTpp();
-validatePpp();
-
-$threadcount = $db->result($db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
-
-// Perform automatic maintenance
-if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
-    updateforumcount($fid);
-}
-
-$mpage = multipage($threadcount, $tpp, 'forumdisplay.php?fid='.$fid);
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {

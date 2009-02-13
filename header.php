@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -48,7 +48,7 @@ $alpha = '';
 $beta = 'Beta 4';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090204;
+$versionbuild = 20090212;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -59,6 +59,7 @@ $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
 $url = $_SERVER['REQUEST_URI'];
 $onlineip = $_SERVER['REMOTE_ADDR'];
 
+$canonical_link = '';
 $cookiepath = '';
 $cookiedomain = '';
 $bbcodescript = '';
