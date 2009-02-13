@@ -2091,8 +2091,15 @@ function makeSearchLink($fid=0) {
  * @param string $relURI Path to the current page, relative to the base href (see header.php).
  */
 function setCanonicalLink($relURI) {
-    global $canonical_link;
-    $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
+    global $canonical_link, $cookiepath, $url;
+    
+    $testurl = $cookiepath;
+    if ($relURI != './') {
+        $testurl .= $relURI;
+    }
+    if ($url != $testurl) {
+        $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
+    }
 }
 
 function phpShorthandValue($ininame) {

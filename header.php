@@ -412,7 +412,11 @@ if ($querystring === FALSE) {
     $querystring = '';
 }
 $querystring = preg_replace('/[^\x20-\x7e]/', '', $querystring);
-$baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
+if ($url == $cookiepath) {
+    $baseelement = '<base href="'.$full_url.'" />';
+} else {
+    $baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
+}
 
 // login/logout links
 if (X_MEMBER) {
@@ -523,7 +527,7 @@ if (false !== strpos($boardimg, ',')) {
     if (!isset($l['scheme']) || !isset($l['host'])) {
         $boardimg = $imgdir.'/'.$boardimg;
     }
-    $logo = '<a href="index.php"><img src="'.$boardimg.'" alt="'.$bbname.'" border="0" /></a>';
+    $logo = '<a href="./"><img src="'.$boardimg.'" alt="'.$bbname.'" border="0" /></a>';
 }
 
 // Font stuff...
