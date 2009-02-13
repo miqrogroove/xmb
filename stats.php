@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -35,14 +35,14 @@ loadtemplates('feature_statistics');
 
 smcwcache();
 
-eval('$css = "'.template('css').'";');
-
-eval('$header = "'.template('header').'";');
-
 if ($SETTINGS['stats'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
-    error($lang['fnasorry3']);
+    error($lang['fnasorry3'], TRUE);
 }
+
+setCanonicalLink('stats.php');
+eval('$css = "'.template('css').'";');
+eval('$header = "'.template('header').'";');
 
 $fids = permittedForums(forumCache(), 'thread', 'csv');
 $restrict = ' fid IN ('.$fids.')';

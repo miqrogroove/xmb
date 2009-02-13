@@ -8,6 +8,7 @@
 User-agent: *
 Disallow: /buddy.php
 Disallow: /memcp.php
+Disallow: /misc.php?action=captchaimage
 Disallow: /misc.php?action=list&desc=
 Disallow: /misc.php?action=list&order=
 Disallow: /misc.php?action=search&

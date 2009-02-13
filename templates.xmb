@@ -1769,10 +1769,9 @@ $smilies
 <!-- Build: $versionbuild -->
 <!-- $versioncompany -->
 <head>
-$baseelement
+$baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
-$canonical_link
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js"></script>
 </head>

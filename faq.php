@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -48,11 +48,13 @@ nav('<a href="faq.php">'.$lang['textfaq'].'</a>');
 
 switch($page) {
     case 'usermaint':
+        setCanonicalLink("faq.php?page=$page");
         loadtemplates('faq_usermaint');
         nav($lang['textuserman']);
         eval('$faq = "'.template('faq_usermaint').'";');
         break;
     case 'using':
+        setCanonicalLink("faq.php?page=$page");
         loadtemplates('faq_using_rankrow', 'faq_using');
         nav($lang['textuseboa']);
         $stars = $rankrows   = '';
@@ -66,6 +68,7 @@ switch($page) {
         eval('$faq = "'.template('faq_using').'";');
         break;
     case 'messages':
+        setCanonicalLink("faq.php?page=$page");
         loadtemplates('faq_messages_smilierow', 'faq_messages');
         $smilierows = NULL;
         nav($lang['textpostread']);
@@ -77,6 +80,7 @@ switch($page) {
         eval('$faq = "'.template('faq_messages').'";');
         break;
     case 'forumrules':
+        setCanonicalLink("faq.php?page=$page");
         loadtemplates('faq_forumrules');
         nav();
         nav($lang['textbbrules']);
@@ -88,6 +92,7 @@ switch($page) {
         eval('$faq = "'.template('faq_forumrules').'";');
         break;
     default:
+        setCanonicalLink('faq.php');
         loadtemplates('faq');
         eval('$faq = "'.template('faq').'";');
         break;

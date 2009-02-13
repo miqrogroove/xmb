@@ -2095,7 +2095,7 @@ function setCanonicalLink($relURI) {
     
     $testurl = $cookiepath;
     if ($relURI != './') {
-        $testurl .= $relURI;
+        $testurl .= str_replace('&amp;', '&', $relURI);
     }
     if ($url != $testurl) {
         $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
