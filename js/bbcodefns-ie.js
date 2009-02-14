@@ -50,13 +50,15 @@ function email() {
     } else if (advmode) {
         AddText('', '', "[email]"+document.selection.createRange().text+"[/email]", messageElement);
     } else {
-        txt2=prompt(bbcode_prompt_email_email,"");
-        if (txt2!=null) {
-            txt=prompt(bbcode_prompt_email_error,"user@example.com");
-            if (txt2=="") {
-                AddText('', '', "[email]"+txt+"[/email]", messageElement);
-            } else {
-                AddText('', '', "[email="+txt+"]"+txt2+"[/email]", messageElement);
+        txt2=prompt(bbcode_prompt_email_desc,"");
+        if (txt2!=null)    {
+            txt=prompt(bbcode_prompt_email_email,"");
+            if (txt2!=null) {
+                if (txt2=="") {
+                    AddText('', '', "[email]"+txt+"[/email]", messageElement);
+                } else {
+                    AddText('', '', "[email="+txt+"]"+txt2+"[/email]", messageElement);
+                }
             }
         }
     }

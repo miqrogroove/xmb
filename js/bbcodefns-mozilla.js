@@ -84,7 +84,7 @@ function email() {
         if (hasSelection(messageElement)) {
             if (fetchSelection(messageElement).match(/(.+)@(.+)/) != null) {
                 text = prompt(bbcode_prompt_email_email, fetchSelection(messageElement));
-                desc = prompt(bbcode_prompt_link_desc, '');
+                desc = prompt(bbcode_prompt_email_desc, '');
                 while(text.length == 0 || text.match(/(.+)@(.+)/) == null) {
                     text = prompt(bbcode_prompt_email_error, fetchSelection(messageElement));
                 }
@@ -122,7 +122,7 @@ function email() {
                     text = prompt(bbcode_prompt_email_error, text);
                 }
 
-                desc = prompt(bbcode_prompt_link_desc, '');
+                desc = prompt(bbcode_prompt_email_desc, '');
                 if (desc.length == 0) {
                     AddText('[email]', '[/email]', text, messageElement);
                 } else {

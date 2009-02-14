@@ -1641,6 +1641,7 @@ var bbcode_helpmode = "$lang[bbcode_helpmode]";
 var bbcode_advmode = "$lang[bbcode_advmode]";
 var bbcode_normode = "$lang[bbcode_normode]";
 var bbcode_help_email = "$lang[bbcode_help_email]";
+var bbcode_prompt_email_desc = "$lang[bbcode_prompt_email_desc]";
 var bbcode_prompt_email_email = "$lang[bbcode_prompt_email_email]";
 var bbcode_prompt_email_error = "$lang[bbcode_prompt_email_error]";
 var bbcode_help_size = "$lang[bbcode_help_size]";
