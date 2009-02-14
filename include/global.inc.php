@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -47,5 +47,34 @@ if (!isset($_SERVER)) {
 // force registerglobals
 if (is_array($_REQUEST)) {
     extract($_REQUEST, EXTR_SKIP);
+}
+
+/**
+ * Kill the script and debug dirty output streams.
+ *
+ * @author Robert Chapin (miqrogroove)
+ * @param string $error_source File name to mention if a dirty buffer is found.
+ * @param bool   $use_debug    Optional.  When FALSE the value of DEBUG is ignored.
+ * @since 1.9.11
+ */
+function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
+    $buffered_fault = (ob_get_length() > 0); // Checks top of buffer stack only.
+    $unbuffered_fault = headers_sent();
+    
+    if ($buffered_fault Or $unbuffered_fault) {
+        if ($buffered_fault) header('HTTP/1.0 500 Internal Server Error');
+
+        if ($use_debug And defined('DEBUG') And DEBUG == FALSE) {
+            echo "Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.";
+        } elseif ($unbuffered_fault) {
+            headers_sent($filepath, $linenum);
+            echo "Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum.";
+        } else {
+            $buffer = ob_get_clean();
+            echo "Error: XMB failed to start due to file corruption. "
+               . "Please inspect $error_source.  It has generated the following unexpected output:<br />\r\n$buffer";
+        }
+        exit;
+    }
 }
 ?>

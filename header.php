@@ -48,7 +48,7 @@ $alpha = '';
 $beta = 'Beta 4';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090212;
+$versionbuild = 20090214;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -181,10 +181,13 @@ define('IS_MOZILLA', ($browser == 'mozilla'));
 define('IS_OPERA', ($browser == 'opera'));
 define('IS_IE', ($browser == 'ie'));
 
+assertEmptyOutputStream('header.php or global.inc.php');
+
 
 /* Load the Configuration Created by Install */
 
 require ROOT.'config.php';
+assertEmptyOutputStream('config.php');
 
 if (!$show_full_info) {
     $versionshort = '';
@@ -203,6 +206,7 @@ if (!defined('DEBUG')) {
     define('DEBUG', FALSE);
 } elseif (DEBUG) {
     require(ROOT.'include/debug.inc.php');
+    assertEmptyOutputStream('debug.inc.php');
 }
 if (!defined('LOG_MYSQL_ERRORS')) {
     define('LOG_MYSQL_ERRORS', FALSE);
@@ -316,8 +320,13 @@ if ($ipcheck == 'on') {
 define('X_PREFIX', $tablepre); // Secured table prefix constant
 
 require ROOT.'db/'.$database.'.php';
+assertEmptyOutputStream('db/'.$database.'.php');
+
 require ROOT.'include/validate.inc.php';
+assertEmptyOutputStream('validate.inc.php');
+
 require ROOT.'include/functions.inc.php';
+assertEmptyOutputStream('functions.inc.php');
 
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
@@ -664,10 +673,13 @@ if (X_MEMBER) {
 
 /* Perform HTTP Connection Maintenance */
 
+assertEmptyOutputStream('header.php');
+
 // Gzip-compression
 if ($SETTINGS['gzipcompress'] == 'on'
  && $action != 'captchaimage'
- && X_SCRIPT != 'files.php') {
+ && X_SCRIPT != 'files.php'
+ && !DEBUG) {
     if (($res = @ini_get('zlib.output_compression')) === 1) {
         // leave it
     } else if ($res === false) {
@@ -685,16 +697,6 @@ if ($SETTINGS['gzipcompress'] == 'on'
     }
 }
 
-// catch all unexpected output
-if (headers_sent()) {
-    header('HTTP/1.0 500 Internal Server Error');
-    if (DEBUG) {
-        headers_sent($filepath, $linenum);
-        exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
-    } else {
-        exit("Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.");
-    }
-} else {
-    return;
-}
+assertEmptyOutputStream('header.php');
+return;
 ?>

@@ -382,11 +382,7 @@ class Captcha {
 
     function WriteFile() {
         // Explicitly re-run XMB's output stream check, and do not rely on the DEBUG constant.
-        if (headers_sent()) {
-            header('HTTP/1.0 500 Internal Server Error');
-            headers_sent($filepath, $linenum);
-            exit(cdataOut("Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum."));
-        }
+        assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', FALSE);
 
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
