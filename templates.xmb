@@ -2343,8 +2343,8 @@ $captcharegcheck
 |#*XMB TEMPLATE FILE*#|member_reg_avatarlist|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textavatar]</td>
-<td bgcolor="$altbg2"><select name="avatar" onchange="document.images.avatarpic.src = this[this.selectedIndex].value;">$avatars</select>&nbsp;&amp;&nbsp;
-<img src="./images/avatars/clear_avatar.gif" name="avatarpic" align="middle" border="0" alt="*" /></td>
+<td bgcolor="$altbg2"><select name="newavatar" onchange="document.images.avatarpic.src = this[this.selectedIndex].value;">$avatars</select> &nbsp;
+<img src="./images/avatars/clear_avatar.gif" id="avatarpic" align="middle" border="0" alt="*" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_avatarurl|#*XMB TEMPLATE*#|
@@ -2865,7 +2865,7 @@ $dayselect
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarlist|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textavatar]</td>
-<td bgcolor="$altbg2">$avatarbox &nbsp;<img src="./images/avatars/clear_avatar.gif" name="avatarpic" align="middle" alt="*" border="0" /></td>
+<td bgcolor="$altbg2">$avatarbox &nbsp;<img src="./images/avatars/clear_avatar.gif" id="avatarpic" align="middle" alt="*" border="0" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarurl|#*XMB TEMPLATE*#|

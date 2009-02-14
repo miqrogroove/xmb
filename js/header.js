@@ -75,6 +75,7 @@ function avatarCheck(input, max_size) {
         }
     }
     if (input.value.substring(0, 7) == 'http://' || input.value.substring(0, 6) == 'ftp://') {
+        avatarCheck.innerHTML = "Checking URL...";
         image.src = input.value;
     } else {
         if (input.value == '') {

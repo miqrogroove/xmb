@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -275,9 +275,9 @@ switch($action) {
                 } else if ($SETTINGS['avastatus'] == 'list') {
                     $avatars = array();
                     $avatars[] = '<option value=""/>'.$lang['textnone'].'</option>';
-                    $dirHandle = opendir('./images/avatars');
+                    $dirHandle = opendir(ROOT.'images/avatars');
                     while($avFile = readdir($dirHandle)) {
-                        if (is_file('./images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..') {
+                        if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                             $avatars[] = '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
                         }
                     }
@@ -490,8 +490,6 @@ switch($action) {
             if ($SETTINGS['regoptional'] == 'off') {
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '', '', '$self[status]', '', '', '', '$showemail', '$timeoffset1', '', '', '', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '', '', '$dateformatnew', '', 0, '', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
             } else {
-                $avatar = postedVar('avatar', 'javascript', TRUE, TRUE, TRUE);
-                $avatarcheck = postedVar('newavatarcheck');
                 $location = postedVar('location', 'javascript', TRUE, TRUE, TRUE);
                 $icq = postedVar('icq', '', FALSE, FALSE);
                 $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
@@ -503,26 +501,50 @@ switch($action) {
                 $mood = postedVar('mood', 'javascript', TRUE, TRUE, TRUE);
                 $sig = postedVar('sig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
 
-                $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-                if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
-                    $avatar = '';
-                    $rawavatar = '';
-                }
-                
-                $max_size = explode('x', $SETTINGS['max_avatar_size']);
-                if (ini_get('allow_url_fopen')) {
-                    if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
-                        $size = @getimagesize($rawavatar);
-                        if ($size === false) {
-                            $avatar = '';
-                        } else if (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
-                            error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                if ($SETTINGS['avastatus'] == 'on') {
+                    $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
+                    $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+
+                    $newavatarcheck = postedVar('newavatarcheck');
+
+                    $max_size = explode('x', $SETTINGS['max_avatar_size']);
+
+                    if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
+                        $avatar = '';
+                    } elseif (ini_get('allow_url_fopen')) {
+                        if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
+                            $size = @getimagesize($rawavatar);
+                            if ($size === FALSE) {
+                                $avatar = '';
+                            } elseif (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                            }
+                        }
+                    } elseif ($newavatarcheck == "no") {
+                        $avatar = '';
+                    }
+                    unset($rawavatar);
+                } elseif ($SETTINGS['avastatus'] == 'list') {
+                    $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+                    $dirHandle = opendir(ROOT.'images/avatars');
+                    $filefound = FALSE;
+                    while($avFile = readdir($dirHandle)) {
+                        if ($rawavatar == './images/avatars/'.$avFile) {
+                            if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                                $filefound = TRUE;
+                            }
                         }
                     }
-                } else if ($newavatarcheck == "no") {
+                    closedir($dirHandle);
+                    unset($rawavatar);
+                    if ($filefound) {
+                        $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
+                    } else {
+                        $avatar = '';
+                    }
+                } else {
                     $avatar = '';
                 }
-                unset($rawavatar);
 
                 $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', ".$db->time($onlinetime).", 0, '$email', '$site', '$aim', '$self[status]', '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
             }

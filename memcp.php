@@ -362,9 +362,9 @@ if ($action == 'profile') {
         if ($SETTINGS['avastatus'] == 'list')  {
             $avatars = '<option value="" />'.$lang['textnone'].'</option>';
             $dir1 = opendir(ROOT.'images/avatars');
-            while($avatar1 = readdir($dir1)) {
-                if (is_file(ROOT.'images/avatars/'.$avatar1)) {
-                    $avatars .= '<option value="'.ROOT.'images/avatars/'.$avatar1.'" />'.$avatar1.'</option>';
+            while($avFile = readdir($dir1)) {
+                if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                    $avatars .= '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
                 }
             }
             $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
@@ -441,8 +441,6 @@ if ($action == 'profile') {
         $month = formInt('month');
         $day = formInt('day');
         $bday = iso8601_date($year, $month, $day);
-        $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-        $newavatarcheck = postedVar('newavatarcheck');
         $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
         $icq = postedVar('newicq', '', FALSE, FALSE);
         $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
@@ -510,26 +508,50 @@ if ($action == 'profile') {
             }
         }
 
-        $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-        if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
-            $avatar = '';
-            $rawavatar = '';
-        }
+        if ($SETTINGS['avastatus'] == 'on') {
+            $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
+            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
 
-        $max_size = explode('x', $SETTINGS['max_avatar_size']);
-        if (ini_get('allow_url_fopen')) {
-            if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
-                $size = @getimagesize($rawavatar);
-                if ($size === false) {
-                    $avatar = '';
-                } else if ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
-                    error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+            $newavatarcheck = postedVar('newavatarcheck');
+
+            $max_size = explode('x', $SETTINGS['max_avatar_size']);
+
+            if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
+                $avatar = '';
+            } elseif (ini_get('allow_url_fopen')) {
+                if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
+                    $size = @getimagesize($rawavatar);
+                    if ($size === FALSE) {
+                        $avatar = '';
+                    } elseif ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
+                        error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                    }
+                }
+            } elseif ($newavatarcheck == "no") {
+                $avatar = '';
+            }
+            unset($rawavatar);
+        } elseif ($SETTINGS['avastatus'] == 'list') {
+            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+            $dirHandle = opendir(ROOT.'images/avatars');
+            $filefound = FALSE;
+            while($avFile = readdir($dirHandle)) {
+                if ($rawavatar == './images/avatars/'.$avFile) {
+                    if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                        $filefound = TRUE;
+                    }
                 }
             }
-        } else if ($newavatarcheck == "no") {
+            closedir($dirHandle);
+            unset($rawavatar);
+            if ($filefound) {
+                $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
+            } else {
+                $avatar = '';
+            }
+        } else {
             $avatar = '';
         }
-        unset($rawavatar);
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$xmbuser'");
 

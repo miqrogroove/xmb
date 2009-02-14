@@ -1890,10 +1890,10 @@ function forumJump() {
     $permitted = getStructuredForums(TRUE);
 
     foreach($permitted['forum']['0'] as $forum) {
-        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
         if (isset($permitted['sub'][$forum['fid']])) {
             foreach($permitted['sub'][$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
             }
         }
     }
@@ -1901,12 +1901,12 @@ function forumJump() {
     foreach($permitted['group']['0'] as $group) {
         if (isset($permitted['forum'][$group['fid']])) {
             $forumselect[] = '<option value="0"></option>';
-            $forumselect[] = '<option value="'.ROOT.'index.php?gid='.intval($group['fid']).'">'.fnameOut($group['name']).'</option>';
+            $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'">'.fnameOut($group['name']).'</option>';
             foreach($permitted['forum'][$group['fid']] as $forum) {
-                $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                 if (isset($permitted['sub'][$forum['fid']])) {
                     foreach($permitted['sub'][$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="'.ROOT.'forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                     }
                 }
             }
