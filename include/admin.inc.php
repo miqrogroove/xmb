@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -115,7 +115,7 @@ class admin {
         $query = $db->query("SELECT tid, lastpost FROM ".X_PREFIX."threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
             $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $db->escape_var($result['lastpost']));
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
         }
         $db->free_result($query);
 
