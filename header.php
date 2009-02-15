@@ -48,7 +48,7 @@ $alpha = '';
 $beta = 'Beta 4';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090214;
+$versionbuild = 20090215;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -457,13 +457,15 @@ if (X_MEMBER) {
 }
 
 // Get themes, [fid, [tid]]
-if (isset($tid) && is_numeric($tid) && $action != 'templates') {
+$fid = getInt('fid', 'r');
+$tid = getInt('tid', 'r');
+if ($tid > 0 && $action != 'templates') {
     $query = $db->query("SELECT f.fid, f.theme FROM ".X_PREFIX."forums f RIGHT JOIN ".X_PREFIX."threads t USING (fid) WHERE t.tid=$tid");
     $locate = $db->fetch_array($query);
     $db->free_result($query);
     $fid = $locate['fid'];
     $forumtheme = $locate['theme'];
-} else if (isset($fid) && is_numeric($fid)) {
+} else if ($fid > 0) {
     $forum = getForum($fid);
     if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
         $forumtheme = 0;

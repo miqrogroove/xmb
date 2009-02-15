@@ -1878,35 +1878,41 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
 }
 
 function forumJump() {
-    global $lang;
+    global $fid, $lang, $selHTML;
 
     // Initialize $forumselect
     $forumselect = array();
+    $checkid = max($fid, getInt('gid', 'r'));
 
     $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
-    $forumselect[] = '<option value="0" selected="selected">'.$lang['forumjumpselect'].'</option>';
+    $forumselect[] = '<option value="">'.$lang['forumjumpselect'].'</option>';
 
     // Populate $forumselect
     $permitted = getStructuredForums(TRUE);
 
     foreach($permitted['forum']['0'] as $forum) {
-        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+        $dropselc1 = ( $checkid == $forum['fid'] ) ? $selHTML : '';
+        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
         if (isset($permitted['sub'][$forum['fid']])) {
             foreach($permitted['sub'][$forum['fid']] as $sub) {
-                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                $dropselc2 = ( $checkid == $sub['fid'] ) ? $selHTML : '';
+                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
             }
         }
     }
 
     foreach($permitted['group']['0'] as $group) {
         if (isset($permitted['forum'][$group['fid']])) {
-            $forumselect[] = '<option value="0"></option>';
-            $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'">'.fnameOut($group['name']).'</option>';
+            $dropselc3 = ( $checkid == $group['fid'] ) ? $selHTML : '';
+            $forumselect[] = '<option value=""></option>';
+            $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
             foreach($permitted['forum'][$group['fid']] as $forum) {
-                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'"> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+                $dropselc4 = ( $checkid == $forum['fid'] ) ? $selHTML : '';
+                $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                 if (isset($permitted['sub'][$forum['fid']])) {
                     foreach($permitted['sub'][$forum['fid']] as $sub) {
-                        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'">&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                        $dropselc5 = ( $checkid == $sub['fid'] ) ? $selHTML : '';
+                        $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                     }
                 }
             }

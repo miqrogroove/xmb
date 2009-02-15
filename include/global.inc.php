@@ -58,6 +58,8 @@ if (is_array($_REQUEST)) {
  * @since 1.9.11
  */
 function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
+    global $SETTINGS;
+    
     $buffered_fault = (ob_get_length() > 0); // Checks top of buffer stack only.
     $unbuffered_fault = headers_sent();
     
@@ -71,8 +73,12 @@ function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
             echo "Error: XMB failed to start due to file corruption.  Please inspect $filepath at line number $linenum.";
         } else {
             $buffer = ob_get_clean();
-            echo "Error: XMB failed to start due to file corruption. "
-               . "Please inspect $error_source.  It has generated the following unexpected output:<br />\r\n$buffer";
+            echo 'OB:';
+            var_dump(ini_get('output_buffering'));
+            echo 'GZ:';
+            var_dump($SETTINGS['gzipcompress']);
+            echo "<br /><br />Error: XMB failed to start due to file corruption. "
+               . "Please inspect $error_source.  It has generated the following unexpected output:$buffer";
         }
         exit;
     }
