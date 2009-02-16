@@ -6,14 +6,15 @@
 # For example, Disallow: /forum/buddy.php
 
 User-agent: *
-Disallow: /buddy.php
-Disallow: /memcp.php
+Disallow: /buddy
+Disallow: /cp
+Disallow: /memcp
 Disallow: /misc.php?action=captchaimage
 Disallow: /misc.php?action=list&desc=
 Disallow: /misc.php?action=list&order=
 Disallow: /misc.php?action=search&
-Disallow: /post.php
+Disallow: /post
 Disallow: /search.php?
 Disallow: /today.php?daysold=
-Disallow: /u2u.php
+Disallow: /u2u
 Disallow: /viewthread.php?fid=
