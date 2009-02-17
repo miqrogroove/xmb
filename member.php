@@ -67,8 +67,11 @@ switch($action) {
 
 switch($action) {
     case 'coppa':
-        if (X_MEMBER) {
-            eval('$header = "'.template('header').'";');
+        eval('$header = "'.template('header').'";');
+        if ($SETTINGS['regstatus'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
+            eval('$memberpage = "'.template('misc_feature_notavailable').'";');
+        } elseif (X_MEMBER) {
             eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
         } else {
             if ($SETTINGS['coppa'] != 'on') {
@@ -77,7 +80,6 @@ switch($action) {
             if (onSubmit('coppasubmit')) {
                 redirect($full_url.'member.php?action=reg', 0);
             } else {
-                eval('$header = "'.template('header').'";');
                 eval('$memberpage = "'.template('member_coppa').'";');
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -58,7 +58,13 @@ displayAdminPanel();
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if ($action == "settings") {
-    if (noSubmit('settingsubmit')) {
+    if (noSubmit('settingsubmit1')
+    And noSubmit('settingsubmit2')
+    And noSubmit('settingsubmit3')
+    And noSubmit('settingsubmit4')
+    And noSubmit('settingsubmit5')
+    And noSubmit('settingsubmit6')
+    And noSubmit('settingsubmit7')) {
         $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
         $themelist = array();
@@ -432,8 +438,8 @@ if ($action == "settings") {
         printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
         printsetting1($lang['gzipcompression'], 'gzipcompressnew', $gzipcompresson, $gzipcompressoff);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit1" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="2" />&raquo;&nbsp;<?php echo $lang['admin_main_settings2']?></font></strong></td>
@@ -458,8 +464,8 @@ if ($action == "settings") {
         <?php
         printsetting2($lang['dateformat'], 'dateformatnew', $SETTINGS['dateformat'], 20);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit2" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="3" />&raquo;&nbsp;<?php echo $lang['admin_main_settings3']?></font></strong></td>
@@ -474,8 +480,8 @@ if ($action == "settings") {
         printsetting1($lang['coppastatus'], 'coppanew', $coppaon, $coppaoff);
         printsetting1($lang['reportpoststatus'], 'reportpostnew', $reportposton, $reportpostoff);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="4" />&raquo;&nbsp;<?php echo $lang['admin_main_settings4']?></font></strong></td>
@@ -498,8 +504,8 @@ if ($action == "settings") {
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="5" />&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
@@ -520,8 +526,8 @@ if ($action == "settings") {
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit4" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="8" />&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
@@ -553,8 +559,8 @@ if ($action == "settings") {
         printsetting3($lang['textfilesurlpath'], 'filesurlpathnew', array($lang['textfilesurlpath1'], $lang['textfilesurlpath2'], $lang['textfilesurlpath3'], $lang['textfilesurlpath4'], $lang['textfilesurlpath5']), array('1', '2', '3', '4', '5'), $urlformatchecked, false);
         printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_virtual_url'], 50);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit5" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="6" />&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
@@ -578,8 +584,8 @@ if ($action == "settings") {
         printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
         printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
         ?>
-        <tr class="tablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2">&nbsp;</td>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="7" />&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
@@ -609,7 +615,7 @@ if ($action == "settings") {
         }
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit7" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>

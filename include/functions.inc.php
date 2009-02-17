@@ -80,9 +80,10 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALS
  * @param  string $xmbuserinput Must be html escaped & db escaped username input.
  * @param  string $xmbpwinput Must be raw password hash input.
  * @param  int    $force_inv Optional.
+ * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
  * @return bool
  */
-function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
+function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '') {
     global $xmbuser, $xmbpw, $self, $db, $SETTINGS, $status_enum;
 
     $xmbuser = '';
@@ -98,7 +99,9 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
         $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
         if ($db->num_rows($query) == 1) {
             $self = $db->fetch_array($query); //The self array will remain available, global.
-            if ($self['password'] == $xmbpwinput) {
+            if ($serror == 'ip' And $self['status'] != 'Super Administrator' And $self['status'] != 'Administrator') {
+                // User is IP-Banned
+            } elseif ($self['password'] == $xmbpwinput) {
                 $xmbuser = $db->escape_var($self['username']);
             }
             $self['password'] = '';
@@ -215,13 +218,15 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE) {
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
     // Save This Session
-    global $onlineip, $onlinetime, $url;
+    if (X_ADMIN Or $serror == '' Or $serror == 'guest' And X_MEMBER) {
+        global $onlineip, $onlinetime, $url;
 
-    $wollocation = $db->escape_var($url);
-    $newtime = $onlinetime - 600;
-    $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
-    $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
-
+        $wollocation = $db->escape_var($url);
+        $newtime = $onlinetime - 600;
+        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
+        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
+    }
+    
     return ($xmbuser != '');
 }
 

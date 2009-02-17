@@ -517,6 +517,14 @@ switch($action) {
         break;
 
     case 'captchaimage':
+        if ($SETTINGS['captcha_status'] == 'off') {
+            header('HTTP/1.0 403 Forbidden');
+            eval('echo "'.template('header').'";');
+            eval('echo "'.template('misc_feature_notavailable').'";');
+            end_time();
+            eval('echo "'.template('footer').'";');
+            exit();
+        }
         require ROOT.'include/captcha.inc.php';
         $oPhpCaptcha = new Captcha(250, 50);
         $imagehash = postedVar('imagehash', '', FALSE, TRUE, FALSE, 'g');

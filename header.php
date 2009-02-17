@@ -48,7 +48,7 @@ $alpha = '';
 $beta = 'Beta 4';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090215;
+$versionbuild = 20090217;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -72,7 +72,9 @@ $full_url = '';
 $navigation = '';
 $newu2umsg = '';
 $othertid = '';
+$pluglink = '';
 $quickjump = '';
+$searchlink = '';
 $smiliesnum = 0;
 $status = '';
 $wordsnum = 0;
@@ -83,7 +85,7 @@ $SETTINGS = array();
 $THEME = array();
 $censorcache = array();
 $footerstuff = array();
-$links = array();
+$links = '';
 $lang = array();
 $mailer = array();
 $plugadmin = array();
@@ -401,15 +403,53 @@ if (isset($oldtopics)) {
 
 /* Authorize User, Set Up Session, and Load Language Translation */
 
+$serror = '';
+
+// Check if the client is ip-banned
+if ($SETTINGS['ip_banning'] == 'on') {
+    $ips = explode(".", $onlineip);
+    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
+    $result = $db->num_rows($query);
+    $db->free_result($query);
+    if ($result > 0) {
+        $serror = 'ip';
+    }
+}
+
+// Check if the board is offline
+if ($SETTINGS['bbstatus'] == 'off' And $serror == '') {
+    if (($action == 'login' Or $action == 'lostpw') And X_SCRIPT == 'misc.php') {
+        // Allow login
+    } elseif ($SETTINGS['regstatus'] == 'on' And ($action == 'reg' Or $action == 'coppa' Or $action == 'captchaimage') And (X_SCRIPT == 'misc.php' Or X_SCRIPT == 'member.php')) {
+        // Allow registration
+    } else {
+        // Block all non-admins
+        $serror = 'bstatus';
+    }
+}
+
+// Check if the board is set to 'reg-only'
+if ($SETTINGS['regviewonly'] == 'on' And $serror == '') {
+    if (($action == 'login' Or $action == 'lostpw') And X_SCRIPT == 'misc.php') {
+        // Allow login
+    } elseif ($SETTINGS['regstatus'] == 'on' And ($action == 'reg' Or $action == 'coppa' Or $action == 'captchaimage') And (X_SCRIPT == 'misc.php' Or X_SCRIPT == 'member.php')) {
+        // Allow registration
+    } else {
+        // Block all guests
+        $serror = 'guest';
+    }
+}
+
 $uinput = postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c');
-if (!elevateUser($uinput, postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c'))) {
+$pinput = postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c');
+if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
     // Delete cookies when authentication fails.
     if ($uinput != '') {
         put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
         put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
     }
 }
-unset($uinput);
+unset($uinput, $pinput);
 
 
 /* Set Up HTML Templates and Themes */
@@ -552,122 +592,120 @@ $THEME['bgcode'] = $bgcode;
 $THEME['font1'] = $font1;
 $THEME['font3'] = $font3;
 
-// Search-link
-$searchlink = makeSearchLink();
 
-// Faq-link
-if ($SETTINGS['faqstatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
-}
+/* Theme Ready.  Make pretty errors. */
 
-// Memberlist-link
-if ($SETTINGS['memliststatus'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
-}
-
-// Today's posts-link
-if ($SETTINGS['todaysposts'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
-}
-
-// Stats-link
-if ($SETTINGS['stats'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
-}
-
-// 'Forum Rules'-link
-if ($SETTINGS['bbrules'] == 'on') {
-    $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
-}
-
-$links = implode(' &nbsp; ', $links);
-
-// Show all plugins
-$pluglinks = array();
-foreach($plugname as $plugnum => $item) {
-    if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum])) {
-        if (trim($plugimg[$plugnum]) != '') {
-            $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" alt="'.$plugname[$plugnum].'" />&nbsp;';
-        } else {
-            $img = '';
-        }
-
-        if ($plugadmin[$plugnum] != true || X_ADMIN) {
-            $pluglinks[] = $img.'<a href="'.$plugurl[$plugnum].'"><font class="navtd">'.$plugname[$plugnum].'</font></a>&nbsp;';
-        }
-    }
-}
-
-if (count($pluglinks) == 0) {
-    $pluglink = '';
-} else {
-    $pluglink = implode('&nbsp;', $pluglinks);
-}
-
-
-/* HTML Ready.  Issue Any Global Alerts To User. */
-
-// Check if the client is ip-banned
-if ($SETTINGS['ip_banning'] == 'on' And !X_ADMIN And X_SCRIPT != 'upgrade.php') {
-    $ips = explode(".", $onlineip);
-    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
-    $result = $db->num_rows($query);
-    $db->free_result($query);
-    if ($result > 0) {
+switch ($serror) {
+case 'ip':
+    if (!X_ADMIN) {
         header('HTTP/1.0 403 Forbidden');
-        eval('$css = "'.template('css').'";');
         error($lang['bannedmessage']);
     }
-}
-
-// Check if the board is offline
-if ($SETTINGS['bbstatus'] == 'off' And !X_ADMIN And X_SCRIPT != 'upgrade.php') {
-    $SETTINGS['quickjump_status'] = 'off';
-    if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
+    break;
+case 'bstatus':
+    if (!X_ADMIN) {
         header('HTTP/1.0 503 Service Unavailable');
         header('Retry-After: 3600');
-        eval('$css = "'.template('css').'";');
         if ($bboffreason != '') {
             message(nl2br($bboffreason));
         } else {
             message($lang['textbstatusdefault']);
         }
     }
-}
-
-// Check if the board is set to 'reg-only'
-if ($SETTINGS['regviewonly'] == 'on' And X_GUEST And X_SCRIPT != 'upgrade.php') {
-    $SETTINGS['quickjump_status'] = 'off';
-    if (($action != 'reg' && $action != 'login' && $action != 'lostpw' && $action != 'coppa' && $action != 'captchaimage') || (X_SCRIPT != 'misc.php' && X_SCRIPT != 'member.php')) {
-        $message = $lang['reggedonly'].' <a href="member.php?action=coppa">'.$lang['textregister'].'</a> '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
-        eval('$css = "'.template('css').'";');
+    break;
+case 'guest':
+    if (X_GUEST) {
+        if ($SETTINGS['regstatus'] == 'on') {
+            $message = $lang['reggedonly'].' '.$reglink.' '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+        } else {
+            $message = $lang['reggedonly'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
+        }
         message($message);
     }
+    break;
 }
 
-// create forum jump
-$quickjump = '';
-if ($SETTINGS['quickjump_status'] == 'on') {
-    $quickjump = forumJump();
-}
 
-// check for new u2u's
-$newu2umsg = '';
-if (X_MEMBER) {
-    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
-    $newu2unum = $db->result($query, 0);
-    $db->free_result($query);
-    if ($newu2unum > 0) {
-        $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
-        // Popup Alert
-        if ($self['u2ualert'] == 2 Or ($self['u2ualert'] == 1 And X_SCRIPT == 'index.php')) {
-            $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
-            if ($newu2unum == 1) {
-                $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';
+/* Finish HTML Templates */
+
+if ((X_ADMIN Or $SETTINGS['bbstatus'] == 'on') And (X_MEMBER Or $SETTINGS['regviewonly'] == 'off')) {
+
+    $links = array();
+
+    // Search-link
+    $searchlink = makeSearchLink();
+
+    // Faq-link
+    if ($SETTINGS['faqstatus'] == 'on') {
+        $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
+    }
+
+    // Memberlist-link
+    if ($SETTINGS['memliststatus'] == 'on') {
+        $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
+    }
+
+    // Today's posts-link
+    if ($SETTINGS['todaysposts'] == 'on') {
+        $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
+    }
+
+    // Stats-link
+    if ($SETTINGS['stats'] == 'on') {
+        $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
+    }
+
+    // 'Forum Rules'-link
+    if ($SETTINGS['bbrules'] == 'on') {
+        $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
+    }
+
+    $links = implode(' &nbsp; ', $links);
+
+    // Show all plugins
+    $pluglinks = array();
+    foreach($plugname as $plugnum => $item) {
+        if (!empty($plugurl[$plugnum]) && !empty($plugname[$plugnum])) {
+            if (trim($plugimg[$plugnum]) != '') {
+                $img = '&nbsp;<img src="'.$plugimg[$plugnum].'" border="0" alt="'.$plugname[$plugnum].'" />&nbsp;';
             } else {
-                $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert6'].'"; ';
+                $img = '';
             }
-            $newu2umsg .= "if (confirm(u2uAlertMsg)) { Popup('u2u.php', 'testWindow', 700, 450); } } setTimeout('u2uAlert();', 10);</script>";
+
+            if ($plugadmin[$plugnum] != true || X_ADMIN) {
+                $pluglinks[] = $img.'<a href="'.$plugurl[$plugnum].'"><font class="navtd">'.$plugname[$plugnum].'</font></a>&nbsp;';
+            }
+        }
+    }
+
+    if (count($pluglinks) == 0) {
+        $pluglink = '';
+    } else {
+        $pluglink = implode('&nbsp;', $pluglinks);
+    }
+
+    // create forum jump
+    if ($SETTINGS['quickjump_status'] == 'on') {
+        $quickjump = forumJump();
+    }
+
+    // check for new u2u's
+    if (X_MEMBER) {
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
+        $newu2unum = $db->result($query, 0);
+        $db->free_result($query);
+        if ($newu2unum > 0) {
+            $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
+            // Popup Alert
+            if ($self['u2ualert'] == 2 Or ($self['u2ualert'] == 1 And X_SCRIPT == 'index.php')) {
+                $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
+                if ($newu2unum == 1) {
+                    $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';
+                } else {
+                    $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert6'].'"; ';
+                }
+                $newu2umsg .= "if (confirm(u2uAlertMsg)) { Popup('u2u.php', 'testWindow', 700, 450); } } setTimeout('u2uAlert();', 10);</script>";
+            }
         }
     }
 }
