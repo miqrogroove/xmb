@@ -34,7 +34,7 @@ if (!defined('IN_CODE')) {
 $devname = 'Croatian-UTF8';
 
 // Meta Data
-$lang['charset'] = 'UTF8';
+$lang['charset'] = 'UTF-8';
 $lang['iso639'] = 'hr';
 $lang['language'] = 'Hrvatski';
 
