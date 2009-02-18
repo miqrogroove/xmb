@@ -30,6 +30,8 @@ define('X_SCRIPT', 'cp.php');
 require 'header.php';
 require ROOT.'include/admin.inc.php';
 
+header('X-Robots-Tag: noindex');
+
 loadtemplates('error_nologinsession');
 
 nav($lang['textcp']);

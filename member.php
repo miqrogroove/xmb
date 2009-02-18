@@ -312,7 +312,7 @@ switch($action) {
                 eval('$memberpage = "'.template('member_reg').'";');
             }
         } else {
-            $username = postedVar('username', '', TRUE, FALSE);
+            $username = trim(postedVar('username', '', TRUE, FALSE));
 
             if (strlen($username) < 3 || strlen($username) > 32) {
                 error($lang['username_length_invalid']);
@@ -335,7 +335,7 @@ switch($action) {
                 error($lang['restricted']);
             }
 
-            $username = postedVar('username');
+            $username = trim(postedVar('username'));
 
             if ($SETTINGS['ipreg'] != 'off') {
                 $time = $onlinetime-86400;
@@ -578,7 +578,7 @@ switch($action) {
 
             if ($SETTINGS['emailcheck'] == 'on') {
                 $translate = $lang2[$langfilenew];
-                $username = postedVar('username', '', FALSE, FALSE);
+                $username = trim(postedVar('username', '', FALSE, FALSE));
                 $headers = array();
                 $headers[] = "From: $bbname <$adminemail>";
                 $headers[] = 'X-Mailer: PHP';
@@ -588,7 +588,7 @@ switch($action) {
                 $headers = implode("\r\n", $headers);
                 altMail($rawemail, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url", $headers);
             } else {
-                $username = postedVar('username', '', TRUE, FALSE);
+                $username = trim(postedVar('username', '', TRUE, FALSE));
                 $currtime = $onlinetime + (86400*30);
                 put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
                 put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
