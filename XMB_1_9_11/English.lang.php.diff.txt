@@ -73,11 +73,9 @@ Index: English.lang.php
 +$lang['generic_missing'] = 'The item you requested could not be found.';
 -$lang['hottopic'] = "more than $hottopic replies";
 +$lang['hottopiceval'] = "\$lang['hottopic'] = \"more than \$hottopic replies\";";
--$lang['ipreg'] = "Allow maximum 1 user to register per ip per day?";
 +$lang['imgdiradm'] = "Admin Image Directory:";
 +$lang['ipbandisable'] = "Disable IP Banning";
 +$lang['ipbanenable'] = "Enable IP Banning";
-+$lang['ipreg'] = "Allow maximum 1 user to register per ip per day?";
 +$lang['langimportfail'] = "The language could not be imported.";
 +$lang['langimportsuccess'] = "The language imported successfully.";
 -$lang['last50today'] = "Last $onlinetodaycount Members Who Have Visited Today (if applicable)";
@@ -100,12 +98,10 @@ Index: English.lang.php
 +$lang['modlog_untop'] = "Thread Untopped";
 +$lang['movetodb'] = 'Move to Database';
 +$lang['movetodisk'] = 'Move to Disk';
--$lang['no_templates'] = "templates.xmb was not found.";
 -$lang['noadminsession2'] = "Welcome to the administration control panel, currently running $bbname.";
 +$lang['noadminsession2'] = "Welcome to the administration control panel, currently running.";
 -$lang['noadminsession4'] = "If you still have issues logging in, please contact the board <strong><a href=\"mailto:$adminemail?subject=Admin Login Failure At $bbname\">webmaster</a></strong>";
 +$lang['noadminsession4'] = "If you still have issues logging in, please contact the board webmaster.";
-+$lang['no_templates'] = "templates.xmb was not found.";
 +$lang['no_url_fopen'] = "This feature has been disabled by the allow_url_fopen directive in your server's PHP configuration.";
 +$lang['o_polls_found'] = " orphaned polls found and deleted.";
 +$lang['o_poll_submit'] = "Delete all orphaned polls";
