@@ -1808,8 +1808,12 @@ if ($action == "members") {
             }
 
             if ($delete == $mem['uid'] && $delete != $self['uid'] && $delete != $sa_uid) {
+                $dbname = $db->escape_var($mem['username']);
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
-                $db->query("UPDATE ".X_PREFIX."whosonline SET username='Anonymous' WHERE username='".$db->escape_var($mem['username'])."'");
+                $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='$dbname'");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$dbname'");
+                $db->query("DELETE FROM ".X_PREFIX."u2u WHERE owner='$dbname'");
+                $db->query("UPDATE ".X_PREFIX."whosonline SET username='xguest123' WHERE username='$dbname'");
             } else {
                 $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
             }

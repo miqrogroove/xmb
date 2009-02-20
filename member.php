@@ -360,6 +360,11 @@ switch($action) {
                 $db->free_result($query);
                 error($lang['alreadyreg']);
             }
+            
+            $postcount = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$username'"), 0);
+            if (intval($postcount) > 0) {
+                error($lang['alreadyreg']);
+            }
 
             if ($SETTINGS['emailcheck'] == 'on') {
                 $password = '';

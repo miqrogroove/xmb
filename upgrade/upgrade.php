@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -1019,7 +1019,7 @@ Public License instead of this License.  But first, please read
         // more, make it more.
         show_act('Extending script timeout to 300 seconds.');
         if (!ini_get('safe_mode')) {
-            set_time_limit(300);
+            @set_time_limit(300);
             show_result(X_INST_OK);
         } else {
             show_result(X_INST_WARN);
