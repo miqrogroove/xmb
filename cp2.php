@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -2291,8 +2291,8 @@ if ($action == "modlog") {
     <td bgcolor="<?php echo $bordercolor?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
-    <td><strong><font color="<?php echo $cattext?>">Username:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">Time:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']; ?>:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['texttime']; ?></font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">URL:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
     </tr>
@@ -2415,11 +2415,11 @@ if ($action == "cplog") {
     <td bgcolor="<?php echo $bordercolor?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
-    <td><strong><font color="<?php echo $cattext?>">Username:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">Time:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']; ?>:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['texttime']; ?></font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">URL:</font></strong></td>
     <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">Ip:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']; ?>:</font></strong></td>
     </tr>
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
