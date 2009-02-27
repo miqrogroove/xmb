@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -477,6 +477,11 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     if ($file['name'] == 'none' Or empty($file['name']) Or !is_uploaded_file($file['tmp_name'])) {
         $filetype = X_EMPTY_UPLOAD;
         return FALSE;
+    }
+    
+    if (!is_readable($file['tmp_name'])) {
+        header('HTTP/1.0 500 Internal Server Error');
+        exit('Fatal Error: XMB does not have read permission in the upload_tmp_dir. This is a PHP server security fault.');
     }
 
     $file['name'] = trim($file['name']);
