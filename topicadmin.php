@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -310,7 +310,7 @@ switch($action) {
                 $tids = array();
                 $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid IN ($csv)");
                 while ($info = $db->fetch_array($query)) {
-                    if (substr($row['closed'], 0, 5) != 'moved') {
+                    if (substr($info['closed'], 0, 5) != 'moved') {
                         //Insert all thread redirectors.
                         $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape_var($info['subject'])."', '', '".$db->escape_var($info['lastpost'])."', 0, 0, '".$db->escape_var($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
                         $ntid = $db->insert_id();
@@ -339,7 +339,11 @@ switch($action) {
                     updateforumcount($fup['fid']);
                 }
                 if ($movetorow['type'] == 'sub') {
-                    if ($movetorow['fup'] != $fup['fid']) {
+                    $doupdate = TRUE;
+                    if (isset($fup['fid'])) {
+                        $doupdate = ($movetorow['fup'] != $fup['fid']);
+                    }
+                    if ($doupdate) {
                         updateforumcount($movetorow['fup']);
                     }
                 }
@@ -644,7 +648,11 @@ switch($action) {
                 updateforumcount($fup['fid']);
             }
             if ($otherthread['type'] == 'sub') {
-                if ($otherthread['fup'] != $fup['fid']) {
+                $doupdate = TRUE;
+                if (isset($fup['fid'])) {
+                    $doupdate = ($otherthread['fup'] != $fup['fid']);
+                }
+                if ($doupdate) {
                     updateforumcount($otherthread['fup']);
                 }
             }
