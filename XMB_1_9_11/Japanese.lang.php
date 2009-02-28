@@ -357,7 +357,7 @@ $lang['guestpostingonmsg'] = "<br />匿名のポストはフォーラムで許�
 $lang['gzipcompression'] = "gzipページ圧縮を使用<br /><span class=\"smalltxt\">PHP 4.0.4以上が必要です。</span>";
 $lang['helpbar'] = "ヘルプ";
 $lang['hidden'] = "見えない";
-$lang['hottopiceval'] = "\$lang['hottopic'] = \"以上の\$hottopicつの返事\";";
+$lang['hottopiceval'] = "\$lang['hottopic'] = \"以上の{\$hottopic}つの返事\";";
 $lang['ignorelist'] = "無視リスト";
 $lang['ignoremsg'] = "無視リスト:<br /><span class=\"smalltxt\">ユーザー名をコンマで離す (例 \"人１, 人２,\"). 最後のユーザー名コンマの後を入力しなくてはいけません。</span>";
 $lang['ignoreupdate'] = "無視するリストは首尾よく更新しました!";
@@ -385,7 +385,7 @@ $lang['ipwarning'] = "<br /><strong>警告!</strong> あなたのIPアドレス�
 $lang['key'] = 'キー:';
 $lang['langimportfail'] = "言語はインポートすることはできません。";
 $lang['langimportsuccess'] = "言語は首尾よくインポートしました。";
-$lang['last50todayeval'] = "\$lang['last50today'] = \"今日は最後の　\$onlinetodaycountつのユーザーが訪れた（妥当な場合）\";";
+$lang['last50todayeval'] = "\$lang['last50today'] = \"今日は最後の　{\$onlinetodaycount}つのユーザーが訪れた（妥当な場合）\";";
 $lang['lastactive'] = "最後のアクティブな:";
 $lang['lastreply1'] = "オン";
 $lang['lastsadmin'] = "今すぐ最後のスーパー管理者を下げようとしました。このは危険物です。下げるなら、もはや誰かのステータスをスーパー管理者に戻ることはできません。";
@@ -1241,7 +1241,7 @@ $lang['whocanpost22'] = "管理者は返事することを許します。";
 $lang['whocanpost23'] = "管理者とモデレイターは返事することを許します。";
 $lang['whocanpost24'] = "返事は許されません。";
 $lang['whoodump_confirm'] = '本当に「誰がオンライン」を整理したいですか？';
-$lang['whosoneval'] = '$lang["whosonmsg"] = "現在、$guestnと$membernと$hiddennが$bbnameを閲覧します。";';
+$lang['whosoneval'] = '$lang["whosonmsg"] = "現在、{$guestn}と{$membern}と{$hiddenn}が{$bbname}を閲覧します。";';
 $lang['whosonline'] = "誰がオンライン";
 $lang['whosonlinetoday'] = "今日誰がオンライン";
 $lang['whosonline_on'] = "インデックスのステータスに誰がオンライン:";
