@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 5 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -45,10 +45,10 @@ $versionshort = '1.9.11';
 $versiongeneral = 'XMB 1.9.11';
 $copyright = '2001-2009';
 $alpha = '';
-$beta = 'Beta 4';
+$beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20090217;
+$versionbuild = 20090228;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -412,6 +412,7 @@ if ($SETTINGS['ip_banning'] == 'on') {
     $result = $db->num_rows($query);
     $db->free_result($query);
     if ($result > 0) {
+        // Block all non-admins
         $serror = 'ip';
     }
 }

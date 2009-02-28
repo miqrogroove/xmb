@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
