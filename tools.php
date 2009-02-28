@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11 Beta 4 - This software should not be used for any purpose after 28 February 2009.
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2009, The XMB Group
@@ -67,10 +67,11 @@ switch($action) {
         $db->query($sql);
 
         $sql = "UPDATE ".X_PREFIX."forums AS f "
-             . " INNER JOIN (SELECT fup, SUM(threads) AS tcount, SUM(posts) AS pcount FROM ".X_PREFIX."forums GROUP BY fup) AS query2 ON f.fid=query2.fup "
-             . " INNER JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query3 ON f.fid=query3.fid "
-             . " INNER JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query4 ON f.fid=query4.fid "
-             . "SET f.threads = query2.tcount + query3.tcount, f.posts = query2.pcount + query4.pcount "
+             . " LEFT JOIN (SELECT fup, SUM(threads) AS tcount, SUM(posts) AS pcount FROM ".X_PREFIX."forums GROUP BY fup) AS query2 ON f.fid=query2.fup "
+             . " LEFT JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query3 ON f.fid=query3.fid "
+             . " LEFT JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query4 ON f.fid=query4.fid "
+             . "SET f.threads = IFNULL(query2.tcount, 0) + IFNULL(query3.tcount, 0), "
+             . "    f.posts   = IFNULL(query2.pcount, 0) + IFNULL(query4.pcount, 0) "
              . "WHERE f.type = 'forum'";
         $db->query($sql);
 
