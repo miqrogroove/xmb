@@ -513,10 +513,12 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         $message = nl2br($message);
 
         $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $message);
-        for($i = 0; $i < sizeof($messagearray); $i++) {
-            if ($i % 2 == 0) {
-                $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
-            } // else inside nobr block
+        if ($wrap == "yes") {
+            for($i = 0; $i < sizeof($messagearray); $i++) {
+                if ($i % 2 == 0) {
+                    $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
+                } // else inside nobr block
+            }
         }
         $message = implode("", $messagearray);
 
@@ -526,7 +528,9 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             smile($message);
         }
         $message = nl2br($message);
-        $message = wordwrap($message, 150, "\n", TRUE);
+        if ($wrap == "yes") {
+            $message = wordwrap($message, 150, "\n", TRUE);
+        }
     }
 
     $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
