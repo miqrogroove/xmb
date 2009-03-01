@@ -1267,40 +1267,42 @@ switch($action) {
 
             // Fill $attachment
             $attachment = '';
-            $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid=$pid AND a.parentid=0");
-            $counter = 0;
             $files = array();
-            while ($attach = $db->fetch_array($query)) {
-                $files[] = $attach;
-                $postinfo['aid'] = $attach['aid'];
-                $postinfo['downloads'] = $attach['downloads'];
-                $postinfo['filename'] = attrOut($attach['filename']);
-                $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
-                $postinfo['url'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
-                eval('$attachment .= "'.template('post_edit_attachment').'";');
-                if ($bBBcodeOnForThisPost) {
-                    $bbcode = "[file]{$attach['aid']}[/file]";
-                    if (strpos($postinfo['message'], $bbcode) === FALSE) {
-                        if ($counter == 0 Or $attach['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
-                            $postinfo['message'] .= "\r\n\r\n";
+            if ($forum['attachstatus'] == 'on') {
+                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid=$pid AND a.parentid=0");
+                $counter = 0;
+                while ($attach = $db->fetch_array($query)) {
+                    $files[] = $attach;
+                    $postinfo['aid'] = $attach['aid'];
+                    $postinfo['downloads'] = $attach['downloads'];
+                    $postinfo['filename'] = attrOut($attach['filename']);
+                    $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
+                    $postinfo['url'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
+                    eval('$attachment .= "'.template('post_edit_attachment').'";');
+                    if ($bBBcodeOnForThisPost) {
+                        $bbcode = "[file]{$attach['aid']}[/file]";
+                        if (strpos($postinfo['message'], $bbcode) === FALSE) {
+                            if ($counter == 0 Or $attach['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
+                                $postinfo['message'] .= "\r\n\r\n";
+                            }
+                            $postinfo['message'] .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
+                            $counter++;
+                            $prevsize = $attach['img_size'];
                         }
-                        $postinfo['message'] .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
-                        $counter++;
-                        $prevsize = $attach['img_size'];
                     }
                 }
+                $maxtotal = phpShorthandValue('post_max_size');
+                if ($maxtotal > 0) {
+                    $lang['attachmaxtotal'] .= ' '.getSizeFormatted($maxtotal);
+                } else {
+                    $lang['attachmaxtotal'] = '';
+                }
+                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                if ($maxuploads > 0) {
+                    eval('$attachment .= "'.template("post_attachmentbox").'";');
+                }
+                $db->free_result($query);
             }
-            $maxtotal = phpShorthandValue('post_max_size');
-            if ($maxtotal > 0) {
-                $lang['attachmaxtotal'] .= ' '.getSizeFormatted($maxtotal);
-            } else {
-                $lang['attachmaxtotal'] = '';
-            }
-            $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
-            if ($maxuploads > 0) {
-                eval('$attachment .= "'.template("post_attachmentbox").'";');
-            }
-            $db->free_result($query);
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
             $subject = rawHTMLsubject($postinfo['subject']);
