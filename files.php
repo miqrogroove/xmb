@@ -104,7 +104,7 @@ $db->free_result($query);
 if ($pid > 0 Or $file['fid'] != '') {
     $forum = getForum($file['fid']);
 
-    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || $forum['attachstatus'] != 'on') {
+    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' And !X_ADMIN)) {
         fileError();
     }
 

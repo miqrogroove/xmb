@@ -1210,6 +1210,7 @@ switch($action) {
 
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid=$pid");
             } else {
+                require_once('include/attach.inc.php');
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape_var($orig['author'])."'");
                 deleteAllAttachments($pid);

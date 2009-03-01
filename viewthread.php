@@ -743,23 +743,27 @@ if ($action == '') {
     end_time();
     eval('$footer = "'.template('footer').'";');
     echo $header.$viewthread.$footer;
-    exit();
-} else if ($action == 'attachment' && $forum['attachstatus'] == 'on' && $pid > 0 && $tid > 0) {
-    // Try to validate $pid
-    $query = $db->query("SELECT aid, filename FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.pid=$pid AND a.parentid=0 AND p.tid='$tid' ORDER BY aid LIMIT 1");
-    if ($db->num_rows($query) == 1) {
-        $file = $db->fetch_array($query);
-        $db->free_result($query);
-        require('include/attach.inc.php');
-        $url = getAttachmentURL($file['aid'], $pid, $file['filename'], FALSE);
-        header('HTTP/1.0 301 Moved Permanently');
-        header('Location: '.$url);
-        exit();
-    } else {
+} else if ($action == 'attachment') {
+    // Validate action
+    if (!($forum['attachstatus'] == 'on' And $pid > 0 And $tid > 0)) {
         header('HTTP/1.0 404 Not Found');
-        eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
+
+    // Validate PID and TID
+    $query = $db->query("SELECT aid, filename FROM ".X_PREFIX."attachments AS a INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE a.pid=$pid AND a.parentid=0 AND p.tid=$tid ORDER BY aid LIMIT 1");
+    if ($db->num_rows($query) != 1) {
+        header('HTTP/1.0 404 Not Found');
+        error($lang['textnothread']);
+    }
+
+    // Redirect to new URL
+    $file = $db->fetch_array($query);
+    $db->free_result($query);
+    require('include/attach.inc.php');
+    $url = getAttachmentURL($file['aid'], $pid, $file['filename'], FALSE);
+    header('HTTP/1.0 301 Moved Permanently');
+    header('Location: '.$url);
 } else if ($action == 'printable') {
     $threadlink = "viewthread.php?tid=$tid";
 
@@ -801,5 +805,8 @@ if ($action == '') {
     }
     $db->free_result($querypost);
     eval('echo "'.template('viewthread_printable').'";');
+} else {
+    header('HTTP/1.0 404 Not Found');
+    error($lang['textnoaction']);
 }
 ?>
