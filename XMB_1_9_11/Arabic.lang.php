@@ -358,7 +358,7 @@ $lang['guestpostingonmsg'] = "<br />„‘«—ﬂ«  «·“Ê«— „”„ÊÕ »Â« ›Ì Â–« «·„‰ œÏ<br /
 $lang['gzipcompression'] = "«” Œœ«„ Gzip ÷€ÿ «·’›Õ« :<br /><small>Ì ÿ·»Â« PHP 4.0.4 √Ê √⁄·Ï</small>";
 $lang['helpbar'] = "«·„”«⁄œ…";
 $lang['hidden'] = "„Œ›Ì";
-$lang['hottopiceval'] = "\$lang['hopttopic'] = \"√ﬂÀ— „‰ \$hottopic —œ\";";
+$lang['hottopiceval'] = "\$lang['hottopic'] = \"√ﬂÀ— „‰ \$hottopic —œ\";";
 $lang['ignorelist'] = "ﬁ«∆„… «· Ã«Â·";
 $lang['ignoremsg'] = "ﬁ«∆„… «· Ã«Â·:<br /><small> ›Ì Õ«·… ÊÃÊœ ⁄œ… «”„«¡ („À«·: \"«·«”„ «·√Ê·, «·«”„ «·À«‰Ì,\") √÷› ›«’·… »⁄œ ﬂ· «”„ Ê √ﬂœ „‰ ≈÷«›… ›«’·… »⁄œ «·«”„ «·√ŒÌ—.</small>";
 $lang['ignoreupdate'] = " „  ÕœÌÀ ﬁ«∆„… «· Ã«Â· »‰Ã«Õ!";
