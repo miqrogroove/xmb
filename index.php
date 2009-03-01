@@ -52,13 +52,15 @@ $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
     $contents = '';
     $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $SETTINGS['tickercontents']));
+    $counter = 0;
     for($i=0;$i<count($news);$i++) {
         if (strlen(trim($news[$i])) == 0) {
             continue;
         }
 
         $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'yes', 'no')));
-        $contents .= "\tcontents[$i]='$news[$i]';\n";
+        $contents .= "\tcontents[$counter]='{$news[$i]}';\n";
+        $counter++;
     }
     eval('$ticker = "'.template('index_ticker').'";');
 }
