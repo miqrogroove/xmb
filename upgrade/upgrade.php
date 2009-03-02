@@ -1012,6 +1012,14 @@ Public License instead of this License.  But first, please read
             }
         }
         
+        require '../include/debug.inc.php';
+        $array = parse_url($full_url);
+        if (!isset($array['path'])) {
+            $array['path'] = '/';
+        }
+        debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
+        unset($array);
+
         define('X_PREFIX', $tablepre);
         require ROOT."db/$database.php";
 
@@ -1108,11 +1116,6 @@ Public License instead of this License.  But first, please read
             error('Incorrect Configuration', 'Most likely, config.php has not been correctly configured for database name, user or password. Please check these details.', false);
         }
 
-        if ($tablepre == 'TABLEPRE') {
-            show_result(X_INST_ERR);
-            error('Incorrect Configuration', 'config.php has not been correctly configured for $tablepre. Please change $tablepre to your preferred table prefix (usually \'xmb_\')', true);
-        }
-
         $mysqlver = 0;
 
         switch($database) {
@@ -1141,15 +1144,6 @@ Public License instead of this License.  But first, please read
                 break;
         }
 
-        show_act('Checking Full Url Compliance');
-        // let's check the $full_url :)
-        if (@file($full_url.'header.php') === false) {
-            show_result(X_INST_WARN);
-            error('Configuration Notice', 'XMB could not verify that you have your $full_url correctly configured. If this is configured wrong, it will silently prevent logging in later on in the process.', false);
-        } else {
-            show_result(X_INST_OK);
-        }
-
         // do the work! :)
         show_act('Starting upgrade.');
         show_result(X_INST_OK);
@@ -1161,11 +1155,6 @@ Public License instead of this License.  But first, please read
         require './upgrade.lib.php';
 
         show_act('Opening XMB Upgrade Template');
-        if ($tablepre == 'TABLEPRE') {
-            show_result(X_INST_ERR);
-            error('Incorrect Configuration', '$tablepre is not configured in config.php. Please configure and try again.', true);
-        }
-
         $u = new Upgrade($db, XMB_UPGRADE_FILE, $tablepre);
         if ($u) {
             $tbl = $u->getTablesByTablepre($u->tablepre);
