@@ -185,11 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' And isset($_SERVER['HTTP_IF_MODIFIED_SIN
 $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$aid");
 
 // Set response headers
-$type = strtolower($file['filetype']);
-$type = ($type == 'text/html') ? 'text/plain' : $type;
 if ($file['img_size'] == '') {
+    $type = 'application/binary';
     $dispositionType = 'attachment';
 } else {
+    $type = strtolower($file['filetype']);
     $dispositionType = 'inline';
 }
 
