@@ -691,9 +691,8 @@ if ($action == '') {
         error($lang['filecorrupt']);
     }
 
-    $type = strtolower($file['filetype']);
     $size = (int) $file['filesize'];
-    $type = ($type == 'text/html') ? 'text/plain' : $type;
+    $type = 'application/binary';
 
     header("Content-type: $type");
     header("Content-length: $size");
