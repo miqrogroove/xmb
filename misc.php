@@ -426,8 +426,27 @@ switch($action) {
         }
 
         if (count($ext) > 0) {
-            $ext = '&amp;'.implode('&amp;', $ext);
+            $params = '&amp;'.implode('&amp;', $ext);
+
+            if ($ext[0] == 'desc=desc') {
+                array_shift($ext);
+                $sflip = '';
+            } else {
+                $sflip = '&amp;desc=desc';
+            }
+            if (count($ext) > 0) {
+                if (substr($ext[0], 0, 6) == 'order=') {
+                    $sflip .= '&amp;'.array_shift($ext);
+                }
+            }
+            if (count($ext) > 0) {
+                $ext = '&amp;'.implode('&amp;', $ext);
+            } else {
+                $ext = '';
+            }
         } else {
+            $params = '';
+            $sflip = '&amp;desc=desc';
             $ext = '';
         }
 
@@ -435,7 +454,7 @@ switch($action) {
         $q = implode(' AND', $where);
         $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
         $canonical = 'misc.php?action=list';
-        $baseurl = $canonical.$ext;
+        $baseurl = $canonical.$params;
         $mpage = multipage($num, $memberperpage, $baseurl, $canonical);
         $multipage =& $mpage['html'];
         if (strlen($mpage['html']) != 0) {
@@ -493,10 +512,8 @@ switch($action) {
         }
 
         if (strtolower($desc) == 'desc') {
-            $init['ascdesc'] = 'asc';
             $ascdesc = $lang['asc'];
         } else {
-            $init['ascdesc'] = 'desc';
             $ascdesc = $lang['desc'];
         }
         eval('$memlist = "'.template($misc_mlist_template).'";');

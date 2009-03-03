@@ -3073,12 +3073,12 @@ $header
 <td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]$ext"><strong>$ascdesc</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username$ext"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status$ext"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location$ext"><strong>{$lang['location']}</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list$ext"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;desc=desc&amp;order=postnum$ext"><strong>$lang[textpostnum]</strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list$sflip$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
@@ -3125,12 +3125,12 @@ $multipage
 <td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username"><strong>$lang[textalpha]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status"><strong>$lang[status]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location"><strong>{$lang['location']}</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list"><strong>$lang[textregdate]</strong></a></td>
-<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=postnum&amp;desc=desc"><strong>$lang[textpostnum]</strong></a></td>
-<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list&amp;desc=$init[ascdesc]$ext"><strong>$ascdesc</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=username$ext"><strong>$lang[textalpha]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=status$ext"><strong>$lang[status]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;order=location$ext"><strong>{$lang['location']}</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list$ext"><strong>$lang[textregdate]</strong></a></td>
+<td bgcolor="$altbg2"><a href="misc.php?action=list&amp;desc=desc&amp;order=postnum$ext"><strong>$lang[textpostnum]</strong></a></td>
+<td bgcolor="$altbg2" width="10%"><a href="misc.php?action=list$sflip$ext"><strong>$ascdesc</strong></a></td>
 </tr>
 </table>
 </td>
