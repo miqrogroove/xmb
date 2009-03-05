@@ -116,7 +116,6 @@ function error($head, $msg, $die=true) {
     echo '<h1 class="progressErr">'.$head.'</h1>';
     echo '<span class="progressWarn">'.$msg.'</span><br />';
     echo "\n";
-    ob_flush();
     if ($die) {
         echo '
             </div>
@@ -139,7 +138,6 @@ function error($head, $msg, $die=true) {
 function show_act($act) {
     $act .= str_repeat('.', (75-strlen($act)));
     echo '<span class="progress">'.$act;
-    ob_flush();
 }
 
 function show_result($type) {
@@ -158,7 +156,6 @@ function show_result($type) {
             break;
     }
     echo "</span>\n";
-    ob_flush();
 }
 
 define('ROOT', '../');
@@ -1012,6 +1009,7 @@ Public License instead of this License.  But first, please read
             }
         }
         
+        $versionlong = '';
         require '../include/debug.inc.php';
         $array = parse_url($full_url);
         if (!isset($array['path'])) {

@@ -1274,6 +1274,7 @@ Public License instead of this License.  But first, please read
             }
         }
         
+        $versionlong = '';
         require '../include/debug.inc.php';
         $array = parse_url($full_url);
         if (!isset($array['path'])) {
