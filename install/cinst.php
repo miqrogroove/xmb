@@ -744,10 +744,15 @@ $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Administrator', -1, 8, 8, 'y
 $db->query("INSERT INTO ".$tablepre."ranks VALUES ('Super Administrator', -1, 9, 9, 'yes', '');");
 show_result(X_INST_OK);
 
+// Reminder: Columns without explicit default values must be set on insert for STRICT_ALL_TABLES mode compatibility.
 show_act("Inserting data into ".$tablepre."settings");
 $db->query(
  "INSERT INTO ".$tablepre."settings "
-."SET siteurl = '$full_url', "
+."SET bboffreason = '', "
+    ."bbrulestxt = '', "
+    ."files_storage_path = '', "
+    ."files_virtual_url = '', "
+    ."siteurl = '$full_url', "
     ."tickercontents = '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.'"
 );
 show_result(X_INST_OK);
