@@ -273,10 +273,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     } else {
         $dbfile = '';
         $subdir = getNewSubdir();
-        $path = getFullPathFromSubdir($subdir);
-        if (!is_dir($path)) {
-            mkdir($path, 0777, TRUE);
-        }
+        $path = getFullPathFromSubdir($subdir, TRUE);
     }
     $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$dbfilename', '$dbfiletype', $dbfilesize, '$dbfile', {$self['uid']}, '$sqlsize', '$subdir')");
     $dbfile = '';
@@ -596,9 +593,10 @@ function getNewSubdir($date='') {
  * A trailing forward-slash is guaranteed in the return value.
  *
  * @param string $subdir The name typically has no leading or trailing slashes, e.g. 'dir1' or 'dir2/sub3'
+ * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created in a PHP4-compatible manner.
  * @return string|bool FALSE if the file storage path is empty.
  */
-function getFullPathFromSubdir($subdir) {
+function getFullPathFromSubdir($subdir, $mkdir = FALSE) {
     global $SETTINGS;
     $path = $SETTINGS['files_storage_path'];
     if (strlen($path) == 0) {
@@ -607,9 +605,21 @@ function getFullPathFromSubdir($subdir) {
     if (substr($path, -1) != '/') {
         $path .= '/';
     }
-    $path .= $subdir;
-    if (substr($path, -1) != '/') {
-        $path .= '/';
+    if ($mkdir) {
+        $dirs = explode('/', $subdir);
+        foreach($dirs as $value) {
+            if (strlen($value) != 0) {
+                $path .= $value.'/';
+                if (!is_dir($path)) {
+                    mkdir($path, 0777);
+                }
+            }
+        }
+    } else {
+        $path .= $subdir;
+        if (substr($path, -1) != '/') {
+            $path .= '/';
+        }
     }
     return $path;
 }
@@ -785,13 +795,10 @@ function regenerateThumbnail($aid, $pid) {
             return FALSE;
         }
         $subdir = getNewSubdir($attach['updatestamp']);
-        $path = getFullPathFromSubdir($subdir);
+        $path = getFullPathFromSubdir($subdir, TRUE);
         if ($path === FALSE) {
             $path = getTempFile();
         } else {
-            if (!is_dir($path)) {
-                mkdir($path, 0777, TRUE);
-            }
             $newfilename = $aid;
             $path .= $newfilename;
         }
