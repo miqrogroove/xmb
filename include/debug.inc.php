@@ -54,7 +54,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ($hostsetting != $host And $host != 'www'.$hostsetting) {
+    if ($hostsetting != $host And $host != 'www'.$hostsetting And $hostsetting != '') {
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
