@@ -50,7 +50,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
             $secure = TRUE;
         }
     }
-    $host = $_SERVER['HTTP_HOST'];
+    $host = substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':'));
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
@@ -67,7 +67,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     }
 
     if (!$success) {
-        header('HTTP/1.0 500 Internal Server Error');
+        if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
         exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
     }
 }
