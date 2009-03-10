@@ -158,7 +158,7 @@ function disableButton() {
         break;
     default:
         echo 'Unrecognized Database!<br />'
-            .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prvent damage.<br />';
+            .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.<br />';
         trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
         break;
     }

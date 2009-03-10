@@ -762,7 +762,12 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
         }
         $matches = 0;
         if ($bBBcodeOnForThisPost) {
-            $message = preg_replace('@\\[file]'.$attach['aid'].'\\[/file]@', $output, $message, 1, $matches);
+            $find = "[file]{$attach['aid']}[/file]";
+            $pos = strpos($message, $find);
+            if ($pos !== FALSE) {
+                $matches = 1;
+                $message = substr($message, 0, $pos).$output.substr($message, $pos + strlen($find));
+            }
         }
         if ($matches == 0) {
             $message .= $prefix.$output.$seperator; // Do we need some sort of a seperator template here?
