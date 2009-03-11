@@ -465,7 +465,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         // Balance [rquote] tags.
         $rquotecount1 = 0;
         $rquotecount2 = 0;
-        $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
+        $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@si";
         $rquotecount1 = preg_match_all($pattern, $message, $matches);
         $pattern = "@\\[/rquote]@si";
         $rquotecount2 = preg_match_all($pattern, $message, $matches);
@@ -602,7 +602,7 @@ function bbcode(&$message, $allowimgcode) {
     $patterns = array();
     $replacements = array();
 
-    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=(.+?)]@si";
+    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@si";
     $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
     $patterns[] = "@\\[/rquote]@si";
     $replacements[] = ' </td></tr></table><font class="mediumtxt">';
