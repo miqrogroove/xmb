@@ -1557,14 +1557,14 @@ function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...') 
 }
 
 function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
-    global $self, $SETTINGS, $timeoffset, $addtime;
+    global $dateformat, $SETTINGS, $timeoffset, $addtime;
 
     if ($timestamp === null) {
         $timestamp = time();
     }
 
     if ($altFormat === null) {
-        $altFormat = $self['dateformat'];
+        $altFormat = $dateformat;
     }
 
     $f = false;
@@ -1632,7 +1632,7 @@ function MakeTime() {
        }
    }
 
-   return call_user_func_array("mktime", $objArgs) + $nOffset;
+   return call_user_func_array("gmmktime", $objArgs) + $nOffset;
 }
 
 function iso8601_date($year=0, $month=0, $day=0) {
