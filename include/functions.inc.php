@@ -1597,19 +1597,18 @@ function MakeTime() {
    $objArgs = func_get_args();
    $nCount = count($objArgs);
    if ($nCount < 7) {
-       $objDate = getdate();
        if ($nCount < 1) {
-           $objArgs[] = $objDate['hours'];
+           $objArgs[] = intval(gmdate('G'));
        } else if ($nCount < 2) {
-           $objArgs[] = $objDate['minutes'];
+           $objArgs[] = intval(gmdate('i'));
        } else if ($nCount < 3) {
-           $objArgs[] = $objDate['seconds'];
+           $objArgs[] = intval(gmdate('s'));
        } else if ($nCount < 4) {
-           $objArgs[] = $objDate['mon'];
+           $objArgs[] = intval(gmdate('n'));
        } else if ($nCount < 5) {
-           $objArgs[] = $objDate['mday'];
+           $objArgs[] = intval(gmdate('j'));
        } else if ($nCount < 6) {
-           $objArgs[] = $objDate['year'];
+           $objArgs[] = intval(gmdate('Y'));
        } else if ($nCount < 7) {
            $objArgs[] = -1;
        }
