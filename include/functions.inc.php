@@ -1598,7 +1598,7 @@ function MakeTime() {
    $nCount = count($objArgs);
    if ($nCount < 7) {
        if ($nCount < 1) {
-           $objArgs[] = intval(gmdate('G'));
+           $objArgs[] = intval(gmdate('H'));
        } else if ($nCount < 2) {
            $objArgs[] = intval(gmdate('i'));
        } else if ($nCount < 3) {
@@ -1609,8 +1609,6 @@ function MakeTime() {
            $objArgs[] = intval(gmdate('j'));
        } else if ($nCount < 6) {
            $objArgs[] = intval(gmdate('Y'));
-       } else if ($nCount < 7) {
-           $objArgs[] = -1;
        }
    }
 
@@ -1622,9 +1620,6 @@ function MakeTime() {
        } else if ($nYear < 1952) {
            $nOffset = -2650838400;
            $objArgs[5] += 84;
-           if ($nYear < 1942) {
-               $objArgs[6] = 0;
-           }
        } else {
            $nOffset = -883612800;
            $objArgs[5] += 28;
