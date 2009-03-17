@@ -226,6 +226,13 @@ if (noSubmit('editsubmit')) {
     eval('$editpage = "'.template('admintool_editprofile').'";');
 } else {
     $status = postedVar('status');
+    $origstatus = $member['status'];
+    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
+    $sa_count = $db->result($query, 0);
+    $db->free_result($query);
+    if ($origstatus == 'Super Administrator' And $status != 'Super Administrator' And $sa_count == 1) {
+        error($lang['lastsadmin']);
+    }
     $cusstatus = postedVar('cusstatus', '', FALSE);
     $langfilenew = postedVar('langfilenew');
     $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");

@@ -1728,9 +1728,15 @@ if ($action == "members") {
                 } else {
                     $pending = '';
                 }
+                
+                if ($member['status'] == 'Super Administrator') {
+                    $disabledelete = ' disabled="disabled"';
+                } else {
+                    $disabledelete = '';
+                }
                 ?>
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>" /></td>
+                <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>"<?php echo $disabledelete; ?> /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo recodeOut($member['username']); ?>"><?php echo $member['username']?></a>
                 <?php if (X_SADMIN) { ?>
                 <br /><a href="editprofile.php?user=<?php echo recodeOut($member['username']); ?>"><strong><?php echo $lang['admin_edituseraccount']; ?></strong></a>
@@ -1777,8 +1783,8 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        $query = $db->query("SELECT MIN(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-        $sa_uid = $db->result($query, 0);
+        $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
+        $sa_count = $db->result($query, 0);
         $db->free_result($query);
 
         $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
@@ -1792,6 +1798,9 @@ if ($action == "members") {
 
             if (!X_SADMIN && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
                 continue;
+            }
+            if ($origstatus == 'Super Administrator' And $status != 'Super Administrator' And $sa_count == 1) {
+                error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
             }
 
             $banstatus = postedVar('banstatus'.$mem['uid']);
@@ -1807,7 +1816,7 @@ if ($action == "members") {
                 }
             }
 
-            if ($delete == $mem['uid'] && $delete != $self['uid'] && $delete != $sa_uid) {
+            if ($delete == $mem['uid'] && $delete != $self['uid'] && $origstatus != "Super Administrator") {
                 $dbname = $db->escape_var($mem['username']);
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
                 $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='$dbname'");
