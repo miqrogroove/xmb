@@ -1783,12 +1783,26 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-        $sa_count = $db->result($query, 0);
-        $db->free_result($query);
-
         $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
 
+        // Guarantee this request will not remove all Super Administrators.
+        if (X_SADMIN And $db->num_rows($query) > 0) {
+            $saquery = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
+            $sa_count = $db->result($saquery, 0);
+            $db->free_result($saquery);
+
+            while($mem = $db->fetch_array($query)) {
+                if ($mem['status'] == 'Super Administrator' And postedVar('status'.$mem['uid']) != 'Super Administrator') {
+                    $sa_count--;
+                }
+            }
+            if ($sa_count < 1) {
+                error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
+            }
+            $db->data_seek($query, 0);
+        }
+
+        // Now execute this request
         while($mem = $db->fetch_array($query)) {
             $origstatus = $mem['status'];
             $status = postedVar('status'.$mem['uid']);
@@ -1798,9 +1812,6 @@ if ($action == "members") {
 
             if (!X_SADMIN && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
                 continue;
-            }
-            if ($origstatus == 'Super Administrator' And $status != 'Super Administrator' And $sa_count == 1) {
-                error($lang['lastsadmin'], false, '</td></tr></table></td></tr></table><br />');
             }
 
             $banstatus = postedVar('banstatus'.$mem['uid']);

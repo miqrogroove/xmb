@@ -1317,7 +1317,7 @@ $lang[bestmember]
 <td>
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr>
-<td class="nav" style="padding-bottom: 1px" bgcolor="$altbg2">&nbsp;<a href="index.php">$bbname</a>$navigation</td>
+<td class="nav" style="padding-bottom: 1px" bgcolor="$altbg2">&nbsp;<a href="./">$bbname</a>$navigation</td>
 <td class="tablerow" align="right" bgcolor="$altbg2">$quickjump&nbsp;</td>
 <td align="right" bgcolor="$altbg2" width="2%"><a href="#top" title="$lang[gototop]"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
 </tr>
