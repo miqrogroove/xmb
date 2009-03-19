@@ -113,19 +113,21 @@ switch($action) {
     case 'fixlastposts':
         if (postedVar('scope', '', FALSE, FALSE, FALSE, 'g') == 'forumsonly') {
             // Update all forums using as few queries as possible
-            $sql = 'SELECT f.fid, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
+            $sql = 'SELECT f.fid, f.fup, f.type, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
                  . 'FROM '.X_PREFIX.'forums AS f '
-                 . 'LEFT JOIN '.X_PREFIX.'posts AS p ON f.fid=p.fid '
-                 . 'INNER JOIN ( '
-                 . '    SELECT p2.fid, MAX(pid) AS lastpid '
-                 . '    FROM '.X_PREFIX.'posts AS p2 '
+                 . 'LEFT JOIN ( '
+                 . '    SELECT pid, p3.fid, author, dateline FROM '.X_PREFIX.'posts AS p3 '
                  . '    INNER JOIN ( '
-                 . '        SELECT fid, MAX(dateline) AS lastdate '
-                 . '        FROM '.X_PREFIX.'posts '
-                 . '        GROUP BY fid '
-                 . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
-                 . '    GROUP BY p2.fid '
-                 . ') AS query2 ON p.pid=query2.lastpid '
+                 . '        SELECT p2.fid, MAX(pid) AS lastpid '
+                 . '        FROM '.X_PREFIX.'posts AS p2 '
+                 . '        INNER JOIN ( '
+                 . '            SELECT fid, MAX(dateline) AS lastdate '
+                 . '            FROM '.X_PREFIX.'posts '
+                 . '            GROUP BY fid '
+                 . '        ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
+                 . '        GROUP BY p2.fid '
+                 . '    ) AS query2 ON p3.pid=query2.lastpid '
+                 . ') AS p ON f.fid=p.fid '
                  . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
                  . '    SELECT log2.fid, log2.date, log2.username '
                  . '    FROM '.X_PREFIX.'logs AS log2 '
@@ -136,58 +138,48 @@ switch($action) {
                  . '        GROUP BY fid '
                  . '    ) AS query4 ON log2.fid=query4.fid AND log2.date=query4.lastdate '
                  . ') AS log ON f.fid=log.fid '
-                 . 'WHERE f.type="forum"';
+                 . 'WHERE f.type="forum" OR f.type="sub"';
 
             $q = $db->query($sql);
-            while($loner = $db->fetch_array($q)) {
+            
+            // Structure results to accommodate a nested loop strategy.
+            $forums_array = array();
+            $subs_array = array();
+            while ($row = $db->fetch_array($q)) {
+                if ($row['type'] == 'forum') {
+                    $forums_array[] = $row;
+                } else {
+                    $subs_array[] = $row;
+                }
+            }
+
+            $db->free_result($q);
+
+            // Loop through all forums
+            foreach($forums_array as $loner) {
                 $lastpost = array();
 
-                // Update all subforums using as few queries as possible
-                $sql = 'SELECT f.fid, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
-                     . 'FROM '.X_PREFIX.'forums AS f '
-                     . 'LEFT JOIN '.X_PREFIX.'posts AS p ON f.fid=p.fid '
-                     . 'INNER JOIN ( '
-                     . '    SELECT p2.fid, MAX(pid) AS lastpid '
-                     . '    FROM '.X_PREFIX.'posts AS p2 '
-                     . '    INNER JOIN ( '
-                     . '        SELECT fid, MAX(dateline) AS lastdate '
-                     . '        FROM '.X_PREFIX.'posts '
-                     . '        GROUP BY fid '
-                     . '    ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
-                     . '    GROUP BY p2.fid '
-                     . ') AS query2 ON p.pid=query2.lastpid '
-                     . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
-                     . '    SELECT log2.fid, log2.date, log2.username '
-                     . '    FROM '.X_PREFIX.'logs AS log2 '
-                     . '    INNER JOIN ( '
-                     . '        SELECT fid, MAX(`date`) AS lastdate '
-                     . '        FROM '.X_PREFIX.'logs '
-                     . '        WHERE `action` = "bump" '
-                     . '        GROUP BY fid '
-                     . '    ) AS query4 ON log2.fid=query4.fid AND log2.date=query4.lastdate '
-                     . ') AS log ON f.fid=log.fid '
-                     . 'WHERE f.fup='.$loner['fid'];
-
-                $subq = $db->query($sql);
-                while($sub = $db->fetch_array($subq)) {
-                    if ($sub['pid'] !== NULL) {
-                        if ($sub['date'] !== NULL) {
-                            if ($sub['date'] > $sub['dateline']) {
-                                $sub['dateline'] = $sub['date'];
-                                $sub['author'] = $sub['username'];
+                // Loop through all sub-forums
+                foreach($subs_array as $sub) {
+                    if ($sub['fup'] == $loner['fid']) {
+                        if ($sub['pid'] !== NULL) {
+                            if ($sub['date'] !== NULL) {
+                                if ($sub['date'] > $sub['dateline']) {
+                                    $sub['dateline'] = $sub['date'];
+                                    $sub['author'] = $sub['username'];
+                                }
                             }
+                            $lastpost[] = $sub;
+                            $lp = $sub['dateline'].'|'.$sub['author'].'|'.$sub['pid'];
+                        } else {
+                            $lp = '';
                         }
-                        $lastpost[] = $sub;
-                        $lp = $sub['dateline'].'|'.$sub['author'].'|'.$sub['pid'];
-                    } else {
-                        $lp = '';
-                    }
-                    if ($sub['lastpost'] != $lp) {
-                        $lp = $db->escape_var($lp);
-                        $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid={$sub['fid']}");
+                        if ($sub['lastpost'] != $lp) {
+                            $lp = $db->escape_var($lp);
+                            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid={$sub['fid']}");
+                        }
                     }
                 }
-                $db->free_result($subq);
 
                 if ($loner['pid'] !== NULL) {
                     if ($loner['date'] !== NULL) {
@@ -215,7 +207,6 @@ switch($action) {
                 $lastpost = $db->escape_var($lastpost);
                 $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='{$loner['fid']}'");
             }
-            $db->free_result($q);
 
         } else { // Update all threads using as few queries as possible
             $newsql = 'SELECT t.tid, t.lastpost, t.closed, p.author, p.dateline, p.pid, log.username, log.date '
