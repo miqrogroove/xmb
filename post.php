@@ -1236,6 +1236,9 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape_var($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
                     }
                 }
+                if ($forum['type'] == 'sub') {
+                    updateforumcount($fup['fid']);
+                }
                 updatethreadcount($tid);
                 updateforumcount($fid);
             }
