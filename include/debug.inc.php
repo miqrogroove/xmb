@@ -50,11 +50,14 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
             $secure = TRUE;
         }
     }
+    if (substr($hostsetting, 0, 1) == '.') {
+        $hostsetting = substr($hostsetting, 1);
+    }
     $host = substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':'));
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ($hostsetting != $host And $host != 'www'.$hostsetting And $hostsetting != '') {
+    if ($hostsetting != $host And $host != 'www.'.$hostsetting And $hostsetting != '') {
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';

@@ -510,6 +510,9 @@ class Captcha {
     }
 
     function SetFonts($vFonts) {
+        // override any pre-defined file path
+        putenv('GDFONTPATH='.realpath('.'));
+
         // check for input type
         if (is_array($vFonts)) {
             $aFonts = $vFonts;
