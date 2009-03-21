@@ -49,7 +49,7 @@ function moveAttachmentToDB($aid, $pid) {
         return FALSE;
     }
     $attachment = $db->escape(file_get_contents($path));
-    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment'");
+    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment' WHERE aid=$aid AND pid=$pid");
     unlink($path);
 }
 
