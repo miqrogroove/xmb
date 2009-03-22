@@ -37,7 +37,11 @@ function url_to_text($url) {
 
     if ($restrict == '') {
         $fids = permittedForums(forumCache(), 'thread', 'csv');
-        $restrict = ' f.fid IN('.$fids.')';
+        if (strlen($fids) == 0) {
+            $restrict = ' FALSE';
+        } else {
+            $restrict = ' f.fid IN('.$fids.')';
+        }
     }
 
     if (false !== strpos($url, '/viewthread.php')) {

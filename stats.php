@@ -45,7 +45,11 @@ eval('$css = "'.template('css').'";');
 eval('$header = "'.template('header').'";');
 
 $fids = permittedForums(forumCache(), 'thread', 'csv');
-$restrict = ' fid IN ('.$fids.')';
+if (strlen($fids) == 0) {
+    $restrict = ' FALSE';
+} else {
+    $restrict = ' fid IN ('.$fids.')';
+}
 
 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
@@ -149,10 +153,14 @@ $latest = implode('<br />', $latest);
 $db->free_result($query);
 
 // Get most popular forum
-$query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
-$pop = $db->fetch_array($query);
-$popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.fnameOut($pop['name']).'</strong></a>';
-$db->free_result($query);
+if (strlen($fids) == 0) {
+    $popforum = $lang['textnoforumsexist'];
+} else {
+    $query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
+    $pop = $db->fetch_array($query);
+    $popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.fnameOut($pop['name']).'</strong></a>';
+    $db->free_result($query);
+}
 
 // Get amount of posts per day
 $postsday = number_format($posts / $days, 2);

@@ -152,7 +152,6 @@ if (!isset($searchsubmit) && !isset($page)) {
     $sql = "SELECT p.*, t.subject AS tsubject "
          . "FROM ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING(tid) INNER JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid "
          . "WHERE f.fid IN($forums)";
-    unset($forums);
 
     if ($srchfrom <= 0) {
         $srchfrom = $onlinetime;
@@ -203,14 +202,17 @@ if (!isset($searchsubmit) && !isset($page)) {
 
     $sql .=" ORDER BY dateline DESC LIMIT $start, $ppp";
 
-    $querysrch = $db->query($sql);
-    $results = 0;
-    $results = $db->num_rows($querysrch);
+    if (strlen($forums) == 0) {
+        $results = 0;
+    } else {
+        $querysrch = $db->query($sql);
+        $results = $db->num_rows($querysrch);
+    }
 
     $temparray = array();
     $searchresults = '';
 
-    while($post = $db->fetch_array($querysrch)) {
+    while($results != 0 And $post = $db->fetch_array($querysrch)) {
         if ($filter_distinct != 'yes' Or !array_key_exists($post['tid'], $temparray)) {
             $temparray[$post['tid']] = true;
             $message = stripslashes($post['message']);

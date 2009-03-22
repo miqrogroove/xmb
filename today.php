@@ -55,13 +55,17 @@ $srchfrom = $onlinetime - (86400 * $daysold);
 $tids = array();
 $fids = permittedForums(forumCache(), 'thread', 'csv');
 
-$query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN ($fids)");
-$results = $db->num_rows($query);
-while($t = $db->fetch_array($query)) {
-    $tids[] = $t['tid'];
+if (strlen($fids) == 0) {
+    $results = 0;
+} else {
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN ($fids)");
+    $results = $db->num_rows($query);
+    while($t = $db->fetch_array($query)) {
+        $tids[] = $t['tid'];
+    }
+    $db->free_result($query);
+    $tids = implode(', ', $tids);
 }
-$db->free_result($query);
-$tids = implode(', ', $tids);
 
 eval('$css = "'.template('css').'";');
 
