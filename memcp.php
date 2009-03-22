@@ -597,31 +597,34 @@ if ($action == 'profile') {
     }
 
     if (!$favadd && noSubmit('favsubmit')) {
-        $fids = permittedForums(forumCache(), 'thread', 'csv');
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC");
         $favnum = 0;
         $favs = '';
-        $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-        while($fav = $db->fetch_array($query)) {
-            $forum = getForum($fav['fid']);
-            $forum['name'] = fnameOut($forum['name']);
+        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        if (strlen($fids) != 0) {
+            $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC");
+            $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+            while($fav = $db->fetch_array($query)) {
+                $forum = getForum($fav['fid']);
+                $forum['name'] = fnameOut($forum['name']);
 
-            $lastpost = explode('|', $fav['lastpost']);
-            $dalast = $lastpost[0];
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
-            $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-            $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-            $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
+                $lastpost = explode('|', $fav['lastpost']);
+                $dalast = $lastpost[0];
+                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+                $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
+                $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+                $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
+                $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
-            if ($fav['icon'] != '') {
-                $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
-            } else {
-                $fav['icon'] = '';
+                if ($fav['icon'] != '') {
+                    $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
+                } else {
+                    $fav['icon'] = '';
+                }
+
+                $favnum++;
+                eval('$favs .= "'.template('memcp_favs_row').'";');
             }
-
-            $favnum++;
-            eval('$favs .= "'.template('memcp_favs_row').'";');
+            $db->free_result($query);
         }
 
         $favsbtn = '';
@@ -632,7 +635,6 @@ if ($action == 'profile') {
         if ($favnum == 0) {
             eval('$favs = "'.template('memcp_favs_none').'";');
         }
-        $db->free_result($query);
         eval('$mempage = "'.template('memcp_favs').'";');
     }
 
@@ -810,35 +812,38 @@ if ($action == 'profile') {
     }
     $db->free_result($u2uquery);
 
-    $fids = permittedForums(forumCache(), 'thread', 'csv');
-    $query2 = $db->query("SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
-    $favnum = $db->num_rows($query2);
+    $favnum = 0;
     $favs = '';
-    $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
-    while($fav = $db->fetch_array($query2)) {
-        $forum = getForum($fav['fid']);
-        $forum['name'] = fnameOut($forum['name']);
+    $fids = permittedForums(forumCache(), 'thread', 'csv');
+    if (strlen($fids) != 0) {
+        $query2 = $db->query("SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
+        $favnum = $db->num_rows($query2);
+        $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+        while($fav = $db->fetch_array($query2)) {
+            $forum = getForum($fav['fid']);
+            $forum['name'] = fnameOut($forum['name']);
 
-        $lastpost = explode('|', $fav['lastpost']);
-        $dalast = $lastpost[0];
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
-        $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-        $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-        $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
-        $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
+            $lastpost = explode('|', $fav['lastpost']);
+            $dalast = $lastpost[0];
+            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+            $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
+            $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
+            $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
-        if ($fav['icon'] != '') {
-            $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
-        } else {
-            $fav['icon'] = '';
+            if ($fav['icon'] != '') {
+                $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
+            } else {
+                $fav['icon'] = '';
+            }
+            eval('$favs .= "'.template('memcp_home_favs_row').'";');
         }
-        eval('$favs .= "'.template('memcp_home_favs_row').'";');
+        $db->free_result($query2);
     }
 
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
-    $db->free_result($query2);
     eval('$mempage = "'.template('memcp_home').'";');
 }
 
