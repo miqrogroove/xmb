@@ -1474,7 +1474,7 @@ if ($action == "newsletter") {
         if ($newscopy != 'yes') {
             $tome = "AND NOT username='$xmbuser'";
         } else {
-            $tome = '';
+            $tome = "OR username='$xmbuser'";
         }
 
         if ($to == "all") {
@@ -1486,7 +1486,7 @@ if ($action == "newsletter") {
         } else if ($to == "supermod") {
             $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Super moderator' $tome ORDER by uid");
         } else if ($to == "mod") {
-            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Moderator' ORDER BY uid");
+            $query = $db->query("SELECT username, email FROM ".X_PREFIX."members WHERE status='Moderator' $tome ORDER BY uid");
         }
 
         if ($sendvia == "u2u") {
