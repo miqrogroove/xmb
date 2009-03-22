@@ -460,6 +460,7 @@ if ($action == '') {
             $enddate = $onlinetime;
         } else {
             $db->data_seek($query1, $rowcount - 1);
+            $row = $db->fetch_array($query1);
             $enddate = $row['dateline'];
         }
     }
