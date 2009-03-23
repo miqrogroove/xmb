@@ -63,7 +63,7 @@ class socket_SMTP {
         socket_set_blocking($this->connection, true);
 
         $this->get();
-        $this->send('EHLO');
+        $this->send('EHLO '.substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':')));
 
         $s = $this->get();
         if (!$this->isOk($s)) {
@@ -71,7 +71,7 @@ class socket_SMTP {
         }
         $parts = explode("\r\n", $s);
         foreach($parts as $ns) {
-            if (substr($ns, 0, 8) == '250-AUTH') {
+            if (substr($ns, 0, 3) == '250' And substr($ns, 4, 4) == 'AUTH') {
                 $authAvailable = true;
                 $methods = substr($ns, 8);
                 $methods = explode(' ', trim($methods));

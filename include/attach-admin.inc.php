@@ -50,6 +50,9 @@ function moveAttachmentToDB($aid, $pid) {
     }
     $attachment = $db->escape(file_get_contents($path));
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment' WHERE aid=$aid AND pid=$pid");
+    if ($db->affected_rows() !== 1) {
+        return FALSE;
+    }
     unlink($path);
 }
 
@@ -73,7 +76,9 @@ function moveAttachmentToDisk($aid, $pid) {
     if ($file === FALSE) {
         return FALSE;
     }
-    fwrite($file, $attach['attachment']);
+    if (fwrite($file, $attach['attachment']) != $attach['filesize']) {
+        return FALSE;
+    }
     fclose($file);
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
 }
