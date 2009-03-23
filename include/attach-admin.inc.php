@@ -60,13 +60,18 @@ function moveAttachmentToDisk($aid, $pid) {
     global $db;
     $aid = intval($aid);
     $pid = intval($pid);
-    $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+    $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.dateline "
+                      . "FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
+                      . "WHERE aid=$aid AND pid=$pid");
     if ($db->num_rows($query) != 1) {
         return FALSE;
     }
     $attach = $db->fetch_array($query);
     if ($attach['subdir'] != '' Or strlen($attach['attachment']) != $attach['filesize']) {
         return FALSE;
+    }
+    if (intval($attach['updatestamp']) == 0 And intval($attach['dateline']) > 0) {
+        $attach['updatestamp'] = $attach['dateline'];
     }
     $subdir = getNewSubdir($attach['updatestamp']);
     $path = getFullPathFromSubdir($subdir, TRUE);
