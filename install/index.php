@@ -141,20 +141,6 @@ function show_result($type) {
     echo "</span>\n";
 }
 
-if (!function_exists('file_get_contents')) {
-    function file_get_contents($file) {
-        $stream = fopen($file, 'r');
-        $contents = fread($stream, filesize($file));
-        fclose($stream);
-        return $contents;
-    }
-}
-
-if (isset($_GET['action'])) {
-    echo md5($_SERVER['PHP_SELF']);
-    exit;
-}
-
 error_reporting(E_ALL&~E_NOTICE);
 
 if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4) {

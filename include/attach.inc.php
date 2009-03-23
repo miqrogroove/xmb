@@ -193,6 +193,9 @@ function attachRemoteFile($url, $pid=0) {
 
     // Write to disk
     $handle = fopen($filepath, 'wb');
+    if ($handle === FALSE) {
+        return X_NO_TEMP_FILE;
+    }
     fwrite($handle, $file);
     fclose($handle);
 
@@ -631,10 +634,10 @@ function getTempFile($path=FALSE) {
     if ($path !== FALSE) {
         $filepath = tempnam($path, 'xmb-');
     }
-    if ($filepath === FALSE) {
+    if (!is_writable($filepath)) {
         $filepath = tempnam('', 'xmb-');
     }
-    if ($filepath === FALSE) {
+    if (!is_writable($filepath)) {
         header('HTTP/1.0 500 Internal Server Error');
         exit($attachmentErrors[X_NO_TEMP_FILE]);
     }
@@ -803,6 +806,9 @@ function regenerateThumbnail($aid, $pid) {
             $path .= $newfilename;
         }
         $file = fopen($path, 'wb');
+        if ($file === FALSE) {
+            return FALSE;
+        }
         fwrite($file, $attach['attachment']);
         fclose($file);
         unset($attach['attachment']);

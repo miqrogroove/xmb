@@ -66,13 +66,13 @@ function moveAttachmentToDisk($aid, $pid) {
         return FALSE;
     }
     $subdir = getNewSubdir($attach['updatestamp']);
-    $path = getFullPathFromSubdir($subdir);
-    if (!is_dir($path)) {
-        mkdir($path, 0777, TRUE);
-    }
+    $path = getFullPathFromSubdir($subdir, TRUE);
     $newfilename = $aid;
     $path .= $newfilename;
     $file = fopen($path, 'wb');
+    if ($file === FALSE) {
+        return FALSE;
+    }
     fwrite($file, $attach['attachment']);
     fclose($file);
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
