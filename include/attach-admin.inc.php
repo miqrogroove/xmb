@@ -62,7 +62,7 @@ function moveAttachmentToDisk($aid, $pid) {
     $pid = intval($pid);
     $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.dateline "
                       . "FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
-                      . "WHERE aid=$aid AND pid=$pid");
+                      . "WHERE a.aid=$aid AND a.pid=$pid");
     if ($db->num_rows($query) != 1) {
         return FALSE;
     }
