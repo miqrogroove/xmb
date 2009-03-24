@@ -32,10 +32,6 @@ if (!defined('IN_CODE')) {
 
 class socket_SMTP {
     function socket_SMTP($debug=false, $dbFile='') {
-        $this->__construct($debug, $dbFile);
-    }
-
-    function __construct($debug=false, $dbFile='') {
         $this->connection   = null;
         if ($debug) {
             $this->debugStream = fopen($dbFile, 'a+');

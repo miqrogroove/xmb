@@ -1497,8 +1497,12 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
                 $mail = new socket_SMTP;
             }
             $handlers['socket_SMTP'] = &$mail;
-            $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password']);
+            if (!$mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
+                return FALSE;
+            }
             register_shutdown_function(array(&$mail, 'disconnect'));
+        } elseif ($mail->connection === FALSE) {
+            return FALSE;
         } else {
             $mail = &$handlers['socket_SMTP'];
         }
