@@ -200,6 +200,8 @@ if (!isset($searchsubmit) && !isset($page)) {
         $ext[] = "srchfrom=$srchfromold";
     }
 
+    $counter = 1;
+    $ppp++; // Peek at next page.
     $sql .=" ORDER BY dateline DESC LIMIT $start, $ppp";
 
     if (strlen($forums) == 0) {
@@ -212,7 +214,8 @@ if (!isset($searchsubmit) && !isset($page)) {
     $temparray = array();
     $searchresults = '';
 
-    while($results != 0 And $post = $db->fetch_array($querysrch)) {
+    while($results != 0 And $counter < $ppp And $post = $db->fetch_array($querysrch)) {
+        $counter++;
         if ($filter_distinct != 'yes' Or !array_key_exists($post['tid'], $temparray)) {
             $temparray[$post['tid']] = true;
             $message = stripslashes($post['message']);
