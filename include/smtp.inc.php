@@ -36,7 +36,7 @@ class socket_SMTP {
         if ($debug) {
             $this->debugStream = fopen($dbFile, 'a+');
             if ($this->debugStream !== FALSE) {
-                $l = 'SMTP loaded ('.date('r', time()).')'."\n";
+                $l = 'SMTP loaded ('.gmdate('r', time()).')'."\n";
                 fwrite($this->debugStream, $l, strlen($l));
                 $this->debug = true;
             }
