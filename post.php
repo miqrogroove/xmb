@@ -1414,6 +1414,6 @@ function postLinkBBcode(&$message) {
 }
 
 function softerror(&$msg) {
-    return error($msg, FALSE, '', '', FALSE, FALSE, TRUE, FALSE);
+    return error($msg, FALSE, '', '<br />', FALSE, FALSE, TRUE, FALSE);
 }
 ?>

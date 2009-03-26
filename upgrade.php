@@ -94,7 +94,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 <!--//--><![CDATA[//><!--
 function disableButton() {
     var newAttr = document.createAttribute("disabled");
-    newAttr.nodeValue = "disabled"
+    newAttr.nodeValue = "disabled";
     document.getElementById("submit1").setAttributeNode(newAttr);
     return true;
 }
