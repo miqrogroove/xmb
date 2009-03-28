@@ -345,6 +345,9 @@ if (isset($oldtopics)) {
 
 // Make all settings global, and put them in the $SETTINGS[] array
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
+if ($db->num_rows($squery) == 0) {
+    exit('Fatal Error: The XMB settings table is empty.');
+}
 foreach($db->fetch_array($squery) as $key => $val) {
     $$key = $val;
     $SETTINGS[$key] = $val;
@@ -459,6 +462,7 @@ $dformatorig = $dateformat;
 $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
 // Get themes, [fid, [tid]]
+$forumtheme = 0;
 if (isset($tid) && is_numeric($tid) && $action != 'templates') {
     $query = $db->query("SELECT f.fid, f.theme FROM ".X_PREFIX."forums f RIGHT JOIN ".X_PREFIX."threads t USING (fid) WHERE t.tid=$tid");
     $locate = $db->fetch_array($query);
@@ -483,16 +487,42 @@ $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && usernam
 $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
 
 // Check what theme to use
-if ((int) $themeuser > 0) {
+$validtheme = FALSE;
+if (!$validtheme And (int) $themeuser > 0) {
     $theme = (int) $themeuser;
-} else if (!empty($forumtheme) && (int) $forumtheme > 0) {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
+    if (!$validtheme = ($db->num_rows($query) > 0)) {
+        $themeuser = 0;
+        $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
+    }
+}
+if (!$validtheme And (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
-} else {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
+    if (!$validtheme = ($db->num_rows($query) > 0)) {
+        $themeuser = 0;
+        $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE fid=$fid");
+    }
+}
+if (!$validtheme) {
     $theme = (int) $SETTINGS['theme'];
+    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
+    $validtheme = ($db->num_rows($query) > 0);
+}
+if (!$validtheme) {
+    $query = $db->query("SELECT * FROM ".X_PREFIX."themes LIMIT 1");
+    if ($validtheme = ($db->num_rows($query) > 0)) {
+        $row = $db->fetch_array($query);
+        $SETTINGS['theme'] = $row['themeid'];
+        $db->query("UPDATE ".X_PREFIX."settings SET theme={$SETTINGS['theme']}");
+        $db->data_seek($query, 0);
+    }
+}
+if (!$validtheme) {
+    exit('Fatal Error: The XMB themes table is empty.');
 }
 
 // Make theme-vars semi-global
-$query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$theme'");
 foreach($db->fetch_array($query) as $key=>$val) {
     if ($key != "name") {
         $$key = $val;
