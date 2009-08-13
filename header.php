@@ -33,7 +33,7 @@ if (!defined('X_SCRIPT')) {
     exit("Not allowed to run this file directly.");
 }
 if (!defined('ROOT')) define('ROOT', './');
-error_reporting(E_ALL&~E_NOTICE);
+error_reporting(E_ALL&~E_NOTICE~E_DEPRECATED);
 define('IN_CODE', TRUE);
 require ROOT.'include/global.inc.php';
 
@@ -759,7 +759,7 @@ if ($SETTINGS['gzipcompress'] == 'on'
         // ini_get not supported. So let's just leave it
     } else {
         if (function_exists('gzopen')) {
-            $r = @ini_set('zlib.output_compression', 'On');
+            $r = @ini_set('zlib.output_compression', 'true');
             $r2 = @ini_set('zlib.output_compression_level', '3');
             if (!$r || !$r2) {
                 ob_start('ob_gzhandler');
