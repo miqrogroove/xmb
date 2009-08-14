@@ -33,7 +33,7 @@ if (!defined('X_SCRIPT')) {
     exit("Not allowed to run this file directly.");
 }
 if (!defined('ROOT')) define('ROOT', './');
-error_reporting(E_ALL&~E_NOTICE~E_DEPRECATED);
+error_reporting(E_ALL&~E_NOTICE&~E_DEPRECATED);
 define('IN_CODE', TRUE);
 require ROOT.'include/global.inc.php';
 
