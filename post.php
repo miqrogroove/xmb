@@ -290,7 +290,7 @@ $bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' And $forum['allowbbcode
 $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no');
 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
 $bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' And $forum['allowsmilies'] == 'yes');
-$bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $smileyoff = 'no');
+$bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $smileyoff == 'no');
 
 if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
     $sc = TRUE;
@@ -1267,7 +1267,7 @@ switch($action) {
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
                 $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $postinfo['bbcodeoff'] == 'no');
                 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
-                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $postinfo['smileyoff'] = 'no');
+                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $postinfo['smileyoff'] == 'no');
             }
 
             // Fill $attachment
