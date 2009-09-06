@@ -332,8 +332,7 @@ if (noSubmit('editsubmit')) {
         $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");
     }
 
-    $editpage = '<div align="center"><span class="mediumtxt">'.$lang['adminprofilechange'].'</span></div>';
-    redirect($full_url.'cp.php', 2, X_REDIRECT_JS);
+    message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);
 }
 
 end_time();
