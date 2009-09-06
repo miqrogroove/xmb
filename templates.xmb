@@ -428,7 +428,7 @@ hr {
 
 table.code {
     border: 1px solid {$THEME['bordercolor']};
-    margin: 15px auto 10px auto;
+    margin: 15px 5% 10px 5%;
     width: 80%;
 }
 
@@ -609,6 +609,11 @@ textarea, select, input, object {
     font-family: {$THEME['font']};
     font-size: {$THEME['fontsize']};
     table-layout: fixed;
+}
+
+.youtube {
+    background-color: transparent;
+    border: none;
 }
 
 .status_Super_Administrator {
@@ -1673,6 +1678,8 @@ var bbcode_prompt_list_error = "$lang[bbcode_prompt_list_error]";
 var bbcode_prompt_list_end = "$lang[bbcode_prompt_list_end]";
 var bbcode_help_underline = "$lang[bbcode_help_underline]";
 var bbcode_prompt_underline = "$lang[bbcode_prompt_underline]";
+var bbcode_help_youtube = "$lang[bbcode_help_youtube]";
+var bbcode_prompt_youtube = "$lang[bbcode_prompt_youtube]";
 
 var messageElement;
 </script>
@@ -1686,7 +1693,8 @@ var messageElement;
 <input type="radio" name="mode" value="0" onclick="chmode('0')" /> $lang[cb_advmode]<br />
 <input type="radio" name="mode" value="1" onclick="chmode('1')" /> $lang[cb_helpmode]</span></td>
 <td bgcolor="$altbg2">
-<select name="font" onchange="chfont(this.options[this.selectedIndex].value)" size="1">
+<select name="font" onchange="chfont(this.options[this.selectedIndex].value);this.selectedIndex=0;" size="1">
+<option value="" selected="selected">$lang[fontselect]</option>
 <option value="Andale Mono">Andale Mono</option>
 <option value="Arial">Arial</option>
 <option value="Arial Black">Arial Black</option>
@@ -1701,20 +1709,22 @@ var messageElement;
 <option value="Trebuchet MS">Trebuchet MS</option>
 <option value="Script MT Bold">Script MT Bold</option>
 <option value="Stencil">Stencil</option>
-<option value="Verdana" selected="selected">Verdana</option>
+<option value="Verdana">Verdana</option>
 <option value="Lucida Console">Lucida Console</option>
 </select>
-<select name="size" onchange="chsize(this.options[this.selectedIndex].value)" size="1">
+<select name="size" onchange="chsize(this.options[this.selectedIndex].value);this.selectedIndex=0;" size="1">
+<option value="" selected="selected">$lang[sizeselect]</option>
 <option value="-2">-2</option>
 <option value="-1">-1</option>
 <option value="1">1</option>
 <option value="2">2</option>
-<option value="3" selected="selected">3</option>
+<option value="3">3</option>
 <option value="4">4</option>
 <option value="5">5</option>
 <option value="6">6</option>
 </select>
-<select name="color" onchange="chcolor(this.options[this.selectedIndex].value)" size="1">
+<select name="color" onchange="chcolor(this.options[this.selectedIndex].value);this.selectedIndex=0;" size="1">
+<option value="" selected="selected">$lang[colorselect]</option>
 <option value="White" style="color:white;">White</option>
 <option value="Black" style="color:black;">Black</option>
 <option value="Red" style="color:red;">Red</option>
@@ -1742,7 +1752,8 @@ $spelling_lang
 <a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
 <a href="javascript:code()" title="$lang[cb_insert_code]" ><img src="$imgdir/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
 <a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
-<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a></td>
+<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a>
+<a href="javascript:youtube()" title="$lang[cb_insert_youtube]"><img src="$imgdir/bb_youtube.gif" border="0" width="23" height="22" alt="$lang[cb_insert_youtube]" /></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|functions_bbcode_quickreply|#*XMB TEMPLATE*#|
@@ -3435,7 +3446,8 @@ $bbcodeinsert
 <td class="tablerow" bgcolor="$altbg1" valign="top">$lang[textmessage]<br /><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span></td>
+$lang[textimgcodeis] $allowimgcode<br />
+$lang[textyoutubecodeis] $allowyoutubecode</span></td>
 <td bgcolor="$altbg2" class="tablerow">
 <table width="100%">
 <tr>
@@ -3522,7 +3534,8 @@ $bbcodeinsert
 $lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span></td>
+$lang[textimgcodeis] $allowimgcode<br />
+$lang[textyoutubecodeis] $allowyoutubecode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
 <td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
@@ -3580,7 +3593,8 @@ $bbcodeinsert
 <span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span></td>
+$lang[textimgcodeis] $allowimgcode<br />
+$lang[textyoutubecodeis] $allowyoutubecode</span></td>
 <td class="tablerow" bgcolor="$altbg2">
 <table width="100%">
 <tr>
@@ -3663,7 +3677,8 @@ $bbcodeinsert
 <td class="tablerow" bgcolor="$altbg1" valign="top">$lang[textmessage]<br /><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span></td>
+$lang[textimgcodeis] $allowimgcode<br />
+$lang[textyoutubecodeis] $allowyoutubecode</span></td>
 <td class="tablerow" bgcolor="$altbg2"><table width="100%">
 <tr>
 <td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
@@ -4969,7 +4984,8 @@ $captchapostcheck
 <td width="8%" height="101" bgcolor="$altbg1" class="tablerow"> <div align="left"><span class="smalltxt">$lang[texthtmlis] $allowhtml<br />
 $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
-$lang[textimgcodeis] $allowimgcode</span></div>
+$lang[textimgcodeis] $allowimgcode<br />
+$lang[textyoutubecodeis] $allowyoutubecode</span></div>
 $smilies
 <td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
 $quickbbcode
