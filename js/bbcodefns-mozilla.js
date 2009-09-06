@@ -485,7 +485,7 @@ function list() {
         if (hasSelection(messageElement)) {
             var type = prompt(bbcode_prompt_list_start, '');
             var cType = type.toLowerCase();
-            while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
+            while(cType != '' && cType != 'a' && cType != 'i' && cType != '1' && cType != null) {
                 type = prompt(bbcode_prompt_list_error, type);
             }
 
@@ -525,7 +525,7 @@ function list() {
             var type      = prompt(bbcode_prompt_list_start, '');
             if (type != null) {
                 var cType     = type.toLowerCase();
-                while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
+                while(cType != '' && cType != 'a' && cType != '1' && cType != 'i' && cType != null) {
                     type = prompt(bbcode_prompt_list_error, type);
                     var cType = type.toLowerCase();
                 }

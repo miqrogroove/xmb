@@ -210,7 +210,7 @@ function list() {
         AddText('', '', "\r[list]\r[*]\r[*]\r[*]\r[/list]", messageElement);
     } else {
         st=prompt(bbcode_prompt_list_start,"");
-        if ((st!="") && (st!="A") && (st!="a") && (st!="1") && (st!=null)) {
+        if ((st!="") && (st!="A") && (st!="a") && (st!="I") && (st!="i") && (st!="1") && (st!=null)) {
             st = prompt(bbcode_prompt_list_error,"");
         }
 
