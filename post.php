@@ -259,6 +259,7 @@ if ($action != 'edit') {
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes' And $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowyoutubecode = ($SETTINGS['youtubestatus'] == 'on' And $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
