@@ -250,6 +250,19 @@ function underline() {
     }
 }
 
+function youtube() {
+    if (helpmode) {
+        alert(bbcode_help_youtube);
+    } else if (advmode) {
+        AddText('', '', "[youtube] [/youtube]", messageElement);
+    } else {
+        txt=prompt(bbcode_prompt_youtube,"movie-id");
+        if (txt!=null) {
+            AddText('', '', "[youtube]"+txt+"[/youtube]", messageElement);
+        }
+    }
+}
+
 function storeCaret(textEl) {
     if (textEl.createTextRange) textEl.caretPos = document.selection.createRange().duplicate();
 }

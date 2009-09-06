@@ -541,6 +541,32 @@ function list() {
     }
 }
 
+function youtube() {
+    if (helpmode) {
+        alert(bbcode_help_youtube);
+    } else if (advmode) {
+        if (hasSelection(messageElement)) {
+            wrapText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", messageElement);
+        } else {
+            AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", ' ', messageElement);
+        }
+    } else {
+        if (hasSelection(messageElement)) {
+            text = prompt(bbcode_prompt_youtube, fetchSelection(messageElement));
+            if (text == fetchSelection(messageElement)) {
+                wrapText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", messageElement);
+            } else {
+                AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", text, messageElement);
+            }
+        } else {
+            text = prompt(bbcode_prompt_youtube,"movie-id");
+            if (text != null) {
+                AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", text, messageElement);
+            }
+        }
+    }
+}
+
 function storeCaret() {
     return null;
 }
