@@ -373,7 +373,7 @@ if ($action == 'lang') {
         // Install uploaded file
         require('include/translation.inc.php');
         $result = installNewTranslation($upload);
-        
+
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
         if ($result) {
             echo $lang['langimportsuccess'];
@@ -382,7 +382,7 @@ if ($action == 'lang') {
         }
         echo '</td></tr>';
     }
-    
+
     if (onSubmit('edit') && noSubmit('editsubmit')) {
         $phraseid = getInt('phraseid', 'r');
         $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
@@ -402,7 +402,7 @@ if ($action == 'lang') {
         } else {
             $value = '';
         }
-        
+
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -456,7 +456,7 @@ if ($action == 'lang') {
 
     if (onSubmit('detail')) {
         $langid = getInt('detail');
-        
+
         $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid='$langid'");
         if ($db->num_rows($result) == 0) {
             error($lang['generic_missing'], FALSE);
@@ -464,7 +464,7 @@ if ($action == 'lang') {
         $row = $db->fetch_array($result);
         $db->free_result($result);
         $devname = $row['devname'];
-        
+
         $db->query("UPDATE ".X_PREFIX."members SET langfile='$devname' WHERE username='$xmbuser'");
 
         $query = "SELECT k.langkey, k.phraseid, COUNT(t.cdata) AS phrasecount "
@@ -1744,7 +1744,7 @@ if ($action == "prune") {
                 $tids = implode(',', $tids);
                 deleteMultiThreadAttachments($tids); // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
-                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE IN ($tids)");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid IN ($tids)");
 
                 $db->query("DELETE FROM d, r, v "
                          . "USING ".X_PREFIX."vote_desc AS d "
@@ -2131,7 +2131,7 @@ if ($action == "attachments") {
             $restriction .= "AND a.downloads > $dlcountmore ";
             $orderby = ' ORDER BY a.downloads DESC ';
         }
-        
+
         $restriction2 = 'WHERE b.parentid!=0 '.$restriction;
 
         if ($forumprune) {
@@ -2153,7 +2153,7 @@ if ($action == "attachments") {
 
         $query2 = $db->query("SELECT b.aid, b.pid, b.parentid, b.filename, b.filesize, b.downloads, b.subdir FROM ".X_PREFIX."attachments AS b "
                            . "LEFT JOIN ".X_PREFIX."attachments AS a ON a.aid=b.parentid $restriction2");
-        
+
         $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filesize, a.downloads, a.subdir, p.author, p.tid, t.fid, t.subject AS tsubject, f.name AS fname, m.username "
                           . "FROM ".X_PREFIX."attachments a "
                           . "LEFT JOIN ".X_PREFIX."posts p USING (pid) "
