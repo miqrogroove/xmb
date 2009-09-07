@@ -1,0 +1,20 @@
+# XMB 1.9.11 Search Engine Optimization File
+#
+# To help search engines avoid members-only areas of your board, you should
+# move this file to the root path of your website.  If your board is
+# not hosted from the root path, then you must also edit the file.
+# For example, Disallow: /forum/buddy
+
+User-agent: *
+Disallow: /buddy
+Disallow: /cp
+Disallow: /memcp
+Disallow: /misc.php?action=captchaimage
+Disallow: /misc.php?action=list&desc=
+Disallow: /misc.php?action=list&order=
+Disallow: /misc.php?action=search&
+Disallow: /post
+Disallow: /search.php?
+Disallow: /today.php?daysold=
+Disallow: /u2u
+Disallow: /viewthread.php?fid=
