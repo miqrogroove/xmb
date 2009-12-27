@@ -753,15 +753,15 @@ if ($SETTINGS['gzipcompress'] == 'on'
  && $action != 'captchaimage'
  && X_SCRIPT != 'files.php'
  && !DEBUG) {
-    if (($res = @ini_get('zlib.output_compression')) === 1) {
+    if (($res = @ini_get('zlib.output_compression')) > 0) {
         // leave it
     } else if ($res === false) {
         // ini_get not supported. So let's just leave it
     } else {
         if (function_exists('gzopen')) {
-            $r = @ini_set('zlib.output_compression', 'true');
+            $r = @ini_set('zlib.output_compression', 4096);
             $r2 = @ini_set('zlib.output_compression_level', '3');
-            if (!$r || !$r2) {
+            if (FALSE === $r || FALSE === $r2) {
                 ob_start('ob_gzhandler');
             }
         } else {
