@@ -207,7 +207,7 @@ class dbstuff {
 
     function like_escape($rawstring) {
         set_error_handler($this->errcallb);
-        $return = str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($rawstring, $this->link));
+        $return = mysql_real_escape_string(str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring), $this->link);
         restore_error_handler();
         return $return;
     }
