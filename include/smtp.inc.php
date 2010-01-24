@@ -34,7 +34,7 @@ class socket_SMTP {
     function socket_SMTP($debug=false, $dbFile='') {
         $this->connection   = null;
         if ($debug) {
-            $this->debugStream = fopen($dbFile, 'a+');
+            $this->debugStream = @fopen($dbFile, 'a+');
             if ($this->debugStream !== FALSE) {
                 $l = 'SMTP loaded ('.gmdate('r', time()).')'."\n";
                 fwrite($this->debugStream, $l, strlen($l));
@@ -99,6 +99,7 @@ class socket_SMTP {
     }
 
     function get() {
+        $lines = '';
         while(($line = fgets($this->connection, 515)) !== false) {
             $this->doDebug('[S] '.$line);
             $lines .= $line;
