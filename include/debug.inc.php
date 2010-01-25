@@ -44,6 +44,21 @@ if ($show_full_info) {
 }
 
 function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
+    if (!isset($_SERVER['REQUEST_URI'])) {
+        if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
+        if (FALSE === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
+            exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
+        } elseif(!extension_loaded('ISAPI') and !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
+            if (version_compare(phpversion(), '5.2.8', '>')) {
+                exit('Error: FastCGI is missing or not configured on your server.');
+            } else {
+                exit('Error: XMB is not compatible with PHP IIS CGI mode.  ISAPI mode is recommended.');
+            }
+        } else {
+            exit('Error: Unexpected environment.  Please make sure FastCGI is working.');
+        }
+    }
+
     $secure = FALSE;
     if (isset($_SERVER['HTTPS'])) {
         if ($_SERVER['HTTPS'] != 'off') {
@@ -54,15 +69,20 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
         $hostsetting = substr($hostsetting, 1);
     }
     $host = substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':'));
+    if (strpos($host, '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $host)) {
+        $host = '';
+    }
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ($hostsetting != $host And $host != 'www.'.$hostsetting And $hostsetting != '') {
+    if ($hostsetting != $host And $host != 'www.'.$hostsetting) {
+        if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
+        if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
     } elseif ($pathsetting != $path And $pathsetting != '') {
-        $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.path;
+        $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.$path;
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';
     } else {

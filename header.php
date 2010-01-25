@@ -56,7 +56,7 @@ $time = $onlinetime;
 $selHTML = 'selected="selected"';
 $cheHTML = 'checked="checked"';
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-$url = $_SERVER['REQUEST_URI'];
+$url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 $onlineip = $_SERVER['REMOTE_ADDR'];
 
 $canonical_link = '';
@@ -260,6 +260,9 @@ if (empty($full_url)) {
 
     if (DEBUG) {
         debugURLsettings($cookiesecure, $cookiedomain, $cookiepath);
+    } elseif (0 == strlen($url)) {
+        header('HTTP/1.0 500 Internal Server Error');
+        exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
     }
     unset($array);
 }
