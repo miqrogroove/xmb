@@ -273,7 +273,6 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 $searchlink = makeSearchLink($forum['fid']);
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
-$allowyoutubecode = ($SETTINGS['youtubestatus'] == 'on') ? $lang['texton']:$lang['textoff'];
 $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton']:$lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];

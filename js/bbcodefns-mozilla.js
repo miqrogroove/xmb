@@ -485,7 +485,7 @@ function list() {
         if (hasSelection(messageElement)) {
             var type = prompt(bbcode_prompt_list_start, '');
             var cType = type.toLowerCase();
-            while(cType != '' && cType != 'a' && cType != 'i' && cType != '1' && cType != null) {
+            while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
                 type = prompt(bbcode_prompt_list_error, type);
             }
 
@@ -525,7 +525,7 @@ function list() {
             var type      = prompt(bbcode_prompt_list_start, '');
             if (type != null) {
                 var cType     = type.toLowerCase();
-                while(cType != '' && cType != 'a' && cType != '1' && cType != 'i' && cType != null) {
+                while(cType != '' && cType != 'a' && cType != '1' && cType != null) {
                     type = prompt(bbcode_prompt_list_error, type);
                     var cType = type.toLowerCase();
                 }
@@ -536,32 +536,6 @@ function list() {
                 }
                 endStr += '[/list'+((type == '' || type == null) ? ']' : '='+type+']');
                 AddText('', '', endStr, messageElement);
-            }
-        }
-    }
-}
-
-function youtube() {
-    if (helpmode) {
-        alert(bbcode_help_youtube);
-    } else if (advmode) {
-        if (hasSelection(messageElement)) {
-            wrapText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", messageElement);
-        } else {
-            AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", ' ', messageElement);
-        }
-    } else {
-        if (hasSelection(messageElement)) {
-            text = prompt(bbcode_prompt_youtube, fetchSelection(messageElement));
-            if (text == fetchSelection(messageElement)) {
-                wrapText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", messageElement);
-            } else {
-                AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", text, messageElement);
-            }
-        } else {
-            text = prompt(bbcode_prompt_youtube,"movie-id");
-            if (text != null) {
-                AddText("\r\n"+'[youtube]', '[/youtube]'+"\r\n", text, messageElement);
             }
         }
     }

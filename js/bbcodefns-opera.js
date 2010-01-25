@@ -209,7 +209,7 @@ function list() {
         AddText('', '', "\r[list]\r[*]\r[*]\r[*]\r[/list]", messageElement);
     } else {
         st=prompt(bbcode_prompt_list_start,"");
-        while ((st!="") && (st!="A") && (st!="a") && (st!="I") && (st!="i") && (st!="1") && (st!=null)) {
+        while ((st!="") && (st!="A") && (st!="a") && (st!="1") && (st!=null)) {
             st = prompt(bbcode_prompt_list_error,"");
         }
 
@@ -246,19 +246,6 @@ function underline() {
         txt=prompt(bbcode_prompt_underline,"Text");
         if (txt!=null) {
             AddText('', '', "[u]"+txt+"[/u]", messageElement);
-        }
-    }
-}
-
-function youtube() {
-    if (helpmode) {
-        alert(bbcode_help_youtube);
-    } else if (advmode) {
-        AddText('', '', "[youtube] [/youtube]", messageElement);
-    } else {
-        txt=prompt(bbcode_prompt_youtube,"movie-id");
-        if (txt!=null) {
-            AddText('', '', "[youtube]"+txt+"[/youtube]", messageElement);
         }
     }
 }

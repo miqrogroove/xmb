@@ -215,9 +215,6 @@ if ($action == "settings") {
         $remoteimageson = $remoteimagesoff = '';
         settingHTML('attach_remote_images', $remoteimageson, $remoteimagesoff);
 
-        $youtubeon = $youtubeoff = '';
-        settingHTML('youtubestatus', $youtubeon, $youtubeoff);
-
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -508,7 +505,6 @@ if ($action == "settings") {
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
-        printsetting1($lang['textyoutubestatus'], 'youtubestatusnew', $youtubeon, $youtubeoff);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -733,7 +729,6 @@ if ($action == "settings") {
         $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
         $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
         $remoteimages = formOnOff('remoteimages');
-        $youtubestatusnew = formOnOff('youtubestatusnew');
 
         $sql = "UPDATE ".X_PREFIX."settings SET
             langfile='$langfilenew',
@@ -812,8 +807,7 @@ if ($action == "settings") {
             files_virtual_url='$filesbasenew',
             filesperpost='$filesperpostnew',
             max_image_size='$max_image_size',
-            max_thumb_size='$max_thumb_size',
-            youtubestatus='$youtubestatusnew'
+            max_thumb_size='$max_thumb_size'
         ";
         
         if (!DEBUG) {

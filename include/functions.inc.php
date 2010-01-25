@@ -539,35 +539,87 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode(&$message, $allowimgcode) {
-    global $lang, $imgdir, $SETTINGS;
+    global $lang, $imgdir;
 
-    TagBBcode($message, "[b]", "<strong>", "[/b]", "</strong>");
-    TagBBcode($message, "[i]", "<em>", "[/i]", "</em>");
-    TagBBcode($message, "[u]", "<u>", "[/u]", "</u>");
-    TagBBcode($message, "[strike]", "<strike>", "[/strike]", "</strike>");
-    TagBBcode($message, "[blink]", "<blink>", "[/blink]", "</blink>");
-    TagBBcode($message, "[marquee]", "<marquee>", "[/marquee]", "</marquee>");
-    TagBBcode($message, "[list]", '<ul type="square">', "[/list]", "</ul>");
-    TagBBcode($message, "[list=1]", '<ol type="1">', "[/list=1]", "</ol>");
-    TagBBcode($message, "[list=a]", '<ol type="a">', "[/list=a]", "</ol>");
-    TagBBcode($message, "[list=A]", '<ol type="A">', "[/list=A]", "</ol>");
-    TagBBcode($message, "[list=i]", '<ol type="i">', "[/list=i]", "</ol>");
-    TagBBcode($message, "[list=I]", '<ol type="I">', "[/list=I]", "</ol>");
-    $message = str_replace('[*]', '<li />', $message);
-    TagBBcode($message, "[quote]", '</font><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage">', "[/quote]", '</td></tr></table><font class="mediumtxt">');
-    TagBBcode($message, "[code]", '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage">', "[/code]", '</td></tr></table><font class="mediumtxt">');
-    TagBBcode($message, "[html]", '</font><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">HTML</td></tr><tr><td class="codemessage">', "[/html]", '</td></tr></table><font class="mediumtxt">');
-	ParBBcode($message,"@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\]@Ssi", '<span style="color: $1;">', "@\[/color\]@Ssi", '</span>');
-    ParBBcode($message,"@\[color=#([\\da-f]{3,6})\]@Ssi", '<span style="color: #$1;">', "@\[/color\]@Ssi", '</span>');
-    ParBBcode($message,"@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\]@Ssi", '<span style="color: rgb($1);">', "@\[/color\]@Ssi", '</span>');
-    ParBBcode($message,"#\[font=([a-z\r\n\t 0-9]+)\]#Ssi", '<span style="font-family: $1;">', "#\[/font\]#Ssi", '</span>');
-    ParBBcode($message,"#\[align=(left|center|right|justify)\]#Ssi", '<div style="text-align: $1;">', "#\[/align\]#Ssi", '</div>');
-    ParBBcode($message,"@\\[pid=(\\d+)&amp;tid=(\\d+)]@si", '<a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong>$3</strong> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" />', "@\\[/pid]@si", '</a>');
-    ParBBcode($message, "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@si", '<table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage">', "@\\[/rquote]@si", ' </td></tr></table>');
+    $find = array(
+        0 => '[b]',
+        1 => '[/b]',
+        2 => '[i]',
+        3 => '[/i]',
+        4 => '[u]',
+        5 => '[/u]',
+        6 => '[marquee]',
+        7 => '[/marquee]',
+        8 => '[blink]',
+        9 => '[/blink]',
+        10 => '[strike]',
+        11 => '[/strike]',
+        12 => '[quote]',
+        13 => '[/quote]',
+        14 => '[code]',
+        15 => '[/code]',
+        16 => '[list]',
+        17 => '[/list]',
+        18 => '[list=1]',
+        19 => '[list=a]',
+        20 => '[list=A]',
+        21 => '[/list=1]',
+        22 => '[/list=a]',
+        23 => '[/list=A]',
+        24 => '[*]'
+    );
+
+    $replace = array(
+        0 => '<strong>',
+        1 => '</strong>',
+        2 => '<em>',
+        3 => '</em>',
+        4 => '<u>',
+        5 => '</u>',
+        6 => '<marquee>',
+        7 => '</marquee>',
+        8 => '<blink>',
+        9 => '</blink>',
+        10 => '<strike>',
+        11 => '</strike>',
+        12 => '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage"><!-- /nobr -->',
+        13 => ' </td></tr></table><font class="mediumtxt">',
+        14 => '</font> <!-- nobr --><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage"><!-- /nobr -->',
+        15 => '</td></tr></table><font class="mediumtxt">',
+        16 => '<ul type="square">',
+        17 => '</ul>',
+        18 => '<ol type="1">',
+        19 => '<ol type="A">',
+        20 => '<ol type="A">',
+        21 => '</ol>',
+        22 => '</ol>',
+        23 => '</ol>',
+        24 => '<li />'
+    );
+
+    $message = str_replace($find, $replace, $message);
 
     $patterns = array();
     $replacements = array();
-	
+
+    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@si";
+    $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
+    $patterns[] = "@\\[/rquote]@si";
+    $replacements[] = ' </td></tr></table><font class="mediumtxt">';
+
+    $patterns[] = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\](.*?)\[/color\]@Ssi";
+    $replacements[] = '<span style="color: $1;">$2</span>';
+    $patterns[] = "@\[color=#([\\da-f]{3,6})\](.*?)\[/color\]@Ssi";
+    $replacements[] = '<span style="color: #$1;">$2</span>';
+    $patterns[] = "@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\](.*?)\[/color\]@Ssi";
+    $replacements[] = '<span style="color: rgb($1);">$2</span>';
+    $patterns[] = "#\[font=([a-z\r\n\t 0-9]+)\](.*?)\[/font\]#Ssi";
+    $replacements[] = '<span style="font-family: $1;">$2</span>';
+    $patterns[] = "#\[align=(left|center|right|justify)\](.*?)\[/align\]#Ssi";
+    $replacements[] = '<div style="text-align: $1;">$2</div>';
+    $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
+    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
+
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
             $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
@@ -576,23 +628,29 @@ function bbcode(&$message, $allowimgcode) {
             $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
         }
     }
-	
-    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+(\.[a-z]{2,4})?[^\s()]*)i?#Smi', 'fixUrl', $message);
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]*?)\[/url\]#Smi";
-    $replacements[] = '<a href="\1\2" target="_blank">\1\2</a>';
-    $patterns[] = "#\[url\]([^\[\"'<>]*?)\[/url\]#Smi";
-    $replacements[] = '<a href="http://\1" target="_blank">\1</a>';
+
+    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
+
+    //[url]http://www.example.com/[/url]
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+    $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
+
+    //[url]www.example.com[/url]
+    $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
+    $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+    $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
+
+    //[url=http://www.example.com]Lorem Ipsum[/url]
     $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a href="\1\2" target="_blank">\3</a>';
+    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
+
+    //[url=www.example.com]Lorem Ipsum[/url]
     $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a href="http://\1" target="_blank">\2</a>';
-    if ($SETTINGS['youtubestatus'] != 'off'){
-        $patterns[] = "#\\[youtube]([a-zA-Z0-9_-]+)\\[/youtube]#Si";
-        $replacements[] = '<object width="425" height="350" class="youtube"><param name="movie" value="http://www.youtube.com/v/\\1"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/\\1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>';
-	} else {
-        $patterns[] = "#\\[youtube]([a-zA-Z0-9_-]+)\\[/youtube]#Si";
-        $replacements[] = $lang['textyoutubeoff'];
-	}
+    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
+
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
     $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
@@ -603,32 +661,6 @@ function bbcode(&$message, $allowimgcode) {
     $message = preg_replace_callback("#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssi", 'bbcodeSizeTags', $message);
 
     return TRUE;
-}
-
-function TagBBcode(&$message, $bbopen, $htmlopen, $bbclose, $htmlclose){
-    $message = str_replace($bbopen, $htmlopen, $message);
-    $message = str_replace($bbclose, $htmlclose, $message);
-    if($bbopen > $bbclose){
-        $diference = $bbopen - $bbclose;
-        $message = $message.str_repeat($bbclose, $diference);
-    } else if($bbopen < $bbclose){
-        $diference = $bbclose - $bbopen;
-        $message = str_repeat($bbopen, $diference).$message;
-    }
-    return true;
-}
-
-function ParBBcode(&$message, $open_pattern, $open_replacement, $close_pattern, $close_replacement){
-    $message = preg_replace($open_pattern, $open_replacement, $message, -1, $tagopened);
-    $message = preg_replace($close_pattern, $close_replacement, $message, -1, $tagclosed);
-    if($tagopened > $tagclosed){
-        $diference = $tagopened - $tagclosed;
-        $message = $message.str_repeat($close_replacement, $diference);
-    } else if($tagopened < $tagclosed){
-        $diference = $tagclosed - $tagopened;
-        $message = str_repeat($open_replacement, $diference).$message;
-    }
-    return true;
 }
 
 function fixUrl($matches) {
@@ -643,14 +675,7 @@ function fixUrl($matches) {
 
     $fullurl = strip_tags($fullurl);
 
-    $shorturl = '';
-    if (strlen($fullurl) > 80) {
-        $shorturl = substr($fullurl, 0, 80);
-        $shorturl = substr_replace($shorturl, '...', 77, 3);
-        return ' [url='.$fullurl.']'.$shorturl.'[/url]';
-    } else {
-        return ' <a href="'.$fullurl.'" target="_blank">'.$fullurl.'</a>';
-    }
+    return $matches[1].'[url]'.$fullurl.'[/url]';
 }
 
 /**
