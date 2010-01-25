@@ -93,8 +93,8 @@ if (!defined('IN_CODE')) {
 
 // Registration settings
     /***************
-     * The ipcheck, checks if your IP is a valid IPv4 or IPv6 type, if none of these, it will kill.
-     * this might shut a few users out, so you can turn it off by changing the $ipcheck variable to 'off'
+     * The ipcheck, checks if your server is reading a valid IPv4 format. If not, it will kill the script.
+     * This is a legacy "feature" of XMB that should be turned off by changing the $ipcheck variable to 'off'
      ****************
      * The allow_spec_q variable specifies if Special queries (eg. USE database and SHOW DATABASES) are allowed.
      * By default, they are not, meaning $allow_spec_q = FALSE;

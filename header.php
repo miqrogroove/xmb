@@ -311,9 +311,9 @@ if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
     exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server. Please remove it as soon as possible.');
 }
 
-//Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
+//Checks the IP-format, if it's not a IPv4 type, it will be blocked, safe to remove....
 if ($ipcheck == 'on') {
-    if (!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')) {
+    if (1 != preg_match('@^(\\d{1,3}\\.){3}\\d{1,3}$@', $onlineip)) {
         header('HTTP/1.0 403 Forbidden');
         exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
     }
