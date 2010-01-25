@@ -33,7 +33,7 @@ if (!defined('X_SCRIPT')) {
     exit("Not allowed to run this file directly.");
 }
 if (!defined('ROOT')) define('ROOT', './');
-error_reporting(E_ALL&~E_NOTICE&~E_DEPRECATED);
+error_reporting(-1); // Report all errors until config.php loads successfully.
 define('IN_CODE', TRUE);
 require ROOT.'include/global.inc.php';
 
@@ -204,14 +204,14 @@ if (!$show_full_info) {
 }
 $versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
 
-if (!defined('DEBUG')) {
-    define('DEBUG', FALSE);
-} elseif (DEBUG) {
+if (!defined('DEBUG')) define('DEBUG', FALSE);
+if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);
+
+if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
     assertEmptyOutputStream('debug.inc.php');
-}
-if (!defined('LOG_MYSQL_ERRORS')) {
-    define('LOG_MYSQL_ERRORS', FALSE);
+} else {
+    error_reporting(E_ERROR & E_USER_ERROR);
 }
 
 $config_array = array(

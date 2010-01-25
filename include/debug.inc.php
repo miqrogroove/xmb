@@ -30,8 +30,6 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-error_reporting(E_ALL | E_STRICT);
-
 if ($show_full_info) {
     $versionlong .= ' (Debug Mode)';
 } else {
