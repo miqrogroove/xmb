@@ -75,8 +75,10 @@ function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
             $buffer = ob_get_clean();
             echo 'OB:';
             var_dump(ini_get('output_buffering'));
-            echo 'GZ:';
-            var_dump($SETTINGS['gzipcompress']);
+            if (isset($SETTINGS['gzipcompress'])) {
+                echo 'GZ:';
+                var_dump($SETTINGS['gzipcompress']);
+            }
             echo "<br /><br />Error: XMB failed to start due to file corruption. "
                . "Please inspect $error_source.  It has generated the following unexpected output:$buffer";
         }
