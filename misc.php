@@ -558,5 +558,5 @@ switch($action) {
 eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo $header.$misc.$footer;
+echo $header, $misc, $footer;
 ?>

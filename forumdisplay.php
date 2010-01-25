@@ -370,5 +370,5 @@ if ($status1 == 'Moderator') {
 
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo $header.$forumdisplay.$footer;
+echo $header, $forumdisplay, $footer;
 ?>

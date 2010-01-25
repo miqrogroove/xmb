@@ -342,7 +342,7 @@ if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
 eval('$index = "'.template('index').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo $header.$index.$footer;
+echo $header, $index, $footer;
 
 /**
  * @param array $forums Read-Only Variable. Must be a return value from the function getStructuredForums()

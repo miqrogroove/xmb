@@ -743,7 +743,7 @@ if ($action == '') {
     eval('$viewthread = "'.template('viewthread').'";');
     end_time();
     eval('$footer = "'.template('footer').'";');
-    echo $header.$viewthread.$footer;
+    echo $header, $viewthread, $footer;
 } else if ($action == 'attachment') {
     // Validate action
     if (!($forum['attachstatus'] == 'on' And $pid > 0 And $tid > 0)) {

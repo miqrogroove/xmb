@@ -1380,7 +1380,7 @@ switch($action) {
 
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo $header.$errors.$postpage.$footer;
+echo $header, $errors, $postpage, $footer;
 
 function postLinkBBcode(&$message) {
     global $db;

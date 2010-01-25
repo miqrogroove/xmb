@@ -102,5 +102,5 @@ eval('$css = "'.template('css').'";');
 eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
-echo stripslashes($header.$faq.$footer);
+echo $header, $faq, $footer;
 ?>
