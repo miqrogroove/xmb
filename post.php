@@ -225,7 +225,9 @@ nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 // Search-link
 $searchlink = makeSearchLink($forum['fid']);
 
-if ($forum['attachstatus'] == 'on') {
+if (!ini_get('file_uploads')) {
+    $forum['attachstatus'] = 'off';
+} elseif ($forum['attachstatus'] == 'on') {
     require 'include/attach.inc.php';
     $attachlimits = ' '.$lang['attachmaxsize'].' '.getSizeFormatted($SETTINGS['maxattachsize']).'.  '.$lang['attachmaxdims'].' '.$SETTINGS['max_image_size'].'.';
 }
@@ -661,6 +663,8 @@ switch($action) {
                 }
                 $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
                 if ($maxuploads > 0) {
+                    $max_dos_limit = (int) ini_get('max_file_uploads');
+                    if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
@@ -1037,6 +1041,8 @@ switch($action) {
                 }
                 $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
                 if ($maxuploads > 0) {
+                    $max_dos_limit = (int) ini_get('max_file_uploads');
+                    if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
@@ -1304,6 +1310,8 @@ switch($action) {
                 }
                 $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
                 if ($maxuploads > 0) {
+                    $max_dos_limit = (int) ini_get('max_file_uploads');
+                    if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     eval('$attachment .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
