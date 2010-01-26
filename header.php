@@ -211,7 +211,7 @@ if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
     assertEmptyOutputStream('debug.inc.php');
 } else {
-    error_reporting(E_ERROR & E_PARSE & E_USER_ERROR);
+    error_reporting(E_ERROR | E_PARSE | E_USER_ERROR);
 }
 
 $config_array = array(
