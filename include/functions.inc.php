@@ -1901,6 +1901,10 @@ function forumJump() {
 
     // Populate $forumselect
     $permitted = getStructuredForums(TRUE);
+    
+    if (0 == count($permitted['group']['0']) and 0 == count($permitted['forum']['0'])) {
+        return '';
+    }
 
     foreach($permitted['forum']['0'] as $forum) {
         $dropselc1 = ( $checkid == $forum['fid'] ) ? $selHTML : '';
