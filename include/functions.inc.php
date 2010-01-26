@@ -2149,7 +2149,7 @@ function phpShorthandValue($ininame) {
  * @param string $fromaddress Must be a fully validated e-mail address.
  * @return string
  */
-smtpHeaderFrom($fromname, $fromaddress) {
+function smtpHeaderFrom($fromname, $fromaddress) {
     $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
     return 'From: "'.$fromname.'" <'.$fromaddress.'>';
 }
