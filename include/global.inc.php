@@ -42,7 +42,7 @@ if (!isset($_SERVER)) {
 }
 
 // make sure magic_quotes_runtime doesn't kill XMB
-@set_magic_quotes_runtime(0);
+ini_set('magic_quotes_runtime', 0);
 
 // force registerglobals
 if (is_array($_REQUEST)) {

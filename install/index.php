@@ -91,7 +91,7 @@ define('SPECQ', false);
 define('SHOWFULLINFO', false);
 define('IN_CODE', true);
 
-@set_magic_quotes_runtime(0);
+ini_set('magic_quotes_runtime', 0);
 @ini_set('magic_quotes_gpc', '1');
 
 function error($head, $msg, $die=true) {
