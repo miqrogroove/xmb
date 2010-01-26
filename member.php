@@ -566,8 +566,9 @@ switch($action) {
                         $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape_var($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                     } else {
                         $rawuser = postedVar('username', '', FALSE, FALSE);
+                        $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
                         $headers = array();
-                        $headers[] = "From: $bbname <$adminemail>";
+                        $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
                         $headers[] = 'X-Mailer: PHP';
                         $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
                         $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
@@ -584,14 +585,15 @@ switch($action) {
             if ($SETTINGS['emailcheck'] == 'on') {
                 $translate = $lang2[$langfilenew];
                 $username = trim(postedVar('username', '', FALSE, FALSE));
+                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
                 $headers = array();
-                $headers[] = "From: $bbname <$adminemail>";
+                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
                 $headers[] = 'X-Mailer: PHP';
                 $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
                 $headers[] = 'X-AntiAbuse: Username - '.$username;
                 $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
                 $headers = implode("\r\n", $headers);
-                altMail($rawemail, '['.$bbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url", $headers);
+                altMail($rawemail, '['.$rawbbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url", $headers);
             } else {
                 $username = trim(postedVar('username', '', TRUE, FALSE));
                 $currtime = $onlinetime + (86400*30);

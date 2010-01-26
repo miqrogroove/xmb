@@ -573,8 +573,9 @@ switch($action) {
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
                 $headers = array();
-                $headers[] = "From: $bbname <$adminemail>";
+                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
                 $headers[] = 'X-Mailer: PHP';
                 $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
                 $headers[] = 'X-AntiAbuse: Username - '.$rawusername;

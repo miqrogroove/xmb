@@ -2139,4 +2139,18 @@ function phpShorthandValue($ininame) {
     }
     return $rawstring;
 }
+
+/**
+ * Simple SMTP message From header formation.
+ *
+ * @author Robert Chapin (miqrogroove)
+ * @since 1.9.11.08
+ * @param string $fromname Will be converted to an SMTP quoted string.
+ * @param string $fromaddress Must be a fully validated e-mail address.
+ * @return string
+ */
+smtpHeaderFrom($fromname, $fromaddress) {
+    $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
+    return 'From: "'.$fromname.'" <'.$fromaddress.'>';
+}
 ?>
