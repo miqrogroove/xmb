@@ -117,28 +117,30 @@ function buddy_delete($delete) {
 * @return    no return value, but will display a status report or a list of buddies and their online status
 */
 function buddy_addu2u() {
-    global $db, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken, $onlinetime;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
     if ($db->num_rows($q) == 0) {
         blistmsg($lang['no_buddies']);
     } else {
         while($buddy = $db->fetch_array($q)) {
             $buddyout = $buddy['buddyname'];
             $recodename = recodeOut($buddy['buddyname']);
-            if ($buddy['invisible'] == 1) {
-                if (!X_ADMIN) {
-                    eval('$buddys["offline"] .= "'.template('buddy_u2u_off').'";');
+            if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+                if ($buddy['invisible'] == 1) {
+                    if (!X_ADMIN) {
+                        eval('$buddys["offline"] .= "'.template('buddy_u2u_off').'";');
+                    } else {
+                        eval('$buddys["online"] .= "'.template('buddy_u2u_inv').'";');
+                    }
                 } else {
-                    eval('$buddys["online"] .= "'.template('buddy_u2u_inv').'";');
+                    eval('$buddys["online"] .= "'.template('buddy_u2u_on').'";');
                 }
-            } else if ($buddy['username'] != '') {
-                eval('$buddys["online"] .= "'.template('buddy_u2u_on').'";');
             } else {
                 eval('$buddys["offline"] .= "'.template('buddy_u2u_off').'";');
             }
@@ -148,29 +150,29 @@ function buddy_addu2u() {
 }
 
 function buddy_display() {
-    global $db, $lang, $xmbuser, $oToken;
+    global $db, $lang, $xmbuser, $oToken, $onlinetime;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
-        if ($buddy['username'] != '') {
+        if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
             if ($buddy['invisible'] == 1) {
                 if (!X_ADMIN) {
-                    eval("\$buddys['offline'] .= \"".template('buddylist_buddy_offline')."\";");
+                    eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
                     continue;
                 } else {
                     $buddystatus = $lang['hidden'];
                 }
             } else {
-                $buddystatus =  $lang['textonline'];
+                $buddystatus = $lang['textonline'];
             }
-            eval("\$buddys['online'] .= \"".template('buddylist_buddy_online')."\";");
+            eval('$buddys["online"] .= "'.template('buddylist_buddy_online').'";');
         } else {
-            eval("\$buddys['offline'] .= \"".template('buddylist_buddy_offline')."\";");
+            eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
         }
     }
     eval('echo stripslashes("'.template('buddylist').'");');

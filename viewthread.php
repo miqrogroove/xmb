@@ -208,10 +208,10 @@ if (strpos($thread['closed'], '|') !== false) {
 $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
+$expire = $onlinetime + X_ONLINE_TIMER;
 if (!isset($oldtopics)) {
-    put_cookie('oldtopics', '|'.$lastPid.'|', $onlinetime+600, $cookiepath, $cookiedomain, null, X_SET_HEADER);
+    put_cookie('oldtopics', '|'.$lastPid.'|', $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
 } else if (false === strpos($oldtopics, '|'.$lastPid.'|')) {
-    $expire = $onlinetime + 600;
     $oldtopics .= $lastPid.'|';
     put_cookie('oldtopics', $oldtopics, $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
 }
@@ -467,7 +467,7 @@ if ($action == '') {
     $db->free_result($query1);
 
     $thisbg = $altbg2;
-    $sql = "SELECT p.*, m.*, w.time "
+    $sql = "SELECT p.*, m.* "
          . "FROM "
          . "( "
          . "  ( "
@@ -485,7 +485,6 @@ if ($action == '') {
          . "  ) "
          . ") AS p "
          . "LEFT JOIN ".X_PREFIX."members m ON m.username=p.author "
-         . "LEFT JOIN ".X_PREFIX."whosonline w ON w.username=p.author "
          . "ORDER BY p.dateline ASC, p.type DESC, p.pid ASC ";
     $querypost = $db->query($sql);
 
@@ -503,13 +502,18 @@ if ($action == '') {
 
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
-        $onlinenow = $lang['memberisoff'];
-        if ($post['time'] != '' && $post['author'] != "xguest123") {
+        if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
             if ($post['invisible'] == 1) {
-                $onlinenow = X_ADMIN ? $lang['memberison'] . ' ('.$lang['hidden'].')' : $lang['memberisoff'];
+                if (!X_ADMIN) {
+                    $onlinenow = $lang['memberisoff'];
+                } else {
+                    $onlinenow = $lang['memberison'].' ('.$lang['hidden'].')';
+                }
             } else {
                 $onlinenow = $lang['memberison'];
             }
+        } else {
+            $onlinenow = $lang['memberisoff'];
         }
 
         $date = gmdate($dateformat, $post['dateline'] + $tmoffset);

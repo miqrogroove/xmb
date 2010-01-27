@@ -138,7 +138,10 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
                 define('X_MEMBER', TRUE);
                 define('X_GUEST', FALSE);
             }
-            $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
+            // Save some write locks by updating in 60-second intervals.
+            if (abs(time() - (int)$self['lastvisit']) > 60) {
+                $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
+            }
         }
     } else {
         if (X_SCRIPT != 'upgrade.php') {
@@ -222,7 +225,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
         global $onlineip, $onlinetime, $url;
 
         $wollocation = $db->escape_var($url);
-        $newtime = $onlinetime - 600;
+        $newtime = $onlinetime - X_ONLINE_TIMER;
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }

@@ -525,7 +525,7 @@ function u2u_ignore() {
 }
 
 function u2u_display($folder, $folders) {
-    global $db, $self, $lang, $xmbuser;
+    global $db, $self, $lang, $xmbuser, $onlinetime;
     global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
@@ -540,7 +540,7 @@ function u2u_display($folder, $folders) {
         $folder = "Inbox";
     }
 
-    $query = $db->query("SELECT u.*, w.username, w.invisible FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."whosonline w ON (u.msgto=w.username OR u.msgfrom=w.username) AND w.username!='$xmbuser' WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
+    $query = $db->query("SELECT u.*, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON (u.msgto=m.username OR u.msgfrom=m.username) AND m.username!='$xmbuser' WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
     while($u2u = $db->fetch_array($query)) {
         if ($u2u['readstatus'] == 'yes') {
             $u2ureadstatus = $lang['textread'];
@@ -553,13 +553,15 @@ function u2u_display($folder, $folders) {
         }
 
         $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
-        if ($u2u['type'] == 'incoming') {
-            if ($u2u['msgfrom'] == $u2u['username'] || $u2u['msgfrom'] == $self['username']) {
+
+        if ($u2u['type'] == 'incoming' or $u2u['type'] == 'outgoing') {
+
+            if ($onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
                 if ($u2u['invisible'] == 1) {
-                    if (X_ADMIN) {
-                        $online = $lang['hidden'];
-                    } else {
+                    if (!X_ADMIN) {
                         $online = $lang['textoffline'];
+                    } else {
+                        $online = $lang['hidden'];
                     }
                 } else {
                     $online = $lang['textonline'];
@@ -567,22 +569,14 @@ function u2u_display($folder, $folders) {
             } else {
                 $online = $lang['textoffline'];
             }
-            $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'"target="_blank">'.$u2u['msgfrom'].'</a> ('.$online.')';
-        } else if ($u2u['type'] == 'outgoing') {
-            if ($u2u['msgto'] == $u2u['username'] || $u2u['msgto'] == $self['username']) {
-                if ($u2u['invisible'] == 1) {
-                    if (X_ADMIN) {
-                        $online = $lang['hidden'];
-                    } else {
-                        $online = $lang['textoffline'];
-                    }
-                } else {
-                    $online = $lang['textonline'];
-                }
+            
+            if ($u2u['type'] == 'incoming') {
+                $u2uname = $u2u['msgfrom'];
             } else {
-                $online = $lang['textoffline'];
+                $u2uname = $u2u['msgto'];
             }
-            $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'"target="_blank">'.$u2u['msgto'].'</a> ('.$online.')';
+
+            $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2uname).'"target="_blank">'.$u2uname.'</a> ('.$online.')';
         } else if ($u2u['type'] == 'draft') {
             $u2usent = $lang['textu2unotsent'];
         }

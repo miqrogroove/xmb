@@ -123,6 +123,7 @@ $tables = array(
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
+define('X_ONLINE_TIMER', 600); // Visitors are offline after this many seconds.
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
 define('X_SET_HEADER', 1);
@@ -399,12 +400,12 @@ if ($xmblvb > 0) {
 }
 
 put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + 600), $cookiepath, $cookiedomain); // lvb =
+put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain); // lvb =
 
 $lastvisit = $thetime;
 
 if (isset($oldtopics)) {
-    put_cookie('oldtopics', $oldtopics, ($onlinetime+600), $cookiepath, $cookiedomain);
+    put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain);
 }
 
 

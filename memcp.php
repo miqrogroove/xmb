@@ -732,42 +732,29 @@ if ($action == 'profile') {
     eval($lang['evalusercpwelcome']);
     $header .= makenav($action);
 
-    $q = $db->query("SELECT b.buddyname, w.invisible, w.username FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."whosonline w ON (b.buddyname=w.username) WHERE b.username='$xmbuser'");
+    $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
-    if (X_ADMIN) {
-        while($buddy = $db->fetch_array($q)) {
-            $recodename = recodeOut($buddy['buddyname']);
-            if (strlen($buddy['username']) > 0) {
-                if ($buddy['invisible'] == 1) {
-                   $buddystatus = $lang['hidden'];
+    while($buddy = $db->fetch_array($q)) {
+        $recodename = recodeOut($buddy['buddyname']);
+        if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+            if ($buddy['invisible'] == 1) {
+                if (!X_ADMIN) {
+                    eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
+                    continue;
                 } else {
-                    $buddystatus = $lang['textonline'];
+                    $buddystatus = $lang['hidden'];
                 }
-                eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
             } else {
-                eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
+                $buddystatus = $lang['textonline'];
             }
+            eval('$buddys["online"] .= "'.template('buddylist_buddy_online').'";');
+        } else {
+            eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
         }
-        $db->free_result($q);
-    } else {
-        while($buddy = $db->fetch_array($q)) {
-            $recodename = recodeOut($buddy['buddyname']);
-            if (strlen($buddy['username']) > 0) {
-                if ($buddy['invisible'] == 1) {
-                   eval("\$buddys[offline] .= \"".template("buddylist_buddy_offline")."\";");
-                   continue;
-                } else {
-                    $buddystatus = $lang['textonline'];
-                }
-                eval("\$buddys['online'] .= \"".template("buddylist_buddy_online")."\";");
-            } else {
-                eval("\$buddys['offline'] .= \"".template("buddylist_buddy_offline")."\";");
-            }
-        }
-        $db->free_result($q);
     }
+    $db->free_result($q);
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
     $member = $db->fetch_array($query);
