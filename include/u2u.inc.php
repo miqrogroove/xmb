@@ -552,7 +552,7 @@ function u2u_display($folder, $folders) {
         $query = $db->query(
             "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' AND u.type='incoming' "
           . "UNION ALL "
-          . "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' AND u.type='outgoing' "
+          . "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' AND u.type IN ('outgoing','draft') "
           . "ORDER BY dateline DESC"
         );
         break;
