@@ -540,7 +540,24 @@ function u2u_display($folder, $folders) {
         $folder = "Inbox";
     }
 
-    $query = $db->query("SELECT u.*, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON (u.msgto=m.username OR u.msgfrom=m.username) AND m.username!='$xmbuser' WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
+    switch($folder) {
+    case 'Inbox':
+        $query = $db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
+        break;
+    case 'Outbox':
+    case 'Drafts':
+        $query = $db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
+        break;
+    default:
+        $query = $db->query(
+            "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' "
+          . "UNION ALL "
+          . "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM ".X_PREFIX."u2u u LEFT JOIN ".X_PREFIX."members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' "
+          . "ORDER BY dateline DESC"
+        );
+        break;
+    }
+
     while($u2u = $db->fetch_array($query)) {
         if ($u2u['readstatus'] == 'yes') {
             $u2ureadstatus = $lang['textread'];
