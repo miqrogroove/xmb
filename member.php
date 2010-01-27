@@ -763,7 +763,7 @@ switch($action) {
         if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
             $memberinfo['bday'] = $lang['textnone'];
         } else {
-            $memberinfo['bday'] = printGmDate(MakeTime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)));
+            $memberinfo['bday'] = printGmDate(MakeTime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)), $dateformat, -$timeoffset);
         }
 
         // Forum most active in
