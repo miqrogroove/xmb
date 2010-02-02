@@ -1,10 +1,10 @@
 <?php
-/**
+/** translation in Polish by Tumuch
  * eXtreme Message Board
- * XMB 1.9.11 BETA 3 translation in Polish by Tumuch
+ * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2009, The XMB Group
+ * Copyright (c) 2001-2010, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -36,7 +36,7 @@ $devname = 'Polish';
 // Meta Data
 $lang['charset'] = 'ISO-8859-2';
 $lang['iso639'] = 'pl';
-$lang['language'] = 'Polish';
+$lang['language'] = 'Polski';
 
 // Translation
 $lang['4spaces'] = "&nbsp;&nbsp;&nbsp;&nbsp;";
