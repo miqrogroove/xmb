@@ -632,10 +632,10 @@ function getTempFile($path=FALSE) {
     
     $filepath = FALSE;
     if ($path !== FALSE) {
-        $filepath = tempnam($path, 'xmb-');
+        $filepath = @tempnam($path, 'xmb-');
     }
     if (!is_writable($filepath)) {
-        $filepath = tempnam('', 'xmb-');
+        $filepath = @tempnam('', 'xmb-');
     }
     if (!is_writable($filepath)) {
         header('HTTP/1.0 500 Internal Server Error');
