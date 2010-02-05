@@ -1261,10 +1261,15 @@ Public License instead of this License.  But first, please read
         }
         
         $versionlong = '';
-        require '../include/debug.inc.php';
+        require ROOT.'include/debug.inc.php';
         $array = parse_url($full_url);
         if (!isset($array['path'])) {
             $array['path'] = '/';
+        }
+        if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $array['host'])) {
+            $array['host'] = '';
+        } elseif (substr($array['host'], 0, 4) === 'www.') {
+            $array['host'] = substr($array['host'], 3);
         }
         debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
         unset($array);
