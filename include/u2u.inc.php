@@ -58,6 +58,17 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
     return $errors;
 }
 
+/**
+ * Sends a message from the current user to the specified username.
+ *
+ * Assumes the current user is already authenticated and not banned from U2U.
+ *
+ * @param string $msgto XMB username, must be SQL safe.
+ * @param string $subject Message subject line, must be double-slashed.
+ * @param string $message Message body, must be double-slashed.
+ * @param int $u2uid Optional.
+ * @return string Empty string on success, HTML formatted messages on failure.
+ */
 function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
     global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
 
