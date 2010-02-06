@@ -38,7 +38,7 @@ function u2u_msg($msg, $redirect) {
     if (!empty($redirect)) {
         redirect($redirect);
     }
-    eval('echo stripslashes("'.template('u2u_msg').'");');
+    eval('echo "'.template('u2u_msg').'";');
     exit;
 }
 
@@ -63,6 +63,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
  *
  * Assumes the current user is already authenticated and not banned from U2U.
  *
+ * @since 1.9.1
  * @param string $msgto XMB username, must be SQL safe.
  * @param string $subject Message subject line, must be double-slashed.
  * @param string $message Message body, must be double-slashed.
