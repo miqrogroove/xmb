@@ -508,11 +508,11 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
         return FALSE;
     }
 
-    if ($file['name'] == 'none' Or empty($file['name']) Or !is_uploaded_file($file['tmp_name'])) {
+    if (!is_uploaded_file($file['tmp_name'])) {
         $filetype = X_EMPTY_UPLOAD;
         return FALSE;
     }
-    
+
     if (!is_readable($file['tmp_name'])) {
         header('HTTP/1.0 500 Internal Server Error');
         exit('Fatal Error: XMB does not have read permission in the upload_tmp_dir. This is a PHP server security fault.');
@@ -522,6 +522,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     if (!isValidFilename($file['name'])) {
         $file['name'] = basename($file['tmp_name']);
         if (!isValidFilename($file['name'])) {
+            unlink($file['tmp_name']);
             $filetype = X_INVALID_FILENAME;
             return FALSE;
         }
@@ -529,10 +530,12 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
 
     $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes (PHP Bug #45124, etc)
     if ($filesize > $SETTINGS['maxattachsize']) {
+        unlink($file['tmp_name']);
         $filetype = X_ATTACH_SIZE_EXCEEDED;
         return FALSE;
     }
     if ($filesize == 0) {
+        unlink($file['tmp_name']);
         $filetype = X_EMPTY_UPLOAD;
         return FALSE;
     }
