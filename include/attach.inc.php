@@ -455,8 +455,23 @@ function private_deleteAttachments($where) {
     $db->query("DELETE ".X_PREFIX."attachments FROM ".X_PREFIX."attachments $where");
 }
 
+/**
+ * Retrieves information about the specified file upload.
+ *
+ * This function sets appropriate error levels and returns several variables.
+ * This function does not provide the upload path, which is $_FILES[$varname]['tmp_name']
+ * All return values must be treated as invalid if (FALSE === get_attached_file(...)).
+ *
+ * @param string $varname The name of the file input on the form.
+ * @param string $filename Variable Required. Returns the filename provided by the user. Uses param $dbescape.
+ * @param string|int $filetype Variable Required. Returns the MIME type provided by the user on success. Returns one of the $attachmentErrors constants on failure. Uses param $dbescape.
+ * @param int    $filesize Variable Required. Returns the actual byte size of the uploaded file.
+ * @param bool   $dbescape Optional. When set to TRUE, the string parameters and the return value itself will all be SQL sanitized.
+ * @param bool   $loadfile Optional. When set to TRUE, the uploaded file will be loaded into memory and returned as a string value.
+ * @return string|bool The uploaded file or an empty string will be returned on success. FALSE on failure. Uses params $dbescape and $loadfile.
+ */
 function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE, $loadfile=TRUE) {
-    global $db, $lang, $SETTINGS;
+    global $db, $SETTINGS;
 
     // Initialize Return Values
     $attachment = '';
@@ -474,6 +489,25 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
         return FALSE;
     }
 
+    if (UPLOAD_ERR_OK != $file['error']) {
+        switch($file['error']) {
+        case UPLOAD_ERR_INI_SIZE:
+        case UPLOAD_ERR_FORM_SIZE:
+            $filetype = X_ATTACH_SIZE_EXCEEDED;
+            break;
+        case UPLOAD_ERR_NO_FILE:
+            $filetype = X_EMPTY_UPLOAD;
+            break;
+        default:
+            // See the PHP Manual for additional information.
+            if (DEBUG) {
+                exit('XMB Upload Haulted by PHP error code '.$file['error']);
+            }
+            $filetype = X_GENERIC_ATTACH_ERROR;
+        }
+        return FALSE;
+    }
+
     if ($file['name'] == 'none' Or empty($file['name']) Or !is_uploaded_file($file['tmp_name'])) {
         $filetype = X_EMPTY_UPLOAD;
         return FALSE;
@@ -488,8 +522,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     if (!isValidFilename($file['name'])) {
         $file['name'] = basename($file['tmp_name']);
         if (!isValidFilename($file['name'])) {
-            $filetype = X_GENERIC_ATTACH_ERROR;
-            error($lang['invalidFilename'], false, '', '', false, false, false, false);
+            $filetype = X_INVALID_FILENAME;
             return FALSE;
         }
     }
@@ -497,7 +530,6 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes (PHP Bug #45124, etc)
     if ($filesize > $SETTINGS['maxattachsize']) {
         $filetype = X_ATTACH_SIZE_EXCEEDED;
-        error($lang['attachtoobig'], false, '', '', false, false, false, false);
         return FALSE;
     }
     if ($filesize == 0) {
