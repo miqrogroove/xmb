@@ -500,7 +500,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
             break;
         default:
             // See the PHP Manual for additional information.
-            if (DEBUG) {
+            if (DEBUG and is_numeric($file['error'])) {
                 exit('XMB Upload Haulted by PHP error code '.$file['error']);
             }
             $filetype = X_GENERIC_ATTACH_ERROR;
