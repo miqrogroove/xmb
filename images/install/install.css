@@ -6,31 +6,31 @@ body {
 
 .top {
         height: 20px;
-        background: url(images/tl.gif) no-repeat left top;
+        background: url(tl.gif) no-repeat left top;
 }
 .top span {
         display: block;
         position: relative;
         height: 20px;
-        background: url(images/tr.gif) no-repeat right top;
+        background: url(tr.gif) no-repeat right top;
 }
 
 .center-content {
         position: relative;
-        background: url(images/r.gif) repeat-y right top;
+        background: url(r.gif) repeat-y right top;
         padding: 1px 20px 1px 20px;
 }
 
 .bottom {
         height: 20px;
-        background: url(images/bl.gif) no-repeat left bottom;
+        background: url(bl.gif) no-repeat left bottom;
 }
 
 .bottom span {
         display: block;
         position: relative;
         height: 20px;
-        background: url(images/br.gif) no-repeat right top;
+        background: url(br.gif) no-repeat right top;
 }
 
 #main {
@@ -64,7 +64,7 @@ body {
 }
 
 #sidebar, #content, #footer, #configure, #config, #complete {
-        background: url(images/l.gif) repeat-y left top;
+        background: url(l.gif) repeat-y left top;
         background-color: #f0f0f0;
 }
 

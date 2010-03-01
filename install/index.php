@@ -150,12 +150,12 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 <head>
     <title>XMB Installer</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-    <link rel="stylesheet" href="install.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen"/>
 </head>
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.png" alt="XMB" title="XMB" />
+        <img src="../images/install/logo.png" alt="XMB" title="XMB" />
     </div>
 <?php
 }
@@ -981,12 +981,12 @@ Public License instead of this License.  But first, please read
     <title>XMB Installer</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
-    <link rel="stylesheet" href="install.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen"/>
 </head>
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.png" alt="XMB" title="XMB" />
+        <img src="../images/install/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="configure">
         <div class="top"><span></span></div>
@@ -1017,12 +1017,12 @@ Public License instead of this License.  But first, please read
     <title>XMB Installer</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
-    <link rel="stylesheet" href="install.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen, projection" />
 </head>
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.png" alt="XMB" title="XMB" />
+        <img src="../images/install/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="configure">
         <div class="top"><span></span></div>
@@ -1090,12 +1090,12 @@ Public License instead of this License.  But first, please read
     <title>XMB Installer</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
-    <link rel="stylesheet" href="install.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen, projection" />
 </head>
 <body>
 <div id="main">
     <div id="header">
-        <img src="images/logo.png" alt="XMB" title="XMB" />
+        <img src="../images/install/logo.png" alt="XMB" title="XMB" />
     </div>
     <div id="sidebar">
         <div class="top"><span></span></div>
