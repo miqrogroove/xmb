@@ -30,6 +30,7 @@ define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
+define('COPY_YEAR', '2001-2010');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
@@ -108,7 +109,7 @@ function error($head, $msg, $die=true) {
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; 2008<br />
+            <span>The XMB Group &copy; '.COPY_YEAR.'<br />
             Sponsored by iEntry</span>
         </div>
         <div class="bottom"><span></span></div>
@@ -1476,7 +1477,7 @@ Public License instead of this License.  But first, please read
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; 2008<br />
+            <span>The XMB Group &copy; <?php echo COPY_YEAR; ?><br />
             Sponsored by iEntry</span>
         </div>
         <div class="bottom"><span></span></div>
