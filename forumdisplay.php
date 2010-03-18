@@ -194,15 +194,27 @@ if ($status1 == 'Moderator') {
 $topicsnum = 0;
 $threadlist = '';
 $threadsInFid = array();
-if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER) {
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$xmbuser' AND fid='$fid'");
-    while($row = $db->fetch_array($query)) {
-        array_push($threadsInFid, $row['tid']);
-    }
-    $db->free_result($query);
-}
 
 $querytop = $db->query("SELECT t.*, m.uid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."members AS m ON t.author=m.username WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT {$mpage['start']}, $tpp");
+
+if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
+    while($thread = $db->fetch_array($querytop)) {
+        $threadsInFid[] = $thread['tid'];
+    }
+    if (!empty($threadsInFid)) {
+        $db->data_seek($querytop, 0);
+
+        $threadsInFid = implode(',', $threadsInFid);
+        $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+
+        $threadsInFid = array();
+        while($row = $db->fetch_array($query)) {
+            $threadsInFid[] = $row['tid'];
+        }
+        $db->free_result($query);
+    }
+}
+
 while($thread = $db->fetch_array($querytop)) {
     if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
