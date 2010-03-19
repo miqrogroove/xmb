@@ -1,0 +1,19 @@
+----------#--- XMB LICENSE ---#----------
+
+This license applies to all of the software in this distribution, and 
+under no circumstances is this license to be ignored.
+
+You may modify any portion of this software save the copyright
+and documents within the docs/ folder. Modification of this
+project is not discouraged, but rather, encouraged.
+
+As stated above, ALL COPYRIGHTS MUST REMAIN INTACT. They may 
+be formatted via HTML tags and aligned in different parts of the 
+page, just so as they are always visible.
+
+You may NOT distribute this software at all.
+
+You may not sell this software, modified or unmodified, new name
+or not, at all.
+
+Any terms are breakable with direct consent of the original author.

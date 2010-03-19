@@ -1,0 +1,124 @@
+**********************************************************************************************
+This has not been tested since 1.0 and may contain bugs.  Current dev team are making a better
+install script, but for 1.5
+**********************************************************************************************
+
+----------#--- XMB UPGRADE NOTES ---#----------
+
+To upgrade, post the code changes for each version
+that you're upgrading in the Upgrade section of the cp.
+For example, if you have Alpha 1 and your upgrading to
+Beta 1, insert the Alpha 2, Alpha 3, and Beta 1 upgrade code.
+If you have any questions, please post at xmbforum.com
+
+YOU SHOULD INPUT THE CODE IN FIRST, THEN UPLOAD ALL FILES FOR A BUG FREE
+UPGRADE.
+
+
+
+1.0 Final
+---------------------------------------------
+ALTER TABLE xmb_members ADD timeformat int(5) NOT NULL;
+ALTER TABLE xmb_members ADD msn varchar(40) NOT NULL;
+ALTER TABLE xmb_smilies ADD type varchar(15) NOT NULL FIRST;
+ALTER TABLE xmb_forums ADD postperm varchar(3) NOT NULL;
+UPDATE xmb_forums SET postperm='1';
+ALTER TABLE xmb_members CHANGE username username varchar(25) NOT NULL;
+ALTER TABLE xmb_threads CHANGE views views int(100) NOT NULL;
+ALTER TABLE xmb_threads ADD replies int(100) NOT NULL AFTER views;
+UPDATE xmb_members SET timeformat='12';
+ALTER TABLE xmb_members ADD dateformat varchar(10) NOT NULL;
+UPDATE xmb_members SET dateformat='mm/dd/yy';
+UPDATE xmb_threads SET icon='';
+UPDATE xmb_posts SET icon='';
+DELETE FROM xmb_smilies;
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':)', 'smilies/smile.gif', '1');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':(', 'smilies/sad.gif', '2');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':D', 'smilies/bigsmile.gif', '3');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ';)', 'smilies/wink.gif', '4');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':cool:', 'smilies/cool.gif', '5');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':mad:', 'smilies/mad.gif', '6');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':o', 'smilies/shocked.gif', '7');
+INSERT INTO xmb_smilies VALUES ( 'smiley', ':P', 'smilies/tongue.gif', '8');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/smile.gif', '9');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/sad.gif', '10');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/bigsmile.gif', '11');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/wink.gif', '12');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/cool.gif', '13');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/mad.gif', '14');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/shocked.gif', '15');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/tongue.gif', '16');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/exclamation.gif', '17');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/question.gif', '18');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/thumbup.gif', '19');
+INSERT INTO xmb_smilies VALUES ( 'picon', '', 'smilies/thumbdown.gif', '20');
+ALTER TABLE xmb_threads CHANGE icon icon varchar(50);
+ALTER TABLE xmb_posts CHANGE icon icon varchar(50);
+ALTER TABLE xmb_members CHANGE customstatus customstatus varchar(100) NOT NULL;
+ALTER TABLE xmb_themes ADD font varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD fontsize varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD altfont varchar(40) NOT NULL;
+ALTER TABLE xmb_themes ADD altfontsize varchar(40) NOT NULL;
+UPDATE xmb_themes SET font='Arial', fontsize='12px', altfont='Verdana', altfontsize='10px';
+ALTER TABLE xmb_ranks ADD avatarrank varchar(90);
+UPDATE xmb_forums SET postperm='1|1';
+ALTER TABLE xmb_themes ADD replyimg varchar(50);
+ALTER TABLE xmb_themes ADD newtopicimg varchar(50);
+ALTER TABLE xmb_themes ADD boardimg varchar(50);
+ALTER TABLE xmb_announce CHANGE announcement announcement text NOT NULL;
+ALTER TABLE xmb_forums CHANGE description description text;
+ALTER TABLE xmb_forums CHANGE userlist userlist text NOT NULL;  
+ALTER TABLE xmb_members CHANGE bio bio text;
+ALTER TABLE xmb_members CHANGE sig sig text;
+ALTER TABLE xmb_posts CHANGE message message text NOT NULL;
+ALTER TABLE xmb_threads CHANGE message message text NOT NULL;
+ALTER TABLE xmb_threads DROP rating;
+INSERT INTO xmb_themes VALUES ( 'blue', '#ffffff', '#b0c0d0', '#d0e0f0', '#cc6600', '#000000', '#e0f0f9', '#000000', '#d0e0f0', '#b0c0d4', '#000000', '#000000', '1', '97%', '6', 'Arial', '12px', 'Verdana', '10px', '', '', 'images/logo1.png');
+DROP TABLE xmb_favthreads;
+ALTER TABLE xmb_threads ADD emailnotify varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD emailnotify varchar(15) NOT NULL;
+ALTER TABLE xmb_forums CHANGE moderator moderator varchar(100) NOT NULL;
+ALTER TABLE xmb_themes ADD postscol varchar(5) NOT NULL;
+UPDATE xmb_themes SET postscol='2col';
+ALTER TABLE xmb_words CHANGE find find varchar(60) NOT NULL;
+ALTER TABLE xmb_words CHANGE replace1 replace1 varchar(60) NOT NULL;
+ALTER TABLE xmb_members ADD ignoreu2u TEXT;
+
+
+
+
+1.0 Beta 3
+---------------------------------------------
+ALTER TABLE xmb_forums DROP cid;
+ALTER TABLE xmb_posts DROP sid;
+ALTER TABLE xmb_threads DROP sid;
+ALTER TABLE xmb_forums ADD type varchar(15) NOT NULL FIRST;
+ALTER TABLE xmb_forums ADD status varchar(15) NOT NULL AFTER name;
+ALTER TABLE xmb_threads ADD bbcodeoff varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD bbcodeoff varchar(15) NOT NULL;
+ALTER TABLE xmb_threads ADD smileyoff varchar(15) NOT NULL;
+ALTER TABLE xmb_posts ADD smileyoff varchar(15) NOT NULL;
+ALTER TABLE xmb_forums ADD fup smallint(6) NOT NULL;
+ALTER TABLE xmb_posts ADD INDEX(pid);
+ALTER TABLE xmb_posts ADD INDEX(tid);
+ALTER TABLE xmb_posts ADD INDEX(fid);
+ALTER TABLE xmb_threads ADD INDEX(tid);
+ALTER TABLE xmb_threads ADD INDEX(fid);
+ALTER TABLE xmb_forums ADD INDEX(fid);
+ALTER TABLE xmb_u2u ADD folder varchar(40) NOT NULL;
+UPDATE xmb_u2u SET folder='inbox';
+UPDATE xmb_forums SET type='forum' WHERE type='';
+UPDATE xmb_threads SET icon='';
+DROP TABLE xmb_category;
+DROP TABLE xmb_subforums;
+INSERT INTO xmb_whosonline VALUES ('onlinerecord', '-1', '', '');
+
+CREATE TABLE xmb_banned ( 
+ip1 smallint(3) NOT NULL, 
+ip2 smallint(3) NOT NULL, 
+ip3 smallint(3) NOT NULL, 
+ip4 smallint(3) NOT NULL, 
+dateline BIGINT(30) NOT NULL, 
+id SMALLINT(6) NOT NULL, 
+PRIMARY KEY(id) 
+);

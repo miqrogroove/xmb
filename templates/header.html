@@ -1,0 +1,131 @@
+<html>
+<head>
+<style type="text/css">
+body {
+background: $bgcolor URL("bg.gif");
+background-color: $bgcolor;
+}
+
+a {
+color: $link;
+text-decoration: none;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+.post {
+font-size: $font4;
+font-weight: bold;
+font-family: $font;
+}
+
+.15px {
+font-size: $font3;
+font-family: $font;
+}
+
+.header {
+color: $headertext;
+background-color: $header;
+font-family: $altfont;
+font-weight: bold;
+font-size: $altfontsize;
+}
+
+.botnav {
+color: $headertext;
+background-color: $header;
+font-family: $font;
+font-weight: bold;
+font-size: $font1;
+}
+
+.category {
+background-color: $catcolor;
+font-family: $font;
+font-size: $fontsize;
+}
+
+.tablerow {
+font-family: $font;
+color: $tabletext;
+font-size: $fontsize;
+}
+
+.nav {
+font-family: $font;
+font-weight: bold;
+font-size: $fontsize;
+}
+
+.postauthor {
+font-size: $font2;
+font-weight: bold;
+font-family: $font;
+}
+
+.11px {
+font-size: $font1;
+font-family: $font;
+}
+
+.12px {
+font-size: $fontsize;
+font-family: $font;
+}
+
+.navtd {
+font-size: $altfontsize;
+font-family: $font;
+color: $headertext;
+background-color: $header;
+text-decoration: none;
+}
+
+.multi {
+font-family: verdana;
+font-size: 11px;
+}
+</style>
+<script language="JavaScript"> 
+function Popup(url, window_name, window_width, window_height) 
+{ settings= 
+"toolbar=no,location=no,directories=no,"+ 
+"status=no,menubar=no,scrollbars=yes,"+ 
+"resizable=yes,width="+window_width+",height="+window_height; 
+
+NewWindow=window.open(url,window_name,settings); }
+
+function icon(theicon) { 
+document.input.message.value += " "+theicon; 
+document.input.message.focus(); 
+} 
+</script>
+
+<title>$bbname - $lang[textpowered]</title>
+</head>
+<body text="$text" $u2upopup> 
+
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr><td bgcolor="$bordercolor">
+
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace" width="100%">
+<tr>
+<td width="74%" bgcolor="$top"><table width="100%" cellpadding="0" cellspacing="0">
+<tr><td><font class="15px">$bbname</font><br /><font class="11px">$notify</font></td><td align="right" valign="bottom"><font style="font-size: 11px; font-family: arial, verdana">$lastvisittext</font></td></tr></table> </td></tr>
+
+<tr><td class="navtd"> 
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td class="navtd"> 
+$proreg $memlistlink | $loginout 
+$searchlink $cplink $faqlink | <a href="misc.php?action=stats"><span class="navtd">$lang[textstats]</span></a></td> 
+<td align="right" valign="bottom"><a href="$siteurl"><span class="navtd">$lang[textbackto] $sitename</span></a></td></tr></table> 
+</td></tr> 
+</table>
+
+</td></tr></table>
+<table width="$tablewidth" align="center">
+<tr><td class="nav">$navigation</td></tr>
+$logo
+</table><br />
