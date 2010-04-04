@@ -323,8 +323,8 @@ $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 
 // Make all settings global, and put them in the $SETTINGS[] array
-$squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
-if ($squery == FALSE) {
+$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", FALSE);
+if (FALSE === $squery) {
     header('HTTP/1.0 500 Internal Server Error');
     if (file_exists(ROOT.'install/')) {
         exit('XMB is not yet installed. Please do so at this time. Just <a href="./install/index.php">click here</a>.');

@@ -219,28 +219,46 @@ class dbstuff {
         return $return;
     }
 
-    function query($sql) {
+    /**
+     * Executes a MySQL Query
+     *
+     * @param string $sql Unique MySQL query (multiple queries are not supported). The query string should not end with a semicolon.
+     * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
+     * @return mixed Returns a MySQL resource or a bool, depending on the query type and error status.
+     */
+    function query($sql, $panic = TRUE) {
         $this->start_timer();
         $query = mysql_query($sql, $this->link);
-        if ($query == false) {
+        if (FALSE === $query and $panic) {
             $this->panic($sql);
         }
         $this->querynum++;
-    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+    	if (DEBUG And (!defined('X_SADMIN') or X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();
         return $query;
     }
 
-    function unbuffered_query($sql) {
+    /**
+     * Sends a MySQL query without fetching the result rows.
+     *
+     * You cannot use mysql_num_rows() and mysql_data_seek() on a result set
+     * returned from mysql_unbuffered_query(). You also have to fetch all result
+     * rows from an unbuffered query before you can send a new query to MySQL.
+     *
+     * @param string $sql Unique MySQL query (multiple queries are not supported). The query string should not end with a semicolon.
+     * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
+     * @return mixed Returns a MySQL resource or a bool, depending on the query type and error status.
+     */
+    function unbuffered_query($sql, $panic = TRUE) {
         $this->start_timer();
         $query = mysql_unbuffered_query($sql, $this->link);
-        if ($query == false) {
+        if (FALSE === $query and $panic) {
             $this->panic($sql);
         }
         $this->querynum++;
-    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+    	if (DEBUG And (!defined('X_SADMIN') or X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();
