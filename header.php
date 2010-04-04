@@ -231,6 +231,9 @@ $config_array = array(
 foreach($config_array as $key => $value) {
     if (${$key} === $value) {
         header('HTTP/1.0 500 Internal Server Error');
+        if (file_exists(ROOT.'install/')) {
+            exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
+        }
         exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
     }
 }
@@ -294,24 +297,6 @@ if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($
     }
 }
 
-
-/* Assert Additional Security */
-
-if (file_exists('./install/')) {
-    header('HTTP/1.0 500 Internal Server Error');
-    exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
-}
-if (file_exists('./Upgrade/') && !@rmdir('./Upgrade/') Or file_exists('./upgrade/') && !@rmdir('./upgrade/')) {
-    header('HTTP/1.0 503 Service Unavailable');
-    header('Retry-After: 3600');
-    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade/") has been found on the server, but could not be removed. Please remove it as soon as possible.');
-}
-if (file_exists('./upgrade.php') And X_SCRIPT != 'upgrade.php') {
-    header('HTTP/1.0 503 Service Unavailable');
-    header('Retry-After: 3600');
-    exit('<h1>Error:</h1><br />The upgrade tool ("./upgrade.php") has been found on the server. Please remove it as soon as possible.');
-}
-
 //Checks the IP-format, if it's not a IPv4 type, it will be blocked, safe to remove....
 if ($ipcheck == 'on') {
     if (1 != preg_match('@^(\\d{1,3}\\.){3}\\d{1,3}$@', $onlineip)) {
@@ -339,6 +324,13 @@ $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 
 // Make all settings global, and put them in the $SETTINGS[] array
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings");
+if ($squery == FALSE) {
+    header('HTTP/1.0 500 Internal Server Error');
+    if (file_exists(ROOT.'install/')) {
+        exit('XMB is not yet installed. Please do so at this time. Just <a href="./install/index.php">click here</a>.');
+    }
+    exit('Fatal Error: XMB is not installed. Please upload the /install/ directory to begin.');
+}
 if ($db->num_rows($squery) == 0) {
     header('HTTP/1.0 500 Internal Server Error');
     exit('Fatal Error: The XMB settings table is empty.');

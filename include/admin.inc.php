@@ -30,6 +30,34 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+
+/* Assert Additional Security */
+
+if (X_SADMIN) {
+    $x_error = '';
+
+    //@todo translation needed
+    if (file_exists(ROOT.'install/') and !@rmdir(ROOT.'install/')) {
+        $x_error = 'The installation files ("./install/") have been found on the server, but could not be removed automatically. Please remove them as soon as possible.';
+    }
+    if (file_exists(ROOT.'Upgrade/') and !@rmdir(ROOT.'Upgrade/') or file_exists(ROOT.'upgrade/') and !@rmdir(ROOT.'upgrade/')) {
+        $x_error = 'The upgrade tool ("./upgrade/") has been found on the server, but could not be removed automatically. Please remove it as soon as possible.';
+    }
+    if (file_exists(ROOT.'upgrade.php')) {
+        $x_error = 'The upgrade tool ("./upgrade.php") has been found on the server. Please remove it as soon as possible.';
+    }
+
+    if (strlen($x_error) > 0) {
+        header('HTTP/1.0 500 Internal Server Error');
+        loadtemplates('error');
+        error($x_error);
+    }
+    unset($x_error);
+}
+
+
+/* Admin Panel Functions */
+
 class admin {
     function rename_user($userfrom, $userto) {
         global $db, $lang, $self;

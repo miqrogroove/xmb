@@ -334,6 +334,11 @@ function langPanic() {
         return TRUE;
     }
     if (!loadLang()) {
+        if (file_exists(ROOT.'Upgrade/') or file_exists(ROOT.'upgrade/') or file_exists(ROOT.'upgrade.php')) {
+            header('HTTP/1.0 503 Service Unavailable');
+            header('Retry-After: 3600');
+            exit('We\'re sorry, a website upgrade is in progress at the moment.  Please try again in a few minutes.');
+        }
         if (file_exists(ROOT.'lang/English.lang.php')) {
             $upload = file_get_contents(ROOT.'lang/English.lang.php');
             installNewTranslation($upload);

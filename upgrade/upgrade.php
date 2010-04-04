@@ -1010,7 +1010,7 @@ Public License instead of this License.  But first, please read
         }
         
         $versionlong = '';
-        require '../include/debug.inc.php';
+        require ROOT.'include/debug.inc.php';
         $array = parse_url($full_url);
         if (!isset($array['path'])) {
             $array['path'] = '/';
@@ -1151,6 +1151,17 @@ Public License instead of this License.  But first, please read
         $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 
         require './upgrade.lib.php';
+        
+        $bbstatus = 'off';
+        $result = $db->query("SELECT bbstatus FROM ".X_PREFIX."settings");
+        if ($db->num_rows($result) == 1) {
+            $bbstatus = $db->result($result, 0);
+            if ($bbstatus != 'off') {
+                show_act('Forcing Board Status = OFF');
+                $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+                show_result(X_INST_OK);
+            }
+        }
 
         show_act('Opening XMB Upgrade Template');
         $u = new Upgrade($db, XMB_UPGRADE_FILE, $tablepre);
@@ -1363,6 +1374,13 @@ Public License instead of this License.  But first, please read
             show_result(X_INST_ERR);
         }
         unset($upload);
+
+
+        if ($bbstatus != 'off') {
+            show_act('Forcing Board Status = ON');
+            $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'on'");
+            show_result(X_INST_OK);
+        }
 
 
         show_act('Removing install and upgrade files.');

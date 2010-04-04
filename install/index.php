@@ -142,6 +142,29 @@ function show_result($type) {
     echo "</span>\n";
 }
 
+/**
+ * Haults the script if XMB is already installed.
+ */
+function already_installed() {
+    if (is_readable(ROOT.'config.php')) {
+        include(ROOT.'config.php');
+        if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect)) {
+            if ($database == 'mysql' and is_readable(ROOT.'db/mysql.php')) {
+                $link = @mysql_connect($dbhost, $dbuser, $dbpw);
+                if ($link !== FALSE) {
+                    $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
+                    if ($result !== FALSE) {
+                        if (mysql_num_rows($result) == 1) {
+                            error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
+                        }
+                    }
+                    mysql_close($link);
+                }
+            }
+        }
+    }
+}
+
 error_reporting(E_ALL&~E_NOTICE);
 
 if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4) {
@@ -160,6 +183,8 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
     </div>
 <?php
 }
+
+already_installed();
 
 $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 0;
 $substep = isset($_REQUEST['substep']) ? $_REQUEST['substep'] : 0;
@@ -1296,7 +1321,17 @@ Public License instead of this License.  But first, please read
         <div class="center-content">
             <h1>Create Super Administrator Account</h1>
             <p>Please fill out the Username, Password, and E-Mail account for the first Super Administrator account for your message board. This will be the account you use to first login to your board</p>
-            <form action="index.php?step=6" method="post">
+            <script type="text/javascript">
+            <!--//--><![CDATA[//><!--
+            function disableButton() {
+                var newAttr = document.createAttribute("disabled");
+                newAttr.nodeValue = "disabled";
+                document.getElementById("submit1").setAttributeNode(newAttr);
+                return true;
+            }
+            //--><!]]>
+            </script>
+            <form action="index.php?step=6" method="post" onsubmit="disableButton();">
                 <table cellspacing="1px">
                     <tr>
                         <td>Username:</td>
@@ -1315,7 +1350,7 @@ Public License instead of this License.  But first, please read
                         <td><input type="text" name="frmEmail" size="32" /></td>
                     </tr>
                 </table>
-                <p class="button"><input type="submit" value="Begin Installation &gt;" /></p>
+                <p class="button"><input type="submit" value="Begin Installation &gt;" id="submit1" /></p>
             </form>
         </div>
         <div class="bottom"><span></span></div>
@@ -1436,7 +1471,7 @@ Public License instead of this License.  But first, please read
                     show_result(X_INST_OK);
                 }
                 $sqlver = mysql_get_server_info($link);
-                mysql_close();
+                mysql_close($link);
                 show_act('Checking Database Version');
                 $current = array_map('intval', explode('.', $sqlver));
                 $min = array_map('intval', explode('.', MYSQL_MIN_VER));
