@@ -236,4 +236,6 @@ function url_to_text($url) {
     $return['text'] = $location;
     return $return;
 }
+
+return;
 ?>

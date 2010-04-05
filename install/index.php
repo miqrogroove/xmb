@@ -144,6 +144,8 @@ function show_result($type) {
 
 /**
  * Haults the script if XMB is already installed.
+ *
+ * @since 1.9.11.09
  */
 function already_installed() {
     global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;

@@ -411,4 +411,6 @@ function dump_query($resource, $header=true) {
         error($db->error());
     }
 }
+
+return;
 ?>
