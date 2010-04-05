@@ -88,9 +88,9 @@ while(ob_get_level() > 0) {
 }
 ob_implicit_flush(1);
 
-require ROOT.'include/global.inc.php';
-require ROOT.'config.php';
-require ROOT.'db/'.$database.'.php';
+require(ROOT.'include/global.inc.php');
+require_once(ROOT.'config.php');
+require(ROOT.'db/'.$database.'.php');
 
 define('X_PREFIX', $tablepre);
 

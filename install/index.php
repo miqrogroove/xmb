@@ -146,21 +146,21 @@ function show_result($type) {
  * Haults the script if XMB is already installed.
  */
 function already_installed() {
-    if (is_readable(ROOT.'config.php')) {
-        include(ROOT.'config.php');
-        if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect)) {
-            if ($database == 'mysql' and is_readable(ROOT.'db/mysql.php')) {
-                $link = @mysql_connect($dbhost, $dbuser, $dbpw);
-                if ($link !== FALSE) {
-                    $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
-                    if ($result !== FALSE) {
-                        if (mysql_num_rows($result) == 1) {
-                            error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
-                        }
+    global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;
+
+    if ('mysql' == $database and is_readable(ROOT.'db/mysql.php')) {
+        $link = @mysql_connect($dbhost, $dbuser, $dbpw);
+        if (FALSE !== $link) {
+            $result = mysql_select_db($dbname);
+            if (FALSE !== $result) {
+                $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
+                if (FALSE !== $result) {
+                    if (1 == mysql_num_rows($result)) {
+                        error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
                     }
-                    mysql_close($link);
                 }
             }
+            mysql_close($link);
         }
     }
 }
@@ -184,7 +184,12 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 <?php
 }
 
-already_installed();
+if (is_readable(ROOT.'config.php')) {
+    require(ROOT.'config.php');
+    if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
+        already_installed();
+    }
+}
 
 $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 0;
 $substep = isset($_REQUEST['substep']) ? $_REQUEST['substep'] : 0;
@@ -1265,7 +1270,7 @@ Public License instead of this License.  But first, please read
 
     case 5: // Make the administrator set a username and password for the super admin user
 
-        require ROOT.'config.php';
+        require_once(ROOT.'config.php');
 
         $config_array = array(
             'dbname' => 'DB/NAME',
@@ -1419,7 +1424,7 @@ Public License instead of this License.  But first, please read
         show_result(X_INST_OK);
 
         // check db-connection.
-        require ROOT.'config.php';
+        require_once(ROOT.'config.php');
 
         // double check all stuff here
         show_act('Checking Database Files');
