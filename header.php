@@ -323,7 +323,9 @@ $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 
 // Make all settings global, and put them in the $SETTINGS[] array
-$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", FALSE);
+// This is the first query, so do not panic unless query logging is enabled.
+$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG and LOG_MYSQL_ERRORS));
+// Assume XMB is not installed if first query fails.
 if (FALSE === $squery) {
     header('HTTP/1.0 500 Internal Server Error');
     if (file_exists(ROOT.'install/')) {
