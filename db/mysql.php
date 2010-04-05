@@ -233,7 +233,7 @@ class dbstuff {
             $this->panic($sql);
         }
         $this->querynum++;
-    	if (DEBUG And (!defined('X_SADMIN') or X_SADMIN)) {
+    	if (DEBUG and (!defined('X_SADMIN') or X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();
@@ -258,7 +258,7 @@ class dbstuff {
             $this->panic($sql);
         }
         $this->querynum++;
-    	if (DEBUG And (!defined('X_SADMIN') or X_SADMIN)) {
+    	if (DEBUG and (!defined('X_SADMIN') or X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();
