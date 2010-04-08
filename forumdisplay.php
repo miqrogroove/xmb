@@ -195,7 +195,15 @@ $topicsnum = 0;
 $threadlist = '';
 $threadsInFid = array();
 
-$querytop = $db->query("SELECT t.*, m.uid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."members AS m ON t.author=m.username WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc, lastpost $ascdesc LIMIT {$mpage['start']}, $tpp");
+$querytop = $db->query(
+    "SELECT t.*, m.uid, r.uid AS lastauthor
+     FROM ".X_PREFIX."threads AS t
+     LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
+     LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+     WHERE t.fid='$fid' $cusdate
+     ORDER BY topped $ascdesc, lastpost $ascdesc
+     LIMIT {$mpage['start']}, $tpp"
+);
 
 if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {
@@ -230,7 +238,9 @@ while($thread = $db->fetch_array($querytop)) {
 
     $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
-    if ($thread['author'] == $lang['textanonymous'] Or is_null($thread['uid'])) {
+    if ($thread['author'] == 'Anonymous') {
+        $authorlink = $lang['textanonymous'];
+    } elseif (is_null($thread['uid'])) {
         $authorlink = $thread['author'];
     } else {
         $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
@@ -241,11 +251,11 @@ while($thread = $db->fetch_array($querytop)) {
     $lastpost = explode('|', $thread['lastpost']);
     $dalast = trim($lastpost[0]);
 
-    if ($lastpost[1] != 'Anonymous') {
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-    } else {
+    if ($lastpost[1] == 'Anonymous') {
         $lastpost[1] = $lang['textanonymous'];
-    }
+    } elseif (!is_null($thread['lastauthor'])) {
+        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+    } // else leave value unchanged
 
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
