@@ -169,15 +169,16 @@ class Upgrade {
 
                 if (strpos(trim($data), 'PRIMARY KEY') === 0) {
                     // primary key :)
-                    $d = explode(' ', trim($data));
-                    if (strpos($d[3], "))")) {
-                        $index['keylen'] = $this->decode_keylen($d[3]);
+                    $d = str_replace('  ', ' ', trim($data)); // XMB Issue #373
+                    $d = explode(' ', $d);
+                    if (strpos($d[2], "))")) {
+                        $index['keylen'] = $this->decode_keylen($d[2]);
                     } else {
                         $index['keylen'] = '';
-                        $d[3] = str_replace(array('(', ')', ' ', '`', ','), '', $d[3]);
+                        $d[2] = str_replace(array('(', ')', ' ', '`', ','), '', $d[2]);
                     }
                     $index['type'] = 'PRIMARY KEY';
-                    $index['field'] = $d[3];
+                    $index['field'] = $d[2];
                     $index['name'] = '';
                     $indices[] = $index;
                 } else if (strpos($data, 'KEY') !== false) {  // not primary
