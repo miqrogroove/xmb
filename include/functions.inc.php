@@ -625,33 +625,33 @@ function bbcode(&$message, $allowimgcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
-            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
+            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
             $replacements[] = '<img <!-- nobr -->src="\1://\2\3"<!-- /nobr --> border="0" alt="" />';
-            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
             $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
         }
     }
 
-    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()]*)i?#Smi', 'fixUrl', $message);
+    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()"\'<>:]*)i?#Smi', 'fixUrl', $message);
 
     //[url]http://www.example.com/[/url]
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>:]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
     $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>:\[\]]{60})([^\"'<>:]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
     $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
 
     //[url]www.example.com[/url]
-    $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+    $patterns[] = "#\[url\]([^\[\"'<>:]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
     $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
-    $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+    $patterns[] = "#\[url\]([^\"'<>:\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
     $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
 
     //[url=http://www.example.com]Lorem Ipsum[/url]
-    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
+    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>:\[\]]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
 
     //[url=www.example.com]Lorem Ipsum[/url]
-    $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
+    $patterns[] = "#\[url=([^\[\"'<>:]*?)\](.*?)\[/url\]#Smi";
     $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
 
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
