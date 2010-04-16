@@ -3353,11 +3353,11 @@ $bbcodescript
   }
 
   function multiAttach() {
-    var uploadBoxCode = '';
+    var newnode = document.createElement('span');
     if (uploadBoxCount < uploadBoxMax) {
       uploadBoxCount++;
-      uploadBoxCode = '<br /><input type="file" name="attach' + uploadBoxCount + '" size="20" />';
-      document.getElementById('uploads').innerHTML += uploadBoxCode;
+      newnode.innerHTML = '<br /><input type="file" name="attach' + uploadBoxCount + '" size="20" />';
+      document.getElementById('uploads').appendChild(newnode);
       if (uploadBoxCount == 2 && uploadTotalLimits != '') {
         document.getElementById('multiattachlink').parentNode.innerHTML += '<br />' + uploadTotalLimits;
       }
