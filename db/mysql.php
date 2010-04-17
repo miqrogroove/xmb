@@ -66,50 +66,50 @@ class dbstuff {
         return $this->select_db($dbname, $force_db);
     }
 
-    function select_db($database, $force=true) {
+    /**
+     * Sets the name of the database to be used on this connection.
+     *
+     * @param string $database The full name of the MySQL database.
+     * @param bool $force Optional. Specifies error mode. Dies if true.
+     * @return bool TRUE on success, FALSE on failure with !$force.
+     */
+    function select_db($database, $force = TRUE) {
+        if (mysql_select_db($database, $this->link)) {
+            $this->db = $database;
+            return TRUE;
+        }
         if ($force) {
-            if (!mysql_select_db($database, $this->link)) {
-                header('HTTP/1.0 500 Internal Server Error');
-                exit('Could not locate database "'.$database.'". Please make sure it exists before trying again!');
-                return false;
-            }
+            $sql = "USE $database -- XMB couldn't find the database! Please reconfigure the config.php file.";
+            $this->panic($sql);
         } else {
-            if (!mysql_select_db($database, $this->link)) {
-                global $tablepre;
-                echo mysql_error();
-                echo '<br />';
-                if ($this->find_database($tablepre)) {
-                    echo "Using $this->db. Please reconfigure your config.php asap, XMB having to search for a database costs a lot of time and heavily slows down your board!";
-                    return true;
-                } else {
-                    echo 'Could not find any database containing the needed tables. Please reconfigure the config.php';
-                    return false;
-                    exit();
-                }
-            } else {
-                $this->db = $database;
-                return true;
-            }
+            return FALSE;
         }
     }
 
+    /**
+     * Searches for an accessible database containing the XMB settings table.
+     *
+     * @param string $tablepre The settings table name prefix.
+     * @return bool
+     */
     function find_database($tablepre) {
-        $found = false;
         $dbs = mysql_list_dbs($this->link);
-        while($db = mysql_fetch_array($dbs)) {
-            $q = $this->query("SHOW TABLES FROM `$db[Database]`");
-            if (!($this->num_rows($q) > 0)) {
+        while($db = $this->fetch_array($dbs)) {
+            if ('information_schema' == $db['Database']) {
                 continue;
             }
+            $q = $this->query("SHOW TABLES FROM `{$db['Database']}`");
 
-            if (strpos(mysql_result($q, 0), $tablepre.'settings') !== false) {
-                $this->select_db($db['Database']);
-                $this->db = $db['Database'];
-                $found = true;
-                break;
+            while ($table = $this->fetch_array($q)) {
+                if ($tablepre.'settings' == $table[0]) {
+                    if (mysql_select_db($db['Database'], $this->link)) {
+                        $this->db = $db['Database'];
+                        return TRUE;
+                    }
+                }
             }
         }
-        return $found;
+        return FALSE;
     }
 
     function error() {

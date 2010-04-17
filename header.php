@@ -320,7 +320,7 @@ require ROOT.'include/functions.inc.php';
 assertEmptyOutputStream('functions.inc.php');
 
 $db = new dbstuff;
-$db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
+$db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
 
 // Make all settings global, and put them in the $SETTINGS[] array
 // This is the first query, so do not panic unless query logging is enabled.
