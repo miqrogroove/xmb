@@ -680,9 +680,9 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime;
-                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $currtime = $onlinetime + ($timeoffset * 3600) + ($addtime * 3600);
+                $date = gmdate($dateformat, $currtime);
+                $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
                 if ($bBBcodeOnForThisPost) {
@@ -734,8 +734,9 @@ switch($action) {
                 $thisbg = $altbg1;
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC");
                 while($post = $db->fetch_array($query)) {
-                    $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-                    $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                    $currtime = $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600);
+                    $date = gmdate($dateformat, $currtime);
+                    $time = gmdate($timecode, $currtime);
                     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
                     if ($post['icon'] != '') {
@@ -1058,9 +1059,9 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime;
-                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $currtime = $onlinetime + ($timeoffset * 3600) + ($addtime * 3600);
+                $date = gmdate($dateformat, $currtime);
+                $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
                 if ($bBBcodeOnForThisPost) {
@@ -1266,7 +1267,7 @@ switch($action) {
             // Fill $postinfo
             $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
             if (onSubmit('editsubmit') || isset($previewpost) || $sc) {
-                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon);
+                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon, 'dateline'=>$orig['dateline']);
             } else {
                 $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
@@ -1327,9 +1328,9 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime;
-                $date = gmdate($dateformat, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
-                $time = gmdate($timecode, $currtime + ($timeoffset * 3600) + ($addtime * 3600));
+                $currtime = $postinfo['dateline'] + ($timeoffset * 3600) + ($addtime * 3600);
+                $date = gmdate($dateformat, $currtime);
+                $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 $dissubject = $subject;
                 $message1 = $postinfo['message'];
