@@ -33,6 +33,14 @@ define('PHP_MIN_VER', '4.3.0');
 define('X_SCRIPT', 'upgrade.php');
 define('XMB_SCHEMA_VER', 3);
 
+//Check configuration
+if (ini_get('display_errors')) {
+	ini_set('display_errors', '0');
+	$forced_display_off = TRUE;
+} else {
+	$forced_display_off = FALSE;
+}
+
 //Check location
 if (!(is_file('header.php') And is_dir('include'))) {
     echo 'Could not find XMB!<br />'
@@ -44,7 +52,11 @@ if (!(is_file('header.php') And is_dir('include'))) {
 require('header.php');
 echo "<html><head><title>XMB Upgrade Script</title><body>Database Connection Established<br />\n";
 if (DEBUG) {
-    echo 'Debug Mode Enabled';
+    echo 'Debug Mode Enabled.';
+	if ($forced_display_off) {
+		ini_set('display_errors', '1');
+		trigger_error('Your PHP server has display_errors=On, which should never be used on production systems.', E_USER_WARNING);
+	}
 } else {
     echo 'Debug is False - You will not see any errors.';
 }
