@@ -420,7 +420,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
     $smiliesallow = ($allowsmilies == 'yes' || $allowsmilies == 'on') ? (($smileyoff != 'off' && $smileyoff != 'yes') ? true : false) : false;
-
+    $allowurlcode = ($ismood != 'yes');
+    
     if ($bballow) {
         if ($ismood == 'yes') {
             $message = str_replace(array('[rquote=', '[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
@@ -487,19 +488,19 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                     if ($smiliesallow) {
                         smile($messagearray[$i]);
                     }
-                    bbcode($messagearray[$i], $allowimgcode);
+                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else if ($i == sizeof($messagearray) - 1) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml);
                     if ($smiliesallow) {
                         smile($messagearray[$i]);
                     }
-                    bbcode($messagearray[$i], $allowimgcode);
+                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else if ($i % 2 == 0) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
                     if ($smiliesallow) {
                         smile($messagearray[$i]);
                     }
-                    bbcode($messagearray[$i], $allowimgcode);
+                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else { // Inside code block
                     $messagearray[$i] = censor($messagearray[$i]);
                 }
@@ -508,7 +509,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
                 if ($smiliesallow) {
                     smile($messagearray[0]);
                 }
-                bbcode($messagearray[0], $allowimgcode);
+                bbcode($messagearray[0], $allowimgcode, $allowurlcode);
             }
         }
         $message = implode("", $messagearray);
@@ -541,7 +542,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     return $message;
 }
 
-function bbcode(&$message, $allowimgcode) {
+function bbcode(&$message, $allowimgcode, $allowurlcode) {
     global $lang, $imgdir;
 
     $find = array(
@@ -632,27 +633,29 @@ function bbcode(&$message, $allowimgcode) {
         }
     }
 
-    $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()"\'<>]*)i?#Smi', 'fixUrl', $message);
+	if ($allowurlcode) {
+        $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()"\'<>]*)i?#Smi', 'fixUrl', $message);
 
-    //[url]http://www.example.com/[/url]
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
-    $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
-    $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
+        //[url]http://www.example.com/[/url]
+        $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+        $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
+        $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+        $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
 
-    //[url]www.example.com[/url]
-    $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
-    $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
-    $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
+        //[url]www.example.com[/url]
+        $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
+        $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
+        $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
+        $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
 
-    //[url=http://www.example.com]Lorem Ipsum[/url]
-    $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
+        //[url=http://www.example.com]Lorem Ipsum[/url]
+        $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
+        $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
 
-    //[url=www.example.com]Lorem Ipsum[/url]
-    $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
-    $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
+        //[url=www.example.com]Lorem Ipsum[/url]
+        $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
+        $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
+    }
 
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
