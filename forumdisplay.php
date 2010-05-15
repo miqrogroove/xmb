@@ -381,7 +381,7 @@ if (strlen($mpage['html']) != 0) {
 
 if ($status1 == 'Moderator') {
     if (X_ADMIN) {
-        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="'.$admdir.'/editforumsets.gif" border="0" /></a>';
+        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="'.$admdir.'/editforumsets.gif" border="0" alt="" /></a>';
     } else {
         $fadminlink = '';
     }
