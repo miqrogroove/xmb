@@ -98,7 +98,7 @@ function printAllQueries() {
     
     $stuff = array();
     if (X_SADMIN) {
-        $stuff[] = '<table cols="2" style="width: 97%;"><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
+        $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
         foreach($db->querylist as $key=>$val) {
             $val = mysql_syn_highlight(cdataOut($val));
             $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($db->querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';

@@ -1331,8 +1331,7 @@ $lang[bestmember]
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="ctrtablerow">
-<td bgcolor="$altbg2">
-<font class="smalltxt">
+<td class="smalltxt" bgcolor="$altbg2">
 $versionlong
 <br />
 <a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
@@ -1342,7 +1341,6 @@ $footerstuff[querynum]
 $footerstuff[phpsql]
 $footerstuff[load]
 $footerstuff[querydump]
-</font>
 </td>
 </tr>
 </table>
