@@ -1189,6 +1189,9 @@ if (!function_exists('htmlspecialchars_decode')) {
     }
 }
 
+/**
+ * Generates sub-templates in the $footerstuff global array.
+ */
 function end_time() {
     global $db, $footerstuff, $lang, $starttime, $SETTINGS;
 
@@ -1202,7 +1205,7 @@ function end_time() {
     if (X_ADMIN && in_array('serverload', $footer_options)) {
         $load = ServerLoad();
         if (!empty($load)) {
-            eval("\$footerstuff['load'] = \"".template('footer_load')."\";");
+            eval('$footerstuff["load"] = "'.template('footer_load').'";');
         } else {
             $footerstuff['load'] = '';
         }
@@ -1212,7 +1215,7 @@ function end_time() {
 
     if (in_array('queries', $footer_options)) {
         $querynum = $db->querynum;
-        eval("\$footerstuff['querynum'] = \"".template('footer_querynum')."\";");
+        eval('$footerstuff["querynum"] = "'.template('footer_querynum').'";');
     } else {
         $footerstuff['querynum'] = '';
     }
@@ -1220,14 +1223,14 @@ function end_time() {
     if (in_array('phpsql', $footer_options)) {
         $db_duration = number_format(($db->duration/$totaltime)*100, 1);
         $php_duration = number_format((1-($db->duration/$totaltime))*100, 1);
-        eval("\$footerstuff['phpsql'] = \"".template('footer_phpsql')."\";");
+        eval('$footerstuff["phpsql"] = "'.template('footer_phpsql').'";');
     } else {
         $footerstuff['phpsql'] = '';
     }
 
     if (in_array('loadtimes', $footer_options) && X_ADMIN) {
         $totaltime = number_format($totaltime, 7);
-        eval("\$footerstuff['totaltime'] = \"".template('footer_totaltime')."\";");
+        eval('$footerstuff["totaltime"] = "'.template('footer_totaltime').'";');
     } else {
         $footerstuff['totaltime'] = '';
     }
@@ -1237,8 +1240,6 @@ function end_time() {
     } else {
         $footerstuff['querydump'] = '';
     }
-
-    return $footerstuff;
 }
 
 function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
