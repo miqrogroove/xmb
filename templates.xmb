@@ -1412,8 +1412,6 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_admin|#*XMB TEMPLATE*#|
 $subforums
-<form method="post" name="geatneet" action="topicadmin.php?fid=$forum[fid]">
-<input type="hidden" name="token" value="" />
 <table width="$tablewidth" cellspacing="0" cellpadding="0" align="center">
 <tr>
 <td class="post" align="right">&nbsp;$newtopiclink$newpolllink</td>
@@ -1422,6 +1420,8 @@ $subforums
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
+<form method="post" name="geatneet" action="topicadmin.php?fid=$forum[fid]">
+<input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 $multipage
 <tr class="header" align="center">
@@ -1444,7 +1444,7 @@ $threadlist
 <td class="tablerow" align="right">
 <input type="hidden" name="fid" value="$fid" />
 <input type="hidden" name="token" value="" />
-<span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
+<label class="mediumtxt"><strong>$lang[textadminoptions]</strong>
 <select name="action">
 <option value="" selected="selected"></option>
 <option value="bump">$lang[textbumpthread]</option>
@@ -1456,15 +1456,18 @@ $threadlist
 <option value="f_open">$lang[textopenthread]</option>
 <option value="top">$lang[topuntop]</option>
 </select>
+</label>
 &nbsp;&nbsp;
 <input type="submit" class="submit" name="submit" value="$lang[textsubmitchanges]" />
 </td>
 </tr>
-</form>
 </table>
-$sortby
 </td>
 </tr>
+</table>
+</form>
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+$sortby
 $multipage
 </table>
 </td>
