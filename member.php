@@ -602,7 +602,7 @@ switch($action) {
             }
             $memberpage = ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
 
-            redirect($full_url, 2, X_REDIRECT_JS);
+            redirect($full_url);
         }
         break;
 

@@ -1319,7 +1319,7 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     end_time();
 
     if ($redirect !== false) {
-        redirect($redirect, 3.0, X_REDIRECT_JS);
+        redirect($redirect, 3);
     }
 
     if ($showheader === false) {
@@ -1381,7 +1381,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     end_time();
 
     if ($redirect !== false) {
-        redirect($redirect, 3.0, X_REDIRECT_JS);
+        redirect($redirect, 3);
     }
 
     if ($showheader === false) {
