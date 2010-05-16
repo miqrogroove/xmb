@@ -775,8 +775,8 @@ class Upgrade {
     }
 
     function upgradeU2U() {
-        $this->db->query("DROP TABLE IF EXISTS `".$this->tablepre."u2u_new`");
-        $this->db->query("CREATE TABLE `".$this->tablepre."u2u_new` (
+        $this->db->query("DROP TABLE IF EXISTS `{$this->tablepre}u2u_new`");
+        $this->db->query("CREATE TABLE `{$this->tablepre}u2u_new` (
             `u2uid` bigint(10) NOT NULL auto_increment,
             `msgto` varchar(32) NOT NULL default '',
             `msgfrom` varchar(32) NOT NULL default '',
@@ -797,7 +797,7 @@ class Upgrade {
             ) TYPE=MyISAM"
         );
 
-        $query = $this->db->query("SELECT * FROM `".$this->tablepre."u2u`");
+        $query = $this->db->query("SELECT * FROM `{$this->tablepre}u2u`");
         while($u2u = $this->db->fetch_array($query)) {
             if ($u2u['folder'] == 'inbox') {
                 $type = 'incoming';
@@ -817,11 +817,11 @@ class Upgrade {
             if (!isset($u2u['new']) || $u2u['new'] == '') {
                 $u2u['new'] = 'yes';
             }
-            $this->db->query("INSERT INTO `".$this->tablepre."u2u_new` VALUES('', '".$u2u['msgto']."', '".$u2u['msgfrom']."', '".$type."', '".$owner."', '".$u2u['folder']."', '".addslashes($u2u['subject'])."', '".addslashes($u2u['message'])."', '".$u2u['dateline']."', '".$u2u['readstatus']."', '".$u2u['new']."')");
+            $this->db->query("INSERT INTO `{$this->tablepre}u2u_new` VALUES('', '".$u2u['msgto']."', '".$u2u['msgfrom']."', '".$type."', '".$owner."', '".$u2u['folder']."', '".addslashes($u2u['subject'])."', '".addslashes($u2u['message'])."', '".$u2u['dateline']."', '".$u2u['readstatus']."', '".$u2u['new']."')");
         }
         $this->db->free_result($query);
-        $this->db->query("DROP TABLE `".$this->tablepre."u2u`");
-        $this->db->query("ALTER TABLE `".$this->tablepre."u2u_new` RENAME `".$this->tablepre."u2u`");
+        $this->db->query("DROP TABLE `{$this->tablepre}u2u`");
+        $this->db->query("ALTER TABLE `{$this->tablepre}u2u_new` RENAME `{$this->tablepre}u2u`");
     }
 
     // this function gets rid of a corner case which the upgrade process has difficulty handling.
@@ -848,7 +848,7 @@ class Upgrade {
         } else {
             // 1.9.1 schema already.
             // let's do a quick check to see if the u2u table is okay and fix it if not
-            $query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `".$this->tablepre."u2u` where owner=''");
+            $query = $this->db->query("SELECT u2uid, msgto, msgfrom, folder FROM `{$this->tablepre}u2u` where owner=''");
             if ($this->db->num_rows($query) != 0) {
                 while($u2u = $this->db->fetch_array($query)) {
                     if ($u2u['folder'] == 'inbox') {
@@ -861,7 +861,7 @@ class Upgrade {
                         $type = 'incoming';
                         $owner = $u2u['msgfrom'];
                     }
-                    $this->db->query("UPDATE ".$this->tablepre."u2u SET type='".$type."', owner='".$owner."' WHERE u2uid = '".$u2u['u2uid']."'");
+                    $this->db->query("UPDATE {$this->tablepre}u2u SET type='".$type."', owner='".$owner."' WHERE u2uid = '".$u2u['u2uid']."'");
                 }
             }
             $this->db->free_result($query);
@@ -870,7 +870,7 @@ class Upgrade {
     }
 
     function findThemeIDByName($themename) {
-        $r = $this->db->query("SELECT themeid FROM ".$this->tablepre."themes WHERE name='".$themename."'");
+        $r = $this->db->query("SELECT themeid FROM {$this->tablepre}themes WHERE name='".$themename."'");
         if ($this->db->num_rows($r) > 0) {
             $retval = $this->db->result($r, 0);
             $this->db->free_result($r);
@@ -881,10 +881,10 @@ class Upgrade {
     }
 
     function deleteThemeByName($themename) {
-        $r = $this->db->query("SELECT themeid FROM ".$this->tablepre."themes WHERE name='".$themename."'");
+        $r = $this->db->query("SELECT themeid FROM {$this->tablepre}themes WHERE name='".$themename."'");
         if ($this->db->num_rows($r) > 0) {
             $this->db->free_result($r);
-            $this->db->query("DELETE FROM `".$this->tablepre."themes` WHERE name='".$themename."'");
+            $this->db->query("DELETE FROM `{$this->tablepre}themes` WHERE name='".$themename."'");
         }
     }
 
@@ -939,7 +939,7 @@ class Upgrade {
                 $cache = array();
                 $cachedLanguages = array();
 
-                $q = $this->db->query("SELECT uid,bday,langfile FROM ".$this->tablepre."members");
+                $q = $this->db->query("SELECT uid,bday,langfile FROM {$this->tablepre}members");
                 while($m = $this->db->fetch_array($q)) {
                     if (strlen($m['bday']) == 0) {
                         continue;
@@ -981,9 +981,9 @@ class Upgrade {
             case 1:
                 // restore
                 if (count($cache) > 0) {
-                    $this->db->query("UPDATE ".$this->tablepre."members SET bday='0000-00-00'");
+                    $this->db->query("UPDATE {$this->tablepre}members SET bday='0000-00-00'");
                     foreach($cache as $uid=>$bd) {
-                        $this->db->query("UPDATE ".$this->tablepre."members SET bday='$bd' WHERE uid=$uid");
+                        $this->db->query("UPDATE {$this->tablepre}members SET bday='$bd' WHERE uid=$uid");
                     }
                 }
                 break;
@@ -1040,7 +1040,7 @@ class Upgrade {
             case 0:
                 // store
                 if ($this->columnExists('forums', 'private') || $this->columnExists('forums', 'guestposting') || $this->columnExists('forums', 'pollstatus')) {
-                    $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".$this->tablepre."forums WHERE (type='forum' or type='sub')");
+                    $q = $this->db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM {$this->tablepre}forums WHERE (type='forum' or type='sub')");
                     while($forum = $this->db->fetch_array($q)) {
                         // check if we need to change it first
                         $parts = explode('|', $forum['postperm']);
@@ -1116,7 +1116,7 @@ class Upgrade {
                 // restore
                 if (isset($cache) && count($cache) > 0) {
                     foreach($cache as $fid=>$format) {
-                        $this->db->query("UPDATE ".$this->tablepre."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
+                        $this->db->query("UPDATE {$this->tablepre}forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
                     }
                 }
                 break;
@@ -1133,7 +1133,7 @@ class Upgrade {
         if (0 == $this->db->num_rows($q)) return; // Schema already at 1.9.8+
         $this->db->free_result($q);
 
-        $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM ".$this->tablepre."threads WHERE pollopts_temp != ''");
+        $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM {$this->tablepre}threads WHERE pollopts_temp != ''");
         while($thread = $this->db->fetch_array($q)) {
             // Poll titles are historically unslashed, but thread titles are double-slashed.
             $thread['subject'] = $this->db->escape(stripslashes($thread['subject']));
@@ -1175,7 +1175,7 @@ class Upgrade {
             $this->db->query("INSERT INTO {$this->tablepre}vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES ".implode(',', $values));
         }
         $this->db->free_result($q);
-        $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
+        $this->db->query("ALTER TABLE {$this->tablepre}threads DROP `pollopts_temp`");
     }
 
     /**
@@ -1186,7 +1186,7 @@ class Upgrade {
      * @since 1.9.8
      */
     function createTempFields() {
-        $this->db->query("DROP TABLE IF EXISTS ".$this->tablepre."u2u_old");
+        $this->db->query("DROP TABLE IF EXISTS {$this->tablepre}u2u_old");
 
         $q = $this->db->query("SHOW COLUMNS FROM {$this->tablepre}threads LIKE 'pollopts_temp'");
         if ($this->db->num_rows($q) != 0) {
@@ -1201,7 +1201,7 @@ class Upgrade {
         if (FALSE === $result) return; // Unexpected condition, do not attempt to use fixPolls().
         if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
 
-        $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
+        $this->db->query("ALTER TABLE {$this->tablepre}threads ADD `pollopts_temp` text NOT NULL");
         $this->db->query("UPDATE {$this->tablepre}threads SET pollopts_temp=pollopts, pollopts='1' WHERE pollopts != ''";
     }
 }
