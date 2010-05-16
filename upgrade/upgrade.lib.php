@@ -25,6 +25,10 @@
  *
  **/
 
+define('X_ALTER', 1);
+define('X_DROP', 2);
+define('X_ADD', 3);
+
 class Upgrade {
     var $db;
     var $tablepre;
@@ -1119,60 +1123,86 @@ class Upgrade {
         }
     }
 
+    /**
+     * Convert threads.pollopts text column into relational vote_ tables.
+     *
+     * @since 1.9.8
+     */
     function fixPolls() {
+        $q = $this->db->query("SHOW COLUMNS FROM {$this->tablepre}threads LIKE 'pollopts_temp'");
+        if (0 == $this->db->num_rows($q)) return; // Schema already at 1.9.8+
+        $this->db->free_result($q);
+
         $q = $this->db->query("SELECT tid, subject, pollopts_temp FROM ".$this->tablepre."threads WHERE pollopts_temp != ''");
         while($thread = $this->db->fetch_array($q)) {
-            // Some users find their thread subjects aren't escaped, so escape them. Strip any existing slashes so we don't double escape
-            $thread['subject'] = addslashes(stripslashes($thread['subject']));
+            // Poll titles are historically unslashed, but thread titles are double-slashed.
+            $thread['subject'] = $this->db->escape(stripslashes($thread['subject']));
 
-            $this->db->query("INSERT INTO ".$this->tablepre."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ('".$thread['tid']."', '".$thread['subject']."', 0)");
+            $this->db->query("INSERT INTO {$this->tablepre}vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
             $poll_id = $this->db->insert_id();
 
             $options = explode("#|#", $thread['pollopts_temp']);
-            $num_options = count($options);
+            $num_options = count($options) - 1;
 
-            $voters = explode('    ', trim($options[$num_options-1]));
+            if (0 == $num_options) continue; // Sanity check.  Remember, 1 != '' evaluates to TRUE in MySQL.
 
-            $name = array();
-            foreach($voters as $v) {
-                $name[] = trim($v);
+            $voters = explode('    ', trim($options[$num_options]));
+
+            if (1 == count($voters) and strlen($voters[0]) < 3) {
+                // The most likely values for $options[$num_options] are '' and '1'.  Treat them equivalent to null.
+            } else {
+                $name = array();
+                foreach($voters as $v) {
+                    $name[] = $this->db->escape(trim($v));
+                }
+                $name = "'".implode("', '", $name)."'";
+                $query = $this->db->query("SELECT uid FROM {$this->tablepre}members WHERE username IN ($name)");
+                $values = array();
+                while($u = $this->db->fetch_array($query)) {
+                    $values[] = "($poll_id, {$u['uid']})";
+                }
+                $this->db->free_result($query);
+                $this->db->query("INSERT INTO {$this->tablepre}vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
             }
-            $name = "'".implode("', '", $name)."'";
-            $query = $this->db->query("SELECT uid FROM ".$this->tablepre."members WHERE username IN($name)");
-            while($u = $this->db->fetch_array($query)) {
-                $this->db->query("INSERT INTO ".$this->tablepre."vote_voters (`vote_id`, `vote_user_id`) VALUES (".$poll_id.", ".$u['uid'].")");
-            }
-
-            for($i=0; $i<$num_options-1; $i++) {
+            
+            $values = array();
+            for($i = 0; $i < $num_options; $i++) {
                 $bit = explode('||~|~||', $options[$i]);
-                $option_name = addslashes(trim($bit[0]));
+                $option_name = $this->db->escape(trim($bit[0]));
                 $num_votes = (int) trim($bit[1]);
-                $this->db->query("INSERT INTO ".$this->tablepre."vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES (".$poll_id.", ".($i+1).", '".$option_name."', ".$num_votes.")");
+                $values[] = "($poll_id, ".($i+1).", '$option_name', $num_votes)";
             }
+            $this->db->query("INSERT INTO {$this->tablepre}vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES ".implode(',', $values));
         }
+        $this->db->free_result($q);
+        $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
     }
 
+    /**
+     * Move all values from threads.pollopts to threads.pollopts_temp
+     *
+     * Returns early if the pollopts column is already a numeric type.
+     *
+     * @since 1.9.8
+     */
     function createTempFields() {
-        $q = $this->db->query("SHOW COLUMNS FROM ".$this->tablepre."threads LIKE 'pollopts_temp'");
+        $this->db->query("DROP TABLE IF EXISTS ".$this->tablepre."u2u_old");
+
+        $q = $this->db->query("SHOW COLUMNS FROM {$this->tablepre}threads LIKE 'pollopts_temp'");
         if ($this->db->num_rows($q) != 0) {
-            $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
+            $this->error("Fatal Error: XMB found {$this->tablepre}threads.pollopts_temp, which indicates the database was corrupted by a previous attempt to upgrade that was unsuccessful.");
         }
         $this->db->free_result($q);
 
-        $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
-        $q = $this->db->query("SELECT tid, pollopts FROM ".$this->tablepre."threads WHERE pollopts != ''");
-        while($t = $this->db->fetch_array($q)) {
-            $this->db->query("UPDATE ".$this->tablepre."threads SET pollopts_temp='".addslashes($t['pollopts'])."', pollopts='1' WHERE tid=".$t['tid']);
-        }
-    }
+        $q = $this->db->query("SHOW COLUMNS FROM {$this->tablepre}threads LIKE 'pollopts'");
+        $result = $this->db->fetch_array($q);
+        $this->db->free_result($q);
 
-    function dropTempFields() {
-        $this->db->query("ALTER TABLE ".$this->tablepre."threads DROP `pollopts_temp`");
-        $this->db->query("DROP TABLE IF EXISTS ".$this->tablepre."u2u_old");
+        if (FALSE === $result) return; // Unexpected condition, do not attempt to use fixPolls().
+        if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
+
+        $this->db->query("ALTER TABLE ".$this->tablepre."threads ADD `pollopts_temp` text NOT NULL");
+        $this->db->query("UPDATE {$this->tablepre}threads SET pollopts_temp=pollopts, pollopts='1' WHERE pollopts != ''";
     }
 }
-
-define('X_ALTER', 1);
-define('X_DROP', 2);
-define('X_ADD', 3);
 ?>

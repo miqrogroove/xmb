@@ -1303,10 +1303,6 @@ Public License instead of this License.  But first, please read
         $u->fixPolls();
         show_result(X_INST_OK);
 
-        show_act('Dropping temporary fields...');
-        $u->dropTempFields();
-        show_result(X_INST_OK);
-        
         //Explicitly reset the schema version number
         $db->query("UPDATE ".$u->tablepre."settings SET schema_version = ".XMB_SCHEMA_VER);
 
