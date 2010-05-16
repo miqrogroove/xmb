@@ -56,20 +56,14 @@ $tids = array();
 $fids = permittedForums(forumCache(), 'thread', 'csv');
 
 if (strlen($fids) == 0) {
-    $results = 0;
+    $threadcount = 0;
 } else {
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE lastpost >= '$srchfrom' AND fid IN ($fids)");
-    $results = $db->num_rows($query);
-    while($t = $db->fetch_array($query)) {
-        $tids[] = $t['tid'];
-    }
-    $db->free_result($query);
-    $tids = implode(', ', $tids);
+    $threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE lastpost >= $srchfrom AND fid IN ($fids)"), 0);
 }
 
 eval('$css = "'.template('css').'";');
 
-if ($results == 0) {
+if ($threadcount == 0) {
     eval('$header = "'.template('header').'";');
     $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
     $multipage = '';
@@ -79,9 +73,9 @@ if ($results == 0) {
     validatePpp();
 
     if ($daysold == 1) {
-        $mpage = multipage($results, $tpp, 'today.php');
+        $mpage = multipage($threadcount, $tpp, 'today.php');
     } else {
-        $mpage = multipage($results, $tpp, 'today.php?daysold='.$daysold);
+        $mpage = multipage($threadcount, $tpp, 'today.php?daysold='.$daysold);
     }
     $multipage =& $mpage['html'];
     if (strlen($mpage['html']) != 0) {
@@ -110,27 +104,39 @@ if ($results == 0) {
             break;
     }
 
-    $query = $db->query("SELECT t.replies+1 as posts, t.tid, t.subject, t.author, t.lastpost, t.icon, t.replies, t.views, t.closed, t.topped, t.pollopts, f.fid, f.name FROM ".X_PREFIX."threads t LEFT JOIN ".X_PREFIX."forums f ON (f.fid=t.fid) WHERE t.tid IN ($tids) ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");
+    $query = $db->query(
+        "SELECT t.*, t.replies+1 as posts, m.uid, r.uid AS lastauthor
+         FROM ".X_PREFIX."threads t
+         LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
+         LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+         WHERE t.lastpost >= $srchfrom AND t.fid IN ($fids)
+         ORDER BY t.lastpost DESC
+         LIMIT {$mpage['start']}, $tpp"
+    );
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-        $thread['name'] = fnameOut($thread['name']);
+        $forum = getForum($thread['fid']);
+        $thread['name'] = fnameOut($forum['name']);
 
         if ($thread['author'] == 'Anonymous') {
             $authorlink = $lang['textanonymous'];
+        } elseif (is_null($thread['uid'])) {
+            $authorlink = $thread['author'];
         } else {
             $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
-
         }
 
         $lastpost = explode('|', $thread['lastpost']);
         $dalast = $lastpost[0];
         $lastPid = $lastpost[2];
 
-        if ($lastpost[1] != 'Anonymous') {
+        if ($lastpost[1] == 'Anonymous') {
+            $lastpost[1] = $lang['textanonymous'];
+        } elseif (!is_null($thread['lastauthor'])) {
             $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
-        }
+        } // else leave value unchanged
 
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);

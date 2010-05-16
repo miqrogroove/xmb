@@ -601,15 +601,27 @@ if ($action == 'profile') {
         $favs = '';
         $fids = permittedForums(forumCache(), 'thread', 'csv');
         if (strlen($fids) != 0) {
-            $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC");
+            $query = $db->query(
+                "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies, r.uid AS lastauthor
+                 FROM ".X_PREFIX."favorites f
+                 INNER JOIN ".X_PREFIX."threads t USING (tid)
+                 LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+                 WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids)
+                 ORDER BY t.lastpost DESC"
+            );
             $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
             while($fav = $db->fetch_array($query)) {
                 $forum = getForum($fav['fid']);
                 $forum['name'] = fnameOut($forum['name']);
 
                 $lastpost = explode('|', $fav['lastpost']);
-                $dalast = $lastpost[0];
-                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+
+                if ($lastpost[1] == 'Anonymous') {
+                    $lastpost[1] = $lang['textanonymous'];
+                } elseif (!is_null($fav['lastauthor'])) {
+                    $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+                } // else leave value unchanged
+
                 $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
                 $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
                 $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -667,7 +679,15 @@ if ($action == 'profile') {
         eval('$header = "'.template('header').'";');
         $header .= makenav($action);
 
-        $query = $db->query("SELECT f.*, t.fid, t.icon, t.lastpost, t.subject, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='subscription' ORDER BY t.lastpost DESC LIMIT {$mpage['start']}, $tpp");
+        $query = $db->query(
+            "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies, r.uid AS lastauthor
+             FROM ".X_PREFIX."favorites f
+             INNER JOIN ".X_PREFIX."threads t USING (tid)
+             LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+             WHERE f.username='$xmbuser' AND f.type='subscription'
+             ORDER BY t.lastpost DESC
+             LIMIT {$mpage['start']}, $tpp"
+        );
         $subnum = 0;
         $subscriptions = '';
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
@@ -676,8 +696,13 @@ if ($action == 'profile') {
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
-            $dalast = $lastpost[0];
-            $lastpost['1'] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+
+            if ($lastpost[1] == 'Anonymous') {
+                $lastpost[1] = $lang['textanonymous'];
+            } elseif (!is_null($fav['lastauthor'])) {
+                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+            } // else leave value unchanged
+
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
@@ -803,7 +828,15 @@ if ($action == 'profile') {
     $favs = '';
     $fids = permittedForums(forumCache(), 'thread', 'csv');
     if (strlen($fids) != 0) {
-        $query2 = $db->query("SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies FROM ".X_PREFIX."favorites f INNER JOIN ".X_PREFIX."threads t USING (tid) WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids) ORDER BY t.lastpost DESC LIMIT 0,5");
+        $query2 = $db->query(
+            "SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies, r.uid AS lastauthor
+             FROM ".X_PREFIX."favorites f
+             INNER JOIN ".X_PREFIX."threads t USING (tid)
+             LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+             WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids)
+             ORDER BY t.lastpost DESC
+             LIMIT 5"
+        );
         $favnum = $db->num_rows($query2);
         $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
         while($fav = $db->fetch_array($query2)) {
@@ -811,8 +844,13 @@ if ($action == 'profile') {
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
-            $dalast = $lastpost[0];
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
+
+            if ($lastpost[1] == 'Anonymous') {
+                $lastpost[1] = $lang['textanonymous'];
+            } elseif (!is_null($fav['lastauthor'])) {
+                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
+            } // else leave value unchanged
+
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
