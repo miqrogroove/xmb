@@ -237,7 +237,7 @@ if ($action == 'lang') {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
-        <form method="POST" action="cp2.php?action=lang" name="theme_main">
+        <form method="post" action="cp2.php?action=lang" name="theme_main">
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -545,7 +545,7 @@ if ($action == 'themes') {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
-        <form method="POST" action="cp2.php?action=themes" name="theme_main">
+        <form method="post" action="cp2.php?action=themes" name="theme_main">
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
