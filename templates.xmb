@@ -1681,11 +1681,12 @@ var messageElement;
 <script language="JavaScript" type="text/javascript">window.onload = loadEls;</script>
 
 |#*XMB TEMPLATE FILE*#|functions_bbcodeinsert|#*XMB TEMPLATE*#|
+<script type="text/javascript">$setbbcodemode</script>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[cb_fomatting]<br /><span class="smalltxt">
-<input type="radio" name="mode" value="2" onclick="chmode('2')" checked="checked" /> $lang[cb_normalmode]<br />
-<input type="radio" name="mode" value="0" onclick="chmode('0')" /> $lang[cb_advmode]<br />
-<input type="radio" name="mode" value="1" onclick="chmode('1')" /> $lang[cb_helpmode]</span></td>
+<input type="radio" name="mode" value="2" onclick="chmode('2')" $mode2check /> $lang[cb_normalmode]<br />
+<input type="radio" name="mode" value="0" onclick="chmode('0')" $mode0check /> $lang[cb_advmode]<br />
+<input type="radio" name="mode" value="1" onclick="chmode('1')" $mode1check /> $lang[cb_helpmode]</span></td>
 <td bgcolor="$altbg2">
 <select name="font" onchange="chfont(this.options[this.selectedIndex].value)" size="1">
 <option value="Andale Mono">Andale Mono</option>

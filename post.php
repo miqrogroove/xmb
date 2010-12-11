@@ -377,6 +377,24 @@ $smilieinsert = '';
 if ($bBBcodeInserterEnabled Or $bSmilieInserterEnabled) {
     eval('$bbcodescript = "'.template('functions_bbcode').'";');
     if ($bBBcodeInserterEnabled) {
+        $mode0check = '';
+        $mode1check = '';
+        $mode2check = '';
+        $mode = isset($mode) ? formInt('mode') : 2;
+        switch($mode) {
+        case 0:
+            $mode0check = $cheHTML;
+            $setbbcodemode = 'advmode=true;normalmode=false;';
+            break;
+        case 1:
+            $mode1check = $cheHTML;
+            $setbbcodemode = 'helpmode=true;normalmode=false;';
+            break;
+        default:
+            $mode2check = $cheHTML;
+            $setbbcodemode = '';
+            break;
+        }
         eval('$bbcodeinsert = "'.template('functions_bbcodeinsert').'";'); // Uses $spelling_lang
     }
     if ($bSmilieInserterEnabled) {
