@@ -4671,7 +4671,7 @@ $sendoptions
 $poll
 <table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center">
 <tr>
-<td class="smalltxt"><a href="viewthread.php?action=printable&amp;fid=$fid&amp;tid=$tid" rel="alternate">$lang[textprintver]</a>$memcplink</td>
+<td class="smalltxt"><a href="viewthread.php?action=printable&amp;tid=$tid" rel="alternate">$lang[textprintver]</a>$memcplink</td>
 <td class="post" align="right" valign="bottom">&nbsp;$newtopiclink$newpolllink$replylink</td>
 </tr>
 </table>
