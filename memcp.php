@@ -378,12 +378,15 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        if ($_POST['newpassword'] != '' || $_POST['newpasswordcf'] != '') {
-            if (!isset($_POST['oldpassword'])) {
+        if (!empty($_POST['newpassword'])) {
+            if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
             if (!elevateUser($xmbuser, md5($_POST['oldpassword']))) {
                 error($lang['textpwincorrect']);
+            }
+            if (empty($_POST['newpasswordcf'])) {
+                error($lang['pwnomatch']);
             }
             if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
                 error($lang['pwnomatch']);

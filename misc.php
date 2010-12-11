@@ -109,6 +109,9 @@ switch($action) {
             eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
         } elseif (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
+        } elseif (empty($_POST['password'])) {
+            eval('$misc = "'.template('misc_login_incorrectdetails').'";');
+            eval('$misc .= "'.template('misc_login').'";');
         } elseif (loginUser(postedVar('username'), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
             if ($server == 'Mic') {
                 $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
