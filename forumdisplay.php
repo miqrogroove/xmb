@@ -191,7 +191,6 @@ if ($status1 == 'Moderator') {
     $forumdisplay_thread = 'forumdisplay_thread_admin';
 }
 
-$topicsnum = 0;
 $threadlist = '';
 $threadsInFid = array();
 
@@ -205,22 +204,22 @@ $querytop = $db->query(
      LIMIT {$mpage['start']}, $tpp"
 );
 
-if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
+if ($db->num_rows($querytop) == 0) {
+    eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
+} elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];
     }
-    if (!empty($threadsInFid)) {
-        $db->data_seek($querytop, 0);
+    $db->data_seek($querytop, 0);
 
-        $threadsInFid = implode(',', $threadsInFid);
-        $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+    $threadsInFid = implode(',', $threadsInFid);
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
 
-        $threadsInFid = array();
-        while($row = $db->fetch_array($query)) {
-            $threadsInFid[] = $row['tid'];
-        }
-        $db->free_result($query);
+    $threadsInFid = array();
+    while($row = $db->fetch_array($query)) {
+        $threadsInFid[] = $row['tid'];
     }
+    $db->free_result($query);
 }
 
 while($thread = $db->fetch_array($querytop)) {
@@ -325,13 +324,8 @@ while($thread = $db->fetch_array($querytop)) {
     eval('$threadlist .= "'.template($forumdisplay_thread).'";');
 
     $prefix = '';
-    $topicsnum++;
 }
 $db->free_result($querytop);
-
-if ($topicsnum == 0) {
-    eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
-}
 
 $check1 = $check5 = '';
 $check15 = $check30 = '';
@@ -363,10 +357,6 @@ switch($cusdate) {
         $checkall = $selHTML;
         break;
 }
-
-$query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid='$fid'");
-$topicsnum = $db->result($query, 0);
-$db->free_result($query);
 
 eval('$sortby = "'.template('forumdisplay_sortby').'";');
 
