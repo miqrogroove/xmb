@@ -179,7 +179,7 @@ eval('$css = "'.template('css').'";');
 
 $posts = '';
 
-$query = $db->query("SELECT t.fid, t.subject, t.closed, t.topped, t.lastpost, t.replies, COUNT(pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
+$query = $db->query("SELECT t.*, COUNT(pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
 if ($db->num_rows($query) != 1) {
     $db->free_result($query);
     header('HTTP/1.0 404 Not Found');
@@ -375,14 +375,16 @@ if ($action == '') {
     $pollhtml = $poll = '';
     $vote_id = $voted = 0;
 
-    $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
-    if ($query) {
-        $vote_id = $db->fetch_array($query);
-        $vote_id = (int) $vote_id['vote_id'];
+    if ($thread['pollopts'] == 1) {
+        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
+        if ($query) {
+            $vote_id = $db->fetch_array($query);
+            $vote_id = (int) $vote_id['vote_id'];
+        }
+        $db->free_result($query);
     }
-    $db->free_result($query);
 
-    if ($vote_id > 0 && $perms[X_PERMS_POLL]) {
+    if ($vote_id > 0) {
         if (X_MEMBER) {
             $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id' AND vote_user_id=".intval($self['uid']));
             if ($query) {
@@ -393,7 +395,7 @@ if ($action == '') {
         }
 
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';
-        if ($voted >= 1 || $thread['closed'] == 'yes' || X_GUEST || $viewresults) {
+        if ($voted >= 1 || $thread['closed'] == 'yes' || !$perms[X_PERMS_POLL] || X_GUEST || $viewresults) {
             if ($viewresults) {
                 $results = '- [<a href="viewthread.php?tid='.$tid.'"><font color="'.$cattext.'">'.$lang['backtovote'].'</font></a>]';
             } else {
