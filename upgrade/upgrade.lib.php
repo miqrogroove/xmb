@@ -1202,7 +1202,7 @@ class Upgrade {
         if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
 
         $this->db->query("ALTER TABLE {$this->tablepre}threads ADD `pollopts_temp` text NOT NULL");
-        $this->db->query("UPDATE {$this->tablepre}threads SET pollopts_temp=pollopts, pollopts='1' WHERE pollopts != ''";
+        $this->db->query("UPDATE {$this->tablepre}threads SET pollopts_temp=pollopts, pollopts='1' WHERE pollopts != ''");
     }
 }
 ?>
