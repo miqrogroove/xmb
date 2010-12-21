@@ -731,8 +731,7 @@ switch($action) {
             $percent = round($percent, 2);
         }
 
-        $memberinfo['bio'] = censor($memberinfo['bio']);
-        $memberinfo['bio'] = nl2br($memberinfo['bio']);
+        $memberinfo['bio'] = nl2br(rawHTMLsubject($memberinfo['bio']));
 
         $emailblock = '';
         if ($memberinfo['showemail'] == 'yes') {
@@ -751,7 +750,7 @@ switch($action) {
             $memberinfo['mood'] = '';
         }
 
-        $memberinfo['location'] = censor($memberinfo['location']);
+        $memberinfo['location'] = rawHTMLsubject($memberinfo['location']);
         $memberinfo['aim'] = censor($memberinfo['aim']);
         $memberinfo['aimrecode'] = recodeOut($memberinfo['aim']);
         $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';

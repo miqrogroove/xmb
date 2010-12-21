@@ -639,7 +639,7 @@ if ($action == '') {
             }
 
             if ($post['location'] != '') {
-                $post['location'] = censor($post['location']);
+                $post['location'] = rawHTMLsubject($post['location']);
                 $location = '<br />'.$lang['textlocation'].' '.$post['location'];
             } else {
                 $location = '';

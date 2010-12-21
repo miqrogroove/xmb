@@ -374,6 +374,10 @@ if ($action == 'profile') {
         }
 
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+        $member['bio'] = rawHTMLsubject($member['bio']);
+        $member['location'] = rawHTMLsubject($member['location']);
+        $member['mood'] = rawHTMLsubject($member['mood']);
+        $member['sig'] = rawHTMLsubject($member['sig']);
         eval('$mempage = "'.template('memcp_profile').'";');
     }
 

@@ -220,6 +220,10 @@ if (noSubmit('editsubmit')) {
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
     $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
+    $member['bio'] = decimalEntityDecode($member['bio']);
+    $member['location'] = decimalEntityDecode($member['location']);
+    $member['mood'] = decimalEntityDecode($member['mood']);
+    $member['sig'] = decimalEntityDecode($member['sig']);
 
     $userrecode = recodeOut($member['username']);
 
