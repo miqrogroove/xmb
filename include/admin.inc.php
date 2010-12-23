@@ -70,8 +70,6 @@ class admin {
         $dbuserto = $db->escape_var($userto);
         $dblikeuserfrom = $db->like_escape($userfrom);
         $dbregexuserfrom = $db->regexp_escape($userfrom);
-        $userfrom = '';
-        $userto = '';
 
         $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$dbuserfrom'");
         $cUsrFrm = $db->num_rows($query);
