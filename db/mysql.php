@@ -232,11 +232,30 @@ class dbstuff {
         if (FALSE === $query and $panic) {
             $this->panic($sql);
         }
-        $this->querynum++;
-    	if (DEBUG and (!defined('X_SADMIN') or X_SADMIN)) {
-            $this->querylist[] = $sql;
-        }
         $this->querytimes[] = $this->stop_timer();
+        $this->querynum++;
+    	if (DEBUG) {
+            if (LOG_MYSQL_ERRORS) {
+                $query2 = mysql_query('SHOW COUNT(*) WARNINGS', $this->link);
+                if (($warnings = mysql_result($query2, 0)) > 0) {
+                    if (!ini_get('log_errors')) {
+                        ini_set('log_errors', TRUE);
+                        ini_set('error_log', 'error_log');
+                    }
+                    $output = "MySQL generated $warnings warnings in the following query:\n$sql\n";
+                    $query3 = mysql_query('SHOW WARNINGS', $this->link);
+                    while ($row = mysql_fetch_array($query3, SQL_ASSOC)) {
+                        $output .= var_export($row, TRUE)."\n";
+                    }
+                    error_log($output);
+                    mysql_free_result($query3);
+                }
+                mysql_free_result($query2);
+            }
+            if (!defined('X_SADMIN') or X_SADMIN) {
+                $this->querylist[] = $sql;
+            }
+        }
         return $query;
     }
 
