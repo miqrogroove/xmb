@@ -234,7 +234,7 @@ class dbstuff {
         }
         $this->querytimes[] = $this->stop_timer();
         $this->querynum++;
-    	if (DEBUG) {
+//Hacked for testing. We don't want to use debug mode for now.
             if (LOG_MYSQL_ERRORS) {
                 $query2 = mysql_query('SHOW COUNT(*) WARNINGS', $this->link);
                 if (($warnings = mysql_result($query2, 0)) > 0) {
@@ -252,6 +252,7 @@ class dbstuff {
                 }
                 mysql_free_result($query2);
             }
+    	if (DEBUG) {
             if (!defined('X_SADMIN') or X_SADMIN) {
                 $this->querylist[] = $sql;
             }
