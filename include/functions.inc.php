@@ -89,6 +89,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     $xmbuser = '';
     $xmbpw = '';
     $self = array();
+    $maxurl = 150; //Schema constant.
 
     //Usernames are historically html encoded in the XMB database, as well as in cookies.
     //$xmbuser is often used as a raw value in queries and should be sql escaped.
@@ -224,7 +225,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     if (X_ADMIN Or $serror == '' Or $serror == 'guest' And X_MEMBER) {
         global $onlineip, $onlinetime, $url;
 
-        $wollocation = $db->escape_var($url);
+        $wollocation = $db->escape(substr($url, 0, $maxurl));
         $newtime = $onlinetime - X_ONLINE_TIMER;
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
