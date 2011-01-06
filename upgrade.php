@@ -445,19 +445,19 @@ function upgrade_schema_to_v2() {
         `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         `devname` VARCHAR( 20 ) NOT NULL ,
         UNIQUE ( `devname` )
-      ) TYPE=MyISAM COMMENT = 'List of Installed Languages'");
+      ) ENGINE=MyISAM COMMENT = 'List of Installed Languages'");
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_keys (
         `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         `langkey` VARCHAR( 30 ) NOT NULL ,
         UNIQUE ( `langkey` )
-      ) TYPE=MyISAM COMMENT = 'List of Translation Variables'");
+      ) ENGINE=MyISAM COMMENT = 'List of Translation Variables'");
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_text (
         `langid` TINYINT UNSIGNED NOT NULL ,
         `phraseid` SMALLINT UNSIGNED NOT NULL ,
         `cdata` BLOB NOT NULL ,
         PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
         INDEX ( `phraseid` )
-      ) TYPE=MyISAM COMMENT = 'Translation Table'");
+      ) ENGINE=MyISAM COMMENT = 'Translation Table'");
 
     echo 'Resetting the schema version number...<br />';
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");

@@ -157,7 +157,7 @@ $r = $db->query("CREATE TABLE ".$tablepre."attachments (
       KEY `pid` (`pid`),
       KEY `parentid` (`parentid`),
       KEY `uid` (`uid`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -177,7 +177,7 @@ $r = $db->query("CREATE TABLE ".$tablepre."banned (
       KEY `ip2` (`ip2`),
       KEY `ip3` (`ip3`),
       KEY `ip4` (`ip4`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -189,7 +189,7 @@ $db->query("CREATE TABLE ".$tablepre."buddys (
     `username` varchar(32) NOT NULL default '',
     `buddyname` varchar(32) NOT NULL default '',
     KEY `username` (username (8))
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -202,7 +202,7 @@ $db->query("CREATE TABLE ".$tablepre."captchaimages (
       `imagestring` varchar(12) NOT NULL default '',
       `dateline` int(10) NOT NULL default '0',
       KEY `dateline` (`dateline`)
-     ) TYPE=MyISAM
+     ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -215,7 +215,7 @@ $db->query("CREATE TABLE ".$tablepre."favorites (
       `username` varchar(32) NOT NULL default '',
       `type` varchar(32) NOT NULL default '',
       KEY `tid` (`tid`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -249,7 +249,7 @@ $db->query("CREATE TABLE ".$tablepre."forums (
       KEY `type` (`type`),
       KEY `displayorder` (`displayorder`),
       KEY `status` (`status`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -261,7 +261,7 @@ $db->query("CREATE TABLE ".$tablepre."lang_base (
     `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     `devname` VARCHAR( 20 ) NOT NULL ,
     UNIQUE ( `devname` )
-  ) TYPE=MyISAM COMMENT = 'List of Installed Languages'
+  ) ENGINE=MyISAM COMMENT = 'List of Installed Languages'
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -273,7 +273,7 @@ $db->query("CREATE TABLE ".$tablepre."lang_keys (
     `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     `langkey` VARCHAR( 30 ) NOT NULL ,
     UNIQUE ( `langkey` )
-  ) TYPE=MyISAM COMMENT = 'List of Translation Variables'
+  ) ENGINE=MyISAM COMMENT = 'List of Translation Variables'
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -287,7 +287,7 @@ $db->query("CREATE TABLE ".$tablepre."lang_text (
     `cdata` BLOB NOT NULL ,
     PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
     INDEX ( `phraseid` )
-  ) TYPE=MyISAM COMMENT = 'Translation Table'
+  ) ENGINE=MyISAM COMMENT = 'Translation Table'
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -306,7 +306,7 @@ $db->query("CREATE TABLE ".$tablepre."logs (
       INDEX ( `fid` ),
       INDEX ( `tid` ),
       INDEX ( `date` )
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // ---------------------------------------------------------
 show_result(X_INST_OK);
@@ -362,7 +362,7 @@ $db->query("CREATE TABLE ".$tablepre."members (
       KEY `email` (`email`),
       KEY `regdate` (`regdate`),
       KEY `invisible` (`invisible`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -388,7 +388,7 @@ $db->query("CREATE TABLE ".$tablepre."posts (
       KEY `tid` (`tid`),
       KEY `dateline` (`dateline`),
       KEY `author` (author (8))
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -405,7 +405,7 @@ $db->query("CREATE TABLE ".$tablepre."ranks (
       `avatarrank` varchar(90) default NULL,
       PRIMARY KEY  (`id`),
       KEY `title` (`title`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -419,7 +419,7 @@ $db->query("CREATE TABLE ".$tablepre."restricted (
       `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
       `partial` ENUM('0', '1') DEFAULT '1' NOT NULL,
       PRIMARY KEY  (`id`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -526,7 +526,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
       `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '3'
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -540,7 +540,7 @@ $db->query("CREATE TABLE ".$tablepre."smilies (
       `url` varchar(40) NOT NULL default '',
       `id` smallint(6) NOT NULL auto_increment,
       PRIMARY KEY  (`id`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -554,7 +554,7 @@ $db->query("CREATE TABLE ".$tablepre."templates (
       `template` text NOT NULL,
       PRIMARY KEY  (`id`),
       KEY `name` (`name`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -588,7 +588,7 @@ $db->query("CREATE TABLE ".$tablepre."themes (
       `cattext` varchar(15) NOT NULL default '',
       PRIMARY KEY  (`themeid`),
       KEY `name` (`name`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -613,7 +613,7 @@ $db->query("CREATE TABLE ".$tablepre."threads (
       KEY `lastpost` (`lastpost`),
       KEY `author` (author (8)),
       KEY `closed` (`closed`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -639,7 +639,7 @@ $db->query("CREATE TABLE ".$tablepre."u2u (
       KEY `folder` (folder (8)),
       KEY `readstatus` (`readstatus`),
       KEY `owner` (owner (8))
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -655,7 +655,7 @@ $db->query("CREATE TABLE ".$tablepre."vote_desc (
       `vote_length` int(11) NOT NULL default '0',
       PRIMARY KEY  (`vote_id`),
       KEY `topic_id` (`topic_id`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -670,7 +670,7 @@ $db->query("CREATE TABLE ".$tablepre."vote_results (
       `vote_result` int(11) NOT NULL default '0',
       KEY `vote_option_id` (`vote_option_id`),
       KEY `vote_id` (`vote_id`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -685,7 +685,7 @@ $db->query("CREATE TABLE ".$tablepre."vote_voters (
       KEY `vote_id` (`vote_id`),
       KEY `vote_user_id` (`vote_user_id`),
       KEY `vote_user_ip` (`vote_user_ip`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -703,7 +703,7 @@ $db->query("CREATE TABLE ".$tablepre."whosonline (
       KEY `ip` (`ip`),
       KEY `time` (`time`),
       KEY `invisible` (`invisible`)
-   ) TYPE=MyISAM PACK_KEYS=0
+   ) ENGINE=MyISAM PACK_KEYS=0
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);
@@ -717,7 +717,7 @@ $db->query("CREATE TABLE ".$tablepre."words (
       `id` smallint(6) NOT NULL auto_increment,
       PRIMARY KEY  (`id`),
       KEY `find` (`find`)
-   ) TYPE=MyISAM
+   ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
 show_result(X_INST_OK);

@@ -278,7 +278,7 @@ class Upgrade {
         }
         $part = 'CREATE TABLE `'.$this->tablepre.$tbl.'` ('."\n";
         $part .= implode(",\n", $parts);
-        $part .= "\n) TYPE=MyISAM;";
+        $part .= "\n) ENGINE=MyISAM;";
         return $part;
     }
 
@@ -794,7 +794,7 @@ class Upgrade {
             KEY `folder` (`folder`),
             KEY `readstatus` (`readstatus`),
             KEY `owner` (`owner`)
-            ) TYPE=MyISAM"
+            ) ENGINE=MyISAM"
         );
 
         $query = $this->db->query("SELECT * FROM `{$this->tablepre}u2u`");
