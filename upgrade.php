@@ -160,9 +160,11 @@ function disableButton() {
         echo 'Database schema is current, skipping ALTER commands...<br />';
         break;
     case 0:
+        //Ambiguous case.  Attempt a backward-compatible schema change.
+        upgrade_schema_to_v0();
+        //No breaks.
     case 1:
         upgrade_schema_to_v2();
-        //No break.
     case 2:
         upgrade_schema_to_v3();
     case 3:
@@ -237,6 +239,163 @@ function disableButton() {
 }
 
 echo "\n</body></html>";
+
+/**
+ * Performs all tasks needed to upgrade the schema to version 1.9.9.
+ *
+ * This function is officially compatible with the following XMB versions
+ * that did not have a schema_version number:
+ * 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
+ *
+ * @author Robert Chapin (miqrogroove)
+ * @since 1.9.11 (Patch #11)
+ */
+function upgrade_schema_to_v0() {
+    global $db;
+
+    echo 'Beginning schema upgrade from legacy version...<br />';
+
+    $upgrade_permissions = TRUE;
+
+    echo 'Requesting to lock the forums table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
+
+    echo 'Gathering schema information from the forums table...<br />';
+    $sql = array();
+    $table = 'forums';
+    $columns = array(
+    'private',
+    'pollstatus',
+    'guestposting');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        } else {
+            $upgrade_permissions = FALSE;
+        }
+        $db->free_result($query);
+    }
+
+    if ($upgrade_permissions) {
+
+        // Verify new schema is not coexisting with the old one.  Results would be unpredictable.
+        $colname = 'postperm';
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(11)') {
+            echo 'Unexpected schema in forums table.  Upgrade aborted to prevent damage.';
+            trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
+        }
+
+        echo 'Loading the new postperm values...<br />';
+        fixForumPerms(0);
+
+        echo 'Making room for the new values in the postperm column...<br />';
+        $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
+
+        echo 'Saving the new postperm values...<br />';
+        fixForumPerms(1);
+
+        echo 'Deleting the index on the private column...<br />';
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX.'forums');
+        while($indexrow = $db->fetch_array($query)) {
+            if ($indexrow['Key_name'] == 'private') { // Index exists
+                $db->query('ALTER TABLE '.X_PREFIX."forums DROP INDEX private");
+                break;
+            }
+        }
+        $db->free_result($query);
+
+        echo 'Deleting the old columns in the forums table...<br />';
+        $columns = array(
+        'private',
+        'pollstatus',
+        'guestposting',
+        'mt_status',
+        'mt_open',
+        'mt_close');
+        foreach($columns as $colname) {
+            $query = $db->query('DESCRIBE '.X_PREFIX.'forums '.$colname);
+            if ($db->num_rows($query) == 1) {
+                $db->query('ALTER TABLE '.X_PREFIX.'forums DROP COLUMN '.$colname);
+            }
+            $db->free_result($query);
+        }
+
+    } else {
+        // Verify new schema is not missing.  Results would be unpredictable.
+        $colname = 'postperm';
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) != 'varchar(11)') {
+            echo 'Unexpected schema in forums table.  Upgrade aborted to prevent damage.';
+            trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
+        }
+    } // upgrade_permissions
+    
+    $columns = array(
+    'mt_status',
+    'mt_open',
+    'mt_close');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+    
+    if (count($sql) > 0) {
+        echo 'Deleting the old columns in the forums table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the settings table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
+
+    echo 'Gathering schema information from the settings table...<br />';
+    $sql = array();
+    $table = 'settings';
+    $columns = array(
+    'files_status',
+    'files_foldername',
+    'files_screenshot',
+    'files_shotsize',
+    'files_guests',
+    'files_cpp',
+    'files_mouseover',
+    'files_fpp',
+    'files_report',
+    'files_jumpbox',
+    'files_search',
+    'files_spp',
+    'files_searchcolor',
+    'files_stats',
+    'files_notify',
+    'files_content_types',
+    'files_comment_report',
+    'files_navigation',
+    'files_faq',
+    'files_paypal_account');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Deleting the old columns in the settings table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the settings table...<br />';
+    $db->query('UNLOCK TABLES');
+}
 
 /**
  * Performs all tasks needed to raise the database schema_version number to 2.
@@ -503,5 +662,121 @@ function upgrade_schema_to_v3() {
 
     echo 'Resetting the schema version number...<br />';
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
+}
+
+/**
+ * Recalculates the value of every field in the forums.postperm column.
+ *
+ * Note the "old format" never used more than two digits.  The original
+ * comments appear to be wrong.
+ *
+ * @param int $v Zero causes old values to be cached. One causes new values to be recorded.
+ * @since 1.9.6 RC1
+ */
+function fixForumPerms($v) {
+    static $cache;
+    global $db;
+    /***
+        OLD FORMAT:
+        "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
+        - 1 normal (all ranks),
+        - 2 admin only,
+        - 3 admin/mod only,
+        - 4 no posting/viewing.
+    ***/
+
+    /***
+        NEW FORMAT:
+        NewPolls,NewThreads,NewReplies,View. Each field contains a number between 0-63 (a sum of the following:)
+        - 1  Super Administrator
+        - 2  Administrator
+        - 4  Super Moderator
+        - 8  Moderator
+        - 16 Member
+        - 32 Guest
+    ***/
+    switch($v) {
+        case 0:
+            // store
+            $q = $db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
+            while($forum = $db->fetch_array($q)) {
+                // check if we need to change it first
+                $parts = explode('|', $forum['postperm']);
+                if (count($parts) == 1) {
+                    // no need to upgrade these; new format in use [we hope]
+                    continue;
+                }
+                $newFormat = array(0,0,0,0);
+
+                $fid            = $forum['fid'];
+                $private        = $forum['private'];
+                $permField      = $forum['postperm'];
+                $guestposting   = $forum['guestposting'];
+                $polls          = $forum['pollstatus'];
+
+                $translationFields = array(0=>1, 1=>2);
+                foreach($parts as $key=>$val) {
+                    switch($val) {
+                        case 1:
+                            $newFormat[$translationFields[$key]] = 31;
+                            break;
+                        case 2:
+                            $newFormat[$translationFields[$key]] = 3;
+                            break;
+                        case 3:
+                            $newFormat[$translationFields[$key]] = 15;
+                            break;
+                        case 4:
+                            $newFormat[$translationFields[$key]] = 1;
+                            break;
+                        default:
+                            // allow only superadmin
+                            $newFormat[$translationFields[$key]] = 1;
+                            break;
+                    }
+                }
+                switch($private) {
+                    case 1:
+                        $newFormat[3] = 63;
+                        break;
+                    case 2:
+                        $newFormat[3] = 3;
+                        break;
+                    case 3:
+                        $newFormat[3] = 15;
+                        break;
+                    case 4:
+                        $newFormat[3] = 1;
+                        break;
+                    default:
+                        // allow only superadmin
+                        $newFormat[3] = 1;
+                        break;
+                }
+                if ($guestposting == 'yes' || $guestposting == 'on') {
+                    $newFormat[0] |= 32;
+                    $newFormat[1] |= 32;
+                    $newFormat[2] |= 32;
+                }
+
+                if ($polls == 'yes' || $polls == 'on') {
+                    $newFormat[0] = $newFormat[1];
+                } else {
+                    $newFormat[0] = 0;
+                }
+
+                $cache[$fid] = $newFormat;
+            }
+            break;
+
+        case 1:
+            // restore
+            if (isset($cache) && count($cache) > 0) {
+                foreach($cache as $fid=>$format) {
+                    $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
+                }
+            }
+            break;
+    }
 }
 ?>

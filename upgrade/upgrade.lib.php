@@ -1015,6 +1015,15 @@ class Upgrade {
         return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
     }
 
+    /**
+     * Recalculates the value of every field in the forums.postperm column.
+     *
+     * Note the "old format" never used more than two digits.  The original
+     * comments appear to be wrong.
+     *
+     * @param int $v Zero causes old values to be cached. One causes new values to be recorded.
+     * @since 1.9.6 RC1
+     */
     function fixForumPerms($v) {
         static $cache;
         /***
