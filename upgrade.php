@@ -85,11 +85,18 @@ if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] |
 
 if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
-<h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
+<h1>XMB 1.9.11 Upgrade Script</h1>
 
-<p>This script is also compatible with XMB 1.9.9 as well as XMB 1.9.11 Betas.
+<p>This script is compatible with upgrades from
+XMB 1.9.8,
+XMB 1.9.8 SP1,
+XMB 1.9.8 SP2,
+XMB 1.9.8 SP3,
+XMB 1.9.9,
+XMB 1.9.10,
+and XMB 1.9.11 Betas.
 
-<p>This script is NOT compatible with XMB 1.9.8.
+<p>This script is NOT compatible with any other version.
 
 <h2>Instructions</h2>
 <ol>
@@ -122,7 +129,7 @@ function disableButton() {
 } else if ($_GET['step'] == 2) {
 
     ?>
-    <h1>XMB 1.9.10 to 1.9.11 Upgrade Script</h1>
+    <h1>XMB 1.9.11 Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
 
@@ -245,7 +252,7 @@ echo "\n</body></html>";
  *
  * This function is officially compatible with the following XMB versions
  * that did not have a schema_version number:
- * 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
+ * 1.9.8, 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
  *
  * @author Robert Chapin (miqrogroove)
  * @since 1.9.11 (Patch #11)
@@ -387,6 +394,10 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     $columns = array(
+    'regoptional' => "set('on','off') NOT NULL default 'off'",
+    'quickreply_status' => "set('on','off') NOT NULL default 'on'",
+    'quickjump_status' => "set('on','off') NOT NULL default 'on'",
+    'index_stats' => "set('on','off') NOT NULL default 'on'",
     'onlinetodaycount' => "smallint(5) NOT NULL default '50'",
     'onlinetoday_status' => "set('on','off') NOT NULL default 'on'");
     foreach($columns as $colname => $coltype) {
@@ -396,6 +407,13 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
+    $colname = 'adminemail';
+    $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(32)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
 
     if (count($sql) > 0) {
         echo 'Adding/Deleting columns in the settings table...<br />';
@@ -403,7 +421,29 @@ function upgrade_schema_to_v0() {
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the settings table...<br />';
+    echo 'Requesting to lock the members table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
+
+    echo 'Gathering schema information from the members table...<br />';
+    $sql = array();
+    $table = 'members';
+    $columns = array(
+    'webcam');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Deleting the old columns in the members table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the members table...<br />';
     $db->query('UNLOCK TABLES');
 }
 
