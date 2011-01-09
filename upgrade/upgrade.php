@@ -1182,6 +1182,7 @@ Public License instead of this License.  But first, please read
         }
         show_result(X_INST_OK);
 
+        // XMB 1.9.6
         // clear logs so we don't have discrepencies between various formats.
         // When upgrading they shouldn't be necessery anymore anyway, thus saving space
         // and making the board more efficient
@@ -1197,6 +1198,7 @@ Public License instead of this License.  But first, please read
         $nr = $db->num_rows($r);
         $db->free_result($r);
 
+        // XMB 1.9.1
         show_act("Upgrading $nr U2Us");
         $t = $u->doU2U();
         if ($t) {
@@ -1206,6 +1208,7 @@ Public License instead of this License.  But first, please read
             error('Could not upgrade U2U table.', true);
         }
 
+        // XMB 1.9.7
         show_act("Removing u2uadmin spy tool");
         if (file_exists(ROOT . 'u2uadmin.php') && !@unlink(ROOT . 'u2uadmin.php')) {
             show_result(X_INST_SKIP);
@@ -1214,10 +1217,12 @@ Public License instead of this License.  But first, please read
             show_result(X_INST_OK);
         }
 
+        // XMB 1.9.1
         show_act("Check and remove sid");
         $u->removeSid();
         show_result(X_INST_OK);
 
+        // XMB 1.9.6
         show_act('Collecting data for data-restructuring');
         $u->fixBirthdays(0);
         $u->fixForumPerms(0);
@@ -1236,6 +1241,7 @@ Public License instead of this License.  But first, please read
         }
         show_result(X_INST_OK);
 
+        // XMB 1.9.8
         show_act('Creating temporary fields...');
         $u->createTempFields();
         show_result(X_INST_OK);
@@ -1283,26 +1289,32 @@ Public License instead of this License.  But first, please read
         }
         show_result(X_INST_OK);
 
+        // XMB 1.9.6
         show_act('Fixing birthday values');
         $u->fixBirthdays(1);
         show_result(X_INST_OK);
 
+        // XMB 1.9.6
         show_act('Fixing forum post permissions');
         $u->fixForumPerms(1);
         show_result(X_INST_OK);
 
+        // XMB 1.9.1
         show_act('Fixing missing posts per page values');
         $u->fixPPP($mysqlver);
         show_result(X_INST_OK);
 
+        // XMB 1.9.1
         show_act('Updating outgoing U2U status');
         $db->query("UPDATE `".$u->tablepre."members` SET saveogu2u='yes'");
         show_result(X_INST_OK);
 
+        // XMB 1.9.8
         show_act('Upgrading polls to new system (may take a long time)');
         $u->fixPolls();
         show_result(X_INST_OK);
 
+        // XMB 1.9.11
         //Explicitly reset the schema version number
         $db->query("UPDATE ".$u->tablepre."settings SET schema_version = ".XMB_SCHEMA_VER);
 
@@ -1356,6 +1368,7 @@ Public License instead of this License.  But first, please read
         show_result(X_INST_OK);
 
         
+        // XMB 1.9.11
         show_act('Initializing the translation system');
 
         require_once(ROOT.'include/translation.inc.php');
