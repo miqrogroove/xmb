@@ -245,7 +245,7 @@ echo "\n</body></html>";
  *
  * This function is officially compatible with the following XMB versions
  * that did not have a schema_version number:
- * 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
+ * 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
  *
  * @author Robert Chapin (miqrogroove)
  * @since 1.9.11 (Patch #11)
@@ -386,9 +386,19 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
+    $columns = array(
+    'onlinetodaycount' => "smallint(5) NOT NULL default '50'",
+    'onlinetoday_status' => "set('on','off') NOT NULL default 'on'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
 
     if (count($sql) > 0) {
-        echo 'Deleting the old columns in the settings table...<br />';
+        echo 'Adding/Deleting columns in the settings table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
