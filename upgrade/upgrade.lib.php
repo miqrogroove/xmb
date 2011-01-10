@@ -924,6 +924,14 @@ class Upgrade {
         }
     }
 
+    /**
+     * Checks the format of everyone's birthdate and fixes or resets them.
+     *
+     * Note the actual schema change was made in 1.9.4, but the first gamma version
+     * to implement fixBirthdays was 1.9.8, and it still didn't work right.
+     *
+     * @since 1.9.6 RC1
+     */
     function fixBirthdays($v) {
         static $cache, $cachedLanguages;
 
@@ -969,10 +977,11 @@ class Upgrade {
                     $year = 0;
                     $monthList = array($lang['textjan'] => 1,$lang['textfeb'] => 2,$lang['textmar'] => 3,$lang['textapr'] =>4,$lang['textmay'] => 5,$lang['textjun'] => 6,$lang['textjul'] => 7,$lang['textaug'] => 8,$lang['textsep'] => 9,$lang['textoct'] => 10,$lang['textnov'] => 11,$lang['textdec'] => 12);
 
-                    if (isset($monthList[$parts[0]])) {
+                    $parts = explode(' ', $m['bday']);
+                    if (count($parts) == 3 && isset($monthList[$parts[0]])) {
                         $month = $monthList[$parts[0]];
                         $day = substr($parts[1], 0, -1); // cut off trailing comma
-                        $year = $parts[3];
+                        $year = $parts[2];
                         $cache[$m['uid']] = $this->iso8601_date($year, $month, $day);
                     }
                 }
@@ -1171,7 +1180,9 @@ class Upgrade {
                     $values[] = "($poll_id, {$u['uid']})";
                 }
                 $this->db->free_result($query);
-                $this->db->query("INSERT INTO {$this->tablepre}vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
+                if (count($values) > 0) {
+                    $this->db->query("INSERT INTO {$this->tablepre}vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
+                }
             }
             
             $values = array();
