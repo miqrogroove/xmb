@@ -87,16 +87,9 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.11 Upgrade Script</h1>
 
-<p>This script is compatible with upgrades from
-XMB 1.9.8,
-XMB 1.9.8 SP1,
-XMB 1.9.8 SP2,
-XMB 1.9.8 SP3,
-XMB 1.9.9,
-XMB 1.9.10,
-and XMB 1.9.11 Betas.
+<p>This script is compatible with XMB versions 1.9.1 through 1.9.10, and XMB 1.9.11 Betas.
 
-<p>This script is NOT compatible with any other version.
+<p>This script is NOT compatible with older versions.
 
 <h2>Instructions</h2>
 <ol>
@@ -252,7 +245,10 @@ echo "\n</body></html>";
  *
  * This function is officially compatible with the following XMB versions
  * that did not have a schema_version number:
- * 1.9.8, 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
+ * 1.9.1, 1.9.2, 1.9.3, 1.9.4, 1.9.5, 1.9.5 SP1, 1.9.6 RC1, 1.9.6 RC2,
+ * 1.9.7 RC3, 1.9.7 RC4, 1.9.8, 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
+ *
+ * Some tables (such as xmb_logs) will be upgraded directly to schema_version 3 for simplicity.
  *
  * @author Robert Chapin (miqrogroove)
  * @since 1.9.11 (Patch #11)
@@ -262,10 +258,31 @@ function upgrade_schema_to_v0() {
 
     echo 'Beginning schema upgrade from legacy version...<br />';
 
-    $upgrade_permissions = TRUE;
+    echo 'Requesting to lock the banned table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."banned WRITE");
+
+    echo 'Gathering schema information from the banned table...<br />';
+    $sql = array();
+    $table = 'banned';
+    $colname = 'id';
+    $coltype = "smallint(6) NOT NULL AUTO_INCREMENT";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Extra']) != 'auto_increment') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+    $db->free_result($query);
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the banned table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
 
     echo 'Requesting to lock the forums table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
+
+    $upgrade_permissions = TRUE;
 
     echo 'Gathering schema information from the forums table...<br />';
     $sql = array();
@@ -295,42 +312,14 @@ function upgrade_schema_to_v0() {
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
 
-        echo 'Loading the new postperm values...<br />';
-        fixForumPerms(0);
-
         echo 'Making room for the new values in the postperm column...<br />';
         $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
 
-        echo 'Saving the new postperm values...<br />';
-        fixForumPerms(1);
-
-        echo 'Deleting the index on the private column...<br />';
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX.'forums');
-        while($indexrow = $db->fetch_array($query)) {
-            if ($indexrow['Key_name'] == 'private') { // Index exists
-                $db->query('ALTER TABLE '.X_PREFIX."forums DROP INDEX private");
-                break;
-            }
-        }
-        $db->free_result($query);
-
-        echo 'Deleting the old columns in the forums table...<br />';
-        $columns = array(
-        'private',
-        'pollstatus',
-        'guestposting',
-        'mt_status',
-        'mt_open',
-        'mt_close');
-        foreach($columns as $colname) {
-            $query = $db->query('DESCRIBE '.X_PREFIX.'forums '.$colname);
-            if ($db->num_rows($query) == 1) {
-                $db->query('ALTER TABLE '.X_PREFIX.'forums DROP COLUMN '.$colname);
-            }
-            $db->free_result($query);
-        }
+        echo 'Restructuring the forum permissions data...<br />';
+        fixForumPerms();
 
     } else {
+
         // Verify new schema is not missing.  Results would be unpredictable.
         $colname = 'postperm';
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -339,7 +328,7 @@ function upgrade_schema_to_v0() {
             echo 'Unexpected schema in forums table.  Upgrade aborted to prevent damage.';
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
-    } // upgrade_permissions
+    }
     
     $columns = array(
     'mt_status',
@@ -353,8 +342,24 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     
+    $colname = 'lastpost';
+    $coltype = "varchar(54) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(30)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'name';
+    $coltype = "varchar(128) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(50)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
     if (count($sql) > 0) {
-        echo 'Deleting the old columns in the forums table...<br />';
+        echo 'Deleting/Modifying columns in the forums table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
@@ -394,6 +399,32 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     $columns = array(
+    'subject_in_title' => "char(3) NOT NULL default ''",
+    'def_tz' => "decimal(4,2) NOT NULL default '0.00'",
+    'indexshowbar' => "tinyint(2) NOT NULL default 2",
+    'resetsigs' => "char(3) NOT NULL default 'off'",
+    'pruneusers' => "smallint(3) NOT NULL default 0",
+    'ipreg' => "char(3) NOT NULL default 'on'",
+    'maxdayreg' => "smallint(5) UNSIGNED NOT NULL default 25",
+    'maxattachsize' => "int(10) UNSIGNED NOT NULL default 256000",
+    'captcha_status' => "set('on','off') NOT NULL default 'on'",
+    'captcha_reg_status' => "set('on','off') NOT NULL default 'on'",
+    'captcha_post_status' => "set('on','off') NOT NULL default 'on'",
+    'captcha_code_charset' => "varchar(128) NOT NULL default 'A-Z'",
+    'captcha_code_length' => "int(2) NOT NULL default '8'",
+    'captcha_code_casesensitive' => "set('on','off') NOT NULL default 'off'",
+    'captcha_code_shadow' => "set('on','off') NOT NULL default 'off'",
+    'captcha_image_type' => "varchar(4) NOT NULL default 'png'",
+    'captcha_image_width' => "int(3) NOT NULL default '250'",
+    'captcha_image_height' => "int(3) NOT NULL default '50'",
+    'captcha_image_bg' => "varchar(128) NOT NULL default ''",
+    'captcha_image_dots' => "int(3) NOT NULL default '0'",
+    'captcha_image_lines' => "int(2) NOT NULL default '70'",
+    'captcha_image_fonts' => "varchar(128) NOT NULL default ''",
+    'captcha_image_minfont' => "int(2) NOT NULL default '16'",
+    'captcha_image_maxfont' => "int(2) NOT NULL default '25'",
+    'captcha_image_color' => "set('on','off') NOT NULL default 'off'",
+    'showsubforums' => "set('on','off') NOT NULL default 'off'",
     'regoptional' => "set('on','off') NOT NULL default 'off'",
     'quickreply_status' => "set('on','off') NOT NULL default 'on'",
     'quickjump_status' => "set('on','off') NOT NULL default 'on'",
@@ -416,13 +447,16 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the settings table...<br />';
+        echo 'Adding/Deleting/Modifying columns in the settings table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
     echo 'Requesting to lock the members table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
+
+    echo 'Fixing birthday values...<br />';
+    fixBirthdays();
 
     echo 'Gathering schema information from the members table...<br />';
     $sql = array();
@@ -436,6 +470,32 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
+    $columns = array(
+    'lastvisit' => "bigint(15) NOT NULL default 0",
+    'email' => "varchar(60) NOT NULL default ''",
+    'site' => "varchar(75) NOT NULL default ''",
+    'aim' => "varchar(40) NOT NULL default ''",
+    'location' => "varchar(50) NOT NULL default ''",
+    'bio' => "text NOT NULL",
+    'ignoreu2u' => "text NOT NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Null']) == 'yes') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'bday' => "varchar(10) NOT NULL default '0000-00-00'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Null']) == 'yes' or strtolower($row['Type']) == 'varchar(50)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
 
     if (count($sql) > 0) {
         echo 'Deleting the old columns in the members table...<br />';
@@ -445,6 +505,117 @@ function upgrade_schema_to_v0() {
 
     echo 'Releasing the lock on the members table...<br />';
     $db->query('UNLOCK TABLES');
+
+    echo 'Adding new tables for polls...<br />';
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_desc (
+        `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
+        `topic_id` INT UNSIGNED NOT NULL,
+        `vote_text` text NOT NULL,
+        `vote_start` int(11) NOT NULL default '0',
+        `vote_length` int(11) NOT NULL default '0',
+        PRIMARY KEY  (`vote_id`),
+        KEY `topic_id` (`topic_id`)
+      ) TYPE=MyISAM");
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_results (
+        `vote_id` mediumint(8) unsigned NOT NULL default '0',
+        `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
+        `vote_option_text` varchar(255) NOT NULL default '',
+        `vote_result` int(11) NOT NULL default '0',
+        KEY `vote_option_id` (`vote_option_id`),
+        KEY `vote_id` (`vote_id`)
+      ) TYPE=MyISAM");
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_voters (
+        `vote_id` mediumint(8) unsigned NOT NULL default '0',
+        `vote_user_id` mediumint(8) NOT NULL default '0',
+        `vote_user_ip` char(8) NOT NULL default '',
+        KEY `vote_id` (`vote_id`),
+        KEY `vote_user_id` (`vote_user_id`),
+        KEY `vote_user_ip` (`vote_user_ip`)
+      ) TYPE=MyISAM");
+
+    echo 'Requesting to lock the polls tables...<br />';
+    $db->query('LOCK TABLES '.
+        X_PREFIX.'threads WRITE, '.
+        X_PREFIX.'vote_desc WRITE, '.
+        X_PREFIX.'vote_results WRITE, '.
+        X_PREFIX.'vote_voters WRITE, '.
+        X_PREFIX.'members READ');
+
+    echo 'Upgrading polls to new system...<br />';
+    fixPolls();
+
+    echo 'Gathering schema information from the threads table...<br />';
+    $sql = array();
+    $table = 'threads';
+    $colname = 'views';
+    $coltype = "bigint(32) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'smallint(4)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'replies';
+    $coltype = "int(10) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'smallint(5)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+    
+    $colname = 'lastpost';
+    $coltype = "varchar(54) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(32)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'pollopts';
+    $coltype = "tinyint(1) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'text') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'tid';
+    $query = $db->query("SHOW INDEX FROM ".X_PREFIX."$table WHERE Key_name = '$colname' AND Column_name = '$colname'");
+    if ($db->num_rows($query) > 0) {
+        $sql[] = 'DROP INDEX '.$colname;
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the threads table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the polls tables...<br />';
+    $db->query('UNLOCK TABLES');
+
+    echo 'Deleting old tables...<br />';
+    $db->query("DROP TABLE IF EXISTS ".X_PREFIX."logs");
+
+    echo 'Adding new tables...<br />';
+    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."captchaimages (
+        `imagehash` varchar(32) NOT NULL default '',
+        `imagestring` varchar(12) NOT NULL default '',
+        `dateline` int(10) NOT NULL default '0',
+        KEY `dateline` (`dateline`)
+      ) TYPE=MyISAM");
+    $db->query("CREATE TABLE ".X_PREFIX."logs (
+        `username` varchar(32) NOT NULL,
+        `action` varchar(64) NOT NULL default '',
+        `fid` smallint(6) NOT NULL default 0,
+        `tid` int(10) NOT NULL default 0,
+        `date` int(10) NOT NULL default 0,
+        KEY `username` (username (8)),
+        KEY `action` (action (8)),
+        INDEX ( `fid` ),
+        INDEX ( `tid` ),
+        INDEX ( `date` )
+      ) TYPE=MyISAM");
 }
 
 /**
@@ -717,18 +888,15 @@ function upgrade_schema_to_v3() {
 /**
  * Recalculates the value of every field in the forums.postperm column.
  *
- * Note the "old format" never used more than two digits.  The original
- * comments appear to be wrong.
+ * Function has been modified to run without parameters.
  *
- * @param int $v Zero causes old values to be cached. One causes new values to be recorded.
  * @since 1.9.6 RC1
  */
-function fixForumPerms($v) {
-    static $cache;
+function fixForumPerms() {
     global $db;
     /***
         OLD FORMAT:
-        "NewTopics|NewReplies|ViewForum". Each field contains a number between 1 and 4:
+        "NewTopics|NewReplies". Each field contains a number between 1 and 4:
         - 1 normal (all ranks),
         - 2 admin only,
         - 3 admin/mod only,
@@ -745,88 +913,197 @@ function fixForumPerms($v) {
         - 16 Member
         - 32 Guest
     ***/
-    switch($v) {
-        case 0:
-            // store
-            $q = $db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
-            while($forum = $db->fetch_array($q)) {
-                // check if we need to change it first
-                $parts = explode('|', $forum['postperm']);
-                if (count($parts) == 1) {
-                    // no need to upgrade these; new format in use [we hope]
-                    continue;
-                }
-                $newFormat = array(0,0,0,0);
 
-                $fid            = $forum['fid'];
-                $private        = $forum['private'];
-                $permField      = $forum['postperm'];
-                $guestposting   = $forum['guestposting'];
-                $polls          = $forum['pollstatus'];
+    // store
+    $q = $db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
+    while($forum = $db->fetch_array($q)) {
+        // check if we need to change it first
+        $parts = explode('|', $forum['postperm']);
+        if (count($parts) == 1) {
+            // no need to upgrade these; new format in use [we hope]
+            continue;
+        }
+        $newFormat = array(0,0,0,0);
 
-                $translationFields = array(0=>1, 1=>2);
-                foreach($parts as $key=>$val) {
-                    switch($val) {
-                        case 1:
-                            $newFormat[$translationFields[$key]] = 31;
-                            break;
-                        case 2:
-                            $newFormat[$translationFields[$key]] = 3;
-                            break;
-                        case 3:
-                            $newFormat[$translationFields[$key]] = 15;
-                            break;
-                        case 4:
-                            $newFormat[$translationFields[$key]] = 1;
-                            break;
-                        default:
-                            // allow only superadmin
-                            $newFormat[$translationFields[$key]] = 1;
-                            break;
-                    }
-                }
-                switch($private) {
-                    case 1:
-                        $newFormat[3] = 63;
-                        break;
-                    case 2:
-                        $newFormat[3] = 3;
-                        break;
-                    case 3:
-                        $newFormat[3] = 15;
-                        break;
-                    case 4:
-                        $newFormat[3] = 1;
-                        break;
-                    default:
-                        // allow only superadmin
-                        $newFormat[3] = 1;
-                        break;
-                }
-                if ($guestposting == 'yes' || $guestposting == 'on') {
-                    $newFormat[0] |= 32;
-                    $newFormat[1] |= 32;
-                    $newFormat[2] |= 32;
-                }
+        $fid            = $forum['fid'];
+        $private        = $forum['private'];
+        $permField      = $forum['postperm'];
+        $guestposting   = $forum['guestposting'];
+        $polls          = $forum['pollstatus'];
 
-                if ($polls == 'yes' || $polls == 'on') {
-                    $newFormat[0] = $newFormat[1];
-                } else {
-                    $newFormat[0] = 0;
-                }
-
-                $cache[$fid] = $newFormat;
+        $translationFields = array(0=>1, 1=>2);
+        foreach($parts as $key=>$val) {
+            switch($val) {
+            case 1:
+                $newFormat[$translationFields[$key]] = 31;
+                break;
+            case 2:
+                $newFormat[$translationFields[$key]] = 3;
+                break;
+            case 3:
+                $newFormat[$translationFields[$key]] = 15;
+                break;
+            case 4:
+            default:
+                $newFormat[$translationFields[$key]] = 1;
+                break;
             }
-            break;
-
+        }
+        switch($private) {
         case 1:
-            // restore
-            if (isset($cache) && count($cache) > 0) {
-                foreach($cache as $fid=>$format) {
-                    $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $format)."' WHERE fid=$fid");
-                }
-            }
+            $newFormat[3] = 63;
             break;
+        case 2:
+            $newFormat[3] = 3;
+            break;
+        case 3:
+            $newFormat[3] = 15;
+            break;
+        case 4:
+        default:
+            $newFormat[3] = 1;
+            break;
+        }
+        if ($guestposting == 'yes' || $guestposting == 'on') {
+            $newFormat[0] |= 32;
+            $newFormat[1] |= 32;
+            $newFormat[2] |= 32;
+        }
+
+        if ($polls == 'yes' || $polls == 'on') {
+            $newFormat[0] = $newFormat[1];
+        } else {
+            $newFormat[0] = 0;
+        }
+
+        $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $newFormat)."' WHERE fid=$fid");
+    }
+}
+
+/**
+ * Convert threads.pollopts text column into relational vote_ tables.
+ *
+ * @since 1.9.8
+ */
+function fixPolls() {
+    global $db;
+
+    $q = $db->query("SHOW COLUMNS FROM ".X_PREFIX."threads LIKE 'pollopts'");
+    $result = $db->fetch_array($q);
+    $db->free_result($q);
+
+    if (FALSE === $result) return; // Unexpected condition, do not attempt to use fixPolls().
+    if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
+
+    $q = $db->query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != ''");
+    while($thread = $db->fetch_array($q)) {
+        // Poll titles are historically unslashed, but thread titles are double-slashed.
+        $thread['subject'] = $db->escape(stripslashes($thread['subject']));
+
+        $db->query("INSERT INTO ".X_PREFIX."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
+        $poll_id = $db->insert_id();
+
+        $options = explode("#|#", $thread['pollopts']);
+        $num_options = count($options) - 1;
+
+        if (0 == $num_options) continue; // Sanity check.  Remember, 1 != '' evaluates to TRUE in MySQL.
+
+        $voters = explode('    ', trim($options[$num_options]));
+
+        if (1 == count($voters) and strlen($voters[0]) < 3) {
+            // The most likely values for $options[$num_options] are '' and '1'.  Treat them equivalent to null.
+        } else {
+            $name = array();
+            foreach($voters as $v) {
+                $name[] = $db->escape(trim($v));
+            }
+            $name = "'".implode("', '", $name)."'";
+            $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE username IN ($name)");
+            $values = array();
+            while($u = $db->fetch_array($query)) {
+                $values[] = "($poll_id, {$u['uid']})";
+            }
+            $db->free_result($query);
+            if (count($values) > 0) {
+                $db->query("INSERT INTO ".X_PREFIX."vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
+            }
+        }
+
+        $values = array();
+        for($i = 0; $i < $num_options; $i++) {
+            $bit = explode('||~|~||', $options[$i]);
+            $option_name = $db->escape(trim($bit[0]));
+            $num_votes = (int) trim($bit[1]);
+            $values[] = "($poll_id, ".($i+1).", '$option_name', $num_votes)";
+        }
+        $db->query("INSERT INTO ".X_PREFIX."vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES ".implode(',', $values));
+    }
+    $db->free_result($q);
+    $db->query("UPDATE ".X_PREFIX."threads SET pollopts='1' WHERE pollopts != ''");
+}
+
+/**
+ * Checks the format of everyone's birthdate and fixes or resets them.
+ *
+ * Function has been modified to work without parameters.
+ * Note the actual schema change was made in 1.9.4, but the first gamma version
+ * to implement fixBirthdays was 1.9.8, and it still didn't work right.
+ *
+ * @since 1.9.6 RC1
+ */
+function fixBirthdays() {
+    global $db;
+
+    $cachedLanguages = array();
+    $lang = array();
+
+    require ROOT.'lang/English.lang.php';
+    $baselang = $lang;
+    $cachedLanguages['English'] = $lang;
+
+    $q = $db->query("SELECT uid, bday, langfile FROM ".X_PREFIX."members");
+    while($m = $db->fetch_array($q)) {
+        $uid = $m['uid'];
+        if (strlen($m['bday']) == 0) {
+            $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
+            continue;
+        }
+
+        // check if the birthday is already in proper format
+        $parts = explode('-', $m['bday']);
+        if (count($parts) == 3 && is_numeric($parts[0]) && is_numeric($parts[1]) && is_numeric($parts[2])) {
+            continue;
+        }
+
+        $lang = array();
+
+        if (!isset($cachedLanguages[$m['langfile']])) {
+			$old_error_level = error_reporting();
+		    error_reporting(E_ERROR | E_PARSE | E_USER_ERROR);
+            require ROOT.'lang/'.$m['langfile'].'.lang.php';
+			error_reporting($old_error_level);
+            $cachedLanguages[$m['langfile']] = $lang;
+        }
+
+        if (isset($cachedLanguages[$m['langfile']])) {
+            $lang = array_merge($baselang, $cachedLanguages[$m['langfile']]);
+        } else {
+            $lang = $baselang;
+        }
+
+        $day = 0;
+        $month = 0;
+        $year = 0;
+        $monthList = array($lang['textjan'] => 1,$lang['textfeb'] => 2,$lang['textmar'] => 3,$lang['textapr'] =>4,$lang['textmay'] => 5,$lang['textjun'] => 6,$lang['textjul'] => 7,$lang['textaug'] => 8,$lang['textsep'] => 9,$lang['textoct'] => 10,$lang['textnov'] => 11,$lang['textdec'] => 12);
+        $parts = explode(' ', $m['bday']);
+        if (count($parts) == 3 && isset($monthList[$parts[0]])) {
+            $month = $monthList[$parts[0]];
+            $day = substr($parts[1], 0, -1); // cut off trailing comma
+            $year = $parts[2];
+            $db->query("UPDATE ".X_PREFIX."members SET bday='".iso8601_date($year, $month, $day)."' WHERE uid=$uid");
+        } else {
+            $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
+        }
     }
 }
 ?>
