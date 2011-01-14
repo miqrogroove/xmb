@@ -30,6 +30,7 @@ define('X_SCRIPT', 'viewthread.php');
 require 'header.php';
 
 validatePpp();
+$printable_ppp = 100;
 
 $pid = getInt('pid');
 $tid = getInt('tid');
@@ -287,6 +288,9 @@ if ($action == '') {
     if (strlen($mpage['html']) != 0) {
         eval('$multipage = "'.template('viewthread_multipage').'";');
     }
+    $printable_page = intval(floor($mpage['start'] / $printable_ppp)) + 1;
+    $printable_page = $printable_page == 1 ? '' : "&amp;page=$printable_page";
+    $printable_link = "viewthread.php?action=printable&amp;tid={$tid}{$printable_page}";
 
     eval('$header = "'.template('header').'";');
 
@@ -772,9 +776,17 @@ if ($action == '') {
     header('HTTP/1.0 301 Moved Permanently');
     header('Location: '.$url);
 } else if ($action == 'printable') {
-    $threadlink = "viewthread.php?tid=$tid";
+    $mpage = multipage($thread['postcount'], $printable_ppp, 'viewthread.php?action=printable&amp;tid='.$tid);
+    $multipage =& $mpage['html'];
+    if (strlen($mpage['html']) != 0) {
+        eval('$multipage = "'.template('viewthread_multipage').'";');
+    }
+    
+    $normal_page = intval(floor($mpage['start'] / $ppp)) + 1;
 
-    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline ASC, pid ASC");
+    $threadlink = $normal_page == 1 ? "viewthread.php?tid=$tid" : "viewthread.php?tid=$tid&amp;page=$normal_page";
+
+    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC, pid ASC LIMIT {$mpage['start']}, $printable_ppp");
     if ($forum['attachstatus'] == 'on') {
         require('include/attach.inc.php');
         $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
