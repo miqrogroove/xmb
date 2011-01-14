@@ -168,6 +168,8 @@ function disableButton() {
     case 2:
         upgrade_schema_to_v3();
     case 3:
+        upgrade_schema_to_v4();
+    case 4:
         //Future use. Break only before case default.
         break;
     default:
@@ -883,6 +885,85 @@ function upgrade_schema_to_v3() {
 
     echo 'Resetting the schema version number...<br />';
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
+}
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 4.
+ *
+ * @since 1.9.11 (Patch #11)
+ */
+function upgrade_schema_to_v4() {
+    global $db;
+
+    echo 'Beginning schema upgrade to version number 4...<br />';
+
+    echo 'Requesting to lock the threads table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."threads WRITE");
+
+    echo 'Gathering schema information from the threads table...<br />';
+    $sql = array();
+    $table = 'threads';
+    $columns = array(
+    'fid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "DROP INDEX $colname";
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'forum_optimize' => 'fid, topped, lastpost');
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Deleting/Adding indexes to the threads table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the posts table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
+
+    echo 'Gathering schema information from the posts table...<br />';
+    $sql = array();
+    $table = 'posts';
+    $columns = array(
+    'tid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "DROP INDEX $colname";
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'thread_optimize' => 'tid, dateline, pid');
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Deleting/Adding indexes to the posts table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the posts table...<br />';
+    $db->query('UNLOCK TABLES');
+
+    echo 'Resetting the schema version number...<br />';
+    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 4");
 }
 
 /**

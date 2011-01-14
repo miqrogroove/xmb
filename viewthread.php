@@ -451,8 +451,9 @@ if ($action == '') {
     }
     
     $startdate = '0';
+    $startpid = '0';
     $enddate = '0';
-    $sql = "SELECT dateline "
+    $sql = "SELECT dateline, pid "
          . "FROM ".X_PREFIX."posts "
          . "WHERE tid=$tid "
          . "ORDER BY dateline ASC, pid ASC "
@@ -462,6 +463,7 @@ if ($action == '') {
     if ($rowcount > 0) {
         $row = $db->fetch_array($query1);
         $startdate = $row['dateline'];
+        $startpid = $row['pid'];
         if ($rowcount <= $ppp) {
             $enddate = $onlinetime;
         } else {
@@ -479,9 +481,9 @@ if ($action == '') {
          . "  ( "
          . "    SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff "
          . "    FROM ".X_PREFIX."posts "
-         . "    WHERE tid=$tid "
+         . "    WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
          . "    ORDER BY dateline ASC, pid ASC "
-         . "    LIMIT {$mpage['start']}, $ppp "
+         . "    LIMIT $ppp "
          . "  ) "
          . "  UNION ALL "
          . "  ( "
@@ -786,7 +788,29 @@ if ($action == '') {
 
     $threadlink = $normal_page == 1 ? "viewthread.php?tid=$tid" : "viewthread.php?tid=$tid&amp;page=$normal_page";
 
-    $querypost = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC, pid ASC LIMIT {$mpage['start']}, $printable_ppp");
+    // This first query does not access any table data if the new thread_optimize index is available.  :)
+    $startdate = '0';
+    $startpid = '0';
+    $sql = "SELECT dateline, pid "
+         . "FROM ".X_PREFIX."posts "
+         . "WHERE tid=$tid "
+         . "ORDER BY dateline ASC, pid ASC "
+         . "LIMIT {$mpage['start']}, 1";
+    $query1 = $db->query($sql);
+    if ($row = $db->fetch_array($query1)) {
+        $startdate = $row['dateline'];
+        $startpid = $row['pid'];
+    }
+    $db->free_result($query1);
+
+    // This second query retrieves table data via multi-column criteria.
+    $sql = "SELECT * "
+         . "FROM ".X_PREFIX."posts "
+         . "WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid) "
+         . "ORDER BY dateline ASC, pid ASC "
+         . "LIMIT $printable_ppp";
+
+    $querypost = $db->query($sql);
     if ($forum['attachstatus'] == 'on') {
         require('include/attach.inc.php');
         $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");

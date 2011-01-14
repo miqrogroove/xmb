@@ -385,9 +385,9 @@ $db->query("CREATE TABLE ".$tablepre."posts (
       `smileyoff` varchar(15) NOT NULL default '',
       PRIMARY KEY  (`pid`),
       KEY `fid` (`fid`),
-      KEY `tid` (`tid`),
       KEY `dateline` (`dateline`),
-      KEY `author` (author (8))
+      KEY `author` (author (8)),
+      KEY `thread_optimize` (`tid`, `dateline`, `pid`)
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
@@ -609,10 +609,10 @@ $db->query("CREATE TABLE ".$tablepre."threads (
       `topped` tinyint(1) NOT NULL default 0,
       `pollopts` tinyint(1) NOT NULL default 0,
       PRIMARY KEY  (`tid`),
-      KEY `fid` (`fid`),
       KEY `lastpost` (`lastpost`),
       KEY `author` (author (8)),
-      KEY `closed` (`closed`)
+      KEY `closed` (`closed`),
+      KEY `forum_optimize` (`fid`, `topped`, `lastpost`)
    ) TYPE=MyISAM
 ");
 // --------------------------------------------------------
