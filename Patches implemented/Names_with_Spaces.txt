@@ -1,0 +1,16 @@
+Simple fix to allow proper functioning of searches and all with regard to usernames
+that have spaces in them....
+
+As proposed by fisico on xmbforums
+
+
+
+In misc.php,
+
+FIND (approximately line 15):
+
+require "./header.php"; 
+
+ADD JUST BELOW THAT:
+
+$member = str_replace("%20", "+", $member); 

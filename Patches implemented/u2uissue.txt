@@ -1,0 +1,96 @@
+For fixing u2u security problem:
+
+
+----------]  In function.php  [-----------
+
+
+----------  1.) Find:    ----------
+===================================
+
+	$message = checkOutput($message, $allowhtml);
+
+===================================
+
+---------- add below: ----------
+===================================
+
+	$remove = '"';
+	$bbcode = Array('url','email','color','size');
+	foreach($bbcode as $code){
+		$patterns = "#\[$code(.*?)$remove(.*?)\](.*?)\[/$code\]#si";
+		$replacements = '&#91;'.$code.'\1'.$remove.'\2&#93;\3&#91;/'.$code.'&#93;';
+		$message = preg_replace($patterns, $replacements, $message);
+	}
+
+===================================
+
+                                 
+----------]  In topicadmin.php  [-----------
+
+----------  1.) Find:    ----------
+===================================
+
+				$message = "$lang_reportmessage $posturl \n\n$lang_reason $reason";
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+				$reason = htmlspecialchars($reason, ENT_NOQUOTES);
+				$message = "$lang_reportmessage $posturl \n\n$lang_reason $reason";
+
+===================================
+
+
+
+----------]  In u2u.php  [-----------
+
+----------  1.) Find:    ----------
+===================================
+
+			$subject = checkInput($subject);
+			$message = checkInput($message);
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+			$subject = htmlspecialchars($subject, ENT_NOQUOTES);
+			$message = htmlspecialchars($message, ENT_NOQUOTES);
+
+===================================
+
+----------  2.) Find:    ----------
+===================================
+
+		$u2u['message'] = postify($u2u['message'], "no", "");
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		$u2u['message'] = postify($u2u['message'], "no", "", "yes", "no");
+
+===================================
+
+
+
+----------]  In u2uadmin.php  [-----------
+
+
+----------  1.) Find:    ----------
+===================================
+
+	$u2u[message] = postify($u2u[message], 'no', '');
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+	$u2u['message'] = postify($u2u['message'], "no", "", "yes", "no");
+
+===================================

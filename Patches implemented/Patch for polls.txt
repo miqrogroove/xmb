@@ -1,0 +1,13 @@
+
+open topicadmin.php
+ 
+find this:
+    case 'votepoll':
+        $pollops = explode("#|#", $currpoll);
+ 
+replace with this:
+    case 'votepoll':
+        $query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
+        $thread = $db->fetch_array($query);
+        $pollops = explode("#|#", $thread[pollopts]);
+

@@ -1,0 +1,38 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 013] Missing header
+
+Problem: 
+In some cases a error will display without a header. 
+
+note fix for:
+2 - Error in member.php missing footer for error "Maximum Registrations per Day Reached, please wait 24 hours." 
+
+is not inculded with this
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in forumdisplay.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------    1.) Find:  ----------
+===================================
+
+		eval("\$footer = \"".template("footer")."\";");
+		
+		echo stripslashes($error);
+		echo stripslashes($pwform);
+		echo $footer;
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		eval("\$footer = \"".template("footer")."\";");
+
+		echo $header;
+		echo stripslashes($error);
+		echo stripslashes($pwform);
+		echo $footer;
+
+===================================

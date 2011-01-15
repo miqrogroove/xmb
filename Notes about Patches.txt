@@ -1,0 +1,47 @@
+Patches implemented in 1.8 SP2
+
+Code provided by various authors, some wishing to remain anonymous, and implemented
+for this Service Pack 2 release of XMB 1.8 by Ixan and RevMac of the XMB QA Team.
+
+
+Patch to fix Censor control and smilies in post.php
+Patch to fix Forumdisplay Censor
+Patch to fix Massive XMB 1.8 Censor 
+Patch to fix Anti-Hacking
+Patch to fix Max Registrations Per Day
+Patch to fix Time Zone Option
+Patch to fix ActivityLogs Time Display in cp2.php
+Patch to fix Anonymous Last Post and Author info 
+Patch to fix possible Footer Display Errors
+Patch to fix possible Header Display Error
+Patch to control Buddy and Member Cross-scripting Vulnerability
+Patch to prevent HTML Injection Vulnerability
+Patch to prevent accidental Member to admin vulnerability
+Patch to prevent display of variables within templates
+Patch to prevent inadvertant password change for multiple users with same email address
+Patch to prevent extra pipes when menu option not set to "on"
+Patch to cinst.php to allow for decimal changes to time zones, etc.
+Patch to remedy problem with viewing pages when Cats only on Main Page selected
+Patch to repair post icon edit problem
+Patch to correct editprofile
+Patch to fix major SQL injection bug
+Patch to fix missing HTML tags
+Patch to fix Mozilla Bottom and Top links
+Patch to allow for proper searches, etc. for names with embedded spaces
+Patch to fix lack of "No Subsvcriptions" Message
+Patch to verify validity of Post Icon Codes
+Patch to correct navigation display when viewing sub-forums
+Patch to Reset time so that guests in whosonline display properly
+Patch to correct XSS vulnerability in member.php and header.php
+Patch to fix double subscription or double favorite issue
+Patch to fix u2u outbox deletion return to inbox issue
+Patch to cp.php to prevent accidental creation of Admin rights
+Patch to prevent deleting other's saved u2u's
+Patch to correct a spelling error in functions.php and to correct for attachments in cp2.php
+Patch to fix some pollopts errors
+Patch to change wording of lost password email (now being blocked becasue of subject)
+Patch to correct a problem with the Ordered List BBCode function
+Patch to correct an issue with invalid characters in usernames
+Patch to correct some strange action php bugs
+Patch to correct manner in which Rank order select is done in cp2.php
+Patch to correct modcheck function when mods have similar names

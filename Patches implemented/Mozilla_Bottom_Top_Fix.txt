@@ -1,0 +1,17 @@
+Mozilla Bottom and Top Solution
+
+
+Only #bottom doesn't seem to work.
+
+At any rate, in the header template, make sure there's
+
+<a name="#top">
+
+At the top.
+
+In footer template, make sure there's
+
+<a name="#bottom">
+
+at the bottom.
+

@@ -1,0 +1,227 @@
+FIX: Censors In Thread Subject, Stats and Todays Posts
+
+Description: These are fixes to correct censors that are added by the board admin 
+             from being used or seen in the thread subjects, stats and todays posts.
+
+Fix is for XMB 1.8 Final SP1. Not tested on 1.8 Final but should work.
+
+Step 1:
+
+Open: viewthread.php
+
+
+Finde Code:
+
+
+// Cache Smilies and Censored Words
+smcwcache();
+
+$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
+$thread = $db->fetch_array($query);
+$fid = $thread[fid];
+if($thread[tid] != $tid) {
+	$notexist = $lang_textnothread;
+}
+
+$query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
+$forum = $db->fetch_array($query);
+
+if($forum[type] != "forum" && $forum[type] != "sub" && $forum[fid] != $fid) {
+	$notexist = $lang_textnoforum;
+}
+
+
+Replace Code With:
+
+
+// Cache Smilies and Censored Words
+smcwcache();
+
+$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
+$thread = $db->fetch_array($query);
+$thread['subject'] = censor($thread['subject']);
+$fid = $thread[fid];
+if($thread[tid] != $tid) {
+	$notexist = $lang_textnothread;
+}
+
+$query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
+$forum = $db->fetch_array($query);
+
+if($forum[type] != "forum" && $forum[type] != "sub" && $forum[fid] != $fid) {
+	$notexist = $lang_textnoforum;
+}
+
+
+Step 2:
+
+Open: today.php
+
+Finde Code:
+
+
+eval("\$header = \"".template("header")."\";");
+echo $header;
+
+
+Add Code Below:
+
+
+smcwcache();
+
+
+Find Code:
+
+
+$thread[subject] = stripslashes($thread[subject]);
+
+
+Replace Code with:
+
+
+$thread[subject] = stripslashes(censor($thread[subject]));
+
+
+Step 3:
+
+Open: stats.php
+
+Find Code:
+
+
+// Show header
+	eval("\$header = \"".template("header")."\";");
+	echo $header;
+	
+Add Code Below:
+
+
+smcwcache();
+
+
+Find Code:
+
+		$views_subject 	 = stripslashes($views[subject]);
+
+				
+Replace Code With:
+
+		$views_subject 	 = stripslashes(censor($views[subject]));
+
+		
+Find Code:
+
+		$reply_subject 	 = stripslashes($reply[subject]);
+
+		
+Replace Code With:
+
+        $reply_subject 	 = stripslashes(censor($reply[subject]));
+        
+        
+Find Code:
+
+		$last_subject 	 = stripslashes($last[subject]);
+		
+		
+Replace Code With:
+
+        $last_subject 	 = stripslashes(censor($last[subject]));
+        
+
+Step 4:
+
+Open functions.php
+
+Find Code:
+
+
+function smcwcache() {
+	global $db, $table_smilies, $table_words, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
+
+	$query = $db->query("SELECT count(*) FROM $table_smilies WHERE type='smiley'");
+	$smiliesnum = $db->result($query, 0);
+	$query = $db->query("SELECT count(*) FROM $table_words");
+	$wordsnum = $db->result($query, 0);
+
+	if($smiliesnum > 0) {
+		$query = $db->query("SELECT * FROM $table_smilies WHERE type='smiley'");
+		while($smilie = $db->fetch_array($query)) {
+			$code = $smilie['code'];
+			$smiliecache[$code] = $smilie['url'];
+		}
+	}
+	if($wordsnum > 0) {
+		$query = $db->query("SELECT * FROM $table_words");
+		while($word = $db->fetch_array($query)) {
+			$find = $word['find'];
+			$censorcache[$find] = $word['replace1'];
+		}
+	}
+}
+
+
+Replace Code With:
+
+
+function smcwcache() {
+	global $db, $table_smilies, $table_words, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
+
+
+	$smquery = $db->query("SELECT * FROM $table_smilies WHERE type='smiley'");
+	$smiliesnum = $db->num_rows($smquery);
+	$wquery = $db->query("SELECT * FROM $table_words");
+	$wordsnum = $db->num_rows($wquery);
+
+	if($smiliesnum > 0) {
+		while($smilie = $db->fetch_array($smquery)) {
+			$code = $smilie['code'];
+			$smiliecache[$code] = $smilie['url'];
+		}
+	}
+	if($wordsnum > 0) {
+		while($word = $db->fetch_array($wquery)) {
+			$find = $word['find'];
+			$censorcache[$find] = $word['replace1'];
+		}
+	}
+}
+
+
+Find Code:
+
+
+function censor($txt){
+	global $censorcache;
+	
+	if(is_array($censorcache)){
+		if(count($censorcache) > 0){
+			reset($censorcache);
+			while(list($find, $replace) = each($censorcache)) {
+				//$txt = preg_replace("#\s($find)\s#si", " ".$replace." ", $txt);
+				$txt = str_replace(" ".$find." ", " ".$replace." ", $txt);
+			}
+		}
+	}
+	
+	return $txt;
+}
+
+
+Replace Code With:
+
+
+function censor($txt){
+	global $censorcache;
+	
+	if(is_array($censorcache)){
+		if(count($censorcache) > 0){
+			reset($censorcache);
+			while(list($find, $replace) = each($censorcache)) {
+				$txt = preg_replace("#\b($find)\b#si",$replace, $txt);
+			}
+		}
+	}
+	
+	return $txt;
+}

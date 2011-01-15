@@ -1,0 +1,39 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 hole 006] Able to get mySQL access variables from a template.
+
+Problem:
+The nice thing about Templates is you can type in any variable that is being used and have it display, 
+this is also bad. 
+
+You can type in any of the mySQL access variables($dbname, $dbuser, $dbpw, $dbhost) in a template 
+and have them display. So if you don't have ftp access (or any other file access) 
+you can still display these variables. 
+
+Super Administrator & Administrator can do this 
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In cp2.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+	if($editsubmit) {
+		$templatenew = addslashes($templatenew);
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+	if(isset($editsubmit)) {
+		$templatenew = addslashes($templatenew);
+		$sql_check = Array('dbname', 'dbuser', 'dbpw','dbhost');
+		foreach ($sql_check as $replace) {
+			$find = "/\W".$replace."/si";
+			$templatenew = preg_replace($find, $replace, $templatenew);
+		}
+
+===================================

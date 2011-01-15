@@ -1,0 +1,24 @@
+There is a problem with the way message links are stored and displayed in the u2u module. 
+This is a fix that corrects such: 
+
+Open u2u.php
+ 
+just before: 
+
+code:--------------------------------------------------------------------------------
+
+eval("\$messages .= \"".template("u2u_row")."\";"); 
+
+--------------------------------------------------------------------------------
+add:
+code:--------------------------------------------------------------------------------
+
+$message['msgfrom_enc'] = urlencode($message['msgfrom']);
+
+--------------------------------------------------------------------------------
+
+
+then, in the templates, (u2u_row), in the link to the profile, 
+replace $message[msgfrom] in the URL to $message[msgfrom_enc], 
+and leave the other one like it was 
+

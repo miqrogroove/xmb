@@ -1,0 +1,72 @@
+[FIX] Moving threads to nowhere
+
+Fix By: Ixan
+
+Fix For: 1.8 Final & SP1, probably earlier
+
+Description: When moving threads and accidentally selecting '' or '---------------' 
+for target can make your thread disappear.
+This is a fix to prevent that from happening.
+
+Note: Only tested with 1.8, with other versions code might be slightly different.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Step 1:
+
+Open: topicadmin.php
+
+Find code:
+
+				if($type == "normal") {
+					$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+					$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+				} else {
+					$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
+					$info = $db->fetch_array($query);
+					$db->query("INSERT INTO $table_threads VALUES ('', '$info[fid]', '$info[subject]', '', '$info[lastpost]', '-', '-', '$info[author]', 'moved|$info[tid]', '$info[topped]', '$info[pollopts]')");
+					$ntid = $db->insert_id();
+					$db->query("INSERT INTO $table_posts VALUES ('$info[fid]', '$ntid', '', '$info[author]', '$info[tid]', '$info[subject]', '', '', '', '', '', '')");
+					
+					$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+					$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+				}
+
+Replace:
+
+				if($moveto != "") {
+					if($type == "normal") {
+						$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+						$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+					} else {
+						$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
+						$info = $db->fetch_array($query);
+						$db->query("INSERT INTO $table_threads VALUES ('', '$info[fid]', '$info[subject]', '', '$info[lastpost]', '-', '-', '$info[author]', 'moved|$info[tid]', '$info[topped]', '$info[pollopts]')");
+						$ntid = $db->insert_id();
+						$db->query("INSERT INTO $table_posts VALUES ('$info[fid]', '$ntid', '', '$info[author]', '$info[tid]', '$info[subject]', '', '', '', '', '', '')");
+						
+						$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+						$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
+					}
+				}
+				else {
+					echo "<center><span class=\"mediumtxt \">$lang_errormovingthreads</span></center>";
+					end_time();
+					eval("\$footer = \"".template("footer")."\";");
+					echo $footer;
+					exit();
+				}
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Step 2:
+
+Open file: English.lang.php
+
+Find code:
+
+?>
+
+Add above:
+
+$lang_errormovingthreads = "You did not select target forum or subforum. Please go back and try again.";

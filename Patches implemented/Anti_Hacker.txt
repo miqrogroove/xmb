@@ -1,0 +1,15 @@
+if(eregi("\?[0-9]+$", $_SERVER['REQUEST_URI'])){
+ 	exit("hacking attempt");
+}
+
+
+if(!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $_GLOBAL['REMOTE_ADDR'])){
+	exit("unknown IP");
+}
+
+
+Tularis says:
+put those lines at the top of your header.php  
+
+anyway, thanx to my measure, the only other way to flood is to do like:
+index.php?novar=4390574857

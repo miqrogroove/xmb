@@ -1,0 +1,10 @@
+rank sort change : - )
+
+not really a fix, but more of a looks better. You can see the ranks by order of stars then post. (unless someone wants to be strange and give less stars for more posts then this looks funny) 
+
+in cp2.php 
+find: 
+$query = $db->query("SELECT * FROM $table_ranks ORDER BY id"); 
+
+replace with: 
+$query = $db->query("SELECT * FROM $table_ranks ORDER BY stars, posts");

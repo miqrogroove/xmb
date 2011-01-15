@@ -1,0 +1,27 @@
+[Fix] U2U Censor fix for 1.8 SP1 and 1.8 Final
+
+Open: u2u.php
+
+Find Code:
+
+$message['subject'] = checkOutput($message['subject']);
+
+Replace Code With:
+
+$message['subject'] = checkOutput(censor($message['subject']));
+
+Find Code:
+
+$u2u['subject'] = checkOutput($u2u['subject']);
+
+Replace Code With:
+
+$u2u['subject'] = checkOutput(censor($u2u['subject']));
+
+Find Code:
+
+$u2u['message'] = postify($u2u['message'], "no", "");
+
+Replace Code With:
+
+$u2u['message'] = postify($u2u['message'], "no", "", "yes", "no");

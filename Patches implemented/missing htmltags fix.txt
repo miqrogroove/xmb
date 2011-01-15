@@ -1,0 +1,114 @@
+
+It is due to missing HTML tags in the XMB template code.
+
+EDIT INDEX TEMPLATE
+
+REPLACE WITH
+
+
+code:--------------------------------------------------------------------------------
+
+$ticker
+
+$welcome
+
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth"
+align="center"> 
+<tr><td bgcolor="$bordercolor"> 
+
+<table border="0" cellspacing="$borderwidth" cellpadding="$tablespace"
+width="100%" align="center"> 
+<tr>
+<td width="4%" class="header">&nbsp;</td> 
+<td width="54%" class="header">$lang_textforum</td> 
+<td width="6%" class="header">$lang_texttopics</td>
+<td width="6%" class="header">$lang_textposts</td> 
+<td width="19%" class="header">$lang_textlastpost</td>
+<td width="2%" class="header"></td>
+</tr>
+
+$forumlist
+
+</table>
+</td></tr></table><br />
+
+$whosonline
+
+<table width="$tablewidth" align="center">
+<tr>
+<td class="tablerow">$lang_indexstats<br /> $lang_stats4
+$memhtml<br /><br /><img src="$imgdir/red_folder.gif"
+alt="RED FOLDER"/> = $lang_newposts<br /><img
+src="$imgdir/folder.gif" alt="FOLDER" /> =
+$lang_nonewposts</td>
+</tr>
+</table>
+
+<br />
+
+--------------------------------------------------------------------------------
+
+
+EDIT INDEX_WHOSONLINE TEMPLATE
+
+REPLACE WITH
+
+
+code:--------------------------------------------------------------------------------
+
+<table border="0" cellpadding="0" cellspacing="0" border="0"
+width="$tablewidth">
+<tr><td bgcolor="$bordercolor">
+
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0"
+width="100%" align="center">
+<tr>
+<td class="category" $catbgcode colspan="2"><b><a
+href="misc.php?action=online"><font
+color="$cattext">$lang_whosonline</font></a><font
+color="$cattext"> - $memonmsg</font></b></td>
+</tr>
+
+<tr>
+<td class="tablerow" bgcolor="$altbg2"
+colspan="2">$lang_key<u><b><i>$lang_superadmin</u&g
+t;</i></b> -
+<u><b>$lang_textsendadmin</u></b> -
+<b><i>$lang_textsendsupermod</i></b> -
+<b>$lang_textsendmod</b> - $lang_textsendall</td>
+</tr>
+
+<tr>
+<td class="tablerow" bgcolor="$altbg1" align="center"
+width="4%"><img src="$imgdir/online.gif"
+alt="$lang_whosonline"/></td>
+<td class="tablerow" bgcolor="$altbg2">$memtally</td>
+</tr>
+
+</table>
+</td></tr></table><br />
+
+<table border="0" cellpadding="0" cellspacing="0" border="0"
+width="$tablewidth">
+<tr><td bgcolor="$bordercolor">
+
+<table cellspacing="$borderwidth" cellpadding="$tablespace" border="0"
+width="100%" align="center">
+<tr>
+<td class="category" $catbgcode colspan="2"><b><font
+color="$cattext">[<a href="misc.php?action=onlinetoday"
+alt=""><font color="$cattext">+</a>]
+</a>$lang_last50today</font></b></td>
+</tr>
+
+<tr>
+<td class="tablerow" bgcolor="$altbg1" align="center"
+width="4%"><img src="$imgdir/online.gif" /></td>
+<td class="tablerow" bgcolor="$altbg2">$todaymembers</td>
+</tr>
+
+</table>
+</td></tr></table><br />
+
+
+--------------------------------------------------------------------------------

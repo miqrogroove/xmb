@@ -1,0 +1,16 @@
+I don't have enough information for this:
+
+$find = array('<', '>', '|', '"', '[', ']', '\\', '&', '#', '--');
+foreach($find as $needle) {
+if(strstr($username, $needle)) {
+eval("\$header = \"".template("header")."\";");
+echo $header;
+echo "<center><span class=\"mediumtxt \">Invalid Characters in Username (- $needle -);</span></center>";
+exit();
+}
+}
+
+but that needs to be updated
+
+watcher
+

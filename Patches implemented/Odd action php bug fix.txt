@@ -1,0 +1,16 @@
+the odd action php bug
+
+something that might need to be stuck in xmb.php or left in header like 
+suggested by wyrdjoey 
+
+open header.php 
+find: 
+require './functions.php'; 
+
+add below: 
+
+// Insert wyrdjoey begin 
+$pos = strpos($action,"&"); 
+if ($pos != 0){ 
+$action = substr_replace($action,"",$pos); 
+} 

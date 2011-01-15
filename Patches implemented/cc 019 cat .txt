@@ -1,0 +1,30 @@
+Version 1.8 sp1
+for fixing:
+[1.8 IC 029] Forum disappears when 'Categories Only On Main Page?' turned on 
+
+When "Categories Only On Main Page?" is turned on, and a category is clicked,
+the forum(s) for that category won't display.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in index.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+		if($catsonly != 'on' && !empty($tempforumlist)){
+			eval("\$forumlist .= \"".template("index_category")."\";");
+			$forumlist .= $tempforumlist;
+		}elseif($catsonly == 'on'){
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		if($catsonly != 'on' || !empty($tempforumlist)){
+			eval("\$forumlist .= \"".template("index_category")."\";");
+			$forumlist .= $tempforumlist;
+		}elseif($catsonly == 'on' || !($gid)){
+
+===================================

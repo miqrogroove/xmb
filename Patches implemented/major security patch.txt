@@ -1,0 +1,52 @@
+[all versions] Registration Bug!
+
+There is a SQL injection bug in the registration processing. 
+By specially crafted parameters, a remote attacker is able to steal 
+password hashes from any registered user! 
+
+If the webserver running XMB has 'register_globals' activated in its php.ini, 
+an attacker is able to modify the SQL query using the unchecked variables 
+$email1 and $email2. The stealing of password hashes can be realized by using the 
+SQL mid() method. 
+
+
+In member.php around line 190 
+
+code:--------------------------------------------------------------------------------
+
+
+if($doublee == "off" && (bool) false !== strpos($email, "@")) { 
+	$email = addslashes(trim($email)); 
+	$email1 = ", email"; 
+	$email2 = "OR email='$email'"; 
+} 
+ 
+$username = trim($username); 
+$query = $db->query("SELECT username$email1 FROM $table_members WHERE username='$username' $email2"); 
+--------------------------------------------------------------------------------
+
+
+To fix this hole you should replace this statement of code with the following: 
+
+code:--------------------------------------------------------------------------------
+ 
+if($doublee == 'off' && (bool) false !== strpos($email, '@')) { 
+	$email = addslashes(trim($email)); 
+	$email1 = ', email'; 
+	$email2 = "OR email='$email'"; 
+}else{ 
+	$email1 = ''; 
+	$email2 = ''; 
+} 
+ 
+$username = trim($username); 
+$query = $db->query("SELECT username$email1 FROM $table_members WHERE username='$username' $email2"); 
+
+--------------------------------------------------------------------------------
+
+
+This will patch the security hole and make sure nobody can use this method to obtain passwords anymore. 
+We appoligize for the inconvenience it might have caused. 
+
+The XMB Team 
+

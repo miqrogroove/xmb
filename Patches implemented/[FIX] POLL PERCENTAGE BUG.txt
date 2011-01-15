@@ -1,0 +1,21 @@
+POll Percentage Fix
+
+This will correct the percentages not displaying in polls.
+
+
+Step 1:
+
+Open Viewthread.php
+
+Find Code:
+
+$thispollnum = str_replace("||~|~|| ", "", $pollops[$pnum]);
+
+
+Replace Code with:
+
+$thispollnum = eregi_replace(".*\||~\|~\|| ", "", $pollops[$pnum]);
+
+------------------------
+
+Now upload it overwriting the old one and all will be good:)

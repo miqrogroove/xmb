@@ -1,0 +1,18 @@
+[fix] whos online multiple guests until logged in
+
+This will fix guests showing up as online when you are not logged in. 
+Right now if you are not logged in you will sometimes see guests 
+who are in fact not really viewing the forum and then when you log in, they disappear.
+
+Code by:ryan_thian
+
+In header.php
+
+FIND:
+
+$bblang = $langfile;
+
+
+ADD BELOW:
+
+$time = time();

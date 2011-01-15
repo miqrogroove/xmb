@@ -1,0 +1,123 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 hole 001] Member.PHP Cross-Site Scripting Vulnerability
+
+Information found at: 
+http://www.securityfocus.com/bid/7662/info/ 
+
+[1.8 hole 004] buddy.php Cross-Site Scripting And HTML Injection Vulnerabilities
+
+Information found here: 
+http://www.securityfocus.com/bid/8013/info/
+
+[1.8 hole 007] SQL Injection with $tid, $fid, $pid.
+
+Problem 
+Text can be inserted into query with $tid, $fid, $pid, since they aren't always check to make sure they are integer 
+
+
+Note miscellaneous bad information change:
+"if it's not a IPv5, nor a IPv9 type"
+there is no IPv5 or IPv9 that has anything to do with this.  They are IPv4 and
+IPv6.  Now there is a better way for checking this, but not what is being
+corrected here.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in header.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------    1.) Find:  ----------
+===================================
+
+find this:
+
+	//Checks the IP-format, if it's not a IPv5, nor a IPv9 type, it will be blocked, safe to remove....
+	if($ipcheck == 'on'){
+		if(!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')){
+			exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
+		}
+	}
+
+	// Checks for various variables in the URL, if any of them is found, script is halted
+	$url_check = Array('status', 'xmbuser', 'xmbpw');
+	foreach ($url_check as $name) {
+	 	if (eregi($name, $url)){
+	 		exit();
+	 	}
+	}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+	//Checks the IP-format, if it's not a IPv4, nor a IPv6 type, it will be blocked, safe to remove....
+	if($ipcheck == 'on'){
+		if(!eregi("^([0-9]{1,3}\.){3}[0-9]{1,3}$", $onlineip) && !eregi("^([a-z,0-9]{0,4}:){5}[a-z,0-9]{0,4}$", $onlineip)&& !stristr($onlineip, ':::::')){
+			exit("Access to this website is currently not possible as your hostname/IP appears suspicous.");
+		}
+	}
+
+	// Checks for various variables in the URL, if any of them is found, script is halted
+	$url2 = str_replace("subscriptions","",$url);
+	$url_check = Array('status', 'xmbuser', 'xmbpw','script','javascript');
+	foreach ($url_check as $name) {
+	 	if (eregi($name, $url2)){
+	 		exit();
+	 	}
+	}
+
+	// Checks to make sure fid, pid, and tid are interger
+	if ($fid){$fid = (int)$fid;}
+	if ($pid){$pid = (int)$pid;}
+	if ($tid){$tid = (int)$tid;}
+
+===================================
+
+----------    2.) Find:  ----------
+===================================
+
+// Set the whosonline
+	$wollocation = addslashes($url);
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+// Set the whosonline
+	$location = checkInput($location, '', '', 'javascript');
+	$wollocation = addslashes($url);
+
+===================================
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In member.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+===================================
+
+----------  1.) Find:    ----------
+===================================
+
+if($action == "viewpro") {
+	eval("\$header = \"".template("header")."\";");
+	echo $header;
+	if(!$member) {
+		echo $lang_nomember;
+	}else{
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+if($action == "viewpro") {
+	eval("\$header = \"".template("header")."\";");
+	echo $header;
+	if(!$member) {
+		echo $lang_nomember;
+	}else{
+		$member = checkInput($member, '', '', 'javascript');
+
+===================================

@@ -1,0 +1,103 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 002] time offset won't do half times
+
+Any time a (x:30) or (x:45) is picked the decimal point is choped off. 
+
+examples: 
+1 - (GMT -3:30) Newfoundland 
+	becomes: (GMT -3:00) Brasilia, Buenos Aires, Georgetown, Greenland 
+2 - (GMT +3:30) Tehran
+	becomes: (GMT +3:00) Baghdad, Riyadh, Moscow, Nairobi 
+3 - (GMT +4:30) Kabul
+	becomes: (GMT +4:00) Abu Dhabi, Baku, Muscat, Tbilisi 
+4 - (GMT +5:30) Bombay, Calcutta, Madras, New Delhi
+	becomes: (GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent 
+5 - (GMT +5:45) Kathmandu
+	becomes: (GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent 
+6 - (GMT +6:30) Rangoon
+	becomes: (GMT +6:00) Almaty, Colombo, Dhaka, Novosibirsk, Sri Jayawardenepura 
+7 - (GMT +9:30) Adelaide, Darwin
+	becomes: Oddly enough (GMT +9:30) Adelaide, Darwin 
+	(but with a value of '9' instead of the value of '9.5' because of template memcp_profile
+Reason for behavor: 
+timeoffset is an INT(5) instead of a decimal(4,2). Integer have no decimal places. 
+
+=========================
+
+[1.8 IC 003] crank the base time up is an integer.
+
+Crank the base time is only set to adjust time by hours, not faction of an hour. 
+
+Why an issue 
+Admin might want to add a few minutes, and see [1.8 bug 002] time offset won't do
+half times for why this make sense to update. 
+
+Reason for behavor: 
+addtime is an INT(3) instead of a decimal(4,2). Integer have no decimal places.
+
+=========================
+
+[1.8 IC 023] u2uid is the wrong datatype (Duplicate entry '32767' for key 1)
+
+When u2uid get to 32768 U2Us sent, this error appears:
+"Duplicate entry '32767' for key 1"
+ 
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+		information for when a upgrade script is made.
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$db->query("ALTER TABLE $table_settings CHANGE `addtime` `addtime` DECIMAL(4,2) DEFAULT '0' NOT NULL");
+$db->query("ALTER TABLE $table_members CHANGE `timeoffset` `timeoffset` DECIMAL(4,2) DEFAULT '0' NOT NULL");
+$db->query("ALTER TABLE $table_u2u CHANGE `u2uid` `u2uid` INT( 6 ) NOT NULL AUTO_INCREMENT");
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in cinst.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------   1)  Find:   ----------
+===================================
+
+		  `timeoffset` int(5) NOT NULL default '0',
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		  `timeoffset` DECIMAL(4,2) NOT NULL default '0',
+
+===================================
+
+----------   2)  Find:   ----------
+===================================
+
+		  `addtime` int(3) NOT NULL default '0'
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		  `addtime` DECIMAL(4,2) NOT NULL DEFAULT '0'
+
+===================================
+
+----------   3)  Find:   ----------
+===================================
+
+		  `u2uid` smallint(6) NOT NULL auto_increment,
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		  `u2uid` INT( 6 ) NOT NULL AUTO_INCREMENT,
+
+===================================

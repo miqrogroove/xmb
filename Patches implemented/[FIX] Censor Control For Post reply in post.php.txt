@@ -1,0 +1,53 @@
+Censor Control For Post reply in post.php
+
+
+Open post.php
+
+
+Find Code:
+
+
+if($tid) {
+	$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid' LIMIT 1");
+	if($db->num_rows($query) == 1){
+		$thread = $db->fetch_array($query);
+		$threadname = $thread['subject'];
+		$threadname = stripslashes($threadname);
+		$fid = $thread['fid'];
+	}else{
+		eval("\$header = \"".template("header")."\";");
+		echo $header;
+		echo "<center><b>$lang_textnothread</b></center>";
+	
+		end_time();
+		eval("\$footer = \"".template("footer")."\";");
+		echo $footer;
+		exit();		
+	}
+}
+
+
+Replace Code with:
+
+
+// Cache Smilies and Censored Words
+smcwcache();
+
+if($tid) {
+	$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid' LIMIT 1");
+	if($db->num_rows($query) == 1){
+		$thread = $db->fetch_array($query);
+		$threadname = censor($thread['subject']);
+		$threadname = stripslashes($threadname);
+		$fid = $thread['fid'];
+	}else{
+		eval("\$header = \"".template("header")."\";");
+		echo $header;
+		echo "<center><b>$lang_textnothread</b></center>";
+	
+		end_time();
+		eval("\$footer = \"".template("footer")."\";");
+		echo $footer;
+		exit();		
+	}
+}

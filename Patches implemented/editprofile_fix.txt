@@ -1,0 +1,22 @@
+[Resolved] edit profile error
+
+I was changing a member's password from the editprofile page and I was given this error.
+
+Warning: No ending delimiter '"' found in /home/xpressht/public_html/forum/editprofile.php on line 235
+
+Warning: No ending delimiter ''' found in /home/xpressht/public_html/forum/editprofile.php on line 235
+
+On line 235 of the edit profile page it has...
+
+
+if(preg_match('"', $newpassword) || preg_match("'", $newpassword)) {
+
+Change to:
+
+
+if(strstr($newpassword, '"') || strstr($newpassword, "'")) {
+
+
+
+
+ 

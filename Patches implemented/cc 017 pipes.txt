@@ -1,0 +1,109 @@
+Version 1.8 sp1
+for fixing:
+[1.8 IC 019-1] When 'Stats' is turned off an extra Pipe Appears in Option Listing
+
+Problem: 
+if you turn off stat you get a | at the end 
+
+	basically while you start with this: 
+Member List | Search | FAQ | Today's Posts | Stats 
+
+	you get this: 
+Member List | Search | FAQ | Today's Posts | 
+
+	and if you have a plugin you get this: 
+
+Member List | Search | FAQ | Today's Posts | | plugin 
+
+Reason: 
+All the options have a Pipe at the end of them except for Stats.
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in header.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+	// Search-link
+	if($SETTINGS['searchstatus'] == "on") {
+		$searchlink = "<a href=\"misc.php?action=search\"><font class=\"navtd\">$lang_textsearch</font></a> |";
+	} else {
+		$searchlink = "";
+	}
+	
+	// Faq-link
+	if($SETTINGS['faqstatus'] == "on") {
+		$faqlink = "<a href=\"faq.php\"><font class=\"navtd\">$lang_textfaq</font></a> |";
+	} else {
+		$faqlink = "";
+	}
+	
+	// Memberlist-link
+	if($SETTINGS['memliststatus'] == "on") {
+		$memlistlink = "<a href=\"misc.php?action=list\"><font class=\"navtd\">$lang_textmemberlist</font></a> |";
+	} else {
+		$memlistlink = "";
+	}
+
+	// Today's posts-link
+	if($SETTINGS['todaysposts'] == "on") {
+		$todaysposts = "<a href=\"today.php\"><font class=\"navtd\">$lang_navtodaysposts</font></a> |";
+	} else {
+		$todaysposts = "";
+	}
+
+	// Stats-link
+	if($SETTINGS['stats'] == "on") {
+		$stats = "<a href=\"stats.php?action=view\"><font class=\"navtd\">$lang_navstats</font></a>";
+	} else {
+		$stats = "";
+	}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+	
+	$pipe = "";
+	// Memberlist-link
+	if($SETTINGS['memliststatus'] == "on") {
+		$memlistlink = "<a href=\"misc.php?action=list\"><font class=\"navtd\">$lang_textmemberlist</font></a>";
+		$pipe = " | ";
+	} else {
+		$memlistlink = "";
+	}
+
+	// Search-link
+	if($SETTINGS['searchstatus'] == "on") {
+		$searchlink = $pipe."<a href=\"misc.php?action=search\"><font class=\"navtd\">$lang_textsearch</font></a>";
+		$pipe = " | ";
+	} else {
+		$searchlink = "";
+	}
+	
+	// Faq-link
+	if($SETTINGS['faqstatus'] == "on") {
+		$faqlink = $pipe."<a href=\"faq.php\"><font class=\"navtd\">$lang_textfaq</font></a>";
+		$pipe = " | ";
+	} else {
+		$faqlink = "";
+	}
+	
+	// Today's posts-link
+	if($SETTINGS['todaysposts'] == "on") {
+		$todaysposts = $pipe."<a href=\"today.php\"><font class=\"navtd\">$lang_navtodaysposts</font></a>";
+		$pipe = " | ";
+	} else {
+		$todaysposts = "";
+	}
+
+	// Stats-link
+	if($SETTINGS['stats'] == "on") {
+		$stats = $pipe."<a href=\"stats.php?action=view\"><font class=\"navtd\">$lang_navstats</font></a>";
+	} else {
+		$stats = "";
+	}
+
+===================================

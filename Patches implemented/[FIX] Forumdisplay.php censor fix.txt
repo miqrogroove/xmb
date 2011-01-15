@@ -1,0 +1,24 @@
+[FIX] Forumdisplay.php censor fix
+ This fix will correct the issue of censors not proeprly functioning 
+ in the forum display code.
+
+
+Open Forumdisplay.php
+
+Find Code:
+
+eval("\$header = \"".template("header")."\";");
+echo $header;
+
+Add Below:
+
+smcwcache();
+
+Find Code:
+
+$thread[subject] = stripslashes($thread[subject]);
+
+Replace With:
+
+$thread[subject] = stripslashes(censor($thread[subject]));
+

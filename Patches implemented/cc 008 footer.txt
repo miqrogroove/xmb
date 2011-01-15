@@ -1,0 +1,227 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 012] Missing footers
+
+Problem: 
+Certain error will not produce footer
+
+note fixes for:
+1 - Error checks in emailfriend.php are missing footers 
+2 - Error in member.php missing footer for error "Maximum Registrations per Day Reached, please wait 24 hours." 
+
+are not inculded with this
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in topicadmin.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------    1.) Find:  ----------
+===================================
+
+		echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
+		exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
+		end_time();
+		eval("\$footer = \"".template("footer")."\";");
+		echo $footer;
+		exit();
+
+===================================
+
+----------    2.) Find:  ----------
+===================================
+
+		echo "<center><span class=\"mediumtxt \">$lang_notpermitted</span></center>";
+		exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		echo "<center><span class=\"mediumtxt \">$lang_notpermitted</span></center>";
+		end_time();
+		eval("\$footer = \"".template("footer")."\";");
+		echo $footer;
+		exit();
+
+===================================
+
+----------   3.)  Find:  ----------
+===================================
+
+			echo "<center><span class=\"mediumtxt \">$lang_textnoaction</span></center>";
+			exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+			echo "<center><span class=\"mediumtxt \">$lang_textnoaction</span></center>";
+			end_time();
+			eval("\$footer = \"".template("footer")."\";");
+			echo $footer;
+			exit();
+
+===================================
+
+----------   4.)  Find:  ----------
+===================================
+
+					echo "<center><span class=\"mediumtxt \">$lang_cantsplit</span></center>";
+					exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+					echo "<center><span class=\"mediumtxt \">$lang_cantsplit</span></center>";
+					end_time();
+					eval("\$footer = \"".template("footer")."\";");
+					echo $footer;
+					exit();
+
+===================================
+
+----------   5.)  Find:  ----------
+===================================
+
+					echo "<center><span class=\"mediumtxt \">$lang_textnosubject</span></center>";
+					exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+					echo "<center><span class=\"mediumtxt \">$lang_textnosubject</span></center>";
+					end_time();
+					eval("\$footer = \"".template("footer")."\";");
+					echo $footer;
+					exit();
+
+===================================
+
+----------   6.)  Find:  ----------
+===================================
+
+				eval("\$footer = \"".template("footer")."\";");
+				$featureoff = stripslashes($featureoff);
+				echo $featureoff;
+				echo $footer;
+				exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+				$featureoff = stripslashes($featureoff);
+				echo $featureoff;
+				end_time();
+				eval("\$footer = \"".template("footer")."\";");
+				echo $footer;
+				exit();
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in member.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------   1.)  Find:  ----------
+===================================
+
+		eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
+		eval("\$header = \"".template("header")."\";");
+		      eval("\$footer = \"".template("footer")."\";");
+			echo $header;
+			echo $featureoff;
+			echo $footer;
+			exit();
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		end_time();
+
+		eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
+		eval("\$header = \"".template("header")."\";");
+		eval("\$footer = \"".template("footer")."\";");
+
+		echo $header;
+		echo $featureoff;
+		echo $footer;
+		exit();
+
+===================================
+
+----------   2.)  Find:  ----------
+===================================
+
+		eval("\$featurelin = \"".template("misc_feature_not_while_loggedin")."\";");
+		eval("\$header = \"".template("header")."\";");
+		      eval("\$footer = \"".template("footer")."\";");
+			echo $header;
+			echo $featurelin;
+			echo $footer;
+			exit();
+
+===================================
+
+---------- Replace with: ----------
+===================================
+		end_time();
+
+		eval("\$featurelin = \"".template("misc_feature_not_while_loggedin")."\";");
+		eval("\$header = \"".template("header")."\";");
+		eval("\$footer = \"".template("footer")."\";");
+
+		echo $header;
+		echo $featurelin;
+		echo $footer;
+		exit();
+
+===================================
+
+----------   3.)  Find:  ----------
+===================================
+
+				eval("\$header = \"".template("header")."\";");
+				echo $header;
+				echo "<center><span class=\"mediumtxt \">Invalid Characters in Username (- $needle -);</span></center>";
+				exit();
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+				eval("\$header = \"".template("header")."\";");
+				echo $header;
+				echo "<center><span class=\"mediumtxt \">Invalid Characters in Username (- $needle -);</span></center>";
+				end_time();
+				eval("\$footer = \"".template("footer")."\";");
+				echo $footer;
+				exit();
+
+===================================

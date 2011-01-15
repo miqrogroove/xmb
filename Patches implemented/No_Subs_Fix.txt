@@ -1,0 +1,24 @@
+[FIX] "No Subscriptions" message not showing
+
+This will fix it so that when you do not have any subscriptions; 
+and you try to view your list of subscriptions; it will display the proper message. 
+Instead of just being blank. 
+
+
+Open up your memcp_subscriptions_none template. 
+
+
+FIND: 
+
+$lang_nosubmsg 
+
+
+REPLACE WITH: 
+
+$lang_nosubsmsg 
+
+
+Then save the changes. 
+
+
+-Jonathon 

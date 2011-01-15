@@ -1,0 +1,179 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 hole 002] Location Field HTML Injection Vulnerability
+
+Information found at:
+http://www.securityfocus.com/bid/7870
+
+[1.8 hole 008] MSN field can contain scripts
+
+Problem
+Scripts can be place in msn field of profile, and when profile is view script activates.
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In editprofile.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------  1.) Find:    ----------
+===================================
+
+		$avatar 	= checkInput($newavatar, 'no', 'no', 'javascript');
+		$memlocation 	= checkInput($newmemlocation, 'no', 'no', 'javascript');
+		$icq 		= checkInput($newicq, 'no', 'no', 'javascript');
+		$yahoo 		= checkInput($newyahoo, 'no', 'no', 'javascript');
+		$aim 		= checkInput($newaim, 'no', 'no', 'javascript');
+		$email 		= checkInput($newemail, 'no', 'no', 'javascript');
+		$site 		= checkInput($newsite, 'no', 'no', 'javascript');
+		$bio 		= checkInput($newbio, 'no', 'no', 'javascript');
+		$bday 		= checkInput($bday, 'no', 'no', 'javascript');
+		$mood 		= checkInput($newmood, 'no', 'no', 'javascript');
+		$pstatus 	= checkInput($newpstatus, 'no', 'no', 'javascript');
+
+		$sig 		= addslashes($newsig);
+		$bio 		= addslashes($bio);
+		$memlocation 	= addslashes($newmemlocation);
+
+		$msn		= $newmsn;
+		$showemail 	= $newshowemail;
+		$newsletter	= $newnewsletter;
+
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		$email 		= checkInput($newemail, 'no', 'no', 'javascript');
+		$site 		= checkInput($newsite, 'no', 'no', 'javascript');
+		$aim 		= checkInput($newaim, 'no', 'no', 'javascript');
+		$memlocation 	= checkInput($newmemlocation, 'no', 'no', 'javascript');
+		$bio 		= checkInput($newbio, 'no', 'no', 'javascript');
+		$newsig 	= checkInput($newsig);
+		$showemail 	= $newshowemail;
+		$icq 		= checkInput($newicq, 'no', 'no', 'javascript');
+		$avatar 	= checkInput($newavatar, 'no', 'no', 'javascript');
+		$yahoo 		= checkInput($newyahoo, 'no', 'no', 'javascript');
+		$bday 		= checkInput($bday, 'no', 'no', 'javascript');
+		$pstatus 	= checkInput($newpstatus, 'no', 'no', 'javascript');
+		$newsletter	= $newnewsletter;
+		$msn		= checkInput($newmsn,'no', 'no', 'javascript');
+		$dateformatnew	= checkInput($dateformatnew,'no', 'no', 'javascript');
+		$mood 		= checkInput($newmood, 'no', 'no', 'javascript');
+
+		$sig 		= addslashes($newsig);
+		$bio 		= addslashes($bio);
+		$memlocation 	= addslashes($newmemlocation);
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In memcp.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------  1.) Find:    ----------
+===================================
+
+
+		$avatar 	= checkInput($newavatar, '', '', 'javascript');
+		$memlocation 	= checkInput($newmemlocation, '', '', 'javascript');
+		$icq 		= checkInput($newicq, '', '', 'javascript');
+		$yahoo 		= checkInput($newyahoo, '', '', 'javascript');
+		$aim 		= checkInput($newaim, '', '', 'javascript');
+		$email 		= checkInput($newemail, '', '', 'javascript');
+		$site 		= checkInput($newsite, '', '', 'javascript');
+		$bio 		= checkInput($newbio, '', '', 'javascript');
+		$bday 		= checkInput($bday, '', '', 'javascript');
+		$mood 		= checkInput($newmood, '', '', 'javascript');
+		$pstatus 	= checkInput($newpstatus, '', '', 'javascript');
+		$sig 		= checkInput($newsig);
+		
+		$sig 		= addslashes($sig);
+		$bio 		= addslashes($bio);
+		$memlocation 	= addslashes($newmemlocation);
+
+		$msn		= $newmsn;
+		$showemail 	= $newshowemail;
+		$newsletter	= $newnewsletter;
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		$email 		= checkInput($newemail, '', '', 'javascript');
+		$site 		= checkInput($newsite, '', '', 'javascript');
+		$aim 		= checkInput($newaim, '', '', 'javascript');
+		$memlocation 	= checkInput($newmemlocation, '', '', 'javascript');
+		$bio 		= checkInput($newbio, '', '', 'javascript');
+		$sig 		= checkInput($newsig);
+		$showemail 	= $newshowemail;
+		$icq 		= checkInput($newicq, '', '', 'javascript');
+		$avatar 	= checkInput($newavatar, '', '', 'javascript');
+		$yahoo 		= checkInput($newyahoo, '', '', 'javascript');
+		$bday 		= checkInput($bday, '', '', 'javascript');
+		$pstatus 	= checkInput($newpstatus, '', '', 'javascript');
+		$newsletter	= $newnewsletter;
+		$msn		= checkInput($newmsn, '', '', 'javascript');
+		$dateformatnew	= checkInput($dateformatnew, '', '', 'javascript');
+		$mood 		= checkInput($newmood, '', '', 'javascript');
+
+		$sig 		= addslashes($sig);
+		$bio 		= addslashes($bio);
+		$memlocation 	= addslashes($memlocation);
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In member.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------  1.) Find:    ----------
+===================================
+
+		$avatar 	= checkInput($avatar, '', '', "javascript");
+		$dateformatnew	= checkInput($dateformatnew, '', '', "javascript");
+		$locationnew	= checkInput($locationnew, '', '', "javascript");
+		$icq		= checkInput($icq, '', '', "javascript");
+		$yahoo		= checkInput($yahoo, '', '', "javascript");
+		$aim		= checkInput($aim, '', '', "javascript");
+		$email		= checkInput($email, '', '', "javascript");
+		$site		= checkInput($site, '', '', "javascript");
+		$bio		= checkInput($bio, '', '', "javascript");
+		$bday		= checkInput($bday, '', '', "javascript");
+		$mood		= checkInput($newmood, '', '', "javascript");
+		$sig 		= checkInput($_POST['sig']);
+
+		$sig		= addslashes($sig);
+		$bio		= addslashes($bio);
+		$locationnew	= addslashes($locationnew);
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		$email		= checkInput($email, '', '', 'javascript');
+		$site		= checkInput($site, '', '', 'javascript');
+		$aim		= checkInput($aim, '', '', 'javascript');
+		$locationnew	= checkInput($locationnew, '', '', 'javascript');
+		$bio		= checkInput($bio, '', '', 'javascript');
+		$sig 		= checkInput($_POST['sig']);
+		$icq		= checkInput($icq, '', '', 'javascript');
+		$avatar 	= checkInput($avatar, '', '', 'javascript');
+		$yahoo		= checkInput($yahoo, '', '', 'javascript');
+		$bday		= checkInput($bday, '', '', 'javascript');
+		$msn		= checkInput($newmsn, '', '', 'javascript');
+		$dateformatnew	= checkInput($dateformatnew, '', '', 'javascript');
+		$mood		= checkInput($newmood, '', '', 'javascript');
+
+		$sig		= addslashes($sig);
+		$bio		= addslashes($bio);
+		$locationnew	= addslashes($locationnew);
+
+===================================

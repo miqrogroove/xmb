@@ -1,0 +1,109 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 011] Anonymous lastpost and author link not always done
+
+Problem: 
+if a post is Anonymous, links to a member profile still display. 
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in forumdisplay.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+	$authorlink = "<a href=\"member.php?action=viewpro&member=".rawurlencode($thread[author])."\">$thread[author]</a>";
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+	if($thread[author] != "Anonymous") {
+		$authorlink = "<a href=\"member.php?action=viewpro&member=".rawurlencode($thread[author])."\">$thread[author]</a>";
+	} else {
+		$authorlink = "$lang_textanonymous";
+	}
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in today.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+----------   1) Find:    ----------
+===================================
+
+			if($thread[author] == $lang[textguest]) {
+				$authorlink = $thread[author];
+			}else {
+				$authorlink = "<a href=\"member.php?action=viewpro&member=".rawurlencode($thread[author])."\">$thread[author]</a>";
+			}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+			if($thread[author] == "Anonymous") {
+				$authorlink = "$lang_textanonymous";
+			}else {
+				$authorlink = "<a href=\"member.php?action=viewpro&member=".rawurlencode($thread[author])."\">$thread[author]</a>";
+			}
+
+===================================
+
+----------   2) Find:    ----------
+===================================
+
+			if($lastpost[1] == $lang[textguest]) {
+				$lastpost[1] = $lastpost[1];
+			} else {
+				$lastpost[1] = "<a href=\"member.php?action=viewpro&member=".rawurlencode($lastpost[1])."\">$lastpost[1]</a>";
+			}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+			if($lastpost[1] == "Anonymous") {
+				$lastpost[1] = "$lang_textanonymous";
+			} else {
+				$lastpost[1] = "<a href=\"member.php?action=viewpro&member=".rawurlencode($lastpost[1])."\">$lastpost[1]</a>";
+			}
+
+===================================
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in stats.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+		if($info['Total'] != 0){
+			$membesthtml = "<a href=\"member.php?action=viewpro&member=".rawurlencode($bestmember)."\"><b>$bestmember</b></a>";
+			$bestmemberpost = $info['Total'];
+			$eval = $lang_evalbestmember;
+		}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+		if($info['Total'] != 0){
+			if ($bestmember == "Anonymous"){
+				$membesthtml = "$lang_textanonymous";
+			} else {
+				$membesthtml = "<a href=\"member.php?action=viewpro&member=".rawurlencode($bestmember)."\"><b>$bestmember</b></a>";
+			}
+			$bestmemberpost = $info['Total'];
+			$eval = $lang_evalbestmember;
+		}
+
+===================================

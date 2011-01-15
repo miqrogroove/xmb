@@ -1,0 +1,63 @@
+Version 1.8 sp1
+for fixing:
+[1.8 hole 005] Member can accidentally be made into an Administrator
+
+If an Administrator or Super Administrator is in the
+'Administration Panel'/'Members' and updating lets say, members or members of
+any status, and a new member joins during that time. the new member will have 
+blanks in certain fields. Like the status field will now be empty. And all
+empty fields become Administrators next time around when a member query is
+submitted. 
+
+This happens because the information of this new member is not in the first 
+query, but is in the second query. Any member of any status that is in the 
+second query but not first loses their status. 
+
+To test this yourself 
+you need two screen opened, 
+1.) {First screen} you have already got to the point of the first query
+ (you have displayed results). 
+2.) {Second screen} logout 
+3.) {Second screen} register a member 
+4.) {Second screen} logout 
+5.) {Second screen} login as an Administrator or Super Administrator 
+6.) {First screen} submit changes 
+7.) {First screen} get back in to member query and display results 
+8.) {First screen} submit changes 
+
+Now you new member has become an Administrator. 
+
+to see this {First screen} get back in to member query and display results for
+that member 
+
+We now have a security problem....
+
+================= 
+
+Why this happens: 
+Since there is a time difference from the editing to the submit of new values,
+your 2nd query could get new members in it. Any new member won't have modified
+information, so blanks are placed in the following fields ban, status, postnum,
+customstatus. 
+
+If a new query is done any blank status become admins if submit for change. 
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                  In cp.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------  1.)  Find:   ----------
+===================================
+
+			$db->query("UPDATE $table_members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$newcustom'$queryadd WHERE uid='$mem[uid]'");
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+			if ($status != ""){
+				$db->query("UPDATE $table_members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$newcustom'$queryadd WHERE uid='$mem[uid]'");
+			}
+
+===================================

@@ -1,0 +1,25 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 005] Control Panel Activity Logs display wrong time
+
+Problem: 
+Control Panel Activity Logs doesn't display the time it displays the timeformat 
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in cp2.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+$time = gmdate($timeformat, $recordinfo[2]);
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+$time = gmdate($timecode, $recordinfo[2]);
+
+===================================

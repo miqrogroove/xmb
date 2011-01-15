@@ -1,0 +1,31 @@
+Version 1.8 sp1
+for fixing:
+
+[1.8 IC 025] Forget Password will reset all members with same email address
+
+versions affected: 
+all versions from xmb version 1.05 to 1.9 2003071010 
+
+Problem: 
+if you click Forgot password? and type a valid username and password and there
+are mulitiple members with the same email address, all members with the same
+email address will have their password reset. 
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				In misc.php 
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+				$db->query("UPDATE $table_members SET password='$newmd5pass', pwdate='".time()."' WHERE username='$member[username]' OR email='$member[email]'");
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+				$db->query("UPDATE $table_members SET password='$newmd5pass', pwdate='".time()."' WHERE username='$member[username]' AND email='$member[email]'");
+
+===================================

@@ -1,0 +1,68 @@
+Open post.php
+
+Find Code:
+
+$querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='picon' AND (url NOT LIKE '%rsvd%')");
+			while($smilie = $db->fetch_array($querysmilie)) {
+		                $posticoncheck = "";
+		                if($posticon == $smilie[url]) {
+					$posticoncheck = "checked=\"checked\"";
+				}
+				$icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" $posticoncheck/><img src=\"$smdir/$smilie[url]\" />";
+				$listed_icons++;
+				if($listed_icons == 9) {
+					$icons .= "<br />";
+					$listed_icons = 0;
+				}
+			}
+		} else {
+			$querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='picon'");
+			while($smilie = $db->fetch_array($querysmilie)) {
+		                $posticoncheck = "";
+		                if($posticon == $smilie[url]) {
+		                        $posticoncheck = "checked=\"checked\"";
+		                }
+				$icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" $posticoncheck/><img src=\"$smdir/$smilie[url]\" />";
+				$listed_icons += 1;
+				if($listed_icons == 9) {
+					$icons .= "<br />";
+					$listed_icons = 0;
+				}
+			}
+		}
+
+--------------------------------------------------------------------------------------------------------------
+Replace with this code:
+
+
+		$querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='picon' AND (url NOT LIKE '%rsvd%')");
+			while($smilie = $db->fetch_array($querysmilie)) {
+		                if($postinfo[icon] == $smilie[url]) {
+					$posticoncheck = "checked=\"checked\"";
+				}else{
+					$posticoncheck = "";
+				}
+				$icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" $posticoncheck/><img src=\"$smdir/$smilie[url]\" />";
+				$listed_icons++;
+				if($listed_icons == 9) {
+					$icons .= "<br />";
+					$listed_icons = 0;
+				}
+			}
+		} else {
+			$querysmilie = $db->query("SELECT * FROM $table_smilies WHERE type='picon'");
+			while($smilie = $db->fetch_array($querysmilie)) {
+		                if($postinfo[icon] == $smilie[url]) {
+		                        $posticoncheck = "checked=\"checked\"";
+		                }else{
+		                	$posticoncheck = "";
+		                }
+				$icons .= " <input type=\"radio\" name=\"posticon\" value=\"$smilie[url]\" $posticoncheck/><img src=\"$smdir/$smilie[url]\" />";
+				$listed_icons += 1;
+				if($listed_icons == 9) {
+					$icons .= "<br />";
+					$listed_icons = 0;
+				}
+			}
+		}
+---------------------------------------------------------------------------------------------

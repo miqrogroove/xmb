@@ -1,0 +1,58 @@
+[FIX] Banned member posting
+
+Fix By: Ixan
+
+Fix For: 1.8 SP1, maybe earlier
+
+Description: This will fix the inadequate check for banned status, 
+             when a post is made by entering username and password when posting.
+
+Note: Only tested with 1.8, with other versions code might be slightly different.
+
+-------------------------------------------------------------------------------------
+
+Step 1:
+
+Open file: post.php
+
+Find 2 occurrences (first and second) of code:
+
+			$query = $db->query("SELECT username, password, status FROM $table_members WHERE username='$username'");
+			$member = $db->fetch_array($query);
+
+			if(!$member[username]) {
+
+Replace with:
+
+			$query = $db->query("SELECT username, password, status, ban FROM $table_members WHERE username='$username'");
+			$member = $db->fetch_array($query);
+			$status = $member[status];
+			$ban = $member[ban];
+
+			if(!$member[username]) {
+
+Find 2 (first and second) occurences of code:
+
+if($status == "Banned") {
+	eval("\$header = \"".template("header")."\";");
+	echo $header;
+	echo "<center><span class=\"mediumtxt \">$lang_bannedmessage</span></center>";
+
+	end_time();
+	eval("\$footer = \"".template("footer")."\";");
+	echo $footer;
+	exit();
+}
+
+Add below:
+
+if ($ban == "posts" || $ban == "both") {
+	eval("\$header = \"".template("header")."\";");
+	echo $header;
+	echo "<center><b>$lang_textbanfrompost</b></center>";
+
+	end_time();
+	eval("\$footer = \"".template("footer")."\";");
+	echo $footer;
+	exit;
+}

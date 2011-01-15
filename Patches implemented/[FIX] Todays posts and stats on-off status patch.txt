@@ -1,0 +1,61 @@
+[FIX] Todays posts and stats on-off status patch
+
+Description: Special thanks goes to Sohil for bringing this to my attention. I made a patch to correct the missing 
+code for the Todays Posts on/off function but then learned that the stats on/off was missing to. This is a compiled
+text file of both missing on/off controls in the settings panel in admin panel.
+
+Note: These are not hacks but missing code. The database content is already stored in xmb for these. It is a simple case
+of oversight for several builds now.
+
+
+Step 1:
+
+Open: cp.php
+
+Find Code:
+
+if($SETTINGS['bbrules'] == "on") {
+$ruleson = "selected=\"selected\"";
+} else {
+$rulesoff = "selected=\"selected\"";
+}
+
+Add Code Below:
+
+if($SETTINGS['todaysposts'] == "on") {
+$todayspostson = "selected=\"selected\"";
+} else {
+$todayspostsoff = "selected=\"selected\"";
+}
+
+if($SETTINGS['stats'] == "on") {
+$statson = "selected=\"selected\"";
+} else {
+$statsoff = "selected=\"selected\"";
+}
+
+
+Step 2:
+
+Find Code:
+
+printsetting1($lang_textsearchstatus, "searchstatusnew", $searchon, $searchoff, $langfile);
+
+Add Code Above:
+
+printsetting1($lang_todayspostsstatus, "todayspostsnew", $todayspostson, $todayspostsoff, $langfile);
+printsetting1($lang_statssatus, "statsnew", $statson, $statsoff, $langfile);
+
+
+Step 3:
+
+Find Code:
+
+, bbrulestxt='$bbrulestxtnew'
+
+Add Code Right After:
+
+, todaysposts='$todayspostsnew', stats='$statsnew'
+
+
+Now go to admin panel->settings and look above the Search Status Switch and you will see both on/off switches that have been missing.

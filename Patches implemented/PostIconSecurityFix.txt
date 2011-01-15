@@ -1,0 +1,64 @@
+[1.8] PostIcon Attack
+
+
+The Basics: 
+An attacker can input HTML of any kind (including javascript) into your forum index, 
+as well as post view. This could allow someone to do anything from shutting down your forums 
+to stealing the passwords of all users who merely visit the forum. This could lead to the loss of 
+administrative power, and potentially your database. 
+
+The Exploit: 
+A rogue user can grab the html of post.php, save the output to their hard drive. 
+They then can modify the HTML to change the POSTICON radio buttons to a text field. 
+They can then input the characters "> .. closing the <img> tag of the posticon in the forumindex, 
+post view, as well as a number of other scripts. It is for this reason the fix stops the user 
+at the time of posting, rather than stripping out the malicious code at the time of displaying. 
+
+The fix: 
+Open post.php 
+
+Find: 
+
+code:-------------------------------------------------------------------------------- 
+                if($forums[pollstatus] != "off") { 
+                        $pollops = explode("\n", $pollanswers); 
+                        $pollanswers = ""; 
+                        for($pnum = 0; $pnum < 10; $pnum++) { 
+                                if($pollops[$pnum] != "") { 
+                                        $pollanswers .= "$pollops[$pnum]||~|~|| 0#|#"; 
+                                } 
+                        } 
+ 
+                        $pollanswers = str_replace("\n", "", $pollanswers); 
+                } 
+--------------------------------------------------------------------------------
+
+
+
+
+Below that, add: 
+
+code:-------------------------------------------------------------------------------- 
+                // Check PostIcon validity... 
+		if ($posticon != "") 
+	        { 
+      		$sql = "SELECT id FROM ".$table_smilies." WHERE type='picon' AND url='".$posticon."'"; 
+                	$query = $db->query($sql); 
+                	if (!($db->result($query, 0, "id"))) 
+                	{ 
+	        	   die(); 
+    	        	}     
+                } 
+
+		// End PostIcon validity
+		
+--------------------------------------------------------------------------------
+
+
+
+Issues: 
+The fix adds one extra query when a user submits. The reason for this? 
+While I could have merely checked for suspicious characters such as >, <, ", etc... 
+this would not solve the problem of larger, disallowed images in your forum index. 
+
+

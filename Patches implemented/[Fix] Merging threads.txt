@@ -1,0 +1,74 @@
+[FIX] Merging Threads
+
+Fix By: Ixan
+
+Fix For: 1.8 Final & SP1, 1.6, maybe earlier
+
+Description: This will will fix the problem with merging threads.
+	When merging threads, the subject of the thread will be the subject of the previous thread, thread where you clicked merge threads. 
+	Also, when merging threads in from different forums, the thread you merge to another, disappears (fid will not be changed, posts will not be displayed). 
+
+Note: Only tested with 1.8, with other versions code might be slightly different.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Step 1:
+
+Open: topicadmin.php
+
+Find code:
+
+				$queryadd1 = $db->query("SELECT replies FROM $table_threads WHERE tid='$othertid'");
+				$queryadd2 = $db->query("SELECT replies FROM $table_threads WHERE tid='$tid'");
+				
+				$replyadd = $db->result($queryadd1, 0);
+				$replyadd2 = $db->result($queryadd2, 0);
+				$replyadd++;
+				$replyadd = $replyadd + $replyadd2;
+				
+				
+				$db->query("UPDATE $table_posts SET tid='$tid' WHERE tid='$othertid'");
+				$db->query("UPDATE $table_attachments SET tid='$tid' WHERE tid='$othertid'");
+		
+				$db->query("DELETE FROM $table_threads WHERE tid='$othertid'");
+				$replies = 
+				$db->query("UPDATE $table_threads SET replies = '$replyadd' WHERE tid='$tid'");
+				$db->query("UPDATE $table_forums SET threads = threads-1 WHERE fid='$fid'");
+
+				$query = $db->query("SELECT author FROM $table_posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
+				$firstauthor = $db->result($query, 0);
+				$query = $db->query("SELECT author, dateline FROM $table_posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+				$lastpost = $db->fetch_array($query);
+				$db->query("UPDATE $table_threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]' WHERE tid='$tid'");
+				
+Replace:
+
+				$queryadd1 = $db->query("SELECT fid, replies FROM $table_threads WHERE tid='$othertid'");
+				$queryadd2 = $db->query("SELECT replies FROM $table_threads WHERE tid='$tid'");
+				
+				$otherfid = $db->fetch_array($queryadd1);
+				$otherfid = $otherfid['fid'];
+				$replyadd = $otherfid['replies'];
+				$replyadd2 = $db->result($queryadd2, 0);
+				$replyadd++;
+				$replyadd = $replyadd + $replyadd2;
+				
+				
+				$db->query("UPDATE $table_posts SET tid='$tid', fid='$fid' WHERE tid='$othertid'");
+				$db->query("UPDATE $table_attachments SET tid='$tid' WHERE tid='$othertid'");
+		
+				$db->query("DELETE FROM $table_threads WHERE tid='$othertid'");
+				$db->query("UPDATE $table_threads SET replies = '$replyadd' WHERE tid='$tid'");
+				$db->query("UPDATE $table_forums SET threads = threads-1 WHERE fid='$otherfid'");
+
+				$query = $db->query("SELECT author FROM $table_posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
+				$firstauthor = $db->result($query, 0);
+				$query = $db->query("SELECT author, dateline FROM $table_posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+				$lastpost = $db->fetch_array($query);
+				$db->query("UPDATE $table_threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]' WHERE tid='$tid'");
+
+				$query = $db->query("SELECT subject, author FROM $table_posts WHERE tid='$tid' ORDER BY dateline ASC LIMIT 0,1");
+				$firstpost = $db->fetch_array($query);
+				$query = $db->query("SELECT author, dateline FROM $table_posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 0,1");
+				$lastpost = $db->fetch_array($query);
+				$db->query("UPDATE $table_threads SET subject='$firstpost[subject]', author='$firstpost[author]', lastpost='$lastpost[dateline]|$lastpost[author]' WHERE tid='$tid'");

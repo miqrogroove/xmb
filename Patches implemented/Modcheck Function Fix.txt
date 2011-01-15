@@ -1,0 +1,50 @@
+being replaced because of this line
+$query = $db->query("SELECT * FROM $table_forums WHERE moderator LIKE '%$username%'");
+
+if you have a mod named 'mod1' & mod.  %mod% is the same as mod & mod1
+
+old function:
+
+Problem:  If moderators have similar names, original modcheck function produced errors.
+
+Open functions.php
+
+FIND:
+
+
+function modcheck($status, $username, $fid) {
+	global $db, $table_forums;
+	if($status == "Moderator") {
+		$query = $db->query("SELECT * FROM $table_forums WHERE moderator LIKE '%$username%'");
+		while($mod = $db->fetch_array($query)) {
+			if($mod[fid] == $fid) {
+				$modgood = "yes";
+			}
+		}
+
+		if($modgood == "yes") {
+			$status1 = "Moderator";
+		}
+	}
+	return $status1;
+}
+
+
+REPLACE WITH:
+
+
+function modcheck($status, $username, $fid) {
+	global $db, $table_forums;
+	if($status == "Moderator") {
+		$query = $db->query("SELECT moderator FROM $table_forums WHERE fid = '$fid'LIMIT 1 ");
+		$mods = $db->fetch_array($query);
+		$modlist = explode(",",$mods[moderator]);
+		for($i = 0; $i < count($modlist); $i++) {
+			if(trim($modlist[$i]) == $username) {
+				$status1 = "Moderator";
+				break;
+			}
+		}
+	}
+	return $status1;
+}

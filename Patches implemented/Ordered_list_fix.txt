@@ -1,0 +1,33 @@
+function list() {
+        if (helpmode) {
+                alert("$lang_bbcode_help_list");
+        } else if (advmode) {
+                AddTxt="\r[list]\r[*]\r[*]\r[*]\r[/list]";
+                AddText(AddTxt);
+        } else {  
+                txtstart=prompt("$lang_bbcode_prompt_list_start","");               
+                while ((txtstart!="") && (txtstart!="A") && (txtstart!="a") && (txtstart!="1") && (txtstart!=null)) {
+                        txtstart=prompt("$lang_bbcode_prompt_list_error","");               
+                }
+                if (txtstart!=null) {
+                        if (txtstart=="") {
+                                AddTxt="\r[list]\r\n";
+                        } else {
+                                AddTxt="\r[list="+txtstart+"]\r";
+                        } 
+                        txtend="1";
+                        while ((txtend!="") && (txtend!=null)) {
+                                txtend=prompt("$lang_bbcode_prompt_list_end",""); 
+                                if (txtend!="") {             
+                                        AddTxt+="[*]"+txtend+"\r"; 
+                                }                   
+                        }
+                        if (txtstart=="") {
+                                AddTxt+="[/list]\r\n";
+                        } else {
+                                AddTxt+="[/list="+txtstart+"]\r";
+                        } 
+                        AddText(AddTxt); 
+                }
+        }
+}

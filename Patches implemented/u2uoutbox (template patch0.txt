@@ -1,0 +1,42 @@
+For fixing the following problem:
+Deleting an u2u while viewing in the outbox will return you to the inbox list.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+			In template u2u_row
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+<td class="tablerow" bgcolor="$altbg2"><a href="u2u.php?action=view&u2uid=$message[u2uid]">$message[subject]</a></td>
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+<td class="tablerow" bgcolor="$altbg2"><a href="u2u.php?action=view&u2uid=$message[u2uid]&folder=$folder">$message[subject] </a></td>
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+			In template u2u_view
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+</table>
+<input type="hidden" name="u2uid" value="$u2uid"><br />
+
+===================================
+
+---------- Replace with: ----------
+===================================
+</table>
+<input type="hidden" name="folder" value="$folder"> 
+<input type="hidden" name="u2uid" value="$u2uid"><br />
+
+===================================
+

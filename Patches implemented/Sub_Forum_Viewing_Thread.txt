@@ -1,0 +1,38 @@
+[Fix]Sub-Forum Viewing Thread Fix
+Created On: 8:58 AM 10/13/2002 By: MM2_SimsHsia
+
+Description: If You Were Looking at A Thread That is In a Sub-Forum, You notice That In The Navigation You Get:
+Your Forum » Forum > Sub-Forum » Thread
+This Fix is Created So That It Can Change The Navigation Above, To Be Like This Below:
+Your Forum » Forum » Sub-Forum » Thread
+
+Compatibility: XMB 1.6 Series and 1.8 Partagium
+
+Let's Get Started!
+
+In viewthread.php
+
+Find:
+
+if($forum[type] == "forum") {
+        $navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fid\"> $forum[name]</a> &raquo; $thread[subject]";
+} else {
+        $query = $db->query("SELECT name, fid FROM $table_forums WHERE fid='$forum[fup]'");
+        $fup = $db->fetch_array($query);
+        $navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">$fup[name]</a> > <a href=\"forumdisplay.php?fid=$fid\"> $forum[name]</a> &raquo; $thread[subject]";
+}
+
+
+Replace It With:
+
+if($forum[type] == "forum") {
+        $navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fid\"> $forum[name]</a> &raquo; $thread[subject]";
+} else {
+        $query = $db->query("SELECT name, fid FROM $table_forums WHERE fid='$forum[fup]'");
+        $fup = $db->fetch_array($query);
+        $navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">$fup[name]</a> &raquo; <a href=\"forumdisplay.php?fid=$fid\"> $forum[name]</a> &raquo; $thread[subject]";
+}
+
+
+
+Save And Reupload To Your Forum Directory.

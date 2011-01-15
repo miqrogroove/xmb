@@ -1,0 +1,76 @@
+Version 1.8 sp1
+for fixing:
+[1.8 IC 015] Maximum Registrations per Day
+
+Problem: 
+1.) no header output 
+2.) no footer output 
+3.) $count['uid'] has no value so even $max = 0 doesn't activate code. 
+
+And fixes to (Only where the above error is concerned):
+[1.8 IC 013] Missing header
+[1.8 IC 012] Missing footers
+[1.8 lang-IC 003] Phases without variables in English.lang.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				in member.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+if($action == "reg") {
+	$time = time()-86400; // take the date and distract 24 hours from it 
+	$max = 999; // Max. amount of users allowed to register per day 
+	$query = $db->query("SELECT count(uid) FROM $table_members WHERE regdate > '$time'");
+	// Select amount of registrations since $time, which is since 24 hours. 
+	while($count = $db->fetch_array($query)) { 
+ 		if($count['uid'] > $max) { 
+     			echo "Maximum Registrations per Day Reached, please wait 24 hours."; 
+    			exit(); 
+ 		} 
+	}
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+if($action == "reg") {
+	$time = time()-86400; // take the date and distract 24 hours from it 
+	$max = 999; // Max. amount of users allowed to register per day 
+	$query = $db->query("SELECT count(uid) FROM $table_members WHERE regdate > '$time'");
+	$count = $db->fetch_row($query);
+	// Select amount of registrations since $time, which is since 24 hours.
+	if($count[0] >= $max) { 
+		end_time();
+		eval("\$header = \"".template("header")."\";");
+		eval("\$footer = \"".template("footer")."\";");
+		
+		echo $header;
+		echo "<center><span class=\"mediumtxt \">$lang_max_reg</span></center>";
+		echo $footer;
+		exit(); 
+	}
+
+===================================
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                                 In English.lang.php
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+----------     Find:     ----------
+===================================
+
+$charset = 'ISO-8859-1';
+
+===================================
+
+---------- Replace with: ----------
+===================================
+
+$charset = 'ISO-8859-1';
+$lang_max_reg ="Maximum Registrations per Day Reached, please wait 24 hours.";
+
+===================================
