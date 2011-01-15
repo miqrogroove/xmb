@@ -907,7 +907,7 @@ function upgrade_schema_to_v4() {
     'fid');
     foreach($columns as $colname) {
         $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if ($db->num_rows($query) > 0) {
             $sql[] = "DROP INDEX $colname";
         }
         $db->free_result($query);
@@ -938,7 +938,7 @@ function upgrade_schema_to_v4() {
     'tid');
     foreach($columns as $colname) {
         $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if ($db->num_rows($query) > 0) {
             $sql[] = "DROP INDEX $colname";
         }
         $db->free_result($query);
