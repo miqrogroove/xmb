@@ -247,7 +247,7 @@ echo "\n</body></html>";
  *
  * This function is officially compatible with the following XMB versions
  * that did not have a schema_version number:
- * 1.8, 1.9.1, 1.9.2, 1.9.3, 1.9.4, 1.9.5, 1.9.5 SP1, 1.9.6 RC1, 1.9.6 RC2,
+ * 1.8 SP2, 1.9.1, 1.9.2, 1.9.3, 1.9.4, 1.9.5, 1.9.5 SP1, 1.9.6 RC1, 1.9.6 RC2,
  * 1.9.7 RC3, 1.9.7 RC4, 1.9.8, 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
  *
  * Some tables (such as xmb_logs) will be upgraded directly to schema_version 3 for simplicity.
@@ -324,11 +324,17 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'username');
-    foreach($columns as $colname) {
+    'username' => 'username (8)');
+    foreach($columns as $colname => $coltype) {
         $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
         if ($db->num_rows($query) == 0) {
-            $sql[] = "ADD INDEX ($colname)";
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        } else {
+            $row = $db->fetch_array($query);
+            if ($row['Sub_part'] != '8') {
+                $sql[] = "DROP INDEX $colname";
+                $sql[] = "ADD INDEX $colname ($coltype)";
+            }
         }
         $db->free_result($query);
     }
@@ -688,7 +694,7 @@ function upgrade_schema_to_v0() {
     $coltype = "int(12) NOT NULL auto_increment";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(6)') {
+    if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -760,7 +766,7 @@ function upgrade_schema_to_v0() {
     $coltype = "bigint(15) NOT NULL default 0";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Null']) == 'yes') {
+    if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Type']) == 'bigint(30)' or strtolower($row['Null']) == 'yes') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -768,7 +774,7 @@ function upgrade_schema_to_v0() {
     $coltype = "varchar(128) NOT NULL default 'Not Set'";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(15)') {
+    if (strtolower($row['Type']) == 'varchar(15)' or strtolower($row['Type']) == 'varchar(32)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -826,6 +832,12 @@ function upgrade_schema_to_v0() {
         $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
         if ($db->num_rows($query) == 0) {
             $sql[] = "ADD INDEX $colname ($coltype)";
+        } else {
+            $row = $db->fetch_array($query);
+            if ($row['Sub_part'] != '8') {
+                $sql[] = "DROP INDEX $colname";
+                $sql[] = "ADD INDEX $colname ($coltype)";
+            }
         }
         $db->free_result($query);
     }
@@ -966,8 +978,23 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
+    'author' => "author (8)");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        } else {
+            $row = $db->fetch_array($query);
+            if ($row['Sub_part'] != '8') {
+                $sql[] = "DROP INDEX $colname";
+                $sql[] = "ADD INDEX $colname ($coltype)";
+            }
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
     'lastpost' => "lastpost",
-    'author' => "author (8)",
     'closed' => "closed",
     'forum_optimize' => "fid, topped, lastpost");
     foreach($columns as $colname => $coltype) {
@@ -1064,9 +1091,24 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
+    'author' => "author (8)");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        } else {
+            $row = $db->fetch_array($query);
+            if ($row['Sub_part'] != '8') {
+                $sql[] = "DROP INDEX $colname";
+                $sql[] = "ADD INDEX $colname ($coltype)";
+            }
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
     'fid' => "fid",
     'dateline' => "dateline",
-    'author' => "author (8)",
     'thread_optimize' => "tid, dateline, pid");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
@@ -1264,7 +1306,7 @@ function upgrade_schema_to_v0() {
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)') {
+        if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -1365,7 +1407,22 @@ function upgrade_schema_to_v0() {
 
     $columns = array(
     'msgto' => "msgto (8)",
-    'msgfrom' => "msgfrom (8)",
+    'msgfrom' => "msgfrom (8)");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        } else {
+            $row = $db->fetch_array($query);
+            if ($row['Sub_part'] != '8') {
+                $sql[] = "DROP INDEX $colname";
+                $sql[] = "ADD INDEX $colname ($coltype)";
+            }
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
     'folder' => "folder (8)",
     'readstatus' => "readstatus",
     'owner' => "owner (8)");
