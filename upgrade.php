@@ -42,7 +42,7 @@ if (ini_get('display_errors')) {
 }
 
 //Check location
-if (!(is_file('header.php') And is_dir('include'))) {
+if (!(is_file('header.php') and is_dir('include'))) {
     echo 'Could not find XMB!<br />'
         .'Please make sure the upgrade.php file is in the same folder as index.php and header.php.<br />';
     trigger_error('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.', E_USER_ERROR);
@@ -61,7 +61,7 @@ if (DEBUG) {
     echo 'Debug is False - You will not see any errors.';
 }
 
-if (!defined('X_SADMIN') Or !X_SADMIN) {
+if (!defined('X_SADMIN') or !X_SADMIN) {
     echo '<br /><br />This script may be run only by a Super Administrator.<br />'
         .'Please <a href="misc.php?action=login">Log In</a> first to begin the upgrade successfully.<br />';
     trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
@@ -83,7 +83,7 @@ if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] |
 }
 
 
-if (!isset($_GET['step']) Or $_GET['step'] == 1) {
+if (!isset($_GET['step']) or $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.11 Upgrade Script</h1>
 
@@ -256,7 +256,7 @@ echo "\n</body></html>";
  * @since 1.9.11 (Patch #11)
  */
 function upgrade_schema_to_v0() {
-    global $db;
+    global $db, $SETTINGS;
 
     echo 'Beginning schema upgrade from legacy version...<br />';
 
@@ -460,7 +460,7 @@ function upgrade_schema_to_v0() {
     
     $columns = array(
     'lastpost' => "varchar(54) NOT NULL default ''",
-    'theme' => "smallint(3) NOT NULL default 0"
+    'theme' => "smallint(3) NOT NULL default 0",
     'password' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -477,6 +477,18 @@ function upgrade_schema_to_v0() {
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $columns = array(
+    'posts' => "int(10) NOT NULL default 0",
+    'threads' => "int(10) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'int(100)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
     }
 
     $columns = array(
@@ -844,7 +856,7 @@ function upgrade_schema_to_v0() {
     $db->query("UPDATE ".X_PREFIX."members SET ppp={$SETTINGS['postperpage']} WHERE ppp=0");
     $db->query("UPDATE ".X_PREFIX."members SET tpp={$SETTINGS['topicperpage']} WHERE tpp=0");
 
-    echo 'Updating outgoing U2U status';
+    echo 'Updating outgoing U2U status...<br />';
 	$db->query("UPDATE ".X_PREFIX."members SET saveogu2u='yes'");
 
     echo 'Releasing the lock on the members table...<br />';
@@ -1024,7 +1036,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'author' => "varchar(32) NOT NULL default ''");
+    'author' => "varchar(32) NOT NULL default ''",
     'useip' => "varchar(15) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1088,7 +1100,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'posts' => "MEDIUMINT DEFAULT 0"
+    'posts' => "MEDIUMINT DEFAULT 0",
     'id' => "smallint(5) NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1219,7 +1231,7 @@ function upgrade_schema_to_v0() {
     $colname = 'themeid';
     $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY' AND Column_name = '$colname'");
     if ($db->num_rows($query) == 0) {
-        $sql[] = "ADD PRIMARY KEY ($colnamenew)";
+        $sql[] = "ADD PRIMARY KEY ($colname)";
     }
     $db->free_result($query);
 
@@ -1363,6 +1375,12 @@ function upgrade_schema_to_v0() {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the u2u table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
     }
 
     echo 'Requesting to lock the words table...<br />';
@@ -2034,6 +2052,8 @@ function fixBirthdays() {
  * @since 1.9.1
  */
 function fixPostPerm() {
+    global $db;
+
 	$query = $db->query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
 	while ( $forum = $db->fetch_array($query) ) {
 		$update = false;
