@@ -87,7 +87,7 @@ if (!isset($_GET['step']) Or $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.11 Upgrade Script</h1>
 
-<p>This script is compatible with XMB versions 1.9.1 through 1.9.10, and XMB 1.9.11 Betas.
+<p>This script is compatible with XMB versions 1.8 through 1.9.10, and XMB 1.9.11 Betas.
 
 <p>This script is NOT compatible with older versions.
 
@@ -247,7 +247,7 @@ echo "\n</body></html>";
  *
  * This function is officially compatible with the following XMB versions
  * that did not have a schema_version number:
- * 1.9.1, 1.9.2, 1.9.3, 1.9.4, 1.9.5, 1.9.5 SP1, 1.9.6 RC1, 1.9.6 RC2,
+ * 1.8, 1.9.1, 1.9.2, 1.9.3, 1.9.4, 1.9.5, 1.9.5 SP1, 1.9.6 RC1, 1.9.6 RC2,
  * 1.9.7 RC3, 1.9.7 RC4, 1.9.8, 1.9.8 SP1, 1.9.8 SP2, 1.9.8 SP3, 1.9.9, 1.9.10.
  *
  * Some tables (such as xmb_logs) will be upgraded directly to schema_version 3 for simplicity.
@@ -275,8 +275,121 @@ function upgrade_schema_to_v0() {
     }
     $db->free_result($query);
 
+    $columns = array(
+    'dateline' => "int(10) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'bigint(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'ip1',
+    'ip2',
+    'ip3',
+    'ip4');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
     if (count($sql) > 0) {
         echo 'Modifying columns in the banned table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the buddys table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."buddys WRITE");
+
+    echo 'Gathering schema information from the buddys table...<br />';
+    $sql = array();
+    $table = 'buddys';
+    $columns = array(
+    'username' => "varchar(32) NOT NULL default ''",
+    'buddyname' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'username');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the buddys table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the favorites table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."favorites WRITE");
+
+    echo 'Gathering schema information from the favorites table...<br />';
+    $sql = array();
+    $table = 'favorites';
+    $columns = array(
+    'tid' => "int(10) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'smallint(6)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'username' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'type' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(20)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'tid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the favorites table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
@@ -318,7 +431,8 @@ function upgrade_schema_to_v0() {
         $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
 
         echo 'Restructuring the forum permissions data...<br />';
-        fixForumPerms();
+        fixPostPerm();   // 1.8 => 1.9.1
+        fixForumPerms(); // 1.9.1 => 1.9.9
 
     } else {
 
@@ -344,12 +458,17 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     
-    $colname = 'lastpost';
-    $coltype = "varchar(54) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-    $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(30)') {
-        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    $columns = array(
+    'lastpost' => "varchar(54) NOT NULL default ''",
+    'theme' => "smallint(3) NOT NULL default 0"
+    'password' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
     }
 
     $colname = 'name';
@@ -358,6 +477,19 @@ function upgrade_schema_to_v0() {
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $columns = array(
+    'fup',
+    'type',
+    'displayorder',
+    'status');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -401,6 +533,13 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     $columns = array(
+    'addtime' => "DECIMAL(4,2) NOT NULL default 0",
+    'max_avatar_size' => "varchar(9) NOT NULL default '100x100'",
+    'footer_options' => "varchar(45) NOT NULL default 'queries-phpsql-loadtimes-totaltime'",
+    'space_cats' => "char(3) NOT NULL default 'no'",
+    'spellcheck' => "char(3) NOT NULL default 'off'",
+    'allowrankedit' => "char(3) NOT NULL default 'on'",
+    'notifyonreg' => "SET('off','u2u','email') NOT NULL default 'off'",
     'subject_in_title' => "char(3) NOT NULL default ''",
     'def_tz' => "decimal(4,2) NOT NULL default '0.00'",
     'indexshowbar' => "tinyint(2) NOT NULL default 2",
@@ -440,12 +579,72 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
+    
     $colname = 'adminemail';
     $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(32)') {
+    if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $columns = array(
+    'langfile' => "varchar(34) NOT NULL default 'English'",
+    'bbname' => "varchar(32) NOT NULL default 'Your Forums'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(50)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'theme' => "smallint(3) NOT NULL default 1");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'dateformat' => "varchar(10) NOT NULL default 'dd-mm-yyyy'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(20)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'tickerdelay' => "int(6) NOT NULL default 4000");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'char(10)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'todaysposts' => "char(3) NOT NULL default 'on'",
+    'stats' => "char(3) NOT NULL default 'on'",
+    'authorstatus' => "char(3) NOT NULL default 'on'",
+    'tickercontents' => "text NOT NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Null']) == 'yes') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -472,8 +671,104 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
+
+    $colname = 'uid';
+    $coltype = "int(12) NOT NULL auto_increment";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'smallint(6)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'username';
+    $coltype = "varchar(32) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(25)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'password';
+    $coltype = "varchar(32) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(40)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'regdate';
+    $coltype = "int(10) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'bigint(30)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'postnum';
+    $coltype = "MEDIUMINT NOT NULL DEFAULT 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'int(10)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'timeoffset';
+    $coltype = "DECIMAL(4,2) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'int(5)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'avatar';
+    $coltype = "varchar(120) default NULL";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(90)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'theme';
+    $coltype = "smallint(3) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(30)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'regip';
+    $coltype = "varchar(15) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(40)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'lastvisit';
+    $coltype = "bigint(15) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Null']) == 'yes') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'mood';
+    $coltype = "varchar(128) NOT NULL default 'Not Set'";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(15)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'pwdate';
+    $coltype = "int(10) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'bigint(30)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
     $columns = array(
-    'lastvisit' => "bigint(15) NOT NULL default 0",
     'email' => "varchar(60) NOT NULL default ''",
     'site' => "varchar(75) NOT NULL default ''",
     'aim' => "varchar(40) NOT NULL default ''",
@@ -499,11 +794,58 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
 
+    $columns = array(
+    'invisible' => "SET('1','0') default 0",
+    'u2ufolders' => "text NOT NULL",
+    'saveogu2u' => "char(3) NOT NULL default ''",
+    'emailonu2u' => "char(3) NOT NULL default ''",
+    'useoldu2u' => "char(3) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'username' => 'username (8)');
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'status',
+    'postnum',
+    'password',
+    'email',
+    'regdate',
+    'invisible');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
     if (count($sql) > 0) {
-        echo 'Deleting the old columns in the members table...<br />';
+        echo 'Deleting/Adding/Modifying columns in the members table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
+
+    // Mimic old function fixPPP()
+    echo 'Fixing missing posts per page values...<br />';
+    $db->query("UPDATE ".X_PREFIX."members SET ppp={$SETTINGS['postperpage']} WHERE ppp=0");
+    $db->query("UPDATE ".X_PREFIX."members SET tpp={$SETTINGS['topicperpage']} WHERE tpp=0");
+
+    echo 'Updating outgoing U2U status';
+	$db->query("UPDATE ".X_PREFIX."members SET saveogu2u='yes'");
 
     echo 'Releasing the lock on the members table...<br />';
     $db->query('UNLOCK TABLES');
@@ -549,11 +891,19 @@ function upgrade_schema_to_v0() {
     echo 'Gathering schema information from the threads table...<br />';
     $sql = array();
     $table = 'threads';
+    $colname = 'subject';
+    $coltype = "varchar(128) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(100)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
     $colname = 'views';
     $coltype = "bigint(32) NOT NULL default 0";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(4)') {
+    if (strtolower($row['Type']) == 'smallint(4)' or strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -561,7 +911,7 @@ function upgrade_schema_to_v0() {
     $coltype = "int(10) NOT NULL default 0";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(5)') {
+    if (strtolower($row['Type']) == 'smallint(5)' or strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
     
@@ -569,7 +919,7 @@ function upgrade_schema_to_v0() {
     $coltype = "varchar(54) NOT NULL default ''";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(32)') {
+    if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -581,10 +931,39 @@ function upgrade_schema_to_v0() {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
+    $colname = 'author';
+    $coltype = "varchar(32) NOT NULL default ''";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(40)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'topped';
+    $coltype = "tinyint(1) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'smallint(6)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
     $colname = 'tid';
     $query = $db->query("SHOW INDEX FROM ".X_PREFIX."$table WHERE Key_name = '$colname' AND Column_name = '$colname'");
     if ($db->num_rows($query) > 0) {
         $sql[] = 'DROP INDEX '.$colname;
+    }
+
+    $columns = array(
+    'lastpost' => "lastpost",
+    'author' => "author (8)",
+    'closed' => "closed",
+    'forum_optimize' => "fid, topped, lastpost");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -593,11 +972,461 @@ function upgrade_schema_to_v0() {
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the polls tables...<br />';
+    echo 'Requesting to lock the attachments table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
+
+    echo 'Gathering schema information from the attachments table...<br />';
+    $sql = array();
+    $table = 'attachments';
+    $columns = array(
+    'aid' => "int(10) NOT NULL auto_increment",
+    'pid' => "int(10) NOT NULL default 0",
+    'downloads' => "int(10) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'smallint(6)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+    $columns = array(
+    'pid');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the attachments table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the posts table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
+
+    echo 'Gathering schema information from the posts table...<br />';
+    $sql = array();
+    $table = 'posts';
+    $columns = array(
+    'tid' => "int(10) NOT NULL default '0'");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'smallint(6)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'author' => "varchar(32) NOT NULL default ''");
+    'useip' => "varchar(15) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $colname = 'subject';
+    $coltype = "tinytext NOT NULL";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(100)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $colname = 'dateline';
+    $coltype = "int(10) NOT NULL default 0";
+    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'bigint(30)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $columns = array(
+    'fid' => "fid",
+    'dateline' => "dateline",
+    'author' => "author (8)",
+    'thread_optimize' => "tid, dateline, pid");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the posts table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the ranks table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
+
+    echo 'Gathering schema information from the ranks table...<br />';
+    $sql = array();
+    $table = 'ranks';
+    $columns = array(
+    'title' => "varchar(100) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'posts' => "MEDIUMINT DEFAULT 0"
+    'id' => "smallint(5) NOT NULL auto_increment");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'smallint(6)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'title');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the ranks table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Fixing special ranks...<br />';
+    $db->query("DELETE FROM ".X_PREFIX."ranks WHERE title IN ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
+    $db->query("INSERT INTO ".X_PREFIX."ranks
+     (title,                 posts, stars, allowavatars, avatarrank) VALUES
+     ('Moderator',           -1,    6,     'yes',  ''),
+     ('Super Moderator',     -1,    7,     'yes',  ''),
+     ('Administrator',       -1,    8,     'yes',  ''),
+     ('Super Administrator', -1,    9,     'yes',  '')"
+    );
+
+    echo 'Requesting to lock the templates table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
+
+    echo 'Gathering schema information from the templates table...<br />';
+    $sql = array();
+    $table = 'templates';
+    $columns = array(
+    'name' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'name');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the templates table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the themes table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
+
+    echo 'Gathering schema information from the themes table...<br />';
+    $sql = array();
+    $table = 'themes';
+    $colname = 'themeid';
+    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY'");
+    if ($db->num_rows($query) == 1) {
+        $row = $db->fetch_array($query);
+        if ($row['Column_name'] != $colname) {
+            $sql[] = "DROP PRIMARY KEY";
+        }
+    }
+    $db->free_result($query);
+
+    $columns = array(
+    'themeid' => "smallint(3) NOT NULL auto_increment");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'name' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'boardimg' => "varchar(128) default NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(50)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'dummy');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    $colname = 'themeid';
+    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY' AND Column_name = '$colname'");
+    if ($db->num_rows($query) == 0) {
+        $sql[] = "ADD PRIMARY KEY ($colnamenew)";
+    }
+    $db->free_result($query);
+
+    $columns = array(
+    'name');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the themes table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the u2u table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."u2u WRITE");
+
+    $upgrade_u2u = FALSE;
+
+    echo 'Gathering schema information from the u2u table...<br />';
+    $sql = array();
+    $table = 'u2u';
+    $columns = array(
+    'u2uid' => "bigint(10) NOT NULL auto_increment");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'smallint(6)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'msgto' => "varchar(32) NOT NULL default ''",
+    'msgfrom' => "varchar(32) NOT NULL default ''",
+    'folder' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(40)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'dateline' => "int(10) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'bigint(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'subject' => "varchar(64) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(75)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'type' => "set('incoming','outgoing','draft') NOT NULL default ''",
+    'owner' => "varchar(32) NOT NULL default ''",
+    'sentstatus' => "set('yes','no') NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+            $upgrade_u2u = TRUE;
+        }
+        $db->free_result($query);
+    }
+
+    if ($upgrade_u2u) {
+        // Commit changes so far.
+        if (count($sql) > 0) {
+            echo 'Modifying columns in the u2u table...<br />';
+            $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+            $db->query($sql);
+        }
+
+        $sql = array();
+
+        // Mimic old function upgradeU2U() but with fewer queries
+        echo 'Upgrading U2Us...<br />';
+        $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgto WHERE folder='inbox'");
+        $db->query("UPDATE ".X_PREFIX."$table SET type='outgoing', owner=msgfrom WHERE folder='outbox'");
+        $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgfrom WHERE folder != 'outbox' AND folder != 'inbox'");
+        $db->query("UPDATE ".X_PREFIX."$table SET readstatus='no' WHERE readstatus=''");
+
+        $colname = 'new';
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $db->query("UPDATE ".X_PREFIX."$table SET sentstatus='yes' WHERE new=''");
+        }
+    }
+
+    $columns = array(
+    'readstatus' => "set('yes','no') NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(3)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'new');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'msgto' => "msgto (8)",
+    'msgfrom' => "msgfrom (8)",
+    'folder' => "folder (8)",
+    'readstatus' => "readstatus",
+    'owner' => "owner (8)");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+        $db->free_result($query);
+    }
+
+    echo 'Requesting to lock the words table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."words WRITE");
+
+    echo 'Gathering schema information from the words table...<br />';
+    $sql = array();
+    $table = 'words';
+    $columns = array(
+    'find');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Adding indexes in the words table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Requesting to lock the restricted table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."restricted WRITE");
+
+    echo 'Gathering schema information from the restricted table...<br />';
+    $sql = array();
+    $table = 'restricted';
+    $columns = array(
+    'name' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(25)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'case_sensitivity' => "ENUM('0', '1') DEFAULT '1' NOT NULL",
+    'partial' => "ENUM('0', '1') DEFAULT '1' NOT NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the restricted table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
+    echo 'Releasing the lock on the restricted table...<br />';
     $db->query('UNLOCK TABLES');
 
     echo 'Deleting old tables...<br />';
     $db->query("DROP TABLE IF EXISTS ".X_PREFIX."logs");
+    $db->query("DROP TABLE IF EXISTS ".X_PREFIX."whosonline");
 
     echo 'Adding new tables...<br />';
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."captchaimages (
@@ -618,6 +1447,17 @@ function upgrade_schema_to_v0() {
         INDEX ( `tid` ),
         INDEX ( `date` )
       ) TYPE=MyISAM");
+    $db->query("CREATE TABLE ".X_PREFIX."whosonline (
+        `username` varchar(32) NOT NULL default '',
+        `ip` varchar(15) NOT NULL default '',
+        `time` int(10) NOT NULL default 0,
+        `location` varchar(150) NOT NULL default '',
+        `invisible` SET('1','0') default '0',
+        KEY `username` (username (8)),
+        KEY `ip` (`ip`),
+        KEY `time` (`time`),
+        KEY `invisible` (`invisible`)
+      ) TYPE=MyISAM PACK_KEYS=0");
 }
 
 /**
@@ -1186,5 +2026,34 @@ function fixBirthdays() {
             $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
         }
     }
+}
+
+/**
+ * Recalculates the value of every field in the forums.postperm column.
+ *
+ * @since 1.9.1
+ */
+function fixPostPerm() {
+	$query = $db->query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
+	while ( $forum = $db->fetch_array($query) ) {
+		$update = false;
+		$pp = trim($forum['postperm']);
+		if ( strlen($pp) > 0 && strpos($pp, '|') === false ) {
+			$update = true;
+			$forum['postperm'] = $pp . '|' . $pp;	// make the postperm the same for thread and reply
+		}
+		if ( $forum['guestposting'] != 'on' and $forum['guestposting'] != 'off' ) {
+			$forum['guestposting'] = 'off';
+			$update = true;
+		}
+		if ( $forum['private'] == '' ) {
+			$forum['private'] = '1';	// by default, forums are not private.
+			$update = true;
+		}
+		if ( $update ) {
+			$db->query("UPDATE ".X_PREFIX."forums SET postperm='{$forum['postperm']}', guestposting='{$forum['guestposting']}', private='{$forum['private']}' WHERE fid={$forum['fid']}");
+		}
+	}
+	$db->free_result($query);
 }
 ?>
