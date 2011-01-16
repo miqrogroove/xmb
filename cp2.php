@@ -367,7 +367,11 @@ if ($action == 'lang') {
         $filesize = 0;
         $upload = get_attached_file('themefile', $filename, $filetype, $filesize, FALSE);
         if ($upload === FALSE) {
-            error($lang['langimportfail'], FALSE);
+            $message = $lang['langimportfail'];
+            if ($filetype != X_EMPTY_UPLOAD) {
+                $message .= ' '.$attachmentErrors[$filetype];
+            }
+            error($message, FALSE);
         }
 
         // Install uploaded file
