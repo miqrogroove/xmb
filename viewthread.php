@@ -789,26 +789,30 @@ if ($action == '') {
     $threadlink = $normal_page == 1 ? "viewthread.php?tid=$tid" : "viewthread.php?tid=$tid&amp;page=$normal_page";
 
     // This first query does not access any table data if the new thread_optimize index is available.  :)
-    $startdate = '0';
-    $startpid = '0';
-    $sql = "SELECT dateline, pid "
-         . "FROM ".X_PREFIX."posts "
-         . "WHERE tid=$tid "
-         . "ORDER BY dateline ASC, pid ASC "
-         . "LIMIT {$mpage['start']}, 1";
-    $query1 = $db->query($sql);
-    if ($row = $db->fetch_array($query1)) {
-        $startdate = $row['dateline'];
-        $startpid = $row['pid'];
+    $criteria = '';
+    $offset = '';
+    if ($mpage['start'] <= 300) {
+        // However, we need to be beyond page 1 to get any boost.
+        $offset = "{$mpage['start']},";
+    } else {
+        $sql = "SELECT dateline, pid "
+             . "FROM ".X_PREFIX."posts "
+             . "WHERE tid=$tid "
+             . "ORDER BY dateline ASC, pid ASC "
+             . "LIMIT {$mpage['start']}, 1";
+        $query1 = $db->query($sql);
+        if ($row = $db->fetch_array($query1)) {
+            $criteria = "AND (dateline > {$row['dateline']} OR dateline = {$row['dateline']} AND pid >= {$row['pid']})";
+        }
+        $db->free_result($query1);
     }
-    $db->free_result($query1);
 
     // This second query retrieves table data via multi-column criteria.
     $sql = "SELECT * "
          . "FROM ".X_PREFIX."posts "
-         . "WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid) "
+         . "WHERE tid=$tid $criteria "
          . "ORDER BY dateline ASC, pid ASC "
-         . "LIMIT $printable_ppp";
+         . "LIMIT $offset $printable_ppp";
 
     $querypost = $db->query($sql);
     if ($forum['attachstatus'] == 'on') {
