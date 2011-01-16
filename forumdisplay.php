@@ -202,28 +202,25 @@ if ($mpage['start'] <= 30) {
         "SELECT topped, lastpost
          FROM ".X_PREFIX."threads
          WHERE fid=$fid
-         ORDER BY topped $ascdesc, lastpost $ascdesc
+         ORDER BY topped DESC, lastpost DESC
          LIMIT {$mpage['start']}, $tpp"
     );
     if ($row = $db->fetch_array($query1)) {
         $lastpostsql = $db->escape_var($row['lastpost']);
-        if ("desc" == $ascdesc) {
-            // Optimize if first row not topped.
-            if (intval($row['topped']) == 0) {
-                $criteria = " AND lastpost <= '$lastpostsql' ";
-            }
+
+        $rowcount = $db->num_rows($query1);
+        $db->data_seek($query1, $rowcount - 1);
+        $lastrow = $db->fetch_array($query1);
+
+        if (intval($row['topped']) == 0) {
+            $criteria = " AND topped = 0 AND lastpost <= '$lastpostsql' ";
+        } elseif (intval($lastrow['topped']) == 1) {
+            $criteria = " AND topped = 1 AND lastpost <= '$lastpostsql' ";
         } else {
-            $rowcount = $db->num_rows($query1);
-            $db->data_seek($query1, $rowcount - 1);
-            $row2 = $db->fetch_array($query1);
-            if (intval($row2['topped']) == 0 or intval($row['topped']) == 1) {
-                // All results had the same topped value.
-                $criteria = " AND lastpost >= '$lastpostsql' ";
-            } else {
-                // Some threads were topped.
-                $criteria = " AND (lastpost >= '$lastpostsql' OR topped = 1) ";
-            }
+            $criteria = " AND (lastpost <= '$lastpostsql' OR topped = 0) ";
         }
+    } else {
+        $criteria = " AND 1=0 ";
     }
     $db->free_result($query1);
 }
