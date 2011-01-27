@@ -5019,7 +5019,7 @@ $quickbbcode
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_reply|#*XMB TEMPLATE*#|
-<a href="./post.php?action=reply&amp;fid=$fid&amp;tid=$tid"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
+<a href="./post.php?action=reply&amp;fid=$fid&amp;tid=$tid" title="$lang[textpostreply]"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
 
 |#*XMB TEMPLATE FILE*#|vtmisc_report|#*XMB TEMPLATE*#|
 <form method="post" name="input" action="vtmisc.php?action=report">
