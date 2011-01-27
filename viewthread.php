@@ -44,7 +44,7 @@ if ($goto == 'lastpost') {
         if ($db->num_rows($query) == 1) {
             $post = $db->fetch_array($query);
             $tid = $post['tid'];
-            
+
             $query = $db->query("SELECT COUNT(pid) as postcount FROM ".X_PREFIX."posts WHERE tid=$tid AND dateline <= {$post['dateline']}");
             $posts = $db->result($query, 0);
             $db->free_result($query);
@@ -325,11 +325,11 @@ if ($action == '') {
             }
 
             $disableguest = X_GUEST ? 'style="display:none;"' : '';
-            
+
             eval('$quickreply = "'.template('viewthread_quickreply').'";');
         }
     }
-    
+
     if ($thread['closed'] == '') {
         $closeopen = $lang['textclosethread'];
     } else {
@@ -445,7 +445,7 @@ if ($action == '') {
         }
         eval('$poll = "'.template('viewthread_poll').'";');
     }
-    
+
     $startdate = '0';
     $startpid = '0';
     $enddate = '0';
@@ -577,7 +577,7 @@ if ($action == '') {
             } else {
                 eval('$search = "'.template('viewthread_post_search').'";');
             }
-            
+
             eval('$profile = "'.template('viewthread_post_profile').'";');
             if (X_GUEST) {
                 $u2u = '';
@@ -675,8 +675,8 @@ if ($action == '') {
         }
 
         $repquote = '';
-        if ($perms[X_PERMS_REPLY] && $thread['closed'] != 'yes') {
-            eval("\$repquote = \"".template('viewthread_post_repquote')."\";");
+        if ($perms[X_PERMS_REPLY] and ($thread['closed'] != 'yes' or X_SADMIN)) {
+            eval('$repquote = "'.template('viewthread_post_repquote').'";');
         }
 
         $reportlink = '';
@@ -779,7 +779,7 @@ if ($action == '') {
     if (strlen($mpage['html']) != 0) {
         eval('$multipage = "'.template('viewthread_multipage').'";');
     }
-    
+
     $normal_page = intval(floor($mpage['start'] / $ppp)) + 1;
 
     $threadlink = $normal_page == 1 ? "viewthread.php?tid=$tid" : "viewthread.php?tid=$tid&amp;page=$normal_page";
