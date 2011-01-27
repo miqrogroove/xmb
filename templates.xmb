@@ -4983,7 +4983,7 @@ $quickbbcode
 <td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[textdissmileys]</div></td>
 </tr>
-<tr>
+<tr $disableguest>
 <td width="15%"> <div align="left"><input type="checkbox" name="usesig" value="yes" $usesigcheck /></div></td>
 <td width="85%"> <div align="left">$lang[textusesig]</div></td>
 </tr>
@@ -4991,7 +4991,7 @@ $quickbbcode
 <td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[bbcodeoff] </div></td>
 </tr>
-<tr>
+<tr $disableguest>
 <td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" /></div></td>
 <td width="85%"> <div align="left">$lang[textemailnotify] </div></td>
 </tr>

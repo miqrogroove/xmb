@@ -265,26 +265,14 @@ $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff']
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
-if (isset($smileyoff) && $smileyoff == 'yes') {
-    $smileoffcheck = $cheHTML;
-} else {
-    $smileoffcheck = '';
-    $smileyoff = 'no';
-}
+$bbcodeoff = formYesNo('bbcodeoff');
+$emailnotify = formYesNo('emailnotify');
+$smileyoff = formYesNo('smileyoff');
+$usesig = formYesNo('usesig');
 
-if (isset($bbcodeoff) && $bbcodeoff == 'yes') {
-    $codeoffcheck = $cheHTML;
-} else {
-    $codeoffcheck = '';
-    $bbcodeoff = 'no';
-}
-
-if (isset($emailnotify) && $emailnotify == 'yes') {
-    $emailnotifycheck = $cheHTML;
-} else {
-    $emailnotifycheck = '';
-    $emailnotify = 'no';
-}
+$codeoffcheck = ($bbcodeoff == 'yes') ? $cheHTML : '';
+$emailnotifycheck = ($emailnotify == 'yes') ? $cheHTML : '';
+$smileoffcheck = ($smileyoff == 'yes') ? $cheHTML : '';
 
 // New bool vars to clear up the confusion about effective settings.
 $bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' And $forum['allowbbcode'] == 'yes');
@@ -297,10 +285,6 @@ if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit)
     $sc = TRUE;
 } else {
     $sc = FALSE;
-}
-
-if (!(isset($usesig) && $usesig == 'yes')) {
-    $usesig = 'no';
 }
 
 if ((isset($previewpost) || $sc) && $usesig == 'yes') {
@@ -564,7 +548,17 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 $where");
             unset($where);
 
-            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
+            if ($username != 'Anonymous') {
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
+
+                if ($emailnotify == 'yes') {
+                    $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
+                    if ($db->num_rows($query) < 1) {
+                        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
+                    }
+                    $db->free_result($query);
+                }
+            }
 
             $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
             $posts = $db->result($query,0);
@@ -604,14 +598,6 @@ switch($action) {
                 altMail($rawemail, $rawsubject.' ('.$translate['textsubsubject'].')', $rawusername.' '.$translate['textsubbody']." \n".$threadurl, $headers);
             }
             $db->free_result($subquery);
-
-            if (isset($emailnotify) && $emailnotify == 'yes') {
-                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
-                if ($db->num_rows($query) < 1) {
-                    $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
-                }
-                $db->free_result($query);
-            }
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
@@ -979,24 +965,26 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET pollopts=1 WHERE tid='$tid'");
             }
 
-            if (isset($emailnotify) && $emailnotify == 'yes') {
-                $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
-                $thread = $db->fetch_array($query);
-                $db->free_result($query);
-                if (!$thread) {
-                    $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
+            if ($username != 'Anonymous') {
+                if ($emailnotify == 'yes') {
+                    $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
+                    $thread = $db->fetch_array($query);
+                    $db->free_result($query);
+                    if (!$thread) {
+                        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
+                    }
                 }
-            }
 
-            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
 
-            $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
-            if ($moderator) {
-                if ($toptopic == 'yes') {
-                    $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
-                }
-                if ($closetopic == 'yes') {
-                    $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+                $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
+                if ($moderator) {
+                    if ($toptopic == 'yes') {
+                        $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
+                    }
+                    if ($closetopic == 'yes') {
+                        $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
+                    }
                 }
             }
 
@@ -1238,7 +1226,9 @@ switch($action) {
             } else {
                 require_once('include/attach.inc.php');
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape_var($orig['author'])."'");
+                if ($orig['author'] != 'Anonymous') {
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape_var($orig['author'])."'");
+                }
                 deleteAllAttachments($pid);
 
                 if ($isfirstpost['pid'] == $pid) {

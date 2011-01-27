@@ -297,13 +297,7 @@ if ($action == '') {
     if ($perms[X_PERMS_REPLY] And ($thread['closed'] == '' Or X_SADMIN)) {
         eval('$replylink = "'.template('viewthread_reply').'";');
         if ($SETTINGS['quickreply_status'] == 'on') {
-            $usesigcheck = '';
-            if (X_MEMBER) {
-                if ($self['sig'] != '') {
-                    $usesigcheck = 'checked="checked"';
-                }
-            }
-
+            $usesigcheck = ($self['sig'] != '') ? $cheHTML : '';
             $captchapostcheck = '';
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
                 require ROOT.'include/captcha.inc.php';
@@ -330,6 +324,8 @@ if ($action == '') {
                 $smilies = '';
             }
 
+            $disableguest = X_GUEST ? 'style="display:none;"' : '';
+            
             eval('$quickreply = "'.template('viewthread_quickreply').'";');
         }
     }
