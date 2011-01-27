@@ -548,7 +548,7 @@ switch($action) {
         }
         require ROOT.'include/captcha.inc.php';
         header('X-Robots-Tag: noindex');
-        $oPhpCaptcha = new Captcha(250, 50);
+        $oPhpCaptcha = new Captcha();
         $imagehash = postedVar('imagehash', '', FALSE, TRUE, FALSE, 'g');
         $oPhpCaptcha->Create($imagehash);
         exit();

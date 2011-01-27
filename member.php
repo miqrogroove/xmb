@@ -298,9 +298,9 @@ switch($action) {
                 }
 
                 $captcharegcheck = '';
-                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
+                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on') {
                     require ROOT.'include/captcha.inc.php';
-                    $Captcha = new Captcha(250, 50);
+                    $Captcha = new Captcha();
                     if ($Captcha->bCompatible !== false) {
                         $imghash = $Captcha->GenerateCode();
                         if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
@@ -441,9 +441,9 @@ switch($action) {
                 error($lang['textnousername']);
             }
 
-            if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on' && !DEBUG) {
+            if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on') {
                 require ROOT.'include/captcha.inc.php';
-                $Captcha = new Captcha(250, 50);
+                $Captcha = new Captcha();
                 if ($Captcha->bCompatible !== false) {
                     $imghash = postedVar('imghash', '', FALSE, TRUE);
                     $imgcode = postedVar('imgcode', '', FALSE, FALSE);
@@ -811,7 +811,7 @@ switch($action) {
             $lastpost = $lang['textnopostsyet'];
         }
 
-        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
             $lang['searchusermsg'] = '';
         } else {
             $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);

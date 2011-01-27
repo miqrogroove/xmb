@@ -71,9 +71,9 @@ if (!isset($searchsubmit) && !isset($page)) {
 
     $captchasearchcheck = '';
     if (X_GUEST) {
-        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
             require ROOT.'include/captcha.inc.php';
-            $Captcha = new Captcha(250, 50);
+            $Captcha = new Captcha();
             if ($Captcha->bCompatible !== false) {
                 $imghash = $Captcha->GenerateCode();
                 if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
@@ -120,12 +120,12 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
 
     if (X_GUEST) {
-        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on' && !DEBUG) {
+        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
             if ($page > 1) {
                 error($lang['searchguesterror']);
             }
             require ROOT.'include/captcha.inc.php';
-            $Captcha = new Captcha(250, 50);
+            $Captcha = new Captcha();
             if ($Captcha->bCompatible !== false) {
                 $imgcode = postedVar('imgcode', '', FALSE, FALSE, FALSE, 'g');
                 $imghash = postedVar('imghash', '', TRUE, TRUE, FALSE, 'g');

@@ -77,7 +77,7 @@ Documentation is available at http://www.ejeliot.com/pages/2
 // class defaults - change to effect globally
 
 define('CAPTCHA_WIDTH', $SETTINGS['captcha_image_width']);
-define('CAPTCHA_HEIGHT', $SETTINGS['captcha_image_width']);
+define('CAPTCHA_HEIGHT', $SETTINGS['captcha_image_height']);
 define('CAPTCHA_NUM_CHARS', $SETTINGS['captcha_code_length']);
 define('CAPTCHA_NUM_DOTS', $SETTINGS['captcha_image_dots']);
 define('CAPTCHA_NUM_LINES', $SETTINGS['captcha_image_lines']);

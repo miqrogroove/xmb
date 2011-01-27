@@ -255,7 +255,7 @@ $db->free_result($querysmilie);
 if ($action != 'edit') {
     $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
 
-    if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
+    if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
         require ROOT.'include/captcha.inc.php';
     }
 }
@@ -493,8 +493,8 @@ switch($action) {
                         $errors .= softerror($lang['textpw1']);
                         $replyvalid = FALSE;
                     }
-                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                    $Captcha = new Captcha(250, 50);
+                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                    $Captcha = new Captcha();
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);
                         $imghash = postedVar('imghash');
@@ -722,8 +722,8 @@ switch($action) {
                 eval('$preview = "'.template('post_preview').'";');
             }
 
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                $Captcha = new Captcha(250, 50);
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                $Captcha = new Captcha();
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
                     if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
@@ -867,8 +867,8 @@ switch($action) {
                         $errors .= softerror($lang['textpw1']);
                         $topicvalid = FALSE;
                     }
-                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                    $Captcha = new Captcha(250, 50);
+                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                    $Captcha = new Captcha();
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);
                         $imghash = postedVar('imghash');
@@ -1101,8 +1101,8 @@ switch($action) {
                 eval('$preview = "'.template('post_preview').'";');
             }
 
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on' && !DEBUG) {
-                $Captcha = new Captcha(250, 50);
+            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                $Captcha = new Captcha();
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
                     if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
