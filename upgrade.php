@@ -400,6 +400,87 @@ function upgrade_schema_to_v0() {
         $db->query($sql);
     }
 
+    echo 'Requesting to lock the themes table...<br />';
+    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
+
+    echo 'Gathering schema information from the themes table...<br />';
+    $sql = array();
+    $table = 'themes';
+    $colname = 'themeid';
+    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY'");
+    if ($db->num_rows($query) == 1) {
+        $row = $db->fetch_array($query);
+        if ($row['Column_name'] != $colname) {
+            $sql[] = "DROP PRIMARY KEY";
+        }
+    }
+    $db->free_result($query);
+
+    $columns = array(
+    'themeid' => "smallint(3) NOT NULL auto_increment");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'name' => "varchar(32) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'boardimg' => "varchar(128) default NULL");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(50)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'dummy');
+    foreach($columns as $colname) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    $colname = 'themeid';
+    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY' AND Column_name = '$colname'");
+    if ($db->num_rows($query) == 0) {
+        $sql[] = "ADD PRIMARY KEY ($colname)";
+    }
+    $db->free_result($query);
+
+    $columns = array(
+    'name');
+    foreach($columns as $colname) {
+        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
+        if ($db->num_rows($query) == 0) {
+            $sql[] = "ADD INDEX ($colname)";
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        echo 'Modifying columns in the themes table...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+    }
+
     echo 'Requesting to lock the forums table...<br />';
     $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
 
@@ -483,7 +564,11 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
+            $sql2 = "UPDATE ".X_PREFIX."$table AS x "
+                  . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
+                  . "SET x.$colname = IFNULL(t.themeid, 0)"
+            $db->query($sql2);
+
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -637,7 +722,11 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '1' WHERE $colname = '' OR $colname IS NULL");
+            $sql2 = "UPDATE ".X_PREFIX."$table AS x "
+                  . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
+                  . "SET x.$colname = IFNULL(t.themeid, 1)"
+            $db->query($sql2);
+
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -768,7 +857,11 @@ function upgrade_schema_to_v0() {
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
+        $sql2 = "UPDATE ".X_PREFIX."$table AS x "
+              . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
+              . "SET x.$colname = IFNULL(t.themeid, 0)"
+        $db->query($sql2);
+
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -1230,87 +1323,6 @@ function upgrade_schema_to_v0() {
 
     if (count($sql) > 0) {
         echo 'Modifying columns in the templates table...<br />';
-        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
-    }
-
-    echo 'Requesting to lock the themes table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
-
-    echo 'Gathering schema information from the themes table...<br />';
-    $sql = array();
-    $table = 'themes';
-    $colname = 'themeid';
-    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY'");
-    if ($db->num_rows($query) == 1) {
-        $row = $db->fetch_array($query);
-        if ($row['Column_name'] != $colname) {
-            $sql[] = "DROP PRIMARY KEY";
-        }
-    }
-    $db->free_result($query);
-
-    $columns = array(
-    'themeid' => "smallint(3) NOT NULL auto_increment");
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        if ($db->num_rows($query) == 0) {
-            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
-    }
-
-    $columns = array(
-    'name' => "varchar(32) NOT NULL default ''");
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'varchar(30)') {
-            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
-    }
-
-    $columns = array(
-    'boardimg' => "varchar(128) default NULL");
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'varchar(50)') {
-            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
-    }
-
-    $columns = array(
-    'dummy');
-    foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $sql[] = 'DROP COLUMN '.$colname;
-        }
-        $db->free_result($query);
-    }
-
-    $colname = 'themeid';
-    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY' AND Column_name = '$colname'");
-    if ($db->num_rows($query) == 0) {
-        $sql[] = "ADD PRIMARY KEY ($colname)";
-    }
-    $db->free_result($query);
-
-    $columns = array(
-    'name');
-    foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
-            $sql[] = "ADD INDEX ($colname)";
-        }
-        $db->free_result($query);
-    }
-
-    if (count($sql) > 0) {
-        echo 'Modifying columns in the themes table...<br />';
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
