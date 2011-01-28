@@ -883,7 +883,7 @@ function upgrade_schema_to_v0() {
         `vote_length` int(11) NOT NULL default '0',
         PRIMARY KEY  (`vote_id`),
         KEY `topic_id` (`topic_id`)
-      ) TYPE=MyISAM");
+      ) ENGINE=MyISAM");
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_results (
         `vote_id` mediumint(8) unsigned NOT NULL default '0',
         `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
@@ -891,7 +891,7 @@ function upgrade_schema_to_v0() {
         `vote_result` int(11) NOT NULL default '0',
         KEY `vote_option_id` (`vote_option_id`),
         KEY `vote_id` (`vote_id`)
-      ) TYPE=MyISAM");
+      ) ENGINE=MyISAM");
     $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_voters (
         `vote_id` mediumint(8) unsigned NOT NULL default '0',
         `vote_user_id` mediumint(8) NOT NULL default '0',
@@ -899,7 +899,7 @@ function upgrade_schema_to_v0() {
         KEY `vote_id` (`vote_id`),
         KEY `vote_user_id` (`vote_user_id`),
         KEY `vote_user_ip` (`vote_user_ip`)
-      ) TYPE=MyISAM");
+      ) ENGINE=MyISAM");
 
     echo 'Requesting to lock the polls tables...<br />';
     $db->query('LOCK TABLES '.
@@ -1509,7 +1509,7 @@ function upgrade_schema_to_v0() {
         `imagestring` varchar(12) NOT NULL default '',
         `dateline` int(10) NOT NULL default '0',
         KEY `dateline` (`dateline`)
-      ) TYPE=MyISAM");
+      ) ENGINE=MyISAM");
     $db->query("CREATE TABLE ".X_PREFIX."logs (
         `username` varchar(32) NOT NULL,
         `action` varchar(64) NOT NULL default '',
@@ -1521,7 +1521,7 @@ function upgrade_schema_to_v0() {
         INDEX ( `fid` ),
         INDEX ( `tid` ),
         INDEX ( `date` )
-      ) TYPE=MyISAM");
+      ) ENGINE=MyISAM");
     $db->query("CREATE TABLE ".X_PREFIX."whosonline (
         `username` varchar(32) NOT NULL default '',
         `ip` varchar(15) NOT NULL default '',
@@ -1532,7 +1532,7 @@ function upgrade_schema_to_v0() {
         KEY `ip` (`ip`),
         KEY `time` (`time`),
         KEY `invisible` (`invisible`)
-      ) TYPE=MyISAM PACK_KEYS=0");
+      ) ENGINE=MyISAM PACK_KEYS=0");
 }
 
 /**
