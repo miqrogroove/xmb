@@ -43,6 +43,8 @@ class dbstuff {
     var $duration   = 0;
     var $timer      = 0;
     var $errcallb   = 'xmb_mysql_error';
+    var $last_id    = 0;
+    var $last_rows  = 0;
 
     function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
 
@@ -236,6 +238,9 @@ class dbstuff {
         $this->querynum++;
     	if (DEBUG) {
             if (LOG_MYSQL_ERRORS) {
+                $this->last_id = mysql_insert_id($this->link);
+                $this->last_rows = mysql_affected_rows($this->link);
+
                 $query2 = mysql_query('SHOW COUNT(*) WARNINGS', $this->link);
                 if (($warnings = mysql_result($query2, 0)) > 0) {
                     if (!ini_get('log_errors')) {
@@ -319,9 +324,13 @@ class dbstuff {
     }
 
     function insert_id() {
-        set_error_handler($this->errcallb);
-        $id = mysql_insert_id($this->link);
-        restore_error_handler();
+    	if (DEBUG and LOG_MYSQL_ERRORS) {
+            $id = $this->last_id;
+        } else {
+            set_error_handler($this->errcallb);
+            $id = mysql_insert_id($this->link);
+            restore_error_handler();
+        }
         return $id;
     }
 
@@ -340,9 +349,13 @@ class dbstuff {
     }
     
     function affected_rows() {
-        set_error_handler($this->errcallb);
-        $return = mysql_affected_rows($this->link);
-        restore_error_handler();
+    	if (DEBUG and LOG_MYSQL_ERRORS) {
+            $return = $this->last_rows;
+        } else {
+            set_error_handler($this->errcallb);
+            $return = mysql_affected_rows($this->link);
+            restore_error_handler();
+        }
         return $return;
     }
 
