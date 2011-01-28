@@ -482,7 +482,9 @@ function upgrade_schema_to_v0() {
     }
 
     echo 'Requesting to lock the forums table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."forums WRITE");
+    $db->query('LOCK TABLES '.
+        X_PREFIX.'forums WRITE, '.
+        X_PREFIX.'themes READ');
 
     $upgrade_permissions = TRUE;
 
@@ -564,9 +566,9 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-            $sql2 = "UPDATE ".X_PREFIX."$table AS x "
-                  . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
-                  . "SET x.$colname = IFNULL(t.themeid, 0)"
+            $sql2 = "UPDATE ".X_PREFIX."$table "
+                  . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
+                  . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 0)";
             $db->query($sql2);
 
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -614,7 +616,9 @@ function upgrade_schema_to_v0() {
     }
 
     echo 'Requesting to lock the settings table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
+    $db->query('LOCK TABLES '.
+        X_PREFIX.'settings WRITE, '.
+        X_PREFIX.'themes READ');
 
     echo 'Gathering schema information from the settings table...<br />';
     $sql = array();
@@ -722,9 +726,9 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-            $sql2 = "UPDATE ".X_PREFIX."$table AS x "
-                  . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
-                  . "SET x.$colname = IFNULL(t.themeid, 1)"
+            $sql2 = "UPDATE ".X_PREFIX."$table "
+                  . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
+                  . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 1)";
             $db->query($sql2);
 
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -777,7 +781,9 @@ function upgrade_schema_to_v0() {
     }
 
     echo 'Requesting to lock the members table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
+    $db->query('LOCK TABLES '.
+        X_PREFIX.'members WRITE, '.
+        X_PREFIX.'themes READ');
 
     echo 'Fixing birthday values...<br />';
     fixBirthdays();
@@ -857,9 +863,9 @@ function upgrade_schema_to_v0() {
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-        $sql2 = "UPDATE ".X_PREFIX."$table AS x "
-              . "LEFT JOIN ".X_PREFIX."themes AS t ON x.$colname = t.name "
-              . "SET x.$colname = IFNULL(t.themeid, 0)"
+        $sql2 = "UPDATE ".X_PREFIX."$table "
+              . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
+              . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 0)";
         $db->query($sql2);
 
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
