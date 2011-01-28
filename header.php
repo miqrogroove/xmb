@@ -345,23 +345,33 @@ $db->free_result($squery);
 
 if ($postperpage < 5) {
     $postperpage = 30;
+    $SETTINGS['postperpage'] = 30;
 }
 
 if ($topicperpage < 5) {
     $topicperpage = 30;
+    $SETTINGS['topicperpage'] = 30;
 }
 
 if ($memberperpage < 5) {
     $memberperpage = 30;
+    $SETTINGS['memberperpage'] = 30;
 }
 
 if ($onlinetodaycount < 5) {
     $onlinetodaycount = 30;
+    $SETTINGS['onlinetodaycount'] = 30;
+}
+
+if ($SETTINGS['smcols'] < 1) {
+    $smcols = 4;
+    $SETTINGS['smcols'] = 4;
 }
 
 // Validate maxattachsize with PHP configuration.
 $inimax = phpShorthandValue('upload_max_filesize');
 if ($inimax < $SETTINGS['maxattachsize']) {
+    $maxattachsize = $inimax;
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);
