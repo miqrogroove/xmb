@@ -466,12 +466,24 @@ function upgrade_schema_to_v0() {
     
     $columns = array(
     'lastpost' => "varchar(54) NOT NULL default ''",
-    'theme' => "smallint(3) NOT NULL default 0",
     'password' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
+            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = array(
+    'theme' => "smallint(3) NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $row = $db->fetch_array($query);
+        if (strtolower($row['Type']) == 'varchar(30)') {
+            // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -624,6 +636,8 @@ function upgrade_schema_to_v0() {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
+            // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '1' WHERE $colname = '' OR $colname IS NULL");
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -646,6 +660,8 @@ function upgrade_schema_to_v0() {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'char(10)') {
+            // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '4000' WHERE $colname = '' OR $colname IS NULL");
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -751,6 +767,8 @@ function upgrade_schema_to_v0() {
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)') {
+        // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -767,6 +785,8 @@ function upgrade_schema_to_v0() {
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Type']) == 'bigint(30)' or strtolower($row['Null']) == 'yes') {
+        // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -952,6 +972,8 @@ function upgrade_schema_to_v0() {
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'text') {
+        // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
+        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
