@@ -523,6 +523,12 @@ function upgrade_schema_to_v0() {
         fixPostPerm();   // 1.8 => 1.9.1
         fixForumPerms(); // 1.9.1 => 1.9.9
 
+        // Drop columns now so that any errors later on wont leave both sets of permissions.
+        echo 'Deleting the old permissions data...<br />';
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $db->query($sql);
+        $sql = array();
+
     } else {
 
         // Verify new schema is not missing.  Results would be unpredictable.
@@ -2031,7 +2037,7 @@ function fixPolls() {
     if (FALSE === $result) return; // Unexpected condition, do not attempt to use fixPolls().
     if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
 
-    $q = $db->query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != ''");
+    $q = $db->query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != '' AND pollopts != '1'");
     while($thread = $db->fetch_array($q)) {
         // Poll titles are historically unslashed, but thread titles are double-slashed.
         $thread['subject'] = $db->escape(stripslashes($thread['subject']));
@@ -2097,13 +2103,9 @@ function fixBirthdays() {
     $baselang = $lang;
     $cachedLanguages['English'] = $lang;
 
-    $q = $db->query("SELECT uid, bday, langfile FROM ".X_PREFIX."members");
+    $q = $db->query("SELECT uid, bday, langfile FROM ".X_PREFIX."members WHERE bday != ''");
     while($m = $db->fetch_array($q)) {
         $uid = $m['uid'];
-        if (strlen($m['bday']) == 0) {
-            $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
-            continue;
-        }
 
         // check if the birthday is already in proper format
         $parts = explode('-', $m['bday']);
@@ -2141,6 +2143,8 @@ function fixBirthdays() {
             $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
         }
     }
+	$db->free_result($q);
+    $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE bday=''");
 }
 
 /**
