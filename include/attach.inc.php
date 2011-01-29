@@ -303,7 +303,16 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
                 $dbfiletype = 'image/png';
             }
             break;
-        case IMAGETYPE_WBMP:
+        case IMAGETYPE_BMP:
+            if ($extension != 'bmp') {
+                $dbfilename .= '.bmp';
+                $rawfilename .= '.bmp';
+            }
+            if (strpos($filetypei, 'bmp') === FALSE) {
+                $dbfiletype = 'image/bmp';
+            }
+            break;
+        case 15: //IMAGETYPE_WBMP
             if ($extension != 'wbmp' and $extension != 'wbm') {
                 $dbfilename .= '.wbmp';
                 $rawfilename .= '.wbmp';
@@ -794,8 +803,10 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
         break;
     case 'wbmp':
     case 'wbm':
-    case 'bmp':
         $img = @imagecreatefromwbmp($filepath);
+        break;
+    case 'bmp':
+        $img = FALSE; // See our website for BMP support.
         break;
     case 'gif':
         $img = @imagecreatefromgif($filepath);
