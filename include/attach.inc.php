@@ -780,6 +780,8 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
             $extension = 'jpg';
         } elseif (strpos($filetypei, 'gif') !== FALSE) {
             $extension = 'gif';
+        } elseif (strpos($filetypei, 'wbmp') !== FALSE) {
+            $extension = 'wbmp';
         } elseif (strpos($filetypei, 'bmp') !== FALSE) {
             $extension = 'bmp';
         } elseif (strpos($filetypei, 'png') !== FALSE) {
