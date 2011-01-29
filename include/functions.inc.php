@@ -738,8 +738,9 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
         $post['filedims'] = '';
         $output = '';
         $prefix = '';
-        $extention = strtolower(get_extension($post['filename']));
-        if ($SETTINGS['attachimgpost'] == 'on' && ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+        $extension = strtolower(get_extension($post['filename']));
+        $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+        if ($SETTINGS['attachimgpost'] == 'on' and in_array($extension, $img_extensions)) {
             if (intval($attach['thumbid'] > 0)) {
                 $post['thumburl'] = getAttachmentURL($attach['thumbid'], $pid, $attach['thumbname']);
                 $result = explode('x', $attach['thumbsize']);

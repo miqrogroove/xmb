@@ -208,14 +208,17 @@ function attachRemoteFile($url, $pid=0) {
     $filetype = $db->escape(image_type_to_mime_type($result[2]));
 
     // Try to make sure the filename extension is okay
-    $extention = strtolower(get_extension($filename));
-    if (!($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp')) {
+    $extension = strtolower(get_extension($filename));
+    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+    if (!in_array($extension, $img_extensions)) {
         $extension = '';
         $filetypei = strtolower($filetype);
         if (strpos($filetypei, 'jpeg') !== FALSE) {
             $extension = '.jpg';
         } elseif (strpos($filetypei, 'gif') !== FALSE) {
             $extension = '.gif';
+        } elseif (strpos($filetypei, 'wbmp') !== FALSE) {
+            $extension = '.wbmp';
         } elseif (strpos($filetypei, 'bmp') !== FALSE) {
             $extension = '.bmp';
         } elseif (strpos($filetypei, 'png') !== FALSE) {
@@ -249,8 +252,9 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     global $db, $self, $SETTINGS;
 
     // Check if we can store image metadata
-    $extention = strtolower(get_extension($rawfilename));
-    if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
+    $extension = strtolower(get_extension($rawfilename));
+    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+    if (in_array($extension, $img_extensions)) {
         $result = getimagesize($filepath);
     } else {
         $result = FALSE;
@@ -273,7 +277,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
         $filetypei = strtolower($dbfiletype);
         switch($result[2]) {
         case IMAGETYPE_JPEG:
-            if ($extention != 'jpg' and $extention != 'jpeg' and $extention != 'jpe') {
+            if ($extension != 'jpg' and $extension != 'jpeg' and $extension != 'jpe') {
                 $dbfilename .= '.jpg';
                 $rawfilename .= '.jpg';
             }
@@ -282,7 +286,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
             }
             break;
         case IMAGETYPE_GIF:
-            if ($extention != 'gif') {
+            if ($extension != 'gif') {
                 $dbfilename .= '.gif';
                 $rawfilename .= '.gif';
             }
@@ -291,7 +295,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
             }
             break;
         case IMAGETYPE_PNG:
-            if ($extention != 'png') {
+            if ($extension != 'png') {
                 $dbfilename .= '.png';
                 $rawfilename .= '.png';
             }
@@ -300,9 +304,12 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
             }
             break;
         case IMAGETYPE_WBMP:
-            if ($extention != 'bmp') {
-                $dbfilename .= '.bmp';
-                $rawfilename .= '.bmp';
+            if ($extension != 'wbmp' and $extension != 'wbm') {
+                $dbfilename .= '.wbmp';
+                $rawfilename .= '.wbmp';
+            }
+            if (strpos($filetypei, 'wbmp') === FALSE) {
+                $dbfiletype = 'image/vnd.wap.wbmp';
             }
             break;
         }
@@ -391,8 +398,9 @@ function renameAttachment($aid, $pid, $rawnewname) {
         $dbrename = $db->escape_var($rawnewname);
         $pid = intval($pid);
         $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid=$aid AND pid=$pid");
-        $extention = strtolower(get_extension($rawnewname));
-        if ($extention == 'jpg' || $extention == 'jpeg' || $extention == 'jpe' || $extention == 'gif' || $extention == 'png' || $extention == 'bmp') {
+        $extension = strtolower(get_extension($rawnewname));
+        $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+        if (in_array($extension, $img_extensions)) {
             $query = $db->query("SELECT aid FROM ".X_PREFIX."attachments WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
             if ($db->num_rows($query) == 0) {
                 regenerateThumbnail($aid, $pid);
@@ -782,6 +790,8 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
     case 'png':
         $img = @imagecreatefrompng($filepath);
         break;
+    case 'wbmp':
+    case 'wbm':
     case 'bmp':
         $img = @imagecreatefromwbmp($filepath);
         break;
