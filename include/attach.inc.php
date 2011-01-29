@@ -498,9 +498,14 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
         case UPLOAD_ERR_NO_FILE:
             $filetype = X_EMPTY_UPLOAD;
             break;
+        case UPLOAD_ERR_NO_TMP_DIR:
+            header('HTTP/1.0 500 Internal Server Error');
+            exit('Fatal Error: XMB can\'t find the upload_tmp_dir. This is a PHP server configuration fault.');
+            break;
         default:
             // See the PHP Manual for additional information.
             if (DEBUG and is_numeric($file['error'])) {
+                header('HTTP/1.0 500 Internal Server Error');
                 exit('XMB Upload Haulted by PHP error code '.$file['error']);
             }
             $filetype = X_GENERIC_ATTACH_ERROR;
