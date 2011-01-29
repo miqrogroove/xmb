@@ -261,12 +261,50 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
         $imgSize = new CartesianSize($result[0], $result[1]);
         $sqlsize = $result[0].'x'.$result[1];
 
-        $result = explode('x', $SETTINGS['max_image_size']);
-        if ($result[0] > 0 And $result[1] > 0) {
-            $maxImgSize = new CartesianSize($result[0], $result[1]);
+        $maxsize = explode('x', $SETTINGS['max_image_size']);
+        if ($maxsize[0] > 0 and $maxsize[1] > 0) {
+            $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
             if ($imgSize->isBiggerThan($maxImgSize)) {
                 return X_IMAGE_DIMS_EXCEEDED;
             }
+        }
+
+        // Coerce filename extension and mime type when they are incorrect.
+        $filetypei = strtolower($dbfiletype);
+        switch($result[2]) {
+        case IMAGETYPE_JPEG:
+            if ($extention != 'jpg' and $extention != 'jpeg' and $extention != 'jpe') {
+                $dbfilename .= '.jpg';
+                $rawfilename .= '.jpg';
+            }
+            if (strpos($filetypei, 'jpeg') === FALSE) {
+                $dbfiletype = 'image/jpeg';
+            }
+            break;
+        case IMAGETYPE_GIF:
+            if ($extention != 'gif') {
+                $dbfilename .= '.gif';
+                $rawfilename .= '.gif';
+            }
+            if (strpos($filetypei, 'gif') === FALSE) {
+                $dbfiletype = 'image/gif';
+            }
+            break;
+        case IMAGETYPE_PNG:
+            if ($extention != 'png') {
+                $dbfilename .= '.png';
+                $rawfilename .= '.png';
+            }
+            if (strpos($filetypei, 'png') === FALSE) {
+                $dbfiletype = 'image/png';
+            }
+            break;
+        case IMAGETYPE_WBMP:
+            if ($extention != 'bmp') {
+                $dbfilename .= '.bmp';
+                $rawfilename .= '.bmp';
+            }
+            break;
         }
     }
 
@@ -498,9 +536,14 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
         case UPLOAD_ERR_NO_FILE:
             $filetype = X_EMPTY_UPLOAD;
             break;
+        case 6: //UPLOAD_ERR_NO_TMP_DIR
+            header('HTTP/1.0 500 Internal Server Error');
+            exit('Fatal Error: XMB can\'t find the upload_tmp_dir. This is a PHP server configuration fault.');
+            break;
         default:
             // See the PHP Manual for additional information.
             if (DEBUG and is_numeric($file['error'])) {
+                header('HTTP/1.0 500 Internal Server Error');
                 exit('XMB Upload Haulted by PHP error code '.$file['error']);
             }
             $filetype = X_GENERIC_ATTACH_ERROR;
@@ -765,10 +808,12 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
     }
     
     // Write full size and dimensions on thumbnail
-    $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
-    $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
-    imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
-    imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
+    if (function_exists('imagefttext')) {
+        $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
+        $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
+        imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
+        imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
+    }
 
     $filename = $db->escape($filename.'-thumb.jpg');
     $filepath = $filepath.'-thumb.jpg';
