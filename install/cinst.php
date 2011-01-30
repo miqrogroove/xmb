@@ -40,6 +40,8 @@ if (!defined('X_INST_ERR')) {
     define('X_INST_SKIP', 3);
 }
 
+define('XMB_SCHEMA_VER', 4);
+
 if (!function_exists('show_act')) {
     function show_act($act) {
         $act .= str_repeat('.', (75-strlen($act)));
@@ -525,7 +527,7 @@ $db->query("CREATE TABLE ".$tablepre."settings (
       `ip_banning` SET('on','off') NOT NULL DEFAULT 'off',
       `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
       `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
-      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT '3'
+      `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT ".XMB_SCHEMA_VER."
    ) ENGINE=MyISAM
 ");
 // --------------------------------------------------------
