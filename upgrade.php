@@ -31,7 +31,7 @@ ignore_user_abort(TRUE);
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 define('X_SCRIPT', 'upgrade.php');
-define('XMB_SCHEMA_VER', 3);
+define('XMB_SCHEMA_VER', 4);
 
 //Check configuration
 if (ini_get('display_errors')) {
