@@ -672,53 +672,53 @@ $themelist .= "<option value=\"$theme[name]\">$theme[name]\n";
 $themelist  .= "</select>";
 
 
-if($forum[private] == "staff") {
+if($forum['private'] == "staff") {
 $checked1 = "checked";
 } else {
 $checked1 = "";
 }
 
-if($forum[allowhtml] == "yes") {
+if($forum['allowhtml'] == "yes") {
 $checked2 = "checked";
 } else {
 $checked2 = "";
 }
 
-if($forum[allowsmilies] == "yes") {
+if($forum['allowsmilies'] == "yes") {
 $checked3 = "checked";
 } else {
 $checked3 = "";
 }
 
-if($forum[allowbbcode] == "yes") {
+if($forum['allowbbcode'] == "yes") {
 $checked4 = "checked";
 } else {
 $checked4 = "";
 }
 
-if($forum[allowimgcode] == "yes") {
+if($forum['allowimgcode'] == "yes") {
 $checked5 = "checked";
 } else {
 $checked5 = "";
 }
 
-if($forum[attachstatus] == "on") {
+if($forum['attachstatus'] == "on") {
 $checked6 = "checked";
 } else {
 $checked6 = "";
 }
 
-if($forum[pollstatus] == "on") {
+if($forum['pollstatus'] == "on") {
 $checked7 = "checked";
 } else {
 $checked7 = "";
 }
-if($forum[guestposting] == "on") {
+if($forum['guestposting'] == "on") {
 $checked8 = "checked";
 } else {
 $checked8 = "";
 }
-$pperm = explode("|", $forum[postperm]);
+$pperm = explode("|", $forum['postperm']);
 
 if($pperm[0] == "2") {
 $type12 = "selected";
@@ -740,28 +740,28 @@ if($pperm[1] == "2") {
 	$type21 = "selected";
 }
 
-if($forum[private] == "2") {
+if($forum['private'] == "2") {
 $type32 = "selected";
-} elseif($forum[private] == "3") {
+} elseif($forum['private'] == "3") {
 $type33 = "selected";
-} elseif($forum[private] == "4") {
+} elseif($forum['private'] == "4") {
 $type34 = "selected";
-} elseif($forum[private] == "1") {
+} elseif($forum['private'] == "1") {
 $type31 = "selected";
 }
 
 
-$forum[private] = str_replace("pw|", "", $forum[private]);
+$forum['private'] = str_replace("pw|", "", $forum['private']);
 ?>
 
 <tr bgcolor="<?php echo $altbg2?>">
 <td class="tablerow"><?php echo $lang_textforumname?></td>
-<td><input type="text" name="namenew" value="<?php echo $forum[name]?>" /></td>
+<td><input type="text" name="namenew" value="<?php echo $forum['name']?>" /></td>
 </tr>
 
 <tr bgcolor="<?php echo $altbg2?>">
 <td class="tablerow"><?php echo $lang_textdesc?></td>
-<td><textarea rows="4" cols="30" name="descnew"><?php echo $forum[description]?></textarea></td>
+<td><textarea rows="4" cols="30" name="descnew"><?php echo $forum['description']?></textarea></td>
 </tr>
 
 <tr bgcolor="<?php echo $altbg2?>">

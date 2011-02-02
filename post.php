@@ -721,24 +721,25 @@ if($action == "reply") {
                 $subject = str_replace("<", "&lt;", $subject);
                 $subject = str_replace(">", "&raquo;", $subject);
                 $subject = addslashes($subject);
-
-                if($attach != "none" && $attach != "" && $forums[attachstatus] != "off" && is_uploaded_file($attach)) {
-                        $attachedfile = addslashes(fread(fopen($attach, "r"), filesize($attach)));
+require './attach.inc.php';
+$attachedfile = get_attached_file('attach', $attach_name, $attach_type, $attach_size, FALSE, TRUE);
+                if($attachedfile !== FALSE && $forums['attachstatus'] != "off") {
+                        $attachedfile = addslashes($attachedfile);
                         if($attach_size > 1000000) {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_attachtoobig</span></center>";
 
-        			end_time();
-				eval("\$footer = \"".template("footer")."\";");
-				echo $footer;
+                        			end_time();
+                				eval("\$footer = \"".template("footer")."\";");
+                				echo $footer;
                                 exit;
                         }
                 }
 
                 $query = $db->query("SELECT closed,topped FROM $table_threads WHERE fid=$fid AND tid=$tid");
                 $closed1 = $db->fetch_array($query);
-                $closed = $closed1[closed];
+                $closed = $closed1['closed'];
                 if($closed1[topped] == "2"){
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
@@ -788,15 +789,7 @@ if($action == "reply") {
                         $pid = $db->insert_id();
 
                         // Insert Attachment if there is on
-                if($attach != "none" && $attach != "" && $forums[attachstatus] != "off" && is_uploaded_file($attach)) {
-					$ext = array('bz2', 'gz', 'zip', 'bz', 'tar', 'exe');
-					$extention = substr(strrchr($post[filename],"."),1);
-					foreach($ext as $name => $var) {
-						if($var == $extension){
-							$attachedfile = base64_decode($attachedfile);
-						}
-					}
-
+                if($attachedfile !== FALSE && $forums['attachstatus'] != "off") {
 					$db->query("INSERT INTO $table_attachments VALUES ('', '$tid', '$pid', '$attach_name', '$attach_type', '$attach_size', '$attachedfile', '0')");
                 }
                         $db->query("UPDATE $table_threads SET lastpost='$thatime|$username', replies=replies+1 WHERE (tid='$tid' AND fid='$fid') OR closed='moved|$tid'");
