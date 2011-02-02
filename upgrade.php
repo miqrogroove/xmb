@@ -31,7 +31,6 @@ ignore_user_abort(TRUE);
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 define('X_SCRIPT', 'upgrade.php');
-define('XMB_SCHEMA_VER', 4);
 
 //Check configuration
 if (ini_get('display_errors')) {
@@ -132,14 +131,19 @@ function disableButton() {
             .'Please delete any folders named install or upgrade.<br />';
         trigger_error('Admin attempted upgrade while non-upgrade files were present.', E_USER_ERROR);
     }
-    if (!is_file('templates.xmb')) {
+    if (!is_file(ROOT.'templates.xmb')) {
         echo 'Files missing!<br />'
             .'Please make sure to upload the templates.xmb file.<br />';
         trigger_error('Admin attempted upgrade with templates.xmb missing.', E_USER_ERROR);
     }
-    if (!is_file('lang/English.lang.php')) {
+    if (!is_file(ROOT.'lang/English.lang.php')) {
         echo 'Files missing!<br />'
             .'Please make sure to upload the lang/English.lang.php file.<br />';
+        trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
+    }
+    if (!is_file(ROOT.'include/schema.inc.php')) {
+        echo 'Files missing!<br />'
+            .'Please make sure to upload the include/schema.inc.php file.<br />';
         trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
     }
 
@@ -152,6 +156,7 @@ function disableButton() {
     }
 
     echo 'Determining the database schema version...<br />';
+    require_once(ROOT.'include/schema.inc.php');
     if (!isset($SETTINGS['schema_version'])) {
         $SETTINGS['schema_version'] = 0;
     }
@@ -181,7 +186,7 @@ function disableButton() {
     echo 'Database schema is now current...<br />';
 
     echo 'Initializing the new translation system...<br />';
-    require_once('include/translation.inc.php');
+    require_once(ROOT.'include/translation.inc.php');
     $upload = file_get_contents('lang/English.lang.php');
 
     echo 'Installing English.lang.php...<br />';
@@ -540,7 +545,7 @@ function upgrade_schema_to_v0() {
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
     }
-    
+
     $columns = array(
     'mt_status',
     'mt_open',
@@ -552,7 +557,7 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
-    
+
     $columns = array(
     'lastpost' => "varchar(54) NOT NULL default ''",
     'password' => "varchar(32) NOT NULL default ''");
@@ -704,7 +709,7 @@ function upgrade_schema_to_v0() {
         }
         $db->free_result($query);
     }
-    
+
     $colname = 'adminemail';
     $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1000,31 +1005,9 @@ function upgrade_schema_to_v0() {
     $db->query('UNLOCK TABLES');
 
     echo 'Adding new tables for polls...<br />';
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_desc (
-        `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
-        `topic_id` INT UNSIGNED NOT NULL,
-        `vote_text` text NOT NULL,
-        `vote_start` int(11) NOT NULL default '0',
-        `vote_length` int(11) NOT NULL default '0',
-        PRIMARY KEY  (`vote_id`),
-        KEY `topic_id` (`topic_id`)
-      ) ENGINE=MyISAM");
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_results (
-        `vote_id` mediumint(8) unsigned NOT NULL default '0',
-        `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
-        `vote_option_text` varchar(255) NOT NULL default '',
-        `vote_result` int(11) NOT NULL default '0',
-        KEY `vote_option_id` (`vote_option_id`),
-        KEY `vote_id` (`vote_id`)
-      ) ENGINE=MyISAM");
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."vote_voters (
-        `vote_id` mediumint(8) unsigned NOT NULL default '0',
-        `vote_user_id` mediumint(8) NOT NULL default '0',
-        `vote_user_ip` char(8) NOT NULL default '',
-        KEY `vote_id` (`vote_id`),
-        KEY `vote_user_id` (`vote_user_id`),
-        KEY `vote_user_ip` (`vote_user_ip`)
-      ) ENGINE=MyISAM");
+    xmb_schema_table('create', 'vote_desc');
+    xmb_schema_table('create', 'vote_results');
+    xmb_schema_table('create', 'vote_voters');
 
     echo 'Requesting to lock the polls tables...<br />';
     $db->query('LOCK TABLES '.
@@ -1063,7 +1046,7 @@ function upgrade_schema_to_v0() {
     if (strtolower($row['Type']) == 'smallint(5)' or strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
-    
+
     $colname = 'lastpost';
     $coltype = "varchar(54) NOT NULL default ''";
     $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1545,40 +1528,10 @@ function upgrade_schema_to_v0() {
     echo 'Releasing the lock on the restricted table...<br />';
     $db->query('UNLOCK TABLES');
 
-    echo 'Deleting old tables...<br />';
-    $db->query("DROP TABLE IF EXISTS ".X_PREFIX."logs");
-    $db->query("DROP TABLE IF EXISTS ".X_PREFIX."whosonline");
-
     echo 'Adding new tables...<br />';
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."captchaimages (
-        `imagehash` varchar(32) NOT NULL default '',
-        `imagestring` varchar(12) NOT NULL default '',
-        `dateline` int(10) NOT NULL default '0',
-        KEY `dateline` (`dateline`)
-      ) ENGINE=MyISAM");
-    $db->query("CREATE TABLE ".X_PREFIX."logs (
-        `username` varchar(32) NOT NULL,
-        `action` varchar(64) NOT NULL default '',
-        `fid` smallint(6) NOT NULL default 0,
-        `tid` int(10) NOT NULL default 0,
-        `date` int(10) NOT NULL default 0,
-        KEY `username` (username (8)),
-        KEY `action` (action (8)),
-        INDEX ( `fid` ),
-        INDEX ( `tid` ),
-        INDEX ( `date` )
-      ) ENGINE=MyISAM");
-    $db->query("CREATE TABLE ".X_PREFIX."whosonline (
-        `username` varchar(32) NOT NULL default '',
-        `ip` varchar(15) NOT NULL default '',
-        `time` int(10) NOT NULL default 0,
-        `location` varchar(150) NOT NULL default '',
-        `invisible` SET('1','0') default '0',
-        KEY `username` (username (8)),
-        KEY `ip` (`ip`),
-        KEY `time` (`time`),
-        KEY `invisible` (`invisible`)
-      ) ENGINE=MyISAM PACK_KEYS=0");
+    xmb_schema_table('create', 'captchaimages');
+    xmb_schema_table('overwrite', 'logs');
+    xmb_schema_table('overwrite', 'whosonline');
 }
 
 /**
@@ -1592,7 +1545,7 @@ function upgrade_schema_to_v0() {
  */
 function upgrade_schema_to_v2() {
     global $db;
-    
+
     echo 'Beginning schema upgrade to version number 2...<br />';
 
     echo 'Requesting to lock the settings table...<br />';
@@ -1784,23 +1737,9 @@ function upgrade_schema_to_v2() {
     $db->query('UNLOCK TABLES');
 
     echo 'Adding new tables...<br />';
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_base (
-        `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-        `devname` VARCHAR( 20 ) NOT NULL ,
-        UNIQUE ( `devname` )
-      ) ENGINE=MyISAM COMMENT = 'List of Installed Languages'");
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_keys (
-        `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-        `langkey` VARCHAR( 30 ) NOT NULL ,
-        UNIQUE ( `langkey` )
-      ) ENGINE=MyISAM COMMENT = 'List of Translation Variables'");
-    $db->query("CREATE TABLE IF NOT EXISTS ".X_PREFIX."lang_text (
-        `langid` TINYINT UNSIGNED NOT NULL ,
-        `phraseid` SMALLINT UNSIGNED NOT NULL ,
-        `cdata` BLOB NOT NULL ,
-        PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
-        INDEX ( `phraseid` )
-      ) ENGINE=MyISAM COMMENT = 'Translation Table'");
+    xmb_schema_table('create', 'lang_base');
+    xmb_schema_table('create', 'lang_keys');
+    xmb_schema_table('create', 'lang_text');
 
     echo 'Resetting the schema version number...<br />';
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
