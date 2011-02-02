@@ -14,6 +14,7 @@ require "./header.php";
 require "./xmb.php";
 loadtemplates('header,footer,index_whosonline,index_category,index_forum,index,index_welcome_member,index_welcome_guest,index_forum_lastpost,index_ticker');
 
+$contents = '';
 if($tickerstatus == "on"){
 	$news = explode("\r\n", $tickercontents);
 	for($i=0;$i<count($news);$i++){
@@ -23,7 +24,7 @@ if($tickerstatus == "on"){
 }
 
 
-if($gid) {
+if(!empty($gid)) {
 	$whosonlinestatus = "off";
 	$query = $db->query("SELECT name FROM $table_forums WHERE fid='$gid' AND type='group'");
 	$cat = $db->fetch_array($query);
@@ -33,7 +34,7 @@ if($gid) {
 
 eval("\$header = \"".template("header")."\";");
 echo $header;
-if(!$gid) {
+if(empty($gid)) {
 
 	if($xmbuser) {
 		eval("\$welcome = \"".template("index_welcome_member")."\";");
@@ -43,7 +44,7 @@ if(!$gid) {
 	// Start Whos Online and Stats
 	$query = $db->query("SELECT username FROM $table_members ORDER BY regdate DESC");
 	$lastmem = $db->fetch_array($query);
-	$lastmember = $lastmem[username];
+	$lastmember = $lastmem['username'];
 	$members = $db->num_rows($query);
 
 	$query = $db->query("SELECT COUNT(*) FROM $table_threads");
@@ -65,8 +66,8 @@ if(!$gid) {
 		$membercount = 0;
 		$query = $db->query("SELECT m.status, m.username, w.* FROM $table_whosonline w LEFT JOIN $table_members m ON m.username=w.username ORDER BY w.username");
 		while($online = $db->fetch_array($query)) {
-			switch($online[username]) {
-				case xguest123:
+			switch($online['username']) {
+				case 'xguest123':
 				$guestcount++;
 				break;
 
@@ -89,7 +90,7 @@ if(!$gid) {
 		$membercount = "0";
 		for($mnum=0; $mnum<$onlinenum; $mnum++) {
 		$online = $member[$mnum];
-		if($online[username] == "") {
+		if($online['username'] == "") {
 		$guestcount++;
 		}
 		else{
@@ -178,9 +179,10 @@ else {
 	$queryg = $db->query("SELECT * FROM $table_forums WHERE type='group' AND fid='$gid' AND status='on' ORDER BY displayorder");
 }
 
+$forumlist = '';
 while($group = $db->fetch_array($queryg)) {
 	$tempforumlist = '';
-	if($group[type] == "group") {
+	if($group['type'] == "group") {
 		if($catsonly != "on" || $gid) {
 			$query = $db->query("SELECT * FROM $table_forums WHERE type='forum' AND status='on' AND fup='$group[fid]' ORDER BY displayorder");
 			while($forum = $db->fetch_array($query)) {

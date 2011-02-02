@@ -53,7 +53,7 @@ foreach ($url_check as $name) {
  	}
 }
 
-$server = substr_replace($HTTP_SERVER_VARS['SERVER_SOFTWARE'], '', 3, 50);
+$server = substr_replace($_SERVER['SERVER_SOFTWARE'], '', 3, 50);
 
 if($server == "Apa") {
         $wookie = $server;
@@ -157,7 +157,7 @@ if(($xmbuser && $xmbuser != '') && !empty($self['username'])) {
 	$notify = "$lang_notloggedin [$loginout - $reglink]";
 }
 
-if($memtime == "") {
+if(empty($memtime)) {
 	if($timeformat == "24") {
 		$timecode = "H:i";
 	} else {
@@ -171,7 +171,7 @@ if($memtime == "") {
 	}
 }
 
-if($memdate == "") {
+if(empty($memdate)) {
 	$dateformat = $dateformat;
 } else {
 	$dateformat = $memdate;
@@ -198,14 +198,14 @@ $onlinetime = time();
 
 // Start url to text transcription - this is used for whosonline
 
-if($tid && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
+if(!empty($tid) && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
 	$query = $db->query("SELECT f.theme, t.fid, t.subject FROM $table_forums f, $table_threads t WHERE f.fid=t.fid AND t.tid='$tid'");
 		while($locate = $db->fetch_array($query)){
 			$fid = $locate['fid'];
 			$forumtheme = $locate['theme'];
 			$location = "$lang_onlineviewthread $locate[subject]";
         }
-}elseif($fid  && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
+}elseif(!empty($fid)  && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
 	$query = $db->query("SELECT theme, name FROM $table_forums WHERE fid='$fid'");
         while($locate = $db->fetch_array($query)){
 			$forumtheme = $locate['theme'];
@@ -278,14 +278,14 @@ if($tid && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
 }
 
 
-$wollocation = getenv(REQUEST_URI);
+$wollocation = getenv('REQUEST_URI');
 $wollocation = "<a href=\"$wollocation\">$location</a>";
 $newtime = $time - 600;
 $db->query("DELETE FROM $table_whosonline WHERE (ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR time<'$newtime'");
 $db->query("INSERT INTO $table_whosonline VALUES('$onlineuser', '$onlineip', '$onlinetime', '$wollocation')");
 
 
-if($themeuser) {
+if(!empty($themeuser)) {
         $theme = $themeuser;
 } elseif(!empty($forumtheme)) {
         $theme = $forumtheme;

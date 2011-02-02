@@ -18,7 +18,7 @@ function template($name) {
 	} else {
 		$query= $db->query("SELECT * FROM $table_templates WHERE name='$name'");
 		$gettemplate=$db->fetch_array($query);
-		$template= $gettemplate[template];
+		$template= $gettemplate['template'];
 		$tempcache[$name]= $template;
 	}
 	$template=str_replace("\\'","'",$template);
@@ -31,6 +31,7 @@ function template($name) {
 
 function loadtemplates($names) {
 	global $db,$tempcache,$table_templates;
+    $sql = '';
 	$namesarray = explode(",",$names);
 	while (list($key,$title) = each($namesarray)) {
 		if ($sql != "") {
@@ -40,7 +41,7 @@ function loadtemplates($names) {
 	}
 	$query = $db->query("SELECT * FROM $table_templates WHERE name IN ($sql)");
 	while($template = $db->fetch_array($query)) {
-		$tempcache[$template[name]] = $template[template];
+		$tempcache[$template['name']] = $template['template'];
 		}
 }
 
@@ -200,8 +201,8 @@ function forum($forum, $template) {
 	$altbg2 = $GLOBALS["altbg2"];
 	$imgdir = $GLOBALS["imgdir"];
 
-	if($forum[lastpost] != "") {
-		$lastpost = explode("|", $forum[lastpost]);
+	if($forum['lastpost'] != "") {
+		$lastpost = explode("|", $forum['lastpost']);
 		$dalast = $lastpost[0];
 		if($lastpost[1] != "Anonymous" && $lastpost[1] != "") {
 			$lastpost[1] = "<a href=\"member.php?action=viewpro&member=".rawurlencode($lastpost[1])."\">$lastpost[1]</a>";
@@ -230,19 +231,19 @@ function forum($forum, $template) {
 	}
 
 	$lastvisit2 += 540;
-	$authorization = privfcheck($forum[private], $forum[userlist]);
+	$authorization = privfcheck($forum['private'], $forum['userlist']);
 	$comma = "";
 	if($authorization || $hideprivate == "off" || $status == "Super Administrator") {
-		if($forum[moderator] != "") {
-			$moderators = explode(", ", $forum[moderator]);
-			$forum[moderator] = "";
+		if($forum['moderator'] != "") {
+			$moderators = explode(", ", $forum['moderator']);
+			$forum['moderator'] = "";
 			for($num = 0; $num < count($moderators); $num++) {
-				$forum[moderator] .= "$comma<a href=\"member.php?action=viewpro&member=$moderators[$num]\">$moderators[$num]</a>";
+				$forum['moderator'] .= "$comma<a href=\"member.php?action=viewpro&member=$moderators[$num]\">$moderators[$num]</a>";
 				$comma = ", ";
 			}
-			$forum[moderator] = "($lang_textmodby $forum[moderator])";
+			$forum['moderator'] = "($lang_textmodby $forum[moderator])";
 		} else {
-			$forum[moderator] = "";
+			$forum['moderator'] = "";
 		}
 		eval("\$foruminfo .= \"".template("$template")."\";");
 	}

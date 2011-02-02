@@ -19,10 +19,12 @@ $patched = 0;
 // This makes XMB compatible with the latest PHP changes (4.2.*) (mainly 4.2.1 and 4.2.2)
 	$patched++;
 	$patch[1] = "PHP 4.2.* fix, due to 'superglobal'-registration being turned off by standard";
+if (isset($_SESSION)) {
 	if(is_array($_SESSION)){
 		extract($_SESSION, EXTR_PREFIX_SAME, "session");
 	}
-	if(is_array($_SERVER)){
+}
+    if(is_array($_SERVER)){
 		extract($_SERVER, EXTR_PREFIX_SAME, "server");
 	}
 	if(is_array($_COOKIE)){
@@ -42,11 +44,13 @@ $patched = 0;
 	}
 
 // Shows list of patches
+if (isset($list)) {
 if($list == "patches"){
 	echo "<b><u>List of current patches applied:<br></u></b>";
 
 	for($i=1; $i <= $patched; $i++){
 			echo "<hr><b>$i</b> - $patch[$i]<br>";
 	}
+}
 }
 ?>
