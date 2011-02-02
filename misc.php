@@ -114,7 +114,7 @@ if($action == "search") {
                 $queryforum = $db->query("SELECT * FROM $table_forums WHERE type='forum'");
                 while($forum = $db->fetch_array($queryforum)) {
 
-                        $authorization = privfcheck($forum[private], $forum[userlist]);
+                        $authorization = privfcheck($forum['private'], $forum['userlist']);
 
                         if($authorization == "true") {
 				$forumselect .= "<option value=\"$forum[fid]\">$forum[name]</option>\n";
@@ -373,28 +373,28 @@ $querymem = $db->query("SELECT * FROM $table_members WHERE status = 'Administrat
 }
         while ($member = $db->fetch_array($querymem)) {
 
-                $member[regdate] = date("n/j/y",$member[regdate]);
+                $member['regdate'] = date("n/j/y",$member['regdate']);
 
-                if($member[email] != "" && $member[showemail] == "yes") {
+                if($member['email'] != "" && $member['showemail'] == "yes") {
                         eval("\$email = \"".template("misc_mlist_row_email")."\";");
                 } else {
                         $email = "&nbsp;";
                 }
 
-                $member[site] = str_replace("http://", "", $member[site]);
-                $member[site] = "http://$member[site]";
+                $member['site'] = str_replace("http://", "", $member['site']);
+                $member['site'] = "http://$member[site]";
 
-                if($member[site] == "http://") {
+                if($member['site'] == "http://") {
                         $site = "&nbsp;";
                 } else {
                         eval("\$site = \"".template("misc_mlist_row_site")."\";");
                 }
 
-                if($member[location] == "") {
-                        $member[location] = "&nbsp;";
+                if($member['location'] == "") {
+                        $member['location'] = "&nbsp;";
                 }
 
-                $memurl = rawurlencode($member[username]);
+                $memurl = rawurlencode($member['username']);
 
                 eval("\$members .= \"".template("misc_mlist_row")."\";");
         }
