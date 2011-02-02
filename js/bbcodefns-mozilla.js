@@ -40,9 +40,11 @@ function AddText(bbFirst, bbLast, text, el) {
     var end   = el.selectionEnd;
     var pre   = el.value.substring(0, start);
     var post  = el.value.substring(end, len);
+    var caret = start + bbFirst.length + text.length + bbLast.length;
 
     el.value = pre + bbFirst + text + bbLast + post;
     el.focus();
+    el.setSelectionRange(caret,caret);
 }
 
 function wrapText(prePend, apPend, el) {
