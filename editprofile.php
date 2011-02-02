@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -244,7 +244,7 @@ window.location.replace("cp.php");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 
 end_time();

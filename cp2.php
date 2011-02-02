@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -78,28 +78,28 @@ fwrite($filehandle, $string);
 fclose($filehandle);
 
 ?>
-<table cellspacing="0" cellpadding="0" border="0" width="<?=$tablewidth?>" align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 <tr class="header">
-<td colspan="2"><?=$lang_textcp?></td>
+<td colspan="2"><?php echo $lang_textcp?></td>
 </tr>
 
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
 <td align="center">
-<a href="cp.php?action=settings"><?=$lang_textsettings?></a> - <a href="cp.php?action=forum"><?=$lang_textforums?></a> -
-<a href="cp.php?action=mods"><?=$lang_textmods?></a> - <a href="cp.php?action=members"><?=$lang_textmembers?></a> -
-<a href="cp2.php?action=restrictions"><?=$lang_cprestricted?></a> - <a href="cp.php?action=ipban"><?=$lang_textipban?></a> -
-<a href="cp.php?action=upgrade"><?=$lang_textupgrade?></a> - <a href="cp.php?action=search"><?=$lang_cpsearch?></a><br>
-<a href="cp2.php?action=themes"><?=$lang_themes?></a> - <a href="cp2.php?action=smilies"><?=$lang_smilies?></a> -
-<a href="cp2.php?action=censor"><?=$lang_textcensors?></a> - <a href="cp2.php?action=ranks"><?=$lang_textuserranks?></a> -
-<a href="cp2.php?action=newsletter"><?=$lang_textnewsletter?></a> - <a href="cp2.php?action=prune"><?=$lang_textprune?></a> -
-<a href="cp2.php?action=templates"><?=$lang_templates?></a> - <a href="cp2.php?action=attachments"><?=$lang_textattachman?></a><br>
-<a href="cp2.php?action=cplog"><?=$lang_cplog?></a>
-<br /><tr bgcolor="<?=$altbg2?>" class="tablerow"><td align="center"><a href="tools.php?action=fixttotals"><?=$lang_textfixthread?></a> - <a href="tools.php?action=fixftotals"><?=$lang_textfixmemposts?></a> - <a href="tools.php?action=fixmposts"><?=$lang_textfixposts?></a> - <a href="tools.php?action=updatemoods"><?=$lang_textfixmoods?></a> - <a href="tools.php?action=u2udump"><?=$lang_u2udump?></a> - <a href="tools.php?action=whosonlinedump"><?=$lang_cpwodump?></a>
-<br /><a href="tools.php?action=fixforumthemes"><?=$lang_fixforumthemes?></a>
-<?
+<a href="cp.php?action=settings"><?php echo $lang_textsettings?></a> - <a href="cp.php?action=forum"><?php echo $lang_textforums?></a> -
+<a href="cp.php?action=mods"><?php echo $lang_textmods?></a> - <a href="cp.php?action=members"><?php echo $lang_textmembers?></a> -
+<a href="cp2.php?action=restrictions"><?php echo $lang_cprestricted?></a> - <a href="cp.php?action=ipban"><?php echo $lang_textipban?></a> -
+<a href="cp.php?action=upgrade"><?php echo $lang_textupgrade?></a> - <a href="cp.php?action=search"><?php echo $lang_cpsearch?></a><br>
+<a href="cp2.php?action=themes"><?php echo $lang_themes?></a> - <a href="cp2.php?action=smilies"><?php echo $lang_smilies?></a> -
+<a href="cp2.php?action=censor"><?php echo $lang_textcensors?></a> - <a href="cp2.php?action=ranks"><?php echo $lang_textuserranks?></a> -
+<a href="cp2.php?action=newsletter"><?php echo $lang_textnewsletter?></a> - <a href="cp2.php?action=prune"><?php echo $lang_textprune?></a> -
+<a href="cp2.php?action=templates"><?php echo $lang_templates?></a> - <a href="cp2.php?action=attachments"><?php echo $lang_textattachman?></a><br>
+<a href="cp2.php?action=cplog"><?php echo $lang_cplog?></a>
+<br /><tr bgcolor="<?php echo $altbg2?>" class="tablerow"><td align="center"><a href="tools.php?action=fixttotals"><?php echo $lang_textfixthread?></a> - <a href="tools.php?action=fixftotals"><?php echo $lang_textfixmemposts?></a> - <a href="tools.php?action=fixmposts"><?php echo $lang_textfixposts?></a> - <a href="tools.php?action=updatemoods"><?php echo $lang_textfixmoods?></a> - <a href="tools.php?action=u2udump"><?php echo $lang_u2udump?></a> - <a href="tools.php?action=whosonlinedump"><?php echo $lang_cpwodump?></a>
+<br /><a href="tools.php?action=fixforumthemes"><?php echo $lang_fixforumthemes?></a>
+<?php
 //Get All Plugins
 for($plugnum=1; $plugname[$plugnum] != ""; $plugnum++) {
 	if(!$plugurl[$plugnum] || !$plugname[$plugnum]) {
@@ -117,104 +117,104 @@ echo "<br>$lang_textplugins $pluglinks";
 					</td>
 				</tr>
 
-<?
+<?php
 if(!$action) {
 }
 
-if($action == "restrictions") { 
-if(!$restrictedsubmit) { 
-?> 
+if($action == "restrictions") {
+if(!$restrictedsubmit) {
+?>
 
-<tr bgcolor="<?=$altbg2?>"> 
-<td align="center"> 
-<br> 
-<form method="post" action="cp2.php?action=restrictions"> 
-<table align="center" border="0" cellspacing="0" cellpadding="0" width="450"> 
-<tr> 
-<td bgcolor="<?=$bordercolor?>"> 
-<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%"> 
-<tr class="header"> 
-<td><?=$lang_textdeleteques?></td> 
-<td><?=$lang_restrictedname?></td> 
-</tr> 
+<tr bgcolor="<?php echo $altbg2?>">
+<td align="center">
+<br>
+<form method="post" action="cp2.php?action=restrictions">
+<table align="center" border="0" cellspacing="0" cellpadding="0" width="450">
+<tr>
+<td bgcolor="<?php echo $bordercolor?>">
+<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+<tr class="header">
+<td><?php echo $lang_textdeleteques?></td>
+<td><?php echo $lang_restrictedname?></td>
+</tr>
 
-<? 
-$query = $db->query("SELECT * FROM $table_restricted ORDER BY id"); 
-while($restricted = $db->fetch_array($query)) { 
-?> 
-<tr class="tablerow"> 
-<td bgcolor="<?=$altbg1?>"><input type="checkbox" name="delete<?=$restricted[id]?>" value="<?=$restricted[id]?>"></td> 
-<td bgcolor="<?=$altbg1?>"><input type="text" size="30" name="name<?=$restricted[id]?>" value="<?=$restricted[name]?>"></td> 
-</tr> 
-<? 
-} 
-?> 
-<tr> 
-<td bgcolor="<?=$altbg2?>" colspan="2"><img src="./images/pixel.gif"></td> 
-</tr> 
+<?php
+$query = $db->query("SELECT * FROM $table_restricted ORDER BY id");
+while($restricted = $db->fetch_array($query)) {
+?>
 <tr class="tablerow">
-<td bgcolor="<?=$altbg1?>" colspan="2" align="center"><?=$lang_textnewcode?><br><?=$lang_newrestriction?><br><?=$lang_newrestrictionwhy?><br><br><input type="text" size="30" name="newname"></td> 
-</tr> 
-</table> 
-</td> 
-</tr> 
+<td bgcolor="<?php echo $altbg1?>"><input type="checkbox" name="delete<?php echo $restricted[id]?>" value="<?php echo $restricted[id]?>"></td>
+<td bgcolor="<?php echo $altbg1?>"><input type="text" size="30" name="name<?php echo $restricted[id]?>" value="<?php echo $restricted[name]?>"></td>
+</tr>
+<?php
+}
+?>
+<tr>
+<td bgcolor="<?php echo $altbg2?>" colspan="2"><img src="./images/pixel.gif"></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="<?php echo $altbg1?>" colspan="2" align="center"><?php echo $lang_textnewcode?><br><?php echo $lang_newrestriction?><br><?php echo $lang_newrestrictionwhy?><br><br><input type="text" size="30" name="newname"></td>
+</tr>
+</table>
+</td>
+</tr>
 </table><br>
-<center><input type="submit" name="restrictedsubmit" value="<?=$lang_textsubmitchanges?>"></center> 
-</form> 
-</td> 
-</tr> 
+<center><input type="submit" name="restrictedsubmit" value="<?php echo $lang_textsubmitchanges?>"></center>
+</form>
+</td>
+</tr>
 
-<? 
-} 
+<?php
+}
 
-if($restrictedsubmit) { 
-$queryrestricted = $db->query("SELECT id FROM $table_restricted"); 
-while($restricted = $db->fetch_array($queryrestricted)) { 
-$name = "name$restricted[id]"; 
-$name = "${$name}"; 
-$delete = "delete$restricted[id]"; 
-$delete = "${$delete}"; 
-if($delete != "") { 
-$db->query("DELETE FROM $table_restricted WHERE id='$delete'"); 
-} 
-$db->query("UPDATE $table_restricted SET name='$name' WHERE id='$restricted[id]'"); 
-} 
-if($newname != "") { 
-$db->query("INSERT INTO $table_restricted VALUES ('$newname', '')"); 
-} 
-echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang_restrictedupdate</td></tr>"; 
+if($restrictedsubmit) {
+$queryrestricted = $db->query("SELECT id FROM $table_restricted");
+while($restricted = $db->fetch_array($queryrestricted)) {
+$name = "name$restricted[id]";
+$name = "${$name}";
+$delete = "delete$restricted[id]";
+$delete = "${$delete}";
+if($delete != "") {
+$db->query("DELETE FROM $table_restricted WHERE id='$delete'");
+}
+$db->query("UPDATE $table_restricted SET name='$name' WHERE id='$restricted[id]'");
+}
+if($newname != "") {
+$db->query("INSERT INTO $table_restricted VALUES ('$newname', '')");
+}
+echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang_restrictedupdate</td></tr>";
 
-?> 
-<script> 
-function redirect() { 
-window.location.replace("cp2.php?action=restrictions"); 
-} 
-setTimeout("redirect();", 2500); 
-</script> 
-<? 
+?>
+<script>
+function redirect() {
+window.location.replace("cp2.php?action=restrictions");
+}
+setTimeout("redirect();", 2500);
+</script>
+<?php
 
-} 
+}
 }
 
 if($action == "themes") {
 if(!$themesubmit && !$single && !$importsubmit) {
 ?>
 
-				<tr bgcolor="<?=$altbg2?>">
+				<tr bgcolor="<?php echo $altbg2?>">
 					<td align="center">
 						<br />
 						<form method="POST" action="cp2.php?action=themes">
 						<table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
 							<tr>
-								<td bgcolor="<?=$bordercolor?>">
-									<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+								<td bgcolor="<?php echo $bordercolor?>">
+									<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 										<tr class="header">
-											<td><?=$lang_textdeleteques?></td>
-											<td><?=$lang_textthemename?></td>
-<td><?=$lang_numberusing?></td>
+											<td><?php echo $lang_textdeleteques?></td>
+											<td><?php echo $lang_textthemename?></td>
+<td><?php echo $lang_numberusing?></td>
 										</tr>
 
-<?
+<?php
 $query = $db->query("SELECT name FROM $table_themes ORDER BY name ASC");
 $i=1;
 while($themeinfo = $db->fetch_array($query)) {
@@ -226,56 +226,56 @@ $checked = "checked=\"checked\"";
 }
 ?>
 
-										<tr bgcolor="<?=$altbg2?>" class="tablerow">
-											<td><input type="checkbox" name="delete" value="<?=$i?>" /></td>
-											<td><input type="text" name="name_<?=$i?>" value="<?=$themeinfo[name]?>" /> <a href="cp2.php?action=themes&single=<?=$themeinfo[name]?>"><?=$lang_textdetails?></a> - <a href="cp2.php?action=themes&download=<?=$themeinfo[name]?>"><?=$lang_textdltheme?></a></td>
-											<td><?=$members?></td>
+										<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+											<td><input type="checkbox" name="delete" value="<?php echo $i?>" /></td>
+											<td><input type="text" name="name_<?php echo $i?>" value="<?php echo $themeinfo[name]?>" /> <a href="cp2.php?action=themes&single=<?php echo $themeinfo[name]?>"><?php echo $lang_textdetails?></a> - <a href="cp2.php?action=themes&download=<?php echo $themeinfo[name]?>"><?php echo $lang_textdltheme?></a></td>
+											<td><?php echo $members?></td>
 										</tr>
 
-<?
+<?php
 $checked = "";
 $i++;
 }
 ?>
 
-										<tr bgcolor="<?=$altbg2?>">
+										<tr bgcolor="<?php echo $altbg2?>">
 											<td colspan="3"><img src="./images/pixel.gif"></td>
 										</tr>
-										<tr bgcolor="<?=$altbg1?>" class="tablerow">
-											<td colspan="3"><a href="cp2.php?action=themes&single=anewtheme1"><?=$lang_textnewtheme?></a></td>
+										<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+											<td colspan="3"><a href="cp2.php?action=themes&single=anewtheme1"><?php echo $lang_textnewtheme?></a></td>
 										</tr>
 									</table>
 								</td>
 							</tr>
 						</table>
-							<center><br><input type="submit" name="themesubmit" value="<?=$lang_textsubmitchanges?>" /></center></form><br>
+							<center><br><input type="submit" name="themesubmit" value="<?php echo $lang_textsubmitchanges?>" /></center></form><br>
 							<form method="post" action="cp2.php?action=themes" enctype="multipart/form-data">
 						<table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
 							<tr>
-								<td bgcolor="<?=$bordercolor?>">
-									<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+								<td bgcolor="<?php echo $bordercolor?>">
+									<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 										<tr class="header">
-											<td colspan="2"><?=$lang_textimporttheme?></td>
+											<td colspan="2"><?php echo $lang_textimporttheme?></td>
 										</tr>
 										<tr class="tablerow">
-											<td bgcolor="<?=$altbg1?>"><?=$lang_textthemefile?></td>
-											<td bgcolor="<?=$altbg2?>"><input name="themefile" type="file"></td>
+											<td bgcolor="<?php echo $altbg1?>"><?php echo $lang_textthemefile?></td>
+											<td bgcolor="<?php echo $altbg2?>"><input name="themefile" type="file"></td>
 										</tr>
 									</table>
 								</td>
 							</tr>
 						</table>
-							<center><br><input type="submit" name="importsubmit" value="<?=$lang_textimportsubmit?>" /></center></form>
+							<center><br><input type="submit" name="importsubmit" value="<?php echo $lang_textimportsubmit?>" /></center></form>
 					</td>
 				</tr>
 
-<?
+<?php
 }
 if($importsubmit) {
 
 	$themebits = readFileAsINI($themefile);
 	$start = "INSERT INTO $table_themes";
-	
+
 	while(list($key,$val) = each($themebits)){
 		$keysql .= "$key, ";
 		$valsql .= "'$val', ";
@@ -283,10 +283,10 @@ if($importsubmit) {
 
 	$keysql = substr($keysql,0,-2);
 	$valsql = substr($valsql,0,-2);
-	
+
 	$sql = "$start ($keysql) VALUES ($valsql);";
 	$query = $db->query($sql);
-	
+
 	echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">";
 		if (!$query) {
 			echo "$lang_textthemeimportfail";
@@ -317,8 +317,8 @@ if($themesubmit) {
 					$db->query("UPDATE $table_settings SET theme='$name'");
 				}
 			}
-		}	
-		$i++;	
+		}
+		$i++;
 	}
 	echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang_themeupdate</td></tr>";
 }
@@ -328,223 +328,223 @@ if($single && $single != "submit" && $single != "anewtheme1") {
 	$themestuff = $db->fetch_array($query);
 ?>
 
-	<tr bgcolor="<?=$altbg2?>">
+	<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br /><form method="post" action="cp2.php?action=themes&single=submit">
 			<table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
 				<tr>
-					<td bgcolor="<?=$bordercolor?>">
-						<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_texthemename?></td>
-								<td colspan="2"><input type="text" name="namenew" value="<?=$themestuff[name]?>" /></td>
+					<td bgcolor="<?php echo $bordercolor?>">
+						<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_texthemename?></td>
+								<td colspan="2"><input type="text" name="namenew" value="<?php echo $themestuff[name]?>" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textbgcolor?></td>
-								<td><input type="text" name="bgcolornew" value="<?=$themestuff[bgcolor]?>" /></td>
-								<td bgcolor="<?=$themestuff[bgcolor]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textbgcolor?></td>
+								<td><input type="text" name="bgcolornew" value="<?php echo $themestuff[bgcolor]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[bgcolor]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textaltbg1?></td>
-								<td><input type="text" name="altbg1new" value="<?=$themestuff[altbg1]?>" /></td>
-								<td bgcolor="<?=$themestuff[altbg1]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textaltbg1?></td>
+								<td><input type="text" name="altbg1new" value="<?php echo $themestuff[altbg1]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[altbg1]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textaltbg2?></td>
-								<td><input type="text" name="altbg2new" value="<?=$themestuff[altbg2]?>" /></td>
-								<td bgcolor="<?=$themestuff[altbg2]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textaltbg2?></td>
+								<td><input type="text" name="altbg2new" value="<?php echo $themestuff[altbg2]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[altbg2]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textlink?></td>
-								<td><input type="text" name="linknew" value="<?=$themestuff[link]?>" /></td>
-								<td bgcolor="<?=$themestuff[link]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textlink?></td>
+								<td><input type="text" name="linknew" value="<?php echo $themestuff[link]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[link]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textborder?></td>
-								<td><input type="text" name="bordercolornew" value="<?=$themestuff[bordercolor]?>" /></td>
-								<td bgcolor="<?=$themestuff[bordercolor]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textborder?></td>
+								<td><input type="text" name="bordercolornew" value="<?php echo $themestuff[bordercolor]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[bordercolor]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textheader?></td>
-								<td><input type="text" name="headernew" value="<?=$themestuff[header]?>" /></td>
-								<td bgcolor="<?=$themestuff[header]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textheader?></td>
+								<td><input type="text" name="headernew" value="<?php echo $themestuff[header]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[header]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textheadertext?></td>
-								<td><input type="text" name="headertextnew" value="<?=$themestuff[headertext]?>" /></td>
-								<td bgcolor="<?=$themestuff[headertext]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textheadertext?></td>
+								<td><input type="text" name="headertextnew" value="<?php echo $themestuff[headertext]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[headertext]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_texttop?></td>
-								<td><input type="text" name="topnew" value="<?=$themestuff[top]?>" /></td>
-								<td bgcolor="<?=$themestuff[top]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_texttop?></td>
+								<td><input type="text" name="topnew" value="<?php echo $themestuff[top]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[top]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textcatcolor?></td>
-								<td><input type="text" name="catcolornew" value="<?=$themestuff[catcolor]?>" /></td>
-								<td bgcolor="<?=$themestuff[catcolor]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textcatcolor?></td>
+								<td><input type="text" name="catcolornew" value="<?php echo $themestuff[catcolor]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[catcolor]?>">&nbsp;</td>
 							</tr>
-								<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textcattextcolor?></td>
-								<td><input type="text" name="cattextnew" value="<?=$themestuff[cattext]?>" /></td>
-								<td bgcolor="<?=$themestuff[cattext]?>">&nbsp;</td>
+								<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textcattextcolor?></td>
+								<td><input type="text" name="cattextnew" value="<?php echo $themestuff[cattext]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[cattext]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_texttabletext?></td>
-								<td><input type="text" name="tabletextnew" value="<?=$themestuff[tabletext]?>" /></td>
-								<td bgcolor="<?=$themestuff[tabletext]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_texttabletext?></td>
+								<td><input type="text" name="tabletextnew" value="<?php echo $themestuff[tabletext]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[tabletext]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_texttext?></td>
-								<td><input type="text" name="textnew" value="<?=$themestuff[text]?>" /></td>
-								<td bgcolor="<?=$themestuff[text]?>">&nbsp;</td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_texttext?></td>
+								<td><input type="text" name="textnew" value="<?php echo $themestuff[text]?>" /></td>
+								<td bgcolor="<?php echo $themestuff[text]?>">&nbsp;</td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textborderwidth?></td>
-								<td colspan="2"><input type="text" name="borderwidthnew" value="<?=$themestuff[borderwidth]?>" size="2" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textborderwidth?></td>
+								<td colspan="2"><input type="text" name="borderwidthnew" value="<?php echo $themestuff[borderwidth]?>" size="2" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textwidth?></td>
-								<td colspan="2"><input type="text" name="tablewidthnew" value="<?=$themestuff[tablewidth]?>" size="3" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textwidth?></td>
+								<td colspan="2"><input type="text" name="tablewidthnew" value="<?php echo $themestuff[tablewidth]?>" size="3" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textspace?></td>
-								<td colspan="2"><input type="text" name="tablespacenew" value="<?=$themestuff[tablespace]?>" size="2" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textspace?></td>
+								<td colspan="2"><input type="text" name="tablespacenew" value="<?php echo $themestuff[tablespace]?>" size="2" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textfont?></td>
-								<td colspan="2"><input type="text" name="fnew" value="<?=$themestuff[font]?>" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textfont?></td>
+								<td colspan="2"><input type="text" name="fnew" value="<?php echo $themestuff[font]?>" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textbigsize?></td>
-								<td colspan="2"><input type="text" name="fsizenew" value="<?=$themestuff[fontsize]?>" size="4" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textbigsize?></td>
+								<td colspan="2"><input type="text" name="fsizenew" value="<?php echo $themestuff[fontsize]?>" size="4" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_textboardlogo?></td>
-								<td colspan="2"><input type="text"  value="<?=$themestuff[boardimg]?>" name="boardlogonew" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_textboardlogo?></td>
+								<td colspan="2"><input type="text"  value="<?php echo $themestuff[boardimg]?>" name="boardlogonew" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_imgdir?></td>
-								<td colspan="2"><input type="text"  value="<?=$themestuff[imgdir]?>" name="imgdirnew" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_imgdir?></td>
+								<td colspan="2"><input type="text"  value="<?php echo $themestuff[imgdir]?>" name="imgdirnew" /></td>
 							</tr>
-							<tr bgcolor="<?=$altbg2?>" class="tablerow">
-								<td><?=$lang_smdir?></td>
-								<td colspan="2"><input type="text"  value="<?=$themestuff[smdir]?>" name="smdirnew" /></td>
+							<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+								<td><?php echo $lang_smdir?></td>
+								<td colspan="2"><input type="text"  value="<?php echo $themestuff[smdir]?>" name="smdirnew" /></td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 			</table>
-				<center><br><input type="submit" value="<?=$lang_textsubmitchanges?>" /></center><input type="hidden" name="orig" value="<?=$single?>" /></form>
+				<center><br><input type="submit" value="<?php echo $lang_textsubmitchanges?>" /></center><input type="hidden" name="orig" value="<?php echo $single?>" /></form>
 		</td>
 	</tr>
 
-<?
+<?php
 }
 if($single == "anewtheme1") {
 ?>
 
-	<tr bgcolor="<?=$altbg2?>">
+	<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
 		<form method="post" action="cp2.php?action=themes&single=submit">
 		<table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
 			<tr>
-				<td bgcolor="<?=$bordercolor?>">
-					<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_texthemename?></td>
+				<td bgcolor="<?php echo $bordercolor?>">
+					<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_texthemename?></td>
 							<td><input type="text" name="namenew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textbgcolor?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textbgcolor?></td>
 							<td><input type="text" name="bgcolornew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textaltbg1?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textaltbg1?></td>
 							<td><input type="text" name="altbg1new" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textaltbg2?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textaltbg2?></td>
 							<td><input type="text" name="altbg2new" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textlink?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textlink?></td>
 							<td><input type="text" name="linknew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textborder?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textborder?></td>
 							<td><input type="text" name="bordercolornew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textheader?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textheader?></td>
 							<td><input type="text" name="headernew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textheadertext?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textheadertext?></td>
 							<td><input type="text" name="headertextnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_texttop?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_texttop?></td>
 							<td><input type="text" name="topnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textcatcolor?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textcatcolor?></td>
 							<td><input type="text" name="catcolornew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textcattextcolor?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textcattextcolor?></td>
 							<td><input type="text" name="cattextnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_texttabletext?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_texttabletext?></td>
 							<td><input type="text" name="tabletextnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_texttext?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_texttext?></td>
 							<td><input type="text" name="textnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textborderwidth?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textborderwidth?></td>
 							<td><input type="text" name="borderwidthnew" size="2" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textwidth?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textwidth?></td>
 							<td><input type="text" name="tablewidthnew" size="3" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textspace?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textspace?></td>
 							<td><input type="text" name="tablespacenew" size="2" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textfont?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textfont?></td>
 							<td><input type="text" name="fnew" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textbigsize?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textbigsize?></td>
 							<td><input type="text" name="fsizenew" size="4" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_textboardlogo?></td>
-							<td><input type="text" name="boardlogonew" value="<?=$boardimg?>" /></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_textboardlogo?></td>
+							<td><input type="text" name="boardlogonew" value="<?php echo $boardimg?>" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_imgdir?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_imgdir?></td>
 							<td><input type="text" name="imgdirnew" value="images" /></td>
 						</tr>
-						<tr bgcolor="<?=$altbg2?>" class="tablerow">
-							<td><?=$lang_smdir?></td>
+						<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+							<td><?php echo $lang_smdir?></td>
 							<td><input type="text" name="smdirnew" value="images" /></td>
 						</tr>
 					</table>
 				</td>
 			</tr>
 		</table>
-			<center><br><input type="submit" value="<?=$lang_textsubmitchanges?>" /></center><input type="hidden" name="newtheme" value="<?=$single?>" /></form>
+			<center><br><input type="submit" value="<?php echo $lang_textsubmitchanges?>" /></center><input type="hidden" name="newtheme" value="<?php echo $single?>" /></form>
 		</td>
 	</tr>
 
-<?
+<?php
 }
 
 
@@ -566,87 +566,87 @@ if($action == "smilies") {
 	if(!$smiliesubmit) {
 ?>
 
-	<tr bgcolor="<?=$altbg2?>">
+	<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br /><form method="post" action="cp2.php?action=smilies">
 			<table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
 				<tr>
-					<td bgcolor="<?=$bordercolor?>">
-						<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+					<td bgcolor="<?php echo $bordercolor?>">
+						<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 							<tr class="header">
-								<td colspan="4" align="left"><?=$lang_smilies?></td>
+								<td colspan="4" align="left"><?php echo $lang_smilies?></td>
 							</tr>
 							<tr class="header">
-								<td><?=$lang_textdeleteques?></td>
-								<td><?=$lang_textsmiliecode?></td>
-								<td><?=$lang_textsmiliefile?></td>
-								<td><?=$lang_smilies?></td>
+								<td><?php echo $lang_textdeleteques?></td>
+								<td><?php echo $lang_textsmiliecode?></td>
+								<td><?php echo $lang_textsmiliefile?></td>
+								<td><?php echo $lang_smilies?></td>
 							</tr>
 
-<?
+<?php
 	$query = $db->query("SELECT * FROM $table_smilies WHERE type='smiley' ORDER BY id");
 	while($smilie = $db->fetch_array($query)) {
 ?>
 
 							<tr>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><input type="checkbox" name="delete<?=$smilie[id]?>" value="<?=$smilie[id]?>" /></td>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><input type="text" name="code<?=$smilie[id]?>" value="<?=$smilie[code]?>" /></td>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><input type="text" name="url<?=$smilie[id]?>" value="<?=$smilie[url]?>" /></td>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><img src="<?=$smdir?>/<?=$smilie[url]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="checkbox" name="delete<?php echo $smilie[id]?>" value="<?php echo $smilie[id]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="text" name="code<?php echo $smilie[id]?>" value="<?php echo $smilie[code]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="text" name="url<?php echo $smilie[id]?>" value="<?php echo $smilie[url]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><img src="<?php echo $smdir?>/<?php echo $smilie[url]?>" /></td>
 							</tr>
 
-<?
+<?php
 }
 ?>
 							<tr>
-								<td bgcolor="<?=$altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
+								<td bgcolor="<?php echo $altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
 							</tr>
-							<tr bgcolor="<?=$altbg1?>" class="tablerow">
-								<td><?=$lang_textnewsmilie?></td>
+							<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+								<td><?php echo $lang_textnewsmilie?></td>
 								<td><input type="text" name="newcode" /></td>
 								<td colspan="2"><input type="text" name="newurl1" /></td>
 							</tr>
 							<tr>
-								<td bgcolor="<?=$altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
+								<td bgcolor="<?php echo $altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
 							</tr>
 							<tr>
-								<td colspan="4" class="header"><?=$lang_picons?></td>
+								<td colspan="4" class="header"><?php echo $lang_picons?></td>
 							</tr>
 							<tr class="header">
-								<td><?=$lang_textdeleteques?></td>
-								<td colspan="2"><?=$lang_textsmiliefile?></td>
-								<td><?=$lang_picons?></td>
+								<td><?php echo $lang_textdeleteques?></td>
+								<td colspan="2"><?php echo $lang_textsmiliefile?></td>
+								<td><?php echo $lang_picons?></td>
 							</tr>
-<?
+<?php
 	$query = $db->query("SELECT * FROM $table_smilies WHERE type='picon' ORDER BY id");
 		while($smilie = $db->fetch_array($query)) {
 ?>
 
 							<tr>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><input type="checkbox" name="delete<?=$smilie[id]?>" value="<?=$smilie[id]?>" /></td>
-								<td colspan="2" bgcolor="<?=$altbg2?>" class="tablerow"><input type="text" name="url<?=$smilie[id]?>" value="<?=$smilie[url]?>" /></td>
-								<td bgcolor="<?=$altbg2?>" class="tablerow"><img src="<?=$smdir?>/<?=$smilie[url]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="checkbox" name="delete<?php echo $smilie[id]?>" value="<?php echo $smilie[id]?>" /></td>
+								<td colspan="2" bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="text" name="url<?php echo $smilie[id]?>" value="<?php echo $smilie[url]?>" /></td>
+								<td bgcolor="<?php echo $altbg2?>" class="tablerow"><img src="<?php echo $smdir?>/<?php echo $smilie[url]?>" /></td>
 							</tr>
 
-<?
+<?php
 }
 ?>
 
 							<tr>
-								<td bgcolor="<?=$altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
+								<td bgcolor="<?php echo $altbg2?>" colspan="4"><img src="./images/pixel.gif"></td>
 							</tr>
-							<tr bgcolor="<?=$altbg1?>" class="tablerow">
-								<td colspan="4"><?=$lang_textnewpicon?>&nbsp;&nbsp;<input type="text" name="newurl2" /></td>
+							<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+								<td colspan="4"><?php echo $lang_textnewpicon?>&nbsp;&nbsp;<input type="text" name="newurl2" /></td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 			</table>
-				<center><br><input type="submit" name="smiliesubmit" value="<?=$lang_textsubmitchanges?>" /></center></form>
+				<center><br><input type="submit" name="smiliesubmit" value="<?php echo $lang_textsubmitchanges?>" /></center></form>
 		</td>
 	</tr>
 
-<?
+<?php
 }
 
 if($smiliesubmit) {
@@ -694,60 +694,60 @@ if($action == "censor") {
 if(!$censorsubmit) {
 ?>
 
-<tr bgcolor="<?=$altbg2?>">
+<tr bgcolor="<?php echo $altbg2?>">
 <td align="center">
 <br />
 <form method="post" action="cp2.php?action=censor">
-<table cellspacing="0" cellpadding="0" border="0" width="450" 
+<table cellspacing="0" cellpadding="0" border="0" width="450"
 align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 <tr class="header">
-<td><?=$lang_textdeleteques?></td>
-<td align="right"><?=$lang_textcensorfind?></td>
-<td align="right"><?=$lang_textcensorreplace?></td>
+<td><?php echo $lang_textdeleteques?></td>
+<td align="right"><?php echo $lang_textcensorfind?></td>
+<td align="right"><?php echo $lang_textcensorreplace?></td>
 </tr>
 
-<?
+<?php
 $query = $db->query("SELECT * FROM $table_words ORDER BY id");
 while($censor = $db->fetch_array($query)) {
 
 ?>
 
-<tr bgcolor="<?=$altbg2?>" class="tablerow">
-<td><input type="checkbox" name="delete<?=$censor[id]?>" 
-value="<?=$censor[id]?>" /></td>
-<td align="right"><input type="text" size="20" name="find<?=$censor[id]?>" 
-value="<?=$censor[find]?>" /></td>
-<td align="right"><input type="text" size="20" 
-name="replace<?=$censor[id]?>" value="<?=$censor[replace1]?>" /></td>
+<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+<td><input type="checkbox" name="delete<?php echo $censor[id]?>"
+value="<?php echo $censor[id]?>" /></td>
+<td align="right"><input type="text" size="20" name="find<?php echo $censor[id]?>"
+value="<?php echo $censor[find]?>" /></td>
+<td align="right"><input type="text" size="20"
+name="replace<?php echo $censor[id]?>" value="<?php echo $censor[replace1]?>" /></td>
 </tr>
 
-<?
+<?php
 }
 ?>
 
-<tr bgcolor="<?=$altbg2?>"><td colspan="3"><img 
+<tr bgcolor="<?php echo $altbg2?>"><td colspan="3"><img
 src="./images/pixel.gif"></td></tr>
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td align="right" colspan="2"><?=$lang_textnewcode?>&nbsp;&nbsp;<input 
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td align="right" colspan="2"><?php echo $lang_textnewcode?>&nbsp;&nbsp;<input
 type="text" size="20" name="newfind" /></td>
 <td align="right"><input type="text" size="20" name="newreplace" /></td>
 </tr>
 
 </table>
 </td></tr></table>
-<center><br><input type="submit" name="censorsubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
+<center><br><input type="submit" name="censorsubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
 </form>
 
 </td>
 </tr>
 
-<?
+<?php
 }
 
 if($censorsubmit) {
@@ -782,27 +782,27 @@ if($action == "ranks") {
 if(!$rankssubmit) {
 ?>
 
-<tr bgcolor="<?=$altbg2?>">
+<tr bgcolor="<?php echo $altbg2?>">
 <td align="center">
 <br />
 <form method="post" action="cp2.php?action=ranks">
-<table cellspacing="0" cellpadding="0" border="0" width="650" 
+<table cellspacing="0" cellpadding="0" border="0" width="650"
 align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 <tr class="header">
-<td><?=$lang_textdeleteques?></td>
-<td><?=$lang_textcusstatus?></td>
-<td><?=$lang_textposts?></td>
-<td><?=$lang_textstars?></td>
-<td><?=$lang_textallowavatars?></td>
-<td><?=$lang_textavatar?></td>
+<td><?php echo $lang_textdeleteques?></td>
+<td><?php echo $lang_textcusstatus?></td>
+<td><?php echo $lang_textposts?></td>
+<td><?php echo $lang_textstars?></td>
+<td><?php echo $lang_textallowavatars?></td>
+<td><?php echo $lang_textavatar?></td>
 </tr>
 
-<?
+<?php
 $query = $db->query("SELECT * FROM $table_ranks ORDER BY id");
 while($rank = $db->fetch_array($query)) {
 
@@ -814,50 +814,50 @@ $avatarno = "selected=\"selected\"";
 }
 ?>
 
-<tr bgcolor="<?=$altbg2?>" class="tablerow">
-<td><input type="checkbox" name="delete<?=$rank[id]?>" 
-value="<?=$rank[id]?>" /></td>
-<td><input type="text" name="title<?=$rank[id]?>" value="<?=$rank[title]?>" 
+<tr bgcolor="<?php echo $altbg2?>" class="tablerow">
+<td><input type="checkbox" name="delete<?php echo $rank[id]?>"
+value="<?php echo $rank[id]?>" /></td>
+<td><input type="text" name="title<?php echo $rank[id]?>" value="<?php echo $rank[title]?>"
 /></td>
-<td><input type="text" name="posts<?=$rank[id]?>" value="<?=$rank[posts]?>" 
+<td><input type="text" name="posts<?php echo $rank[id]?>" value="<?php echo $rank[posts]?>"
 size="5" /></td>
-<td><input type="text" name="stars<?=$rank[id]?>" value="<?=$rank[stars]?>" 
+<td><input type="text" name="stars<?php echo $rank[id]?>" value="<?php echo $rank[stars]?>"
 size="4" /></td>
-<td><select name="allowavatars<?=$rank[id]?>"><option value="yes" 
-<?=$avataryes?>><?=$lang_texton?></option>
-<option value="no" <?=$avatarno?>><?=$lang_textoff?></option></select></td>
-<td><input type="text" name="avaurl<?=$rank[id]?>" 
-value="<?=$rank[avatarrank]?>" size="20" /></td>
+<td><select name="allowavatars<?php echo $rank[id]?>"><option value="yes"
+<?php echo $avataryes?>><?php echo $lang_texton?></option>
+<option value="no" <?php echo $avatarno?>><?php echo $lang_textoff?></option></select></td>
+<td><input type="text" name="avaurl<?php echo $rank[id]?>"
+value="<?php echo $rank[avatarrank]?>" size="20" /></td>
 </tr>
 
-<?
+<?php
 $avataryes = "";
 $avatarno = "";
 }
 ?>
 
-<tr bgcolor="<?=$altbg2?>"><td colspan="6"> </td></tr>
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td colspan="2"><?=$lang_textnewrank?>&nbsp;&nbsp;<input type="text" 
+<tr bgcolor="<?php echo $altbg2?>"><td colspan="6"> </td></tr>
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td colspan="2"><?php echo $lang_textnewrank?>&nbsp;&nbsp;<input type="text"
 name="newtitle" /></td>
 <td><input type="text" name="newposts" size="5" /></td>
 <td><input type="text" name="newstars" size="4" /></td>
-<td><select name="newallowavatars"><option 
-value="yes"><?=$lang_texton?></option><option 
-value="no"><?=$lang_textoff?></option></select></td>
+<td><select name="newallowavatars"><option
+value="yes"><?php echo $lang_texton?></option><option
+value="no"><?php echo $lang_textoff?></option></select></td>
 <td><input type="text" name="newavaurl" size="20" /></td>
 </tr>
 
 </table>
 </td></tr></table>
-<center><br><input type="submit" name="rankssubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
+<center><br><input type="submit" name="rankssubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
 </form>
 
 </td>
 </tr>
 
-<?
+<?php
 }
 
 if($rankssubmit) {
@@ -881,17 +881,17 @@ if($delete != "") {
 $db->query("DELETE FROM $table_ranks WHERE id='$delete'");
 }
 
-$db->query("UPDATE $table_ranks SET title='$title', posts='$posts', 
-stars='$stars', allowavatars='$allowavatars', avatarrank='$avaurl' WHERE 
+$db->query("UPDATE $table_ranks SET title='$title', posts='$posts',
+stars='$stars', allowavatars='$allowavatars', avatarrank='$avaurl' WHERE
 id='$ranks[id]'");
 }
 
 if($newtitle != "") {
-$db->query("INSERT INTO $table_ranks VALUES ('$newtitle', '$newposts', '', 
+$db->query("INSERT INTO $table_ranks VALUES ('$newtitle', '$newposts', '',
 '$newstars', '$newallowavatars', '$newavaurl')");
 }
 
-echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td 
+echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td
 align=\"center\">$lang_rankingsupdate</td></tr>";
 }
 }
@@ -902,56 +902,56 @@ if($action == "newsletter") {
 if(!$newslettersubmit) {
 ?>
 
-<tr bgcolor="<?=$altbg2?>">
+<tr bgcolor="<?php echo $altbg2?>">
 <td align="center">
 <br />
 <form method="post" action="cp2.php?action=newsletter">
-<table cellspacing="0" cellpadding="0" border="0" width="550" 
+<table cellspacing="0" cellpadding="0" border="0" width="550"
 align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 <tr class="header">
-<td colspan=2><?=$lang_textnewsletter?></td>
+<td colspan=2><?php echo $lang_textnewsletter?></td>
 </tr>
 
 
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td><?=$lang_textsubject?></td><td><input type="text" name="newssubject" 
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td><?php echo $lang_textsubject?></td><td><input type="text" name="newssubject"
 size="80" /></td>
 </tr>
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td valign=top><?=$lang_textmessage?></td><td><textarea cols="80" rows="10" 
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td valign=top><?php echo $lang_textmessage?></td><td><textarea cols="80" rows="10"
 name="newsmessage"></textarea></td>
 </tr>
 
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td valign=top><?=$lang_textsendvia?></td><td><input type="radio" 
-value="email" checked name="sendvia"> <?=$lang_textemail?><BR><input 
-type="radio" value="u2u" checked name="sendvia"> <?=$lang_textu2u?></td>
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td valign=top><?php echo $lang_textsendvia?></td><td><input type="radio"
+value="email" checked name="sendvia"> <?php echo $lang_textemail?><BR><input
+type="radio" value="u2u" checked name="sendvia"> <?php echo $lang_textu2u?></td>
 
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
-<td valign=top><?=$lang_textsendto?></td>
-</td><td><input type="radio" 
-value="all" checked name="to"> <?=$lang_textsendall?><BR><input 
-type="radio" value="staff" name="to"> <?=$lang_textsendstaff?><BR><input 
-type="radio" value="admin" name="to"> <?=$lang_textsendadmin?><BR><input 
-type="radio" value="supermod" name="to"> <?=$lang_textsendsupermod?><BR><input 
-type="radio" value="mod" name="to"> <?=$lang_textsendmod?></td>
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
+<td valign=top><?php echo $lang_textsendto?></td>
+</td><td><input type="radio"
+value="all" checked name="to"> <?php echo $lang_textsendall?><BR><input
+type="radio" value="staff" name="to"> <?php echo $lang_textsendstaff?><BR><input
+type="radio" value="admin" name="to"> <?php echo $lang_textsendadmin?><BR><input
+type="radio" value="supermod" name="to"> <?php echo $lang_textsendsupermod?><BR><input
+type="radio" value="mod" name="to"> <?php echo $lang_textsendmod?></td>
 
 </tr>
 </table>
 </td></tr></table>
-<center><br><input type="submit" name="newslettersubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
+<center><br><input type="submit" name="newslettersubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
 </form>
 
 </td>
 </tr>
 
-<?
+<?php
 }
 if($newslettersubmit) {
 
@@ -1002,42 +1002,42 @@ $forumselect .= "<option value=\"$forum[fid]\">$forum[name]</option>\n";
 $forumselect .= "</select>";
 ?>
 
-<tr bgcolor="<?=$altbg2?>">
+<tr bgcolor="<?php echo $altbg2?>">
 <td align="center">
 <br />
 <form method="post" action="cp2.php?action=prune">
-<table cellspacing="0" cellpadding="0" border="0" width="550" 
+<table cellspacing="0" cellpadding="0" border="0" width="550"
 align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 <tr>
-<td class="header" colspan="2"><?=$lang_textprune?></td>
+<td class="header" colspan="2"><?php echo $lang_textprune?></td>
 </tr>
 
 <tr>
-<td class="tablerow" bgcolor="<?=$altbg1?>"><?=$lang_prunewhere?></td>
-<td align="right" bgcolor="<?=$altbg2?>"><input type="text" name="days" 
+<td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang_prunewhere?></td>
+<td align="right" bgcolor="<?php echo $altbg2?>"><input type="text" name="days"
 size="7" /></td>
 </tr>
 
 <tr>
-<td class="tablerow" bgcolor="<?=$altbg1?>"><?=$lang_prunein?></td>
-<td align="right" bgcolor="<?=$altbg2?>"><?=$forumselect?></td>
+<td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $lang_prunein?></td>
+<td align="right" bgcolor="<?php echo $altbg2?>"><?php echo $forumselect?></td>
 </tr>
 
 </table>
 </td></tr></table>
-<center><br><input type="submit" name="prunesubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
+<center><br><input type="submit" name="prunesubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
 </form>
 
 </td>
 </tr>
 
-<?
+<?php
 }
 
 if($prunesubmit) {
@@ -1069,32 +1069,32 @@ while($post = $db->fetch_array($querypost)) {
 if($action == "templates") {
 	if(!$edit && !$editsubmit && !$delete && !$deletesubmit && !$new && !$restore && !$restoresubmit) {
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
 		<form method="post" action="cp2.php?action=templates">
 		<table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header"><?=$lang_templates?></td>
+		<td class="header"><?php echo $lang_templates?></td>
 		</tr>
 		<tr>
-		<td bgcolor="<?=$altbg2?>" class="tablerow" align="left">
+		<td bgcolor="<?php echo $altbg2?>" class="tablerow" align="left">
 		<INPUT TYPE="text" NAME="newtemplatename" size="30" maxlength="50">&nbsp;&nbsp;
-		<input type="submit" name="new" value="<?=$lang_newtemplate?>">
+		<input type="submit" name="new" value="<?php echo $lang_newtemplate?>">
 		</td></tr>
 
 		<tr>
-		<td bgcolor="<?=$altbg1?>" class="tablerow" align="left">
-			
+		<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="left">
+
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-		<td bgcolor="<?=$altbg1?>">
-		
-		<?
+		<td bgcolor="<?php echo $altbg1?>">
+
+		<?php
 		$query = $db->query("SELECT * FROM $table_templates ORDER BY name");
 		echo "<select name=\"tid\"><option value=\"default\">$lang_selecttemplate</option>";
 		while($template = $db->fetch_array($query)) {
@@ -1102,12 +1102,12 @@ if($action == "templates") {
 		}
 		echo "</select>&nbsp;&nbsp;";
 		?>
-		
-		<input type="submit" name="edit" value="<?=$lang_textedit?>">&nbsp;
-		<input type="submit" name="delete" value="<?=$lang_deletebutton?>">
+
+		<input type="submit" name="edit" value="<?php echo $lang_textedit?>">&nbsp;
+		<input type="submit" name="delete" value="<?php echo $lang_deletebutton?>">
 		</td>
-		<td bgcolor="<?=$altbg1?>" align="right"><input type="submit" name="restore" value="<?=$lang_textrestoredeftemps?>">&nbsp;
-		<input type="submit" name="download" value="<?=$lang_textdownloadtemps?>"></td>
+		<td bgcolor="<?php echo $altbg1?>" align="right"><input type="submit" name="restore" value="<?php echo $lang_textrestoredeftemps?>">&nbsp;
+		<input type="submit" name="download" value="<?php echo $lang_textdownloadtemps?>"></td>
 		</tr>
 		</table>
 		</table>
@@ -1115,28 +1115,28 @@ if($action == "templates") {
 		</form>
 		</td>
 		</tr>
-		
-		<?
+
+		<?php
 	}
 
 	if($restore) {
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
 		<form method="post" action="cp2.php?action=templates">
 		<table cellspacing="0" cellpadding="0" border="0" width="300" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header"><?=$lang_templates?></td>
+		<td class="header"><?php echo $lang_templates?></td>
 		</tr>
 		<tr>
-		<td bgcolor="<?=$altbg1?>" class="tablerow" align="center">
-		<?=$lang_templaterestoreconfirm?><p>
-		<center><input type="submit" name="restoresubmit" value="<?=$lang_textyes?>" /></center>
+		<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center">
+		<?php echo $lang_templaterestoreconfirm?><p>
+		<center><input type="submit" name="restoresubmit" value="<?php echo $lang_textyes?>" /></center>
 		</td>
 		</tr>
 
@@ -1146,7 +1146,7 @@ if($action == "templates") {
 
 		</td>
 		</tr>
-		<?
+		<?php
 	}
 
 	if($restoresubmit) {
@@ -1174,31 +1174,31 @@ if($action == "templates") {
 		}
 
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
-		<form method="post" action="cp2.php?action=templates&tid=<?=$tid?>">
+		<form method="post" action="cp2.php?action=templates&tid=<?php echo $tid?>">
 		<table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header"><?=$lang_templates?></td>
+		<td class="header"><?php echo $lang_templates?></td>
 		</tr>
-		
-		<?
+
+		<?php
 		$query = $db->query("SELECT * FROM $table_templates WHERE id='$tid' ORDER BY name");
 		$template = $db->fetch_array($query);
 		$template[template] = stripslashes($template[template]);
 		$template[template] = htmlspecialchars($template[template]);
 		?>
-		
+
 		<tr>
-		<td bgcolor="<?=$altbg1?>" class="tablerow" align="center">
-		<b><?=$template[name]?></b><br />
-		<textarea cols="70" rows="20" name="templatenew"><?=$template[template]?></textarea>
-		<center><input type="submit" name="editsubmit" value="<?=$lang_textsubmitchanges?>" /></center>
+		<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center">
+		<b><?php echo $template[name]?></b><br />
+		<textarea cols="70" rows="20" name="templatenew"><?php echo $template[template]?></textarea>
+		<center><input type="submit" name="editsubmit" value="<?php echo $lang_textsubmitchanges?>" /></center>
 		</td>
 		</tr>
 
@@ -1208,8 +1208,8 @@ if($action == "templates") {
 
 		</td>
 		</tr>
-		
-		<?
+
+		<?php
 	}
 
 	if($editsubmit) {
@@ -1217,11 +1217,11 @@ if($action == "templates") {
 		if($tid == "new") {
 			if(empty($namenew)){
 				echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">Template Name can not be empty!!</td></tr></table></td></tr></table>";
-				
+
 				end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
-				
+
 				exit();
 			}else{
 				$db->query("INSERT INTO $table_templates VALUES('', '$namenew', '$templatenew')");
@@ -1240,33 +1240,33 @@ if($action == "templates") {
 		}
 
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
-		<form method="post" action="cp2.php?action=templates&tid=<?=$tid?>">
+		<form method="post" action="cp2.php?action=templates&tid=<?php echo $tid?>">
 		<table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header"><?=$lang_templates?></td>
+		<td class="header"><?php echo $lang_templates?></td>
 		</tr>
 		<tr>
-		<td bgcolor="<?=$altbg1?>" class="tablerow" align="center">
-		<?=$lang_templatedelconfirm?>
+		<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center">
+		<?php echo $lang_templatedelconfirm?>
 		</td>
 		</tr>
 
 		</table>
 		</td></tr></table>
-		<center><input type="submit" name="deletesubmit" value="<?=$lang_textyes?>" /></center>
+		<center><input type="submit" name="deletesubmit" value="<?php echo $lang_textyes?>" /></center>
 		</form>
 
 		</td>
 		</tr>
-		
-		<?
+
+		<?php
 	}
 
 	if($deletesubmit) {
@@ -1277,23 +1277,23 @@ if($action == "templates") {
 	if($new) {
 
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
 		<form method="post" action="cp2.php?action=templates&tid=new">
 		<table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header"><?=$lang_templates?></td>
+		<td class="header"><?php echo $lang_templates?></td>
 		</tr>
 		<tr>
-		<td bgcolor="<?=$altbg1?>" class="tablerow" align="center">
-		<?=$lang_templatename?> <input type="text" name="namenew" size="30" value="<?=$newtemplatename?>" /><br />
+		<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center">
+		<?php echo $lang_templatename?> <input type="text" name="namenew" size="30" value="<?php echo $newtemplatename?>" /><br />
 		<textarea cols="70" rows="20" name="templatenew"></textarea>
-		<center><input type="submit" name="editsubmit" value="<?=$lang_textsubmitchanges?>" /></center>
+		<center><input type="submit" name="editsubmit" value="<?php echo $lang_textsubmitchanges?>" /></center>
 		</td>
 		</tr>
 
@@ -1303,8 +1303,8 @@ if($action == "templates") {
 
 		</td>
 		</tr>
-	
-		<?
+
+		<?php
 	}
 
 }
@@ -1312,113 +1312,113 @@ if($action == "templates") {
 if($action == "attachments") {
 	if(!$attachsubmit && !$searchsubmit) {
 		$forumselect = "<select name=\"forumprune\">\n";
-		$forumselect .= "<option 
+		$forumselect .= "<option
 value=\"$lang_textall\">$lang_textall</option>\n";
-		$querycat = $db->query("SELECT * FROM $table_forums WHERE type='forum' OR 
+		$querycat = $db->query("SELECT * FROM $table_forums WHERE type='forum' OR
 type='sub' ORDER BY displayorder");
 		while($forum = $db->fetch_array($querycat)) {
 			$forumselect .= "<option value=\"$forum[fid]\">$forum[name]</option>\n";
 		}
 		$forumselect .= "</select>";
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br>
 		<form method="post" action="cp2.php?action=attachments">
-		<table cellspacing="0" cellpadding="0" border="0" width="550" 
+		<table cellspacing="0" cellpadding="0" border="0" width="550"
 align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header" colspan="2"><?=$lang_textsearch?></td>
+		<td class="header" colspan="2"><?php echo $lang_textsearch?></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwherename?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="filename" size="30" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwherename?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="filename" size="30"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwhereauthor?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="author" size="40" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwhereauthor?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="author" size="40"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwhereforum?></td>
-		<td bgcolor="<?=$altbg2?>"><?=$forumselect?></td>
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwhereforum?></td>
+		<td bgcolor="<?php echo $altbg2?>"><?php echo $forumselect?></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwheresizesmaller?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="sizeless" size="20" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwheresizesmaller?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizeless" size="20"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwheresizegreater?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="sizemore" size="20" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwheresizegreater?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="sizemore" size="20"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwheredlcountsmaller?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="dlcountless" size="20" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwheredlcountsmaller?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountless" size="20"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwheredlcountgreater?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="dlcountmore" size="20" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwheredlcountgreater?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="dlcountmore" size="20"
 /></td>
 		</tr>
 		<tr>
-		<td class="tablerow" 
-bgcolor="<?=$altbg1?>"><?=$lang_attachmanwheredaysold?></td>
-		<td bgcolor="<?=$altbg2?>"><input type="text" name="daysold" size="20" 
+		<td class="tablerow"
+bgcolor="<?php echo $altbg1?>"><?php echo $lang_attachmanwheredaysold?></td>
+		<td bgcolor="<?php echo $altbg2?>"><input type="text" name="daysold" size="20"
 /></td>
 		</tr>
 		</table>
 		</td></tr></table><br>
-		<center><input type="submit" name="searchsubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
+		<center><input type="submit" name="searchsubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
 		</form>
 
 		</td>
 		</tr>
-		<?
+		<?php
 	}
 	if($searchsubmit) {
 		?>
-		<tr bgcolor="<?=$altbg2?>">
+		<tr bgcolor="<?php echo $altbg2?>">
 		<td align="center">
 		<br />
 		<form method="post" action="cp2.php?action=attachments">
-		<table cellspacing="0" cellpadding="0" border="0" width="93%" 
+		<table cellspacing="0" cellpadding="0" border="0" width="93%"
 align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 
-		<table border="0" cellspacing="<?=$borderwidth?>" 
-cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>"
+cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header" colspan="6"><?=$lang_textattachsearchresults?></td>
+		<td class="header" colspan="6"><?php echo $lang_textattachsearchresults?></td>
 		</tr>
 		<tr>
 		<td class="header" width="4%" align="center">?</td>
-		<td class="header" width="25%"><?=$lang_textfilename?></td>
-		<td class="header" width="29%"><?=$lang_textauthor?></td>
-		<td class="header" width="27%"><?=$lang_textinthread?></td>
-		<td class="header" width="10%"><?=$lang_textfilesize?></td>
-		<td class="header" width="5%"><?=$lang_textdownloads?></td>
+		<td class="header" width="25%"><?php echo $lang_textfilename?></td>
+		<td class="header" width="29%"><?php echo $lang_textauthor?></td>
+		<td class="header" width="27%"><?php echo $lang_textinthread?></td>
+		<td class="header" width="10%"><?php echo $lang_textfilesize?></td>
+		<td class="header" width="5%"><?php echo $lang_textdownloads?></td>
 
 
 		</tr>
-		<?
+		<?php
 		if($forumprune != "" && $forumprune != "$lang_textall") {
 			$queryforum = "AND p.fid='$forumprune' ";
 		}
@@ -1456,34 +1456,34 @@ cellpadding="<?=$tablespace?>" width="100%">
 			$attachment[filename] = stripslashes($attachment[filename]);
 			?>
 			<tr>
-			<td bgcolor="<?=$altbg1?>" class="tablerow" align="center" valign="middle"><a href="cp2.php?action=delete_attachment&amp;aid=<?=$attachment[aid]?>">Delete</a>
-			<td bgcolor="<?=$altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?=$attachment[aid]?>" value="<?=$attachment[filename]?>"><br><small><a href="viewthread.php?action=attachment&tid=<?=$attachment[tid]?>&pid=<?=$attachment[pid]?>"><?=$lang_textdownload?></a></td>
-			<td bgcolor="<?=$altbg2?>" class="tablerow" valign="top"><?=$attachment[author]?></td>
-			<td bgcolor="<?=$altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?=$attachment[tid]?>"><?=$attachment[tsubject]?></a><br><small><?=$lang_textinforum?> <a href="forumdisplay.php?fid=<?=$attachment[fid]?>"><?=$attachment[fname]?></a></small></td>
-			<td bgcolor="<?=$altbg2?>" class="tablerow" valign="top" align="center"><?=$attachsize?></td>
-			<td bgcolor="<?=$altbg2?>" class="tablerow" valign="top" align="center"><?=$attachment[downloads]?></td>
+			<td bgcolor="<?php echo $altbg1?>" class="tablerow" align="center" valign="middle"><a href="cp2.php?action=delete_attachment&amp;aid=<?php echo $attachment[aid]?>">Delete</a>
+			<td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment[aid]?>" value="<?php echo $attachment[filename]?>"><br><small><a href="viewthread.php?action=attachment&tid=<?php echo $attachment[tid]?>&pid=<?php echo $attachment[pid]?>"><?php echo $lang_textdownload?></a></td>
+			<td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment[author]?></td>
+			<td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment[tid]?>"><?php echo $attachment[tsubject]?></a><br><small><?php echo $lang_textinforum?> <a href="forumdisplay.php?fid=<?php echo $attachment[fid]?>"><?php echo $attachment[fname]?></a></small></td>
+			<td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachsize?></td>
+			<td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top" align="center"><?php echo $attachment[downloads]?></td>
 			</tr>
-			<?
+			<?php
 
 		}
 		?>
 		</table>
 		</td></tr></table><br>
-		<center><input type="submit" name="deletesubmit" 
-value="<?=$lang_textsubmitchanges?>" /></center>
-		<input type="hidden" name="filename" value="<?=$filename?>">
-		<input type="hidden" name="author" value="<?=$author?>">
-		<input type="hidden" name="forumprune" value="<?=$forumprune?>">
-		<input type="hidden" name="sizeless" value="<?=$sizeless?>">
-		<input type="hidden" name="sizemore" value="<?=$sizemore?>">
-		<input type="hidden" name="dlcountless" value="<?=$dlcountless?>">
-		<input type="hidden" name="dlcountmore" value="<?=$dlcountmore?>">
-		<input type="hidden" name="daysold" value="<?=$daysold?>">
+		<center><input type="submit" name="deletesubmit"
+value="<?php echo $lang_textsubmitchanges?>" /></center>
+		<input type="hidden" name="filename" value="<?php echo $filename?>">
+		<input type="hidden" name="author" value="<?php echo $author?>">
+		<input type="hidden" name="forumprune" value="<?php echo $forumprune?>">
+		<input type="hidden" name="sizeless" value="<?php echo $sizeless?>">
+		<input type="hidden" name="sizemore" value="<?php echo $sizemore?>">
+		<input type="hidden" name="dlcountless" value="<?php echo $dlcountless?>">
+		<input type="hidden" name="dlcountmore" value="<?php echo $dlcountmore?>">
+		<input type="hidden" name="daysold" value="<?php echo $daysold?>">
 		</form>
 
 		</td>
 		</tr>
-		<?
+		<?php
 	}
 	if($deletesubmit) {
 		if($forumprune != "" && $forumprune != "$lang_textall") {
@@ -1536,45 +1536,45 @@ value="<?=$lang_textsubmitchanges?>" /></center>
 }
 echo "</table></td></tr></table>";
 
-if($action == "cplog") { 
-?> 
-<tr bgcolor="<?=$altbg2?>"> 
-<td align="center"> 
-<br /> 
-<table cellspacing="0" cellpadding="0" border="0" width="500" align="center"> 
-<tr><td bgcolor="<?=$bordercolor?>"> 
+if($action == "cplog") {
+?>
+<tr bgcolor="<?php echo $altbg2?>">
+<td align="center">
+<br />
+<table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%"> 
+<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
-<tr class="header"> 
-<td>Username:</td> 
-<td>Time:</td> 
-<td>URL:</td> 
-</tr> 
-<? 
-$logcontents = file("./cplogfile.php"); 
-$total = count($logcontents); 
+<tr class="header">
+<td>Username:</td>
+<td>Time:</td>
+<td>URL:</td>
+</tr>
+<?php
+$logcontents = file("./cplogfile.php");
+$total = count($logcontents);
 
-for($i = 1; $i < $total; $i++) { 
-$recordinfo = explode("|#||#|", $logcontents[$i]); 
-$date = date($dateformat, $recordinfo[2]); 
-$time = date($timeformat, $recordinfo[2]); 
-$url = "<a href=\"$recordinfo[3]\" target=\"_blank\">$recordinfo[3]</a>"; 
-?> 
-<tr> 
-<td class="tablerow" bgcolor="<?=$altbg1?>"><?=$recordinfo[0]?><br><small>IP: <?=$recordinfo[1]?></small></td> 
-<td class="tablerow" bgcolor="<?=$altbg2?>"><?=$date?> at <?=$time?></td> 
-<td class="tablerow" bgcolor="<?=$altbg1?>"><?=$url?></td> 
-</tr> 
-<? 
-} 
-?> 
-</table> 
-</td></tr></table> 
-</td> 
-</tr> 
-<? 
-} 
+for($i = 1; $i < $total; $i++) {
+$recordinfo = explode("|#||#|", $logcontents[$i]);
+$date = date($dateformat, $recordinfo[2]);
+$time = date($timeformat, $recordinfo[2]);
+$url = "<a href=\"$recordinfo[3]\" target=\"_blank\">$recordinfo[3]</a>";
+?>
+<tr>
+<td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $recordinfo[0]?><br><small>IP: <?php echo $recordinfo[1]?></small></td>
+<td class="tablerow" bgcolor="<?php echo $altbg2?>"><?php echo $date?> at <?php echo $time?></td>
+<td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $url?></td>
+</tr>
+<?php
+}
+?>
+</table>
+</td></tr></table>
+</td>
+</tr>
+<?php
+}
 
 
 end_time();
@@ -1599,10 +1599,10 @@ function readFileAsINI($filename) {
 			$key = $temp[0];
 			$val = $temp[1];
 		}
-		
+
 		$key = trim($key);
 		$val = trim($val);
-		
+
 		$thefile[$key] = $val;
 	}
 	return $thefile;

@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -17,28 +17,28 @@ if(!$ppp || $ppp == '') {
 }
 
 
-if($goto == "lastpost") { 
-	if($tid) { 		
-		$query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'"); 
+if($goto == "lastpost") {
+	if($tid) {
+		$query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'");
 		$posts = $db->result($query, 0);
-	
-	}elseif($fid) { 
+
+	}elseif($fid) {
 		$query = $db->query("SELECT tid FROM $table_posts WHERE fid='$fid' ORDER by dateline DESC LIMIT 0,1");
 		$tid = $db->result($query, 0);
-		
-		$query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'"); 
+
+		$query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'");
 		$posts = $db->result($query, 0);
 	}
-	
-	
+
+
 	if($posts > $ppp) {
-		$topicpages = $posts / $ppp; 
+		$topicpages = $posts / $ppp;
 		$topicpages = ceil($topicpages);
 	}else{
 		$topicpages=1;
 	}
-	
-	header("Location: viewthread.php?tid=$tid&page=$topicpages#bottom"); 
+
+	header("Location: viewthread.php?tid=$tid&page=$topicpages#bottom");
 	exit;
 }
 
@@ -95,7 +95,7 @@ if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum[password] != "" 
 	$url = "forumdisplay.php?fid=$fid&action=pwverify";
 	eval("\$pwform = \"".template("forumdisplay_password")."\";");
 	echo $pwform;
-	
+
 	end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -156,7 +156,7 @@ if(!$action) {
         $multipage = multi($num, $ppp, $page, $mpurl);
 
 // Start polls
-if($thread[pollopts] != "" && $forum[pollstatus] != "off" && $thread[closed] != "yes") { 
+if($thread[pollopts] != "" && $forum[pollstatus] != "off" && $thread[closed] != "yes") {
         $thread[pollopts] = str_replace("\n", "", $thread[pollopts]);
         $pollops = explode("#|#", $thread[pollopts]);
 
@@ -226,7 +226,7 @@ if($thread[pollopts] != "" && $forum[pollstatus] != "off" && $thread[closed] != 
 	$thisbg = $altbg2;
 	$querypost = $db->query("SELECT a.*, p.*, m.*,w.time FROM $table_posts p LEFT JOIN $table_members m ON m.username=p.author LEFT JOIN $table_attachments a ON a.pid=p.pid LEFT JOIN $table_whosonline w ON p.author=w.username WHERE p.fid='$fid' AND p.tid='$tid' ORDER BY dateline LIMIT $start_limit, $ppp");
 	while($post = $db->fetch_array($querypost)) {
-	$post[avatar] = eregi_replace("javascript:", "java script:", $post[avatar]); 
+	$post[avatar] = eregi_replace("javascript:", "java script:", $post[avatar]);
 
 		if($post[time] != "" && $post[author] != "xguest123"){
 			$onlinenow = $lang_memberison;
@@ -284,7 +284,7 @@ if($thread[pollopts] != "" && $forum[pollstatus] != "off" && $thread[closed] != 
                         } else {
 				eval("\$msn = \"".template("viewthread_post_msn")."\";");
                         }
-                        
+
                         if($post[yahoo] == "") {
 				$yahoo = "";
 			}else{
@@ -430,7 +430,7 @@ if($thread[pollopts] != "" && $forum[pollstatus] != "off" && $thread[closed] != 
 				}else{
 					$attachsize = $attachsize . "b";
 				}
-				
+
                                 $downloadcount = $post[downloads];
                                 if($downloadcount == "") {
                                         $downloadcount = 0;

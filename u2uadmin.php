@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -61,17 +61,17 @@ if(!$action || $action == "") {
 		if($message[subject] == "") {
 			$message[subject] = "&lt;$lang_textnosub&raquo;";
 		}
-		
+
 		if ($message[readstatus] == "yes") {
 			$read = "$lang_textread";
 		} else {
 			$read = "$lang_textunread";
 		}
-	
+
 		if ($folder=="outbox") {
 			$message[msgfrom] = $message[msgto];
 		}
-	
+
 		eval("\$messages .= \"".template("u2u_row_admin")."\";");
 	}
 	eval("\$u2u = \"".template("u2u_admin")."\";");
@@ -91,7 +91,7 @@ if($action == "delete") {
 	} else {
 		$msg_field="msgto";
 	}
-	
+
 	if(!$uid) {
 		$query = $db->query("SELECT * FROM $table_u2u WHERE ".$msg_field."='$xmbuser' AND folder='$folder' ORDER BY dateline DESC");
 		while($u2u = $db->fetch_array($query)) {
@@ -153,7 +153,7 @@ function u2umsg($message, $redirect="") {
 	if($redirect != "") {
 		$redirectjs = "<script> function redirect() { window.location.replace(\"$redirect\"); } setTimeout(\"redirect();\", 1250); </script>";
 	}
-	
+
 	eval("\$msg = \"".template("u2u_message")."\";");
 	$u2umsg = stripslashes($u2umsg);
 	echo $msg;

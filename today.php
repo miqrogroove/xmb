@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 
@@ -46,7 +46,7 @@ while($thread = $db->fetch_array($query)) {
 
 	$authorization = privfcheck($forum[private], $forum[userlist]);
 	if($authorization == "true") {
-	
+
 	if(($forum[password] == $_COOKIE["fidpw${forum[fid]}"]) || $forum[password] == "") {
 		if($thread[author] == $lang[textguest]) {
 			$authorlink = $thread[author];
@@ -130,7 +130,7 @@ while($thread = $db->fetch_array($query)) {
 		                $pagelinks .= " .. <a href=\"viewthread.php?tid=$thread[tid]&page=$topicpages\">$topicpages </a>";
 
 		        }
-		        
+
 		        $multipage2 = "(<small>Pages: $pagelinks</small>)";
 		        $pagelinks = "";
 

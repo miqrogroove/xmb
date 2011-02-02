@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -183,9 +183,9 @@ if(!$xmbuser && $forums[guestposting] == "on") {
 if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrator" && $status != "Super Administrator") {
         eval("\$header = \"".template("header")."\";");
         echo $header;
-        
+
         echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
-        
+
         end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -194,7 +194,7 @@ if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrat
         eval("\$header = \"".template("header")."\";");
         echo $header;
         echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
-        
+
         end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -203,7 +203,7 @@ if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrat
         eval("\$header = \"".template("header")."\";");
         echo $header;
         echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
-        
+
         end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -214,7 +214,7 @@ if($posterror) {
         eval("\$header = \"".template("header")."\";");
         echo $header;
         echo "<center><span class=\"mediumtxt \">$posterror</span></center>";
-        
+
         end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -226,7 +226,7 @@ if($forums[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forums[password] != "
         echo $header;
         eval("\$pwform = \"".template("forumdisplay_password")."\";");
         echo $pwform;
-        
+
         end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -311,7 +311,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_badname</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -324,7 +324,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -335,7 +335,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_bannedmessage</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -348,7 +348,7 @@ if($action == "newthread") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_textnoguestposting</span></center>";
-                        
+
                         end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -358,7 +358,7 @@ if($action == "newthread") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_textnosubject</span></center>";
-                        
+
                         end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -371,7 +371,7 @@ if($action == "newthread") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -380,7 +380,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span></center>";
-                                
+
                                 end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -389,7 +389,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span><center>";
-        	
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -408,7 +408,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_floodprotect $floodlink $lang_tocont</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -427,7 +427,7 @@ if($action == "newthread") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_attachtoobig</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -452,12 +452,12 @@ if($action == "newthread") {
 
                 $thatime = time();
                 $subject = checkInput($subject, 'no', 'no', '');
-                
+
                 $db->query("INSERT INTO $table_threads VALUES ('', '$fid', '$subject', '$posticon', '$thatime|$username', '0', '0', '$username', '', '', '$pollanswers')");
                 $tid = $db->insert_id();
-                
+
                 $message = checkInput($message, 'no', $allowhtml, '');
-                
+
                 $db->query("INSERT INTO $table_posts VALUES ('$fid', '$tid', '', '$username', '$message', '$subject', '$thatime', '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
                 $pid = $db->insert_id();
                 // Insert Attachment if there is one
@@ -467,7 +467,7 @@ if($action == "newthread") {
 					foreach($ext as $name => $var) {
 						if($var == $extension){
 							$attachedfile = base64_decode($attachedfile);
-						}	
+						}
 					}
                     $db->query("INSERT INTO $table_attachments VALUES ('', '$tid', '$pid', '$attach_name', '$attach_type', '$attach_size', '$attachedfile', '0')");
                 }
@@ -503,13 +503,13 @@ if($action == "newthread") {
                 eval("\$header = \"".template("header")."\";");
                 echo $header;
                 echo "<center><span class=\"mediumtxt \">$lang_postmsg</span></center>";
-                
-                
-                $query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'"); 
+
+
+                $query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'");
 		$posts = $db->result($query, 0);
-					
+
 		if($posts > $ppp) {
-			$topicpages = $posts / $ppp; 
+			$topicpages = $posts / $ppp;
 			$topicpages = ceil($topicpages);
 		}else{
 			$topicpages=1;
@@ -517,11 +517,11 @@ if($action == "newthread") {
                 ?>
                 <script>
                 function redirect() {
-                window.location.replace("viewthread.php?tid=<?=$tid?>&page=<?=$topicpages?>");
+                window.location.replace("viewthread.php?tid=<?php echo $tid?>&page=<?php echo $topicpages?>");
                 }
                 setTimeout("redirect();", 1250);
                 </script>
-                <?
+                <?php
         }
 }
 
@@ -542,7 +542,7 @@ if($action == "reply") {
         			eval("\$header = \"".template("header")."\";");
 				echo $header;
         			echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -599,7 +599,7 @@ if($action == "reply") {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
 			echo "<center><span class=\"mediumtxt \">$lang_postnothing</span></center>";
-	
+
 			end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -616,7 +616,7 @@ if($action == "reply") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_badname</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -629,7 +629,7 @@ if($action == "reply") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
-        	
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -640,7 +640,7 @@ if($action == "reply") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_bannedmessage</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -653,7 +653,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_textnoguestposting</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -667,7 +667,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -676,7 +676,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -685,7 +685,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_postpermerr</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -705,7 +705,7 @@ if($action == "reply") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_floodprotect $floodlink $lang_tocont</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -728,7 +728,7 @@ if($action == "reply") {
                                 eval("\$header = \"".template("header")."\";");
                                 echo $header;
                                 echo "<center><span class=\"mediumtxt \">$lang_attachtoobig</span></center>";
-        
+
         			end_time();
 				eval("\$footer = \"".template("footer")."\";");
 				echo $footer;
@@ -743,7 +743,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">No posting is allowed on announcements!</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -753,7 +753,7 @@ if($action == "reply") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_closedmsg</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -764,7 +764,7 @@ if($action == "reply") {
 			$message = checkInput($message, 'no', $allowhtml, '');
 
                         // Start Subsciptions
-                        
+
                         $query = $db->query("SELECT dateline FROM $table_posts WHERE tid='$tid' ORDER BY dateline DESC LIMIT 1");
                         $lp = $db->fetch_array($query);
                         $threadurl = $boardurl;
@@ -774,7 +774,7 @@ if($action == "reply") {
                         while($subs = $db->fetch_array($subquery)) {
                                 mail("$subs[email]", "$lang_textsubsubject $threadname", "$username $lang_textsubbody \n$threadurl", "From: $bbname <$adminemail>");
                         }
-                        
+
                         // End Subscriptions
                         // Auto subscribe options
                         if($emailnotify == "yes") {
@@ -783,7 +783,7 @@ if($action == "reply") {
 					$db->query("INSERT INTO $table_favorites VALUES ('$tid', '$username', 'subscription')");
 				}
 			}
-                        
+
                         $db->query("INSERT INTO $table_posts VALUES ('$fid', '$tid', '', '$username', '$message', '$subject', '$thatime', '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
                         $pid = $db->insert_id();
 
@@ -796,7 +796,7 @@ if($action == "reply") {
 							$attachedfile = base64_decode($attachedfile);
 						}
 					}
-                	
+
 					$db->query("INSERT INTO $table_attachments VALUES ('', '$tid', '$pid', '$attach_name', '$attach_type', '$attach_size', '$attachedfile', '0')");
                 }
                         $db->query("UPDATE $table_threads SET lastpost='$thatime|$username', replies=replies+1 WHERE (tid='$tid' AND fid='$fid') OR closed='moved|$tid'");
@@ -814,21 +814,21 @@ if($action == "reply") {
                 eval("\$header = \"".template("header")."\";");
                 echo $header;
                 echo "<center><span class=\"mediumtxt \">$lang_replymsg</span></center>";
-                
-                $query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'"); 
+
+                $query = $db->query("SELECT count(*) FROM $table_posts WHERE tid='$tid'");
 		$posts = $db->result($query, 0);
-							
+
 		if($posts > $ppp) {
-			$topicpages = $posts / $ppp; 
+			$topicpages = $posts / $ppp;
 			$topicpages = ceil($topicpages);
 		}else{
 			$topicpages=1;
 		}
-		
+
 		?>
 		<script>
 			function redirect() {
-			window.location.replace("viewthread.php?tid=<?=$tid?>&page=<?=$topicpages?>");
+			window.location.replace("viewthread.php?tid=<?php echo $tid?>&page=<?php echo $topicpages?>");
 			}
 			setTimeout("redirect();", 1250);
                 </script>
@@ -848,7 +848,7 @@ if($action == "edit") {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
 			echo "$lang_privforummsg";
-	
+
 			end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -861,16 +861,16 @@ if($action == "edit") {
 			$url = "viewthread.php?tid=$tid&action=pwverify";
 			eval("\$pwform = \"".template("forumdisplay_password")."\";");
 			echo $pwform;
-	
+
 			end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
 			exit;
 		}
-		
+
                 $query = $db->query("SELECT * FROM $table_posts WHERE pid='$pid' AND tid='$tid' AND fid='$fid'");
 		$postinfo = $db->fetch_array($query);
-		
+
                 if($postinfo[usesig] == "yes") {
                         $checked = "checked=\"checked\"";
                 }
@@ -925,7 +925,7 @@ if($action == "edit") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_badname</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -938,7 +938,7 @@ if($action == "edit") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -949,7 +949,7 @@ if($action == "edit") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_bannedmessage</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -963,7 +963,7 @@ if($action == "edit") {
 
                 $subject = addslashes($subject);
 
-                
+
                 $status1 = modcheck($status, $username, $fid, $table_forums);
                 if($status == "Super Moderator") {
                         $status1 = "Moderator";
@@ -990,7 +990,7 @@ if($action == "edit") {
                 		$db->query("DELETE FROM $table_posts WHERE pid='$pid'");
                 		updateforumcount($fid);
 				updatethreadcount($tid);
-				
+
                         } elseif($delete == "yes" && $isfirstpost[pid] == $pid) {
                                 if($status == "Administrator" || $status == "Super Administrator" || $status == "Moderator" || $username == $orig[author]) {
 
@@ -1010,7 +1010,7 @@ if($action == "edit") {
                         eval("\$header = \"".template("header")."\";");
                         echo $header;
                         echo "<center><span class=\"mediumtxt \">$lang_noedit</span></center>";
-        
+
         		end_time();
 			eval("\$footer = \"".template("footer")."\";");
 			echo $footer;
@@ -1019,37 +1019,37 @@ if($action == "edit") {
                 eval("\$header = \"".template("header")."\";");
                 echo $header;
                 echo "<center><span class=\"mediumtxt \">$lang_editpostmsg</span></center>";
-		
+
 		if($threaddelete != 'yes'){
 			$query =$db->query("SELECT COUNT(*) FROM $table_posts WHERE pid<=$pid AND tid='$tid' AND fid='$fid'");
 			$post = $db->result($query,0);
-			$postsnum = $post; 
-		
-			if($postsnum > $ppp) { 
-				$posts = $postsnum; 
-				$topicpages = $posts / $ppp; 
-				$topicpages = ceil($topicpages); 
-			} 
-	
+			$postsnum = $post;
+
+			if($postsnum > $ppp) {
+				$posts = $postsnum;
+				$topicpages = $posts / $ppp;
+				$topicpages = ceil($topicpages);
+			}
+
 			?>
 			<script>
 			function redirect()
 			{
-			window.location.replace("viewthread.php?tid=<?=$tid?>&page=<?=$topicpages?>#pid<?=$pid?>");
+			window.location.replace("viewthread.php?tid=<?php echo $tid?>&page=<?php echo $topicpages?>#pid<?php echo $pid?>");
 			}
 			setTimeout("redirect();", 1250);
 			</script>
-			<?
+			<?php
 		}else{
 			?>
 			<script>
 			function redirect()
 			{
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 			}
 			setTimeout("redirect();", 1250);
 			</script>
-			<?
+			<?php
 		}
         }
 }

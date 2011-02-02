@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -46,7 +46,7 @@ function loadtemplates($names) {
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies="yes", $allowhtml="yes", $allowbbcode="yes", $allowimgcode="yes") {
 	global $imgdir, $bordercolor, $table_words, $table_forums, $table_smilies, $db, $smdir, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
-	
+
 	if($allowhtml != 'yes'){
 		$message = str_replace("<", "&lt;", $message);
 		$message = str_replace(">", "&gt;", $message);
@@ -59,7 +59,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies="yes"
 				$message = str_replace($find, $replace, $message);
 		}
 	}
-	
+
 	if(($allowsmilies != 'no' && $allowsmilies != 'off') && ($smileyoff != 'yes' && $smileyoff != 'off')) {
 		if($smiliesnum > 0) {
 			reset($smiliecache);
@@ -71,8 +71,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies="yes"
 
 	if(!($allowbbcode == 'no' || $allowbcode == 'off') && !($bbcodeoff == 'yes' || $bbcodeoff == 'off')) {
 		$message = stripslashes($message);
-		
-		
+
+
 		$message = str_replace("[b]", "<b>", $message);
 		$message = str_replace("[/b]", "</b>", $message);
 		$message = str_replace("[i]", "<i>", $message);
@@ -102,40 +102,40 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies="yes"
 		$message = str_replace("[/list=A]","</ol>",$message);
 		$message = str_replace("[credits]", "XMB 1.8 Main Developers - Tularis, Kathryl, Richard, IT, RevMac For More Information On Other Staff - Visit XMBForum.com",$message);
 		$message = str_replace("[*]","<li>",$message);
-		$message = str_replace("<br />"," <br />",$message); 
+		$message = str_replace("<br />"," <br />",$message);
 		$message = str_replace("[buildedition]","<b>2120211PM</b>",$message);
-		
-		
-		
+
+
+
 		$message = eregi_replace("(^|[>[:space:]\n])([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])([<[:space:]\n]|$)","\\1<a href=\"\\2://\\3\\4\" target=\"_blank\">\\2://\\3\\4</a>\\5", $message);
-		
+
 		$message = eregi_replace("\\[color=([^\\[]*)\\]([^\\[]*)\\[/color\\]","<font color=\"\\1\">\\2</font>",$message);
 		$message = eregi_replace("\\[size=([^\\[]*)\\]([^\\[]*)\\[/size\\]","<font size=\"\\1\">\\2</font>",$message);
 		$message = eregi_replace("\\[font=([^\\[]*)\\]([^\\[]*)\\[/font\\]","<font face=\"\\1\">\\2</font>",$message);
 		$message = eregi_replace("\\[align=([^\\[]*)\\]([^\\[]*)\\[/align\\]","<p align=\"\\1\">\\2</p>",$message);
-		
-		
+
+
 		$patterns = array();
 		$replacements = array();
-		
+
 		$patterns[0] = "#\[url\]([a-z]+?://){1}(.*?)\[/url\]#si";
 		$replacements[0] = '<a href="\1\2" target="_blank">\1\2</a>';
-		
+
 		$patterns[1] = "#\[url\](.*?)\[/url\]#si";
 		$replacements[1] = '<a href="http://\1" target="_blank">\1</a>';
-		
+
 		$patterns[2] = "#\[url=([a-z]+?://){1}(.*?)\](.*?)\[/url\]#si";
 		$replacements[2] = '<a href="\1\2" target="_blank">\3</a>';
-		
+
 		$patterns[3] = "#\[url=(.*?)\](.*?)\[/url\]#si";
 		$replacements[3] = '<a href="http://\1" target="_blank">\2</a>';
-		
+
 		$patterns[4] = "#\[email\](.*?)\[/email\]#si";
 		$replacements[4] = '<a href="mailto:\1">\1</a>';
-		
+
 		$patterns[5] = "#\[email=(.*?){1}(.*?)\](.*?)\[/email\]#si";
 		$replacements[5] = '<a href="mailto:\1\2">\3</a>';
-		
+
 		$message = preg_replace($patterns, $replacements, $message);
 		$message = addslashes($message);
 
@@ -174,7 +174,7 @@ function modcheck($status, $username, $fid) {
 
 function privfcheck($private, $userlist) {
 	global $status, $xmbuser, $hideprivate;
-	
+
 	if($private == "2" && ($status == "Administrator" || $status == "Super Administrator")) {
 		return true;
 	} elseif($private == "3" && ($status == "Administrator" || $status == "Moderator" || $status == "Super Moderator" || $status == "Super Administrator")) {
@@ -217,7 +217,7 @@ function forum($forum, $template) {
 		$lastpost = "$lang_textnever";
 		$lastpostrow = "$lang_textnever";
 	}
-	
+
 	$lastvisit2 -= 540;
 	if($lastvisit2 < $dalast) {
 		$folder = "<img src=\"$imgdir/red_folder.gif\">";
@@ -246,12 +246,12 @@ function forum($forum, $template) {
 		}
 		eval("\$foruminfo .= \"".template("$template")."\";");
 	}
-	
+
 	$foruminfo = stripslashes($foruminfo);
 	$dalast = "";
 	$fmods = "";
 	$authorization = "";
-	
+
 	return $foruminfo;
 }
 
@@ -327,9 +327,9 @@ function printsetting1($setname, $varname, $check1, $check2) {
 	$altbg1 = $GLOBALS["altbg1"];
 	$altbg2 = $GLOBALS["altbg2"];
 	?>
-	<tr><td class="tablerow" bgcolor="<?=$altbg1?>"><?=$setname?></td>
-	<td class="tablerow" bgcolor="<?=$altbg2?>"><select name="<?=$varname?>">
-	<option value="on" <?=$check1?>><?=$lang_texton?></option><option value="off" <?=$check2?>><?=$lang_textoff?></option>
+	<tr><td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $setname?></td>
+	<td class="tablerow" bgcolor="<?php echo $altbg2?>"><select name="<?php echo $varname?>">
+	<option value="on" <?php echo $check1?>><?php echo $lang_texton?></option><option value="off" <?php echo $check2?>><?php echo $lang_textoff?></option>
 	</select></td></tr>
 	<?php
 }
@@ -339,8 +339,8 @@ function printsetting2($setname, $varname, $value, $size) {
 	$altbg2 = $GLOBALS["altbg2"];
 	?>
 	<tr>
-	<td class="tablerow" bgcolor="<?=$altbg1?>"><?=$setname?></td>
-	<td class="tablerow" bgcolor="<?=$altbg2?>"><input type="text"  size="<?=$size?>" value="<?=$value?>" name="<?=$varname?>" /></td>
+	<td class="tablerow" bgcolor="<?php echo $altbg1?>"><?php echo $setname?></td>
+	<td class="tablerow" bgcolor="<?php echo $altbg2?>"><input type="text"  size="<?php echo $size?>" value="<?php echo $value?>" name="<?php echo $varname?>" /></td>
 	</tr>
 	<?php
 }
@@ -350,17 +350,17 @@ function noaccess($message) {
 	while(list($key, $val) = each($GLOBALS)){
 		$$key = $val;
 	}
-	
+
 	loadtemplates("css");
 	eval("\$css = \"".template("css")."\";");
 
 	eval("\$header = \"".template("header")."\";");
 	echo $header;
 	?>
-	
-	<table cellspacing="0" cellpadding="0" border="0" width="<?=$tablewidth?>" align="center">
-	<tr><td class="mediumtxt"><center><?=$message?></center></td></tr></table>
-	
+
+	<table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
+	<tr><td class="mediumtxt"><center><?php echo $message?></center></td></tr></table>
+
 	<?php
 	end_time();
 	eval("\$footer = \"".template("footer")."\";");
@@ -372,16 +372,16 @@ function updateforumcount($fid) {
 	global $db, $table_posts, $table_forums, $table_threads;
 	$query = $db->query("SELECT count(pid) FROM $table_posts WHERE fid='$fid'");
 	$postcount = $db->result($query, 0);
-	
+
 	$query = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$fid' AND closed != 'moved'");
 	$threadcount = $db->result($query, 0);
-	
+
 	// Count posts in subforums.
 	$query = $db->query("SELECT fid FROM $table_forums WHERE fup='$fid'");
 	while($children = $db->fetch_array($query)) {
 		$query = $db->query("SELECT count(pid) FROM $table_posts WHERE fid='$children[fid]'");
 		$postcount += $db->result($query, 0);
-	
+
 		$query = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$fid' AND closed != 'moved'");
 		$threadcount += $db->result($query, 0);
 	}
@@ -426,30 +426,30 @@ function smcwcache() {
 
 function checkInput($input, $striptags='yes', $allowhtml='no', $word=''){
 	// Function generously donated by FiXato
-	
+
 	$input = trim($input);
 	if($striptags != 'no'){
 		$input = strip_tags($input);
 	}
-	
+
 	if($allowhtml != 'yes' && $allowhtml != 'on'){
 		$input = htmlentities($input,ENT_QUOTES);
 	}
 	if($word != "")	{
 		$input = str_replace($word, "_".$word, $input);
 	}
-	
+
 	return $input;
 }
 
 function end_time() {
 	global $starttime, $totaltime;
-	
+
 	$mtime2 = explode(" ", microtime());
 	$endtime = $mtime2[1] + $mtime2[0];
 	$totaltime = ($endtime - $starttime);
 	$totaltime = number_format($totaltime, 7);
-	
+
 	return $totaltime;
 }
 ?>

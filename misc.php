@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -173,7 +173,7 @@ if($action == "search") {
                 	                $date = date("$dateformat",$post[dateline]);
                 	                $time = date("$timecode",$post[dateline]);
                 	                $poston = "$date $lang_textat $time";
-	
+
                 	                $post[tsubject] = stripslashes($post[tsubject]);
                 	                $postcount++;
                 	                eval("\$searchresults .= \"".template("misc_search_results_row")."\";");
@@ -183,7 +183,7 @@ if($action == "search") {
                	if($postcount == "0" || !$postcount) {
                	        eval("\$searchresults = \"".template("misc_search_results_none")."\";");
                 }
-                
+
                 eval("\$search = \"".template("misc_search_results")."\";");
                 $search = stripslashes($search);
                 echo $search;
@@ -230,7 +230,7 @@ if($action == 'lostpw') {
                 }
                 setTimeout("redirect();", 1250);
                 </script>
-                <?
+                <?php
         }
 }
 
@@ -276,7 +276,7 @@ if($action == 'onlinetoday') {
 	if ($todaymembersnum == 1) {
 	$memontoday = $todaymembersnum . $lang_textmembertoday;
 	} else {
-	$memontoday = $todaymembersnum . $lang_textmemberstoday; 
+	$memontoday = $todaymembersnum . $lang_textmemberstoday;
 	}
 	$todaymembers = ""; while ($memberstoday = $db->fetch_array($query)) {
     	$todaymembers .= "$comma2<a href=\"member.php?action=viewpro&member=".rawurlencode($memberstoday['username'])."\">".$memberstoday['username']."</a>";
@@ -368,8 +368,8 @@ if($action == "list") {
         } else {
                 $querymem = $db->query("SELECT * FROM $table_members WHERE username LIKE '%$srchmem%' ORDER BY $order $desc LIMIT $start_limit, $memberperpage");
         }
-if($staff == "view") { 
-$querymem = $db->query("SELECT * FROM $table_members WHERE status = 'Administrator' OR status = 'Super Moderator' OR status = 'Moderator' OR status ='Super Administrator' ORDER BY regdate"); 
+if($staff == "view") {
+$querymem = $db->query("SELECT * FROM $table_members WHERE status = 'Administrator' OR status = 'Super Moderator' OR status = 'Moderator' OR status ='Super Administrator' ORDER BY regdate");
 }
         while ($member = $db->fetch_array($querymem)) {
 

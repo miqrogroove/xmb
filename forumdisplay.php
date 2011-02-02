@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -114,9 +114,9 @@ $querytop = $db->query("SELECT $dotadd1 t.* FROM $table_threads t $dotadd2 WHERE
 // Start Authorization Checks
 $authorization = privfcheck($forum[private], $forum[userlist]);
 if(!$authorization) {
-	
+
 	echo "<center><div class=\"tablerow\">$lang_privforummsg</div></center>";
-	
+
 	end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -127,7 +127,7 @@ if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum[password] != "")
 	eval("\$pwform = \"".template("forumdisplay_password")."\";");
 	$pwform = stripslashes($pwform);
 	echo $pwform;
-	
+
 	end_time();
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
@@ -185,7 +185,7 @@ while($thread = $db->fetch_array($querytop)) {
 	}else {
 		$folder = $folder;
 	}
-	
+
 	$lastvisit2 += 540;
 	if($dotfolders == "on" && $thread[dotauthor] == $xmbuser && $xmbuser != "") {
 		$folder = "dot_".$folder;
@@ -222,7 +222,7 @@ while($thread = $db->fetch_array($querytop)) {
 	} else {
 		$multipage2 = "";
 	}
-	
+
 	$moved = explode("|", $thread[closed]);
 	if($moved[0] == "moved") {
 		$prefix = "$lang_moved ";
@@ -289,7 +289,7 @@ if($cusdate == "86400") {
 	}
 	if(!$ascdesc) {
 		$ascdesc = "DESC";
-	} 
+	}
 	$querytop = $db->query("SELECT t.*, (substring_index(lastpost, '|',1)+1) lastpostd FROM $table_threads t WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc,lastpostd $ascdesc LIMIT $start_limit, $tpp");
 	$query = $db->query("SELECT count(tid) FROM $table_threads WHERE fid='$fid'");
 	$topicsnum = $db->result($query, 0);

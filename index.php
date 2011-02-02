@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -83,19 +83,19 @@ if(!$gid) {
 		if(!$membercount) {
 			$membercount = "0";
 		}
-		$onlinenum = $guestcount + $membercount; 
+		$onlinenum = $guestcount + $membercount;
 
-		$guestcount = "0"; 
-		$membercount = "0"; 
-		for($mnum=0; $mnum<$onlinenum; $mnum++) { 
-		$online = $member[$mnum]; 
-		if($online[username] == "") { 
-		$guestcount++; 
-		} 
-		else{ 
-		$membercount++; 
-		} 
-		} 
+		$guestcount = "0";
+		$membercount = "0";
+		for($mnum=0; $mnum<$onlinenum; $mnum++) {
+		$online = $member[$mnum];
+		if($online[username] == "") {
+		$guestcount++;
+		}
+		else{
+		$membercount++;
+		}
+		}
 
 
 		if($membercount==0){
@@ -105,7 +105,7 @@ if(!$gid) {
 		}else{
 			$membern = "$membercount Members";
 		}
-		
+
 		if($guestcount==0){
 			$guestn = "No Guests";
 		}elseif($guestcount==1){
@@ -122,22 +122,22 @@ if(!$gid) {
 		$comma = "";
 		for($mnum=0; $mnum<$membercount; $mnum++) {
 			$online = $member[$mnum];
-			if($online[status] == "Administrator") { 
-			$pre = "<b><u>"; 
-			$suf = "</b></u>"; 
-			} 
-			elseif($online[status] == "Super Administrator") { 
-			$pre = "<i><b><u>"; 
-			$suf = "</i></b></u>"; 
-			} 
-			elseif($online[status] == "Super Moderator") { 
-			$pre = "<i><b>"; 
-			$suf = "</i></b>"; 
-			} 
-			elseif($online[status] == "Moderator") { 
-			$pre = "<b>"; 
-			$suf = "</b>"; 
-			} 
+			if($online[status] == "Administrator") {
+			$pre = "<b><u>";
+			$suf = "</b></u>";
+			}
+			elseif($online[status] == "Super Administrator") {
+			$pre = "<i><b><u>";
+			$suf = "</i></b></u>";
+			}
+			elseif($online[status] == "Super Moderator") {
+			$pre = "<i><b>";
+			$suf = "</i></b>";
+			}
+			elseif($online[status] == "Moderator") {
+			$pre = "<b>";
+			$suf = "</b>";
+			}
 			else {
 				$pre = "";
 				$suf = "";
@@ -158,7 +158,7 @@ if(!$gid) {
 	if ($todaymembersnum == 1) {
 	$memontoday = $todaymembersnum . $lang_textmembertoday;
 	} else {
-	$memontoday = $todaymembersnum . $lang_textmemberstoday; 
+	$memontoday = $todaymembersnum . $lang_textmemberstoday;
 	}
 
 	$todaymembers = ""; while ($memberstoday = $db->fetch_array($query)) {

@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<?
+<?php
 require "./config.php";
 require "./functions.php";
 require "./db/$database.php";

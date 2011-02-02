@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -35,7 +35,7 @@ $altbg2, $lang_textmyhome, $lang_texteditpro, $lang_textsubscriptions,
 $lang_textfavorites, $lang_textu2umessenger, $lang_textbuddylist, $lang_helpbar;
 ?>
 <table cellpadding="0" cellspacing="0" border="0"
-bgcolor="<?=$bordercolor?>" width="<?=$tablewidth?>"
+bgcolor="<?php echo $bordercolor?>" width="<?php echo $tablewidth?>"
 align="center"><tr><td>
 <table cellpadding="4" cellspacing="1" border="0" width="100%">
 <tr align="center" class="tablerow">
@@ -79,7 +79,7 @@ window.location.replace("misc.php?action=login");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 exit;
 }
 // Start Profile Editor Code
@@ -346,7 +346,7 @@ window.location.replace("memcp.php");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 }
 // Start Favorites
@@ -378,7 +378,7 @@ window.location.replace("memcp.php?action=favorites");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 if(!$favadd && !$favsubmit) {
 $query = $db->query("SELECT * FROM $table_favorites f, $table_threads t, $table_posts p WHERE f.tid=t.tid AND p.tid=t.tid AND p.subject=t.subject AND f.username='$xmbuser' AND f.type='favorite' ORDER BY t.lastpost DESC");
@@ -429,7 +429,7 @@ window.location.replace("memcp.php?action=favorites");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 }
 // Start Subscriptions
@@ -462,7 +462,7 @@ window.location.replace("memcp.php?action=subscriptions");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 if(!$subadd && !$subsubmit) {
 
@@ -515,7 +515,7 @@ window.location.replace("memcp.php?action=subscriptions");
 }
 setTimeout("redirect();", 1250);
 </script>
-<?
+<?php
 }
 }
 // Load the Default Page

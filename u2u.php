@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -48,11 +48,11 @@ if(!$action || $action == "") {
 		} else {
 			$read = "$lang_textunread";
 		}
-		
+
 		if ($folder=="outbox") {
 			$message[msgfrom]=$message[msgto];
 		}
-		
+
 		eval("\$messages .= \"".template("u2u_row")."\";");
 	}
 	eval("\$u2u = \"".template("u2u")."\";");
@@ -70,7 +70,7 @@ if($action == "send") {
 		echo stripslashes($u2ufooter);
 		exit;
 	}
-	
+
 	$query = $db->query("SELECT count(u2uid) FROM $table_u2u WHERE (msgto='$xmbuser' AND folder='inbox') OR (msgfrom='$xmbuser' AND folder='outbox')");
 	$u2unum = $db->result($query, 0);
 	if($u2unum >= $u2uquota) {
@@ -96,7 +96,7 @@ if($action == "send") {
           				$touser = "$u2u[msgfrom]";
         			}
       			}
-      			
+
       			eval("\$u2usend = \"".template("u2u_send")."\";");
       			echo stripslashes($u2usend);
     		}
@@ -116,7 +116,7 @@ if($action == "send") {
       			$message = str_replace("<","&lt;", $message);
       			$message = str_replace(">","&raquo;", $message);
       			$message = addslashes($message);
-      
+
 			if(eregi(", ", $msgto)){
 				$to = explode(", ", $msgto);
 			      	for($i=0; $i < count($to); $i++){
@@ -146,7 +146,7 @@ if($action == "send") {
 				}else{
 					$msgto = $member['username'];
 				}
-		
+
 				$query = $db->query("SELECT ignoreu2u FROM $table_members WHERE username='$msgto'");
 				while($list = $db->fetch_array($query)){
 					if(eregi(trim($username."(,|$)"), $list[ignoreu2u])) {
@@ -154,7 +154,7 @@ if($action == "send") {
 						exit;
 					}
 				}
-				
+
 				$db->query("INSERT INTO $table_u2u VALUES('', '$msgto', '$self[username]', '" . time() . "', '$subject', '$message', 'inbox', 'yes', 'no')");
 				$db->query("INSERT INTO $table_u2u VALUES('', '$msgto', '$self[username]', '" . time() . "', '$subject', '$message', 'outbox', 'no', 'no')");
 				u2umsg($lang_imsentmsg, "u2u.php");
@@ -169,7 +169,7 @@ if($action == "delete") {
 	} else {
 		$msg_field="msgto";
 	}
-	
+
 	if(!$u2uid) {
 		$query = $db->query("SELECT * FROM $table_u2u WHERE ".$msg_field."='$xmbuser' AND folder='$folder' ORDER BY dateline DESC");
 		while($u2u = $db->fetch_array($query)) {
@@ -213,11 +213,11 @@ if($action == "view") {
 		$dateline = "$u2udate $lang_textat $u2utime";
 		$u2u[subject] = "$lang_textsubject $u2u[subject]";
 		$u2u[message] = postify($u2u[message], "no", "");
-		
+
 		if($u2u[msgfrom] != $xmbuser) {
 			eval("\$refwdlinks = \"".template("u2u_view_refwdlinks")."\";");
 		}
-		
+
 		eval("\$view = \"".template("u2u_view")."\";");
 		echo stripslashes($view);
 	}

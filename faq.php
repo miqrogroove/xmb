@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 
@@ -13,10 +13,10 @@ For license information, please read the license file which came with this editi
 
 require ('./header.php');
 
-if ($tempcache['footer'] != "") { 
-	header("Location: faq.php"); 
-	exit; 
-} 
+if ($tempcache['footer'] != "") {
+	header("Location: faq.php");
+	exit;
+}
 
 loadtemplates('header,faq,faq_usermaint,faq_using,faq_messages,faq_messages_smiley,faq_messages_smilierow,faq_misc,faq_misc_rankrow,footer');
 

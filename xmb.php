@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -44,7 +44,7 @@ $patched = 0;
 // Shows list of patches
 if($list == "patches"){
 	echo "<b><u>List of current patches applied:<br></u></b>";
-	
+
 	for($i=1; $i <= $patched; $i++){
 			echo "<hr><b>$i</b> - $patch[$i]<br>";
 	}

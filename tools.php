@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -32,50 +32,50 @@ if($status != "Administrator" && $status !="Super Administrator") {
 	exit;
 }
 
-$cploc = $HTTP_SERVER_VARS["REQUEST_URI"]; 
+$cploc = $HTTP_SERVER_VARS["REQUEST_URI"];
 
-if(getenv(HTTP_CLIENT_IP)) { 
-	$ip = getenv(HTTP_CLIENT_IP); 
-} elseif(getenv(HTTP_X_FORWARDED_FOR)) { 
-	$ip = getenv(HTTP_X_FORWARDED_FOR); 
-} else { 
-	$ip = getenv(REMOTE_ADDR); 
-} 
+if(getenv(HTTP_CLIENT_IP)) {
+	$ip = getenv(HTTP_CLIENT_IP);
+} elseif(getenv(HTTP_X_FORWARDED_FOR)) {
+	$ip = getenv(HTTP_X_FORWARDED_FOR);
+} else {
+	$ip = getenv(REMOTE_ADDR);
+}
 
-$time = time(); 
+$time = time();
 $string = "$xmbuser|#||#|$ip|#||#|$time|#||#|$cploc\n";
-$filehandle=fopen("./cplogfile.log","a"); 
-flock($filehandle, 2); 
-fwrite($filehandle, $string); 
-fclose($filehandle); 
+$filehandle=fopen("./cplogfile.log","a");
+flock($filehandle, 2);
+fwrite($filehandle, $string);
+fclose($filehandle);
 
 ?>
 
-<table cellspacing="0" cellpadding="0" border="0" width="<?=$tablewidth?>" align="center">
-<tr><td bgcolor="<?=$bordercolor?>">
+<table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
+<tr><td bgcolor="<?php echo $bordercolor?>">
 
-<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 <tr class="header">
-<td colspan="2"><?=$lang_textcp?></td>
+<td colspan="2"><?php echo $lang_textcp?></td>
 </tr>
 
-<tr bgcolor="<?=$altbg1?>" class="tablerow">
+<tr bgcolor="<?php echo $altbg1?>" class="tablerow">
 <td align="center">
-<a href="cp.php?action=settings"><?=$lang_textsettings?></a> - <a href="cp.php?action=forum"><?=$lang_textforums?></a> -
-<a href="cp.php?action=mods"><?=$lang_textmods?></a> - <a href="cp.php?action=members"><?=$lang_textmembers?></a> -
-<a href="cp2.php?action=restrictions"><?=$lang_cprestricted?></a> - <a href="cp.php?action=ipban"><?=$lang_textipban?></a> -
-<a href="cp.php?action=upgrade"><?=$lang_textupgrade?></a> - <a href="cp.php?action=search"><?=$lang_cpsearch?></a><br>
-<a href="cp2.php?action=themes"><?=$lang_themes?></a> - <a href="cp2.php?action=smilies"><?=$lang_smilies?></a> -
-<a href="cp2.php?action=censor"><?=$lang_textcensors?></a> - <a href="cp2.php?action=ranks"><?=$lang_textuserranks?></a> -
-<a href="cp2.php?action=newsletter"><?=$lang_textnewsletter?></a> - <a href="cp2.php?action=prune"><?=$lang_textprune?></a> -
-<a href="cp2.php?action=templates"><?=$lang_templates?></a> - <a href="cp2.php?action=attachments"><?=$lang_textattachman?></a><br>
-<a href="cp2.php?action=cplog"><?=$lang_cplog?></a>
-<br /><tr bgcolor="<?=$altbg2?>" class="tablerow"><td align="center"><a href="tools.php?action=fixttotals"><?=$lang_textfixthread?></a> - <a href="tools.php?action=fixftotals"><?=$lang_textfixmemposts?></a> - <a href="tools.php?action=fixmposts"><?=$lang_textfixposts?></a> - <a href="tools.php?action=updatemoods"><?=$lang_textfixmoods?></a> - <a href="tools.php?action=u2udump"><?=$lang_u2udump?></a> - <a href="tools.php?action=whosonlinedump"><?=$lang_cpwodump?></a>
-<br /><a href="tools.php?action=fixforumthemes"><?=$lang_fixforumthemes?></a>
+<a href="cp.php?action=settings"><?php echo $lang_textsettings?></a> - <a href="cp.php?action=forum"><?php echo $lang_textforums?></a> -
+<a href="cp.php?action=mods"><?php echo $lang_textmods?></a> - <a href="cp.php?action=members"><?php echo $lang_textmembers?></a> -
+<a href="cp2.php?action=restrictions"><?php echo $lang_cprestricted?></a> - <a href="cp.php?action=ipban"><?php echo $lang_textipban?></a> -
+<a href="cp.php?action=upgrade"><?php echo $lang_textupgrade?></a> - <a href="cp.php?action=search"><?php echo $lang_cpsearch?></a><br>
+<a href="cp2.php?action=themes"><?php echo $lang_themes?></a> - <a href="cp2.php?action=smilies"><?php echo $lang_smilies?></a> -
+<a href="cp2.php?action=censor"><?php echo $lang_textcensors?></a> - <a href="cp2.php?action=ranks"><?php echo $lang_textuserranks?></a> -
+<a href="cp2.php?action=newsletter"><?php echo $lang_textnewsletter?></a> - <a href="cp2.php?action=prune"><?php echo $lang_textprune?></a> -
+<a href="cp2.php?action=templates"><?php echo $lang_templates?></a> - <a href="cp2.php?action=attachments"><?php echo $lang_textattachman?></a><br>
+<a href="cp2.php?action=cplog"><?php echo $lang_cplog?></a>
+<br /><tr bgcolor="<?php echo $altbg2?>" class="tablerow"><td align="center"><a href="tools.php?action=fixttotals"><?php echo $lang_textfixthread?></a> - <a href="tools.php?action=fixftotals"><?php echo $lang_textfixmemposts?></a> - <a href="tools.php?action=fixmposts"><?php echo $lang_textfixposts?></a> - <a href="tools.php?action=updatemoods"><?php echo $lang_textfixmoods?></a> - <a href="tools.php?action=u2udump"><?php echo $lang_u2udump?></a> - <a href="tools.php?action=whosonlinedump"><?php echo $lang_cpwodump?></a>
+<br /><a href="tools.php?action=fixforumthemes"><?php echo $lang_fixforumthemes?></a>
 </td>
 </tr>
 
-<?
+<?php
 if(!$action) {
 }
 
@@ -94,7 +94,7 @@ if($action == "fixftotals") {
 
 		$db->query("UPDATE $table_forums SET threads='$threadnum', posts='$postnum' WHERE fid='$forum[fid]'");
 	}
-	
+
 	$navigation .= " &raquo; Tools";
 	echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">Tool Request Completed! Fixed Member Totals</td></tr></table></table>";
 	end_time();
@@ -134,7 +134,7 @@ if($action == "fixmposts") {
 		$postsnum = $db->result($query, 0);
 		$db->query("UPDATE $table_members SET postnum='$postsnum' WHERE username='$mem[username]'");
 	}
-	
+
 	$navigation .= " &raquo; Tools";
 	echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">Tool Request Completed! - Fixed Total Posts</td></tr></table></table>";
 	end_time();

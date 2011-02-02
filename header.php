@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 
@@ -46,12 +46,12 @@ if(!eregi("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", $_SERVER['REMOTE_A
 }
 // Finish IP CHeck
 
-$url_check = Array('status', 'xmbuser', 'xmbpw'); 
-foreach ($url_check as $name) { 
+$url_check = Array('status', 'xmbuser', 'xmbpw');
+foreach ($url_check as $name) {
  	if (eregi($name, $_SERVER['REQUEST_URI'])){
- 		exit(); 
- 	} 
-} 
+ 		exit();
+ 	}
+}
 
 $server = substr_replace($HTTP_SERVER_VARS['SERVER_SOFTWARE'], '', 3, 50);
 
@@ -75,9 +75,9 @@ foreach($tables as $name) {
 
 loadtemplates('css,functions_bbcode');
 
-$currtime1 = time() + (86400*365); 
-$currtime2 = time() + 600; 
-setcookie("xmblva", time(), $currtime1, $cookiepath, $cookiedomain); 
+$currtime1 = time() + (86400*365);
+$currtime2 = time() + 600;
+setcookie("xmblva", time(), $currtime1, $cookiepath, $cookiedomain);
 
 if($xmblvb){
 	$thetime = $xmblvb;
@@ -87,10 +87,10 @@ if($xmblvb){
 	$thetime = 0;
 }
 
-setcookie("xmblvb", $thetime, $currtime2, $cookiepath, $cookiedomain); 
+setcookie("xmblvb", $thetime, $currtime2, $cookiepath, $cookiedomain);
 
-$lastvisit = $thetime; 
-$lastvisit2 = $lastvisit; 
+$lastvisit = $thetime;
+$lastvisit2 = $lastvisit;
 
 $settingsquery = $db->query("SELECT * FROM $table_settings");
 foreach($db->fetch_array($settingsquery) as $key => $val) {
@@ -230,7 +230,7 @@ if($tid && !preg_match("/post.php/i",$_SERVER['REQUEST_URI'])){
                 $location = "$lang_onlineviewpro";
         }elseif($action == "coppa"){
                 $location = "$lang_onlinecoppa";
-        }       
+        }
 }elseif(preg_match("/misc.php/i",$_SERVER['REQUEST_URI'])){
         if($action == "login"){
                 $location = "$lang_onlinelogin";

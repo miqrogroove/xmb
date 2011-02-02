@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -48,7 +48,7 @@ $membersact = $db->result($query, 0);
 
 if($posts == 0 || $members == 0 || $threads == 0 || $forums == 0){
 	$warning = $lang_stats_incomplete;
-	
+
 	eval("\$stats = \"".template("feature_statistics")."\";");
 	$stats = stripslashes($stats);
 	echo $stats;

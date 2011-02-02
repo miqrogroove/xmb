@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -88,11 +88,11 @@ if ($sendsubmit){
 	<script>
 	function redirect()
 	{
-	window.location.replace("viewthread.php?tid=<?=$tid?>");
+	window.location.replace("viewthread.php?tid=<?php echo $tid?>");
 	}
 	setTimeout("redirect();", 1250);
 	</script>
-	<?
+	<?php
 }
 
 end_time();

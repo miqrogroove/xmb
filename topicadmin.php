@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -79,42 +79,42 @@ if($action == "delete") {
 		$delete = stripslashes($delete);
 		echo $delete;
 	}
-	
+
 	if($deletesubmit) {
 		$query = $db->query("SELECT username, password, status FROM $table_members WHERE username='$xmbuser'");
 		$member = $db->fetch_array($query);
 		$status = $member[status];
-		
+
 		if(!$member[username]) {
 			echo "<center><span class=\"mediumtxt \">$lang_badname</span></center>";
 			exit;
 		}
-		
+
 		if($xmbpw != $member[password]) {
 			echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
 			exit;
 		}
-		
+
 		$status1= modcheck($status, $xmbuser, $fid);
-		
+
 		if($status == "Super Moderator" || $status == "Super Administrator") {
 			$status1 = "Moderator";
 		}
-		
+
 		if($status != "Administrator" && $status1 != "Moderator") {
 			echo "<center><span class=\"mediumtxt \">$lang_textnoaction</span></center>";
 			exit;
 		}
-		
+
 		$query = $db->query("SELECT author FROM $table_posts WHERE tid='$tid'");
 		while($result = $db->fetch_array($query)) {
 			$db->query("UPDATE $table_members SET postnum=postnum-1 WHERE username='$result[author]'");
 		}
-		
+
 		$db->query("DELETE FROM $table_threads WHERE tid='$tid'");
 		$db->query("DELETE FROM $table_posts WHERE tid='$tid'");
 		$db->query("DELETE FROM $table_attachments WHERE tid='$tid'");
-		
+
 		if ($forums[type] == "sub"){
 			$query= $db->query("SELECT fup FROM $table_forums WHERE fid='$fid' LIMIT 1");
 			$fup = $db->fetch_array($query);
@@ -122,81 +122,81 @@ if($action == "delete") {
 			updateforumcount($fup[fup]);
 		}else{
 			updateforumcount($fid);
-		}		
-		
+		}
+
 		echo "<center><span class=\"mediumtxt \">$lang_deletethreadmsg</span></center>";
-		
+
 		?>
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
 if($action == "close") {
 	$query = $db->query("SELECT closed FROM $table_threads WHERE fid='$fid' AND tid='$tid'");
 	$closed = $db->result($query, 0);
-	
+
 	if($closed == "yes") {
 		$lang_textclosethread = $lang_textopenthread;
 	}elseif($closed == "") {
 		$lang_textclosethread = $lang_textclosethread;
 	}
-	
+
 	if(!$closesubmit) {
 		eval("\$close = \"".template("topicadmin_openclose")."\";");
 		$close = stripslashes($close);
 		echo $close;
 	}
-	
+
 	if($closesubmit) {
 		$query = $db->query("SELECT username, password, status FROM $table_members WHERE username='$xmbuser'");
 		$member = $db->fetch_array($query);
 		$status = $member[status];
-		
+
 		if(!$member[username]) {
 			echo "<center><span class=\"mediumtxt \">$lang_badname</span></center>";
 			exit;
 		}
-		
+
 		if($xmbpw != $member[password]) {
 			echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
 			exit;
 		}
-		
+
 		$status1= modcheck($status, $xmbuser, $fid);
-		
+
 		if($status == "Super Moderator" || $status == "Super Administrator") {
 			$status1 = "Moderator";
 		}
-		
+
 		if($status != "Administrator" && $status1 != "Moderator") {
 			echo "<center><span class=\"mediumtxt \">$lang_textnoaction</center></span>";
 			exit;
 		}
-		
+
 		if($closed == "yes") {
 			$db->query("UPDATE $table_threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
 		}elseif($closed == "") {
 			$db->query("UPDATE $table_threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
 		}
-		
+
 		echo "<center><span class=\"mediumtxt \">$lang_closethreadmsg</span></center>";
-		
+
 		?>
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -205,15 +205,15 @@ if($action == "move") {
 	if(!$movesubmit) {
 		$forumselect = "<select name=\"moveto\">\n";
 		$queryfor = $db->query("SELECT * FROM $table_forums WHERE fup='' AND type='forum' ORDER BY displayorder");
-		
+
 		while($forum = $db->fetch_array($queryfor)) {
 			$forumselect .= "<option value=\"$forum[fid]\"> &nbsp; &raquo; $forum[name]</option>";
 			$querysub = $db->query("SELECT * FROM $table_forums WHERE fup='$forum[fid]' AND type='sub' ORDER BY displayorder");
-		
+
 			while($sub = $db->fetch_array($querysub)) {
 				$forumselect .= "<option value=\"$sub[fid]\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; $sub[name]</option>";
 			}
-		
+
 			$forumselect .= "<option value=\"\"> </option>";
 		}
 
@@ -266,12 +266,12 @@ if($action == "move") {
 			echo "<center><span class=\"mediumtxt \">$lang_textnoaction</span></center>";
 			exit;
 		}
-	
+
 		if($type == "normal") {
 
 			$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
 			$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
-	
+
 		} else {
 			$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
 			$info = $db->fetch_array($query);
@@ -282,27 +282,27 @@ if($action == "move") {
 			$db->query("UPDATE $table_threads SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
 			$db->query("UPDATE $table_posts SET fid='$moveto' WHERE tid='$tid' AND fid='$fid'");
 		}
-	
+
 		if ($forums[type] == "sub"){
 			$query= $db->query("SELECT fup FROM $table_forums WHERE fid='$fid' LIMIT 1");
 			$fup = $db->fetch_array($query);
 			updateforumcount($fup[fup]);
 		}
-	
+
 		updateforumcount($fid);
 		updateforumcount($moveto);
 		updatethreadcount($tid);
 		echo "<center><span class=\"mediumtxt \">$lang_movethreadmsg</span></center>";
-	
+
 		?>
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -359,12 +359,12 @@ if($action == "top") {
 
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -395,16 +395,16 @@ if($action == "getip") {
 
 		?>
 		<table cellspacing="0" cellpadding="0" border="0" width="60%" align="center">
-		<tr><td bgcolor="<?=$bordercolor?>">
+		<tr><td bgcolor="<?php echo $bordercolor?>">
 		<form method="post" action="cp.php?action=ipban">
-		<table border="0" cellspacing="<?=$borderwidth?>" cellpadding="<?=$tablespace?>" width="100%">
+		<table border="0" cellspacing="<?php echo $borderwidth?>" cellpadding="<?php echo $tablespace?>" width="100%">
 
 		<tr>
-		<td class="header" colspan="3"><?=$lang_textgetip?></td>
+		<td class="header" colspan="3"><?php echo $lang_textgetip?></td>
 		</tr>
-		<tr bgcolor="<?=$altbg2?>">
-		<td class="tablerow"><?=$lang_textyesip?> <b><?=$ipinfo[useip]?></b> - <?=gethostbyaddr($ipinfo[useip])?>
-		<?
+		<tr bgcolor="<?php echo $altbg2?>">
+		<td class="tablerow"><?php echo $lang_textyesip?> <b><?php echo $ipinfo[useip]?></b> - <?php echo gethostbyaddr($ipinfo[useip])?>
+		<?php
 
 		if($status == "Administrator" || $status =="Super Administrator") {
 
@@ -414,7 +414,7 @@ if($action == "getip") {
 
 			if ($result) {
 				$buttontext = $lang_textunbanip;
-	
+
 			for($i=1; $i<=4; ++$i) {
 					$j = "ip$i";
 					if ($result[$j] == -1) {
@@ -422,7 +422,7 @@ if($action == "getip") {
 						$foundmask = 1;
 					}
 				}
-			
+
 				if ($foundmask) {
 					$ipmask = "<b>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</b>";
 					eval($lang_evalipmask);
@@ -432,9 +432,9 @@ if($action == "getip") {
 					$lang_textbannedip = stripslashes($lang_textbannedip);
 					echo $lang_textbannedip;
 				}
-			
+
 				echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
-	
+
 			}else {
 				$buttontext = $lang_textbanip;
 				for($i=1; $i<=4; ++$i) {
@@ -444,10 +444,10 @@ if($action == "getip") {
 			}
 			?>
 			</td>
-			<tr bgcolor="<?=$altbg1?>"><td class="tablerow">
-			<center><input type="submit" name="ipbansubmit" value="<?=$buttontext?>" /></center>
-			
-			<?
+			<tr bgcolor="<?php echo $altbg1?>"><td class="tablerow">
+			<center><input type="submit" name="ipbansubmit" value="<?php echo $buttontext?>" /></center>
+
+			<?php
 		}
 
 		echo "</td></tr></table></td></tr></table></form>";
@@ -478,7 +478,7 @@ if($action == "bump") {
 		}
 
 		$status1= modcheck($status, $xmbuser, $fid);
-		
+
 		if($status == "Super Moderator" || $status == "Super Administrator") {
 			$status1 = "Moderator";
 		}
@@ -496,12 +496,12 @@ if($action == "bump") {
 
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -548,7 +548,7 @@ if($action == "split") {
 		}
 
 		$status1= modcheck($status, $xmbuser, $fid);
-		
+
 		if($status == "Super Moderator" || $status == "Super Administrator") {
 			$status1 = "Moderator";
 		}
@@ -572,7 +572,7 @@ if($action == "split") {
 		while($post = $db->fetch_array($query)) {
 			$move = "move$post[pid]";
 			$move = "${$move}";
-			
+
 
 				$thatime = time();
 				if(!$firstsubject) {
@@ -583,7 +583,7 @@ if($action == "split") {
 			if(!empty($move)){
 				$db->query("UPDATE $table_posts SET tid='$newtid' WHERE pid='$move'");
 				$db->query("UPDATE $table_attachments SET tid='$newtid' WHERE pid='$move'");
-				
+
 				$db->query("UPDATE $table_threads SET replies=replies+1 WHERE tid='$newtid'");
 				$db->query("UPDATE $table_threads SET replies=replies-1 WHERE tid='$tid'");
 			}elseif(!$firstoldpost){
@@ -591,9 +591,9 @@ if($action == "split") {
 					$db->query("UPDATE $table_threads SET subject = 'TEMPORARY SUBJECT'");
 				}
 				$firstoldpost = 1;
-			}		
+			}
 		}
-		
+
 		$query = $db->query("SELECT author FROM $table_posts WHERE tid='$newtid' ORDER BY dateline ASC LIMIT 0,1");
 		$firstauthor = $db->result($query, 0);
 		$query = $db->query("SELECT author, dateline FROM $table_posts WHERE tid='$newtid' ORDER BY dateline DESC LIMIT 0,1");
@@ -611,12 +611,12 @@ if($action == "split") {
 
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
-		
+
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -659,7 +659,7 @@ if($action == "merge") {
 		$replyadd++;
 		$db->query("UPDATE $table_posts SET tid='$tid' WHERE tid='$othertid'");
 		$db->query("UPDATE $table_attachments SET tid='$tid' WHERE tid='$othertid'");
-		
+
 		$db->query("DELETE FROM $table_threads WHERE tid='$othertid'");
 		$db->query("UPDATE $table_threads SET replies=replies+$replyadd WHERE tid='$tid'");
 		$db->query("UPDATE $table_forums SET threads=threads-1 WHERE fid='$fid'");
@@ -671,16 +671,16 @@ if($action == "merge") {
 		$db->query("UPDATE $table_threads SET author='$firstauthor', lastpost='$lastpost[dateline]|$lastpost[author]' WHERE tid='$tid'");
 
 		echo "<center><span class=\"mediumtxt \">$lang_mergethreadmsg</span></center>";
-		
+
 		?>
 		<script>
 		function redirect() {
-			window.location.replace("forumdisplay.php?fid=<?=$fid?>");
+			window.location.replace("forumdisplay.php?fid=<?php echo $fid?>");
 		}
 
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -733,15 +733,15 @@ if($action == "report") {
 
 		echo "<center><span class=\"mediumtxt \">$lang_reportmsg</span></center>";
 		?>
-		
+
 		<script>
 		function redirect() {
-			window.location.replace("viewthread.php?tid=<?=$tid?>");
+			window.location.replace("viewthread.php?tid=<?php echo $tid?>");
 		}
 
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -775,12 +775,12 @@ if($action == "votepoll") {
 
 	<script>
 	function redirect() {
-		window.location.replace("viewthread.php?tid=<?=$tid?>");
+		window.location.replace("viewthread.php?tid=<?php echo $tid?>");
 	}
-	
+
 	setTimeout("redirect();", 1250);
 	</script>
-	<?
+	<?php
 }
 
 end_time();

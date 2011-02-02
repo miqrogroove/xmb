@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 
 XMB 1.8 Partagium
@@ -38,17 +38,17 @@ if($action == "coppa") {
 
 
 if($action == "reg") {
-	$time = time()-86400; // take the date and distract 24 hours from it 
-	$max = 999; // Max. amount of users allowed to register per day 
+	$time = time()-86400; // take the date and distract 24 hours from it
+	$max = 999; // Max. amount of users allowed to register per day
 	$query = $db->query("SELECT count(uid) FROM $table_members WHERE regdate > '$time'");
-	// Select amount of registrations since $time, which is since 24 hours. 
-	while($count = $db->fetch_array($query)){ 
- 		if($count['uid'] > $max){ 
-     			echo "Maximum Registrations per Day Reached, please wait 24 hours."; 
-    			exit(); 
- 		} 
+	// Select amount of registrations since $time, which is since 24 hours.
+	while($count = $db->fetch_array($query)){
+ 		if($count['uid'] > $max){
+     			echo "Maximum Registrations per Day Reached, please wait 24 hours.";
+    			exit();
+ 		}
 	}
-	
+
 	if($regstatus != "on") {
 		eval("\$featureoff = \"".template("misc_feature_notavailable")."\";");
 		eval("\$header = \"".template("header")."\";");
@@ -68,7 +68,7 @@ if($action == "reg") {
 			echo $footer;
 			exit;
 		}
-	
+
 	if(!$regsubmit) {
 		eval("\$header = \"".template("header")."\";");
 		echo $header;
@@ -168,13 +168,13 @@ if($action == "reg") {
 				$query = $db->query("SELECT * FROM $table_members WHERE regip = '$onlineip' AND regdate >= '$time'");
 				if($db->num_rows($query) >= '1'){
 					eval("\$header = \"".template("header")."\";");
-					
+
 					end_time();
-							
+
 					eval("\$footer = \"".template("footer")."\";");
 					$message = "<tr><td><b>$lang_error:</b> ".$lang_reg_today."</td></tr>";
 					eval("\$error = \"".template("error")."\";");
-				
+
 					echo $error;
 					exit;
 				}
@@ -189,21 +189,21 @@ if($action == "reg") {
 
 		$username = trim($username);
 		$query = $db->query("SELECT username$email1 FROM $table_members WHERE username='$username' $email2");
-	
+
 		if($member = $db->fetch_array($query)) {
 			eval("\$header = \"".template("header")."\";");
-			
+
 			end_time();
-					
+
 			eval("\$footer = \"".template("footer")."\";");
-			
+
 			$message = "<b>$lang_error:</b> $lang_alreadyreg";
 			eval("\$error = \"".template("error")."\";");
-			
+
 			echo $error;
 			exit;
 		}
-	
+
 		if($emailcheck == "on"){
 			$chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
 			mt_srand((double)microtime() * 1000000);
@@ -212,7 +212,7 @@ if($action == "reg") {
 			}
 			$password2 = $password;
 		}
-	
+
 		if($password != $password2) {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
@@ -220,22 +220,22 @@ if($action == "reg") {
 			exit;
 		}
 
-		$query = $db->query("SELECT name FROM $table_restricted WHERE name = '$username'"); 
-		if($member = $db->fetch_array($query)) { 
-			eval("\$header = \"".template("header")."\";"); 
-			echo $header; 
-			echo "<center><span class=\"mediumtxt \">$lang_restricted</span></center>"; 
-			exit; 
-		} 
-	
-		$query = $db->query("SELECT name FROM $table_restricted WHERE name='$email'"); 
-		if($member = $db->fetch_array($query)) { 
-			eval("\$header = \"".template("header")."\";"); 
-			echo $header; 
-			echo "<center><span class=\"mediumtxt \">$lang_emailrestricted</span></center>"; 
-			exit; 
-		} 
-	
+		$query = $db->query("SELECT name FROM $table_restricted WHERE name = '$username'");
+		if($member = $db->fetch_array($query)) {
+			eval("\$header = \"".template("header")."\";");
+			echo $header;
+			echo "<center><span class=\"mediumtxt \">$lang_restricted</span></center>";
+			exit;
+		}
+
+		$query = $db->query("SELECT name FROM $table_restricted WHERE name='$email'");
+		if($member = $db->fetch_array($query)) {
+			eval("\$header = \"".template("header")."\";");
+			echo $header;
+			echo "<center><span class=\"mediumtxt \">$lang_emailrestricted</span></center>";
+			exit;
+		}
+
 		if(!strstr($email, "@")) {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
@@ -249,30 +249,30 @@ if($action == "reg") {
 			echo "<center><span class=\"mediumtxt \">$lang_textpwincorrect</span></center>";
 			exit;
 		}
-	
+
 		$query = $db->query("SELECT COUNT(uid) FROM $table_members");
 		$count1 = $db->result($query,0);
-	
+
 		if($count1 != "0") {
 			$status = "Member";
 		}else {
 			$status = "Super Administrator";
 		}
-	
+
 		if($showemail != "yes") {
 			$showemail = "no";
 		}
-	
+
 		if($newsletter != "yes") {
 			$newsletter = "no";
 		}
-	
+
 		$bday = "$month $day, $year";
-	
+
 		if($month == "" || $day == "" || $year == "") {
 			$bday = "";
 		}
-		
+
 		$avatar = checkInput($avatar, "yes", "no", "javascript");
 		$locationnew = checkInput($locationnew, "yes", "no", "javascript");
 		$icq = checkInput($icq, "yes", "no", "javascript:");
@@ -290,14 +290,14 @@ if($action == "reg") {
 
 		$password = md5($password);
 	$db->query("INSERT INTO $table_members VALUES ('', '$username', '$password', '" . time() . "', '0', '$email', '$site', '$aim', '$status',  '$locationnew', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', '$thememem', '$bday', '$langfile', '$tpp', '$ppp',  '$newsletter', '$onlineip', '$timeformatnew', '$msn', '$dateformatnew', '', '', '', '$newmood', '')");
-		
+
 		if($notify == "on"){
 			$mailquery = $db->query("SELECT * FROM $table_members WHERE status = 'Administrator'");
 			while($notify = $db->fetch_array($mailquery)){
 				mail("$notify[email]", "$lang_textnewmember", "$lang_textnewmember2", "From: $bbname <$adminemail>");
 			}
 		}
-		
+
 		if($emailcheck == "on"){
 			mail($email, "$lang_textyourpw", "$lang_textyourpwis \n\n$username\n$password2", "From: $bbname <$adminemail>");
 		}else{
@@ -318,7 +318,7 @@ if($action == "reg") {
 		}
 		setTimeout("redirect();", 1250);
 		</script>
-		<?
+		<?php
 	}
 }
 
@@ -335,7 +335,7 @@ if($action == "viewpro") {
 		$daysreg = (time() - $memberinfo[regdate]) / (24*3600);
 		$ppd = $memberinfo[postnum] / $daysreg;
 		$ppd = round($ppd, 2);
-	
+
 		$memberinfo[regdate] = date("n/j/y",$memberinfo[regdate]);
 
 		$memberinfo[site] = str_replace("http://", "", $memberinfo[site]);
@@ -354,7 +354,7 @@ if($action == "viewpro") {
 				$avatar = "<a href=\"$site\"><img src=\"$memberinfo[avatar]\" border=\"0\" ></a>";
 			} elseif(!isset($site)) {
 				$avatar = "<img src=\"$memberinfo[avatar]\" border=\"0\" >";
-			} 
+			}
 		}
 
 		$lastvisitdate = date("$dateformat",$memberinfo[lastvisit] + ($timeoffset * 3600));
