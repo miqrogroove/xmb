@@ -19,21 +19,21 @@ $tid = str_replace("<", "", $tid);
 $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
-if($forum[type] != "forum" && $forum[type] != "sub") {
+if($forum['type'] != "forum" && $forum['type'] != "sub") {
 	$notexist = $lang_textnoforum;
 }
 
-if($forum[type] == "forum") {
-	$navigation .= "&raquo; ".stripslashes($forum[name]);
+if($forum['type'] == "forum") {
+	$navigation .= "&raquo; ".stripslashes($forum['name']);
 } else {
 	$query = $db->query("SELECT name, fid FROM $table_forums WHERE fid='$forum[fup]'");
 	$fup = $db->fetch_array($query);
-	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">".stripslashes($fup[name])."</a> &raquo; ".stripslashes($forum[name]);
+	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">".stripslashes($fup[name])."</a> &raquo; ".stripslashes($forum['name']);
 }
 
 // Start Forum Password Verify (by surfi)
-if($forum[password] != "" && $action == "pwverify") {
-	if($pw != $forum[password]) {
+if($forum['password'] != "" && $action == "pwverify") {
+	if($pw != $forum['password']) {
 
 		echo "$lang_invalidforumpw";
 		end_time();
@@ -54,17 +54,17 @@ echo $header;
 $query = $db->query("SELECT * FROM $table_forums WHERE type='sub' AND fup='$fid' AND status='on' ORDER BY displayorder");
 
 if($db->num_rows($query) != 0) {
-	$fulist = $forum[userlist];
+	$fulist = $forum['userlist'];
 	while($sub = $db->fetch_array($query)) {
 		$forumlist .= forum($sub, "forumdisplay_subforum");
 	}
-	$forum[userlist] = $fulist;
+	$forum['userlist'] = $fulist;
 	eval("\$subforums = \"".template("forumdisplay_subforums")."\";");
 }
 // End subforums
 if($notexist != $lang_textnoforum) {
 	eval("\$newtopiclink = \"".template("viewthread_newtopic")."\";");
-	if($forum[pollstatus] != "off") {
+	if($forum['pollstatus'] != "off") {
 		eval("\$newpolllink = \"".template("viewthread_newpoll")."\";");
 	}
 
@@ -112,7 +112,7 @@ if($dotfolders == "on" && $xmbuser != "") {
 $querytop = $db->query("SELECT $dotadd1 t.* FROM $table_threads t $dotadd2 WHERE t.fid='$fid' $cusdate ORDER BY topped $ascdesc,lastpost $ascdesc LIMIT $start_limit, $tpp");
 
 // Start Authorization Checks
-$authorization = privfcheck($forum[private], $forum[userlist]);
+$authorization = privfcheck($forum['private'], $forum['userlist']);
 if(!$authorization) {
 
 	echo "<center><div class=\"tablerow\">$lang_privforummsg</div></center>";
@@ -122,7 +122,7 @@ if(!$authorization) {
 	echo $footer;
 	exit;
 }
-if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum[password] != "") {
+if($forum['password'] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum['password'] != "") {
 	$url = "forumdisplay.php?fid=$fid&action=pwverify";
 	eval("\$pwform = \"".template("forumdisplay_password")."\";");
 	$pwform = stripslashes($pwform);

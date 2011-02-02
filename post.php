@@ -180,7 +180,7 @@ if(!$xmbuser && $forums[guestposting] == "on") {
         $guestpostingmsg = $lang_guestpostingonmsg;
 }
 
-if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrator" && $status != "Super Administrator") {
+if(($forums['private'] == "2" || $subf['private'] == "2") && $status != "Administrator" && $status != "Super Administrator") {
         eval("\$header = \"".template("header")."\";");
         echo $header;
 
@@ -190,7 +190,7 @@ if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrat
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
         exit;
-} elseif(($forums[private] == "3" || $subf[private] == "3") && $status != "Administrator" && $status != "Super Administrator" && $status != "Moderator" && $status != "Super Moderator") {
+} elseif(($forums['private'] == "3" || $subf['private'] == "3") && $status != "Administrator" && $status != "Super Administrator" && $status != "Moderator" && $status != "Super Moderator") {
         eval("\$header = \"".template("header")."\";");
         echo $header;
         echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
@@ -199,7 +199,7 @@ if(($forums[private] == "2" || $subf[private] == "2") && $status != "Administrat
 	eval("\$footer = \"".template("footer")."\";");
 	echo $footer;
         exit;
-} elseif(($forums[private] == "4" || $subf[private] == "4")&&(!privfcheck($forums[private], $forums[userlist]))){
+} elseif(($forums['private'] == "4" || $subf['private'] == "4")&&(!privfcheck($forums['private'], $forums['userlist']))){
         eval("\$header = \"".template("header")."\";");
         echo $header;
         echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
@@ -221,7 +221,7 @@ if($posterror) {
         exit;
 }
 // Start forum password check
-if($forums[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forums[password] != "") {
+if($forums[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forums['password'] != "") {
         eval("\$header = \"".template("header")."\";");
         echo $header;
         eval("\$pwform = \"".template("forumdisplay_password")."\";");
@@ -235,7 +235,7 @@ if($forums[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forums[password] != "
 
 $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
-$authorization = privfcheck($forum[private], $forum[userlist]);
+$authorization = privfcheck($forum['private'], $forum['userlist']);
 if(!$authorization) {
 eval("\$header = \"".template("header")."\";");
 echo $header;
@@ -843,7 +843,7 @@ if($action == "edit") {
 		$queryextra = $db->query("SELECT f.* FROM $table_forums f LEFT JOIN $table_posts p ON (f.fid = p.fid) WHERE p.tid='$tid' AND p.pid='$pid'");
 		$forum = $db->fetch_array($queryextra);
 
-		$authorization = privfcheck($forum[private], $forum[userlist]);
+		$authorization = privfcheck($forum['private'], $forum['userlist']);
 		if(!$authorization) {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
@@ -855,7 +855,7 @@ if($action == "edit") {
 			exit;
 		}
 
-		if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum[password] != "") {
+		if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum['password'] != "") {
 			eval("\$header = \"".template("header")."\";");
 			echo $header;
 			$url = "viewthread.php?tid=$tid&action=pwverify";

@@ -57,28 +57,28 @@ smcwcache();
 
 $query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
 $thread = $db->fetch_array($query);
-$fid = $thread[fid];
-if($thread[tid] != $tid) {
+$fid = $thread['fid'];
+if($thread['tid'] != $tid) {
 	$notexist = $lang_textnothread;
 }
 
 $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forum = $db->fetch_array($query);
 
-if($forum[type] != "forum" && $forum[type] != "sub" && $forum[fid] != $fid) {
+if($forum['type'] != "forum" && $forum['type'] != "sub" && $forum['fid'] != $fid) {
 	$notexist = $lang_textnoforum;
 }
 
 
-if($forum[type] == "forum") {
-	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fid\"> ".stripslashes($forum[name])."</a> &raquo; ".stripslashes($thread[subject]);
+if($forum['type'] == "forum") {
+	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fid\"> ".stripslashes($forum['name'])."</a> &raquo; ".stripslashes($thread['subject']);
 } else {
 	$query = $db->query("SELECT name, fid FROM $table_forums WHERE fid='$forum[fup]'");
 	$fup = $db->fetch_array($query);
-	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">".stripslashes($fup[name])."</a> &raquo; <a href=\"forumdisplay.php?fid=$fid\">".stripslashes($forum[name])."</a> &raquo; ".stripslashes($thread[subject]);
+	$navigation .= "&raquo; <a href=\"forumdisplay.php?fid=$fup[fid]\">".stripslashes($fup['name'])."</a> &raquo; <a href=\"forumdisplay.php?fid=$fid\">".stripslashes($forum['name'])."</a> &raquo; ".stripslashes($thread['subject']);
 }
 
-$authorization = privfcheck($forum[private], $forum[userlist]);
+$authorization = privfcheck($forum['private'], $forum['userlist']);
 if(!$authorization && $status != "Super Administrator") {
 
 	eval("\$header = \"".template("header")."\";");
@@ -89,7 +89,7 @@ if(!$authorization && $status != "Super Administrator") {
 	echo $footer;
 	exit;
 }
-if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum[password] != "" && $status != "Super Administrator") {
+if($forum[password] != $HTTP_COOKIE_VARS["fidpw$fid"] && $forum['password'] != "" && $status != "Super Administrator") {
 	eval("\$header = \"".template("header")."\";");
 	echo $header;
 	$url = "forumdisplay.php?fid=$fid&action=pwverify";

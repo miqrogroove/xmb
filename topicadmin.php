@@ -17,14 +17,14 @@ loadtemplates('header,footer,topicadmin_delete,topicadmin_openclose,topicadmin_m
 if($tid && $fid) {
 	$query = $db->query("SELECT * FROM $table_threads WHERE tid='$tid'");
 	$thread = $db->fetch_array($query);
-	$threadname = $thread[subject];
+	$threadname = $thread['subject'];
 	$threadname = stripslashes($threadname);
-	$fid = $thread[fid];
+	$fid = $thread['fid'];
 }
 
 $query = $db->query("SELECT * FROM $table_forums WHERE fid='$fid'");
 $forums = $db->fetch_array($query);
-$forums[name] = stripslashes($forums[name]);
+$forums['name'] = stripslashes($forums['name']);
 
 
 if($forums[type] == "forum") {
@@ -63,7 +63,7 @@ eval("\$header = \"".template("header")."\";");
 echo $header;
 
 
-if($forums[private] == "3" && $status != "Administrator" && $status != "Super Moderator" && $status != "Super Administrator" && $status != "Moderator") {
+if($forums['private'] == "3" && $status != "Administrator" && $status != "Super Moderator" && $status != "Super Administrator" && $status != "Moderator") {
 	echo "<center><span class=\"mediumtxt \">$lang_privforummsg</span></center>";
 	exit;
 }
