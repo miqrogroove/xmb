@@ -52,6 +52,7 @@ $req['files'] = array(
     'include/functions.inc.php',
     'include/global.inc.php',
     'include/online.inc.php',
+    'include/schema.inc.php',
     'include/smtp.inc.php',
     'include/spelling.inc.php',
     'include/translation.inc.php',
@@ -1292,7 +1293,7 @@ Public License instead of this License.  But first, please read
                 error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.', TRUE);
             }
         }
-        
+
         $versionlong = '';
         require ROOT.'include/debug.inc.php';
         $array = parse_url($full_url);

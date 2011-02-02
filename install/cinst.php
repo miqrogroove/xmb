@@ -91,6 +91,7 @@ ob_implicit_flush(1);
 require(ROOT.'include/global.inc.php');
 require_once(ROOT.'config.php');
 require(ROOT.'db/'.$database.'.php');
+require(ROOT.'include/schema.inc.php');
 
 define('X_PREFIX', $tablepre);
 
