@@ -221,7 +221,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
     // Save This Session
-    if (X_ADMIN Or $serror == '' Or $serror == 'guest' And X_MEMBER) {
+    if (X_SCRIPT != 'upgrade.php' and (X_ADMIN or $serror == '' or $serror == 'guest' and X_MEMBER)) {
         global $onlineip, $onlinetime, $url;
 
         $wollocation = $db->escape_var($url);

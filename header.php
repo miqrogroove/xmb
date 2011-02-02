@@ -453,6 +453,7 @@ if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
     }
 }
 unset($uinput, $pinput);
+if (X_SCRIPT == 'upgrade.php') return;
 
 
 /* Set Up HTML Templates and Themes */
