@@ -275,7 +275,6 @@ switch($action) {
             $online['location'] = shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
             if (X_STAFF) {
                 $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
-                $online['location'] = stripslashes($online['location']);
             }
 
             if ($online['invisible'] == 1 && (X_ADMIN || $online['username'] == $xmbuser)) {
@@ -388,15 +387,15 @@ switch($action) {
 
         $where = array();
         $ext = array();
-        
+
         if ($desc != 'asc') {
             $ext[] = "desc=$desc";
         }
-        
+
         if ($order != '') {
             $ext[] = 'order='.$order;
         }
-        
+
         if ($dblikeemail != '') {
             if (!X_SADMIN) {
                 $where[] = " email LIKE '%$dblikeemail%'";

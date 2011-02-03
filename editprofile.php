@@ -132,9 +132,9 @@ if (noSubmit('editsubmit')) {
     $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
     while($themeinfo = $db->fetch_array($query)) {
         if ($themeinfo['themeid'] == $member['theme']) {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
+            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
         } else {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
+            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
         }
     }
     $themelist[] = '</select>';

@@ -38,7 +38,7 @@ eval('echo ("'.template('header').'");');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
 
 if (!X_ADMIN) {
-    eval('echo stripslashes("'.template('error_nologinsession').'");');
+    eval('echo "'.template('error_nologinsession').'";');
     end_time();
     eval('echo "'.template('footer').'";');
     exit();
@@ -141,7 +141,7 @@ switch($action) {
                  . 'WHERE f.type="forum" OR f.type="sub"';
 
             $q = $db->query($sql);
-            
+
             // Structure results to accommodate a nested loop strategy.
             $forums_array = array();
             $subs_array = array();
@@ -328,13 +328,13 @@ switch($action) {
             $row = $db->fetch_array($query);
             $export_fid = $row['fid'];
             $db->free_result($query);
-            
+
             // Fix Invalid FIDs
             $db->query("UPDATE ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING (tid) "
                      . "SET p.fid = t.fid "
                      . "WHERE p.fid != t.fid");
             $i = $db->affected_rows();
-            
+
             // Fix Invalid TIDs
             $db->query("UPDATE ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) "
                      . "SET p.fid = $export_fid, p.tid = $export_tid "
@@ -347,7 +347,7 @@ switch($action) {
             if ($forum['type'] == 'sub') {
                 updateforumcount($forum['fup']);
             }
-            
+
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_posts_found'].'</td></tr>';
         }
@@ -386,7 +386,7 @@ switch($action) {
                     $tids[] = $row['topic_id'];
                 }
                 $tids = implode(', ', $tids);
-                
+
                 // Important: Do not alias tables in multi-table delete queries as long as MySQL 4.0 is supported.
                 $db->query("DELETE FROM ".X_PREFIX."vote_desc, ".X_PREFIX."vote_results, ".X_PREFIX."vote_voters "
                          . "USING ".X_PREFIX."vote_desc "

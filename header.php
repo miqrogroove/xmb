@@ -570,8 +570,6 @@ if (!$validtheme) {
 foreach($db->fetch_array($query) as $key=>$val) {
     if ($key != "name") {
         $$key = $val;
-    } else {
-        $val = stripslashes($val);
     }
     $THEME[$key] = $val;
 }

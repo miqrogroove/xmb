@@ -38,7 +38,7 @@ function blistmsg($message, $redirect='', $exit=false) {
         redirect($redirect, 2);
     }
 
-    eval('echo stripslashes("'.template('buddylist_message').'");');
+    eval('echo "'.template('buddylist_message').'";');
 
     if ($exit) {
         exit();
@@ -96,7 +96,7 @@ function buddy_edit() {
         unset($buddys);
         $buddys = '';
     }
-    eval('echo stripslashes("'.template('buddylist_edit').'");');
+    eval('echo "'.template('buddylist_edit').'";');
 }
 
 function buddy_delete($delete) {
@@ -175,6 +175,6 @@ function buddy_display() {
             eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
         }
     }
-    eval('echo stripslashes("'.template('buddylist').'");');
+    eval('echo "'.template('buddylist').'";');
 }
 ?>

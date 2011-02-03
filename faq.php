@@ -40,7 +40,7 @@ if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
     eval('$featureoff = "'.template('misc_feature_notavailable').'";');
     end_time();
     eval('$footer = "'.template('footer').'";');
-    echo stripslashes($header.$featureoff.$footer);
+    echo $header, $featureoff, $footer;
     exit();
 }
 
@@ -87,7 +87,7 @@ switch($page) {
         if (empty($SETTINGS['bbrulestxt'])) {
             $SETTINGS['bbrulestxt'] = $lang['textnone'];
         } else {
-            $SETTINGS['bbrulestxt'] = nl2br(stripslashes($SETTINGS['bbrulestxt']));
+            $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
         }
         eval('$faq = "'.template('faq_forumrules').'";');
         break;

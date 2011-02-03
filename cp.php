@@ -74,9 +74,9 @@ if ($action == "settings") {
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $SETTINGS['theme']) {
-                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
+                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
             } else {
-                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
+                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
             }
         }
         $themelist[] = '</select>';
@@ -711,7 +711,7 @@ if ($action == "settings") {
         $index_statsnew = formOnOff('index_statsnew');
         $onlinetodaycountnew = formInt('onlinetodaycountnew');
         $onlinetoday_statusnew = formOnOff('onlinetoday_statusnew');
-        
+
         $filespathnew = postedVar('filespathnew');
         $filesbasenew = postedVar('filesbasenew');
         $filesminsizenew = formInt('filesminsizenew');
@@ -805,7 +805,7 @@ if ($action == "settings") {
             max_image_size='$max_image_size',
             max_thumb_size='$max_thumb_size'
         ";
-        
+
         $captchanew = formOnOff('captchanew');
         $captcharegnew = formOnOff('captcharegnew');
         $captchapostnew = formOnOff('captchapostnew');
@@ -845,7 +845,7 @@ if ($action == "settings") {
         captcha_image_maxfont='$captchaimagemaxfontnew',
         captcha_image_color='$captchaimagecolornew'
         ";
-        
+
         $db->query($sql);
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
@@ -1197,9 +1197,9 @@ if ($action == 'forum') {
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while($themeinfo = $db->fetch_array($query)) {
             if ($themeinfo['themeid'] == $forum['theme']) {
-                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.stripslashes($themeinfo['name']).'</option>';
+                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
             } else {
-                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
+                $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
             }
         }
         $themelist[] = '</select>';
@@ -1349,7 +1349,7 @@ if ($action == 'forum') {
                     message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
                 }
             }
-            
+
             if (!$dsuccess) {
                 $settype = '';
                 if ($forum['fup'] != $moveto And $moveto != $forum['fid'] And $forum['type'] != 'group') { //Forum is being moved
@@ -1670,7 +1670,7 @@ if ($action == "members") {
             <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textbanfrom']?></font></strong></td>
             </tr>
             <?php
-            
+
             $query = $db->query("SELECT * FROM ".X_PREFIX."members $where ORDER BY username");
 
             while($member = $db->fetch_array($query)) {
@@ -1722,7 +1722,7 @@ if ($action == "members") {
                 } else {
                     $pending = '';
                 }
-                
+
                 if ($member['status'] == 'Super Administrator') {
                     $disabledelete = ' disabled="disabled"';
                 } else {
@@ -1984,7 +1984,7 @@ if ($action == "deleteposts") {
     while($threads = $db->fetch_array($countquery)) {
         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
     }
-    
+
     // Delete Empty Threads
     // This will also delete thread redirectors where the redirect's author is $member
     $tids = array();
@@ -2202,7 +2202,7 @@ if ($action == "search") {
             <strong><?php echo ($num+1)?>.</strong>
             </td>
             <td align="left" width="95%" bgcolor="<?php echo $altbg1?>">
-            <?php echo stripslashes($val); ?>
+            <?php echo $val; ?>
             </td>
             </tr>
             <?php

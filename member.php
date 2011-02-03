@@ -120,7 +120,7 @@ switch($action) {
                 $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
                 $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
                 while($themeinfo = $db->fetch_array($query)) {
-                    $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.stripslashes($themeinfo['name']).'</option>';
+                    $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
                 }
                 $themelist[] = '</select>';
                 $themelist = implode("\n", $themelist);
@@ -330,7 +330,7 @@ switch($action) {
             } elseif (substr($icharset, 0, 11) == 'WINDOWS-125') {
                 $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
             }
-                        
+
             if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]#", '', $_POST['username'])) {
                 error($lang['restricted']);
             }
@@ -360,7 +360,7 @@ switch($action) {
                 $db->free_result($query);
                 error($lang['alreadyreg']);
             }
-            
+
             $postcount = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$username'"), 0);
             if (intval($postcount) > 0) {
                 error($lang['alreadyreg']);
@@ -645,7 +645,7 @@ switch($action) {
         }
 
         eval('$header = "'.template('header').'";');
-        
+
         $encodeuser = recodeOut($memberinfo['username']);
         if (X_GUEST) {
             $memberlinks = '';
@@ -685,7 +685,7 @@ switch($action) {
         if ($rank['avatarrank'] != '') {
             $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
-        
+
         if ($memberinfo['avatar'] != '') {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }

@@ -193,7 +193,7 @@ switch($action) {
             eval('echo "'.template('topicadmin_delete').'";');
         } else {
             require('include/attach.inc.php');
-            
+
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
                 while($result = $db->fetch_array($query)) {
@@ -204,7 +204,7 @@ switch($action) {
                 deleteThreadAttachments($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$tid");
-                
+
                 $db->query("DELETE FROM d, r, v "
                          . "USING ".X_PREFIX."vote_desc AS d "
                          . "LEFT JOIN ".X_PREFIX."vote_results AS r ON r.vote_id = d.vote_id "
@@ -295,7 +295,7 @@ switch($action) {
         } else {
             $moveto = formInt('moveto');
             $type = postedVar('type');
-            
+
             $movetorow = getForum($moveto);
             if ($movetorow === FALSE) {
                 error($lang['textnoforum'], FALSE);
@@ -434,10 +434,8 @@ switch($action) {
             if ($foundmask) {
                 $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
                 eval($lang['evalipmask']);
-                $lang['bannedipmask'] = stripslashes($lang['bannedipmask']);
                 echo $lang['bannedipmask'];
             } else {
-                $lang['textbannedip'] = stripslashes($lang['textbannedip']);
                 echo $lang['textbannedip'];
             }
             echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
@@ -786,7 +784,7 @@ switch($action) {
             }
 
             $newfid = getRequestInt('newfid');
-            
+
             $otherforum = getForum($newfid);
             if ($otherforum === FALSE) {
                 error($lang['textnoforum'], FALSE);
@@ -846,7 +844,7 @@ switch($action) {
                 $db->free_result($query);
 
                 audit($xmbuser, $action, $fid, $tid);
-                
+
                 if ($otherforum['type'] == 'sub') {
                     updateforumcount($otherforum['fup']);
                 }
