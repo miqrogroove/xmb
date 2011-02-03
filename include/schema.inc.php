@@ -609,5 +609,36 @@ function xmb_schema_table_exists($name) {
     return ($db->num_rows($result) > 0);
 }
 
+/**
+ * Determines if a specific index already exists in the database.
+ *
+ * @param string $table The name of the XMB table, with no prefix.
+ * @param string $column The name of the column on which you want to find any index. Set to '' if you want to search by index name only.
+ * @param string $index Optional. The name of the index to check.
+ * @param string $subpart Optional. The number of indexed characters, if you want to only find indexes that have this attribute.
+ * @return bool
+ */
+function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
+    global $db;
+
+    if (empty($column) and empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
+
+    $result = $db->query("SHOW INDEX FROM ".X_PREFIX.$name);
+
+    while ($row = $db->fetch_array($result)) {
+        if (!empty($column) and $row['Column_name'] != $column) {
+            continue;
+        } elseif (!empty($index) and $row['Key_name'] != $index) {
+            continue;
+        } elseif (!empty($subpart) and $row['Sub_part'] != $subpart) {
+            continue;
+        } else {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 return;
 ?>

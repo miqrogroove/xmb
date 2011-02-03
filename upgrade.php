@@ -297,11 +297,9 @@ function upgrade_schema_to_v0() {
     'ip3',
     'ip4');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -331,15 +329,11 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'username' => 'username (8)');
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
-        } else {
-            $row = $db->fetch_array($query);
-            if ($row['Sub_part'] != '8') {
-                $sql[] = "DROP INDEX $colname";
-                $sql[] = "ADD INDEX $colname ($coltype)";
-            }
+        } elseif (!xmb_schema_index_exists($table, $colname, '', '8')) {
+            $sql[] = "DROP INDEX $colname";
+            $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
     }
@@ -392,11 +386,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'tid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -412,14 +404,9 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'themes';
     $colname = 'themeid';
-    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY'");
-    if ($db->num_rows($query) == 1) {
-        $row = $db->fetch_array($query);
-        if ($row['Column_name'] != $colname) {
-            $sql[] = "DROP PRIMARY KEY";
-        }
+    if (xmb_schema_index_exists($table, '', 'PRIMARY') and !xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
+        $sql[] = "DROP PRIMARY KEY";
     }
-    $db->free_result($query);
 
     $columns = array(
     'themeid' => "smallint(3) NOT NULL auto_increment");
@@ -464,8 +451,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'themeid';
-    $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = 'PRIMARY' AND Column_name = '$colname'");
-    if ($db->num_rows($query) == 0) {
+    if (!xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
         $sql[] = "ADD PRIMARY KEY ($colname)";
     }
     $db->free_result($query);
@@ -473,11 +459,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'name');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -613,11 +597,9 @@ function upgrade_schema_to_v0() {
     'displayorder',
     'status');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -959,15 +941,11 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'username' => 'username (8)');
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
-        } else {
-            $row = $db->fetch_array($query);
-            if ($row['Sub_part'] != '8') {
-                $sql[] = "DROP INDEX $colname";
-                $sql[] = "ADD INDEX $colname ($coltype)";
-            }
+        } elseif (!xmb_schema_index_exists($table, '', $colname, '8')) {
+            $sql[] = "DROP INDEX $colname";
+            $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
     }
@@ -980,11 +958,9 @@ function upgrade_schema_to_v0() {
     'regdate',
     'invisible');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1082,23 +1058,18 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'tid';
-    $query = $db->query("SHOW INDEX FROM ".X_PREFIX."$table WHERE Key_name = '$colname' AND Column_name = '$colname'");
-    if ($db->num_rows($query) > 0) {
+    if (xmb_schema_index_exists($table, $colname, $colname)) {
         $sql[] = 'DROP INDEX '.$colname;
     }
 
     $columns = array(
     'author' => "author (8)");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
-        } else {
-            $row = $db->fetch_array($query);
-            if ($row['Sub_part'] != '8') {
-                $sql[] = "DROP INDEX $colname";
-                $sql[] = "ADD INDEX $colname ($coltype)";
-            }
+        } elseif (!xmb_schema_index_exists($table, '', $colname, '8')) {
+            $sql[] = "DROP INDEX $colname";
+            $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
     }
@@ -1108,11 +1079,9 @@ function upgrade_schema_to_v0() {
     'closed' => "closed",
     'forum_optimize' => "fid, topped, lastpost");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1142,11 +1111,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'pid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1203,15 +1170,11 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'author' => "author (8)");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
-        } else {
-            $row = $db->fetch_array($query);
-            if ($row['Sub_part'] != '8') {
-                $sql[] = "DROP INDEX $colname";
-                $sql[] = "ADD INDEX $colname ($coltype)";
-            }
+        } elseif (!xmb_schema_index_exists($table, '', $colname, '8')) {
+            $sql[] = "DROP INDEX $colname";
+            $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
     }
@@ -1221,8 +1184,7 @@ function upgrade_schema_to_v0() {
     'dateline' => "dateline",
     'thread_optimize' => "tid, dateline, pid");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
@@ -1266,11 +1228,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'title');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1309,11 +1269,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'name');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1438,15 +1396,11 @@ function upgrade_schema_to_v0() {
     'msgto' => "msgto (8)",
     'msgfrom' => "msgfrom (8)");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
-        } else {
-            $row = $db->fetch_array($query);
-            if ($row['Sub_part'] != '8') {
-                $sql[] = "DROP INDEX $colname";
-                $sql[] = "ADD INDEX $colname ($coltype)";
-            }
+        } elseif (!xmb_schema_index_exists($table, $colname, '', '8')) {
+            $sql[] = "DROP INDEX $colname";
+            $sql[] = "ADD INDEX $colname ($coltype)";
         }
         $db->free_result($query);
     }
@@ -1456,11 +1410,9 @@ function upgrade_schema_to_v0() {
     'readstatus' => "readstatus",
     'owner' => "owner (8)");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1478,11 +1430,9 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'find');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1622,11 +1572,9 @@ function upgrade_schema_to_v2() {
     'parentid',
     'uid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1767,11 +1715,9 @@ function upgrade_schema_to_v3() {
     'date',
     'tid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Column_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, $colname)) {
             $sql[] = "ADD INDEX ($colname)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1806,20 +1752,16 @@ function upgrade_schema_to_v4() {
     $columns = array(
     'fid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) > 0) {
+        if (xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "DROP INDEX $colname";
         }
-        $db->free_result($query);
     }
     $columns = array(
     'forum_optimize' => 'fid, topped, lastpost');
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1837,20 +1779,16 @@ function upgrade_schema_to_v4() {
     $columns = array(
     'tid');
     foreach($columns as $colname) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) > 0) {
+        if (xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "DROP INDEX $colname";
         }
-        $db->free_result($query);
     }
     $columns = array(
     'thread_optimize' => 'tid, dateline, pid');
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('SHOW INDEX FROM '.X_PREFIX."$table WHERE Key_name = '$colname'");
-        if ($db->num_rows($query) == 0) {
+        if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
