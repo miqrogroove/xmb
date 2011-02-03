@@ -92,12 +92,14 @@ if (!isset($_GET['step']) or $_GET['step'] == 1) {
 
 <h2>Instructions</h2>
 <ol>
-<li>BACKUP YOUR DATABASE - This script cannot be undone!
-<li>Copy your config.php settings into the new file.
-<li>Confirm your forum database account is granted ALTER, CREATE, and LOCK privileges.
 <li>Disable your forums using the Board Status setting.
-<li>Upload the XMB 1.9.11 files.
-<li>Upload and run this script to complete your database upgrade.
+<li>BACKUP YOUR DATABASE - This script cannot be undone!
+<li>Confirm your forum database account is granted ALTER, CREATE, INDEX, and LOCK privileges.
+<li>Copy your config.php settings into the new file.
+<li>Upload the XMB 1.9.11 files.  Do not upload the install folder (delete it if necessary).
+<li>Upload the upgrade directory to your board's root directory.
+<li>Run this script by hitting the upgrade URL, for example:  http://www.example.com/forum/upgrade/
+<li>When the upgrade finishes successfully, delete the upgrade directory.
 <li>Enable your forums using the Board Status setting.
 </ol>
 
