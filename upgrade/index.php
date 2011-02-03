@@ -150,105 +150,26 @@ function disableButton() {
         trigger_error('Admin attempted upgrade with upgrade.lib.php missing.', E_USER_ERROR);
     }
 
-    echo 'Confirming forums are turned off...<br />';
-    if ($SETTINGS['bbstatus'] != 'off') {
-        $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
-        echo '<b>Your forums were turned off by the upgrader to prevent damage.<br />'
-            .'They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.</b><br />';
-        trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
-    }
 
-    echo 'Determining the database schema version...<br />';
-    require(ROOT.'include/schema.inc.php');
+
     require('./upgrade.lib.php');
-    if (!isset($SETTINGS['schema_version'])) {
-        $SETTINGS['schema_version'] = 0;
-    }
-    switch ($SETTINGS['schema_version']) {
-    case XMB_SCHEMA_VER:
-        echo 'Database schema is current, skipping ALTER commands...<br />';
-        break;
-    case 0:
-        //Ambiguous case.  Attempt a backward-compatible schema change.
-        upgrade_schema_to_v0();
-        //No breaks.
-    case 1:
-        upgrade_schema_to_v2();
-    case 2:
-        upgrade_schema_to_v3();
-    case 3:
-        upgrade_schema_to_v4();
-    case 4:
-        //Future use. Break only before case default.
-        break;
-    default:
-        echo 'Unrecognized Database!<br />'
-            .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.<br />';
-        trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
-        break;
-    }
-    echo 'Database schema is now current...<br />';
+    xmb_upgrade();
 
-    echo 'Initializing the new translation system...<br />';
-    require_once(ROOT.'include/translation.inc.php');
-    $upload = file_get_contents('lang/English.lang.php');
-
-    echo 'Installing English.lang.php...<br />';
-    installNewTranslation($upload);
-    unset($upload);
-
-    echo 'Opening the templates file...<br />';
-    $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
-
-    echo 'Resetting the templates table...<br />';
-    $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
-
-    echo 'Requesting to lock the templates table...<br />';
-    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
-
-    echo 'Saving the new templates...<br />';
-    $values = array();
-    foreach($templates as $val) {
-        $template = explode("|#*XMB TEMPLATE*#|", $val);
-        if (isset($template[1])) {
-            $template[1] = addslashes(ltrim($template[1]));
-        } else {
-            $template[1] = '';
-        }
-        $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
-    }
-    unset($templates);
-    if (count($values) > 0) {
-        $values = implode(', ', $values);
-        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
-    }
-    unset($values);
-    $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
-
-    echo 'Releasing the lock on the templates table...<br />';
-    $db->query('UNLOCK TABLES');
-
-    echo 'Deleting the templates.xmb file...<br />';
-    unlink(ROOT.'templates.xmb');
-
-
-    echo 'Checking for new themes...';
-    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
-    if ($db->num_rows($query) == 0 and is_dir(ROOT.'images/davis')) {
-        echo 'Adding Davis as the new default theme...<br />';
-        $db->query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
-                                          ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
-        $newTheme = $db->insert_id();
-        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
-    }
-    $db->free_result($query);
-
-    echo 'Deleting the upgrade files...<br />';
-    rmFromDir('upgrade');
 
     echo '<b>Done! :D</b><br />Now <a href="cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
 }
 
 echo "\n</body></html>";
 
+/**
+ * Output the upgrade progress at each step.
+ *
+ * This function is intended to be overridden by other upgrade scripts
+ * that don't use this exact file, to support various output streams.
+ *
+ * @param string $text Description of current progress.
+ */
+function show_progress($text) {
+    echo $text, "...<br />\n";
+}
 ?>

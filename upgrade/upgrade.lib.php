@@ -26,6 +26,106 @@
  **/
 
 /**
+ * Performs all tasks necessary for a normal upgrade.
+ */
+function xmb_upgrade() {
+    show_progress('Confirming forums are turned off');
+    if ($SETTINGS['bbstatus'] != 'off') {
+        $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+        echo '<b>Your forums were turned off by the upgrader to prevent damage.<br />'
+            .'They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.</b><br />';
+        trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
+    }
+
+    show_progress('Determining the database schema version');
+    require(ROOT.'include/schema.inc.php');
+    if (!isset($SETTINGS['schema_version'])) {
+        $SETTINGS['schema_version'] = 0;
+    }
+    switch ($SETTINGS['schema_version']) {
+        case XMB_SCHEMA_VER:
+            show_progress('Database schema is current, skipping ALTER commands');
+            break;
+        case 0:
+            //Ambiguous case.  Attempt a backward-compatible schema change.
+            upgrade_schema_to_v0();
+            //No breaks.
+        case 1:
+            upgrade_schema_to_v2();
+        case 2:
+            upgrade_schema_to_v3();
+        case 3:
+            upgrade_schema_to_v4();
+        case 4:
+            //Future use. Break only before case default.
+            break;
+        default:
+            echo 'Unrecognized Database!<br />'
+                .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.<br />';
+            trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
+            break;
+    }
+    show_progress('Database schema is now current');
+
+    show_progress('Initializing the new translation system');
+    require_once(ROOT.'include/translation.inc.php');
+    $upload = file_get_contents(ROOT.'lang/English.lang.php');
+
+    show_progress('Installing English.lang.php');
+    installNewTranslation($upload);
+    unset($upload);
+
+    show_progress('Opening the templates file');
+    $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
+
+    show_progress('Resetting the templates table');
+    $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
+
+    show_progress('Requesting to lock the templates table');
+    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
+
+    show_progress('Saving the new templates');
+    $values = array();
+    foreach($templates as $val) {
+        $template = explode("|#*XMB TEMPLATE*#|", $val);
+        if (isset($template[1])) {
+            $template[1] = addslashes(ltrim($template[1]));
+        } else {
+            $template[1] = '';
+        }
+        $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
+    }
+    unset($templates);
+    if (count($values) > 0) {
+        $values = implode(', ', $values);
+        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
+    }
+    unset($values);
+    $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
+
+    show_progress('Releasing the lock on the templates table');
+    $db->query('UNLOCK TABLES');
+
+    show_progress('Deleting the templates.xmb file');
+    unlink(ROOT.'templates.xmb');
+
+
+    show_progress('Checking for new themes');
+    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
+    if ($db->num_rows($query) == 0 and is_dir(ROOT.'images/davis')) {
+        show_progress('Adding Davis as the new default theme');
+        $db->query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+                                          ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
+        $newTheme = $db->insert_id();
+        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
+    }
+    $db->free_result($query);
+
+    show_progress('Deleting the upgrade files');
+    rmFromDir('upgrade');
+}
+
+/**
  * Performs all tasks needed to upgrade the schema to version 1.9.9.
  *
  * This function is officially compatible with the following XMB versions
@@ -41,12 +141,12 @@
 function upgrade_schema_to_v0() {
     global $db, $SETTINGS;
 
-    echo 'Beginning schema upgrade from legacy version...<br />';
+    show_progress('Beginning schema upgrade from legacy version');
 
-    echo 'Requesting to lock the banned table...<br />';
+    show_progress('Requesting to lock the banned table');
     $db->query('LOCK TABLES '.X_PREFIX."banned WRITE");
 
-    echo 'Gathering schema information from the banned table...<br />';
+    show_progress('Gathering schema information from the banned table');
     $sql = array();
     $table = 'banned';
     $colname = 'id';
@@ -81,15 +181,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the banned table...<br />';
+        show_progress('Modifying columns in the banned table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the buddys table...<br />';
+    show_progress('Requesting to lock the buddys table');
     $db->query('LOCK TABLES '.X_PREFIX."buddys WRITE");
 
-    echo 'Gathering schema information from the buddys table...<br />';
+    show_progress('Gathering schema information from the buddys table');
     $sql = array();
     $table = 'buddys';
     $columns = array(
@@ -117,15 +217,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the buddys table...<br />';
+        show_progress('Modifying columns in the buddys table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the favorites table...<br />';
+    show_progress('Requesting to lock the favorites table');
     $db->query('LOCK TABLES '.X_PREFIX."favorites WRITE");
 
-    echo 'Gathering schema information from the favorites table...<br />';
+    show_progress('Gathering schema information from the favorites table');
     $sql = array();
     $table = 'favorites';
     $columns = array(
@@ -170,15 +270,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the favorites table...<br />';
+        show_progress('Modifying columns in the favorites table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the themes table...<br />';
+    show_progress('Requesting to lock the themes table');
     $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
 
-    echo 'Gathering schema information from the themes table...<br />';
+    show_progress('Gathering schema information from the themes table');
     $sql = array();
     $table = 'themes';
     $colname = 'themeid';
@@ -243,19 +343,19 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the themes table...<br />';
+        show_progress('Modifying columns in the themes table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the forums table...<br />';
+    show_progress('Requesting to lock the forums table');
     $db->query('LOCK TABLES '.
         X_PREFIX.'forums WRITE, '.
         X_PREFIX.'themes READ');
 
     $upgrade_permissions = TRUE;
 
-    echo 'Gathering schema information from the forums table...<br />';
+    show_progress('Gathering schema information from the forums table');
     $sql = array();
     $table = 'forums';
     $columns = array(
@@ -283,15 +383,15 @@ function upgrade_schema_to_v0() {
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
 
-        echo 'Making room for the new values in the postperm column...<br />';
+        show_progress('Making room for the new values in the postperm column');
         $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
 
-        echo 'Restructuring the forum permissions data...<br />';
+        show_progress('Restructuring the forum permissions data');
         fixPostPerm();   // 1.8 => 1.9.1
         fixForumPerms(); // 1.9.1 => 1.9.9
 
         // Drop columns now so that any errors later on wont leave both sets of permissions.
-        echo 'Deleting the old permissions data...<br />';
+        show_progress('Deleting the old permissions data');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
         $sql = array();
@@ -381,17 +481,17 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Deleting/Modifying columns in the forums table...<br />';
+        show_progress('Deleting/Modifying columns in the forums table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the settings table...<br />';
+    show_progress('Requesting to lock the settings table');
     $db->query('LOCK TABLES '.
         X_PREFIX.'settings WRITE, '.
         X_PREFIX.'themes READ');
 
-    echo 'Gathering schema information from the settings table...<br />';
+    show_progress('Gathering schema information from the settings table');
     $sql = array();
     $table = 'settings';
     $columns = array(
@@ -546,20 +646,20 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting/Modifying columns in the settings table...<br />';
+        show_progress('Adding/Deleting/Modifying columns in the settings table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the members table...<br />';
+    show_progress('Requesting to lock the members table');
     $db->query('LOCK TABLES '.
         X_PREFIX.'members WRITE, '.
         X_PREFIX.'themes READ');
 
-    echo 'Fixing birthday values...<br />';
+    show_progress('Fixing birthday values');
     fixBirthdays();
 
-    echo 'Gathering schema information from the members table...<br />';
+    show_progress('Gathering schema information from the members table');
     $sql = array();
     $table = 'members';
     $columns = array(
@@ -742,28 +842,28 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Deleting/Adding/Modifying columns in the members table...<br />';
+        show_progress('Deleting/Adding/Modifying columns in the members table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
     // Mimic old function fixPPP()
-    echo 'Fixing missing posts per page values...<br />';
+    show_progress('Fixing missing posts per page values');
     $db->query("UPDATE ".X_PREFIX."members SET ppp={$SETTINGS['postperpage']} WHERE ppp=0");
     $db->query("UPDATE ".X_PREFIX."members SET tpp={$SETTINGS['topicperpage']} WHERE tpp=0");
 
-    echo 'Updating outgoing U2U status...<br />';
+    show_progress('Updating outgoing U2U status');
 	$db->query("UPDATE ".X_PREFIX."members SET saveogu2u='yes'");
 
-    echo 'Releasing the lock on the members table...<br />';
+    show_progress('Releasing the lock on the members table');
     $db->query('UNLOCK TABLES');
 
-    echo 'Adding new tables for polls...<br />';
+    show_progress('Adding new tables for polls');
     xmb_schema_table('create', 'vote_desc');
     xmb_schema_table('create', 'vote_results');
     xmb_schema_table('create', 'vote_voters');
 
-    echo 'Requesting to lock the polls tables...<br />';
+    show_progress('Requesting to lock the polls tables');
     $db->query('LOCK TABLES '.
         X_PREFIX.'threads WRITE, '.
         X_PREFIX.'vote_desc WRITE, '.
@@ -771,10 +871,10 @@ function upgrade_schema_to_v0() {
         X_PREFIX.'vote_voters WRITE, '.
         X_PREFIX.'members READ');
 
-    echo 'Upgrading polls to new system...<br />';
+    show_progress('Upgrading polls to new system');
     fixPolls();
 
-    echo 'Gathering schema information from the threads table...<br />';
+    show_progress('Gathering schema information from the threads table');
     $sql = array();
     $table = 'threads';
     $colname = 'subject';
@@ -863,15 +963,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the threads table...<br />';
+        show_progress('Modifying columns in the threads table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the attachments table...<br />';
+    show_progress('Requesting to lock the attachments table');
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
-    echo 'Gathering schema information from the attachments table...<br />';
+    show_progress('Gathering schema information from the attachments table');
     $sql = array();
     $table = 'attachments';
     $columns = array(
@@ -895,15 +995,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the attachments table...<br />';
+        show_progress('Modifying columns in the attachments table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the posts table...<br />';
+    show_progress('Requesting to lock the posts table');
     $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
 
-    echo 'Gathering schema information from the posts table...<br />';
+    show_progress('Gathering schema information from the posts table');
     $sql = array();
     $table = 'posts';
     $columns = array(
@@ -969,15 +1069,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the posts table...<br />';
+        show_progress('Modifying columns in the posts table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the ranks table...<br />';
+    show_progress('Requesting to lock the ranks table');
     $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
 
-    echo 'Gathering schema information from the ranks table...<br />';
+    show_progress('Gathering schema information from the ranks table');
     $sql = array();
     $table = 'ranks';
     $columns = array(
@@ -1012,12 +1112,12 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the ranks table...<br />';
+        show_progress('Modifying columns in the ranks table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Fixing special ranks...<br />';
+    show_progress('Fixing special ranks');
     $db->query("DELETE FROM ".X_PREFIX."ranks WHERE title IN ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
     $db->query("INSERT INTO ".X_PREFIX."ranks
      (title,                 posts, stars, allowavatars, avatarrank) VALUES
@@ -1027,10 +1127,10 @@ function upgrade_schema_to_v0() {
      ('Super Administrator', -1,    9,     'yes',  '')"
     );
 
-    echo 'Requesting to lock the templates table...<br />';
+    show_progress('Requesting to lock the templates table');
     $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
-    echo 'Gathering schema information from the templates table...<br />';
+    show_progress('Gathering schema information from the templates table');
     $sql = array();
     $table = 'templates';
     $columns = array(
@@ -1053,17 +1153,17 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the templates table...<br />';
+        show_progress('Modifying columns in the templates table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the u2u table...<br />';
+    show_progress('Requesting to lock the u2u table');
     $db->query('LOCK TABLES '.X_PREFIX."u2u WRITE");
 
     $upgrade_u2u = FALSE;
 
-    echo 'Gathering schema information from the u2u table...<br />';
+    show_progress('Gathering schema information from the u2u table');
     $sql = array();
     $table = 'u2u';
     $columns = array(
@@ -1128,7 +1228,7 @@ function upgrade_schema_to_v0() {
     if ($upgrade_u2u) {
         // Commit changes so far.
         if (count($sql) > 0) {
-            echo 'Modifying columns in the u2u table...<br />';
+            show_progress('Modifying columns in the u2u table');
             $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
             $db->query($sql);
         }
@@ -1136,7 +1236,7 @@ function upgrade_schema_to_v0() {
         $sql = array();
 
         // Mimic old function upgradeU2U() but with fewer queries
-        echo 'Upgrading U2Us...<br />';
+        show_progress('Upgrading U2Us');
         $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgto WHERE folder='inbox'");
         $db->query("UPDATE ".X_PREFIX."$table SET type='outgoing', owner=msgfrom WHERE folder='outbox'");
         $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgfrom WHERE folder != 'outbox' AND folder != 'inbox'");
@@ -1194,15 +1294,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the u2u table...<br />';
+        show_progress('Modifying columns in the u2u table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the words table...<br />';
+    show_progress('Requesting to lock the words table');
     $db->query('LOCK TABLES '.X_PREFIX."words WRITE");
 
-    echo 'Gathering schema information from the words table...<br />';
+    show_progress('Gathering schema information from the words table');
     $sql = array();
     $table = 'words';
     $columns = array(
@@ -1214,15 +1314,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding indexes in the words table...<br />';
+        show_progress('Adding indexes in the words table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the restricted table...<br />';
+    show_progress('Requesting to lock the restricted table');
     $db->query('LOCK TABLES '.X_PREFIX."restricted WRITE");
 
-    echo 'Gathering schema information from the restricted table...<br />';
+    show_progress('Gathering schema information from the restricted table');
     $sql = array();
     $table = 'restricted';
     $columns = array(
@@ -1248,15 +1348,15 @@ function upgrade_schema_to_v0() {
     }
 
     if (count($sql) > 0) {
-        echo 'Modifying columns in the restricted table...<br />';
+        show_progress('Modifying columns in the restricted table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the restricted table...<br />';
+    show_progress('Releasing the lock on the restricted table');
     $db->query('UNLOCK TABLES');
 
-    echo 'Adding new tables...<br />';
+    show_progress('Adding new tables');
     xmb_schema_table('create', 'captchaimages');
     xmb_schema_table('overwrite', 'logs');
     xmb_schema_table('overwrite', 'whosonline');
@@ -1274,12 +1374,12 @@ function upgrade_schema_to_v0() {
 function upgrade_schema_to_v2() {
     global $db;
 
-    echo 'Beginning schema upgrade to version number 2...<br />';
+    show_progress('Beginning schema upgrade to version number 2');
 
-    echo 'Requesting to lock the settings table...<br />';
+    show_progress('Requesting to lock the settings table');
     $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
-    echo 'Gathering schema information from the settings table...<br />';
+    show_progress('Gathering schema information from the settings table');
     $sql = array();
     $table = 'settings';
     $columns = array(
@@ -1313,15 +1413,15 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the settings table...<br />';
+        show_progress('Adding/Deleting columns in the settings table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the attachments table...<br />';
+    show_progress('Requesting to lock the attachments table');
     $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
-    echo 'Gathering schema information from the attachments table...<br />';
+    show_progress('Gathering schema information from the attachments table');
     $sql = array();
     $table = 'attachments';
     $columns = array(
@@ -1356,16 +1456,16 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the attachments table...<br />';
+        show_progress('Adding/Deleting columns in the attachments table');
         // Important to do this all in one step because MySQL copies the entire table after every ALTER command.
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the members table...<br />';
+    show_progress('Requesting to lock the members table');
     $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
 
-    echo 'Gathering schema information from the members table...<br />';
+    show_progress('Gathering schema information from the members table');
     $sql = array();
     $table = 'members';
     $columns = array(
@@ -1388,15 +1488,15 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the members table...<br />';
+        show_progress('Adding/Deleting columns in the members table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the ranks table...<br />';
+    show_progress('Requesting to lock the ranks table');
     $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
 
-    echo 'Gathering schema information from the ranks table...<br />';
+    show_progress('Gathering schema information from the ranks table');
     $sql = array();
     $table = 'ranks';
     $columns = array(
@@ -1410,15 +1510,15 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the ranks table...<br />';
+        show_progress('Adding/Deleting columns in the ranks table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the themes table...<br />';
+    show_progress('Requesting to lock the themes table');
     $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
 
-    echo 'Gathering schema information from the themes table...<br />';
+    show_progress('Gathering schema information from the themes table');
     $sql = array();
     $table = 'themes';
     $columns = array(
@@ -1432,15 +1532,15 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the themes table...<br />';
+        show_progress('Adding/Deleting columns in the themes table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the vote_desc table...<br />';
+    show_progress('Requesting to lock the vote_desc table');
     $db->query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
 
-    echo 'Gathering schema information from the vote_desc table...<br />';
+    show_progress('Gathering schema information from the vote_desc table');
     $sql = array();
     $table = 'vote_desc';
     $columns = array(
@@ -1454,20 +1554,20 @@ function upgrade_schema_to_v2() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding/Deleting columns in the vote_desc table...<br />';
+        show_progress('Adding/Deleting columns in the vote_desc table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the vote_desc table...<br />';
+    show_progress('Releasing the lock on the vote_desc table');
     $db->query('UNLOCK TABLES');
 
-    echo 'Adding new tables...<br />';
+    show_progress('Adding new tables');
     xmb_schema_table('create', 'lang_base');
     xmb_schema_table('create', 'lang_keys');
     xmb_schema_table('create', 'lang_text');
 
-    echo 'Resetting the schema version number...<br />';
+    show_progress('Resetting the schema version number');
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
 }
 
@@ -1481,12 +1581,12 @@ function upgrade_schema_to_v2() {
 function upgrade_schema_to_v3() {
     global $db;
 
-    echo 'Beginning schema upgrade to version number 3...<br />';
+    show_progress('Beginning schema upgrade to version number 3');
 
-    echo 'Requesting to lock the logs table...<br />';
+    show_progress('Requesting to lock the logs table');
     $db->query('LOCK TABLES '.X_PREFIX."logs WRITE");
 
-    echo 'Gathering schema information from the logs table...<br />';
+    show_progress('Gathering schema information from the logs table');
     $sql = array();
     $table = 'logs';
     $columns = array(
@@ -1499,15 +1599,15 @@ function upgrade_schema_to_v3() {
     }
 
     if (count($sql) > 0) {
-        echo 'Adding indexes to the logs table...<br />';
+        show_progress('Adding indexes to the logs table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the logs table...<br />';
+    show_progress('Releasing the lock on the logs table');
     $db->query('UNLOCK TABLES');
 
-    echo 'Resetting the schema version number...<br />';
+    show_progress('Resetting the schema version number');
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
 }
 
@@ -1519,12 +1619,12 @@ function upgrade_schema_to_v3() {
 function upgrade_schema_to_v4() {
     global $db;
 
-    echo 'Beginning schema upgrade to version number 4...<br />';
+    show_progress('Beginning schema upgrade to version number 4');
 
-    echo 'Requesting to lock the threads table...<br />';
+    show_progress('Requesting to lock the threads table');
     $db->query('LOCK TABLES '.X_PREFIX."threads WRITE");
 
-    echo 'Gathering schema information from the threads table...<br />';
+    show_progress('Gathering schema information from the threads table');
     $sql = array();
     $table = 'threads';
     $columns = array(
@@ -1543,15 +1643,15 @@ function upgrade_schema_to_v4() {
     }
 
     if (count($sql) > 0) {
-        echo 'Deleting/Adding indexes to the threads table...<br />';
+        show_progress('Deleting/Adding indexes to the threads table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Requesting to lock the posts table...<br />';
+    show_progress('Requesting to lock the posts table');
     $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
 
-    echo 'Gathering schema information from the posts table...<br />';
+    show_progress('Gathering schema information from the posts table');
     $sql = array();
     $table = 'posts';
     $columns = array(
@@ -1570,15 +1670,15 @@ function upgrade_schema_to_v4() {
     }
 
     if (count($sql) > 0) {
-        echo 'Deleting/Adding indexes to the posts table...<br />';
+        show_progress('Deleting/Adding indexes to the posts table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
     }
 
-    echo 'Releasing the lock on the posts table...<br />';
+    show_progress('Releasing the lock on the posts table');
     $db->query('UNLOCK TABLES');
 
-    echo 'Resetting the schema version number...<br />';
+    show_progress('Resetting the schema version number');
     $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 4");
 }
 
