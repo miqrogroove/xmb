@@ -806,7 +806,18 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
         $img = @imagecreatefromwbmp($filepath);
         break;
     case 'bmp':
-        $img = FALSE; // See our website for BMP support.
+        // See our website for drop-in BMP support.
+        if (!class_exists('phpthumb_bmp')) {
+            if (is_file(ROOT.'include/phpthumb-bmp.php')) {
+                require_once(ROOT.'include/phpthumb-bmp.php');
+            }
+        }
+        if (class_exists('phpthumb_bmp')) {
+            $ns = new phpthumb_bmp;
+            $img = $ns->phpthumb_bmpfile2gd($filepath);
+        } else {
+            $img = FALSE;
+        }
         break;
     case 'gif':
         $img = @imagecreatefromgif($filepath);
