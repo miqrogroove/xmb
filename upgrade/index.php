@@ -68,17 +68,12 @@ if (!defined('X_SADMIN') or !X_SADMIN) {
 }
 
 //Check Server Version
-$current = array_map('intval', explode('.', phpversion()));
-$min = array_map('intval', explode('.', PHP_MIN_VER));
-if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
+if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
     echo '<br /><br />XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.';
     trigger_error('Admin attempted upgrade with obsolete PHP engine.', E_USER_ERROR);
 }
-$sqlver = mysql_get_server_info($db->link);
-$current = array_map('intval', explode('.', $sqlver));
-$min = array_map('intval', explode('.', MYSQL_MIN_VER));
-if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
-    echo '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.';
+if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
+    echo '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.';
     trigger_error('Admin attempted upgrade with obsolete MySQL engine.', E_USER_ERROR);
 }
 

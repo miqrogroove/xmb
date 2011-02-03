@@ -1390,10 +1390,7 @@ Public License instead of this License.  But first, please read
 <?php
         // first, let's check if we have right version of PHP
         show_act('Checking PHP version');
-        $current = phpversion();
-        $current = array_map('intval', explode('.', $current));
-        $min = array_map('intval', explode('.', PHP_MIN_VER));
-        if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
+        if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
             show_result(X_INST_ERR);
             error('Version mismatch', 'XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.', true);
         }
@@ -1481,11 +1478,9 @@ Public License instead of this License.  But first, please read
                 $sqlver = mysql_get_server_info($link);
                 mysql_close($link);
                 show_act('Checking Database Version');
-                $current = array_map('intval', explode('.', $sqlver));
-                $min = array_map('intval', explode('.', MYSQL_MIN_VER));
-                if ($current[0] < $min[0] || ($current[0] == $min[0] && ($current[1] < $min[1] || ($current[1] == $min[1] && $current[2] < $min[2])))) {
+                if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
                     show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
+                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.', true);
                 } else {
                     show_result(X_INST_OK);
                 }

@@ -191,7 +191,7 @@ class dbstuff {
         restore_error_handler();
         return $return;
     }
-    
+
     /**
      * Preferred for performance when escaping any string variable.
      *
@@ -340,14 +340,14 @@ class dbstuff {
         restore_error_handler();
         return $query;
     }
-    
+
     function data_seek($query, $row) {
         set_error_handler($this->errcallb);
         $return = mysql_data_seek($query, $row);
         restore_error_handler();
         return $return;
     }
-    
+
     function affected_rows() {
     	if (DEBUG and LOG_MYSQL_ERRORS) {
             $return = $this->last_rows;
@@ -379,6 +379,15 @@ class dbstuff {
         $this->duration += $taken;
         $this->timer = 0;
         return $taken;
+    }
+
+    /**
+     * Retrieve the MySQL server version number.
+     *
+     * @return string
+     */
+    function server_version(){
+        return mysql_get_server_info($db->link);
     }
 }
 
