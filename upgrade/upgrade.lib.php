@@ -25,6 +25,11 @@
  *
  **/
 
+if (!defined('IN_CODE')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
+}
+
 /**
  * Performs all tasks necessary for a normal upgrade.
  */
