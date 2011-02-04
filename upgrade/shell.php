@@ -54,8 +54,8 @@ if ($db->num_rows($squery) == 0) exit('Fatal Error: The XMB settings table is em
 $SETTINGS = array();
 foreach($db->fetch_array($squery) as $key => $val) $SETTINGS[$key] = $val;
 $db->free_result($squery);
-if ($postperpage < 5) $SETTINGS['postperpage'] = 30;
-if ($topicperpage < 5) $SETTINGS['topicperpage'] = 30;
+if ($SETTINGS['postperpage'] < 5) $SETTINGS['postperpage'] = 30;
+if ($SETTINGS['topicperpage'] < 5) $SETTINGS['topicperpage'] = 30;
 
 //Make it happen!
 require('./upgrade.lib.php');
