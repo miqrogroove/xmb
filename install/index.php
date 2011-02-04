@@ -1478,9 +1478,9 @@ Public License instead of this License.  But first, please read
                 $sqlver = mysql_get_server_info($link);
                 mysql_close($link);
                 show_act('Checking Database Version');
-                if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
+                if (version_compare($sqlver, MYSQL_MIN_VER, '<')) {
                     show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.', true);
+                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
                 } else {
                     show_result(X_INST_OK);
                 }
