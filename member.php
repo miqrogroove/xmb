@@ -766,48 +766,54 @@ switch($action) {
         }
 
         // Forum most active in
-        $found = false;
-        $query = $db->query("SELECT f.userlist, f.password, f.postperm, f.moderator, f.name, p.fid, COUNT(DISTINCT p.pid) as posts FROM ".X_PREFIX."posts p LEFT JOIN ".X_PREFIX."forums f ON p.fid=f.fid WHERE p.author='$member' AND f.status='on' GROUP BY p.fid ORDER BY posts DESC");
-        while($f = $db->fetch_array($query)) {
-            $pp = checkForumPermissions($f);
-            if ($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD]) {
-                $forum = $f;
-                $found = true;
-                break;
-            }
+        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        if (strlen($fids) > 0) {
+            $query = $db->query(
+                "SELECT fid, COUNT(*) AS posts
+                 FROM ".X_PREFIX."posts
+                 WHERE author='$member' AND fid IN ($fids)
+                 GROUP BY fid
+                 HAVING COUNT(*) > 0
+                 ORDER BY COUNT(*) DESC
+                 LIMIT 1"
+            );
+            $found = ($db->num_rows($query) == 1);
+        } else {
+            $found = FALSE;
         }
 
-        if (!$found || $forum['posts'] < 1) {
-            $topforum = $lang['textnopostsyet'];
-        } else if ($memberinfo['postnum'] <= 0) {
-            $topforum = $lang['textnopostsyet'];
+        if ($found) {
+            $row = $db->fetch_array($query);
+            $posts = $row['posts'];
+            $forum = getForum($row['fid']);
+            $topforum = "<a href='./forumdisplay.php?fid={$forum['fid']}'>".fnameOut($forum['name'])."</a> ($posts {$lang['memposts']}) [".round(($posts/$memberinfo['postnum'])*100, 1)."% {$lang['textoftotposts']}]";
         } else {
-            $topforum = "<a href=\"./forumdisplay.php?fid=$forum[fid]\">".fnameOut($forum['name'])."</a> ($forum[posts] $lang[memposts]) [".round(($forum['posts']/$memberinfo['postnum'])*100, 1)."% $lang[textoftotposts]]";
+            $topforum = $lang['textnopostsyet'];
         }
 
         // Last post
-        $lpfound = false;
-        $pq = $db->query("SELECT t.tid, t.subject, p.dateline, p.pid, f.fid, f.postperm, f.password, f.userlist, f.moderator FROM ".X_PREFIX."posts p, ".X_PREFIX."threads t, ".X_PREFIX."forums f WHERE p.fid=f.fid AND p.author='$memberinfo[username]' AND p.tid=t.tid AND f.status='on' ORDER BY p.dateline DESC");
-        while($post = $db->fetch_array($pq)) {
-            $pp = checkForumPermissions($post);
-            if (!($pp[X_PERMS_VIEW] && $pp[X_PERMS_PASSWORD])) {
-                continue;
-            }
-            $lpfound = true;
-            $posts = $db->result($db->query("SELECT count(pid) FROM ".X_PREFIX."posts WHERE tid='$post[tid]' AND pid < '$post[pid]'"), 0)+1; // +1 is faster than doing <= !
-            validatePpp();
-
-            $page = quickpage($posts, $ppp);
+        if (strlen($fids) > 0) {
+            $pq = $db->query(
+                "SELECT p.tid, t.subject, p.dateline, p.pid
+                 FROM ".X_PREFIX."posts AS p
+                 INNER JOIN ".X_PREFIX."threads AS t USING (tid)
+                 WHERE p.author='$member' AND p.fid IN ($fids)
+                 ORDER BY p.dateline DESC
+                 LIMIT 1"
+            );
+            $lpfound = ($db->num_rows($pq) == 1);
+        } else {
+            $lpfound = FALSE;
+        }
+        if ($lpfound) {
+            $post = $db->fetch_array($pq);
 
             $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
             $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
-            $post['subject'] = rawHTMLsubject(stripslashes($post['subject']));
-            $lastpost = "<a href=\"./viewthread.php?tid=$post[tid]&amp;page=$page#pid$post[pid]\">$post[subject]</a> ($lastposttext)";
-            break;
-        }
-        if (!$lpfound) {
+            $lpsubject = rawHTMLsubject(stripslashes($post['subject']));
+            $lastpost = "<a href=\"./viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}\">$lpsubject</a> ($lastposttext)";
+        } else {
             $lastpost = $lang['textnopostsyet'];
         }
 
