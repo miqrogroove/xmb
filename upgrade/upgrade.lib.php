@@ -39,8 +39,7 @@ function xmb_upgrade() {
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
         $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
-        echo '<b>Your forums were turned off by the upgrader to prevent damage.<br />'
-            .'They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.</b><br />';
+        show_warning('Your forums were turned off by the upgrader to prevent damage.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
         trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
     }
 
@@ -67,8 +66,7 @@ function xmb_upgrade() {
             //Future use. Break only before case default.
             break;
         default:
-            echo 'Unrecognized Database!<br />'
-                .'This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.<br />';
+            show_error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
             trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
             break;
     }
@@ -384,7 +382,7 @@ function upgrade_schema_to_v0() {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(11)') {
-            echo 'Unexpected schema in forums table.  Upgrade aborted to prevent damage.';
+            show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
 
@@ -408,7 +406,7 @@ function upgrade_schema_to_v0() {
         $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) != 'varchar(11)') {
-            echo 'Unexpected schema in forums table.  Upgrade aborted to prevent damage.';
+            show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
             trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
         }
     }

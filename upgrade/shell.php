@@ -45,6 +45,7 @@ if (DEBUG) {
 }
 define('X_PREFIX', $tablepre);
 require ROOT.'db/'.$database.'.php';
+require ROOT.'include/functions.inc.php';
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG and LOG_MYSQL_ERRORS));
@@ -59,6 +60,7 @@ if ($topicperpage < 5) $SETTINGS['topicperpage'] = 30;
 //Make it happen!
 require('./upgrade.lib.php');
 xmb_upgrade();
+show_progress('Done');
 
 /**
  * Output the upgrade progress at each step.
@@ -70,5 +72,23 @@ xmb_upgrade();
  */
 function show_progress($text) {
     echo $text, "...\n";
+}
+
+/**
+ * Output a warning message to the user.
+ *
+ * @param string $text
+ */
+function show_warning($text) {
+    echo $text, "\n";
+}
+
+/**
+ * Output an error message to the user.
+ *
+ * @param string $text Description of current progress.
+ */
+function show_error($text) {
+    echo $text, "\n";
 }
 ?>

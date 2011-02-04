@@ -172,4 +172,22 @@ echo "\n</body></html>";
 function show_progress($text) {
     echo $text, "...<br />\n";
 }
+
+/**
+ * Output a warning message to the user.
+ *
+ * @param string $text
+ */
+function show_warning($text) {
+    echo '<b>', $text, "</b><br />\n";
+}
+
+/**
+ * Output an error message to the user.
+ *
+ * @param string $text Description of current progress.
+ */
+function show_error($text) {
+    echo $text, "<br />\n";
+}
 ?>
