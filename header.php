@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2010, The XMB Group
+ * Copyright (c) 2001-2011, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -43,12 +43,12 @@ require ROOT.'include/global.inc.php';
 $versioncompany = 'The XMB Group';
 $versionshort = '1.9.11';
 $versiongeneral = 'XMB 1.9.11';
-$copyright = '2001-2010';
+$copyright = '2001-2011';
 $alpha = '';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20100126;
+$versionbuild = 20110204;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();

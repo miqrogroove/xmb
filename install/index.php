@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2010, The XMB Group
+ * Copyright (c) 2001-2011, The XMB Group
  * http://www.xmbforum.com
  *
  * Sponsored By iEntry, Inc.
@@ -30,7 +30,7 @@ define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
-define('COPY_YEAR', '2001-2010');
+define('COPY_YEAR', '2001-2011');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
