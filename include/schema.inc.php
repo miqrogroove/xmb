@@ -69,7 +69,7 @@ function xmb_schema_create($name){
     switch($name) {
     case 'attachments':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `aid` int(10) NOT NULL auto_increment,
           `pid` int(10) NOT NULL default 0,
           `filename` varchar(120) NOT NULL default '',
@@ -90,7 +90,7 @@ function xmb_schema_create($name){
         break;
     case 'banned':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `ip1` smallint(3) NOT NULL default 0,
           `ip2` smallint(3) NOT NULL default 0,
           `ip3` smallint(3) NOT NULL default 0,
@@ -106,7 +106,7 @@ function xmb_schema_create($name){
         break;
     case 'buddys':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `username` varchar(32) NOT NULL default '',
           `buddyname` varchar(32) NOT NULL default '',
           KEY `username` (username (8))
@@ -114,7 +114,7 @@ function xmb_schema_create($name){
         break;
     case 'captchaimages':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `imagehash` varchar(32) NOT NULL default '',
           `imagestring` varchar(12) NOT NULL default '',
           `dateline` int(10) NOT NULL default '0',
@@ -123,7 +123,7 @@ function xmb_schema_create($name){
         break;
     case 'favorites':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `tid` int(10) NOT NULL default 0,
           `username` varchar(32) NOT NULL default '',
           `type` varchar(32) NOT NULL default '',
@@ -132,7 +132,7 @@ function xmb_schema_create($name){
         break;
     case 'forums':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `type` varchar(15) NOT NULL default '',
           `fid` smallint(6) NOT NULL auto_increment,
           `name` varchar(128) NOT NULL default '',
@@ -162,7 +162,7 @@ function xmb_schema_create($name){
         break;
     case 'lang_base':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
           `devname` VARCHAR( 20 ) NOT NULL ,
           UNIQUE ( `devname` )
@@ -170,7 +170,7 @@ function xmb_schema_create($name){
         break;
     case 'lang_keys':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
           `langkey` VARCHAR( 30 ) NOT NULL ,
           UNIQUE ( `langkey` )
@@ -178,7 +178,7 @@ function xmb_schema_create($name){
         break;
     case 'lang_text':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `langid` TINYINT UNSIGNED NOT NULL ,
           `phraseid` SMALLINT UNSIGNED NOT NULL ,
           `cdata` BLOB NOT NULL ,
@@ -188,7 +188,7 @@ function xmb_schema_create($name){
         break;
     case 'logs':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `username` varchar(32) NOT NULL,
           `action` varchar(64) NOT NULL default '',
           `fid` smallint(6) NOT NULL default 0,
@@ -203,7 +203,7 @@ function xmb_schema_create($name){
         break;
     case 'members':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `uid` int(12) NOT NULL auto_increment,
           `username` varchar(32) NOT NULL default '',
           `password` varchar(32) NOT NULL default '',
@@ -255,7 +255,7 @@ function xmb_schema_create($name){
         break;
     case 'posts':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `fid` smallint(6) NOT NULL default '0',
           `tid` int(10) NOT NULL default '0',
           `pid` int(10) NOT NULL auto_increment,
@@ -277,7 +277,7 @@ function xmb_schema_create($name){
         break;
     case 'ranks':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `title` varchar(100) NOT NULL default '',
           `posts` MEDIUMINT DEFAULT 0,
           `id` smallint(5) NOT NULL auto_increment,
@@ -290,7 +290,7 @@ function xmb_schema_create($name){
         break;
     case 'restricted':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `name` varchar(32) NOT NULL default '',
           `id` smallint(6) NOT NULL auto_increment,
           `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
@@ -300,7 +300,7 @@ function xmb_schema_create($name){
         break;
     case 'settings':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `langfile` varchar(34) NOT NULL default 'English',
           `bbname` varchar(32) NOT NULL default 'Your Forums',
           `postperpage` smallint(5) NOT NULL default 25,
@@ -403,7 +403,7 @@ function xmb_schema_create($name){
         break;
     case 'smilies':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `type` varchar(15) NOT NULL default '',
           `code` varchar(40) NOT NULL default '',
           `url` varchar(40) NOT NULL default '',
@@ -413,7 +413,7 @@ function xmb_schema_create($name){
         break;
     case 'templates':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `id` smallint(6) NOT NULL auto_increment,
           `name` varchar(32) NOT NULL default '',
           `template` text NOT NULL,
@@ -423,7 +423,7 @@ function xmb_schema_create($name){
         break;
     case 'themes':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `themeid` smallint(3) NOT NULL auto_increment,
           `name` varchar(32) NOT NULL default '',
           `bgcolor` varchar(25) NOT NULL default '',
@@ -453,7 +453,7 @@ function xmb_schema_create($name){
         break;
     case 'threads':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `tid` int(10) NOT NULL auto_increment,
           `fid` smallint(6) NOT NULL default 0,
           `subject` varchar(128) NOT NULL default '',
@@ -474,7 +474,7 @@ function xmb_schema_create($name){
         break;
     case 'u2u':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `u2uid` bigint(10) NOT NULL auto_increment,
           `msgto` varchar(32) NOT NULL default '',
           `msgfrom` varchar(32) NOT NULL default '',
@@ -496,7 +496,7 @@ function xmb_schema_create($name){
         break;
     case 'vote_desc':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
           `topic_id` INT UNSIGNED NOT NULL,
           `vote_text` text NOT NULL,
@@ -508,7 +508,7 @@ function xmb_schema_create($name){
         break;
     case 'vote_results':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint(8) unsigned NOT NULL default '0',
           `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
           `vote_option_text` varchar(255) NOT NULL default '',
@@ -519,7 +519,7 @@ function xmb_schema_create($name){
         break;
     case 'vote_voters':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint(8) unsigned NOT NULL default '0',
           `vote_user_id` mediumint(8) NOT NULL default '0',
           `vote_user_ip` char(8) NOT NULL default '',
@@ -530,7 +530,7 @@ function xmb_schema_create($name){
         break;
     case 'whosonline':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `username` varchar(32) NOT NULL default '',
           `ip` varchar(15) NOT NULL default '',
           `time` int(10) NOT NULL default 0,
@@ -544,7 +544,7 @@ function xmb_schema_create($name){
         break;
     case 'words':
         $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name" (
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `find` varchar(60) NOT NULL default '',
           `replace1` varchar(60) NOT NULL default '',
           `id` smallint(6) NOT NULL auto_increment,
@@ -623,7 +623,7 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
 
     if (empty($column) and empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
 
-    $result = $db->query("SHOW INDEX FROM ".X_PREFIX.$name);
+    $result = $db->query("SHOW INDEX FROM ".X_PREFIX.$table);
 
     while ($row = $db->fetch_array($result)) {
         if (!empty($column) and $row['Column_name'] != $column) {
@@ -633,10 +633,12 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
         } elseif (!empty($subpart) and $row['Sub_part'] != $subpart) {
             continue;
         } else {
+            $db->free_result($result);
             return TRUE;
         }
     }
 
+    $db->free_result($result);
     return FALSE;
 }
 

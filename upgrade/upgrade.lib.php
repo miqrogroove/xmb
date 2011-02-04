@@ -34,6 +34,8 @@ if (!defined('IN_CODE')) {
  * Performs all tasks necessary for a normal upgrade.
  */
 function xmb_upgrade() {
+    global $db, $SETTINGS;
+    
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
         $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
@@ -127,7 +129,7 @@ function xmb_upgrade() {
     $db->free_result($query);
 
     show_progress('Deleting the upgrade files');
-    rmFromDir('upgrade');
+    rmFromDir(ROOT.'upgrade');
 }
 
 /**
@@ -218,7 +220,6 @@ function upgrade_schema_to_v0() {
             $sql[] = "DROP INDEX $colname";
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -337,7 +338,6 @@ function upgrade_schema_to_v0() {
     if (!xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
         $sql[] = "ADD PRIMARY KEY ($colname)";
     }
-    $db->free_result($query);
 
     $columns = array(
     'name');
@@ -830,7 +830,6 @@ function upgrade_schema_to_v0() {
             $sql[] = "DROP INDEX $colname";
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     $columns = array(
@@ -954,7 +953,6 @@ function upgrade_schema_to_v0() {
             $sql[] = "DROP INDEX $colname";
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     $columns = array(
@@ -1059,7 +1057,6 @@ function upgrade_schema_to_v0() {
             $sql[] = "DROP INDEX $colname";
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     $columns = array(
@@ -1070,7 +1067,6 @@ function upgrade_schema_to_v0() {
         if (!xmb_schema_index_exists($table, '', $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     if (count($sql) > 0) {
@@ -1285,7 +1281,6 @@ function upgrade_schema_to_v0() {
             $sql[] = "DROP INDEX $colname";
             $sql[] = "ADD INDEX $colname ($coltype)";
         }
-        $db->free_result($query);
     }
 
     $columns = array(

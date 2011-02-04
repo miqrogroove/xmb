@@ -387,7 +387,7 @@ class dbstuff {
      * @return string
      */
     function server_version(){
-        return mysql_get_server_info($db->link);
+        return mysql_get_server_info($this->link);
     }
 }
 

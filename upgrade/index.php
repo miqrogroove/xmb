@@ -49,7 +49,7 @@ if (!(is_file(ROOT.'header.php') and is_dir(ROOT.'include'))) {
 }
 
 //Authenticate Browser
-require('header.php');
+require(ROOT.'header.php');
 echo "<html><head><title>XMB Upgrade Script</title><body>Database Connection Established<br />\n";
 if (DEBUG) {
     echo 'Debug Mode Enabled.';
@@ -156,7 +156,7 @@ function disableButton() {
     xmb_upgrade();
 
 
-    echo '<b>Done! :D</b><br />Now <a href="cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
+    echo '<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1">reset the Board Status setting to turn your board back on</a>.<br />';
 }
 
 echo "\n</body></html>";
