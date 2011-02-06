@@ -2280,12 +2280,12 @@ function nonce_use($key, $nonce, $expire = 0) {
     $key = $db->escape(substr($key, 0, X_NONCE_KEY_LEN));
     $nonce = $db->escape($nonce);
     $time = time() - X_NONCE_MAX_AGE;
-    $sql_expire = "OR dateline < $time";
+    $sql_expire = "dateline < $time";
     if ($expire > 0 and $expire < X_NONCE_MAX_AGE) {
         $time = time() - $expire;
-        $sql_expire = "AND dateline < $time $sql_expire";
+        $sql_expire .= " OR imagestring='$key' AND dateline < $time";
     }
-    $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagestring='$key' $sql_expire");
+    $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE $sql_expire");
     $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$nonce' AND imagestring='$key'");
 
     return ($db->affected_rows() === 1);
