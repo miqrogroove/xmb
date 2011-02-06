@@ -4715,7 +4715,7 @@ $showtitle
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_modoptions|#*XMB TEMPLATE*#|
-<a NAME="admintools"></a>
+<a name="admintools"></a>
 <form action="topicadmin.php?tid=$tid&amp;fid=$fid" method="get">
 <input type="hidden" name="token" value="" />
 <span class="mediumtxt"><strong>$lang[textadminoptions]</strong>
