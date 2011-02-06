@@ -295,20 +295,14 @@ class Captcha {
             }
         }
 
-        // XMB saves code in DB and returns hashed code.
-        global $db, $onlinetime;
-        $time = $onlinetime;
-        $this->bPoison = TRUE;
-
         if ($this->bCaseInsensitive) {
-            $imagehash = md5(strtoupper($this->sCode));
-        } else {
-            $imagehash = md5($this->sCode);
+            $this->sCode = strtoupper($this->sCode);
         }
 
-        $db->query('DELETE FROM '.X_PREFIX.'captchaimages WHERE dateline < '.(time() - 86400));
-        $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$imagehash', '$this->sCode', '$time')");
-        return $imagehash;
+        // XMB saves code in DB and returns hashed code.
+        $this->bPoison = TRUE;
+
+        return nonce_create($this->sCode);
     }
 
     function DrawCharacters($bg_lum, $colors) {
@@ -471,38 +465,21 @@ class Captcha {
 
 
     function ValidateCode($sUserCode, $imghash) {
-        global $db;
-
-        if ($this->bPoison) {
-            return FALSE;
-        }
-
-        if (strlen($sUserCode) != CAPTCHA_NUM_CHARS Or $imghash == 'test') {
-            $this->bPoison = TRUE;
-            return FALSE;
-        }
-
-        $this->RetrieveCode($imghash);
-
         if ($this->bPoison) {
             return FALSE;
         }
 
         $this->bPoison = TRUE;
 
-        if ($this->bCaseInsensitive) {
-            $sUserCode = strtoupper($sUserCode);
-            $this->sCode = strtoupper($this->sCode);
+        if (strlen($sUserCode) != $this->iNumChars or $imghash == 'test') {
+            return FALSE;
         }
 
-        if ($sUserCode == $this->sCode) {
-            // clear to prevent re-use
-            $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
-            if ($db->affected_rows() === 1) {
-                return TRUE;
-            }
+        if ($this->bCaseInsensitive) {
+            $sUserCode = strtoupper($sUserCode);
         }
-        return FALSE;
+
+        return nonce_use($sUserCode, $imghash);
     }
 
     function SetNumDots($iNumDots) {
@@ -619,24 +596,12 @@ class Captcha {
     }
 
     function RetrieveCode($imghash) {
-        global $db;
-        // check imagehash
         if ($imghash == 'test') {
-            $imgCode = 'CaPtChA';
+            $this->bPoison = TRUE;
+            $this->sCode = 'CaPtChA';
         } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."captchaimages WHERE imagehash='$imghash'");
-            if ($db->num_rows($query) !== 1) {
-                $bPoison = TRUE;
-                return FALSE;
-            }
-            $captchaimage = $db->fetch_array($query);
-            $db->free_result($query);
-            $imgCode = $captchaimage['imagestring'];
+            $this->sCode = nonce_peek($imghash, $this->iNumChars);
         }
-
-        // reset code
-        $this->sCode = $imgCode;
-        return $imgCode;
     }
 
     function CheckCompatibility() {

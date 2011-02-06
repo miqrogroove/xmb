@@ -412,8 +412,16 @@ switch($action) {
 
     case 'u2udump':
         if (noSubmit('yessubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['u2udump_confirm'].'<br /><form action="tools.php?action=u2udump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+            ?>
+            <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['u2udump_confirm']; ?><br />
+            <form action="tools.php?action=u2udump" method="post">
+              <input type="hidden" name="token" value="<?php echo nonce_create('truncateu2us'); ?>" />
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+            </form></td></tr>
+            <?php
         } else if ($lang['textyes'] == $yessubmit) {
+            request_secure('truncateu2us', '', X_NONCE_AYS_EXP, FALSE);
             $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_u2u'].'</td></tr></table></table>';
@@ -427,8 +435,16 @@ switch($action) {
 
     case 'whosonlinedump':
         if (noSubmit('yessubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['whoodump_confirm'].'<br /><form action="tools.php?action=whosonlinedump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+            ?>
+            <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['whoodump_confirm']; ?><br />
+            <form action="tools.php?action=whosonlinedump" method="post">
+              <input type="hidden" name="token" value="<?php echo nonce_create('truncatewhos'); ?>" />
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+            </form></td></tr>
+            <?php
         } else if ($lang['textyes'] == $yessubmit) {
+            request_secure('truncatewhos', '', X_NONCE_AYS_EXP, FALSE);
             $db->query("TRUNCATE ".X_PREFIX."whosonline");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_whosonline'].'</td></tr></table></table>';
@@ -446,8 +462,16 @@ switch($action) {
         }
 
         if (noSubmit('yessubmit')) {
-            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['logsdump_confirm'].'<br /><form action="tools.php?action=logsdump" method="post"><input type="submit" name="yessubmit" value="'.$lang['textyes'].'" /> - <input type="submit" name="yessubmit" value="'.$lang['textno'].'" /></form></td></tr>';
+            ?>
+            <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['logsdump_confirm']; ?><br />
+            <form action="tools.php?action=logsdump" method="post">
+              <input type="hidden" name="token" value="<?php echo nonce_create('deletecplogs'); ?>" />
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
+              <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+            </form></td></tr>
+            <?php
         } else if ($lang['textyes'] == $yessubmit) {
+            request_secure('deletecplogs', '', X_NONCE_AYS_EXP, FALSE);
             $db->query("DELETE FROM ".X_PREFIX."logs WHERE fid=0");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';

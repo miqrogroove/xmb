@@ -48,7 +48,7 @@ $alpha = '';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20110204;
+$versionbuild = 20110205;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -123,6 +123,10 @@ $tables = array(
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
+define('X_NONCE_AYS_EXP', 300); // Yes/no prompt expiration, in seconds.
+define('X_NONCE_FORM_EXP', 3600); // Form expiration, in seconds.
+define('X_NONCE_MAX_AGE', 86400); // CAPTCHA expiration, in seconds.
+define('X_NONCE_KEY_LEN', 12); // Size of captchaimages.imagestring.
 define('X_ONLINE_TIMER', 600); // Visitors are offline after this many seconds.
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
@@ -366,6 +370,11 @@ if ($onlinetodaycount < 5) {
 if ($SETTINGS['smcols'] < 1) {
     $smcols = 4;
     $SETTINGS['smcols'] = 4;
+}
+
+if ($SETTINGS['captcha_code_length'] < 3 or $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
+    $captcha_code_length = 8;
+    $SETTINGS['captcha_code_length'] = 8;
 }
 
 // Validate maxattachsize with PHP configuration.
