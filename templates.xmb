@@ -4915,7 +4915,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <!-- Build: $versionbuild -->
 <!-- $versioncompany -->
 <head>
-$baseelement
+$baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 <style type="text/css">
@@ -4945,7 +4945,7 @@ font-family: arial, verdana;
 $logo
 <br />
 <br />
-<h2><a href="$threadlink" rel="canonical" rev="alternate">$thread[subject]</a></h2>
+<h2><a href="$threadlink" rev="alternate">$thread[subject]</a></h2>
 $multipage
 $posts
 $multipage

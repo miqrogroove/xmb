@@ -784,6 +784,8 @@ if ($action == '') {
 
     $threadlink = $normal_page == 1 ? "viewthread.php?tid=$tid" : "viewthread.php?tid=$tid&amp;page=$normal_page";
 
+    setCanonicalLink($threadlink);
+
     // This first query does not access any table data if the new thread_optimize index is available.  :)
     $criteria = '';
     $offset = '';
