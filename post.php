@@ -688,7 +688,9 @@ switch($action) {
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                $dissubject = $subject;
+                if (strlen($subject) > 0) {
+                    $dissubject = $subject.'<br />';
+                }
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($messageinput);
                 }
@@ -1069,7 +1071,9 @@ switch($action) {
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                $dissubject = $subject;
+                if (strlen($subject) > 0) {
+                    $dissubject = $subject.'<br />';
+                }
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($messageinput);
                 }
@@ -1340,7 +1344,9 @@ switch($action) {
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                $dissubject = $subject;
+                if (strlen($subject) > 0) {
+                    $dissubject = $subject.'<br />';
+                }
                 $message1 = $postinfo['message'];
                 if ($SETTINGS['editedby'] == 'on') {
                     $message1 .= "\n\n[".$lang['textediton'].' '.gmdate($dateformat).' '.$lang['textby']." $username]";
