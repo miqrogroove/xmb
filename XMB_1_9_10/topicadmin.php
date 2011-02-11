@@ -191,26 +191,6 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 
 eval('echo "'.template('header').'";');
 
-if (is_array($tid)) {
-    $csv = $mod->create_tid_string($tid);
-} else {
-    $csv = $tid;
-}
-if (strlen($csv) != 0) {
-    $tids = array();
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE tid IN ($csv) AND fid=$fid");
-    while ($row = $db->fetch_array($query)) {
-        $tids[] = $row['tid'];
-    }
-    $db->free_result($query);
-}
-if (is_array($tid)) {
-    $tid = $tids;
-} else {
-    $tid = implode(',', $tids);
-}
-unset($csv, $tids);
-
 switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
