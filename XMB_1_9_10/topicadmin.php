@@ -194,7 +194,7 @@ eval('echo "'.template('header').'";');
 switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
-            $template = template_secure('topicadmin_delete', 'tadel', min($tid));
+            $template = template_secure('topicadmin_delete', 'tadel', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.$template.'";');
         } else {
@@ -256,7 +256,7 @@ switch($action) {
 
     case 'f_close':
         if (noSubmit('closesubmit')) {
-            $template = template_secure('topicadmin_openclose', 'taclo', min($tid));
+            $template = template_secure('topicadmin_openclose', 'taclo', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.$template.'";');
         } else {
@@ -273,7 +273,7 @@ switch($action) {
 
     case 'f_open':
         if (noSubmit('closesubmit')) {
-            $template = template_secure('topicadmin_openclose', 'taope', min($tid));
+            $template = template_secure('topicadmin_openclose', 'taope', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             $lang['textclosethread'] = $lang['textopenthread'];
             eval('echo "'.$template.'";');
@@ -291,7 +291,7 @@ switch($action) {
 
     case 'move':
         if (noSubmit('movesubmit')) {
-            $template = template_secure('topicadmin_move', 'tamov', min($tid));
+            $template = template_secure('topicadmin_move', 'tamov', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('moveto', false, false, $fid);
             eval('echo "'.$template.'";');
@@ -361,7 +361,7 @@ switch($action) {
             } else {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
-            $template = template_secure('topicadmin_topuntop', 'tatop', min($tid));
+            $template = template_secure('topicadmin_topuntop', 'tatop', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.$template.'";');
         } else {
@@ -452,12 +452,12 @@ switch($action) {
 
     case 'bump':
         if (noSubmit('bumpsubmit')) {
-            $template = template_secure('topicadmin_bump', 'tabum', min($tid));
+            $template = template_secure('topicadmin_bump', 'tabum', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
-            request_secure('tabum', min($tid), X_NONCE_AYS_EXP, FALSE);
+            request_secure('tabum', min((array)$tid), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -477,7 +477,7 @@ switch($action) {
 
     case 'empty':
         if (noSubmit('emptysubmit')) {
-            $template = template_secure('topicadmin_empty', 'taemp', min($tid));
+            $template = template_secure('topicadmin_empty', 'taemp', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             eval('echo "'.$template.'";');
         } else {
@@ -688,7 +688,7 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            $template = template_secure('topicadmin_threadprune', 'tapru', $tid));
+            $template = template_secure('topicadmin_threadprune', 'tapru', $tid);
             eval('echo "'.$template.'";');
         } else {
             request_secure('tapru', $tid, X_NONCE_AYS_EXP, FALSE);
@@ -749,7 +749,7 @@ switch($action) {
 
     case 'copy':
         if (noSubmit('copysubmit')) {
-            $template = template_secure('topicadmin_copy', 'tacop', min($tid));
+            $template = template_secure('topicadmin_copy', 'tacop', min((array)$tid));
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('newfid', false, false);
             eval('echo "'.$template.'";');

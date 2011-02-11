@@ -1925,6 +1925,6 @@ function nonce_use($key, $nonce, $expire = 0) {
     $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE $sql_expire");
     $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$nonce' AND imagestring='$key'");
 
-    return ($db->affected_rows() === 1);
+    return (mysql_affected_rows($db->link) === 1);
 }
 ?>
