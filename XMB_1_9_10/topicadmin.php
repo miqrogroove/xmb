@@ -191,13 +191,35 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 
 eval('echo "'.template('header').'";');
 
+if (is_array($tid)) {
+    $csv = $mod->create_tid_string($tid);
+} else {
+    $csv = $tid;
+}
+if (strlen($csv) != 0) {
+    $tids = array();
+    $query = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE tid IN ($csv) AND fid=$fid");
+    while ($row = $db->fetch_array($query)) {
+        $tids[] = $row['tid'];
+    }
+    $db->free_result($query);
+}
+if (is_array($tid)) {
+    $tid = $tids;
+} else {
+    $tid = implode(',', $tids);
+}
+unset($csv, $tids);
+
 switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
+            $template = template_secure('topicadmin_delete', 'tadel', min($tid));
             $tid = $mod->create_tid_string($tid);
-            eval('echo "'.template('topicadmin_delete').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('tadel', min($tids), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 while($result = $db->fetch_array($query)) {
@@ -254,10 +276,12 @@ switch($action) {
 
     case 'f_close':
         if (noSubmit('closesubmit')) {
+            $template = template_secure('topicadmin_openclose', 'taclo', min($tid));
             $tid = $mod->create_tid_string($tid);
-            eval('echo "'.template('topicadmin_openclose').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('taclo', min($tids), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
                 $mod->log($xmbuser, 'close', $fid, $tid);
@@ -269,11 +293,13 @@ switch($action) {
 
     case 'f_open':
         if (noSubmit('closesubmit')) {
+            $template = template_secure('topicadmin_openclose', 'taope', min($tid));
             $tid = $mod->create_tid_string($tid);
             $lang['textclosethread'] = $lang['textopenthread'];
-            eval('echo "'.template('topicadmin_openclose').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('taope', min($tids), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid='$tid' AND fid='$fid'");
                 $mod->log($xmbuser, 'open', $fid, $tid);
@@ -285,10 +311,13 @@ switch($action) {
 
     case 'move':
         if (noSubmit('movesubmit')) {
+            $template = template_secure('topicadmin_move', 'tamov', min($tid));
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('moveto', false, false, $fid);
-            eval('echo "'.template('topicadmin_move').'";');
+            eval('echo "'.$template.'";');
         } else {
+            $tids = $mod->create_tid_array($tid);
+            request_secure('tamov', min($tids), X_NONCE_AYS_EXP, FALSE);
             $moveto = formInt('moveto');
             $query = $db->query("SELECT type, fup FROM ".X_PREFIX."forums WHERE fid=$moveto");
             if ($db->num_rows($query) == 0) {
@@ -300,7 +329,6 @@ switch($action) {
                 error($lang['errormovingthreads'], FALSE);
             }
 
-            $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 if ($type == "normal") {
                     $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid='$tid'");
@@ -353,10 +381,12 @@ switch($action) {
             } else {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
+            $template = template_secure('topicadmin_topuntop', 'tatop', min($tid));
             $tid = $mod->create_tid_string($tid);
-            eval('echo "'.template('topicadmin_topuntop').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('tatop', min($tids), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE fid=$fid AND tid='$tid'");
                 if ($db->num_rows($query) == 0) {
@@ -442,10 +472,12 @@ switch($action) {
 
     case 'bump':
         if (noSubmit('bumpsubmit')) {
+            $template = template_secure('topicadmin_bump', 'tabum', min($tid));
             $tid = $mod->create_tid_string($tid);
-            eval('echo "'.template('topicadmin_bump').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('tabum', min($tid), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid DESC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -465,10 +497,12 @@ switch($action) {
 
     case 'empty':
         if (noSubmit('emptysubmit')) {
+            $template = template_secure('topicadmin_empty', 'taemp', min($tid));
             $tid = $mod->create_tid_string($tid);
-            eval('echo "'.template('topicadmin_empty').'";');
+            eval('echo "'.$template.'";');
         } else {
             $tids = $mod->create_tid_array($tid);
+            request_secure('taemp', min($tids), X_NONCE_AYS_EXP, FALSE);
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -518,8 +552,10 @@ switch($action) {
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
-            eval('echo "'.template('topicadmin_split').'";');
+            $template = template_secure('topicadmin_split', 'taspl', $tid);
+            eval('echo "'.$template.'";');
         } else {
+            request_secure('taspl', $tid, X_NONCE_AYS_EXP, FALSE);
             $subject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));  // Subjects are historically double-quoted
             if ($subject == '') {
                 error($lang['textnosubject'], false);
@@ -570,8 +606,10 @@ switch($action) {
     case 'merge':
         $tid = intval($tid);
         if (noSubmit('mergesubmit')) {
-            eval('echo "'.template('topicadmin_merge').'";');
+            $template = template_secure('topicadmin_merge', 'tamer', $tid);
+            eval('echo "'.$template.'";');
         } else {
+            request_secure('tamer', $tid, X_NONCE_AYS_EXP, FALSE);
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
             } else if ($tid == $othertid) {
@@ -670,8 +708,10 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            eval('echo "'.template('topicadmin_threadprune').'";');
+            $template = template_secure('topicadmin_threadprune', 'tapru', $tid));
+            eval('echo "'.$template.'";');
         } else {
+            request_secure('tapru', $tid, X_NONCE_AYS_EXP, FALSE);
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid='$tid'");
                 while($post = $db->fetch_array($query))    {
@@ -729,10 +769,13 @@ switch($action) {
 
     case 'copy':
         if (noSubmit('copysubmit')) {
+            $template = template_secure('topicadmin_copy', 'tacop', min($tid));
             $tid = $mod->create_tid_string($tid);
             $forumselect = forumList('newfid', false, false);
-            eval('echo "'.template('topicadmin_copy').'";');
+            eval('echo "'.$template.'";');
         } else {
+            $tids = $mod->create_tid_array($tid);
+            request_secure('tacop', min($tids), X_NONCE_AYS_EXP, FALSE);
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);
             }
@@ -750,7 +793,6 @@ switch($action) {
                 error($lang['notpermitted'], false);
             }
 
-            $tids = $mod->create_tid_array($tid);
             foreach($tids AS $tid) {
                 $thread = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid='$tid'"));
 

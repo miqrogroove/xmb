@@ -223,11 +223,14 @@ if ($action == 'themes') {
     $single_int = getInt('single');
     $newtheme = postedVar('newtheme');
 
+    $themenonce = nonce_create('massedthemes');
+
     if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
-        <form method="POST" action="cp2.php?action=themes" name="theme_main">
+        <form method="post" action="cp2.php?action=themes" name="theme_main">
+        <input type="hidden" name="token" value="<?php echo $themenonce; ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -311,6 +314,7 @@ if ($action == 'themes') {
         </form>
         <br />
         <form method="post" action="cp2.php?action=themes" enctype="multipart/form-data">
+        <input type="hidden" name="token" value="<?php echo $themenonce; ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -336,6 +340,7 @@ if ($action == 'themes') {
     }
 
     if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
+        request_secure('massedthemes', '', X_NONCE_FORM_EXP, FALSE);
         if (!is_uploaded_file($_FILES['themefile']['tmp_name'])) {
             error($lang['textthemeimportfail'], FALSE);
         }
@@ -373,6 +378,7 @@ if ($action == 'themes') {
         }
         echo '</td></tr>';
     } else if (onSubmit('themesubmit')) {
+        request_secure('massedthemes', '', X_NONCE_FORM_EXP, FALSE);
         $theme_delete = formArray('theme_delete');
         $theme_name = formArray('theme_name');
 
@@ -405,10 +411,12 @@ if ($action == 'themes') {
         $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid='$single_int'");
         $themestuff = $db->fetch_array($query);
         $db->free_result($query);
+        $key = template_key('theme', $single_int);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp2.php?action=themes&amp;single=submit">
+        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -525,6 +533,7 @@ if ($action == 'themes') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=themes&amp;single=submit">
+        <input type="hidden" name="token" value="<?php echo nonce_create('makenewtheme'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -625,6 +634,8 @@ if ($action == 'themes') {
         </tr>
         <?php
     } else if ($single_str == "submit" && !$newtheme) {
+        $orig = formInt('orig');
+        request_secure('theme', $orig, X_NONCE_FORM_EXP, FALSE);
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -650,6 +661,7 @@ if ($action == 'themes') {
         $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew' WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } else if ($single_str == "submit" && $newtheme) {
+        request_secure('makenewtheme', '', X_NONCE_FORM_EXP, FALSE);
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -970,6 +982,7 @@ if ($action == "ranks") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=ranks">
+        <input type="hidden" name="token" value="<?php echo nonce_create('editusrranks'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="650" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1034,6 +1047,7 @@ if ($action == "ranks") {
         </tr>
         <?php
     } else {
+        request_secure('editusrranks', '', X_NONCE_FORM_EXP, FALSE);
         $id = formArray('id');
         $delete = formArray('delete');
         $title = formArray('title');
@@ -1085,6 +1099,7 @@ if ($action == "newsletter") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp2.php?action=newsletter">
+        <input type="hidden" name="token" value="<?php echo nonce_create('sendnewslttr'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1141,6 +1156,7 @@ if ($action == "newsletter") {
         </tr>
         <?php
     } else {
+        request_secure('sendnewslttr', '', X_NONCE_FORM_EXP, FALSE);
         @set_time_limit(0);
         $newssubject = postedVar('newssubject');
         $newsmessage = postedVar('newsmessage');
@@ -1211,6 +1227,7 @@ if ($action == "prune") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=prune">
+        <input type="hidden" name="token" value="<?php echo nonce_create('admmassprune'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1248,7 +1265,7 @@ if ($action == "prune") {
         <input type="checkbox" name="pruneByPosts[check]" value="1" />
         </td>
         <td>
-        <select name="pruneBy[posts][type]">
+        <select name="pruneByPosts[type]">
         <option value="more"><?php echo $lang['prunemorethan']?></option>
         <option value="is"><?php echo $lang['pruneexactly']?></option>
         <option value="less"><?php echo $lang['prunelessthan']?></option>
@@ -1314,6 +1331,7 @@ if ($action == "prune") {
         </tr>
         <?php
     } else {
+        request_secure('admmassprune', '', X_NONCE_FORM_EXP, FALSE);
         $pruneByDate = formArray('pruneByDate');
         $pruneByPosts = formArray('pruneByPosts');
         $pruneFrom = postedVar('pruneFrom', '', FALSE, FALSE);
@@ -1483,6 +1501,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates">
+        <input type="hidden" name="token" value="<?php echo nonce_create('rsttemplates'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1507,6 +1526,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('restoresubmit')) {
+        request_secure('rsttemplates', '', X_NONCE_AYS_EXP, FALSE);
         if (!file_exists('./templates.xmb')) {
             error($lang['no_templates'], false, '</td></tr></table></td></tr></table><br />');
         }
@@ -1535,10 +1555,12 @@ if ($action == "templates") {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
         $tid = formInt('tid');
+        $key = template_key('tmplt', $tid);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
+        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1572,6 +1594,7 @@ if ($action == "templates") {
 
     if (onSubmit('editsubmit')) {
         $tid = postedVar('tid', '', FALSE, FALSE, FALSE, 'g');
+        request_secure('tmplt', $tid, X_NONCE_FORM_EXP, FALSE);
         $namenew = postedVar('namenew');
         //Templates are double-slashed so that they can be eval'd as raw strings.
         $templatenew = $db->escape(getRequestVar('templatenew'));
@@ -1600,10 +1623,12 @@ if ($action == "templates") {
             error($lang['selecttemplate'], false, '</td></tr></table></td></tr></table><br />');
         }
         $tid = getInt('tid', 'r');
+        $key = template_key('dtmpl', $tid);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
+        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1629,6 +1654,7 @@ if ($action == "templates") {
 
     if (onSubmit('deletesubmit')) {
         $tid = getInt('tid', 'r');
+        request_secure('dtmpl', $tid, X_NONCE_AYS_EXP, FALSE);
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE id=$tid");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
         redirect('cp2.php?action=templates', 2, X_REDIRECT_JS);
@@ -1636,10 +1662,12 @@ if ($action == "templates") {
 
     if (onSubmit('new')) {
         $newtemplatename = postedVar('newtemplatename', 'javascript', TRUE, FALSE, TRUE);
+        $key = template_key('tmplt', 'new');
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=new">
+        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1739,6 +1767,7 @@ if ($action == "attachments") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=attachments">
+        <input type="hidden" name="token" value="<?php echo nonce_create('massedattach'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1839,6 +1868,7 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('deletesubmit')) {
+        request_secure('massedattach', '', X_NONCE_FORM_EXP, FALSE);
         $filelist = '';
         foreach($_POST as $postedname => $rawvalue) {
             if (substr($postedname, 0, 8) == 'filename' And is_numeric($fileaid = substr($postedname, 8))) {
@@ -2106,8 +2136,21 @@ if ($action == "cplog") {
 
 if ($action == "delete_attachment") {
     $aid = getInt('aid');
-    $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid=$aid");
-    echo "<p align=\"center\">Deleted ...</br>";
+    if (noSubmit('yessubmit')) {
+        $key = template_key('delat', $aid);
+        ?>
+        <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td>Are you sure you want to delete this attachment?<br />
+        <form action="cp2.php?action=delete_attachment&amp;aid=<?php echo $aid; ?>&amp;pid=<?php echo $pid; ?>" method="post">
+          <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
+          <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
+          <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+        </form></td></tr>
+        <?php
+    } elseif ($lang['textyes'] == $yessubmit) {
+        request_secure('delat', $aid, X_NONCE_AYS_EXP, FALSE);
+        $db->query("DELETE FROM ".X_PREFIX."attachments WHERE aid=$aid");
+        echo "<p align=\"center\">Deleted ...</br>";
+    }
 }
 
 echo '</table></td></tr></table>';

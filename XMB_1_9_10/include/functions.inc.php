@@ -253,6 +253,57 @@ function loadtemplates() {
     }
 }
 
+/**
+ * Get a template with the token filled in.
+ *
+ * @param string $name The template name.
+ * @param string $action The action for which the token is valid.
+ * @param string $id The object for which the token is valid.
+ * @return string
+ */
+function template_secure($name, $action, $id) {
+    $key = template_key($action, $id);
+    $nonce = nonce_create($key);
+    $placeholder = '<input type="hidden" name="token" value="$oToken->newToken" />';
+    $replace = '<input type="hidden" name="token" value="'.$nonce.'" />';
+    return str_replace(addslashes($placeholder), addslashes($replace), template($name));
+}
+
+/**
+ * Assert token validity for a user request.
+ *
+ * @param string $action The action for which the token is valid.
+ * @param string $id The object for which the token is valid.
+ * @param int    $expire Number of seconds for which the token was valid.
+ * @param bool   $error_header Display header template on errors?
+ */
+function request_secure($action, $id, $expire, $error_header = TRUE) {
+    global $lang;
+
+    $key = template_key($action, $id);
+    $nonce = postedVar('token');
+    if (!nonce_use($key, $nonce, $expire)) {
+        error($lang['noadminsession'], $error_header);
+    }
+}
+
+/**
+ * Make a key for the nonce/key pair.
+ *
+ * @param string $action The action for which the token is valid.
+ * @param string $id The object for which the token is valid.
+ * @return string
+ */
+function template_key($action, $id) {
+    $id_len = X_NONCE_KEY_LEN - strlen($action);
+    if (strlen($id) > $id_len) {
+        $id = substr($id, -$id_len);
+    } else {
+        $id = str_pad($id, $id_len, '0', STR_PAD_LEFT);
+    }
+    return $action . $id;
+}
+
 function censor($txt) {
     global $censorcache;
 
@@ -1802,5 +1853,78 @@ function handlePasswordDialog($fid) {
         eval('$pwform = "'.template('forumdisplay_password').'";');
         error($lang['forumpwinfo'], true, '', $pwform, false, true, false, true);
     }
+}
+
+/**
+ * Generate a nonce.
+ *
+ * The XMB schema is currently limited to a 12-byte key length, and as such
+ * does not offer user uniqueness beyond simple randomization.
+ *
+ * @param string $key The known value, such as what the nonce may be used for.
+ * @param string $salt A semi-secret value such as the id of the current user.
+ * @return string
+ */
+function nonce_create($key) {
+    global $db, $self;
+
+    $key = $db->escape(substr($key, 0, X_NONCE_KEY_LEN));
+    $salt = isset($self['email']) ? $self['email'] : $key;
+    $nonce = md5( $salt . mt_rand() );
+    $time = time();
+    $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$nonce', '$key', '$time')");
+
+    return $nonce;
+}
+
+/**
+ * Reveal the nonce/key pair to the user, as in CAPTCHA.
+ *
+ * @param  string $nonce The user input.
+ * @param  int    $key_length The known length of the key.
+ * @return string The key value.
+ */
+function nonce_peek($nonce, $key_length) {
+    global $db;
+
+    $key_length = (int) $key_length;
+    if ($key_length >= X_NONCE_KEY_LEN) return '';  //Since the schema is so constrained, keep all the 12-byte keys secure.
+
+    $nonce = $db->escape($nonce);
+    $time = time() - X_NONCE_MAX_AGE;
+    $result = $db->query(
+        "SELECT imagestring
+         FROM ".X_PREFIX."captchaimages
+         WHERE imagehash='$nonce' AND dateline >= $time AND LENGTH(imagestring) = $key_length"
+    );
+    if ($db->num_rows($result) === 1) {
+        return $db->result($result, 0);
+    }
+    return '';
+}
+
+/**
+ * Test a nonce.
+ *
+ * @param string $key The same value used in nonce_create().
+ * @param string $nonce The user input.
+ * @param int    $expire Optional. Number of seconds for which any nonce having the same $key will be valid.
+ * @return bool True only if the user provided a unique nonce for the key/nonce pair.
+ */
+function nonce_use($key, $nonce, $expire = 0) {
+    global $db;
+
+    $key = $db->escape(substr($key, 0, X_NONCE_KEY_LEN));
+    $nonce = $db->escape($nonce);
+    $time = time() - X_NONCE_MAX_AGE;
+    $sql_expire = "dateline < $time";
+    if ($expire > 0 and $expire < X_NONCE_MAX_AGE) {
+        $time = time() - $expire;
+        $sql_expire .= " OR imagestring='$key' AND dateline < $time";
+    }
+    $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE $sql_expire");
+    $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$nonce' AND imagestring='$key'");
+
+    return ($db->affected_rows() === 1);
 }
 ?>

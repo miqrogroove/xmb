@@ -35,6 +35,10 @@ error_reporting(E_ALL&~E_NOTICE);
 define('IN_CODE', true);
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
+define('X_NONCE_AYS_EXP', 300); // Yes/no prompt expiration, in seconds.
+define('X_NONCE_FORM_EXP', 3600); // Form expiration, in seconds.
+define('X_NONCE_MAX_AGE', 86400); // CAPTCHA expiration, in seconds.
+define('X_NONCE_KEY_LEN', 12); // Size of captchaimages.imagestring.
 define('X_SET_HEADER', 1);
 define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
@@ -368,6 +372,11 @@ if ($memberperpage < 5) {
 
 if ($onlinetodaycount < 5) {
     $onlinetodaycount = 30;
+}
+
+if ($SETTINGS['captcha_code_length'] < 3 or $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
+    $captcha_code_length = 8;
+    $SETTINGS['captcha_code_length'] = 8;
 }
 
 // Get the user-vars, and make them semi-global

@@ -406,6 +406,7 @@ if ($action == "settings") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=settings">
+        <input type="hidden" name="token" value="<?php echo nonce_create('mainsettings'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -575,6 +576,8 @@ if ($action == "settings") {
         </tr>
         <?php
     } else {
+        request_secure('mainsettings', '', X_NONCE_FORM_EXP, FALSE);
+
         $sitenamenew = postedVar('sitenamenew');
         $bbnamenew = postedVar('bbnamenew');
         $siteurlnew = postedVar('siteurlnew');
@@ -781,6 +784,7 @@ if ($action == 'rename') {
     }
 
     if (onSubmit('renamesubmit')) {
+        request_secure('renamemember', '', X_NONCE_AYS_EXP, FALSE);
         $vUserFrom = postedVar('frmUserFrom', '', TRUE, FALSE);
         $vUserTo = postedVar('frmUserTo', '', TRUE, FALSE);
         $adm = new admin();
@@ -791,6 +795,7 @@ if ($action == 'rename') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form action="cp.php?action=rename" method="post">
+        <input type="hidden" name="token" value="<?php echo nonce_create('renamemember'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -859,6 +864,7 @@ if ($action == 'forum') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=forum">
+        <input type="hidden" name="token" value="<?php echo nonce_create('massedforums'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1097,10 +1103,12 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if ($fdetails && noSubmit('forumsubmit')) {
+        $key = template_key('editfid', $fdetails);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=forum&amp;fdetails=<?php echo $fdetails?>">
+        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1247,6 +1255,7 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if (onSubmit('forumsubmit') && !$fdetails) {
+        request_secure('massedforums', '', X_NONCE_FORM_EXP, FALSE);
         $queryforum = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         $db->query("DELETE FROM ".X_PREFIX."forums WHERE name=''");
         while($forum = $db->fetch_array($queryforum)) {
@@ -1342,6 +1351,7 @@ if ($action == 'forum') {
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
+        request_secure('editfid', $fdetails, X_NONCE_FORM_EXP, FALSE);
         $namenew = addslashes(htmlspecialchars(postedVar('namenew', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $descnew = postedVar('descnew');
         $allowhtmlnew = formYesNo('allowhtmlnew');
@@ -1516,6 +1526,7 @@ if ($action == "members") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
+            <input type="hidden" name="token" value="<?php echo nonce_create('masseditmems'); ?>" />
             <table cellspacing="0" cellpadding="0" border="0" width="91%" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
@@ -1593,7 +1604,7 @@ if ($action == "members") {
                 <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
                 <td align="center"><input type="checkbox" name="delete<?php echo $member['uid']?>" onclick="addUserDel(<?php echo $member['uid']?>, '<?php echo $member['username']?>', this)" value="<?php echo $member['uid']?>" /></td>
                 <td><a href="member.php?action=viewpro&amp;member=<?php echo recodeOut($member['username']);?>"><?php echo $member['username']?></a>
-                <br /><a href="javascript:confirmAction('<?php echo addslashes($lang['confirmDeletePosts']);?>', 'cp.php?action=deleteposts&amp;member=<?php echo recodeJavaOut($member['username'])?>', false);"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
+                <br /><a href="cp.php?action=deleteposts&amp;member=<?php echo recodeOut($member['username'])?>"><strong><?php echo $lang['cp_deleteposts']?></strong></a><?php echo $pending ?>
                 </td>
                 <td><input type="text" size="12" name="pw<?php echo $member['uid']?>"></td>
                 <td><input type="text" size="3" name="postnum<?php echo $member['uid']?>" value="<?php echo $member['postnum']?>"></td>
@@ -1632,6 +1643,7 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
+        request_secure('masseditmems', '', X_NONCE_FORM_EXP, FALSE);
         $query = $db->query("SELECT MIN(`uid`) FROM `" . X_PREFIX. "members` WHERE `status`='Super Administrator'");
         $sa_uid = $db->result($query, 0);
         $db->free_result($query);
@@ -1816,18 +1828,31 @@ if ($action == "ipban") {
 
 if ($action == "deleteposts") {
     $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
-    $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
-    //Critical: Do not alias tables in the next query.  MySQL 4.0 and MySQL 4.1 use mutually incompatible syntax.
-    $db->query("DELETE ".X_PREFIX."attachments, ".X_PREFIX."posts FROM ".X_PREFIX."posts LEFT JOIN ".X_PREFIX."attachments USING(pid) WHERE author='$member'");
-    $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
-    while($threads = $db->fetch_array($countquery)) {
-        $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
-    }
-    $countquery = $db->query("SELECT t.tid, COUNT(p.pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts AS p USING (tid) WHERE t.author='$member' GROUP BY t.tid");
-    while($threads = $db->fetch_array($countquery)) {
-        if ($threads['postcount'] == 0) { //This will also delete thread redirectors where the redirect's author is $member
-            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='{$threads['tid']}'");
-            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='{$threads['tid']}'");
+    if (noSubmit('yessubmit')) {
+        $key = template_key('delps', $member);
+        ?>
+        <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['confirmDeletePosts']; ?><br />
+        <form action="cp.php?action=deleteposts&amp;member=<?php echo recodeOut($member); ?>" method="post">
+          <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
+          <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
+          <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+        </form></td></tr>
+        <?php
+    } elseif ($lang['textyes'] == $yessubmit) {
+        request_secure('delps', $member, X_NONCE_AYS_EXP, FALSE);
+        $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
+        //Critical: Do not alias tables in the next query.  MySQL 4.0 and MySQL 4.1 use mutually incompatible syntax.
+        $db->query("DELETE ".X_PREFIX."attachments, ".X_PREFIX."posts FROM ".X_PREFIX."posts LEFT JOIN ".X_PREFIX."attachments USING(pid) WHERE author='$member'");
+        $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
+        while($threads = $db->fetch_array($countquery)) {
+            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
+        }
+        $countquery = $db->query("SELECT t.tid, COUNT(p.pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts AS p USING (tid) WHERE t.author='$member' GROUP BY t.tid");
+        while($threads = $db->fetch_array($countquery)) {
+            if ($threads['postcount'] == 0) { //This will also delete thread redirectors where the redirect's author is $member
+                $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid='{$threads['tid']}'");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='{$threads['tid']}'");
+            }
         }
     }
 }
@@ -1838,6 +1863,7 @@ if ($action == "upgrade") {
     }
 
     if (onSubmit('upgradesubmit')) {
+        request_secure('insertrawsql', '', X_NONCE_FORM_EXP, FALSE);
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
             $add = get_attached_file($_FILES['sql_file'], 'on', ini_get('upload_max_filesize'), FALSE);
@@ -1916,6 +1942,7 @@ if ($action == "upgrade") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=upgrade" enctype="multipart/form-data">
+        <input type="hidden" name="token" value="<?php echo nonce_create('insertrawsql'); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">

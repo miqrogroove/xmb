@@ -175,8 +175,10 @@ if (noSubmit('editsubmit')) {
 
     $userrecode = recodeOut($member['username']);
 
-    eval('echo "'.template('admintool_editprofile').'";');
+    $template = template_secure('admintool_editprofile', 'edpro', $member['uid']);
+    eval('echo "'.$template.'";');
 } else {
+    request_secure('edpro', $member['uid'], X_NONCE_FORM_EXP);
     $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
     $langfilenew = getLangFileNameFromHash($langfilenew);
     if ($langfilenew === false) {
