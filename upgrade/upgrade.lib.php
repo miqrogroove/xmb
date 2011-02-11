@@ -1125,6 +1125,20 @@ function upgrade_schema_to_v0() {
      ('Administrator',       -1,    8,     'yes',  ''),
      ('Super Administrator', -1,    9,     'yes',  '')"
     );
+    $result = $db->query("SELECT title FROM ".X_PREFIX."ranks WHERE posts = 0");
+    if ($db->num_rows($result) == 0) {
+        $result2 = $db->query("SELECT title FROM ".X_PREFIX."ranks WHERE title = 'Newbie'");
+        if ($db->num_rows($result2) == 0) {
+            $db->query("INSERT INTO ".X_PREFIX."ranks
+             (title,    posts, stars, allowavatars, avatarrank) VALUES
+             ('Newbie', 0,     1,     'yes',  '')"
+            );
+        } else {
+            $db->query("UPDATE ".X_PREFIX."ranks SET posts = 0 WHERE title = 'Newbie'");
+        }
+        $db->free_result($result2);
+    }
+    $db->free_result($result);
 
     show_progress('Requesting to lock the templates table');
     $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
