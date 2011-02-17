@@ -77,7 +77,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         $sourcearray =& $_REQUEST;
         break;
     }
-    
+
     if (isset($sourcearray[$varname])) {
         if (is_string($sourcearray[$varname])) {
             $retval = $sourcearray[$varname];
@@ -159,7 +159,11 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                 break;
                 break;
             case 'int':
-                $theObject = intval($theObject);
+                if (is_string($theObject)) {
+                    $theObject = intval($theObject);
+                } else {
+                    $theObject = 0;
+                }
                 break;
             case 'string':
             default:

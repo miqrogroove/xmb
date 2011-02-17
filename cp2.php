@@ -1566,7 +1566,7 @@ if ($action == "newsletter") {
 
 if ($action == "prune") {
     if (noSubmit('pruneSubmit')) {
-        $forumselect = forumList('pruneFromList[]', true, false);
+        $forumselect = forumList('pruneFromList', true, false);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
