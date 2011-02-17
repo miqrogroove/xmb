@@ -207,7 +207,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
         $self['uid'] = 0;
         $self['username'] = '';
     }
-    
+
     if ($force_inv === TRUE) {
         $invisible = 1;
     }
@@ -230,7 +230,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }
-    
+
     return ($xmbuser != '');
 }
 
@@ -403,7 +403,7 @@ function template_secure($name, $action, $id) {
  */
 function request_secure($action, $id, $expire, $error_header = TRUE) {
     global $lang;
-    
+
     $key = template_key($action, $id);
     $nonce = postedVar('token');
     if (!nonce_use($key, $nonce, $expire)) {
@@ -473,7 +473,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
     $smiliesallow = ($allowsmilies == 'yes' || $allowsmilies == 'on') ? (($smileyoff != 'off' && $smileyoff != 'yes') ? true : false) : false;
     $allowurlcode = ($ismood != 'yes');
-    
+
     if ($bballow) {
         if ($ismood == 'yes') {
             $message = str_replace(array('[rquote=', '[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
@@ -566,26 +566,19 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
         $message = implode("", $messagearray);
 
-        $message = nl2br($message);
-
-        $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $message);
-        if ($wrap == "yes") {
-            for($i = 0; $i < sizeof($messagearray); $i++) {
-                if ($i % 2 == 0) {
-                    $messagearray[$i] = wordwrap($messagearray[$i], 150, "\n", TRUE);
-                } // else inside nobr block
-            }
+        if ('yes' == $wrap) {
+            $message = xmb_wordwrap(nl2br($message));
+        } else {
+            $message = nl2br(str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message));
         }
-        $message = implode("", $messagearray);
-
     } else {
         $message = rawHTMLmessage($message, $allowhtml);
         if ($smiliesallow) {
             smile($message);
         }
         $message = nl2br($message);
-        if ($wrap == "yes") {
-            $message = wordwrap($message, 150, "\n", TRUE);
+        if ('yes' == $wrap) {
+            $message = xmb_wordwrap($message);
         }
     }
 
@@ -721,6 +714,28 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     return TRUE;
 }
 
+/**
+ * Wraps long lines but avoids certain elements.
+ *
+ * @since 1.9.11.12
+ * @param string $input
+ * @return string
+ */
+function xmb_wordwrap($input) {
+    $br = trim(nl2br("\n"));
+    $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $input);
+    for($i = 0; $i < sizeof($messagearray); $i++) {
+        if ($i % 2 == 0) {
+            $messagearray[$i] = explode($br, $messagearray[$i]);
+            foreach($messagearray[$i] as $key => $val) {
+                $messagearray[$i][$key] = wordwrap($val, 150, "\n", TRUE);
+            }
+            $messagearray[$i] = implode($br, $messagearray[$i]);
+        } // else inside nobr block
+    }
+    return implode('', $messagearray);
+}
+
 function fixUrl($matches) {
     $fullurl = '';
     if (!empty($matches[2])) {
@@ -775,7 +790,7 @@ function bbcodeSizeTags($matches) {
  */
 function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
     global $lang, $SETTINGS;
-    
+
     $pid = intval($pid);
     $count = 0;
     $seperator = '';
@@ -971,7 +986,7 @@ function forum($forum, $template, $index_subforums) {
  */
 function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
     global $cookiepath, $full_url, $lang, $url;
-    
+
     // Initialize
     $return = array();
     $page = getInt('page');
@@ -997,10 +1012,10 @@ function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
         header('HTTP/1.0 404 Not Found');
         error($lang['generic_missing']);
     }
-    
+
     // Generate the multipage link bar.
     $return['html'] = multi($page, $max_page, $baseurl);
-    
+
     return $return;
 }
 
@@ -1033,7 +1048,7 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
         } else {
             $from = $page - 3;
         }
-        
+
         $to--;
         $from++;
 
@@ -1107,7 +1122,7 @@ function smilieinsert($type='normal') {
     $sms = array();
     $smilies = '';
     $smilieinsert = '';
-    
+
     if ($type == 'normal') {
         $smcols = intval($SETTINGS['smcols']);
         $smtotal = intval($SETTINGS['smtotal']);
@@ -1757,7 +1772,7 @@ function forumCache() {
     if ($cache === FALSE) {
         $cache = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
     }
-    
+
     if ($cache !== FALSE) {
         if ($db->num_rows($cache) > 0) {
             $db->data_seek($cache, 0);  // Restores the pointer for fetch_array().
@@ -1772,7 +1787,7 @@ function forumCache() {
  */
 function getForum($fid) {
     global $db;
-    
+
     $forums = forumCache();
     while($forum = $db->fetch_array($forums)) {
         if (intval($forum['fid']) == intval($fid)) {
@@ -1799,7 +1814,7 @@ function getForum($fid) {
  */
 function getStructuredForums($usePerms=FALSE) {
     global $db;
-    
+
     if ($usePerms) {
         $forums = permittedForums(forumCache(), 'forum');
     } else {
@@ -1809,7 +1824,7 @@ function getStructuredForums($usePerms=FALSE) {
             $forums[] = $forum;
         }
     }
-    
+
     // This function guarantees the following subscripts exist, regardless of forum count.
     $structured['group'] = array();
     $structured['forum'] = array();
@@ -1820,7 +1835,7 @@ function getStructuredForums($usePerms=FALSE) {
     foreach($forums as $forum) {
         $structured[$forum['type']][$forum['fup']][$forum['fid']] = $forum;
     }
-    
+
     return $structured;
 }
 
@@ -1836,12 +1851,12 @@ function getStructuredForums($usePerms=FALSE) {
  */
 function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE) {
     global $db, $SETTINGS;
-    
+
     $permitted = array();
     $fids['group'] = array();
     $fids['forum'] = array();
     $fids['sub'] = array();
-    
+
     while($forum = $db->fetch_array($forums)) {
         $perms = checkForumPermissions($forum, $user_status);
         if ($mode == 'thread') {
@@ -1886,14 +1901,14 @@ function permittedForums($forums, $mode='thread', $output='array', $check_parent
                 }
             }
         }
-        
+
         $permitted = $filtered;
     }
-    
+
     if ($output == 'csv') {
         $permitted = implode(', ', array_merge($fids['group'], $fids['forum'], $fids['sub']));
     }
-    
+
     return $permitted;
 }
 
@@ -1961,7 +1976,7 @@ function forumJump() {
 
     // Populate $forumselect
     $permitted = getStructuredForums(TRUE);
-    
+
     if (0 == count($permitted['group']['0']) and 0 == count($permitted['forum']['0'])) {
         return '';
     }
@@ -2036,7 +2051,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
     $ret[X_PERMS_VIEW] = FALSE;
     $ret[X_PERMS_USERLIST] = FALSE;
     $ret[X_PERMS_PASSWORD] = FALSE;
-    
+
     // 2. Check Forum Postperm
     $pp = explode(',', $forum['postperm']);
     foreach($pp as $key=>$val) {
@@ -2063,7 +2078,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
             }
         }
     }
-    
+
     // 4. Set Effective Permissions
     $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL];
     $ret[X_PERMS_THREAD] = $ret[X_PERMS_RAWTHREAD];
@@ -2174,7 +2189,7 @@ function makeSearchLink($fid=0) {
  */
 function setCanonicalLink($relURI) {
     global $canonical_link, $cookiepath, $url;
-    
+
     $testurl = $cookiepath;
     if ($relURI != './') {
         $testurl .= str_replace('&amp;', '&', $relURI);
