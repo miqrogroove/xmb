@@ -1613,10 +1613,15 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
             ini_set('sendmail_from', ini_get('sendmail_from'));
         }
         if (ini_get('safe_mode') == "1") {
-            return mail($to, $subject, $message, $additional_headers);
+            $return = mail($to, $subject, $message, $additional_headers);
         } else {
-            return mail($to, $subject, $message, $additional_headers, $additional_parameters);
+            $return = mail($to, $subject, $message, $additional_headers, $additional_parameters);
         }
+        if (!$return) {
+            $msg = 'XMB failed to send an e-mail because the PHP mail() function returned FALSE!  This might be caused by using an invalid address in XMB\'s Administrator E-Mail setting.';
+            trigger_error($msg, E_USER_WARNING);
+        }
+        return $return;
     }
 }
 
