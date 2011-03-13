@@ -35,7 +35,7 @@ if (!defined('IN_CODE')) {
  */
 function xmb_upgrade() {
     global $db, $SETTINGS;
-    
+
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
         $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
@@ -1883,11 +1883,27 @@ function fixBirthdays() {
         $lang = array();
 
         if (!isset($cachedLanguages[$m['langfile']])) {
-			$old_error_level = error_reporting();
-		    error_reporting(E_ERROR | E_PARSE | E_USER_ERROR);
-            require ROOT.'lang/'.$m['langfile'].'.lang.php';
-			error_reporting($old_error_level);
-            $cachedLanguages[$m['langfile']] = $lang;
+            if (!file_exists(ROOT.'lang/'.$m['langfile'].'.lang.php')) {
+                // Re-try in case the old file was named english.lang.php instead of English.lang.php for some reason.
+                $test = $m['langfile'];
+                $test[0] = strtoupper($test[0]);
+                if (isset($cachedLanguages[$test])) {
+                    $m['langfile'] = $test;
+                } elseif (file_exists(ROOT.'lang/'.$test.'.lang.php')) {
+                    $db->query("UPDATE ".X_PREFIX."members SET langfile='$test' WHERE langfile = '{$m['langfile']}'");
+                    $m['langfile'] = $test;
+                } else {
+                    show_error('A needed file is missing for date translation: '.ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
+                    trigger_error('fixBirthdays() stopped the upgrade because language "'.$m['langfile'].'" was missing.', E_USER_ERROR);
+                }
+            }
+            if (!isset($cachedLanguages[$m['langfile']])) {
+                $old_error_level = error_reporting();
+                error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR | E_USER_ERROR);
+                require ROOT.'lang/'.$m['langfile'].'.lang.php';
+                error_reporting($old_error_level);
+                $cachedLanguages[$m['langfile']] = $lang;
+            }
         }
 
         if (isset($cachedLanguages[$m['langfile']])) {
