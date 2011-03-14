@@ -994,11 +994,26 @@ function upgrade_schema_to_v0() {
             $sql[] = "ADD INDEX ($colname)";
         }
     }
+    $filesize_was_missing = FALSE;
+    $columns = array(
+    'filesize' => "varchar(120) NOT NULL default ''");
+    foreach($columns as $colname => $coltype) {
+        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+            $filesize_was_missing = TRUE;
+        }
+        $db->free_result($query);
+    }
 
     if (count($sql) > 0) {
         show_progress('Modifying columns in the attachments table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         $db->query($sql);
+    }
+
+    if ($filesize_was_missing) {
+        $db->query('UPDATE '.X_PREFIX.$table.' SET filesize = LENGTH(attachment)'.);
     }
 
     show_progress('Requesting to lock the posts table');
