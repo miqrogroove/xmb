@@ -378,10 +378,16 @@ if ($action == 'profile') {
         $member['location'] = rawHTMLsubject($member['location']);
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
-        eval('$mempage = "'.template('memcp_profile').'";');
+        if (X_STAFF) {
+            $template = template_secure('memcp_profile', 'edpro', $self['uid']);
+        } else {
+            $template = template('memcp_profile');
+        }
+        eval('$mempage = "'.$template.'";');
     }
 
     if (onSubmit('editsubmit')) {
+        if (X_STAFF) request_secure('edpro', $self['uid'], X_NONCE_FORM_EXP);
         if (!empty($_POST['newpassword'])) {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
