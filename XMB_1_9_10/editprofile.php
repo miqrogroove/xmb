@@ -178,7 +178,7 @@ if (noSubmit('editsubmit')) {
     $template = template_secure('admintool_editprofile', 'edpro', $member['uid']);
     eval('echo "'.$template.'";');
 } else {
-    request_secure('edpro', $member['uid'], X_NONCE_FORM_EXP);
+    request_secure('edpro', $member['uid'], X_NONCE_FORM_EXP, FALSE);
     $langfilenew = postedVar('langfilenew', '', FALSE, FALSE);
     $langfilenew = getLangFileNameFromHash($langfilenew);
     if ($langfilenew === false) {

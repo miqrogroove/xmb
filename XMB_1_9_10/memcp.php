@@ -352,10 +352,16 @@ if ($action == 'profile') {
         }
 
         $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
-        eval('echo "'.template('memcp_profile').'";');
+        if (X_STAFF) {
+            $template = template_secure('memcp_profile', 'edpro', $self['uid']);
+        } else {
+            $template = template('memcp_profile');
+        }
+        eval('echo "'.$template.'";');
     }
 
     if (onSubmit('editsubmit')) {
+        if (X_STAFF) request_secure('edpro', $self['uid'], X_NONCE_FORM_EXP, FALSE);
         $newemail = postedVar('newemail', '', FALSE, FALSE);
         if ($newemail && (!$newemail || isset($_GET['newemail']))) {
             $auditaction = $_SERVER['REQUEST_URI'];
