@@ -119,9 +119,14 @@ if (noSubmit('editsubmit')) {
     }
 
     $registerdate = gmdate($dateformat, $member['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
-    $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-    $lastvisittime = gmdate($timecode, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-    $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
+
+    if (!($member['lastvisit'] > 0)) {
+        $lastlogdate = $lang['textpendinglogin'];
+    } else {
+        $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+        $lastvisittime = gmdate($timecode, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+        $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
+    }
 
     $currdate = gmdate($timecode, $onlinetime + ($addtime * 3600));
     eval($lang['evaloffset']);
