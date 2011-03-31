@@ -63,7 +63,7 @@ if (DEBUG) {
 
 if (!defined('X_SADMIN') or !X_SADMIN) {
     echo '<br /><br />This script may be run only by a Super Administrator.<br />'
-        .'Please <a href="'.$full_url.'misc.php?action=login">Log In</a> first to begin the upgrade successfully.<br />';
+        .'Please <a href="login.php">Log In</a> first to begin the upgrade successfully.<br />';
     trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
 }
 
