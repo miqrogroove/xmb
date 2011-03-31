@@ -642,5 +642,25 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
     return FALSE;
 }
 
+/**
+ * Get the names of all existing columns in a table.
+ *
+ * @param string $table The name of the XMB table, with no prefix.
+ * @return array
+ */
+function xmb_schema_columns_list($table) {
+    global $db;
+
+    $columns = array();
+
+    $result = $db->query("DESCRIBE ".X_PREFIX.$table);
+    while($row = $db->fetch_array($result)) {
+        $columns[] = $row['Field'];
+    }
+    $db->free_result($result);
+
+    return $columns;
+}
+
 return;
 ?>

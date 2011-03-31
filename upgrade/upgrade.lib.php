@@ -141,10 +141,40 @@ function xmb_upgrade() {
  * Some tables (such as xmb_logs) will be upgraded directly to schema_version 3 for simplicity.
  *
  * @author Robert Chapin (miqrogroove)
- * @since 1.9.11 (Patch #11)
+ * @since 1.9.11.11
  */
 function upgrade_schema_to_v0() {
     global $db, $SETTINGS;
+
+    show_progress('Checking for legacy version tables');
+
+    $schema = array();
+    $schema['attachments'] = array('aid', 'pid', 'filename', 'filetype', 'attachment', 'downloads');
+    $schema['banned'] = array('ip1', 'ip2', 'ip3', 'ip4', 'dateline', 'id');
+    $schema['buddys'] = array('username', 'buddyname');
+    $schema['favorites'] = array('tid', 'username', 'type');
+    $schema['forums'] = array('type', 'fid', 'name', 'status', 'lastpost', 'moderator', 'displayorder', 'description', 'allowhtml', 'allowsmilies', 'allowbbcode', 'userlist', 'theme', 'posts', 'threads', 'fup', 'postperm', 'allowimgcode', 'attachstatus', 'password');
+    $schema['members'] = array('uid', 'username', 'password', 'regdate', 'postnum', 'email', 'site', 'aim', 'status', 'location', 'bio', 'sig', 'showemail', 'timeoffset', 'icq', 'avatar', 'yahoo', 'customstatus', 'theme', 'bday', 'langfile', 'tpp', 'ppp', 'newsletter', 'regip', 'timeformat', 'msn', 'dateformat', 'ban', 'ignoreu2u', 'lastvisit', 'mood', 'pwdate');
+    $schema['posts'] = array('fid', 'tid', 'pid', 'author', 'message', 'subject', 'dateline', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff');
+    $schema['ranks'] = array('title', 'posts', 'id', 'stars', 'allowavatars', 'avatarrank');
+    $schema['restricted'] = array('name', 'id');
+    $schema['settings'] = array('langfile', 'bbname', 'postperpage', 'topicperpage', 'hottopic', 'theme', 'bbstatus', 'whosonlinestatus', 'regstatus', 'bboffreason', 'regviewonly', 'floodctrl', 'memberperpage', 'catsonly', 'hideprivate',
+        'emailcheck', 'bbrules', 'bbrulestxt', 'searchstatus', 'faqstatus', 'memliststatus', 'sitename', 'siteurl', 'avastatus', 'u2uquota', 'gzipcompress', 'coppa', 'timeformat', 'adminemail', 'dateformat', 'sigbbcode', 'sightml',
+        'reportpost', 'bbinsert', 'smileyinsert', 'doublee', 'smtotal', 'smcols', 'editedby', 'dotfolders', 'attachimgpost', 'todaysposts', 'stats', 'authorstatus', 'tickerstatus', 'tickercontents', 'tickerdelay');
+    $schema['smilies'] = array('type', 'code', 'url', 'id');
+    $schema['templates'] = array('id', 'name', 'template');
+    $schema['themes'] = array('name', 'bgcolor', 'altbg1', 'altbg2', 'link', 'bordercolor', 'header', 'headertext', 'top', 'catcolor', 'tabletext', 'text', 'borderwidth', 'tablewidth', 'tablespace', 'font', 'fontsize', 'boardimg', 'imgdir', 'smdir', 'cattext');
+    $schema['threads'] = array('tid', 'fid', 'subject', 'icon', 'lastpost', 'views', 'replies', 'author', 'closed', 'topped', 'pollopts');
+    $schema['u2u'] = array('u2uid', 'msgto', 'msgfrom', 'dateline', 'subject', 'message', 'folder', 'readstatus');
+    $schema['words'] = array('find', 'replace1', 'id');
+
+    foreach($schema as $table => $columns) {
+        $missing = array_diff($columns, xmb_schema_columns_list($table));
+        if (!empty($missing)) {
+            show_error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
+            trigger_error("Admin attempted upgrade with obsolete database.  Columns missing from $table table: ".implode(', ', $missing), E_USER_ERROR);
+        }
+    }
 
     show_progress('Beginning schema upgrade from legacy version');
 
@@ -497,6 +527,7 @@ function upgrade_schema_to_v0() {
     show_progress('Gathering schema information from the settings table');
     $sql = array();
     $table = 'settings';
+    $existing = xmb_schema_columns_list($table);
     $columns = array(
     'files_status',
     'files_foldername',
@@ -518,12 +549,9 @@ function upgrade_schema_to_v0() {
     'files_navigation',
     'files_faq',
     'files_paypal_account');
-    foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        if ($db->num_rows($query) == 1) {
-            $sql[] = 'DROP COLUMN '.$colname;
-        }
-        $db->free_result($query);
+    $obsolete = array_intersect($columns, $existing);
+    foreach($obsolete as $colname) {
+        $sql[] = 'DROP COLUMN '.$colname;
     }
     $columns = array(
     'addtime' => "DECIMAL(4,2) NOT NULL default 0",
@@ -565,12 +593,10 @@ function upgrade_schema_to_v0() {
     'index_stats' => "set('on','off') NOT NULL default 'on'",
     'onlinetodaycount' => "smallint(5) NOT NULL default '50'",
     'onlinetoday_status' => "set('on','off') NOT NULL default 'on'");
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        if ($db->num_rows($query) == 0) {
-            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
+    $missing = array_diff(array_keys($columns), $existing);
+    foreach($missing as $colname) {
+        $coltype = $columns[$colname];
+        $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'adminemail';
@@ -1013,7 +1039,7 @@ function upgrade_schema_to_v0() {
     }
 
     if ($filesize_was_missing) {
-        $db->query('UPDATE '.X_PREFIX.$table.' SET filesize = LENGTH(attachment)'.);
+        $db->query('UPDATE '.X_PREFIX.$table.' SET filesize = LENGTH(attachment)');
     }
 
     show_progress('Requesting to lock the posts table');
@@ -1431,12 +1457,10 @@ function upgrade_schema_to_v2() {
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '1000x1000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'",
     'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT ".XMB_SCHEMA_VER);
-    foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        if ($db->num_rows($query) == 0) {
-            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
+    $missing = array_diff(array_keys($columns), xmb_schema_columns_list($table));
+    foreach($missing as $colname) {
+        $coltype = $columns[$colname];
+        $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
     }
 
     if (count($sql) > 0) {
@@ -1641,7 +1665,7 @@ function upgrade_schema_to_v3() {
 /**
  * Performs all tasks needed to raise the database schema_version number to 4.
  *
- * @since 1.9.11 (Patch #11)
+ * @since 1.9.11.11
  */
 function upgrade_schema_to_v4() {
     global $db;
