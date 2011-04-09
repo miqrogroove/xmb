@@ -534,42 +534,35 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         $messagearray = preg_split("/\[code\]|\[\/code\]/", $message);
         for($i = 0; $i < sizeof($messagearray); $i++) {
+            $incode = FALSE;
             if (sizeof($messagearray) != 1) {
                 if ($i == 0) {
                     $messagearray[$i] = rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
-                    if ($smiliesallow) {
-                        smile($messagearray[$i]);
-                    }
-                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else if ($i == sizeof($messagearray) - 1) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml);
-                    if ($smiliesallow) {
-                        smile($messagearray[$i]);
-                    }
-                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else if ($i % 2 == 0) {
                     $messagearray[$i] = "[/code]".rawHTMLmessage($messagearray[$i], $allowhtml)."[code]";
-                    if ($smiliesallow) {
-                        smile($messagearray[$i]);
-                    }
-                    bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
                 } else { // Inside code block
                     $messagearray[$i] = censor($messagearray[$i]);
+                    $incode = TRUE;
                 }
             } else {
-                $messagearray[0] = rawHTMLmessage($messagearray[0], $allowhtml);
+                $messagearray[$i] = rawHTMLmessage($messagearray[$i], $allowhtml);
+            }
+            if (!$incode) {
                 if ($smiliesallow) {
-                    smile($messagearray[0]);
+                    smile($messagearray[$i]);
                 }
-                bbcode($messagearray[0], $allowimgcode, $allowurlcode);
+                bbcode($messagearray[$i], $allowimgcode, $allowurlcode);
+                $messagearray[$i] = nl2br($messagearray[$i]);
             }
         }
         $message = implode("", $messagearray);
 
         if ('yes' == $wrap) {
-            $message = xmb_wordwrap(nl2br($message));
+            $message = xmb_wordwrap($message);
         } else {
-            $message = nl2br(str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message));
+            $message = str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message);
         }
     } else {
         $message = rawHTMLmessage($message, $allowhtml);
@@ -633,8 +626,8 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         11 => '</strike>',
         12 => '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage"><!-- /nobr -->',
         13 => ' </td></tr></table><font class="mediumtxt">',
-        14 => '</font> <!-- nobr --><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage"><!-- /nobr -->',
-        15 => '</td></tr></table><font class="mediumtxt">',
+        14 => '</font> <!-- nobr --><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage"><div>',
+        15 => '</div></td></tr></table><font class="mediumtxt"><!-- /nobr -->',
         16 => '<ul type="square">',
         17 => '</ul>',
         18 => '<ol type="1">',
