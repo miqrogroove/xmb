@@ -442,13 +442,13 @@ td.code {
     padding-left: 5px;
 }
 
-td.codemessage div {
+code {
     background-color: {$THEME['altbg2']};
     color: {$THEME['tabletext']};
-    font-family: Courier New, monospace;
     font-size: {$THEME['fontsize']};
     padding: 10px 5px 10px 5px;
     white-space: pre;
+    display: block;
     width: 600px;
     max-height: 400px;
     overflow: auto;
