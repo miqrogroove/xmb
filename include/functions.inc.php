@@ -671,30 +671,6 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         }
     }
 
-	if ($allowurlcode) {
-        $message = preg_replace_callback('#(^|\s|\()((((http(s?)|ftp(s?))://)|www)[-a-z0-9.]+\.[a-z]{2,4}[^\s()"\'<>]*)i?#Smi', 'fixUrl', $message);
-
-        //[url]http://www.example.com/[/url]
-        $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-        $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\1\2</a>';
-        $patterns[] = "#\[url\]([a-z]+?://){1}([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
-        $replacements[] = ' <!-- nobr --><a href="\1\2\3" onclick="window.open(this.href); return false;">\1\2...</a><!-- /nobr --> ';
-
-        //[url]www.example.com[/url]
-        $patterns[] = "#\[url\]([^\[\"'<>]{0,60}?)\[/url\]#Smi";  //Match only if length is <= 60 chars
-        $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\1</a>';
-        $patterns[] = "#\[url\]([^\"'<>\[\]]{60})([^\"'<>]*?)\[/url\]#Smi";  //Match only if length is >= 60 chars
-        $replacements[] = ' <!-- nobr --><a href="http://\1\2" onclick="window.open(this.href); return false;">\1...</a><!-- /nobr --> ';
-
-        //[url=http://www.example.com]Lorem Ipsum[/url]
-        $patterns[] = "#\[url=([a-z]+?://){1}([^\"'<>\[\]]*?)\](.*?)\[/url\]#Smi";
-        $replacements[] = '<a <!-- nobr -->href="\1\2" onclick="window.open(this.href); return false;"><!-- /nobr -->\3</a>';
-
-        //[url=www.example.com]Lorem Ipsum[/url]
-        $patterns[] = "#\[url=([^\[\"'<>]*?)\](.*?)\[/url\]#Smi";
-        $replacements[] = '<a <!-- nobr -->href="http://\1" onclick="window.open(this.href); return false;"><!-- /nobr -->\2</a>';
-    }
-
     $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
     $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
@@ -703,6 +679,30 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $message = preg_replace($patterns, $replacements, $message);
 
     $message = preg_replace_callback("#\[size=([+-]?[0-9]{1,2})\](.*?)\[/size\]#Ssi", 'bbcodeSizeTags', $message);
+
+    if ($allowurlcode) {
+        /*
+          This block positioned last so that bare URLs may appear adjacent to BBCodes without matching on square braces.
+          Regexp explanation: match strings surrounded by whitespace or () or ><.  Do not include the surrounding chars.
+            Group 1 will be identical to the full match so that the callback function can be reused for [url] codes.
+        */
+        $regexp = '(?<=^|\s|>|\()'
+                . '('
+                . '(?:(?:http|ftp)s?://|www)'
+                . '[-a-z0-9.]+\.[a-z]{2,4}'
+                . '[^\s()"\'<>\[\]]*'
+                . ')'
+                . '(?=$|\s|<|\))';
+        $message = preg_replace_callback("#$regexp#Smi", 'bbcodeLongURLs', $message);
+
+        //[url]http://www.example.com/[/url]
+        //[url]www.example.com[/url]
+        $message = preg_replace_callback("#\[url\]([^\"'<>]*?)\[/url\]#i", 'bbcodeLongURLs', $message);
+
+        //[url=http://www.example.com/]Lorem Ipsum[/url]
+        //[url=www.example.com]Lorem Ipsum[/url]
+        $message = preg_replace_callback("#\[url=([^\"'<>\[\]]*)\](.*?)\[/url\]#i", 'bbcodeLongURLs', $message);
+    }
 
     return TRUE;
 }
@@ -729,6 +729,9 @@ function xmb_wordwrap($input) {
     return implode('', $messagearray);
 }
 
+/**
+ * DEPRECATED by XMB 1.9.11.12
+ */
 function fixUrl($matches) {
     $fullurl = '';
     if (!empty($matches[2])) {
@@ -742,6 +745,44 @@ function fixUrl($matches) {
     $fullurl = strip_tags($fullurl);
 
     return $matches[1].'[url]'.$fullurl.'[/url]';
+}
+
+/**
+ * Handles the [url] BBCode.
+ *
+ * This helper function is algorithmically required in order to fully support
+ * unencoded square braces in BBCode URLs.  Encoding of the RFC 1738 Unsafe
+ * character set thus remains optional at the BBCode and HTML layers.
+ *
+ * Credit for the value used in $scheme_whitelist goes to the WordPress project.
+ *
+ * @since 1.9.11.12
+ * @param array $url Expects $url[0] to be the raw BBCode, $url[1] to be the URL only, and optionally $url[2] to be the display text.
+ * @return string The HTML replacement for $url[0] if the code was valid, else the code is unchaged.
+ */
+function bbcodeLongURLs($url) {
+    $url_max_display_len = 60;
+    $scheme_whitelist = array('http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'svn');
+
+    $colon = strpos($url[1], ':');
+    if (FALSE !== $colon) {
+        $scheme = substr($url[1], 0, $colon);
+	if (in_array($scheme, $scheme_whitelist)) {
+            $href = $url[1];
+        } else {
+            return $url[0];
+        }
+    } else {
+        $href = 'http://'.$url[1];
+    }
+    if (!empty($url[2])) {
+        $text = $url[2];
+    } elseif (strlen($url[1]) <= $url_max_display_len) {
+        $text = $url[1];
+    } else {
+        $text = substr($url[1], 0, $url_max_display_len).'...';
+    }
+    return '<a <!-- nobr -->href="'.$href.'" onclick="window.open(this.href); return false;"><!-- /nobr -->'.$text.'</a>';
 }
 
 /**
