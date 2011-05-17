@@ -603,7 +603,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     }
 
     // Balance regex tags.
-    $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@s";
+    $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)]@s";
     $rquotecount1 = preg_match_all($pattern, $message, $matches);
     $rquotecount2 = substr_count($message, '[/rquote]');
     $rquotecount1 -= $rquotecount2;
@@ -653,6 +653,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         $message = preg_replace('@\\[/size]@', '&#091;/size]', $message, -$rquotecount1);
     }
 
+    // Replace simple tags.
     $find = array(
         0 => '[b]',
         1 => '[/b]',
@@ -682,7 +683,8 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         25 => '[/color]',
         26 => '[/font]',
         27 => '[/size]',
-        28 => '[/align]'
+        28 => '[/align]',
+        29 => '[/rquote]'
     );
 
     $replace = array(
@@ -714,18 +716,18 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         25 => '</span>',
         26 => '</span>',
         27 => '</span>',
-        28 => '</div>'
+        28 => '</div>',
+        29 => ' </td></tr></table><font class="mediumtxt">'
     );
 
     $message = str_replace($find, $replace, $message);
 
+    // Replace regex tags.
     $patterns = array();
     $replacements = array();
 
-    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]]+)]@s";
+    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)]@s";
     $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
-    $patterns[] = "@\\[/rquote]@";
-    $replacements[] = ' </td></tr></table><font class="mediumtxt">';
 
     $patterns[] = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\]@i";
     $replacements[] = '<span style="color: $1;">';
