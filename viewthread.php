@@ -407,7 +407,7 @@ if ($action == '') {
             while($result = $db->fetch_array($query)) {
                 $num_votes += $result['vote_result'];
                 $pollentry = array();
-                $pollentry['name'] = rawHTMLsubject($result['vote_option_text']);
+                $pollentry['name'] = postify($result['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
                 $pollentry['votes'] = $result['vote_result'];
                 $poll[] = $pollentry;
             }
@@ -437,7 +437,7 @@ if ($action == '') {
             $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
             while($result = $db->fetch_array($query)) {
                 $poll['id'] = (int) $result['vote_option_id'];
-                $poll['name'] = rawHTMLsubject($result['vote_option_text']);
+                $poll['name'] = postify($result['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
                 eval('$pollhtml .= "'.template('viewthread_poll_options').'";');
             }
             $db->free_result($query);
