@@ -75,6 +75,7 @@ function chsize(size) {
             AddText('', '', "[size="+size+"]"+txt+"[/size]", messageElement);
         }
     }
+    document.getElementById("zerosize").selected = true;
 }
 
 function chfont(font) {

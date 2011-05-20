@@ -161,6 +161,7 @@ function chsize(size) {
             }
         }
     }
+    document.getElementById("zerosize").selected = true;
 }
 
 function chfont(font) {
