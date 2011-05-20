@@ -1690,10 +1690,11 @@ function altMail($to, $subject, $message, $additional_headers='', $additional_pa
                 return FALSE;
             }
             register_shutdown_function(array(&$mail, 'disconnect'));
-        } elseif ($mail->connection === FALSE) {
-            return FALSE;
         } else {
             $mail = &$handlers['socket_SMTP'];
+            if (FALSE === $mail->connection) {
+                return FALSE;
+            }
         }
 
         $subjectInHeader = false;
