@@ -89,6 +89,7 @@ function chfont(font) {
             AddText('', '', "[font="+font+"]"+txt+"[/font]", messageElement);
         }
     }
+    document.getElementById("zerofont").selected = true;
 }
 
 function bold() {
@@ -141,6 +142,7 @@ function chcolor(color) {
             AddText('', '', "[color="+color+"]"+txt+"[/color]", messageElement);
         }
     }
+    document.getElementById("zerocolor").selected = true;
 }
 
 function center() {

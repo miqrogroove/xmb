@@ -190,6 +190,7 @@ function chfont(font) {
             }
         }
     }
+    document.getElementById("zerofont").selected = true;
 }
 
 function bold() {
@@ -400,6 +401,7 @@ function chcolor(color) {
             }
         }
     }
+    document.getElementById("zerocolor").selected = true;
 }
 
 function hyperlink() {
