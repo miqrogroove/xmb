@@ -677,10 +677,10 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         }
     }
 
-    $patterns[] = "#\[email\]([^\"'<>]*?)\[/email\]#Smi";
+    $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#mi";
     $replacements[] = '<a href="mailto:\1">\1</a>';
-    $patterns[] = "#\[email=([^\"'<>]*?){1}([^\"]*?)\](.*?)\[/email\]#Smi";
-    $replacements[] = '<a href="mailto:\1\2">\3</a>';
+    $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#mi";
+    $replacements[] = '<a href="mailto:\1">\2</a>';
 
     $message = preg_replace($patterns, $replacements, $message);
 
@@ -703,11 +703,11 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 
         //[url]http://www.example.com/[/url]
         //[url]www.example.com[/url]
-        $message = preg_replace_callback("#\[url\]([^\"'<>]*?)\[/url\]#i", 'bbcodeLongURLs', $message);
+        $message = preg_replace_callback("#\[url\]([^\"'<>]+?)\[/url\]#i", 'bbcodeLongURLs', $message);
 
         //[url=http://www.example.com/]Lorem Ipsum[/url]
         //[url=www.example.com]Lorem Ipsum[/url]
-        $message = preg_replace_callback("#\[url=([^\"'<>\[\]]*)\](.*?)\[/url\]#i", 'bbcodeLongURLs', $message);
+        $message = preg_replace_callback("#\[url=([^\"'<>\[\]]+)\](.*?)\[/url\]#i", 'bbcodeLongURLs', $message);
     }
 
     return TRUE;
@@ -942,7 +942,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
             }
             $separator = "<br /><br />";
         }
-        $output = trim($output); // Prevent template linefeeds being handled by postify().
+        $output = trim($output); // Prevents template linefeeds being handled by postify(). Also removes extra space between thumbnails.
         if ($count == 0) {
             $prefix = "<br /><br />";
         }
