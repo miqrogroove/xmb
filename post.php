@@ -694,11 +694,10 @@ switch($action) {
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($messageinput);
                 }
-                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-
                 if (count($files) > 0) {
-                    bbcodeFileTags($message1, $files, 0, $bBBcodeOnForThisPost);
+                    bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
                 }
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
                     $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
@@ -1077,11 +1076,10 @@ switch($action) {
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($messageinput);
                 }
-                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-
                 if (count($files) > 0) {
-                    bbcodeFileTags($message1, $files, 0, $bBBcodeOnForThisPost);
+                    bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
                 }
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
                     $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
@@ -1354,11 +1352,10 @@ switch($action) {
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($message1);
                 }
-                $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-
                 if (count($files) > 0) {
                     bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
                 }
+                $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
                     $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
@@ -1408,7 +1405,7 @@ echo $header, $errors, $postpage, $footer;
 
 function postLinkBBcode(&$message) {
     global $db;
-    
+
     $items = array();
     $pattern = "@\\[pid](\\d+)\\[/pid]@si";
     preg_match_all($pattern, $message, $results, PREG_SET_ORDER);

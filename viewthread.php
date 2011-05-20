@@ -691,9 +691,8 @@ if ($action == '') {
 
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
-        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
-        if ($forum['attachstatus'] == 'on' And $db->num_rows($queryattach) > 0) {
+        if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
@@ -702,9 +701,11 @@ if ($action == '') {
                 }
             }
             if (count($files) > 0) {
-                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no'));
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'));
             }
         }
+
+        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
 
         if ($post['usesig'] == 'yes') {
             $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
@@ -832,8 +833,7 @@ if ($action == '') {
         } else {
             $subject = rawHTMLsubject(stripslashes($post['subject']));
         }
-        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
-        if ($forum['attachstatus'] == 'on' And $db->num_rows($queryattach) > 0) {
+        if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
@@ -842,9 +842,10 @@ if ($action == '') {
                 }
             }
             if (count($files) > 0) {
-                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no'));
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'));
             }
         }
+        $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
         eval('$posts .= "'.template('viewthread_printable_row').'";');
         $counter++;
     }

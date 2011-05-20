@@ -479,44 +479,8 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
             $message = str_replace(array('[rquote=', '[quote]', '[/quote]', '[code]', '[/code]', '[list]', '[/list]', '[list=1]', '[list=a]', '[list=A]', '[/list=1]', '[/list=a]', '[/list=A]', '[*]'), '_', $message);
         }
 
-        //Full parsing of [code] tags.  Odd number indexes in $messagearray contain the code block contents.
-        $counter = 0;
-        $offset = 0;
-        $done = FALSE;
-        $messagearray = array();
-        while(!$done){
-            $pos = strpos($message, '[code]', $offset);
-            if (FALSE === $pos) {
-                $messagearray[$counter] = substr($message, $offset);
-                $messagearray[$counter] = str_replace('[/code]', '&#091;/code]', $messagearray[$counter]);
-                if ($counter > 1) {
-                    $messagearray[$counter] = '[/code]'.$messagearray[$counter];
-                }
-                $done = TRUE;
-            } else {
-                $pos += strlen('[code]');
-                $messagearray[$counter] = substr($message, $offset, $pos - $offset);
-                $messagearray[$counter] = str_replace('[/code]', '&#091;/code]', $messagearray[$counter]);
-                if ($counter > 1) {
-                    $messagearray[$counter] = '[/code]'.$messagearray[$counter];
-                }
-                $counter++;
-                $offset = $pos;
-                $pos = strpos($message, '[/code]', $offset);
-                if (FALSE === $pos) {
-                    $messagearray[$counter] = substr($message, $offset);
-                    $counter++;
-                    $messagearray[$counter] = '[/code]';
-                    $done = TRUE;
-                } else {
-                    $messagearray[$counter] = substr($message, $offset, $pos - $offset);
-                    $counter++;
-                    $offset = $pos + strlen('[/code]');
-                }
-            }
-        }
-
         //Remove the code block contents from $message.
+        $messagearray = bbcodeCode($message);
         $message = array();
         for($i = 0; $i < count($messagearray); $i += 2) {
             $message[$i] = $messagearray[$i];
@@ -541,7 +505,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
 
         if ('yes' == $wrap) {
-            $message = xmb_wordwrap($message);
+            xmb_wordwrap($message);
         } else {
             $message = str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message);
         }
@@ -552,7 +516,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
         $message = nl2br($message);
         if ('yes' == $wrap) {
-            $message = xmb_wordwrap($message);
+            xmb_wordwrap($message);
         }
     }
 
@@ -603,55 +567,17 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     }
 
     // Balance regex tags.
-    $pattern = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)]@s";
-    $rquotecount1 = preg_match_all($pattern, $message, $matches);
-    $rquotecount2 = substr_count($message, '[/rquote]');
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat('[/rquote]', $rquotecount1);
-    } elseif ($rquotecount1 < 0) {
-        $message = preg_replace('@\\[/rquote]@', '&#091;/rquote]', $message, -$rquotecount1);
-    }
-    $pattern = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\]@i";
-    $rquotecount1 = preg_match_all($pattern, $message, $matches);
-    $pattern = "@\[color=#([\\da-f]{3,6})\]@i";
-    $rquotecount1 += preg_match_all($pattern, $message, $matches);
-    $pattern = "@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\]@i";
-    $rquotecount1 += preg_match_all($pattern, $message, $matches);
-    $rquotecount2 = substr_count($message, '[/color]');
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat('[/color]', $rquotecount1);
-    } elseif ($rquotecount1 < 0) {
-        $message = preg_replace('@\\[/color]@', '&#091;/color]', $message, -$rquotecount1);
-    }
-    $pattern = "@\[font=([a-z\r\n\t 0-9]+)\]@i";
-    $rquotecount1 = preg_match_all($pattern, $message, $matches);
-    $rquotecount2 = substr_count($message, '[/font]');
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat('[/font]', $rquotecount1);
-    } elseif ($rquotecount1 < 0) {
-        $message = preg_replace('@\\[/font]@', '&#091;/font]', $message, -$rquotecount1);
-    }
-    $pattern = "@\[align=(left|center|right|justify)\]@i";
-    $rquotecount1 = preg_match_all($pattern, $message, $matches);
-    $rquotecount2 = substr_count($message, '[/align]');
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat('[/align]', $rquotecount1);
-    } elseif ($rquotecount1 < 0) {
-        $message = preg_replace('@\\[/align]@', '&#091;/align]', $message, -$rquotecount1);
-    }
-    $pattern = "@\[size=([+-]?[0-9]{1,2})\]@";
-    $rquotecount1 = preg_match_all($pattern, $message, $matches);
-    $rquotecount2 = substr_count($message, '[/size]');
-    $rquotecount1 -= $rquotecount2;
-    if ($rquotecount1 > 0) {
-        $message .= str_repeat('[/size]', $rquotecount1);
-    } elseif ($rquotecount1 < 0) {
-        $message = preg_replace('@\\[/size]@', '&#091;/size]', $message, -$rquotecount1);
-    }
+    $regex = array();
+    $regex['align']  = "@\\[align=(left|center|right|justify)\\]@i";
+    $regex['font']   = "@\\[font=([a-z\\r\\n\\t 0-9]+)\\]@i";
+    $regex['rquote'] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)\\]@s";
+    $regex['size']   = "@\\[size=([+-]?[0-9]{1,2})\\]@";
+    $regex['color'] = array();
+    $regex['color']['named'] = "@\\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\\]@i";
+    $regex['color']['hex']   = "@\\[color=#([\\da-f]{3,6})\\]@i";
+    $regex['color']['rgb']   = "@\\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\\]@i";
+
+    bbcodeBalanceTags($message, $regex);
 
     // Replace simple tags.
     $find = array(
@@ -726,19 +652,19 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $patterns = array();
     $replacements = array();
 
-    $patterns[] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)]@s";
+    $patterns[] = $regex['rquote'];
     $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
-
-    $patterns[] = "@\[color=(White|Black|Red|Yellow|Pink|Green|Orange|Purple|Blue|Beige|Brown|Teal|Navy|Maroon|LimeGreen|aqua|fuchsia|gray|silver|lime|olive)\]@i";
+    $patterns[] = $regex['color']['named'];
     $replacements[] = '<span style="color: $1;">';
-    $patterns[] = "@\[color=#([\\da-f]{3,6})\]@i";
+    $patterns[] = $regex['color']['hex'];
     $replacements[] = '<span style="color: #$1;">';
-    $patterns[] = "@\[color=rgb\\(([\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*,[\\s]*[\\d]{1,3}%?[\\s]*)\\)\]@i";
+    $patterns[] = $regex['color']['rgb'];
     $replacements[] = '<span style="color: rgb($1);">';
-    $patterns[] = "@\[font=([a-z\r\n\t 0-9]+)\]@i";
+    $patterns[] = $regex['font'];
     $replacements[] = '<span style="font-family: $1;">';
-    $patterns[] = "@\[align=(left|center|right|justify)\]@i";
+    $patterns[] = $regex['align'];
     $replacements[] = '<div style="text-align: $1;">';
+
     $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
     $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
@@ -758,7 +684,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 
     $message = preg_replace($patterns, $replacements, $message);
 
-    $message = preg_replace_callback("@\[size=([+-]?[0-9]{1,2})\]@", 'bbcodeSizeTags', $message);
+    $message = preg_replace_callback($regex['size'], 'bbcodeSizeTags', $message);
 
     if ($allowurlcode) {
         /*
@@ -788,13 +714,57 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 }
 
 /**
+ * Full parsing of [code] tags.
+ *
+ * @param string $message
+ * @return array Odd number indexes contain the code block contents.
+ */
+function bbcodeCode($message){
+    $counter = 0;
+    $offset = 0;
+    $done = FALSE;
+    $messagearray = array();
+    while(!$done){
+        $pos = strpos($message, '[code]', $offset);
+        if (FALSE === $pos) {
+            $messagearray[$counter] = substr($message, $offset);
+            $messagearray[$counter] = str_replace('[/code]', '&#091;/code]', $messagearray[$counter]);
+            if ($counter > 1) {
+                $messagearray[$counter] = '[/code]'.$messagearray[$counter];
+            }
+            $done = TRUE;
+        } else {
+            $pos += strlen('[code]');
+            $messagearray[$counter] = substr($message, $offset, $pos - $offset);
+            $messagearray[$counter] = str_replace('[/code]', '&#091;/code]', $messagearray[$counter]);
+            if ($counter > 1) {
+                $messagearray[$counter] = '[/code]'.$messagearray[$counter];
+            }
+            $counter++;
+            $offset = $pos;
+            $pos = strpos($message, '[/code]', $offset);
+            if (FALSE === $pos) {
+                $messagearray[$counter] = substr($message, $offset);
+                $counter++;
+                $messagearray[$counter] = '[/code]';
+                $done = TRUE;
+            } else {
+                $messagearray[$counter] = substr($message, $offset, $pos - $offset);
+                $counter++;
+                $offset = $pos + strlen('[/code]');
+            }
+        }
+    }
+    return $messagearray;
+}
+
+/**
  * Wraps long lines but avoids certain elements.
  *
  * @since 1.9.11.12
- * @param string $input
- * @return string
+ * @param string $input Read/Write Variable
  */
-function xmb_wordwrap($input) {
+function xmb_wordwrap(&$input) {
     $br = trim(nl2br("\n"));
     $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $input);
     for($i = 0; $i < sizeof($messagearray); $i++) {
@@ -806,7 +776,34 @@ function xmb_wordwrap($input) {
             $messagearray[$i] = implode($br, $messagearray[$i]);
         } // else inside nobr block
     }
-    return implode('', $messagearray);
+    $input = implode('', $messagearray);
+}
+
+/**
+ * Guarantees each BBCode has an equal number of open and close tags.
+ *
+ * @since 1.9.11.12
+ * @param string $message Read/Write Variable
+ * @param array $regex Indexed by code name
+ */
+function bbcodeBalanceTags(&$message, $regex){
+    foreach($regex as $code => $pattern) {
+        if (is_array($pattern)) {
+            $open = 0;
+            foreach($pattern as $subpattern) {
+                $open += preg_match_all($subpattern, $message, $matches);
+            }
+        } else {
+            $open = preg_match_all($pattern, $message, $matches);
+        }
+        $close = substr_count($message, "[/$code]");
+        $open -= $close;
+        if ($open > 0) {
+            $message .= str_repeat("[/$code]", $open);
+        } elseif ($open < 0) {
+            $message = preg_replace("@\\[/$code]@", "&#091;/$code]", $message, -$open);
+        }
+    }
 }
 
 /**
@@ -907,7 +904,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
 
     $pid = intval($pid);
     $count = 0;
-    $seperator = '';
+    $separator = '';
     foreach($files as $attach) {
         $post = array();
         $post['filename'] = attrOut($attach['filename']);
@@ -933,18 +930,19 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
                 }
                 eval('$output = "'.template('viewthread_post_attachmentimage').'";');
             }
-            $seperator = '';
+            $separator = '';
         } else {
             $downloadcount = $attach['downloads'];
             if ($downloadcount == '') {
                 $downloadcount = 0;
             }
             eval('$output = "'.template('viewthread_post_attachment').'";');
-            if ($seperator == '') {
+            if ($separator == '') {
                 $prefix = "<br /><br />";
             }
-            $seperator = "<br /><br />";
+            $separator = "<br /><br />";
         }
+        $output = trim($output); // Prevent template linefeeds being handled by postify().
         if ($count == 0) {
             $prefix = "<br /><br />";
         }
@@ -958,7 +956,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
             }
         }
         if ($matches == 0) {
-            $message .= $prefix.$output.$seperator; // Do we need some sort of a seperator template here?
+            $message .= $prefix.$output.$separator; // Do we need some sort of a separator template here?
             $count++;
         }
     }
@@ -2342,7 +2340,6 @@ function phpShorthandValue($ininame) {
 /**
  * Simple SMTP message From header formation.
  *
- * @author Robert Chapin (miqrogroove)
  * @since 1.9.11.08
  * @param string $fromname Will be converted to an SMTP quoted string.
  * @param string $fromaddress Must be a fully validated e-mail address.
