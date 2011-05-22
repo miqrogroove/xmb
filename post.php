@@ -529,7 +529,8 @@ switch($action) {
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
             }
-            $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
+            $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+            $db->escape_fast($dbmessage);
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
             $pid = $db->insert_id();
@@ -608,7 +609,8 @@ switch($action) {
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
-                        $newdbmessage = $db->escape(addslashes($messageinput));
+                        $newdbmessage = addslashes($messageinput);
+                        $db->escape_fast($newdbmessage);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
                             $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
                         }
@@ -924,7 +926,8 @@ switch($action) {
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
             }
-            $dbmessage = $db->escape(addslashes($messageinput)); //The message column is historically double-quoted.
+            $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+            $db->escape_fast($dbmessage);
             $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
             $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
             $tid = $db->insert_id();
@@ -998,7 +1001,8 @@ switch($action) {
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
-                        $newdbmessage = $db->escape(addslashes($messageinput));
+                        $newdbmessage = addslashes($messageinput);
+                        $db->escape_fast($newdbmessage);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
                             $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
                         }
@@ -1217,7 +1221,8 @@ switch($action) {
                 if ($bBBcodeOnForThisPost) {
                     postLinkBBcode($messageinput);
                 }
-                $dbmessage = $db->escape(addslashes($messageinput)); //The subject and message columns are historically double-quoted.
+                $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+                $db->escape_fast($dbmessage);
                 $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
 
                 if ($isfirstpost['pid'] == $pid) {
