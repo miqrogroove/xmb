@@ -943,7 +943,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
             }
             $separator = "<br /><br />";
         }
-        $output = trim(str_replace(array("\n","\r"), array('',''), $output)); // Prevents template linefeeds being handled by postify(). Also removes extra space between thumbnails.
+        $output = '<!-- nobr -->'.trim(str_replace(array("\n","\r"), array('',''), $output)).'<!-- /nobr -->'; // Avoid nl2br, trailing space, wordwrap.
         if ($count == 0) {
             $prefix = "<br /><br />";
         }
