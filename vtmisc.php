@@ -140,15 +140,16 @@ if ($action == 'report') {
         require('include/u2u.inc.php');
         $modquery = $db->query("SELECT username, ppp FROM ".X_PREFIX."members WHERE status='Super Administrator' OR status='Administrator' OR status='Super Moderator'");
         while($modusr = $db->fetch_array($modquery)) {
-            $mod = $db->escape_var($modusr['username']);
-
             $posturl = $full_url."viewthread.php?tid=$tid&amp;goto=search&amp;pid=$pid";
             $reason = postedVar('reason', '', TRUE, FALSE);
             $message = $lang['reportmessage'].' '.$posturl."\n\n".$lang['reason'].' '.$reason;
-            $message = $db->escape(addslashes($message)); //Messages are historically double-slashed.
-            $subject = $db->escape(addslashes($lang['reportsubject']));
+            $message = addslashes($message); //Messages are historically double-slashed.
+            $subject = addslashes($lang['reportsubject']);
+            $db->escape_fast($message);
+            $db->escape_fast($subject);
+            $db->escape_fast($modusr['username']);
 
-            u2u_send_recp($mod, $subject, $message);
+            u2u_send_recp($modusr['username'], $subject, $message);
         }
         $db->free_result($modquery);
 

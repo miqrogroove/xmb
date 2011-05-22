@@ -175,7 +175,7 @@ switch($action) {
                             $lp = '';
                         }
                         if ($sub['lastpost'] != $lp) {
-                            $lp = $db->escape_var($lp);
+                            $db->escape_fast($lp);
                             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid={$sub['fid']}");
                         }
                     }
@@ -204,7 +204,7 @@ switch($action) {
                     }
                     $lastpost = $lastpost[$mkey]['dateline'].'|'.$lastpost[$mkey]['author'].'|'.$lastpost[$mkey]['pid'];
                 }
-                $lastpost = $db->escape_var($lastpost);
+                $db->escape_fast($lastpost);
                 $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lastpost' WHERE fid='{$loner['fid']}'");
             }
 
@@ -260,7 +260,7 @@ switch($action) {
                 }
 
                 if ($thread['lastpost'] != $lp) {
-                    $lp = $db->escape_var($lp);
+                    $db->escape_fast($lp);
                     $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$lp' WHERE tid={$thread['tid']}");
                 }
             }

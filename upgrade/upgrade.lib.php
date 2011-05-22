@@ -98,7 +98,9 @@ function xmb_upgrade() {
         } else {
             $template[1] = '';
         }
-        $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
+        $db->escape_fast($template[0]);
+        $db->escape_fast($template[1]);
+        $values[] = "('{$template[0]}', '{$template[1]}')";
     }
     unset($templates);
     if (count($values) > 0) {
@@ -1846,7 +1848,8 @@ function fixPolls() {
     $q = $db->query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != '' AND pollopts != '1'");
     while($thread = $db->fetch_array($q)) {
         // Poll titles are historically unslashed, but thread titles are double-slashed.
-        $thread['subject'] = $db->escape(stripslashes($thread['subject']));
+        $thread['subject'] = stripslashes($thread['subject']);
+        $db->escape_fast($thread['subject']);
 
         $db->query("INSERT INTO ".X_PREFIX."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
         $poll_id = $db->insert_id();

@@ -195,10 +195,23 @@ class dbstuff {
     /**
      * Preferred for performance when escaping any string variable.
      *
-     * Example: $db->query('UPDATE a SET b = "Hello, my name is '.$db->escape_var($rawinput).'"');
+     * Note this only works when the raw value can be discarded.
      *
-     * @param string $rawstring
-     * @return string
+     * Example:
+     *  $db->escape_fast($rawinput);
+     *  $db->query('UPDATE a SET b = "Hello, my name is '.$rawinput.'"');
+     *
+     * @since 1.9.11.12
+     * @param string $sql Read/Write Variable
+     */
+    function escape_fast(&$sql) {
+        set_error_handler($this->errcallb);
+        $sql = mysql_real_escape_string($sql, $this->link);
+        restore_error_handler();
+    }
+
+    /**
+     * DEPRECATED by version 1.9.11.12
      */
     function escape_var(&$rawstring) {
         set_error_handler($this->errcallb);

@@ -206,18 +206,18 @@ if ($mpage['start'] <= 30) {
          LIMIT {$mpage['start']}, $tpp"
     );
     if ($row = $db->fetch_array($query1)) {
-        $lastpostsql = $db->escape_var($row['lastpost']);
+        $db->escape_fast($row['lastpost']);
 
         $rowcount = $db->num_rows($query1);
         $db->data_seek($query1, $rowcount - 1);
         $lastrow = $db->fetch_array($query1);
 
         if (intval($row['topped']) == 0) {
-            $criteria = " AND topped = 0 AND lastpost <= '$lastpostsql' ";
+            $criteria = " AND topped = 0 AND lastpost <= '{$row['lastpost']}' ";
         } elseif (intval($lastrow['topped']) == 1) {
-            $criteria = " AND topped = 1 AND lastpost <= '$lastpostsql' ";
+            $criteria = " AND topped = 1 AND lastpost <= '{$row['lastpost']}' ";
         } else {
-            $criteria = " AND (lastpost <= '$lastpostsql' OR topped = 0) ";
+            $criteria = " AND (lastpost <= '{$row['lastpost']}' OR topped = 0) ";
         }
     } else {
         $criteria = " AND 1=0 ";

@@ -43,7 +43,7 @@ if (!defined('IN_CODE')) {
 function setNewLangValue($langkey, $cdata) {
     global $db, $langfile;
 
-    $langkey = $db->escape_var($langkey);
+    $db->escape_fast($langkey);
 
     $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE langkey='$langkey'");
     if ($db->num_rows($result) == 0) {
@@ -82,7 +82,7 @@ function setNewLangValue($langkey, $cdata) {
  */
 function setLangValue($phraseid, $cdata) {
     global $db, $langfile;
-    
+
     $phraseid = intval($phraseid);
 
     $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
@@ -100,7 +100,7 @@ function setLangValue($phraseid, $cdata) {
 
     $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
     $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
-    
+
     return TRUE;
 }
 
@@ -113,7 +113,7 @@ function setLangValue($phraseid, $cdata) {
  */
 function setManyLangValues(&$lang, &$langfile) {
     global $db;
-    
+
     // Ensure devname is present in the database.
     $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
     if ($db->num_rows($result) == 0) {
@@ -151,7 +151,7 @@ function setManyLangValues(&$lang, &$langfile) {
     $sql = '';
     foreach($lang as $key=>$value) {
         $phraseid = $phraseids[$key];
-        $value = $db->escape_var($value);
+        $db->escape_fast($value);
         if ($flag) {
             $sql .= ", ($langid, $phraseid, '$value')";
         } else {
@@ -273,7 +273,7 @@ function installNewTranslation(&$upload) {
         $oldids = implode(", ", $oldids);
         $db->query("DELETE FROM ".X_PREFIX."lang_keys WHERE phraseid IN ($oldids)");
     }
-    
+
     return TRUE;
 }
 
@@ -288,9 +288,9 @@ function installNewTranslation(&$upload) {
  */
 function exportTranslation($langid, &$devname) {
     global $db;
-    
+
     $langid = intval($langid);
-    
+
     $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid=$langid");
     if ($db->num_rows($result) == 0) {
         return FALSE;

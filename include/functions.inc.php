@@ -43,7 +43,7 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALS
     global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
 
     if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
-        $dbname = $db->escape_var($self['username']);
+        $dbname = $db->escape($self['username']);
 
         if (!is_null($invisible)) {
             if ($invisible And $self['invisible'] == 0) {
@@ -103,7 +103,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
             if ($serror == 'ip' And $self['status'] != 'Super Administrator' And $self['status'] != 'Administrator') {
                 // User is IP-Banned
             } elseif ($self['password'] == $xmbpwinput) {
-                $xmbuser = $db->escape_var($self['username']);
+                $xmbuser = $db->escape($self['username']);
             }
             $self['password'] = '';
         }
@@ -225,7 +225,8 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     if (X_SCRIPT != 'upgrade.php' and (X_ADMIN or $serror == '' or $serror == 'guest' and X_MEMBER)) {
         global $onlineip, $onlinetime, $url;
 
-        $wollocation = $db->escape(substr($url, 0, $maxurl));
+        $wollocation = substr($url, 0, $maxurl);
+        $db->escape_fast($wollocation);
         $newtime = $onlinetime - X_ONLINE_TIMER;
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
@@ -243,7 +244,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
 function loadLang($devname = "English") {
     global $charset, $db, $lang, $langfile;
 
-    $devname = $db->escape_var($devname);
+    $db->escape_fast($devname);
 
     // Query The Translation Database
     $sql = 'SELECT k.langkey, t.cdata '
@@ -313,7 +314,7 @@ function nav($add=false, $raquo=true) {
 function template($name) {
     global $db, $comment_output;
 
-    $name = $db->escape_var($name);
+    $db->escape_fast($name);
 
     if (($template = templatecache(X_CACHE_GET, $name)) === false) {
         $query = $db->query("SELECT template FROM ".X_PREFIX."templates WHERE name='$name'");
@@ -942,7 +943,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
             }
             $separator = "<br /><br />";
         }
-        $output = trim($output); // Prevents template linefeeds being handled by postify(). Also removes extra space between thumbnails.
+        $output = trim(str_replace(array("\n","\r"), array('',''), $output)); // Prevents template linefeeds being handled by postify(). Also removes extra space between thumbnails.
         if ($count == 0) {
             $prefix = "<br /><br />";
         }
@@ -1297,8 +1298,8 @@ function updateforumcount($fid) {
 
     $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads AS t USING(fid) WHERE f.fid=$fid OR f.fup=$fid ORDER BY t.lastpost DESC LIMIT 0, 1");
     $lp = $db->fetch_array($query);
-    $lastpost = $db->escape_var($lp['lastpost']);
-    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='$lastpost' WHERE fid='$fid'");
+    $db->escape_fast($lp['lastpost']);
+    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='{$lp['lastpost']}' WHERE fid='$fid'");
     $db->free_result($query);
 }
 
@@ -1321,7 +1322,7 @@ function updatethreadcount($tid) {
     }
     $db->free_result($query);
     $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
-    $lastpost = $db->escape_var($lastpost);
+    $db->escape_fast($lastpost);
 
     $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
@@ -2363,7 +2364,8 @@ function smtpHeaderFrom($fromname, $fromaddress) {
 function nonce_create($key) {
     global $db, $self;
 
-    $key = $db->escape(substr($key, 0, X_NONCE_KEY_LEN));
+    $key = substr($key, 0, X_NONCE_KEY_LEN);
+    $db->escape_fast($key);
     $salt = isset($self['email']) ? $self['email'] : $key;
     $nonce = md5( $salt . mt_rand() );
     $time = time();
@@ -2385,7 +2387,7 @@ function nonce_peek($nonce, $key_length) {
     $key_length = (int) $key_length;
     if ($key_length >= X_NONCE_KEY_LEN) return '';  //Since the schema is so constrained, keep all the 12-byte keys secure.
 
-    $nonce = $db->escape($nonce);
+    $db->escape_fast($nonce);
     $time = time() - X_NONCE_MAX_AGE;
     $result = $db->query(
         "SELECT imagestring
@@ -2409,8 +2411,9 @@ function nonce_peek($nonce, $key_length) {
 function nonce_use($key, $nonce, $expire = 0) {
     global $db;
 
-    $key = $db->escape(substr($key, 0, X_NONCE_KEY_LEN));
-    $nonce = $db->escape($nonce);
+    $key = substr($key, 0, X_NONCE_KEY_LEN);
+    $db->escape_fast($key);
+    $db->escape_fast($nonce);
     $time = time() - X_NONCE_MAX_AGE;
     $sql_expire = "dateline < $time";
     if ($expire > 0 and $expire < X_NONCE_MAX_AGE) {

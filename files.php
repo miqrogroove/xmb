@@ -91,7 +91,7 @@ if ($filename == '') {
         $where .= " AND a.uid={$self['uid']}"; // Allow preview of own attachments when URL format requires a PID.
     }
 } else {
-    $filename = $db->escape_var($filename);
+    $db->escape_fast($filename);
     $where = "WHERE a.aid=$aid AND a.filename='$filename'";
 }
 $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) $where");

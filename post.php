@@ -959,7 +959,7 @@ switch($action) {
                 $vote_id =  $db->insert_id();
                 $i = 1;
                 foreach($pollopts as $p) {
-                    $p = $db->escape_var($p);
+                    $db->escape_fast($p);
                     $db->query("INSERT INTO ".X_PREFIX."vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ($vote_id, $i, '$p', 0)");
                     $i++;
                 }
@@ -1229,7 +1229,7 @@ switch($action) {
                 require_once('include/attach.inc.php');
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
                 if ($orig['author'] != 'Anonymous') {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape_var($orig['author'])."'");
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
                 }
                 deleteAllAttachments($pid);
 
@@ -1251,7 +1251,7 @@ switch($action) {
 
                         $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid OR closed='moved|$tid'");
                     } else {
-                        $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape_var($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
+                        $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
                     }
                 }
                 if ($forum['type'] == 'sub') {

@@ -68,7 +68,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  */
 function attachUploadedFile($varname, $pid=0) {
     global $attachmentErrors, $db, $self, $SETTINGS;
-    
+
     $path = getFullPathFromSubdir('');
     $pid = intval($pid);
     $usedb = TRUE;
@@ -159,7 +159,7 @@ function attachRemoteFile($url, $pid=0) {
         $filename = explode('/', $filepath);
         $filename = array_pop($filename);
     }
-    $dbfilename = $db->escape_var($filename);
+    $dbfilename = $db->escape($filename);
     if ($pid == 0 And intval($self['uid']) <= 0) {
         return X_GENERIC_ATTACH_ERROR;
     }
@@ -185,7 +185,7 @@ function attachRemoteFile($url, $pid=0) {
     if ($file === FALSE) {
         return X_INVALID_REMOTE_LINK;
     }
-    
+
     $filesize = strlen($file);
     if ($filesize > $SETTINGS['maxattachsize']) {
         return X_ATTACH_SIZE_EXCEEDED;
@@ -205,7 +205,8 @@ function attachRemoteFile($url, $pid=0) {
         unlink($filepath);
         return X_NOT_AN_IMAGE;
     }
-    $filetype = $db->escape(image_type_to_mime_type($result[2]));
+    $filetype = image_type_to_mime_type($result[2]);
+    $db->escape_fast($filetype);
 
     // Try to make sure the filename extension is okay
     $extension = strtolower(get_extension($filename));
@@ -237,7 +238,7 @@ function attachRemoteFile($url, $pid=0) {
         }
     }
 
-    $file = $db->escape_var($file);
+    $db->escape_fast($file);
     $aid = private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
 
     // Clean up disk if attachment failed.
@@ -404,10 +405,10 @@ function renameAttachment($aid, $pid, $rawnewname) {
     global $db;
     if (isValidFilename($rawnewname)) {
         $aid = intval($aid);
-        $dbrename = $db->escape_var($rawnewname);
         $pid = intval($pid);
-        $db->query("UPDATE ".X_PREFIX."attachments SET filename='$dbrename' WHERE aid=$aid AND pid=$pid");
         $extension = strtolower(get_extension($rawnewname));
+        $db->escape_fast($rawnewname);
+        $db->query("UPDATE ".X_PREFIX."attachments SET filename='$rawnewname' WHERE aid=$aid AND pid=$pid");
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if (in_array($extension, $img_extensions)) {
             $query = $db->query("SELECT aid FROM ".X_PREFIX."attachments WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
@@ -425,7 +426,7 @@ function copyAllAttachments($frompid, $topid) {
     global $db;
     $frompid = intval($frompid);
     $topid = intval($topid);
-    
+
     // Find all primary attachments for $frompid
     $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid=0");
     while($attach = $db->fetch_array($query)) {
@@ -437,17 +438,17 @@ function copyAllAttachments($frompid, $topid) {
                 private_copyDiskAttachment($attach['aid'], $aid, $attach['subdir']);
             }
         }
-        
+
         // Update any [file] object references in the new copy of the post messsage.
         $message = $db->query("SELECT message FROM ".X_PREFIX."posts WHERE pid=$topid");
         if ($message = $db->fetch_array($message)) {
             $newmessage = str_replace("[file]{$attach['aid']}[/file]", "[file]{$aid}[/file]", $message['message']);
             if ($newmessage != $message['message']) {
-                $newmessage = $db->escape_var($newmessage);
+                $db->escape_fast($newmessage);
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$newmessage' WHERE pid=$topid");
             }
         }
-        
+
         // Find all children of this attachment and copy them too.
         $childquery = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid={$attach['aid']}");
         while($childattach = $db->fetch_array($childquery)) {
@@ -536,7 +537,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
 
 
     /* Perform Sanity Checks */
-    
+
     if (isset($_FILES[$varname])) {
         $file = $_FILES[$varname];
     } else {
@@ -610,9 +611,9 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     $filetype = preg_replace('#[\\x00\\r\\n%]#', '', $file['type']);
 
     if ($dbescape) {
-        $attachment = $db->escape_var($attachment);
-        $filename = $db->escape_var($filename);
-        $filetype = $db->escape_var($filetype);
+        $db->escape_fast($attachment);
+        $db->escape_fast($filename);
+        $db->escape_fast($filetype);
     }
 
     return $attachment;
@@ -620,7 +621,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
 
 function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
     global $full_url, $SETTINGS;
-    
+
     if ($SETTINGS['files_virtual_url'] == '') {
         $virtual_path = $full_url;
     } else {
@@ -724,7 +725,7 @@ function getFullPathFromSubdir($subdir, $mkdir = FALSE) {
 
 function getTempFile($path=FALSE) {
     global $attachmentErrors;
-    
+
     $filepath = FALSE;
     if ($path !== FALSE) {
         $filepath = @tempnam($path, 'xmb-');
@@ -781,7 +782,7 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
     } else {
         $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
     }
-    
+
     $extension = strtolower(get_extension($filename));
     if ($extension == '') {
         $filetypei = strtolower($filetype);
@@ -833,14 +834,14 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
     if (!$img) {
         return FALSE;
     }
-    
+
     $thumb = imagecreatetruecolor($thumbSize->width, $thumbSize->height);
 
     // Resize $img
     if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
         return FALSE;
     }
-    
+
     // Write full size and dimensions on thumbnail
     if (function_exists('imagefttext')) {
         $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
@@ -849,8 +850,9 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
         imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
     }
 
-    $filename = $db->escape($filename.'-thumb.jpg');
-    $filepath = $filepath.'-thumb.jpg';
+    $filepath .= '-thumb.jpg';
+    $filename .= '-thumb.jpg';
+    $db->escape_fast($filename);
 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
@@ -870,7 +872,8 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
 
         // Add database record
         if ($subdir == '') {
-            $file = $db->escape(file_get_contents($filepath));
+            $file = file_get_contents($filepath);
+            $db->escape_fast($file);
             unlink($filepath);
         } else {
             $file = '';
@@ -958,7 +961,9 @@ function regenerateThumbnail($aid, $pid) {
         $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
     }
 
-    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $db->escape_var($attach['filetype']), $aid, $pid, $attach['subdir']);
+    $db->escape_fast($attach['filetype']);
+
+    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $attach['filetype'], $aid, $pid, $attach['subdir']);
 
     // Clean up temp files
     if ($attach['subdir'] == '') {

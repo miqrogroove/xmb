@@ -682,10 +682,10 @@ if ($action == 'themes') {
             if ($key == 'themeid') {
                 $val = '';
             } else if ($key == 'name') {
-                $dbname = $db->escape_var($val);
+                $dbname = $db->escape($val);
             }
-            $keysql[] = $db->escape_var($key);
-            $valsql[] = "'".$db->escape_var($val)."'";
+            $keysql[] = $db->escape($key);
+            $valsql[] = "'".$db->escape($val)."'";
         }
 
         $keysql = implode(', ', $keysql);
@@ -1521,7 +1521,8 @@ if ($action == "newsletter") {
 
         if ($sendvia == "u2u") {
             while($memnews = $db->fetch_array($query)) {
-                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('".$db->escape_var($memnews['username'])."', '$xmbuser', 'incoming', '".$db->escape_var($memnews['username'])."', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
+                $db->escape_fast($memnews['username']);
+                $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('{$memnews['username']}', '$xmbuser', 'incoming', '{$memnews['username']}', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
             }
             echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[newslettersubmit]</td></tr>";
         } else {
@@ -1897,7 +1898,9 @@ if ($action == "templates") {
         foreach($templates as $val) {
             $template = explode("|#*XMB TEMPLATE*#|", $val);
             $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
-            $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
+            $db->escape_fast($template[0]);
+            $db->escape_fast($template[1]);
+            $values[] = "('{$template[0]}', '{$template[1]}')";
         }
         unset($templates);
         if (count($values) > 0) {
@@ -1961,7 +1964,8 @@ if ($action == "templates") {
         request_secure('tmplt', $tid, X_NONCE_FORM_EXP, FALSE);
         $namenew = postedVar('namenew');
         //Templates are historically double-slashed.
-        $templatenew = $db->escape(addslashes(postedVar('templatenew', '', FALSE, FALSE)));
+        $templatenew = addslashes(postedVar('templatenew', '', FALSE, FALSE));
+        $db->escape_fast($templatenew);
 
         if ($tid == 'new') {
             if (!$namenew) {

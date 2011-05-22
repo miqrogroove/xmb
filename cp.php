@@ -1834,12 +1834,12 @@ if ($action == "members") {
             }
 
             if ($delete == $mem['uid'] && $delete != $self['uid'] && $origstatus != "Super Administrator") {
-                $dbname = $db->escape_var($mem['username']);
+                $db->escape_fast($mem['username']);
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
-                $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='$dbname'");
-                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='$dbname'");
-                $db->query("DELETE FROM ".X_PREFIX."u2u WHERE owner='$dbname'");
-                $db->query("UPDATE ".X_PREFIX."whosonline SET username='xguest123' WHERE username='$dbname'");
+                $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='{$mem['username']}'");
+                $db->query("DELETE FROM ".X_PREFIX."favorites WHERE username='{$mem['username']}'");
+                $db->query("DELETE FROM ".X_PREFIX."u2u WHERE owner='{$mem['username']}'");
+                $db->query("UPDATE ".X_PREFIX."whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
             } else {
                 $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
             }

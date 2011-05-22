@@ -101,7 +101,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
             }
 
             if ($dbescape) {
-                $retval = $GLOBALS['db']->escape_var($retval);
+                $GLOBALS['db']->escape_fast($retval);
             }
         }
     }
@@ -187,7 +187,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
                     }
 
                     if ($dbescape) {
-                        $theObject = $GLOBALS['db']->escape_var($theObject);
+                        $GLOBALS['db']->escape_fast($theObject);
                     }
                 } else {
                     $theObject = '';

@@ -241,7 +241,9 @@ $values = array();
 foreach($templates as $val) {
     $template = explode("|#*XMB TEMPLATE*#|", $val);
     $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
-    $values[] = "('".$db->escape_var($template[0])."', '".$db->escape_var($template[1])."')";
+    $db->escape_fast($template[0]);
+    $db->escape_fast($template[1]);
+    $values[] = "('{$template[0]}', '{$template[1]}')";
 }
 unset($templates);
 if (count($values) > 0) {

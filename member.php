@@ -563,7 +563,7 @@ switch($action) {
                 while($admin = $db->fetch_array($mailquery)) {
                     $translate = $lang2[$admin['langfile']];
                     if ($SETTINGS['notifyonreg'] == 'u2u') {
-                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape_var($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
+                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                     } else {
                         $rawuser = postedVar('username', '', FALSE, FALSE);
                         $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);

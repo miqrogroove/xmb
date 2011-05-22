@@ -199,7 +199,8 @@ switch($action) {
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
                 while($result = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='".$db->escape_var($result['author'])."'");
+                    $db->escape_fast($result['author']);
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
                 }
                 $db->free_result($query);
 
@@ -320,13 +321,15 @@ switch($action) {
                 while ($info = $db->fetch_array($query)) {
                     if (substr($info['closed'], 0, 5) != 'moved') {
                         //Insert all thread redirectors.
-                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '".$db->escape_var($info['subject'])."', '', '".$db->escape_var($info['lastpost'])."', 0, 0, '".$db->escape_var($info['author'])."', 'moved|{$info['tid']}', '{$info['topped']}')");
+                        $db->escape_fast($info['author']);
+                        $db->escape_fast($info['subject']);
+                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ({$info['fid']}, '{$info['subject']}', '', '".$db->escape($info['lastpost'])."', 0, 0, '{$info['author']}', 'moved|{$info['tid']}', '{$info['topped']}')");
                         $ntid = $db->insert_id();
 
                         $lastpost = explode('|', $info['lastpost']);
                         $lastposttime = intval($lastpost[0]);
 
-                        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '".$db->escape_var($info['author'])."', '{$info['tid']}', '".$db->escape_var($info['subject'])."', $lastposttime, '', '', '', '', '')");
+                        $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ({$info['fid']}, '$ntid', '{$info['author']}', '{$info['tid']}', '{$info['subject']}', $lastposttime, '', '', '', '', '')");
                         $tids[] = $info['tid'];
                     }
                 }
@@ -508,8 +511,8 @@ switch($action) {
                     $pid = $db->result($query, 0);
                     $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid GROUP BY author");
                     while($result = $db->fetch_array($query)) {
-                        $dbauthor = $db->escape_var($result['author']);
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='$dbauthor'");
+                        $db->escape_fast($result['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
                     }
 
                     emptyThreadAttachments($tid, $pid);  // Must delete attachments before posts!
@@ -566,11 +569,12 @@ switch($action) {
             $query = $db->query("SELECT pid, author, dateline, subject FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC");
             $movecount = 0;
             while($post = $db->fetch_array($query)) {
+                $db->escape_fast($post['author']);
                 $move = getInt('move'.$post['pid'], 'p');
                 if ($move == $post['pid']) {
                     if (!$threadcreated) {
                         $thatime = $onlinetime;
-                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '".$db->escape_var($post['author'])."', '', 0)");
+                        $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '{$post['author']}', '', 0)");
                         $newtid = $db->insert_id();
                         $threadcreated = true;
                     }
@@ -581,10 +585,10 @@ switch($action) {
                         $firstmove = true;
                     }
                     $db->query("UPDATE ".X_PREFIX."posts SET tid=$newtid $newsub WHERE pid=$move");
-                    $lastpost = $post['dateline'].'|'.$db->escape_var($post['author']).'|'.$post['pid'];
+                    $lastpost = $post['dateline'].'|'.$post['author'].'|'.$post['pid'];
                     $movecount++;
                 } else {
-                    $oldlastpost = $post['dateline'].'|'.$db->escape_var($post['author']).'|'.$post['pid'];
+                    $oldlastpost = $post['dateline'].'|'.$post['author'].'|'.$post['pid'];
                 }
             }
             $db->query("UPDATE ".X_PREFIX."threads SET replies=$movecount-1, lastpost='$lastpost' WHERE tid='$newtid'");
@@ -656,7 +660,10 @@ switch($action) {
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0, 1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+'$replyadd', subject='".$db->escape_var($thread['subject'])."', icon='{$thread['icon']}', author='".$db->escape_var($thread['author'])."', lastpost='{$lastpost['dateline']}|".$db->escape_var($lastpost['author'])."|{$lastpost['pid']}' WHERE tid=$tid");
+            $db->escape_fast($thread['author']);
+            $db->escape_fast($thread['subject']);
+            $db->escape_fast($lastpost['author']);
+            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+'$replyadd', subject='{$thread['subject']}', icon='{$thread['icon']}', author='{$thread['author']}', lastpost='{$lastpost['dateline']}|{$lastpost['author']}|{$lastpost['pid']}' WHERE tid=$tid");
 
             audit($xmbuser, $action, $fid, $tid);
 
@@ -744,8 +751,8 @@ switch($action) {
                     $move = "move".$post['pid'];
                     $move = getInt($move, 'p');
                     if (!empty($move)) {
-                        $dbauthor = $db->escape_var($post['author']);
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
+                        $db->escape_fast($post['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
                         deleteAllAttachments($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
@@ -762,8 +769,8 @@ switch($action) {
                     $move = "move".$post['pid'];
                     $move = getInt($move, 'p');
                     if (!empty($move)) {
-                        $dbauthor = $db->escape_var($post['author']);
-                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='$dbauthor'");
+                        $db->escape_fast($post['author']);
+                        $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
                         deleteAllAttachments($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
@@ -773,13 +780,13 @@ switch($action) {
             }
 
             $firstauthor = $db->result($db->query("SELECT author FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 0,1"), 0);
-            $firstauthor = $db->escape_var($firstauthor);
+            $db->escape_fast($firstauthor);
 
             $query = $db->query("SELECT pid, author, dateline FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0,1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
-
-            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='$lastpost[dateline]|".$db->escape_var($lastpost['author'])."|$lastpost[pid]' WHERE tid=$tid");
+            $db->escape_fast($lastpost['author']);
+            $db->query("UPDATE ".X_PREFIX."threads SET author='$firstauthor', lastpost='{$lastpost['dateline']}|{$lastpost['author']}|{$lastpost['pid']}' WHERE tid=$tid");
 
             if ($forums['type'] == 'sub') {
                 updateforumcount($fup['fid']);
@@ -827,7 +834,7 @@ switch($action) {
 
                 foreach($thread as $key=>$val) {
                     $cols[] = $key;
-                    $vals[] = $db->escape_var($val);
+                    $vals[] = $db->escape($val);
                 }
                 $columns = implode(', ', $cols);
                 $values  = "'".implode("', '", $vals)."'";
@@ -848,7 +855,7 @@ switch($action) {
 
                     foreach($post as $key=>$val) {
                         $cols[] = $key;
-                        $vals[] = $db->escape_var($val);
+                        $vals[] = $db->escape($val);
                     }
                     $columns = implode(', ', $cols);
                     $values  = "'".implode("', '", $vals)."'";
@@ -861,7 +868,8 @@ switch($action) {
 
                 $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
                 while($result = $db->fetch_array($query)) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+{$result['pidcount']} WHERE username='".$db->escape_var($result['author'])."'");
+                    $db->escape_fast($result['author']);
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+{$result['pidcount']} WHERE username='{$result['author']}'");
                 }
                 $db->free_result($query);
 
