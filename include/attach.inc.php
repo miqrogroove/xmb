@@ -934,7 +934,6 @@ function regenerateThumbnail($aid, $pid) {
     global $db, $SETTINGS;
     $aid = intval($aid);
     $pid = intval($pid);
-    deleteThumbnail($aid, $pid);
 
     // Initialize
     $path = getFullPathFromSubdir('');
@@ -981,6 +980,9 @@ function regenerateThumbnail($aid, $pid) {
     $result = getimagesize($path);
 
     if ($result === FALSE) {
+        if ($attach['subdir'] == '') {
+            unlink($path);
+        }
         return FALSE;
     }
     $imgSize = new CartesianSize($result[0], $result[1]);
@@ -990,7 +992,10 @@ function regenerateThumbnail($aid, $pid) {
     if ($result[0] > 0 And $result[1] > 0) {
         $maxImgSize = new CartesianSize($result[0], $result[1]);
         if ($imgSize->isBiggerThan($maxImgSize)) {
-            return FALSE;
+            if ($attach['subdir'] == '') {
+                unlink($path);
+            }
+            return X_IMAGE_DIMS_EXCEEDED;
         }
     }
 
@@ -998,12 +1003,14 @@ function regenerateThumbnail($aid, $pid) {
         $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
     }
 
+    deleteThumbnail($aid, $pid);
     createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, '', $aid, $pid, $attach['subdir']);
 
     // Clean up temp files
     if ($attach['subdir'] == '') {
         unlink($path);
     }
+    return TRUE;
 }
 
 function deleteThumbnail($aid, $pid) {

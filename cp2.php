@@ -2614,8 +2614,16 @@ if ($action == "regeneratethumbnail") {
     require('include/attach-admin.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    regenerateThumbnail($aid, $pid);
-    echo "<p align=\"center\">Done ...</br>";
+    $result = regenerateThumbnail($aid, $pid);
+    if ($result < 0) {
+        $msg = $attachmentErrors[$result];
+    } elseif (FALSE === $result) {
+        $msg = $lang['error'];
+    } else {
+        $msg = $lang['tool_completed'];
+    }
+
+    echo "<p align=\"center\">$msg</br>";
 }
 
 echo '</table></td></tr></table>';
