@@ -863,13 +863,13 @@ function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALS
     // Load the image.
     switch($result[2]) {
     case IMAGETYPE_JPEG:
-        $img = @imagecreatefromjpeg($filepath);
+        $img = @imagecreatefromjpeg($path);
         break;
     case IMAGETYPE_GIF:
-        $img = @imagecreatefromgif($filepath);
+        $img = @imagecreatefromgif($path);
         break;
     case IMAGETYPE_PNG:
-        $img = @imagecreatefrompng($filepath);
+        $img = @imagecreatefrompng($path);
         break;
     case IMAGETYPE_BMP:
         // See our website for drop-in BMP support.
@@ -880,13 +880,13 @@ function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALS
         }
         if (class_exists('phpthumb_bmp')) {
             $ns = new phpthumb_bmp;
-            $img = $ns->phpthumb_bmpfile2gd($filepath);
+            $img = $ns->phpthumb_bmpfile2gd($path);
         } else {
             $img = FALSE;
         }
         break;
     case 15: //IMAGETYPE_WBMP
-        $img = @imagecreatefromwbmp($filepath);
+        $img = @imagecreatefromwbmp($path);
         break;
     default:
         return FALSE;
