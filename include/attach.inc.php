@@ -350,7 +350,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
 
     // Make Thumbnail
     if ($result !== FALSE) {
-        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, $dbfiletype, $aid, $pid, $subdir);
+        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, '', $aid, $pid, $subdir);
     }
 
     // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
@@ -750,95 +750,26 @@ function getTempFile($path=FALSE) {
  * @param string $filepath Current name and location (full path) of the input file.
  * @param int    $filesize The size, in bytes, that you want printed on the thumbnail.
  * @param object $imgSize  Caller must construct a CartesianSize object to specify the dimensions of the input image.
- * @param string $filetype MIME type of the input image.
+ * @param string $dep1     This parameter is ignored.
  * @param int    $aid      Optional. AID to be used as the parentid if attaching the thumbnail to a post.
  * @param int    $pid      Optional. PID to attach the thumbnail to.
  * @param string $subdir   Optional. Subdirectory to use inside the file storage path, or null string to store it in the database.
  * @return bool
  */
-function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, $aid=0, $pid=0, $subdir='') {
+function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=0, $pid=0, $subdir='') {
     global $db, $self, $SETTINGS;
-
-    // Check if GD is available
-    if (!function_exists('imagecreatetruecolor')) {
-        return FALSE;
-    }
 
     // Determine if a thumbnail is needed.
     $result = explode('x', $SETTINGS['max_thumb_size']);
     if ($result[0] > 0 And $result[1] > 0) {
-        $thumbMaxSize = new CartesianSize($result[0], $result[1]);
+        $thumbSize = new CartesianSize($result[0], $result[1]);
     } else {
         return FALSE;
     }
 
-    if ($imgSize->isSmallerThan($thumbMaxSize)) {
-        return FALSE;
-    }
+    $thumb = load_and_resize_image($filepath, $thumbSize->width, $thumbSize->height);
 
-    // Create a thumbnail for this attachment.
-    if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
-        $thumbSize = new CartesianSize($thumbMaxSize->width, round($thumbMaxSize->width / $imgSize->aspect()));
-    } else {
-        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
-    }
-
-    $extension = strtolower(get_extension($filename));
-    if ($extension == '') {
-        $filetypei = strtolower($filetype);
-        if (strpos($filetypei, 'jpeg') !== FALSE) {
-            $extension = 'jpg';
-        } elseif (strpos($filetypei, 'gif') !== FALSE) {
-            $extension = 'gif';
-        } elseif (strpos($filetypei, 'wbmp') !== FALSE) {
-            $extension = 'wbmp';
-        } elseif (strpos($filetypei, 'bmp') !== FALSE) {
-            $extension = 'bmp';
-        } elseif (strpos($filetypei, 'png') !== FALSE) {
-            $extension = 'png';
-        }
-    }
-    switch($extension) {
-    case 'png':
-        $img = @imagecreatefrompng($filepath);
-        break;
-    case 'wbmp':
-    case 'wbm':
-        $img = @imagecreatefromwbmp($filepath);
-        break;
-    case 'bmp':
-        // See our website for drop-in BMP support.
-        if (!class_exists('phpthumb_bmp')) {
-            if (is_file(ROOT.'include/phpthumb-bmp.php')) {
-                require_once(ROOT.'include/phpthumb-bmp.php');
-            }
-        }
-        if (class_exists('phpthumb_bmp')) {
-            $ns = new phpthumb_bmp;
-            $img = $ns->phpthumb_bmpfile2gd($filepath);
-        } else {
-            $img = FALSE;
-        }
-        break;
-    case 'gif':
-        $img = @imagecreatefromgif($filepath);
-        break;
-    case 'jpeg':
-    case 'jpg':
-    case 'jpe':
-    default:
-        $img = @imagecreatefromjpeg($filepath);
-        break;
-    }
-
-    if (!$img) {
-        return FALSE;
-    }
-
-    $thumb = imagecreatetruecolor($thumbSize->width, $thumbSize->height);
-
-    // Resize $img
-    if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
+    if (FALSE === $thumb) {
         return FALSE;
     }
 
@@ -856,6 +787,7 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
+    imagedestroy($thumb);
 
     // Gather metadata
     $filesize = intval(filesize($filepath));
@@ -891,6 +823,111 @@ function createThumbnail(&$filename, $filepath, $filesize, $imgSize, $filetype, 
         }
     }
     return TRUE;
+}
+
+/**
+ * Uses the path to an image file to create a resized image resource in memory.
+ *
+ * @since 1.9.11.12
+ * @param string $path Current name and location (full path) of the input file.
+ * @param int    $width Takes the width limit.  Returns the actual width.
+ * @param int    $height Takes the height limit.  Returns the actual height.
+ * @param bool   $load_if_smaller Do you want to load the image if it's smaller than both $width and $height?
+ * @param bool   $enlarge_if_smaller Do you want to resize the image if it's smaller than both $width and $height?
+ * @return resource|bool The image GD resource on success.  FALSE when $path is not an image file, or if the image is larger than $SETTINGS['max_image_size'].
+ */
+function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALSE, $enlarge_if_smaller = FALSE) {
+    global $SETTINGS;
+
+    // Check if GD is available
+    if (!function_exists('imagecreatetruecolor')) {
+        return FALSE;
+    }
+
+    $result = getimagesize($path);
+
+    if (FALSE === $result) {
+        return FALSE;
+    }
+
+    $imgSize = new CartesianSize($result[0], $result[1]);
+
+    $maxsize = explode('x', $SETTINGS['max_image_size']);
+    if ($maxsize[0] > 0 and $maxsize[1] > 0) {
+        $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
+        if ($imgSize->isBiggerThan($maxImgSize)) {
+            return FALSE;
+        }
+    }
+
+    // Load the image.
+    switch($result[2]) {
+    case IMAGETYPE_JPEG:
+        $img = @imagecreatefromjpeg($filepath);
+        break;
+    case IMAGETYPE_GIF:
+        $img = @imagecreatefromgif($filepath);
+        break;
+    case IMAGETYPE_PNG:
+        $img = @imagecreatefrompng($filepath);
+        break;
+    case IMAGETYPE_BMP:
+        // See our website for drop-in BMP support.
+        if (!class_exists('phpthumb_bmp')) {
+            if (is_file(ROOT.'include/phpthumb-bmp.php')) {
+                require_once(ROOT.'include/phpthumb-bmp.php');
+            }
+        }
+        if (class_exists('phpthumb_bmp')) {
+            $ns = new phpthumb_bmp;
+            $img = $ns->phpthumb_bmpfile2gd($filepath);
+        } else {
+            $img = FALSE;
+        }
+        break;
+    case 15: //IMAGETYPE_WBMP
+        $img = @imagecreatefromwbmp($filepath);
+        break;
+    default:
+        return FALSE;
+    }
+
+    if (!$img) {
+        return FALSE;
+    }
+
+    // Determine if a thumbnail is needed.
+    $thumbMaxSize = new CartesianSize($width, $height);
+
+    if ($imgSize->isSmallerThan($thumbMaxSize)) {
+        if (!$load_if_smaller) {
+            return FALSE;
+        } elseif (!$enlarge_if_smaller) {
+            $width  = $imgSize->width;
+            $height = $imgSize->height;
+            return $img;
+        }
+    }
+
+    // Create a thumbnail for this attachment.
+    if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
+        $thumbSize = new CartesianSize($thumbMaxSize->width, round($thumbMaxSize->width / $imgSize->aspect()));
+    } else {
+        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
+    }
+
+    $thumb = imagecreatetruecolor($thumbSize->width, $thumbSize->height);
+
+    // Resize $img
+    if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
+        return FALSE;
+    }
+
+    imagedestroy($img);
+
+    $width  = $thumbSize->width;
+    $height = $thumbSize->height;
+    return $thumb;
 }
 
 function regenerateThumbnail($aid, $pid) {
@@ -961,9 +998,7 @@ function regenerateThumbnail($aid, $pid) {
         $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
     }
 
-    $db->escape_fast($attach['filetype']);
-
-    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $attach['filetype'], $aid, $pid, $attach['subdir']);
+    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, '', $aid, $pid, $attach['subdir']);
 
     // Clean up temp files
     if ($attach['subdir'] == '') {
