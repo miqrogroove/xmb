@@ -2001,13 +2001,30 @@ if ($action == "deleteposts") {
     } elseif ($lang['textyes'] == $yessubmit) {
         request_secure('delps', $member, X_NONCE_AYS_EXP, FALSE);
         require('include/attach-admin.inc.php');
-        $countquery = $db->query("SELECT tid, COUNT(*) AS postcount FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
+
+        // Get TIDs
+        $dirty = array();
+        $countquery = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
+        while($post = $db->fetch_array($countquery)) {
+            $dirty[] = $post['tid'];
+        }
+        $db->free_result($countquery);
+
+        // Get FIDs
+        $fids = array();
+        if (count($dirty) > 0) {
+            $csv = implode(',', $dirty);
+            $countquery = $db->query("SELECT fid FROM ".X_PREFIX."threads WHERE tid IN ($csv) GROUP BY fid");
+            while($thread = $db->fetch_array($countquery)) {
+                $fids[] = $thread['fid'];
+            }
+            $db->free_result($countquery);
+        }
+
+        // Delete Member's Posts
         deleteAttachmentsByUser($member);
         $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
         $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
-        while($threads = $db->fetch_array($countquery)) {
-            $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-{$threads['postcount']} WHERE tid='{$threads['tid']}'");
-        }
 
         // Delete Empty Threads
         // This will also delete thread redirectors where the redirect's author is $member
@@ -2018,17 +2035,39 @@ if ($action == "deleteposts") {
             $tids[] = $threads['tid'];
             $movedids[] = 'moved|'.$threads['tid'];
         }
+        $db->free_result($countquery);
         if (count($tids) > 0) {
-            $tids = implode(', ', $tids);
+            $csv = implode(',', $tids);
             $movedids = implode("', '", $movedids);
-            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids) OR closed IN ('$movedids')");
-            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid IN ($tids)");
+            $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($csv) OR closed IN ('$movedids')");
+            $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid IN ($csv)");
             $db->query("DELETE FROM d, r, v "
                      . "USING ".X_PREFIX."vote_desc AS d "
                      . "LEFT JOIN ".X_PREFIX."vote_results AS r ON r.vote_id = d.vote_id "
                      . "LEFT JOIN ".X_PREFIX."vote_voters AS v  ON v.vote_id = d.vote_id "
-                     . "WHERE d.topic_id IN ($tids)");
+                     . "WHERE d.topic_id IN ($csv)");
         }
+
+        // Update Thread Stats
+        $dirty = array_diff($dirty, $tids);
+        foreach($dirty as $tid) {
+            updatethreadcount($tid);
+        }
+
+        // Update Forum Stats
+        $fids = array_unique($fids);
+        $fups = array();
+        foreach ($fids as $fid) {
+            $forum = getForum($fid);
+            if ('sub' == $forum['type']) {
+                $fups[] = $forum['fup'];
+            }
+        }
+        $fids = array_unique(array_merge($fids, $fups));
+        foreach ($fids as $fid) {
+            updateforumcount($fid);
+        }
+
         echo "<p align=\"center\">Deleted ...</br>";
     }
 }
