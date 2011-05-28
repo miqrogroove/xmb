@@ -395,7 +395,7 @@ if ($action == '') {
         }
 
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';
-        if ($voted >= 1 || $thread['closed'] == 'yes' || !$perms[X_PERMS_POLL] || X_GUEST || $viewresults) {
+        if ($voted >= 1 || $thread['closed'] == 'yes' || X_GUEST || $viewresults) {
             if ($viewresults) {
                 $results = '- [<a href="viewthread.php?tid='.$tid.'"><font color="'.$cattext.'">'.$lang['backtovote'].'</font></a>]';
             } else {
