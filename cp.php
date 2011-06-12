@@ -2030,7 +2030,7 @@ if ($action == "deleteposts") {
         // This will also delete thread redirectors where the redirect's author is $member
         $tids = array();
         $movedids = array();
-        $countquery = $db->query("SELECT t.tid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts AS p USING (tid) WHERE t.author='$member' GROUP BY t.tid HAVING COUNT(p.pid) = 0");
+        $countquery = $db->query("SELECT t.tid FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts AS p USING (tid) WHERE t.closed NOT LIKE 'moved%' GROUP BY t.tid HAVING COUNT(p.pid) = 0");
         while($threads = $db->fetch_array($countquery)) {
             $tids[] = $threads['tid'];
             $movedids[] = 'moved|'.$threads['tid'];
