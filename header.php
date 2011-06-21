@@ -400,6 +400,8 @@ if ($action != 'attachment' && !($action == 'templates' && isset($download)) && 
     header("Content-type: text/html");
 }
 
+ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
+
 // Update last visit cookies
 $xmblva = getInt('xmblva', 'c'); // Last visit
 $xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
