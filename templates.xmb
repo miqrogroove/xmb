@@ -1743,7 +1743,7 @@ $spelling_lang
 <a href="javascript:bold()" accesskey="b" title="$lang[cb_insert_bold]"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
 <a href="javascript:italicize()" accesskey="i" title="$lang[cb_insert_italics]"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
 <a href="javascript:underline()" accesskey="u" title="$lang[cb_insert_underlined]"><img src="$imgdir/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
-<a href="javascript:center()" title="lang[cb_insert_centered]" ><img src="$imgdir/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
+<a href="javascript:center()" title="$lang[cb_insert_centered]" ><img src="$imgdir/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
 <a href="javascript:hyperlink()" title="$lang[cb_insert_hyperlink]" ><img src="$imgdir/bb_url.gif" border="0" width="23" height="22" alt="$lang[cb_insert_hyperlink]" /></a>
 <a href="javascript:email()" title="$lang[cb_insert_email]" ><img src="$imgdir/bb_email.gif" border="0" width="23" height="22" alt="$lang[cb_insert_email]" /></a>
 <a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
@@ -3648,7 +3648,7 @@ $suggestions
 
 |#*XMB TEMPLATE FILE*#|post_reply|#*XMB TEMPLATE*#|
 $preview
-<form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid" enctype="multipart/form-data">
+<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid" enctype="multipart/form-data">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -4890,7 +4890,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altreportpost]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_repquote|#*XMB TEMPLATE*#|
-<a href="post.php?action=reply&amp;fid=$fid&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
+<a href="post.php?action=reply&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_search|#*XMB TEMPLATE*#|
 <a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
@@ -4968,7 +4968,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
 <br />
 <a name="qreply"></a>
-<form method="post" name="input" action="post.php?action=reply&amp;fid=$fid&amp;tid=$tid">
+<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid">
 <input type="hidden" name="token" value="" />
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>
@@ -4984,7 +4984,7 @@ $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></div>
 $smilies
-<td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
+<td bgcolor="$altbg2" width="56%" class="tablerow"> <div align="center"><textarea rows="10" cols="80" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
 $quickbbcode
 <td width="20%" height="101" bgcolor="$altbg2" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
@@ -5028,7 +5028,7 @@ $quickbbcode
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_reply|#*XMB TEMPLATE*#|
-<a href="./post.php?action=reply&amp;fid=$fid&amp;tid=$tid" title="$lang[textpostreply]"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
+<a href="./post.php?action=reply&amp;tid=$tid" title="$lang[textpostreply]"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
 
 |#*XMB TEMPLATE FILE*#|vtmisc_report|#*XMB TEMPLATE*#|
 <form method="post" name="input" action="vtmisc.php?action=report">
