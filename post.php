@@ -317,6 +317,8 @@ if (X_STAFF) {
 }
 
 $messageinput = postedVar('message', '', TRUE, FALSE);  //postify() is responsible for DECODING if html is allowed.
+$subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+$subjectinput = str_replace(array("\r", "\n"), array('', ''), $subjectinput);
 
 if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
@@ -493,7 +495,7 @@ switch($action) {
         }
 
         if ($replyvalid) {
-            if (strlen(postedVar('subject')) == 0 && strlen($messageinput) == 0) {
+            if (strlen($subjectinput) == 0 && strlen($messageinput) == 0) {
                 $errors .= softerror($lang['postnothing']);
                 $replyvalid = FALSE;
             }
@@ -529,9 +531,27 @@ switch($action) {
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
             }
+
             $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+            $dbsubject = addslashes($subjectinput);
+
+            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+                // Inputs are suspiciously long.  Has the schema been customized?
+                $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
+                $msgmax = $db->field_len($query, 0);
+                $submax = $db->field_len($query, 1);
+                $db->free_result($query);
+                if (strlen($dbmessage) > $msgmax) {
+                    $dbmessage = substr($dbmessage, 0, $msgmax);
+                }
+                if (strlen($dbsubject) > $submax) {
+                    $dbsubject = substr($dbsubject, 0, $submax);
+                }
+            }
+
             $db->escape_fast($dbmessage);
-            $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
+            $db->escape_fast($dbsubject);
+
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time(time()).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
             $pid = $db->insert_id();
 
@@ -567,7 +587,16 @@ switch($action) {
 
             $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
             $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
-            $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid='$tid' AND pid < $pid ORDER BY dateline DESC LIMIT 1"), 0);
+
+            $query = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
+            if ($db->num_rows($query) > 0) {
+                $date = $db->result($query, 0);
+            } else {
+                // Replying to a thread that has zero posts.
+                $date = '0';
+            }
+            $db->free_result($query);
+
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                                  . "FROM ".X_PREFIX."favorites f "
                                  . "INNER JOIN ".X_PREFIX."members m USING (username) "
@@ -677,7 +706,7 @@ switch($action) {
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-            $subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));
+            $subject = rawHTMLsubject($subjectinput);
             $message = rawHTMLmessage($messageinput);
 
             if (isset($previewpost)) {
@@ -872,7 +901,7 @@ switch($action) {
         }
 
         if ($topicvalid) {
-            if (strlen(postedVar('subject')) == 0) {
+            if (strlen($subjectinput) == 0) {
                 $errors .= softerror($lang['textnosubject']);
                 $topicvalid = FALSE;
             }
@@ -927,8 +956,25 @@ switch($action) {
                 postLinkBBcode($messageinput);
             }
             $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+            $dbsubject = addslashes($subjectinput);
+
+            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+                // Inputs are suspiciously long.  Has the schema been customized?
+                $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
+                $msgmax = $db->field_len($query, 0);
+                $submax = $db->field_len($query, 1);
+                $db->free_result($query);
+                if (strlen($dbmessage) > $msgmax) {
+                    $dbmessage = substr($dbmessage, 0, $msgmax);
+                }
+                if (strlen($dbsubject) > $submax) {
+                    $dbsubject = substr($dbsubject, 0, $submax);
+                }
+            }
+
             $db->escape_fast($dbmessage);
-            $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
+            $db->escape_fast($dbsubject);
+
             $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
             $tid = $db->insert_id();
 
@@ -957,7 +1003,8 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
+                $dbsubject = addslashes($subjectinput);
+                $db->fast_escape($dbsubject);
                 $db->query("INSERT INTO ".X_PREFIX."vote_desc (topic_id, vote_text) VALUES ($tid, '$dbsubject')");
                 $vote_id =  $db->insert_id();
                 $i = 1;
@@ -1061,7 +1108,7 @@ switch($action) {
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-            $subject = rawHTMLsubject(postedVar('subject', 'javascript', TRUE, FALSE, TRUE));
+            $subject = rawHTMLsubject($subjectinput);
             $message = rawHTMLmessage($messageinput);
 
             if (isset($previewpost)) {
@@ -1204,7 +1251,7 @@ switch($action) {
             $isfirstpost = $db->fetch_array($query);
             $db->free_result($query);
 
-            if ((strlen(postedVar('subject')) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
+            if ((strlen($subjectinput) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
                 $errors .= softerror($lang['textnosubject']);
                 $editvalid = FALSE;
             }
@@ -1222,8 +1269,24 @@ switch($action) {
                     postLinkBBcode($messageinput);
                 }
                 $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
+                $dbsubject = addslashes($subjectinput);
+
+                if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+                    // Inputs are suspiciously long.  Has the schema been customized?
+                    $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
+                    $msgmax = $db->field_len($query, 0);
+                    $submax = $db->field_len($query, 1);
+                    $db->free_result($query);
+                    if (strlen($dbmessage) > $msgmax) {
+                        $dbmessage = substr($dbmessage, 0, $msgmax);
+                    }
+                    if (strlen($dbsubject) > $submax) {
+                        $dbsubject = substr($dbsubject, 0, $submax);
+                    }
+                }
+
                 $db->escape_fast($dbmessage);
-                $dbsubject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));
+                $db->escape_fast($dbsubject);
 
                 if ($isfirstpost['pid'] == $pid) {
                     $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$dbsubject' WHERE tid=$tid");
@@ -1280,7 +1343,6 @@ switch($action) {
 
         if (!$editvalid) {
             // Fill $postinfo
-            $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
             if (onSubmit('editsubmit') || isset($previewpost) || $sc) {
                 $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon, 'dateline'=>$orig['dateline']);
             } else {
