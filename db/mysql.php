@@ -139,6 +139,21 @@ class dbstuff {
         return $return;
     }
 
+    /**
+     * Returns the length of a field as specified in the database schema.
+     *
+     * @since 1.9.11.13
+     * @param resource $query The result of a query.
+     * @param int $field The field_offset starts at 0.
+     * @return int
+     */
+    function field_len($query, $field) {
+        set_error_handler($this->errcallb);
+        $return = mysql_field_len($query, $field);
+        restore_error_handler();
+        return $return;
+    }
+
     function panic(&$sql) {
         if (!headers_sent()) {
             header('HTTP/1.0 500 Internal Server Error');
@@ -165,8 +180,12 @@ class dbstuff {
     	}
         if (LOG_MYSQL_ERRORS) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
-            if ($sql != '') {
-                $log .= "In the following query:\n$sql";
+            if (strlen($sql) > 0) {
+                if (1153 == $errno and strlen($sql) > 16000) {
+                    $log .= "In the following query (log truncated):\n" . substr($sql, 0, 16000);
+                } else {
+                    $log .= "In the following query:\n$sql";
+                }
             }
             if (!ini_get('log_errors')) {
                 ini_set('log_errors', TRUE);
@@ -260,7 +279,11 @@ class dbstuff {
                         ini_set('log_errors', TRUE);
                         ini_set('error_log', 'error_log');
                     }
-                    $output = "MySQL generated $warnings warnings in the following query:\n$sql\n";
+                    if (strlen($sql) > 16000) {
+                        $output = "MySQL generated $warnings warnings in the following query (log truncated):\n" . substr($sql, 0, 16000) . "\n";
+                    } else {
+                        $output = "MySQL generated $warnings warnings in the following query:\n$sql\n";
+                    }
                     $query3 = mysql_query('SHOW WARNINGS', $this->link);
                     while ($row = mysql_fetch_array($query3, SQL_ASSOC)) {
                         $output .= var_export($row, TRUE)."\n";
