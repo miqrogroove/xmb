@@ -155,7 +155,7 @@ class admin {
 
         $nameokay = true;
 
-        if ($userto != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $userto)) {
+        if ($userto != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]|  #', '', $userto)) {
             return false;
         }
 

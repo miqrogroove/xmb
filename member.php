@@ -317,6 +317,7 @@ switch($action) {
 
             $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
             $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
+            $sequences = '|  ';  //Phrases disallowed, each separated by '|'
             $icharset = strtoupper($charset);
             if (substr($icharset, 0, 8) == 'ISO-8859') {
                 if ($icharset == 'ISO-8859-11') {
@@ -328,7 +329,7 @@ switch($action) {
                 $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
             }
 
-            if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]#", '', $_POST['username'])) {
+            if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'])) {
                 error($lang['restricted']);
             }
 
