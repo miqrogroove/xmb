@@ -1,0 +1,214 @@
+XMB 1.9 Nexus - Frequently Asked Questions and Answers
+
+Thank you for downloading and installing XMB 1.9 Nexus!
+
+Here is a short list of frequently asked questions and answers (FAQ) to get you started with your forums.
+For a more in depth study of the forums we suggest you read through the support threads/posts in the Support Forums.
+The forums are located at http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you may get personalize support at our "Members" forum - http://www.xmbforum.com/members/community/. For information on purchasing a Membership or Support Plan please visit the XMB Store - http://www.xmbforum.com/store/ - and take a look around.
+
+Also note that your forums also contain a "Frequently Asked Questions" section - look for the "FAQ" link in the forums header menu.
+------------------------------------------------------------------
+
+1) QUESTION: What are the duties and differences between the staff ranks?
+ANSWER: Below is a brief, but comprehensive, description of the different ranks:
+Super Administrator: Unlimited and Full Access to Administration Panel and full control of the board.
+
+This is a relatively simple description of the rank system in XMB to get you started. The rank system can be altered in
+Administration Panel > User Ranks. A description of the moderation tools is also provided.
+
+Super Administrator
+The Super Administrator is the highest rank. The first person to register on your board is automatically assigned this 
+rank. They can use all of the moderation options in threads/posts in all forums, and they have access to every feature
+in the Administration Panel.
+
+Administrator
+The Administrator rank can moderate all forums and has access to nearly all of the administration panel. The only functions
+of the administration panel they cannot access is the Upgrade section. They also cannot read other member's u2u inboxes, or edit
+other member's profiles. 
+
+Super Moderator
+The Super Moderator has access to the moderating tools for all the forums, but they cannot access the administration panel.
+
+Moderator
+Moderators has access to the moderating tools for a specified forum or forums. The forums that they moderate can be altered by 
+an Administrator/Super Administrator by accessing the Administration Panel feature "Moderators".
+
+Member
+The Member rank is the default rank that is set when a user registers. Under the default settings, members can post topics, reply
+to topics and edit their own posts in any public forum. However, this can be changed by altering the settings in 
+Administration Panel > Forums > More Options.
+
+Banned
+
+A banned user cannot access the forums, and cannot use the U2U function. You can ban a user by going to
+Administration Panel > Members, searching for the member and setting their rank to "Banned". To ban a member's IP,
+go to the Administration Panel and click on IP Banning. There are also different levels of Banning in the Banned From column.
+------------------------------------------------------------------------
+
+2) QUESTION: How do I set the ranks? And how do I make a member a moderator of a particular forum?
+ANSWER: To change the rank of a member you will enter your Administration Panel and click on the "Members" link. Then you will enter the member's name in the "Search for user:" field and click the "Display Results" button. When the results are displayed you will see the following options:
+Delete | Username | New Password | Posts | Avatar & Member Status: | Custom Status | Banned From
+To set that member to a new rank you will use the drop down menu under "Avatar & Member Status:". The available options are"
+Super Administrator, Administrator, Super Moderator, Moderator, Member and Banned. Choose the rank you wish to set for that member and click "Submit Changes".
+To set Moderators (see FAQ #1 - Moderators must be "assigned" to a forum(s) to be effective) - Go to the Administration Panel and click on the "Moderators" link. Here you will find a column for "Forum: and a column for "Moderator:". Simply put the prospective Moderator's username in the field opposite the forum you wish to assign them to.
+--------------------------------------------------------------------------
+
+3) QUESTION: How do I use the "Admin Options" in the bottom left corner of each thread - what do they do?
+ANSWER: Below are descriptions of each of the moderator tools:
+
+*Delete Thread - Delete the thread and all posts within it
+*Close Thread - Close the thread, disabling posting for all members of all ranks. However, ranks with moderation tools can Open the thread again.
+*Move Thread - Move the thread to another (sub)forum, with the option of leaving a redirect in its old location. This redirect can be removed with the little Trashcan on the righthand side in the forumdisplay view.
+*Top Thread - This pins the thread to the top of the forum, meaning it cannot move down the (sub)forum under other topics.
+*Split Thread - This takes a selected amount of posts in a thread and places them into another new topic.
+*Merge Thread - This takes two threads and combines all their posts together into one thread.
+*Bump Thread - This "bumps" the thread to the top of the forum, like Top Thread, except it can be overtaken by other threads again.
+*Copy Thread - This will copy, thus leaving the original thread in place, a thread to a new (sub)forum.
+*Prune Thread - This allows you to remove a certain amount of posts from a thread.
+
+Moderators and other members of higher rank can also edit posts. However, a user cannot edit a post of a user who has a higher rank, for example:
+A Super Moderator cannot edit the post of a Administrator. This setting can be altered by going to the Settings section of the Administration
+Panel and changing the setting "Allow Rank Editing?".
+-----------------------------------------------------------------------------
+
+4) QUESTION: How do I create my own themes?
+ANSWER: To create your own custom themes you will go to the Administration Panel - and click on the "Themes" link. There you will see all of the existing themes as well as a link to "New Theme" link at the bottom of the page.
+Please check out this "How To" on creating themes for more details.
+HOW TO: Create a new theme - http://www.xmbforum.com/community/boards/viewthread.php?tid=745375
+------------------------------------------------------------------------------
+
+5) QUESTION: Where can I find more themes?
+ANSWER: XMB has a forum that provides User-Made themes that can be used for your XMB Forum! To visit the User-Made themes, please visit: http://www.xmbforum.com/community/boards/forumdisplay.php?fid=87
+------------------------------------------------------------------------------
+
+6) QUESTION: I don't understand the difference between forums, sub-forums and categories! 
+ANSWER: It can be tricky at first but you will get the hang of it as you go along. Check out this "How To" by our very own RevMac on that subject. HOW TO: Planning and Creating Forums by REVMAC - http://www.xmbforum.com/community/boards/viewthread.php?tid=740682
+------------------------------------------------------------------------------
+
+7) QUESTION: How do I use the BBCode? I don't understand exactly what it is!
+ANSWER: BBCode is a system of shortcut keystrokes that help your quickly format text in your posts; some examples and what they mean have been added below for your convenience.
+For more information, check the FAQ on your board.
+
+[b] Text Here [/b]
+ - This makes the text between the tags bold.
+
+[i] Text Here [/i]
+ - This makes the text between the tags italic.
+
+[u] Text Here [/u]
+ - This will underline the text between the tags.
+
+[marquee] Text Here [/marquee]
+ - This will scroll the text between the tags the width of the table post.
+
+[blink] Text Here [/blink]
+ - This will make the text between the tags blink. This will only work in Netscape.
+
+[strike] Text Here [/strike]
+ - This will make the text between the tags have a strike through line.
+
+[quote] Text Here [/quote]
+ - This is used when replying to a users post, it will make their text italic, and place it in a box.
+
+[code] Text Here [/code]
+ - This is used when posting up HTML/PHP etc code, it will make the text smaller.
+
+[poem] Text Here [/poem]
+ - This will show the text in poem style. Meaning, italicized and centered.
+ 
+[vinfo]
+ - This will show the version info for this XMB version.
+
+[list] Text Here [/list]
+ - This will create a list from the text, in bullet points.
+ 
+[list] (alternative syntax)
+ - Starts a list, list can also take one of the following arguments:
+ 	- [list=1]
+ 	- [list=a]
+ 	- [list=A]
+
+[/list] ends the list
+ - End the current list
+ 
+[*] Text
+ - When [*] is placed in a list, it will provide a bullet in front of the text.
+
+[credits]
+ - Shows credits for XMB
+ 
+[buildedition]
+ - Shows the build-id for this XMB-version
+
+[url]http://www.php.net[/url]
+ - Will create a hyperlink from the URL between the tags
+ 
+[url=http://www.php.net]Home Page of PHP[/url]
+ - Will create a hyperlink, showing 'Home Page of PHP', but linking to http://www.php.net
+
+[email]mail@xmbforum.com[/email]
+ - Will create a link to the e-mail of this user
+
+[email=mail@xmbforum.com]E-mail Me![/email]
+ - Will create a link to this e-mail, but show 'E-mail Me!'.
+
+[img]http://www.php.net/gifs/php_logo.gif[/img]
+ - Will show the image that the URL points to, on screen.
+ 
+[img=50x50]http://www.php.net/gifs/php_logo.gif[/img]
+ - Will show the image that the URL points to, on screen. This code resizes that image to a particular size
+
+[flash=200x100]http://www.macromedia.com/flash.swf[/flash]
+ - Shows the Flash-movie that this URL points to, on screen. Size can be set by the author of the post. (the size is optional. Specifying [flash]url[/flash] is valid aswell)
+
+[color=red]This colour is red[/color]
+ - Changes the text-colour to red.
+ 
+[size=3]This font size is 3[/size]
+ - Changes the text-size to the basic Board FontSize +3pt. Eg. the basic fontsize is 12pt, specifying [size=-2]text[/size] will show it in a 10pt size (12-2=10).
+
+[font=Tahoma]This font is Tahoma[/font]
+ - Changes the font to Tahoma
+
+[align=center]This is centered[/align]
+ - Centers this text.
+----------------------------------------------------------------
+ 
+8) QUESTION: I would like to put my own logo in the header - how do I replace the XMB logo with my own?
+ANSWER: There are a couple of easy ways to do this-but first let me explain that the logo is unique to each theme.
+For each theme, that comes installed with your forums, there is a corresponding "images" folder in the forums "images" folder on your server. It is within that theme's folder that the images, including the header logo, are stored.
+So with that in mind...
+1. The first method of replacing the XMB logo is to go to your Administration Panel and click on the "Themes" link. Then click the "Details" link next to a theme's name. Scroll down to "Board Logo URL..." and note the file name of the image that is in that field. Now use that exact name, and image format, to name your custom logo. Then simply upload your logo to the theme's image folder - thus replacing the XMB logo with yours.
+
+2. The second method is just as easy. You may retain the image name of your logo as is. Just upload your logo to the theme's image folder, then go to the Administration Panel - click on "Themes" - then "Details" for the theme you wish to replace the logo for and insert your logo's file name into the "Board Logo URL..." field.
+
+Note that you may have a different logo per theme this way. Just visit each theme's "Details" and use one of the methods above.
+----------------------------------------------------------------
+
+9) QUESTION: Am I allowed to modify my boards, change appearance or add new features? And what is a "hack"?
+ANSWER: Yes - you allowed to modify your forums however you wish. You will find that a small amount of HTML knowledge will be essential in modifying the templates (the templates are primarily just HTML code- like a web page)and some knowledge of PHP and MySQL will be necessary for any modifications involving the actual files.
+"Hacks" are pre-made modifications that people have put together to add or even subtract to/from the functionality of the forums.
+These are generally instructions that require that you add, change or remove code from your files. It is advised that you always back up your files before making any modifications. XMB has a special forum for finding and seeking support for "hacks" - you will find it here: http://www.xmbhacks.co.uk/community/boards/ There is a great support team in place there that will be happy to help you with your hack support questions.
+----------------------------------------------------------------
+
+These are just a few of the many possible questions you may have about your XMB forum. IF your question isn't addressed here we urge you to:
+
+1) Visit the support forums at either http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you may get personalize support at our "members" forum - http://www.xmbforum.com/members/community/ - use the SEARCH feature to search for keywords that describe the problem you are having. Chances are that other members have had the same problem at some point and your search will bring up many threads/posts that will have a solution.
+
+2) Check out our How To Forum - http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176 - there are many, many good "How Tos" on different aspects of troubleshooting, running and enjoying your forums. 
+
+3) Post your question, with as much detail as you can, in the support forums (see above for urls to the support forums) so that our Support Team can assist you.
+
+
+
+
+
+
+We hope that this document will help you to get a good start on setting up and enjoying your new forums!
+
+Thank you for using eXtreme Message Board as your Community Forum Software!
+
+
+The XMB Group
+http://www.xmbforum.com : http://www.aventure-media.co.uk
+September 2004

@@ -1,0 +1,796 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<link rel="stylesheet" href="xmb.css" type="text/css" />
+<title>Welcome to XMB 1.9.1 Nexus!</title>
+</head>
+<body>
+<div id="header"><img src="images/xmbheader.gif" height="66" width="331" alt="Welcome to XMB Message Boards!" /></div>
+
+<div id="content">
+<h4>Table Of Contents</h4>
+
+<p><a href="#new">What's new in XMB 1.9.1 Nexus?</a><br />
+<br />
+<a href="#require">Requirements for XMB 1.9.1 Nexus</a><br />
+<br />
+<a href="#install">How To Install XMB 1.9.1 Nexus</a><br />
+<br />
+<a href="#upgrade">How To Upgrade to XMB 1.9.1 Nexus</a><br />
+<br />
+<a href="#errors">Troubleshooting General Errors</a><br />
+<br />
+<a href="#faq">Frequently Asked Questions</a><br />
+<br />
+<a href="#links">Useful Links</a><br />
+<br />
+<a href="#license">License Notice</a><br />
+</p>
+
+<a id="new" name="new"></a>
+<h4>XMB 1.9.1 Nexus - What's New</h4>
+
+<p>Thank you for downloading and installing XMB's 1.9.1 Nexus! Below are some of the new features included with 1.9
+Nexus:</p>
+
+  <p>- New U2U Interface - Still like the old U2U interface? Change in through Control
+    Panel/Options-&gt;Edit Profile<br />
+    - New Address Book - For keeping your contacts on your forums.<br />
+    - Spell Checker - for posts<br />
+    - New Admin Panel interface - with special thanks to John Briggs<br />
+    - Fully XHTML 1.0 Valid Templates<br />
+    - Quick Reply - With Random Smilie Insertion<br />
+    - 3 New Admin Options - Prune Thread, Empty Thread and Copy Thread<br />
+    - Avatar Size Control - From Admin Panel-&gt;Settings<br />
+    - Rank Editing &quot;on/off&quot; Control - Contains users to edit only their
+    posts; for staff they can only edit from their rank down.<br />
+    - Repair/Optimize/Analyze Database Tables - From Admin Panel<br />
+    - Comment Output &quot;on/off&quot; <br />
+    - Staff Avatar Option<br />
+    - Fix Last Post Tool<br />
+    - Database Backup - From Admin Panel<br />
+    - New Themes<br />
+    - Pause News Ticker<br />
+    - PHP/MySQL Usage Output - In Footer<br />
+    - Webcam Option (Url Input In Profile)<br />
+    - Spaced Categories - From Admin Panel-&gt;Settings<br />
+    - PHP5 and MySQL 5.0 compatible</p>
+
+<br />
+<br />
+ <a id="require" name="require"></a>
+<h4>XMB 1.9.1 Nexus - Requirements</h4>
+
+<p>To install and run an XMB forum your web host must include both MySQL and PHP with your account. These are essential
+in running the forum software. If your hoster does not have these available, check the "Hosting" forum on XMB
+<a href="http://www.xmbforum.com/community/forums/">http://www.xmbforum.com/community/forums</a>. Members regularly post "finds" or offer hosting.</p>
+
+<p>You may be interested in a "free" hosting plan. There are many available - try searching on Google (<a href="http://www.google.com/">google.com</a>) or
+Yahoo (<a href="http://www.yahoo.com/">yahoo.com</a>) for a free PHP/MySQL host. You may find these "free" hosting services a bit limiting, especially as
+your forum grows into a popular and busy site. In which case, you may want to consider finding a host
+which although "not
+free", can offer you stability and room to grow.</p>
+
+<p>For that reason we suggest checking out XMB hosting, which starts as low as &pound;22.27 / $35 Yearly for a
+Ensim/Cpanel hosting plan. http://www.xmbforum.com/hosting</p>
+
+<p><strong>Minimum Requirements</strong></p>
+<p><strong>Disk space, processor load and bandwidth</strong></p>
+<p><strong style="font-weight: 400">XMB uses about 1 MB of disk space once
+installed. Most forums will use less than 20 MB of disk space between the PHP
+files and database usage, and use less than 100 MB of network bandwidth a month.
+Careful attention to pruning old posts can keep total disk space to acceptable
+levels for light usage.</strong></p>
+<p><strong style="font-weight: 400">XMB 1.9.1 is very CPU efficient compared to
+previous versions. Most hosts should not see any significant load from XMB until
+large numbers of users are active on a single host (such as about 200
+simultaneous requests in flight).</strong></p>
+<p><strong style="font-weight: 400">A busy forum with 2,500 users, 125,000
+posts, 20,000 attachments, and 35,000 U2U's uses about 400 MB of disk space, and
+will normally consume about 20-25 Gb of bandwidth per month. You should be on a
+dedicated server with this level of activity.&nbsp; </strong></p>
+<p><strong>MySQL</strong></p>
+<p>Minimum: 3.00 (Not recommended)</p>
+<p>Recommended: XMB recommends the current 4.0.x branch for stability and
+security reasons. </p>
+<p>XMB 1.9.1 works just fine with MySQL 5.0, but does not use any MySQL 5.0
+features.</p>
+<p>PHP: </p>
+<p>Minimum: 4.1.0 - note this version has severe security issues. Not
+recommended.</p>
+<p>Recommended: Latest 4.x series (4.3.8 at the time of writing). </p>
+<p>XMB works just fine with PHP5 but does not take advantage of the shiny new
+PHP 5.0 features. </p>
+
+<p><strong><em>Not required but strongly suggested:</em></strong></p>
+<p>A good FTP program for transferring your files to and from your web space. There are several good, free FTP clients
+out there - here are a couple you could check out: </p>
+<ul>
+	<li>Windows XP's built in
+	<a href="ms-its:C:/WINDOWS/Help/filefold.chm::/using_webfolders_for_file_transfer.htm">
+	web folders</a> </li>
+	<li>FTP Commander 7.0 -
+	<a
+href="http://www.internet-soft.com/ftpcomm.htm" target="_blank">www.internet-soft.com/ftpcomm.htm</a></li>
+	<li>Core FTP Lite - <a href="http://www.coreftp.com/" target="_blank">www.coreftp.com/</a></li>
+	<li>FileZilla Open Source FTP / SFTP Client -
+	<a href="http://sourceforge.net/projects/filezilla/"
+target="_blank">http://sourceforge.net/projects/filezilla/</a></li>
+	<li>SmartFTP - <a href="http://www.smartftp.com/" target="_blank">www.smartftp.com/</a></li>
+</ul>
+
+<p>Another suggestion is a good text editor. PHP files require a plain text editor - don't use your Cpanel File
+Manager, MSWord or any other word processor for the editing of your files.</p>
+
+<p>Probably the best "free" text editor is: Crimson Editor - <a
+href="http://crimsoneditor.com/">http://crimsoneditor.com/</a><br />
+<a href="http://www.textpad.com/">http://www.textpad.com/</a> is a very good (free) choice aswell.</p>
+
+<p>Again - thank you for downloading and using XMB Forums!</p>
+
+<br />
+<br />
+ <a id="install" name="install"></a>
+<h4>Installing XMB 1.9</h4>
+  <p>Thank you for choosing XMB 1.9.1 Nexus, created by Aventure Media & The XMB Group.
+  </p>
+  <p>Below is a guide on how to Install XMB 1.9.1 Nexus.</p>
+  <p> <b>1) Before you Begin</b></p>
+<p> Make sure that you have enough web space for your forum, and that
+    your hosting account includes both PHP and mySQL.</p>
+<p> Create a database for your forums, using the MySQL Management Tool
+    from your site's Control Panel or by using mysql's administration tool
+directly.</p>
+<p> Please note the database name ($dbname), username ($dbuser) and password ($dbpw).
+  </p>
+  <p><b>2) Upload </b> </p>
+<p>Upload all the files from the distribution to your site. Everything in the &quot;Files&quot;
+folder requires uploading.<br />
+    <br />
+    <i>chmod 666 config.php </i> </p>
+<p>Unless your hoster is using Windows Server and IIS (rare), the file
+permissions on the configuration file need to be temporarily changed to allow
+the installation to complete. There are many ways to achieve this. In many FTP
+clients, you right on a file and choose chmod or Change Attributes or similar.
+Then check all check marks in the permissions area, or enter in
+    666 where it shows a textbox with the numbers: 644. This represents:</p>
+<ul>
+	<li>user: read/write</li>
+	<li>group: read/write</li>
+	<li>other: read/write</li>
+</ul>
+<p>You may need to do this in your hoster's CPanel or via shell access. If you
+can't work it out, ask your hoster for help. </p>
+<p>Once your installation has completed, this should be set back to 644. </p>
+<p> <br />
+    <b>3) Installation</b></p>
+<p><i><b>*!* Please note that XMB 1.9.1 Nexus Final Installation is different from
+    the older versions and builds. *!*</b></i></p>
+<ul>
+	<li>Start your web browser </li>
+	<li>Input the URL where your forum will be located and then add <i>/install/index.php
+	</i>to the end </li>
+</ul>
+<p>Example:
+    </p>
+<ul>
+	<li>http://<a href="http://www.mydomain.com/forums/install/index.php">www.mydomain.com/forums/install/index.php</a></li>
+</ul>
+<ul>
+	<li>If you have typed the installation URL correctly, you will see the Welcome Image to XMB 1.9.1 Nexus.
+	Click on it to begin installation.</li>
+	<li>The second page is the XMB Version Check. This is used to show you
+    the most recent build of XMB Forum. If your version is earlier, go get a
+	later version as it'll be more secure and contain fewer bugs. However, if
+	you have the latest version, click on the 'Install XMB 1.9.1 Final' button to proceed.</li>
+	<li>Read and understand the XMB 1.9.1 Nexus License Agreement. If you're
+	prepared to accept it, 'I agree to terms' button
+    to proceed. </li>
+	<li>Next up is the Configuration File Setup Page. This is the most important
+	step. Input the required database
+    name, username, password from above where you configured the database. </li>
+	<li>The only other mandatory field is &quot;Full URL&quot;. The Full URL helps the
+	forum base itself relative to wherever you need it, and allows you to move
+	XMB easily between hosters if you need it. </li>
+</ul>
+<p>If you're forum is going to be at </p>
+<p><a href="http://www.example.com/forum/">http://www.example.com/forum/</a></p>
+<p>then, that's the full URL. Simple! Remember to put a slash at the end. </p>
+<ul>
+	<li>The other settings are optional,
+    but you may activate them if you wish. The most important to note is &quot;ipreg&quot;.
+	This is not a useful setting in many countries where ISPs use transparent
+	proxies. Leaving this in the &quot;on&quot; state stops more than a couple of
+	registrations per day. </li>
+	<li>Once finished with the configuration choices, click on the 'Configure'
+    button to proceed. If the file permissions on config.php are correct, XMB
+	will have written out a correct config.php.&nbsp; </li>
+	<li>The installer automatically installs XMB 1.9.1 Nexus on to your database.</li>
+	<li>Scroll down to the end of the page, and click on 'here' to redirect to your
+    forums. </li>
+</ul>
+<p><i><b>* If you have WARNINGS from the Installer, it will tell you why it has
+    stopped the installation process, contact your host if it has issues related
+    to PHP or mySQL versions. * </b></i></p>
+<p><b>Post-installation Checks</b></p>
+<ul>
+	<li>Make sure the file permissions of config.php are mode 644 (or user:
+	read/write, group / other: read only)</li>
+	<li>Delete the /install/ folder in FTP</li>
+	<li>Register on your forums as soon as you can as the first account is the
+	Super Administrator. If you find you can't register as Super Administrator,
+	remove the xmb_settings table in mysql and restart the installation process.</li>
+</ul>
+<p><b>4) Your Forum </b></p>
+<p>Have fun with
+    your newly installed forum! - Be sure to REGISTER your new account at your
+    forums, you will automatically become a Super Administrator of your forums.
+    </p>
+<p>To edit different aspects of your forum, click on Administration Panel,
+    then you will see links to different settings for your forums. </p>
+<p>Please read
+    the other documentation included in this installation package for additional
+    instructions and tips!</p>
+<p><b>About hacks</b></p>
+<p>Hacks and modifications are used to add in more features
+    for your forum. </p>
+<p><a href="http://www.xmbhacks.co.uk/community/boards/">http://www.xmbhacks.co.uk/community/boards/</a>
+is a site dedicated to XMB Hacks & Modifications for your boards. They can provide Hack
+    Support if you are having problems with Hacks!</p>
+  <p><b>Stuck? Need help?</b> </p>
+<p>Go to our Support Forums (<a href="http://www.xmbforum.com/community/boards/" target="_blank">http://www.xmbforum.com/community/boards/</a>)
+    and we can assist you further!</p>
+  <a id="upgrade" name="upgrade"></a>
+<h4>XMB 1.9.1 Nexus - How to Upgrade:</h4>
+
+<p><b>*** NOTICE ***<br>
+<br>
+This upgrade is beta quality. Please use caution when upgrading your forum!<br>
+Feel free to test this upgrade, we urge you to do so and help us perfect it. <br>
+</b><br>
+Make sure to always perform these steps before using *ANY* upgrade script!<br>
+<br>
+* backup all the data in your database <br>
+* backup all your forum's files <br>
+<br>
+Although this is common sense, it's often forgotten. <br>
+<br>
+<b>Database Hacks </b><br>
+<br>
+!!! This upgrade works most of the time when hacks are installed. !!!<br>
+!!! However, hack data will be destroyed by this utility !!!<br>
+!!! Proceed with extreme caution if you want to keep your hack data !!!<br>
+<br>
+<br>
+<b>Compatibility<br>
+</b><br>
+Any version of XMB 1.11c or higher <br>
+- It does not work with earlier versions.<br>
+<br>
+<br>
+Required Files:<br>
+<br>
+* upgrade.lib.php<br>
+* upgrade.php<br>
+* install.css<br>
+* XMB_*.xmb (at the time of writing, XMB_1_9-final.xmb)<br>
+<br>
+The createFile.php script and this readme should not be uploaded to your system.
+This script creates the schema for XMB developers or you if you're particularly
+keen :)<br>
+<br>
+<br>
+<b>Upgrade Instructions </b><br>
+<br>
+Disable posting to your board in Admin -&gt; Settings<br>
+<br>
+<b><font size="2"><span style="background-color: #FF0000">0. Backup your
+database </span></font></b><br>
+1. Backup all your forum's files<br>
+2. Upload all of Nexus 1.9's files over the top of your existing forum files<br>
+3. Delete ./install/<br>
+4. Edit the new config.php to suit your needs<br>
+5. Upload upgrade.php, upgrade.lib.php, install.css to your forum<br>
+6. Run http://www.yourdomain.com/pathtoyourforum/upgrade.php<br>
+7. When it succeeds, check that upgrade.php, upgrade.lib.php, install.css, and
+xmb_*.xmb have <br>
+been deleted.<br>
+8. Log on your shiny new 1.9.1 board <br>
+9. Turn on the board in Admin -&gt; Settings. Adjust other new settings as you see
+fit. <br>
+<br>
+<br>
+<b>Keeping XMB healthy</b><br>
+<br>
+If your database is not looked after regularly, it can slow down. XMB 1.9.1 has
+many performance<br>
+improvements which can be best utilized with a healthy database. XMB recommends
+administrators <br>
+use Admin -&gt; Analyze on their databases weekly, followed by Admin -&gt; Optimize.
+This keeps your <br>
+board in the best possible shape. Try it now!<br>
+<br>
+<br>
+<b>Basic system administration</b><br>
+<br>
+You should find out if your hoster does backups for you. If they don't, you need
+to take backups<br>
+manually. XMB 1.9.1 has a backup utility, but it is best if you use your hoster's
+utilities (such as <br>
+myPhpAdmin or the mysqldump tool for this purpose. Backups should be taken about
+once a week, and<br>
+more often for very busy sites.<br>
+<br>
+<br>
+<b>Security</b><br>
+<br>
+All software has bugs, XMB included. You should check back with http://www.xmbforum.com/
+regularly<br>
+to see if you need to install patches. When customizing your board, remember the
+following:<br>
+<br>
+* Changes to themes are supported<br>
+* Modifications to XMB's PHP files, or to the database schema, or altering
+templates within the <br>
+Admin -&gt; Templates area makes it much harder for *YOU* to upgrade to the next
+service pack or a<br>
+later version of XMB. <br>
+<br>
+Try to keep the number of hacks down, and consider using &quot;diff&quot; to allow you to
+reapply them if you need<br>
+to reload XMB from scratch. <br>
+<br>
+<br>
+<b>Known issues</b><br>
+<br>
+The upgrade is quite resource-intensive, especially with large databases. <br>
+- The script might time out or look to be inactive <br>
+- The script can consume large amounts of disk space, up to twice the amount you
+are currently<br>
+- using. Make sure you have enough room!<br>
+<br>
+We're still working on this. <br>
+You should now be successfully upgraded to 1.9.1 Nexus!</p>
+<p><b>Problems?</b></p>
+<p>If you should have any problems or have any questions we suggest that you:</p>
+<ul>
+	<li>Visit the support forums at
+	<a href="http://www.xmbforum.com/community/boards/">http://www.xmbforum.com/community/boards/</a>
+	</li>
+	<li>If you are a Premiere Member you may get priority support at our
+	&quot;members&quot; forum: <a href="http://www.xmbforum.com/members/community/">http://www.xmbforum.com/members/community/</a></li>
+	<li>Use the SEARCH
+feature to search for keywords that describe the problem you are having. Chances are that other members have had the
+same problem at some point and your search will bring up many threads/posts that will have a solution.</li>
+	<li>Check out our How To Forum:
+	<a href="http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176">http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176</a>
+	There are many,
+many good "How Tos" on different aspects of troubleshooting, running and enjoying your forums.<br>
+&nbsp;</li>
+	<li>If all else fails, feel free to post your question with as much detail as you can in the support forums (see above for urls to the support forums)
+so that our Support Team can assist you. </li>
+</ul>
+<p>We hope that this document will help you to get a good start on setting up and enjoying your new forums!</p>
+
+<br />
+<br />
+<a id="errors" name="errors"></a>
+<h4>XMB 1.9.1 Nexus - General Errors</h4>
+
+<p>We hope that you never have any problems with this software, but we realize that occasionally you will encounter a
+few glitches or normal error messages. So we have compiled a short list of common problems you may encounter and some
+suggested solutions for these problems. If your particular issue is not addressed below please don't hesitate to post
+your questions to our Support Team at<br />
+<a href="http://www.xmbforum.com/community/boards/">http://www.xmbforum.com/community/boards/</a><br />
+or if you are a Premiere Member you may get personalize support at our "Members" forum -<br />
+<a href="http://www.xmbforum.com/members/community/">http://www.xmbforum.com/members/community/</a>.<br />
+For information on purchasing a Membership or Support Plan please visit the XMB Store - <a
+href="http://www.xmbforum.com/store/">http://www.xmbforum.com/store/</a> - and take a look around.</p>
+
+<hr noshade />
+<p><strong>"Help! I can't log into my new boards!"</strong><br />
+This is a common issue with new installs and is usually due to the $full_url not being filled our correctly in your
+config.php file. Open your config.php file in a text editor and find the *// Path-settingssection. Within that section
+you will see $full_url = 'http://www.xmbforum.com/community/boards/';</p>
+
+<p>You need to make sure to replace the "http://www.xmbforum.com/community/boards/" with the url to your forums - and
+don't forget the trailing forward slash. Save the config.php file and upload to your server.<br />
+99% of the time this will clear up any "new install" login issues.</p>
+
+<p>If you still have login issues after checking the above solution please consult the following "How To" threads on
+our support forums:<br />
+ <a href="http://www.xmbforum.com/community/boards/viewthread.php?tid=740614" target="_blank">How To: Enable/Delete
+Cookies</a><br />
+ <a href="http://www.xmbforum.com/community/boards/viewthread.php?tid=740632" target="_blank">How To: Deal with
+Login/Logout Issues</a></p>
+
+<p>If all of the above fail to help please post your question in our support forums (listed above) and we will be happy
+to help from there.</p>
+
+<p><strong>"I just installed the forums and it seemed to go well...but I have an error message when I go to the
+Administration Panel. The error says: 'Wrong File permissions set. Please CHMOD the cplogfile.php to 777'. What do I do
+now?!"</strong></p>
+
+<p>This is actually a normal occurrence and simply involves setting the permissions on the cplogfile.php so that it can
+be written to. There is a "How To" in our How To Forum that will help you deal with this error. You will find it
+here:<br />
+<a href="http://www.xmbforum.com/community/boards/viewthread.php?tid=741288" target="_blank">How To: CHMOD/Set File
+Permissions</a></p>
+
+<p>If you continue to have permission/chmod problems or don't understand the above "How To" please post your question
+in our support forums (listed above) and we will be happy to help from there.</p>
+
+<p><strong>"A few of my new members are getting an error message and they are not being allowed to register! The error
+message is 'Access to this website is currently not possible as your hostname/IP appears suspicious' - what is that all
+about?!</strong></p>
+
+<p>The error message "Access to this website is currently not possible as your hostname/IP appears suspicious" is due
+to a "check" installed by default to prevent any suspicious activity that could harm your forums. Sometimes it can get
+in the way of valid registrations. You can "undo" this check by opening your config.php file in a text editor and
+looking in the "// Registration settings" section and changing $ipcheck to "off" instead of the default "on". Save the
+config.php file and upload to your server.</p>
+
+<p><strong>"I tried to register a new account for my forum but I get this error: 'Error: You have already registered
+today, you can re-register again in 24 hours' - why is this happening?!</strong></p>
+  <p>Again, like the question/answer above, this is due to a "check" in the config.php
+    file. You can "undo" this check by opening your config.php file in a text
+    editor and looking in the "// Registration settings" section and changing
+    $ipreg to "off" instead of the default "on". Save the config.php file and
+    upload to your server.<br />
+    <br />
+    <strong>"I get a Column count not found at row 1 error!"</strong></p>
+  <p>Go to <a href="http://www.xmbhacks.co.uk/community/boards/index.php" target="_blank">http://www.xmbhacks.co.uk/community/boards/</a>,
+	register, then first click Search. The XMB Forum no longer provides supports
+	for hacks. </p>
+  <p>&nbsp; </p>
+
+<hr noshade />
+<p>You may encounter other errors that we have not covered here. We hope not,
+but if you need help we urge
+you to follow the steps below to help you overcome these problems.</p>
+
+<ul>
+	<li>Visit the support forums at
+	<a href="http://www.xmbforum.com/community/boards/">http://www.xmbforum.com/community/boards/</a>
+	</li>
+	<li>If you are a Premiere Member you may get priority support at our
+	&quot;members&quot; forum: <a href="http://www.xmbforum.com/members/community/">http://www.xmbforum.com/members/community/</a></li>
+	<li>Use the SEARCH
+feature to search for keywords that describe the problem you are having. Chances are that other members have had the
+same problem at some point and your search will bring up many threads/posts that will have a solution.</li>
+	<li>Check out our How To Forum:
+	<a href="http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176">http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176</a>
+	There are many,
+many good "How Tos" on different aspects of troubleshooting, running and enjoying your forums.<br>
+&nbsp;</li>
+	<li>If all else fails, feel free to post your question with as much detail as you can in the support forums (see above for urls to the support forums)
+so that our Support Team can assist you. </li>
+</ul>
+
+<p>We hope that this document will help you to get a good start on setting up and enjoying your new forums!</p>
+
+<br />
+<br />
+ <a id="faq" name="faq"></a>
+<h4>XMB 1.9.1 Nexus - Frequently Asked Questions and Answers</h4>
+
+<p>Here is a short list of frequently asked questions and answers (FAQ) to get you started with your forums. For a more
+in depth study of the forums we suggest you read through the support threads/posts in the Support Forums. The forums
+are located at http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you may get personalize
+support at our "Members" forum - http://www.xmbforum.com/members/community/. For information on purchasing a Membership
+or Support Plan please visit the XMB Store - http://www.xmbforum.com/store/ - and take a look around.</p>
+
+<p>Also note that your forums also contain a "Frequently Asked Questions" section - look for the "FAQ" link in the
+forums header menu.</p>
+
+<p><strong>QUESTION:</strong> What are the duties and differences between the staff ranks?<br />
+<strong>ANSWER:</strong> Below is a brief, but comprehensive, description of the different ranks: Super Administrator:
+Unlimited and Full Access to Administration Panel and full control of the board.</p>
+
+<p>This is a relatively simple description of the rank system in XMB to get you started. The rank system can be altered
+in Administration Panel &gt; User Ranks. A description of the moderation tools is also provided.</p>
+
+<p><strong>Super Administrator</strong> The Super Administrator is the highest rank. The first person to register on
+your board is automatically assigned this rank. They can use all of the moderation options in threads/posts in all
+forums, and they have access to every feature in the Administrator Panel.</p>
+
+<p><strong>Administrator</strong> The Administrator rank can moderate all forums and has access to nearly all of the
+administration panel. The only functions of the administration panel they cannot access is the Upgrade section. They
+also cannot read other member's u2u inboxes, or edit other member's profiles.</p>
+
+<p><strong>Super Moderator</strong> The Super Moderator has access to the moderating tools for all the forums, but they
+cannot access the administration panel.</p>
+
+<p><strong>Moderator</strong> Moderators has access to the moderating tools for a specified forum or forums. The forums
+that they moderate can be altered by an Administrator/Super Administrator by accessing the Administration Panel feature
+"Moderators".</p>
+
+<p><strong>Member</strong> The Member rank is the default rank that is set when a user registers. Under the default
+settings, members can post topics, reply to topics and edit their own posts in any public forum. However, this can be
+changed by altering the settings in Administration Panel &gt; Forums &gt; More Options.</p>
+
+<p><strong>Banned</strong> A banned user cannot access the forums, and cannot use the U2U function. You can ban a user
+by going to Administration Panel &gt; Members, searching for the member and setting their "Avatar & Member Status:" to
+"Banned" then in the "Banned From" column choose the extent of the ban. The options are: u2u, posting and u2u/posting.
+To ban a member's IP, go to the Administration Panel and click on IP Banning. Then enter the IP address that you want
+to ban from the forums.</p>
+
+<hr noshade />
+<p><strong>QUESTION:</strong> How do I set the ranks? And how do I make a member a moderator of a particular
+forum?<br />
+<strong>ANSWER:</strong> To change the rank of a member you will enter your Administration Panel and click on the
+"Members" link. Then you will enter the member's name in the "Search for user:" field and click the "Display Results"
+button. When the results are displayed you will see the following options: Delete | Username | New Password | Posts |
+Avatar & Member Status: | Custom Status | Banned From To set that member to a new rank you will use the drop down menu
+under "Avatar & Member Status:". The available options are" Super Administrator, Administrator, Super Moderator,
+Moderator, Member and Banned. Choose the rank you wish to set for that member and click "Submit Changes". To set
+Moderators (see FAQ #1 - Moderators must be "assigned" to a forum(s) to be effective) - Go to the Administration Panel
+and click on the "Moderators" link. Here you will find a column for "Forum: and a column for "Moderator:". Simply put
+the prospective Moderator's username in the field opposite the forum you wish to assign them to.</p>
+
+<hr noshade />
+<p><strong>QUESTION:</strong> How do I use the "Admin Options" in the bottom left corner of each thread - what do they
+do?<br />
+ <strong>ANSWER:</strong> Below are descriptions of each of the moderator tools:</p>
+
+<p>Delete Thread - Delete the thread and all posts within it<br />
+Close Thread - Close the thread, disabling posting for all members of all ranks. However, ranks with moderation tools
+can Open the thread again.<br />
+Move Thread - Move the thread to another forum, with the option of leaving a redirect in its old location.<br />
+Top Thread - This pins the thread to the top of the forum, meaning it cannot move down the forum under other
+topics.<br />
+Split Thread - This takes a selected amount of posts in a thread and places them into another new topic.<br />
+Merge Thread - This takes two threads and combines all their posts together into one thread.<br />
+Bump Thread - This "bumps" the thread to the top of the forum, like Top Thread, except it can be overtaking by other
+threads again.<br />
+Copy Thread - This will copy, thus leaving the original thread in place, a thread to a new forum.<br />
+Prune Thread - This allows you to remove a certain amount of posts from a thread.<br />
+</p>
+
+<p>Moderators and other members of higher rank can also edit posts. However, a user cannot edit a post of a user who
+has a higher rank, for example: A Super Moderator cannot edit the post of a Administrator. This setting can be altered
+by going to the Settings section of the Administration Panel and changing the setting "Allow Rank Editing?".</p>
+
+<hr noshade />
+<p><strong>QUESTION:</strong> How do I create my own themes?<br />
+<strong>ANSWER:</strong> To create your own custom themes you will go to the Administration Panel - and click on the
+"Themes" link. There you will see all of the existing themes as well as a link to "New Theme" link at the bottom of the
+page. Please check out this "How To" on creating themes for more details.<br />
+ <a href="http://www.xmbforum.com/community/boards/viewthread.php?tid=745375" target="_blank">HOW TO: Create a new
+theme</a></p>
+
+<hr noshade />
+QUESTION: I don't understand the difference between forums, sub-forums and categories!<br />
+ ANSWER: It can be tricky at first but you will get the hang of it as you go along. Check out this
+"How To" by our very own RevMac on that subject.<p><br />
+ <a href="http://www.xmbforum.com/community/boards/viewthread.php?tid=740682" target="_blank">HOW TO: Planning and
+Creating Forums by REVMAC</a>
+</p>
+<p><strong>QUESTION:</strong> How do I use the BBCode? I don't understand exactly what it is!<br />
+ <strong>ANSWER:</strong> BBCode is a system of shortcut keystrokes that help your quickly format text in your posts;
+some examples and what they mean have been added below for your convenience. For more information, check the FAQ on
+your board.</p>
+
+<p>[b] Text Here [/b] - This makes the text between the tags bold.<br />
+[i] Text Here [/i] - This makes the text between the tags italic.<br />
+ [u] Text Here [/u] - This will underline the text between the tags.<br />
+ [marquee] Text Here [/marquee] - This will scroll the text between the tags the width of the table post.<br />
+ [blink] Text Here [/blink] - This will make the text between the tags blink. This will only work in Netscape.<br />
+ [strike] Text Here [/strike] - This will make the text between the tags have a strike through line.<br />
+[quote] Text Here [/quote] - This is used when replying to a users post, it will make their text italic, and place it
+in a box.<br />
+ [list] Text Here [/list] - This will create a list from the text, in bullet points.<br />
+ [code] Text Here [/code] - This is used when posting up HTML/PHP etc code, it will make the text smaller.<br />
+ [poem] Text Here [/poem] - This will show the text in poem style. Meaning, italicized and centered.<br />
+ [vinfo] - This will show the version info for this XMB version.<br />
+ [list] - Starts a list, list can also take one of the following arguments: - [list=1] - [list=a] - [list=A] [/list]
+ends the list - End the current list [*] Text - When [*] is placed in a list, it will provide a bullet in front of the
+text.<br />
+[credits] - Shows credits for XMB [buildedition] - Shows the build-id for this XMB-version<br />
+[url]http://www.php.net[/url] - Will create a hyperlink from the URL between the tags<br />
+ [url=http://www.php.net]Home Page of PHP[/url] - Will create a hyperlink, showing 'Home Page of PHP', but linking to
+http://www.php.net<br />
+[email]mail@xmbforum.com[/email] - Will create a link to the e-mail of this user<br />
+ [email=mail@xmbforum.com]E-mail Me![/email] - Will create a link to this e-mail, but show 'E-mail Me!'.<br />
+[img]http://www.php.net/gifs/php_logo.gif[/img] - Will show the image that the URL points to, on screen.<br />
+ [img=50x50]http://www.php.net/gifs/php_logo.gif[/img] - Will show the image that the URL points to, on screen. This
+code resizes that image to a particular size<br />
+ [flash=200x100]http://www.macromedia.com/flash.swf[/flash] - Shows the Flash-movie that this URL points to, on screen.
+Size can be set by the author of the post.<br />
+ [color=red]This colour is red[/color] - Changes the text-colour to red.<br />
+[size=3]This font size is 3[/size] - Changes the text-size to 3px.<br />
+ [font=Tahoma]This font is Tahoma[/font] - Changes the font to Tahoma<br />
+[align=center]This is centered[/align] - Centers this text.</p>
+
+<hr noshade />
+<p><strong>QUESTION:</strong> I would like to put my own logo in the header - how do I replace the XMB logo with my
+own?<br />
+ <strong>ANSWER:</strong> There are a couple of easy ways to do this-but first let me explain that the logo is unique
+to each theme. For each theme, that comes installed with your forums, there is a corresponding "images" folder in the
+forums "images" folder on your server. It is within that theme's folder that the images, including the header logo, are
+stored. So with that in mind... 1. The first method of replacing the XMB logo is to go to your Administration Panel and
+click on the "Themes" link. Then click the "Details" link next to a theme's name. Scroll down to "Board Logo URL..."
+and note the file name of the image that is in that field. Now use that exact name, and image format, to name your
+custom logo. Then simply upload your logo to the theme's image folder - thus replacing the XMB logo with yours. 2. The
+second method is just as easy. You may retain the image name of your logo as is. Just upload your logo to the theme's
+image folder, then go to the Administration Panel - click on "Themes" - then "Details" for the theme you wish to
+replace the logo for and insert your logo's file name into the "Board Logo URL..." field. Note that you may have a
+different logo per theme this way. Just visit each theme's "Details" and use one of the methods above.</p>
+
+<hr noshade />
+<p><strong>QUESTION:</strong> Am I allowed to modify my boards, change appearance or add new features? And what is a
+"hack"?<br />
+<strong>ANSWER:</strong> Yes - you allowed to modify your forums however you wish. You will find that a small amount of
+HTML knowledge will be essential in modifying the templates (the templates are primarily just HTML code- like a web
+page)and some knowledge of PHP and MySQL will be necessary for any modifications involving the actual files. "Hacks"
+are pre-made modifications that people have put together to add or even subtract to/from the functionality of the
+forums. These are generally instructions that require that you add, change or remove code from your files. It is
+advised that you always back up your files before making any modifications. XMB has a special forum for finding and
+seeking support for "hacks" - you will find it here: http://www.xmbhacks.co.uk/community/boards/ There is a great
+support team in place there that will be happy to help you with your hack support questions.</p>
+
+<hr noshade />
+<p>These are just a few of the many possible questions you may have about your XMB forum. IF your question isn't
+addressed here we urge you to:<br />
+ 1) Visit the support forums at either http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you
+may get personalize support at our "members" forum - http://www.xmbforum.com/members/community/ - use the SEARCH
+feature to search for keywords that describe the problem you are having. Chances are that other members have had the
+same problem at some point and your search will bring up many threads/posts that will have a solution.<br />
+ 2) Check out our <a href="http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176">How To Forum</a> - there
+are many, many good "How Tos" on different aspects of troubleshooting, running and enjoying your forums.<br />
+3) Post your question, with as much detail as you can, in the support forums (see above for urls to the support forums)
+so that our Support Team can assist you. We hope that this document will help you to get a good start on setting up and
+enjoying your new forums! Thanks!</p>
+
+<br />
+<br />
+ <a id="links" name="links"></a>
+<h4>XMB 1.9.1 Nexus - USEFUL LINKS</h4>
+
+<p>Here are a few links we think you will find useful in running/maintaining your XMB forums.</p>
+
+<p><strong>Support Related Links:</strong></p>
+
+<a href="http://www.xmbforum.com/community/boards/" target="_blank">XMB Forums -</a> (for free support for your XMB
+forums)<br />
+<a href="http://www.xmbforum.com/members/community/" target="_blank">XMB Member's Forum</a> - (for Premiere
+Members)<br />
+<a href="http://www.xmbhacks.co.uk/community/boards/" target="_blank">XMBHacks</a> - (for hack or modification support)
+
+<p><strong>Editing/File Management Links:</strong></p>
+
+<p><a href="http://crimsoneditor.com/" target="_blank">Crimson Editor</a> - (A free text editor for Windows)<br />
+<a href="http://www.internet-soft.com/ftpcomm.htm" target="_blank">FTP Commander 7.0</a> -
+http://www.internet-soft.com/ftpcomm.htm (Free FTP Program for transferring files)<br />
+<a href="http://www.coreftp.com/" target="_blank">Core FTP Lite</a> - (Free FTP Program for transferring files)<br />
+<a href="http://sourceforge.net/projects/filezilla/" target="_blank">FileZilla Open Source FTP / SFTP Client</a> -
+(Free FTP Program for transferring files) <a href="http://www.smartftp.com/" target="_blank">SmartFTP</a> - (Free FTP
+Program for transferring files)<br />
+</p>
+
+<p><strong>Hosting Links:</strong></p>
+
+<p>Free Hosts - Rather than list the thousands of links necessary to make this a worthy effort - check out this link
+for a list of free hosts and reviews of that hosts' services:<br />
+<a href="http://www.100best-free-web-space.com/" target="_blank">http://www.100best-free-web-space.com/</a><br />
+Also check the hosting forum on XMB forums - <a href="http://www.xmbforum.com/community/boards/forumdisplay.php?fid=12"
+target="_blank">http://www.xmbforum.com/community/boards/forumdisplay.php?fid=12</a><br />
+Paid Hosting Services - again, rather than posting a thousand links... try this site for finding a host: <a
+href="http://www.tophosts.com/" target="_blank">TopHosts.Com</a></p>
+  <p>And we are a little partial to our own Hosting services so please give some
+    consideration to XMB Hosting: <a
+href="http://www.xmbforum.com/hosting" target="_blank">XMB Hosting</a> - there
+    are some really nice and affordable plans there.<br />
+    Also, you can view : <a href="http://www.aventurehost.com" target="_blank">AventureHost</a>
+    - XMB's Hosting Company!<br />
+  </p>
+
+<p><strong>Avatar/Smilie Links:</strong></p>
+
+<p><strong>Free Smilies:</strong><br />
+<a href="http://forums.invisionpower.com/index.php?act=legends&CODE=emoticons&s=3feee01ecc58617136566041ecc5fa65"
+target="_blank">http://forums.invisionpower.com/index.php?act=legends&CODE=emoticons&s=3feee01ecc58617136566041ecc5fa65</a>
+<a href="http://www.beatlelinks.net/ubb/smilies.html"
+target="_blank">http://www.beatlelinks.net/ubb/smilies.html</a><br />
+<a href="http://www.tag-board.com/smilies/smilies.htm"
+target="_blank">http://www.tag-board.com/smilies/smilies.htm</a><br />
+<a href="http://www.mysmilies.com/" target="_blank">http://www.mysmilies.com/</a><br />
+<a href="http://www.clicksmilies.com/" target="_blank">http://www.clicksmilies.com/</a><br />
+<a href="http://www.plauder-smilies.com/" target="_blank">http://www.plauder-smilies.com/</a><br />
+<a href="http://mazeguy.tripod.com/index.html" target="_blank">http://mazeguy.tripod.com/index.html</a><br />
+<a href="http://www.smilies.nl/" target="_blank">http://www.smilies.nl/</a><br />
+<a href="http://www.smiliemania.de/" target="_blank">http://www.smiliemania.de/</a><br />
+<a href="http://visual.deadlysin3.net/smileys/" target="_blank">http://visual.deadlysin3.net/smileys/</a><br />
+<a href="http://www.kurts-smilies.de/" target="_blank">http://www.kurts-smilies.de/</a><br />
+<a href="http://www.jms101.btinternet.co.uk/" target="_blank">http://www.jms101.btinternet.co.uk/</a><br />
+<a href="http://1-2-3-gaestebuch.de/smilies/" target="_blank">http://1-2-3-gaestebuch.de/smilies/</a><br />
+<a href="http://www.emoticones.com/" target="_blank">http://www.emoticones.com/</a><br />
+<a href="http://community.the-underdogs.org/smiley/gallery.htm"
+target="_blank">http://community.the-underdogs.org/smiley/gallery.htm</a><br />
+<a href="http://www.tnfj.com/Downloads/smilies.html"
+target="_blank">http://www.tnfj.com/Downloads/smilies.html</a><br />
+<a href="http://www.my-smileys.de/" target="_blank">http://www.my-smileys.de/</a><br />
+<br />
+<br />
+Also - try searching on google.com or yahoo.com for "smilies" or "free smilies"</p>
+
+<br />
+
+<p><strong>Free Avatars:</strong></p>
+
+<p><a href="http://metal.20m.com/wmaavatars.htm" target="_blank">http://metal.20m.com/wmaavatars.htm</a><br />
+<a href="http://www.blackmaxpc.com/avatarsmiles/avasmiles.htm"
+target="_blank">http://www.blackmaxpc.com/avatarsmiles/avasmiles.htm</a><br />
+<a href="http://www.hotavatars.com/" target="_blank">http://www.hotavatars.com/</a><br />
+<a href="http://www.toniallen.com/avatars.htm" target="_blank">http://www.toniallen.com/avatars.htm</a><br />
+<a href="http://www.anime-avas.de/" target="_blank">http://www.anime-avas.de/</a><br />
+<a href="http://www.daydreamgraphics.com/graphics/avatars_index.php"
+target="_blank">http://www.daydreamgraphics.com/graphics/avatars_index.php</a><br />
+<a href="http://www.e-cadfael.pwp.blueyonder.co.uk/Avatars.htm"
+target="_blank">http://www.e-cadfael.pwp.blueyonder.co.uk/Avatars.htm</a><br />
+<a href="http://www.palace4all.de/avatarpage/" target="_blank">http://www.palace4all.de/avatarpage/</a><br />
+<a href="http://wow.stratics.com/content/forums/avatars.php"
+target="_blank">http://wow.stratics.com/content/forums/avatars.php</a><br />
+<a href="http://dragonballarena.gamesurf.it/english/forumpics.php"
+target="_blank">http://dragonballarena.gamesurf.it/english/forumpics.php</a><br />
+<a href="http://avatar.heikou.net/avatars/" target="_blank">http://avatar.heikou.net/avatars/</a><br />
+<a href="http://www.papatya.com/komigazin/avatar/PapatyaForumAvatars1.htm"
+target="_blank">http://www.papatya.com/komigazin/avatar/PapatyaForumAvatars1.htm</a><br />
+<br />
+Also - try searching on google.com or yahoo.com for "avatar" or "free avatar"</p>
+
+<br />
+<br />
+ <a id="license" name="license"></a>
+<h4>XMB 1.9.1 Nexus License</h4>
+
+<p>www.aventure-media.co.uk www.xmbforum.com</p>
+
+<p>XMB 1.9.1 Nexus License</p>
+
+<p>Use in source and binary forms, with or without modification, are permitted provided that the following conditions
+are met.</p>
+
+<p>You are provided with these scripts for personal and commercial use at no charge. You may modify the code for your
+own use on your server, but may not redistribute this package.</p>
+
+<p>All copyright must remain in the footer no matter what modifications are used.</p>
+
+<p>Powered by XMB 1.9.1 Developed By Aventure Media & The XMB Group &copy; 2002-2004</p>
+
+<p>All copyright tags must remain the header template.</p>
+
+<p>Special licenses can be purchased for the removal of the copyright information. See the XMB Store for details: <a
+href="http://www.xmbforum.com/store/#licences" target="_blank">http://www.xmbforum.com/store/#licences</a></p>
+
+<p>By using XMB you agree to this terms and accept full responsibility for the removal of copyright material. Neither
+the names Aventure Media, Aventure Studios nor The XMB Group or its contributors may be used without permission.</p>
+
+<p>This software is provided by the copyright holders and contributor "as is" and any express or implied warranties,
+including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+disclaimed. In no event shall the regents or contributors be liable for any direct, indirect, incidental, special,
+exemplary or consequential damages. Including but not limited to, procurement of substitute goods or services, loss of
+data, profits or business interruption.</p>
+
+<p>By using this software you are granted a basic license, you may not however use the software for.<br />
+ - Distribution with a paid/ free product without permission<br />
+ - Offer hosting with pre installed XMB without permission<br />
+ - Charge for the use of XMB<br />
+ - Create profit resulting from the use of the XMB software<br />
+ - You may only distribute the software WITHOUT MODIFICATION<br />
+ - You must not remove the embedded HTML or copyright footer<br />
+ - You cannot copyright the board in any format To report abuse of material please e-mail abuse@xmbforum.com</p>
+<br /><br />
+  <p>Thank you for using e<strong>X</strong>treme <strong>M</strong>essage <strong>B</strong>oards
+    for your Community Message Board Software!<br />
+  </p>
+  <p>The XMB Group<br />
+    http://www.xmbforum.com : http://www.aventure-media.co.uk<br />
+    July 2004 </p>
+  <br />
+</div>
+
+</body>
+</html>
+

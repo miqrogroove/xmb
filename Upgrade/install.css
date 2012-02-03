@@ -1,0 +1,37 @@
+body {
+	background-color: #000000;
+	color: #FFFFFF;
+	font-family: Verdana, Times New Roman, Arial, sans-serif;
+	font-size: 10px;
+}
+
+a {
+	text-decoration: none;
+	color: #FFCC33;
+}
+
+.progressErr {
+	color: #FF0000;
+}
+
+.progressWarn {
+	color: #FFFF00;
+}
+
+.progressOk {
+	color: #00FF00;
+}
+
+.progressSkip {
+	color: #FFFF00;
+}
+
+.progress {
+	font-family: Courier New, monospace;
+	font-size: 12px;
+}
+
+.subTitle {
+	color: #FFCC33;
+	font-weight: bold;
+}

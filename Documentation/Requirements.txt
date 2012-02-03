@@ -1,0 +1,36 @@
+XMB 1.9.1 Nexus - Requirements
+
+To install and run an XMB forum your web host must include both MySQL and PHP with your account.
+These are essential in running the forum software so if your site does not have these available check the "Hosting" forum on XMB
+http://www.xmbforum.com/community/forums. Members regularly post "finds" or offer hosting.
+
+You may be interested in a "free" hosting plan. There are many available try searching on Google (google.com) or Yahoo (yahoo.com) for a free PHP/MySQL host. You may find these "free" hosting services a bit limiting, especially as your forum grows into a popular and busy site. In which case you may want to consider finding a host that although "not free" can offer you stability and room to grow.
+
+For that reason we suggest checking out XMB hosting, which starts as low as £22.27 / $35 Yearly for a Ensim/cPanel hosting plan.
+http://www.xmbforum.com/hosting
+
+
+Minimum MySQL and PHP Versions:
+
+Mysql: 3.00, 3.23 recommended (works on MySQL 4x as well)
+PHP: 4.1.0, 4.3.1 recommended (will work with PHP5 - in other words, although not using the special control-structures which are neatly used in php5, xmb 1.9 *will* work with it fine).
+
+Not required but strongly suggested:
+
+A good FTP program for transferring your files to and from your web space.
+There are several good, free FTP clients out there - here are a couple you could check out:
+FTP Commander 7.0 - http://www.internet-soft.com/ftpcomm.htm
+Core FTP Lite - http://www.coreftp.com/
+FileZilla Open Source FTP / SFTP Client - http://filezilla.sourceforge.net/
+SmartFTP - http://www.smartftp.com/
+
+Another suggestion is a good text editor. PHP files require a plain text editor - don't use your Cpanel File Manager, MSWord or any other word processor for the editing of your files.
+
+Probably the best "free" text editor is:
+Crimson Editor - http://crimsoneditor.com/
+
+Again - thank you for downloading and using XMB Forums!
+
+The XMB Group
+http://www.xmbforum.com : http://www.aventure-media.co.uk
+July 2004

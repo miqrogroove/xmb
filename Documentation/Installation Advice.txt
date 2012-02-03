@@ -1,0 +1,116 @@
+XMB 1.9.1 Nexus - Installation Advice
+______________________________________________________________________________
+
+Thank you for choosing XMB 1.9.1 Nexus, created by Aventure Media & The XMB 
+Group.
+
+Below is a guide on how to Install XMB 1.9 Nexus.
+
+
+1) Before you Begin
+
+Make sure that you have enough webspace for your forum, and that your hosting
+account includes both PHP and mySQL.
+
+Create a database for your forums, using the mySQL Management Tool from your 
+site's Control Panel.
+- Please note the database name ($dbname), username ($dbuser) and password 
+  ($dbpw).
+
+2) Upload
+
+Using FTP to your site, upload all of the XMB 1.9.1 Nexus files from the Files
+folder in your downloaded package of XMB 1.9 Nexus.
+
+Make config.php "world writable"
+
+If you want to let the installation program update your config.php, you will
+need to make config.php world writable. To do this, right click the file, then
+click on CHMOD (other FTP programs may have Change Attributes), then check all
+check marks in the window, or enter in 666 where it shows a textbox with the 
+numbers: 644. Once installation is finished, you will want to set this back
+to 644. Please note that on most hosts this is not a necessery step to take.
+Leaving it with the default permissions seems to work just fine in most cases.
+
+3) Installation
+
+*** Please note that XMB 1.9 Nexus Final Installation is different from 
+    older versions and builds. ***
+
+Go to your forums, then input the url: /install
+  - Example: http://www.mydomain.com/forums/install
+  
+You will see the Welcome Image to XMB 1.9 Nexus, click on it to begin 
+installation.
+
+The next page is the XMB Version Check. This is used to show you the current 
+version of XMB. If there's a later version than what you have, please obtain
+that and restart the process, as the newer version will be better, faster, 
+and / or more secure.
+
+Click on the 'Install XMB 1.9.1 Final' button to proceed.
+
+Read the XMB 1.9.1 Nexus License Agreement, and if you agree, click 
+'I agree to terms' button to proceed.
+
+Configuration File Setup Page
+
+If you have uploaded an already configured config.php, just click Next.
+
+or 
+
+If you have chosen to let the installer update your config.php:
+
+* Input the required database name, username, password and full url forms. 
+* Other settings there are optional, but you may activate them if you wish.
+* Once finished editing defaults, click on the 'Configure' button to proceed.
+
+The installer will now automatically install XMB into your database.
+
+- If you have WARNINGS from the Installer, it will tell you why it has stopped
+  the installation process, contact your host if it has issues related to PHP
+  or MySQL versions.
+  
+- Scroll down to the end of the page, and click on 'here' to redirect to your 
+  forums.
+
+You are now prompted to create a new SuperAdministrator account. It's really easy;
+Just input your desired username and password, and press the button.
+
+The XMB installer will now proceed with installing, please be patient.
+
+If the installation succeeds, but didn't manage to delete the installation 
+files, you must delete the /install/ folder using FTP or the File Manager in 
+cPanel.
+
+4) Your Forum
+
+Log in with the username and password you provided during Install.
+
+To edit different aspects of your forum, click on Administration Panel. From
+there, you will see links to different settings for your forums.
+
+Please read the other documentation included in this installation package for
+additional instructions and tips!
+
+Have fun with your newly installed forum!
+
+* Hacks & Modifications are used to add in more features for your forum
+  http://www.xmbhacks.co.uk/community/boards/ is a site that has XMB Hacks
+  & Modifications for your boards. They even provide Hack Support if you 
+  are having problems with Hacks!
+
+______________________________________________________________________________
+
+Stuck? Need help? Go to our Support Forums 
+	http://www.xmbforum.com/community/boards/
+and we can assist you further!
+______________________________________________________________________________
+
+Thank you for choosing XMB as your message board software, and enjoy your new
+forums!
+
+The XMB Group
+http://www.xmbforum.com - http://aventure-media.co.uk
+
+September 2004

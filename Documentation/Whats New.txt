@@ -1,0 +1,24 @@
+XMB 1.9 Nexus - What's New
+
+Thank you for downloading and installing XMB's 1.9 Nexus!
+
+- New U2U Interface - Still like the old U2U interface? Change in through Control Panel/Options->Edit Profile
+- New Address Book - For keeping your contacts on your forums.
+- Spell Checker - for posts
+- New Admin Panel interface - with special thanks to John Briggs
+- Fully XHTML 1.0 Valid Templates
+- Quick Reply - With Random Smilie Insertion
+- 3 New Admin Options - Prune Thread, Empty Thread and Copy Thread
+- Avatar Size Control - From Admin Panel->Settings
+- Rank Editing "on/off" Control - Contains users to edit only their posts; for staff they can only edit from their rank down.
+- Repair/Optimize/Analyze Database Tables - From Admin Panel
+- Comment Output "on/off" 
+- Staff Avatar Option
+- Fix Last Post Tool
+- Database Backup - From Admin Panel
+- New Themes
+- Pause News Ticker
+- PHP/MySQL Usage Outpur - In Footer
+- Webcam Option (Url Input In Profile)
+- Spaced Categories - From Admin Panel->Settings
+- PHP5 Compliant

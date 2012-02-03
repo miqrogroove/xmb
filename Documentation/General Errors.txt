@@ -1,0 +1,61 @@
+XMB 1.9 Nexus - General Errors - FAQ
+
+Thank you for downloading and installing XMB's 1.9 Nexus!
+
+We hope that you never have any problems with this software, but we realize that occasionally you will encounter a few glitches or normal error messages. So we have compiled a short list of common problems you may encounter and some suggested solutions for these problems.
+If your particular issue is not addressed below please don't hesitate to post your questions to our Support Team at 
+http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you may get personalize support at our "Members" forum - http://www.xmbforum.com/members/community/. For information on purchasing a Membership or Support Plan please visit the XMB Store - http://www.xmbforum.com/store/ - and take a look around.
+          ------------------------------------------------------------------------------------------------
+
+****************************************************************
+
+1) "Help! I can't log into my new boards!"
+
+This is a common issue with new installs and is usually due to the $full_url not being filled our correctly in your config.php file. Open your config.php file in a text editor and find the  *// Path-settings* section.
+Within that section you will see 
+$full_url       = 'http://www.xmbforum.com/community/boards/';
+You need to make sure to replace the "http://www.xmbforum.com/community/boards/" with the url to your forums - and don't forget the trailing forward slash. Save the config.php file and upload to your server.
+
+99% of the time this will clear up any "new install" login issues.
+
+If you still have login issues after checking the above solution please consult the following "How To" threads on our support forums:
+How Do I Enable/Delete Cookies - http://www.xmbforum.com/community/boards/viewthread.php?tid=740614
+HOW TO: Deal with Login/Logout Issues - http://www.xmbforum.com/community/boards/viewthread.php?tid=740632
+
+If all of the above fail to help please post your question in our support forums (listed above) and we will be happy to help from there.
+********************************************************************
+
+2) "A few of my new members are getting an error message and they are not being allowed to register! The error message is 'Access to this website is currently not possible as your hostname/IP appears suspicious' - what is that all about?!
+
+The error message "Access to this website is currently not possible as your hostname/IP appears suspicious" is due to a "check" installed by default to prevent any suspicious activity that could harm your forums. Sometimes it can get in the way of valid registrations.
+You can "undo" this check by opening your config.php file in a text editor and looking in the "// Registration settings" section and changing $ipcheck to "off" instead of the default "on". Save the config.php file and upload to your server.
+
+***********************************************************************
+3) "I tried to register a new account for my forum but I get this error: 'Error: You have already registered today, you can re-register again in 24 hours' - why is this happening?!
+
+Again, like the question/answer above, this is due to a "check" in the config.php file. You can "undo" this check by opening your config.php file in a text editor and looking in the "// Registration settings" section and changing $ipreg to "off" instead of the default "on". Save the config.php file and upload to your server.
+
+***********************************************************************
+You may encounter other errors that we have not covered here, of course we hope not, and if that is the case we urge you to follow the steps below to help you overcome these problems.
+
+1) Visit the support forums at either http://www.xmbforum.com/community/boards/ - or if you are a Premiere Member you may get personalize support at our "members" forum - http://www.xmbforum.com/members/community/ - use the SEARCH feature to search for keywords that describe the problem you are having. Chances are that other members have had the same problem at some point and your search will bring up many threads/posts that will have a solution.
+
+2) Check out our How To Forum - http://www.xmbforum.com/community/boards/forumdisplay.php?fid=176 - there are many, many good "How Tos" on different aspects of troubleshooting, running and enjoying your forums. 
+
+3) Post your question, with as much detail as you can, in the support forums (see above for urls to the support forums) so that our Support Team can assist you.
+
+***********************************************************************
+5) "I get a Column count not found at row 1 error!"
+First way of trying to "solve" this is by performing an Upgrade. Just follow the steps described in the upgrade documentation. The upgrade basically restores your board to correct working condition.
+
+If you have installed a hack, and it appeared after that, then please go to http://www.xmbhacks.co.uk/community/boards/, register, then first click Search. If your problem could not be resolved, post in the XMB 1.9 : Hacks Support & Questions Forum.
+
+***********************************************************************
+
+
+We hope that this document will help you to get a good start on setting up and enjoying your new forums!
+
+
+The XMB Group
+http://www.xmbforum.com : http://www.aventure-media.co.uk
+September 2004

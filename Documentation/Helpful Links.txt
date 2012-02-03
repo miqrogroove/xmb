@@ -1,0 +1,78 @@
+XMB 1.9 Nexus - USEFUL LINKS
+
+Thank you for downloading and installing XMB's 1.9 Nexus!
+
+Here are a few links we think you will find useful in running/maintaining your XMB forums.
+
+Support Related Links:
+
+XMB Forums - http://www.xmbforum.com/community/boards/ (for free support for your XMB forums)
+XMB Member's Forum - http://www.xmbforum.com/members/community/ (for Premiere Members)
+XMBHacks - http://www.xmbhacks.co.uk/community/boards/ (for hack or modification support)
+
+Editing/File Management Links:
+
+FTP Program(s):
+FTP Commander 7.0 - http://www.internet-soft.com/ftpcomm.htm (Free FTP Program for transferring files)
+Core FTP Lite - http://www.coreftp.com/(Free FTP Program for transferring files)
+FileZilla Open Source FTP / SFTP Client - http://filezilla.sourceforge.net/(Free FTP Program for transferring files)
+SmartFTP - http://www.smartftp.com/(Free FTP Program for transferring files)
+Globalscape CuteFTP Pro - http://www.globalscape.com/ (Commercial FTP program, though very good)
+
+TextEditors:
+Crimson Editor - http://crimsoneditor.com/ (A free text editor for Windows)
+TextPad - http://www.textpad.com/ (A free text editor for Windows. Includes linenumbers, syntax highlighting for PHP, HTML, etc.)
+
+Hosting Links:
+
+Free Hosts - Rather than list the thousands of links necessary to make this a worthy effort - check out this link for a list of free hosts and reviews of that hosts' services:
+http://www.100best-free-web-space.com/
+
+Also check the hosting forum on XMB forums - http://www.xmbforum.com/community/boards/forumdisplay.php?fid=12
+
+Paid Hosting Services - again, rather than posting a thousand links... try this site for finding a host:
+TopHosts.Com - http://www.tophosts.com/
+
+And we are a little partial to our own Hosting services so please give some consideration to XMB Hosting:
+http://www.xmbforum.com/hosting - there are some really nice and affordable plans there.
+Also, you can view : AventureHost - http://www.aventurehost.com/ - XMB's Hosting Company!
+
+Avatar/Smilie Links:
+
+Free Smilies:
+http://forums.invisionpower.com/index.php?act=legends&CODE=emoticons&s=3feee01ecc58617136566041ecc5fa65
+http://www.beatlelinks.net/ubb/smilies.html
+http://www.tag-board.com/smilies/smilies.htm
+http://www.mysmilies.com/
+http://www.clicksmilies.com/
+http://www.plauder-smilies.com/
+http://mazeguy.tripod.com/index.html
+http://www.smilies.nl/
+http://www.smiliemania.de/
+http://visual.deadlysin3.net/smileys/
+http://www.kurts-smilies.de/
+http://www.jms101.btinternet.co.uk/
+http://1-2-3-gaestebuch.de/smilies/
+http://www.emoticones.com/
+http://community.the-underdogs.org/smiley/gallery.htm
+http://www.tnfj.com/Downloads/smilies.html
+http://www.my-smileys.de/
+
+Also - try searching on google.com or yahoo.com for "smilies" or "free smilies"
+
+Free Avatars:
+
+http://metal.20m.com/wmaavatars.htm
+http://www.blackmaxpc.com/avatarsmiles/avasmiles.htm
+http://www.hotavatars.com/
+http://www.toniallen.com/avatars.htm
+http://www.anime-avas.de/
+http://www.daydreamgraphics.com/graphics/avatars_index.php
+http://www.e-cadfael.pwp.blueyonder.co.uk/Avatars.htm
+http://www.palace4all.de/avatarpage/
+http://wow.stratics.com/content/forums/avatars.php
+http://dragonballarena.gamesurf.it/english/forumpics.php
+http://avatar.heikou.net/avatars/
+http://www.papatya.com/komigazin/avatar/PapatyaForumAvatars1.htm
+
+Also - try searching on google.com or yahoo.com for "avatar" or "free avatar"

@@ -1,0 +1,16 @@
+Known Bugs in XMB 1.9.1
+
+These bugs have been identified, but will not be fixed in xmb 1.x:
+- double entries in tables. Eg. double whosonline entries, double member entries, etc. (this requires transaction logging, which is not supported with the current code architecture)
+
+These bugs are being worked on; any help is welcome:
+- Edit page not showing in pw-forums
+- Admin Panel >> Prune threads syntax error
+- Creating a superAdministrator Account during install is very delicate currently.
+- When a notification of a new U2U is sent via email, sometimes the email seems to come from INVALID_ADDRESS@.SYNTAX-ERROR
+
+These bugs will not be fixed till XMB 1.9.2:
+- Voting in polls is impossible under certain conditions.
+- Moderators can't edit own pages when post replies is set to 'No Posting'
+- Expiry behavior in post.php (using the Back button does not always work correctly)
+- Insert Raw SQL breaks when more than 1 query is issued, and an error appears in the middle.
