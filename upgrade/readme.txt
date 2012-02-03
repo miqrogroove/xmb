@@ -29,7 +29,7 @@ Instructions
 
 If it doesn't work, back it out by restoring from backups, and come see us at
 
-http://forums.xmbforum.com/
+http://forums.xmbforum2.com/
 
 Good luck!
 XMBForum Team

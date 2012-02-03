@@ -1336,7 +1336,7 @@ $lang[bestmember]
 <td class="smalltxt" bgcolor="$altbg2">
 $versionlong
 <br />
-<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
+<a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
 <br />
 $footerstuff[totaltime]
 $footerstuff[querynum]
@@ -4301,7 +4301,7 @@ $self[u2ufolders]</textarea></td>
 <tr>
 <td align="center"><font style="font-size: 10px; font-family: Verdana">$versionlong
 <br />
-$lang[developedby]&nbsp;<a href="http://www.xmbforum.com" onclick="window.open(this.href); return false;">$lang[xmbgroup]</a>&nbsp;&copy; $copyright</font></td>
+<a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]</font></td>
 </tr>
 </table>
 </body>

@@ -10,8 +10,4 @@ Do use the new English.lang.php file because it is saved during the upgrade.
 
 The latest language translation files can be found at:
 
-http://svn.xmbforum.com/wsvn/XMB/xmb19x/branches/lang/
-
-or
-
-svn://svn.xmbforum.com/xmb19x/branches/lang/
+svn://svn.code.sf.net/p/xmb-forum/code/xmb19x/branches/lang

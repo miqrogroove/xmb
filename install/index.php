@@ -4,11 +4,8 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2011, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * http://www.ientry.com
+ * Copyright (c) 2001-2012, The XMB Group
+ * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -252,7 +249,7 @@ switch($vStep) {
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
                 <li>Install This Version: XMB <?php echo X_VERSION_EXT;?></li>
-                <li>Latest Available Version: <img src="http://www.xmbforum.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Latest Available Version: <img src="http://www.xmbforum2.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./index.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Install XMB <?php echo X_VERSION;?> &gt;" /></p>
@@ -286,7 +283,7 @@ switch($vStep) {
             <p>Please read over the agreement below, and if you agree to it select the button at the very bottom. By selecting the button, you agree to the terms below.</p>
             <textarea style="width: 90%;" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
 XMB <?php echo X_VERSION;?>  License (Updated November 2007)
-www.xmbforum.com
+www.xmbforum2.com
 ----------------------------------------------
 
         GNU GENERAL PUBLIC LICENSE
