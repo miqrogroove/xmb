@@ -591,24 +591,31 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="7" />&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
         </tr>
         <?php
-        printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
-        printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);
-        printsetting1($lang['captchapoststatus'], 'captchapostnew', $captchapostOn, $captchapostOff);
-        printsetting1($lang['captchasearchstatus'], 'captchasearchnew', $captchasearchOn, $captchasearchOff);
-        printsetting2($lang['captchacharset'], 'captchacharsetnew', $SETTINGS['captcha_code_charset'], 50);
-        printsetting2($lang['captchacodelength'], 'captchacodenew', ((int)$SETTINGS['captcha_code_length']), 3);
-        printsetting1($lang['captchacodecase'], 'captchacodecasenew', $captchacodecaseOn, $captchacodecaseOff);
-        printsetting1($lang['captchacodeshadow'], 'captchacodeshadownew', $captchacodeshadowOn, $captchacodeshadowOff);
-        printsetting2($lang['captchaimagetype'], 'captchaimagetypenew', $SETTINGS['captcha_image_type'], 5);
-        printsetting2($lang['captchaimagewidth'], 'captchaimagewidthnew', ((int)$SETTINGS['captcha_image_width']), 5);
-        printsetting2($lang['captchaimageheight'], 'captchaimageheightnew', ((int)$SETTINGS['captcha_image_height']), 5);
-        printsetting2($lang['captchaimagebg'], 'captchaimagebgnew', $SETTINGS['captcha_image_bg'], 50);
-        printsetting2($lang['captchaimagedots'], 'captchaimagedotsnew', ((int)$SETTINGS['captcha_image_dots']), 3);
-        printsetting2($lang['captchaimagelines'], 'captchaimagelinesnew', ((int)$SETTINGS['captcha_image_lines']), 3);
-        printsetting2($lang['captchaimagefonts'], 'captchaimagefontsnew', $SETTINGS['captcha_image_fonts'], 50);
-        printsetting2($lang['captchaimageminfont'], 'captchaimageminfontnew', ((int)$SETTINGS['captcha_image_minfont']), 3);
-        printsetting2($lang['captchaimagemaxfont'], 'captchaimagemaxfontnew', ((int)$SETTINGS['captcha_image_maxfont']), 3);
-        printsetting1($lang['captchaimagecolor'], 'captchaimagecolornew', $captchaimagecolorOn, $captchaimagecolorOff);
+        require ROOT.'include/captcha.inc.php';
+        $Captcha = new Captcha();
+        if ($Captcha->bCompatible === FALSE) {
+            printsetting5($lang['captchastatus'], 'CAPTCHA is not working. Usually, this means the GD or FreeType software is missing from your PHP server.');
+        } else {
+            printsetting1($lang['captchastatus'], 'captchanew', $captchaOn, $captchaOff);
+            printsetting1($lang['captcharegstatus'], 'captcharegnew', $captcharegOn, $captcharegOff);
+            printsetting1($lang['captchapoststatus'], 'captchapostnew', $captchapostOn, $captchapostOff);
+            printsetting1($lang['captchasearchstatus'], 'captchasearchnew', $captchasearchOn, $captchasearchOff);
+            printsetting2($lang['captchacharset'], 'captchacharsetnew', $SETTINGS['captcha_code_charset'], 50);
+            printsetting2($lang['captchacodelength'], 'captchacodenew', ((int)$SETTINGS['captcha_code_length']), 3);
+            printsetting1($lang['captchacodecase'], 'captchacodecasenew', $captchacodecaseOn, $captchacodecaseOff);
+            printsetting1($lang['captchacodeshadow'], 'captchacodeshadownew', $captchacodeshadowOn, $captchacodeshadowOff);
+            printsetting2($lang['captchaimagetype'], 'captchaimagetypenew', $SETTINGS['captcha_image_type'], 5);
+            printsetting2($lang['captchaimagewidth'], 'captchaimagewidthnew', ((int)$SETTINGS['captcha_image_width']), 5);
+            printsetting2($lang['captchaimageheight'], 'captchaimageheightnew', ((int)$SETTINGS['captcha_image_height']), 5);
+            printsetting2($lang['captchaimagebg'], 'captchaimagebgnew', $SETTINGS['captcha_image_bg'], 50);
+            printsetting2($lang['captchaimagedots'], 'captchaimagedotsnew', ((int)$SETTINGS['captcha_image_dots']), 3);
+            printsetting2($lang['captchaimagelines'], 'captchaimagelinesnew', ((int)$SETTINGS['captcha_image_lines']), 3);
+            printsetting2($lang['captchaimagefonts'], 'captchaimagefontsnew', $SETTINGS['captcha_image_fonts'], 50);
+            printsetting2($lang['captchaimageminfont'], 'captchaimageminfontnew', ((int)$SETTINGS['captcha_image_minfont']), 3);
+            printsetting2($lang['captchaimagemaxfont'], 'captchaimagemaxfontnew', ((int)$SETTINGS['captcha_image_maxfont']), 3);
+            printsetting1($lang['captchaimagecolor'], 'captchaimagecolornew', $captchaimagecolorOn, $captchaimagecolorOff);
+        }
+        unset($Captcha);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit7" value="<?php echo $lang['textsubmitchanges']?>" /></td>
