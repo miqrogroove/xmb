@@ -43,15 +43,26 @@ class dbstuff {
     var $last_id    = 0;
     var $last_rows  = 0;
 
-    function connect($dbhost="localhost", $dbuser, $dbpw, $dbname, $pconnect=0, $force_db=false) {
+    /**
+     * Establishes a connection to the MySQL server.
+     *
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpw
+     * @param string $dbname
+     * @param bool   $pconnect Keep the connection open after the script ends.
+     * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
+     * @param bool   $new_link Use to connect to a second database on the same server at the same time.
+     */
+    function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=FALSE) {
 
         if ($pconnect) {
-            $this->link = @mysql_pconnect($dbhost, $dbuser, $dbpw);
+            $this->link = @mysql_pconnect($dbhost, $dbuser, $dbpw, $new_link);
         } else {
-            $this->link = @mysql_connect($dbhost, $dbuser, $dbpw);
+            $this->link = @mysql_connect($dbhost, $dbuser, $dbpw, $new_link);
         }
 
-        if ($this->link == false) {
+        if (FALSE === $this->link) {
             echo '<h3>Database connection error!</h3>';
             echo 'A connection to the Database could not be established.<br />';
             echo 'Please check your username, password, database name and host.<br />';
