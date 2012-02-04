@@ -1767,16 +1767,21 @@ if ($action == "prune") {
         if (count($queryWhere) > 0) {
             require('include/attach-admin.inc.php');
             $tids = array();
+            $fids = array();
             $queryWhere = implode(' AND ', $queryWhere);
-            $q = $db->query("SELECT tid FROM ".X_PREFIX."threads WHERE ".$queryWhere);
+            $q = $db->query("SELECT tid, fid FROM ".X_PREFIX."threads WHERE ".$queryWhere);
             if ($db->num_rows($q) > 0) {
                 while($t = $db->fetch_array($q)) {
                     $tids[] = $t['tid'];
+                    $fids[] = $t['fid'];
                 }
                 $tids = implode(',', $tids);
+                set_time_limit(30); // Potentially expensive operations coming up.
                 deleteMultiThreadAttachments($tids); // Must delete attachments before posts!
+                set_time_limit(30);
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid IN ($tids)");
+                set_time_limit(30);
 
                 $db->query("DELETE FROM d, r, v "
                          . "USING ".X_PREFIX."vote_desc AS d "
@@ -1785,6 +1790,20 @@ if ($action == "prune") {
                          . "WHERE d.topic_id IN ($tids)");
 
                 $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid IN ($tids)");
+
+                // Update Forum Stats
+                $fids = array_unique($fids);
+                $fups = array();
+                foreach ($fids as $fid) {
+                    $forum = getForum($fid);
+                    if ('sub' == $forum['type']) {
+                        $fups[] = $forum['fup'];
+                    }
+                }
+                $fids = array_unique(array_merge($fids, $fups));
+                foreach ($fids as $fid) {
+                    updateforumcount($fid);
+                }
             }
         } else {
             $db->query("TRUNCATE TABLE ".X_PREFIX."attachments");
