@@ -960,8 +960,9 @@ switch($action) {
             }
             $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
             $dbsubject = addslashes($subjectinput);
+            $dbtsubject = $dbsubject;
 
-            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 128) {
                 // Inputs are suspiciously long.  Has the schema been customized?
                 $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
                 $msgmax = $db->field_len($query, 0);
@@ -973,12 +974,20 @@ switch($action) {
                 if (strlen($dbsubject) > $submax) {
                     $dbsubject = substr($dbsubject, 0, $submax);
                 }
+
+                $query = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE 1=0");
+                $tsubmax = $db->field_len($query, 0);
+                $db->free_result($query);
+                if (strlen($dbtsubject) > $tsubmax) {
+                    $dbtsubject = substr($dbtsubject, 0, $tsubmax);
+                }
             }
 
             $db->escape_fast($dbmessage);
             $db->escape_fast($dbsubject);
+            $db->escape_fast($dbtsubject);
 
-            $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
+            $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbtsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
             $tid = $db->insert_id();
 
             $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', ".$db->time($thatime).", '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
@@ -1007,7 +1016,7 @@ switch($action) {
                 $db->free_result($query);
 
                 $dbsubject = addslashes($subjectinput);
-                $db->fast_escape($dbsubject);
+                $db->escape_fast($dbsubject);
                 $db->query("INSERT INTO ".X_PREFIX."vote_desc (topic_id, vote_text) VALUES ($tid, '$dbsubject')");
                 $vote_id =  $db->insert_id();
                 $i = 1;
