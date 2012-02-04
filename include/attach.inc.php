@@ -1050,6 +1050,14 @@ function extractRemoteImages($pid, &$message) {
         return TRUE;
     }
 
+    // Remove the code block contents from $message.
+    $messagearray = bbcodeCode($message);
+    $message = array();
+    for($i = 0; $i < count($messagearray); $i += 2) {
+        $message[$i] = $messagearray[$i];
+    }
+    $message = implode("<!-- code -->", $message);
+
     // Extract img codes
     $results = array();
     $items = array();
@@ -1077,6 +1085,16 @@ function extractRemoteImages($pid, &$message) {
         $temppos = strpos($message, $result['code']);
         $message = substr($message, 0, $temppos).$replace.substr($message, $temppos + strlen($result['code']));
     }
+
+    // Replace the code block contents in $message.
+    if (count($messagearray) > 1) {
+        $message = explode("<!-- code -->", $message);
+        for($i = 0; $i < count($message) - 1; $i++) {
+            $message[$i] .= $messagearray[$i*2+1];
+        }
+        $message = implode("", $message);
+    }
+
     return $return;
 }
 ?>
