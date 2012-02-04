@@ -1166,10 +1166,14 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
 
         // Link to first page
         $multipage .= "\n";
-        if ($page != 1 Or !$isself) {
+        if ($page != 1 or !$isself) {
             $extra = '';
             if ($isself) {
-                $extra = ' rel="start"';
+                if (2 == $page) {
+                    $extra = ' rel="prev start"';
+                } else {
+                    $extra = ' rel="start"';
+                }
             }
             $multipage .= '&nbsp;<u><a href="'.$mpurl.'"'.$extra.'>1</a></u>';
             if ($from > 2) {
@@ -1207,8 +1211,13 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
                 $multipage .= "&nbsp;..\n";
             }
             $extra = '';
-            if ($isself And $page == 1) {
-                $extra = ' rev="start"';
+            if ($isself) {
+                if ($page == $lastpage - 1) {
+                    $extra = ' rel="next"';
+                }
+                if ($page == 1) {
+                    $extra .= ' rev="start"';
+                }
             }
             $multipage .= '&nbsp;<u><a href="'.$mpurl.$string.'page='.$lastpage.'"'.$extra.'>'.$lastpage.'</a></u>';
         } else {
