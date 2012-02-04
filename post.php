@@ -659,8 +659,14 @@ switch($action) {
                 $quoteperms = checkForumPermissions(getForum($thaquote['fid']));
                 if ($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
-                    //Note this bbcode is a pseudo-link. Treat it as cdata.  Do not recode the author string.
-                    $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]".rawHTMLmessage(stripslashes($thaquote['message']))."[/rquote]"; //Messages are historically double-quoted.
+                    $quoteblock = rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
+                    if ($bBBcodeOnForThisPost) {
+                        $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]{$quoteblock}[/rquote]";
+                    } else {
+                        $quotesep = '|| ';
+                        $quoteblock = $quotesep.str_replace("\n", "\n$quotesep", $quoteblock);
+                        $messageinput = "{$lang['textquote']} {$lang['origpostedby']} {$thaquote['author']}\r\n$quotesep\r\n$quoteblock\r\n\r\n";
+                    }
                 }
             }
 
