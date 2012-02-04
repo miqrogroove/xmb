@@ -2085,6 +2085,7 @@ if ($action == "upgrade") {
             $add = get_attached_file('sql_file', $filename, $filetype, $filesize, FALSE);
             if ($add !== FALSE) {
                 $upgrade .= $add;
+                unlink($_FILES['sql_file']['tmp_name']);
             }
         }
 

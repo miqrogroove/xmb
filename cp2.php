@@ -375,6 +375,7 @@ if ($action == 'lang') {
             }
             error($message, FALSE);
         }
+        unlink($_FILES['themefile']['tmp_name']);
 
         // Install uploaded file
         require('include/translation.inc.php');
