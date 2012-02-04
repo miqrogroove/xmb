@@ -719,7 +719,7 @@ if ($action == '') {
 
             if ($post['subject'] != '') {
                 $linktitle = rawHTMLsubject(stripslashes($post['subject']));
-                $post['subject'] = $linktitle.'<br />';
+                $post['subject'] = wordwrap($linktitle, 150, '<br />', TRUE).'<br />';
             } else {
                 $linktitle = $thread['subject'];
             }
