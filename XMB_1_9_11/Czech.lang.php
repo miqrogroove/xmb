@@ -1,15 +1,11 @@
 <?php
 /**Made by:    Kurt    Last mod:   21.8.2008
  * eXtreme Message Board
- * XMB 1.9.11 Beta 3 - This software should not be used for any purpose after 1 February 2009.
+ * XMB 1.9.11 Beta
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2008, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * Copyright (c) 2007, iEntry, Inc.
- * http://www.ientry.com
+ * Copyright (c) 2001-2012, The XMB Group
+ * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

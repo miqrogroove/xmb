@@ -4,11 +4,8 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2009, The XMB Group
- * http://www.xmbforum.com
- *
- * Sponsored By iEntry, Inc.
- * http://www.ientry.com
+ * Copyright (c) 2001-2012, The XMB Group
+ * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
