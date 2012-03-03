@@ -26,8 +26,6 @@ define('X_SCRIPT', 'files.php');
 
 require 'header.php';
 
-header('X-Robots-Tag: nofollow');
-
 loadtemplates('');
 eval('$css = "'.template('css').'";');
 
@@ -185,6 +183,7 @@ $db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$
 if ($file['img_size'] == '') {
     $type = 'application/binary';
     $dispositionType = 'attachment';
+    header('X-Robots-Tag: nofollow, noimageindex');
 } else {
     $type = strtolower($file['filetype']);
     $dispositionType = 'inline';
