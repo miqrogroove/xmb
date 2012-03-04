@@ -27,7 +27,7 @@ define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
-define('COPY_YEAR', '2001-2011');
+define('COPY_YEAR', '2001-2012');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
@@ -107,8 +107,8 @@ function error($head, $msg, $die=true) {
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; '.COPY_YEAR.'<br />
-            Sponsored by iEntry</span>
+            <span><a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
+            Forum Software</strong></a>&nbsp;&copy; '.COPY_YEAR.' The XMB Group</span>
         </div>
         <div class="bottom"><span></span></div>
     </div>
@@ -1512,8 +1512,8 @@ Public License instead of this License.  But first, please read
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; <?php echo COPY_YEAR; ?><br />
-            Sponsored by iEntry</span>
+            <span><a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
+            Forum Software</strong></a>&nbsp;&copy; <?php echo COPY_YEAR; ?> The XMB Group</span>
         </div>
         <div class="bottom"><span></span></div>
     </div>
