@@ -62,19 +62,35 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     eval('$ticker = "'.template('index_ticker').'";');
 }
 
+$forums = getStructuredForums(TRUE);
+
 if (onSubmit('gid')) {
     $gid = getInt('gid');
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
     $cat = getForum($gid);
+
     if ($cat === FALSE) {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnocat']);
-    } elseif ($cat['type'] != 'group' Or $cat['status'] != 'on') {
+    } elseif ($cat['type'] != 'group') {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnocat']);
+    } elseif (!isset($forums['forum'][$gid])) {
+        // Does this user not have permissions for any existing forums in this group?
+        $allforums = getStructuredForums(FALSE);
+        if (isset($allforums['forum'][$gid])) {
+            if (X_GUEST) {
+                redirect("{$full_url}misc.php?action=login", 0);
+                exit;
+            } else {
+                error($lang['privforummsg']);
+            }
+        }
+        unset($allforums);
     }
+
     setCanonicalLink("index.php?gid=$gid");
     nav(fnameOut($cat['name']));
     if ($SETTINGS['subject_in_title'] == 'on') {
@@ -248,7 +264,6 @@ if ($gid == 0) {
     $ticker = $welcome = $whosonline = $statsbar = $whosonlinetoday = '';
 }
 
-$forums = getStructuredForums(TRUE);
 $fquery = getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
 $indexBarTop = $indexBar = $forumlist = $spacer = '';
@@ -344,12 +359,14 @@ echo $header, $index, $footer;
 function getIndexForums(&$forums, $cat, $catsonly) {
     $sorted = array();
 
-    if (isset($cat['fid']) and isset($forums['forum'][$cat['fid']])) {
+    if (isset($cat['fid'])) {
         // Group forums.
-        foreach($forums['forum'][$cat['fid']] as $forum) {
-            $forum['cat_fid'] = $cat['fid'];
-            $forum['cat_name'] = $cat['name'];
-            $sorted[] = $forum;
+        if (isset($forums['forum'][$cat['fid']])) {
+            foreach($forums['forum'][$cat['fid']] as $forum) {
+                $forum['cat_fid'] = $cat['fid'];
+                $forum['cat_name'] = $cat['name'];
+                $sorted[] = $forum;
+            }
         }
     } elseif ($catsonly) {
         // Groups instead of forums.
