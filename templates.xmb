@@ -178,7 +178,7 @@ $css
 <script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
 </head>
 <body text="$text">
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -207,7 +207,7 @@ $buddys[offline]
 </tr>
 </table>
 <br />
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -4218,7 +4218,7 @@ $posts
 
 |#*XMB TEMPLATE FILE*#|u2u|#*XMB TEMPLATE*#|
 $u2uheader
-<table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td width="19%" valign="top" align="center">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
@@ -4317,7 +4317,7 @@ $self[u2ufolders]</textarea></td>
 $css
 </head>
 <body text="$text">
-<table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="0" width="100%">
@@ -4519,7 +4519,7 @@ $lang[textsent] $u2udateline</span>
 
 |#*XMB TEMPLATE FILE*#|u2u_quotabar|#*XMB TEMPLATE*#|
 <br />
-<table border="0" cellspacing="0" cellpadding="0" width="$tablewidth" align="center">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
