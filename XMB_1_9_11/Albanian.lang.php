@@ -5,7 +5,7 @@
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2012, The XMB Group
- * http://www.xmbforum.com
+ * http://www.xmbforum2.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 
 if (!defined('IN_CODE')) {
     header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
+    exit("Nuk lejohet ekzekutimi direkt i këtij skedari.");
 }
 
 // Name assigned by XMB for internal use.
@@ -909,11 +909,11 @@ $lang['textmodby'] = "Moderatorët e Forumit:";
 $lang['textmoderator'] = "Moderator:";
 $lang['textmodlogs'] = "Regjistrat e Moderatorëve";
 $lang['textmods'] = "Moderator";
-$lang['textmodupdate'] = "Moderators updated successfully!";
+$lang['textmodupdate'] = "Moderatorët u përditësuan me sukses!";
 $lang['textmoreopts'] = "Më Shumë Opsione...";
 $lang['textmovemethod'] = "Metoda e Zhvendosjes:";
 $lang['textmovemethod1'] = "Zhvendos Temën";
-$lang['textmovemethod2'] = "Move thread and leave redirect in previous forum";
+$lang['textmovemethod2'] = "Lëviz temën dhe lere ridrejtimin në forumin e mëparshëm";
 $lang['textmovesucc'] = "Mesazhet u zhvendosën me sukses.";
 $lang['textmoveto'] = "Zhvendos temën tek:";
 $lang['textmpp'] = "Antarë për faqe";
@@ -1093,7 +1093,7 @@ $lang['textu2uoptions'] = "Opsionet";
 $lang['textu2uoutbox'] = "Mesazhet e Dërguara";
 $lang['textu2uoutgoing'] = "Mesazhet në vajtje";
 $lang['textu2uprevsaved'] = "Mesazhet e Ruajtur";
-$lang['textu2usavedon'] = "Rua:";
+$lang['textu2usavedon'] = "Të Ruajtura:";
 $lang['textu2utoemail'] = "Ju keni kërkuar mesazhin:";
 $lang['textu2utoemailsent'] = "Mesazhi ëshdë dërguar tek emaili juaj.";
 $lang['textu2utrash'] = "Koshi";
