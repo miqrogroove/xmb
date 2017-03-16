@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2012, The XMB Group
+ * Copyright (c) 2001-2017, The XMB Group
  * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
-define('COPY_YEAR', '2001-2012');
+define('COPY_YEAR', '2001-2017');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',

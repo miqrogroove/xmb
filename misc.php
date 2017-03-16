@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2012, The XMB Group
+ * Copyright (c) 2001-2017 The XMB Group
  * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
