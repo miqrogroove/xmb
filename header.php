@@ -418,6 +418,7 @@ if (isset($oldtopics)) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $serror = '';
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 // Check if the client is ip-banned
 if ($SETTINGS['ip_banning'] == 'on') {
@@ -430,8 +431,6 @@ if ($SETTINGS['ip_banning'] == 'on') {
         $serror = 'ip';
     }
 }
-
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 // Check if the board is offline
 if ($SETTINGS['bbstatus'] == 'off' And $serror == '') {
