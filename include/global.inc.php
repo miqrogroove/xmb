@@ -27,23 +27,25 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-// This is an old compatibility trick, kept in case superglobals are disabled.
-if (!isset($_SERVER)) {
-    $_GET = &$HTTP_GET_VARS;
-    $_POST = &$HTTP_POST_VARS;
-    $_ENV = &$HTTP_ENV_VARS;
-    $_SERVER = &$HTTP_SERVER_VARS;
-    $_COOKIE = &$HTTP_COOKIE_VARS;
-    $_FILES = &$HTTP_POST_FILES;
-    $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
-}
+// For all supported versions of PHP, we can trust but verify the variables_order setting.
+testSuperGlobals();
 
 // make sure magic_quotes_runtime doesn't kill XMB
-ini_set('magic_quotes_runtime', 0);
+if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
 
 // force registerglobals
-if (is_array($_REQUEST)) {
-    extract($_REQUEST, EXTR_SKIP);
+extract($_REQUEST, EXTR_SKIP);
+
+/**
+ * Assert presence and scope of PHP superglobal variables.
+ *
+ * @since 1.9.11.14
+ */
+function testSuperGlobals() {
+	if (!is_array($_GET) or !is_array($_POST) or !is_array($_COOKIE) or !is_array($_SERVER) or !is_array($_FILES) or !is_array($_REQUEST)) {
+        header('HTTP/1.0 500 Internal Server Error');
+		exit('XMB could not find the PHP Superglobals.  Please check PHP configuration.  Detected variables_order setting: ' . ini_get('variables_order'));
+	}
 }
 
 /**
