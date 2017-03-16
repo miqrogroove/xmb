@@ -431,6 +431,8 @@ if ($SETTINGS['ip_banning'] == 'on') {
     }
 }
 
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+
 // Check if the board is offline
 if ($SETTINGS['bbstatus'] == 'off' And $serror == '') {
     if (($action == 'login' Or $action == 'lostpw') And X_SCRIPT == 'misc.php') {
@@ -471,7 +473,6 @@ if (X_SCRIPT == 'upgrade.php') return;
 /* Set Up HTML Templates and Themes */
 
 // Specify all charset variables as early as possible.
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
     header("Content-type: text/html;charset={$lang['charset']}");
 }
