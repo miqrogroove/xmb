@@ -391,12 +391,6 @@ if (X_SCRIPT != 'files.php') {
     header("Pragma: no-cache");
 }
 
-// Fix annoying bug in windows... *sigh*
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
-if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
-    header("Content-type: text/html");
-}
-
 ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
 
 // Update last visit cookies
@@ -475,6 +469,13 @@ if (X_SCRIPT == 'upgrade.php') return;
 
 
 /* Set Up HTML Templates and Themes */
+
+// Specify all charset variables as early as possible.
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
+    header("Content-type: text/html;charset={$lang['charset']}");
+}
+ini_set('default_charset', $lang['charset']);
 
 // Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
 // XMB expects all links to be relative to $full_url + script name + query string.

@@ -73,6 +73,17 @@ class dbstuff {
 
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
 
+        // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
+        $result = mysql_set_charset('latin1', $this->link);
+
+        if (FALSE === $result) {
+            echo '<h3>Database connection error!</h3>';
+            echo 'The database connection could not be configured for XMB.<br />';
+            echo 'Please ensure the mysql_set_charset function is available.<br /><br />';
+            $sql = '';
+            $this->panic($sql);
+        }
+
         return $this->select_db($dbname, $force_db);
     }
 

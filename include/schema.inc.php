@@ -83,7 +83,7 @@ function xmb_schema_create($name){
           KEY `pid` (`pid`),
           KEY `parentid` (`parentid`),
           KEY `uid` (`uid`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'banned':
         $sql =
@@ -99,7 +99,7 @@ function xmb_schema_create($name){
           KEY `ip2` (`ip2`),
           KEY `ip3` (`ip3`),
           KEY `ip4` (`ip4`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'buddys':
         $sql =
@@ -107,7 +107,7 @@ function xmb_schema_create($name){
           `username` varchar(32) NOT NULL default '',
           `buddyname` varchar(32) NOT NULL default '',
           KEY `username` (username (8))
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'captchaimages':
         $sql =
@@ -116,7 +116,7 @@ function xmb_schema_create($name){
           `imagestring` varchar(12) NOT NULL default '',
           `dateline` int(10) NOT NULL default '0',
           KEY `dateline` (`dateline`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'favorites':
         $sql =
@@ -125,7 +125,7 @@ function xmb_schema_create($name){
           `username` varchar(32) NOT NULL default '',
           `type` varchar(32) NOT NULL default '',
           KEY `tid` (`tid`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'forums':
         $sql =
@@ -155,7 +155,7 @@ function xmb_schema_create($name){
           KEY `type` (`type`),
           KEY `displayorder` (`displayorder`),
           KEY `status` (`status`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'lang_base':
         $sql =
@@ -163,7 +163,7 @@ function xmb_schema_create($name){
           `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
           `devname` VARCHAR( 20 ) NOT NULL ,
           UNIQUE ( `devname` )
-        ) ENGINE=MyISAM COMMENT = 'List of Installed Languages'";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of Installed Languages'";
         break;
     case 'lang_keys':
         $sql =
@@ -171,7 +171,7 @@ function xmb_schema_create($name){
           `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
           `langkey` VARCHAR( 30 ) NOT NULL ,
           UNIQUE ( `langkey` )
-        ) ENGINE=MyISAM COMMENT = 'List of Translation Variables'";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of Translation Variables'";
         break;
     case 'lang_text':
         $sql =
@@ -181,7 +181,7 @@ function xmb_schema_create($name){
           `cdata` BLOB NOT NULL ,
           PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
           INDEX ( `phraseid` )
-        ) ENGINE=MyISAM COMMENT = 'Translation Table'";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Translation Table'";
         break;
     case 'logs':
         $sql =
@@ -196,7 +196,7 @@ function xmb_schema_create($name){
           INDEX ( `fid` ),
           INDEX ( `tid` ),
           INDEX ( `date` )
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'members':
         $sql =
@@ -248,7 +248,7 @@ function xmb_schema_create($name){
           KEY `email` (`email`),
           KEY `regdate` (`regdate`),
           KEY `invisible` (`invisible`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'posts':
         $sql =
@@ -270,7 +270,7 @@ function xmb_schema_create($name){
           KEY `dateline` (`dateline`),
           KEY `author` (author (8)),
           KEY `thread_optimize` (`tid`, `dateline`, `pid`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'ranks':
         $sql =
@@ -283,7 +283,7 @@ function xmb_schema_create($name){
           `avatarrank` varchar(90) default NULL,
           PRIMARY KEY  (`id`),
           KEY `title` (`title`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'restricted':
         $sql =
@@ -293,7 +293,7 @@ function xmb_schema_create($name){
           `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
           `partial` ENUM('0', '1') DEFAULT '1' NOT NULL,
           PRIMARY KEY  (`id`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'settings':
         $sql =
@@ -396,7 +396,7 @@ function xmb_schema_create($name){
           `max_image_size` VARCHAR(9) NOT NULL DEFAULT '1000x1000',
           `max_thumb_size` VARCHAR(9) NOT NULL DEFAULT '200x200',
           `schema_version` TINYINT UNSIGNED NOT NULL DEFAULT ".XMB_SCHEMA_VER."
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'smilies':
         $sql =
@@ -406,7 +406,7 @@ function xmb_schema_create($name){
           `url` varchar(40) NOT NULL default '',
           `id` smallint(6) NOT NULL auto_increment,
           PRIMARY KEY  (`id`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'templates':
         $sql =
@@ -416,7 +416,7 @@ function xmb_schema_create($name){
           `template` text NOT NULL,
           PRIMARY KEY  (`id`),
           KEY `name` (`name`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'themes':
         $sql =
@@ -446,7 +446,7 @@ function xmb_schema_create($name){
           `cattext` varchar(15) NOT NULL default '',
           PRIMARY KEY  (`themeid`),
           KEY `name` (`name`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'threads':
         $sql =
@@ -467,7 +467,7 @@ function xmb_schema_create($name){
           KEY `author` (author (8)),
           KEY `closed` (`closed`),
           KEY `forum_optimize` (`fid`, `topped`, `lastpost`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'u2u':
         $sql =
@@ -489,7 +489,7 @@ function xmb_schema_create($name){
           KEY `folder` (folder (8)),
           KEY `readstatus` (`readstatus`),
           KEY `owner` (owner (8))
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'vote_desc':
         $sql =
@@ -501,7 +501,7 @@ function xmb_schema_create($name){
           `vote_length` int(11) NOT NULL default '0',
           PRIMARY KEY  (`vote_id`),
           KEY `topic_id` (`topic_id`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'vote_results':
         $sql =
@@ -512,7 +512,7 @@ function xmb_schema_create($name){
           `vote_result` int(11) NOT NULL default '0',
           KEY `vote_option_id` (`vote_option_id`),
           KEY `vote_id` (`vote_id`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'vote_voters':
         $sql =
@@ -523,7 +523,7 @@ function xmb_schema_create($name){
           KEY `vote_id` (`vote_id`),
           KEY `vote_user_id` (`vote_user_id`),
           KEY `vote_user_ip` (`vote_user_ip`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'whosonline':
         $sql =
@@ -537,7 +537,7 @@ function xmb_schema_create($name){
           KEY `ip` (`ip`),
           KEY `time` (`time`),
           KEY `invisible` (`invisible`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'words':
         $sql =
@@ -547,7 +547,7 @@ function xmb_schema_create($name){
           `id` smallint(6) NOT NULL auto_increment,
           PRIMARY KEY  (`id`),
           KEY `find` (`find`)
-        ) ENGINE=MyISAM";
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     default:
         exit('Fatal Error: Invalid parameter for xmb_schema_create().');
