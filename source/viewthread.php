@@ -390,6 +390,12 @@ if ($action == '') {
             }
             $db->free_result($query);
         }
+		
+
+        $pquery = $db->query("SELECT SUM(vote_result) AS tVotes FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
+        $tvotes = $db->fetch_array($pquery);
+        $tvotes = (int) $tvotes['tVotes'];
+        $db->free_result($pquery);
 
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';
         if ($voted >= 1 || $thread['closed'] == 'yes' || X_GUEST || $viewresults) {
@@ -399,23 +405,14 @@ if ($action == '') {
                 $results = '';
             }
 
-            $num_votes = 0;
             $query = $db->query("SELECT vote_result, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
-            while($result = $db->fetch_array($query)) {
-                $num_votes += $result['vote_result'];
-                $pollentry = array();
-                $pollentry['name'] = postify($result['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
-                $pollentry['votes'] = $result['vote_result'];
-                $poll[] = $pollentry;
-            }
-            $db->free_result($query);
-
-            reset($poll);
-            foreach($poll as $num=>$array) {
+            while($array = $db->fetch_array($query)) {
+                $array['name'] = postify($array['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
+                $array['votes'] = $array['vote_result'];
                 $pollimgnum = 0;
                 $pollbar = '';
                 if ($array['votes'] > 0) {
-                    $orig = round($array['votes']/$num_votes*100, 2);
+                    $orig = round($array['vote_result']/$tvotes*100, 2);
                     $percentage = round($orig, 2);
                     $percentage .= '%';
                     $poll_length = (int) $orig;
@@ -427,14 +424,15 @@ if ($action == '') {
                     $percentage = '0%';
                 }
                 eval('$pollhtml .= "'.template('viewthread_poll_options_view').'";');
-                $buttoncode = '';
             }
+            $db->free_result($query);
+            $buttoncode = '';
         } else {
             $results = '- [<a href="viewthread.php?tid='.$tid.'&amp;viewresults=yes"><font color="'.$cattext.'">'.$lang['viewresults'].'</font></a>]';
             $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
-            while($result = $db->fetch_array($query)) {
-                $poll['id'] = (int) $result['vote_option_id'];
-                $poll['name'] = postify($result['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
+            while($poll = $db->fetch_array($query)) {
+                $poll['id'] = (int) $poll['vote_option_id'];
+                $poll['name'] = postify($poll['vote_option_text'], 'no', 'no', $forum['allowsmilies'], 'no', $forum['allowbbcode'], 'no', TRUE, 'yes');
                 eval('$pollhtml .= "'.template('viewthread_poll_options').'";');
             }
             $db->free_result($query);

@@ -2327,19 +2327,20 @@ function setCanonicalLink($relURI) {
 function phpShorthandValue($ininame) {
     $rawstring = trim(ini_get($ininame));
     $rchr = strtoupper(substr($rawstring, -1));
+    $rawstring = (int) $rawstring;
     switch ($rchr) {
-    case 'G':
-        $rawstring *= 1073741824;
-        break;
-    case 'M':
-        $rawstring *= 1048576;
-        break;
-    case 'K':
-        $rawstring *= 1024;
-        break;
-    default:
-        $rawstring = intval($rawstring);
-        break;
+        case 'G':
+            $rawstring *= 1073741824;
+            break;
+        case 'M':
+            $rawstring *= 1048576;
+            break;
+        case 'K':
+            $rawstring *= 1024;
+            break;
+        default:
+            $rawstring = intval($rawstring);
+            break;
     }
     return $rawstring;
 }

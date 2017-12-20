@@ -60,6 +60,8 @@ if (strlen($fids) == 0) {
 
 eval('$css = "'.template('css').'";');
 
+$threadsInFid = array();
+
 if ($threadcount == 0) {
     eval('$header = "'.template('header').'";');
     $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
@@ -112,11 +114,24 @@ if ($threadcount == 0) {
     );
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
+	
     while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
         $forum = getForum($thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 
+        if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
+            $threadsInFid[] = $thread['tid'];
+            $threadsInFid = implode(',', $threadsInFid);
+            $query1 = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+
+            $threadsInFid = array();
+            while($row = $db->fetch_array($query1)) {
+                $threadsInFid[] = $row['tid'];
+            }
+            $db->free_result($query1);
+        }
+		
         if ($thread['author'] == 'Anonymous') {
             $authorlink = $lang['textanonymous'];
         } elseif (is_null($thread['uid'])) {
@@ -146,18 +161,24 @@ if ($threadcount == 0) {
         }
 
         if ($thread['replies'] >= $SETTINGS['hottopic']) {
-            $folder = '<img src="'.$imgdir.'/hot_folder.gif" alt="'.$lang['althotfolder'].'" border="0" />';
+            $folder = 'hot_folder.gif';
         } else {
-            $folder = '<img src="'.$imgdir.'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
+            $folder = 'folder.gif';
         }
 
         $oldtopics = isset($oldtopics) ? $oldtopics : '';
         if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-            $folder = '<img src="'.$imgdir.'/hot_red_folder.gif" alt="'.$lang['althotredfolder'].'" border="0" />';
+            $folder = "hot_red_folder.gif";
         } else if ($lastvisit < $dalast && $oT === false) {
-            $folder = '<img src="'.$imgdir.'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
+            $folder = "red_folder.gif";
         }
 
+        if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
+            $folder = 'dot_'.$folder;
+        }
+
+        $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
+		
         if ($thread['closed'] == 'yes') {
             $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
             $prefix = '';

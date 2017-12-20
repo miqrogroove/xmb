@@ -27,7 +27,7 @@ define('X_VERSION', '1.9.11');
 define('X_VERSION_EXT', '1.9.11');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
-define('COPY_YEAR', '2001-2011');
+define('COPY_YEAR', '2001-2017');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
@@ -35,6 +35,7 @@ $req['files'] = array(
     'cp.php',
     'cp2.php',
     'db/mysql.php',
+    'db/mysqli.php',
     'editprofile.php',
     'faq.php',
     'files.php',
@@ -107,8 +108,7 @@ function error($head, $msg, $die=true) {
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; '.COPY_YEAR.'<br />
-            Sponsored by iEntry</span>
+            <span>The XMB Group &copy; '.COPY_YEAR.'<br /></span>
         </div>
         <div class="bottom"><span></span></div>
     </div>
@@ -140,27 +140,54 @@ function show_result($type) {
     echo "</span>\n";
 }
 
-/**
- * Haults the script if XMB is already installed.
- *
- * @since 1.9.11.09
- */
-function already_installed() {
-    global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;
+if (version_compare(PHP_VERSION, '7.0.0', '>=')){
+    /**
+     * Haults the script if XMB is already installed.
+     *
+     * @since 1.9.11.09
+     */
+    function already_installed() {
+        global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;
 
-    if ('mysql' == $database and is_readable(ROOT.'db/mysql.php')) {
-        $link = @mysql_connect($dbhost, $dbuser, $dbpw);
-        if (FALSE !== $link) {
-            $result = mysql_select_db($dbname);
-            if (FALSE !== $result) {
-                $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
+        if ('mysql' == $database and is_readable(ROOT.'db/mysqli.php')) {
+            $link = @mysqli_connect($dbhost, $dbuser, $dbpw);
+            if (FALSE !== $link) {
+                $result = mysqli_select_db($dbname);
                 if (FALSE !== $result) {
-                    if (1 == mysql_num_rows($result)) {
-                        error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
+                    $result = mysqli_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
+                    if (FALSE !== $result) {
+                        if (1 == mysqli_num_rows($result)) {
+                            error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
+                        }
                     }
                 }
+                mysqli_close($link);
             }
-            mysql_close($link);
+        }
+    }
+}else{
+    /**
+     * Haults the script if XMB is already installed.
+     *
+     * @since 1.9.11.09
+     */
+    function already_installed() {
+        global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;
+
+        if ('mysql' == $database and is_readable(ROOT.'db/mysql.php')) {
+            $link = @mysql_connect($dbhost, $dbuser, $dbpw);
+            if (FALSE !== $link) {
+                $result = mysql_select_db($dbname);
+                if (FALSE !== $result) {
+                    $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
+                    if (FALSE !== $result) {
+                        if (1 == mysql_num_rows($result)) {
+                            error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
+                        }
+                    }
+                }
+                mysql_close($link);
+            }
         }
     }
 }
@@ -979,8 +1006,8 @@ Public License instead of this License.  But first, please read
             $configuration = file_get_contents(ROOT.'config.php');
 
             // Now, replace the main text values with those given by user
-            $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
-            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
+            $find = array('DB/NAME', 'DB/USER', 'DB/PW', 'db_type', "= 'localhost';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
+            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], $_REQUEST['db_type'], "= '{$_REQUEST['db_host']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
             $configuration = str_replace($find, $replace, $configuration);
 
             // Change Comment Output Option
@@ -1113,7 +1140,11 @@ Public License instead of this License.  But first, please read
 
         default:
         // Get the DB types...
-            $types = '<select name="db_type"><option selected="selected" value="mysql">mysql</option></select>';
+            if (version_compare(PHP_VERSION, '7.0.0', '>=')){
+                $types = '<select name="db_type"><option selected="selected" value="mysqli">MySQLi</option></select>';
+			}else{
+                $types = '<select name="db_type"><option selected="selected" value="mysql">MySQL</option></select>';
+			}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -1187,7 +1218,7 @@ Public License instead of this License.  But first, please read
                         <td><input type="text" name="db_host" size="40" value="localhost" /></td>
                     </tr>
                     <tr>
-                        <td>Database Type<br /><span>The type of database server run. At this time, only mysql is supported</span></td>
+                        <td>Database Type<br /><span>The type of database server run.</span></td>
                         <td><?php echo $types?></td>
                     </tr>
                     <tr>
@@ -1441,6 +1472,12 @@ Public License instead of this License.  But first, please read
                     $err = true;
                 }
                 break;
+            case 'mysqli':
+                if (!defined('MYSQLI_NUM')) {
+                    show_result(X_INST_ERR);
+                    $err = true;
+                }
+                break;
             default:
                 show_result(X_INST_ERR);
                 error('Database Handler', 'Unknown handler provided', true);
@@ -1482,6 +1519,24 @@ Public License instead of this License.  But first, please read
                     show_result(X_INST_OK);
                 }
                 break;
+            case 'mysqli':
+                $link = mysqli_connect($dbhost, $dbuser, $dbpw);
+                if (!$link) {
+                    show_result(X_INST_ERR);
+                    error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_errno().': '.mysqli_error(), true);
+                } else {
+                    show_result(X_INST_OK);
+                }
+                $sqlver = mysqli_get_server_info($link);
+                mysqli_close($link);
+                show_act('Checking Database Version');
+                if (version_compare($sqlver, MYSQL_MIN_VER, '<')) {
+                    show_result(X_INST_ERR);
+                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
+                } else {
+                    show_result(X_INST_OK);
+                }
+                break;
             default:
                 show_result(X_INST_SKIP);
                 break;
@@ -1512,8 +1567,7 @@ Public License instead of this License.  But first, please read
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span>The XMB Group &copy; <?php echo COPY_YEAR; ?><br />
-            Sponsored by iEntry</span>
+            <span>The XMB Group &copy; <?php echo COPY_YEAR; ?><br /></span>
         </div>
         <div class="bottom"><span></span></div>
     </div>

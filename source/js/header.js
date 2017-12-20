@@ -74,7 +74,7 @@ function avatarCheck(input, max_size) {
             avatarCheck.innerHTML = "Valid Image";
         }
     }
-    if (input.value.substring(0, 7) == 'http://' || input.value.substring(0, 6) == 'ftp://') {
+	if (input.value.substring(0, 7) == 'http://' || input.value.substring(0, 8) == 'https://' || input.value.substring(0, 6) == 'ftp://') {
         avatarCheck.innerHTML = "Checking URL...";
         image.src = input.value;
     } else {
