@@ -618,7 +618,7 @@ $lang['searchusermsg'] = '<a href="search.php?srchuname=*USER*&amp;searchsubmit=
 $lang['search_advanced'] = "Advanced Search";
 $lang['secure_login'] = "Secure Login - increased security on public computers";
 $lang['selecttemplate'] = "Please select a template...";
-$lang['seperatebycomma'] = "Seperate multiple entries using commas";
+$lang['seperatebycomma'] = "Separate multiple entries using commas";
 $lang['showsubforums'] = "Sub-forums on index status:<br /><span class=\"smalltxt\">This will enable or disable sub-forums display on index.</span>";
 $lang['showtopics'] = "Show topics from";
 $lang['sigbbcode'] = "BB Code in Sigs:";
