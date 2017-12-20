@@ -1023,7 +1023,7 @@ class CartesianSize {
     var $height;
     var $width;
 
-    function CartesianSize($width, $height) {
+    function __construct($width, $height) {
         $this->height = intval($height);
         $this->width = intval($width);
     }

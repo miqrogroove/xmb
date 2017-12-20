@@ -140,8 +140,9 @@ $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 while($last = $db->fetch_array($query)) {
-    $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
-    $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
+    $lastpost = explode('|', $last['lastpost']);
+    $lpdate = gmdate($dateformat, $lastpost[0] + $adjTime);
+    $lptime = gmdate($timecode, $lastpost[0] + $adjTime);
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
     $last['subject'] = shortenString(rawHTMLsubject(stripslashes($last['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
     $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last['subject'].'</a> ('.$thislast.')';

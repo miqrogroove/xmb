@@ -525,8 +525,7 @@ if ($action == 'profile') {
             $newavatarcheck = postedVar('newavatarcheck');
 
             $max_size = explode('x', $SETTINGS['max_avatar_size']);
-
-            if (preg_match('#^(http|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
+            if (preg_match('#^(http|https|ftp)://[:a-z\\./_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$#Smi', $rawavatar) == 0) {
                 $avatar = '';
             } elseif (ini_get('allow_url_fopen')) {
                 if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {

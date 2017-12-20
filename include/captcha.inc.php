@@ -114,7 +114,7 @@ class Captcha {
     var $bCompatible;
     var $bPoison;
 
-    function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+    function __construct($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
         // get parameters
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
         $this->SetNumDots(CAPTCHA_NUM_DOTS);

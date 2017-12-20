@@ -32,7 +32,7 @@ if (!defined('IN_CODE')) {
     $dbuser         = 'DB/USER';   // Username used to access it
     $dbpw           = 'DB/PW';     // Password used to access it
     $dbhost         = 'localhost'; // Database host, usually 'localhost'
-    $database       = 'mysql';     // Database type, currently only mysql is supported.
+    $database       = 'db_type';     // Database type.
     $pconnect       = 0;           // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
 
 // Table Settings
