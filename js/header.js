@@ -54,6 +54,7 @@ function avatarCheck(input, max_size) {
     var image = new Image();
     var avatarCheck = document.getElementById('avatarCheck');
     var isValid = document.getElementById('newavatarcheck');
+    var imgRegex = /^(https?|ftp):\/\/[:a-z\.\/_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$/i;
     image.onload = function() {
         max_size = max_size.split("x");
 
@@ -74,7 +75,7 @@ function avatarCheck(input, max_size) {
             avatarCheck.innerHTML = "Valid Image";
         }
     }
-    if (input.value.substring(0, 7) == 'http://' || input.value.substring(0, 6) == 'ftp://') {
+    if (imgRegex.test(input.value)) {
         avatarCheck.innerHTML = "Checking URL...";
         image.src = input.value;
     } else {
