@@ -1,0 +1,125 @@
+body
+{
+	font:				normal 12px Tahoma, Verdana, sans-serif;
+	background-color:	#AEBBCF;
+	margin-top:			0px;
+}
+
+a
+{
+	color:				#2E3E55;
+	text-decoration:	none;
+}
+
+a:hover
+{
+	color:				#5472A4;
+	text-decoration:	underline;
+}
+
+#pageTitle
+{
+	font:				bold 14px Tahoma, Verdana, sans-serif;
+	letter-spacing:		2px;
+	color:				#2C3B6A;
+	display:			block;
+	margin:				5px 0px 5px 0px;
+}
+
+.code
+{
+	font:			 	normal 10px "Courier New", Courier, Arial monospaced;
+}
+
+.installPic
+{
+	display:			block;
+	margin-bottom:		10px;
+	text-align:			center;
+}
+
+#nextStep
+{
+	display:			block;
+	margin-top:			25px;
+	font-size:			12px;
+	font-weight:		bold;
+}
+
+<!-- Install page code -->
+#wrapper
+{
+	margin:				0px auto 0px auto;
+	background-color:	#AEBBCF;
+	border:				1px solid #2E3E55;
+}
+
+#content
+{
+	width: 				670px;
+	padding:			20px 10px 10px 10px;
+	background-color:	#AEBBCF;
+}
+
+#content a
+{
+	color:				#2E3E55;
+	text-decoration:	none;
+}
+
+#content a:hover
+{
+	color:				#5472A4;
+	text-decoration:	underline;
+}
+
+#leftCol
+{
+	width:				115px;
+	float:				left;
+	text-align:			left;
+	padding-right:		10px;
+	padding-top:		5px;
+	background-color:	#AEBBCF;
+}
+
+#leftColNav
+{
+	margin:				0px;
+	padding-left:		5px;
+}
+
+#leftColNav ul
+{
+	list-style:			none;
+	margin:				0px;
+	padding:			0px;
+}
+
+#leftColNav li
+{
+	list-style:			none;
+	margin-left:		0px;
+	padding:			3px;
+}
+
+#leftColNav a
+{
+	color:				#000000;
+}
+
+#rightCol
+{
+	width:				530px;
+	padding-left:		10px;
+	float:				right;
+	background-color:	#AEBBCF;
+	border-left:		1px solid #2E3E55;
+}
+
+#clear
+{
+	clear:				both;
+	min-height:			1px;
+	background-color:	#AEBBCF;
+}
