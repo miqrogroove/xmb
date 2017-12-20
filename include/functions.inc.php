@@ -518,7 +518,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
         }
     }
 
-    $message = preg_replace('#(script|about|applet|activex|chrome):#Sis',"\\1 &#058;",$message);
+    $message = preg_replace('#(script|about|applet|activex|chrome):#is',"\\1 &#058;",$message);
 
     return $message;
 }
@@ -668,16 +668,17 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
-            $patterns[] = '#\[img\](http[s]?|ftp[s]?){1}://([:a-z\\./_\-0-9%~]+){1}\[/img\]#Smi';
+            $base_pattern = get_img_regexp();
+            $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
             $replacements[] = '<img <!-- nobr -->src="\1://\2\3"<!-- /nobr --> border="0" alt="" />';
-            $patterns[] = "#\[img=([0-9]*?){1}x([0-9]*?)\](http[s]?|ftp[s]?){1}://([:~a-z\\./0-9_\-%]+){1}(\?[a-z=0-9&_\-;~]*)?\[/img\]#Smi";
+            $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
             $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
         }
     }
 
-    $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#mi";
+    $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
     $replacements[] = '<a href="mailto:\1">\1</a>';
-    $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#mi";
+    $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#i";
     $replacements[] = '<a href="mailto:\1">\2</a>';
 
     $message = preg_replace($patterns, $replacements, $message);
@@ -697,7 +698,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
                 . '[^\s()"\'<>\[\]]*'
                 . ')'
                 . '(?=$|\s|<|\))';
-        $message = preg_replace_callback("#$regexp#Smi", 'bbcodeLongURLs', $message);
+        $message = preg_replace_callback("#$regexp#i", 'bbcodeLongURLs', $message);
 
         //[url]http://www.example.com/[/url]
         //[url]www.example.com[/url]
@@ -2430,6 +2431,18 @@ function nonce_use($key, $nonce, $expire = 0) {
     $db->query("DELETE FROM ".X_PREFIX."captchaimages WHERE imagehash='$nonce' AND imagestring='$key'");
 
     return ($db->affected_rows() === 1);
+}
+
+/**
+ * Central place to get the image URL pattern.
+ *
+ * Remember, this is also duplicated in js/header.js
+ *
+ * @since 1.9.11.15
+ * @return string Regular expression for a user-provided URL to an image.
+ */
+function get_img_regexp() {
+    return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
 }
 
 return;

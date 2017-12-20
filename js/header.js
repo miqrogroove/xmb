@@ -54,7 +54,7 @@ function avatarCheck(input, max_size) {
     var image = new Image();
     var avatarCheck = document.getElementById('avatarCheck');
     var isValid = document.getElementById('newavatarcheck');
-    var imgRegex = /^(https?|ftp):\/\/[:a-z\.\/_\-0-9%~]+(\?[a-z=0-9&_\-;~]*)?$/i;
+    var imgRegex = /^(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?$/i;
     image.onload = function() {
         max_size = max_size.split("x");
 

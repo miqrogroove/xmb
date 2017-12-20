@@ -1061,7 +1061,7 @@ function extractRemoteImages($pid, &$message) {
     // Extract img codes
     $results = array();
     $items = array();
-    $pattern = '#\[img(=([0-9]*?){1}x([0-9]*?))?\]((http|ftp){1}://([:a-z\\./_\-0-9%~]+){1}(\?[a-z=0-9&_\-;~]*)?)\[/img\]#Smi';
+    $pattern = '/\[img(=([0-9]*?){1}x([0-9]*?))?\](' . get_img_regexp() . ')\[\/img\]/i';
     preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
     foreach($results as $result) {
         if (isset($result[4])) {
