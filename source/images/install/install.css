@@ -1,0 +1,141 @@
+body {
+	font-family: arial, sans-serif;
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+.top {
+        height: 20px;
+        background: url(tl.gif) no-repeat left top;
+}
+.top span {
+        display: block;
+        position: relative;
+        height: 20px;
+        background: url(tr.gif) no-repeat right top;
+}
+
+.center-content {
+        position: relative;
+        background: url(r.gif) repeat-y right top;
+        padding: 1px 20px 1px 20px;
+}
+
+.bottom {
+        height: 20px;
+        background: url(bl.gif) no-repeat left bottom;
+}
+
+.bottom span {
+        display: block;
+        position: relative;
+        height: 20px;
+        background: url(br.gif) no-repeat right top;
+}
+
+#main {
+	width: 800px;
+	margin: 0px auto;
+}
+
+#header {
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+#sidebar {
+	width: 200px;
+	float: left;
+}
+
+#sidebar ul {
+	padding-left: 10px;
+}
+
+#content, #complete {
+	width: 590px;
+	float: right;
+	margin-bottom: 10px;
+}
+
+#footer {
+	clear: both;
+	text-align: right;
+}
+
+#sidebar, #content, #footer, #configure, #config, #complete {
+        background: url(l.gif) repeat-y left top;
+        background-color: #f0f0f0;
+}
+
+li {
+	color: #0000ff;
+	padding: 3px;
+}
+
+input, select, textarea {
+	color: #ffffff;
+	background-color: #666666;
+	border: 1px solid #000000;
+	padding: 2px;
+}
+
+textarea {
+	margin: 0px;
+}
+
+table {
+	margin: 10px auto;
+	background-color: #0000ff;
+}
+
+td {
+	padding: 5px;
+	background-color: #cccccc;
+}
+
+table tr.category td {
+	color: #ffffff;
+	background-color: #91a9cf;
+	font-weight: bold;
+}
+
+table td span {
+	font-size: 10px;
+	font-style: italic;
+}
+table td.configure {
+	margin: 0px auto;
+	text-align: center;
+}
+
+
+.current {
+	color: #000033;
+}
+
+.button {
+	text-align: right;
+	padding: 5px;
+}
+
+.progressErr {
+    color: #B00000;
+}
+
+.progressWarn {
+    color: #A08000;
+}
+
+.progressOk {
+    color: #00A000;
+}
+
+.progressSkip {
+    color: #A0A000;
+}
+
+.progress {
+    font-family: Courier New, monospace;
+    font-size: 12px;
+}
