@@ -128,7 +128,7 @@ function attachRemoteFile($url, $pid=0) {
     $filepath = getTempFile($path);
 
     // Sanity checks
-    if (substr($url, 0, 7) != 'http://' And substr($url, 0, 6) != 'ftp://') {
+    if (1 != preg_match('/^' . get_img_regexp() . '$/i', $url)) {
         return X_INVALID_REMOTE_LINK;
     }
     $urlparts = parse_url($url);
