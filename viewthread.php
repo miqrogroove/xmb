@@ -535,11 +535,10 @@ if ($action == '') {
                 $email = '';
             }
 
+            $post['site'] = format_member_site( $post['site'] );
             if ($post['site'] == '') {
                 $site = '';
             } else {
-                $post['site'] = str_replace("http://", "", $post['site']);
-                $post['site'] = "http://$post[site]";
                 eval('$site = "'.template('viewthread_post_site').'";');
             }
 

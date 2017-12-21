@@ -661,15 +661,8 @@ switch($action) {
 
         $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
 
-        if (strpos($memberinfo['site'], 'http') === false) {
-            $memberinfo['site'] = "http://$memberinfo[site]";
-        }
-
-        if ($memberinfo['site'] != 'http://') {
-            $site = $memberinfo['site'];
-        } else {
-            $site = '';
-        }
+        $memberinfo['site'] = format_member_site( $memberinfo['site'] );
+        $site = $memberinfo['site'];
 
         if (X_MEMBER && $memberinfo['email'] != '' && $memberinfo['showemail'] == 'yes') {
             $email = $memberinfo['email'];
@@ -688,12 +681,8 @@ switch($action) {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if ($rank['avatarrank'] || $memberinfo['avatar']) {
-            if (isset($site) && strlen(trim($site)) > 0) {
-                $sitelink = $site;
-            } else {
-                $sitelink = "about:blank";
-            }
+        if ( ($rank['avatarrank'] || $memberinfo['avatar']) && $site != '' ) {
+            $sitelink = $site;
         } else {
             $sitelink = "about:blank";
         }

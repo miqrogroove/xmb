@@ -469,7 +469,6 @@ switch($action) {
 
         $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 
-        $replace = array('http://', 'https://', 'ftp://');
         $members = $oldst = '';
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
@@ -483,10 +482,8 @@ switch($action) {
                     $email = '';
                 }
 
-                $member['site'] = str_replace($replace, '', $member['site']);
-                $member['site'] = "http://$member[site]";
-
-                if ($member['site'] == "http://") {
+                $member['site'] = format_member_site( $member['site'] );
+                if ($member['site'] == '') {
                     $site = '';
                 } else {
                     eval('$site = "'.template('misc_mlist_row_site').'";');

@@ -2445,5 +2445,35 @@ function get_img_regexp() {
     return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
 }
 
+/**
+ * Convert user 'site' input to a reasonable URL.
+ *
+ * @since 1.9.11.15
+ * @param string $site The members.site value retrieved from the database.
+ * @return string A URL or an empty string.
+ */
+function format_member_site($site) {
+    $site = trim($site);
+    $length = strlen($site);
+
+    if ( $length < 4 ) {
+        // Found some garbage value like 'a.b'
+        $url = '';
+    } else if ( false === strpos( $site, '.' ) ) {
+        // Found some garbage value like 'aaaa'
+        $url = '';
+    } else if ( 1 !== preg_match( '@^https?://@i', $site ) ) {
+        // Scheme missing, assume it starts with a domain name.
+        $url = "http://$site";
+    } else if ( $length < 11 ) {
+        // Found some garbage value like 'http://a.b'
+        $url = '';
+    } else {
+        $url = $site;
+    }
+    
+    return $url;
+}
+
 return;
 ?>
