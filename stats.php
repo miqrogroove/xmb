@@ -140,6 +140,7 @@ $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
 $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
 while($last = $db->fetch_array($query)) {
+    $last['lastpost'] = (int) $last['lastpost'];
     $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
     $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
