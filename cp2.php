@@ -1738,14 +1738,14 @@ if ($action == "prune") {
         if (isset($pruneByDate['check']) && $pruneByDate['check'] == 1) {
             switch($pruneByDate['type']) {
                 case 'less':
-                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*$pruneByDate['date']));
+                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) >= ' . (time()-(24*3600*$pruneByDate['date']));
                     break;
                 case 'is':
-                    $queryWhere[] = 'lastpost >= '.(time()-(24*3600*($pruneByDate['date']-1))).' AND lastpost <= '.(time()-(24*3600*($pruneByDate['date'])));
+                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) >= ' . (time()-(24*3600*($pruneByDate['date']-1))) . ' AND SUBSTRING_INDEX(lastpost, '|', 1) <= ' . (time()-(24*3600*$pruneByDate['date']));
                     break;
                 case 'more':
                 default:
-                    $queryWhere[] = 'lastpost <= '.(time()-(24*3600*$pruneByDate['date']));
+                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) <= ' . (time()-(24*3600*$pruneByDate['date']));
                     break;
             }
         } else if ($sign == '') {

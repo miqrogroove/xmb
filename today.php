@@ -55,7 +55,7 @@ $fids = permittedForums(forumCache(), 'thread', 'csv');
 if (strlen($fids) == 0) {
     $threadcount = 0;
 } else {
-    $threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE lastpost >= $srchfrom AND fid IN ($fids)"), 0);
+    $threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE SUBSTRING_INDEX(lastpost, '|', 1) >= $srchfrom AND fid IN ($fids)"), 0);
 }
 
 eval('$css = "'.template('css').'";');
@@ -106,7 +106,7 @@ if ($threadcount == 0) {
          FROM ".X_PREFIX."threads t
          LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
          LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
-         WHERE t.lastpost >= $srchfrom AND t.fid IN ($fids)
+         WHERE SUBSTRING_INDEX(t.lastpost, '|', 1) >= $srchfrom AND t.fid IN ($fids)
          ORDER BY t.lastpost DESC
          LIMIT {$mpage['start']}, $tpp"
     );
