@@ -31,6 +31,12 @@ header('X-Robots-Tag: noindex');
 
 loadtemplates('error_nologinsession');
 
+$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+
+if ($action == "settings") {
+    header('X-XSS-Protection: 0'); // Disables HTML input errors in Chrome.
+}
+
 nav($lang['textcp']);
 
 eval('$css = "'.template('css').'";');
@@ -53,8 +59,6 @@ $auditaction = addslashes("$onlineip|#|$auditaction");
 audit($xmbuser, $auditaction, 0, 0);
 
 displayAdminPanel();
-
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 if ($action == "settings") {
     if (noSubmit('settingsubmit1')

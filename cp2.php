@@ -86,6 +86,10 @@ if (X_ADMIN) {
     }
 }
 
+if ($action == "templates") {
+    header('X-XSS-Protection: 0'); // Disables HTML input errors in Chrome.
+}
+
 nav($lang['textcp']);
 
 eval('echo "'.template('header').'";');
