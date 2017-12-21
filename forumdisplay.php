@@ -288,29 +288,28 @@ while($thread = $db->fetch_array($querytop)) {
     } // else leave value unchanged
 
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
-
-    if ($thread['replies'] >= $SETTINGS['hottopic']) {
-        $folder = 'hot_folder.gif';
-    } else {
-        $folder = 'folder.gif';
-    }
-
     $oldtopics = isset($oldtopics) ? $oldtopics : '';
-
-    if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-        $folder = "hot_red_folder.gif";
-    } else if ($lastvisit < $dalast && $oT === false) {
-        $folder = "red_folder.gif";
-    }
-
-    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
-        $folder = 'dot_'.$folder;
-    }
-
-    $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
 
     if ($thread['closed'] == 'yes') {
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+    } else {
+        if ($thread['replies'] >= $SETTINGS['hottopic']) {
+            $folder = 'hot_folder.gif';
+        } else {
+            $folder = 'folder.gif';
+        }
+
+        if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
+            $folder = "hot_red_folder.gif";
+        } else if ($lastvisit < $dalast && $oT === false) {
+            $folder = "red_folder.gif";
+        }
+
+        if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
+            $folder = 'dot_'.$folder;
+        }
+
+        $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
     $lastreplydate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($addtime * 3600));

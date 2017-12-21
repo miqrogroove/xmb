@@ -110,6 +110,25 @@ if ($threadcount == 0) {
          ORDER BY t.lastpost DESC
          LIMIT {$mpage['start']}, $tpp"
     );
+    
+    $threadsInFid = array();
+
+    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
+        while($thread = $db->fetch_array($query)) {
+            $threadsInFid[] = $thread['tid'];
+        }
+        $db->data_seek($query, 0);
+
+        $threadsInFid = implode(',', $threadsInFid);
+        $queryfids = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+
+        $threadsInFid = array();
+        while($row = $db->fetch_array($queryfids)) {
+            $threadsInFid[] = $row['tid'];
+        }
+        $db->free_result($queryfids);
+    }
+
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
@@ -145,32 +164,38 @@ if ($threadcount == 0) {
             $thread['icon'] = '';
         }
 
-        if ($thread['replies'] >= $SETTINGS['hottopic']) {
-            $folder = '<img src="'.$imgdir.'/hot_folder.gif" alt="'.$lang['althotfolder'].'" border="0" />';
-        } else {
-            $folder = '<img src="'.$imgdir.'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
-        }
-
         $oldtopics = isset($oldtopics) ? $oldtopics : '';
-        if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-            $folder = '<img src="'.$imgdir.'/hot_red_folder.gif" alt="'.$lang['althotredfolder'].'" border="0" />';
-        } else if ($lastvisit < $dalast && $oT === false) {
-            $folder = '<img src="'.$imgdir.'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
-        }
 
         if ($thread['closed'] == 'yes') {
             $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-            $prefix = '';
         } else {
+            if ($thread['replies'] >= $SETTINGS['hottopic']) {
+                $folder = 'hot_folder.gif';
+            } else {
+                $folder = 'folder.gif';
+            }
+
+            if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
+                $folder = 'hot_red_folder.gif';
+            } else if ($lastvisit < $dalast && $oT === false) {
+                $folder = 'red_folder.gif';
+            }
+
+            if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
+                $folder = 'dot_'.$folder;
+            }
+
+            $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
+
             $moved = explode('|', $thread['closed']);
             if ($moved[0] == 'moved') {
                 continue;
             }
         }
 
+        $prefix = '';
         eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
-        $prefix = '';
         if ($thread['pollopts'] == 1) {
             $prefix = $lang['pollprefix'].' ';
         }
