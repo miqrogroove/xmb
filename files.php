@@ -193,7 +193,7 @@ header("Content-type: $type");
 header("Content-length: $size");
 header("Content-Disposition: {$dispositionType}; filename=\"{$file['filename']}\"");
 header("Content-Description: XMB Attachment");
-header("Cache-Control: public; max-age=604800");
+header("Cache-Control: public, max-age=604800");
 header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
 header("Last-Modified: ".gmdate('D, d M Y H:i:s', $file['updatestamp'])." GMT");
 
