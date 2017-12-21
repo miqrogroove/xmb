@@ -1023,9 +1023,15 @@ class CartesianSize {
     var $height;
     var $width;
 
-    function CartesianSize($width, $height) {
+    // PHP 5+
+    function __construct($width, $height) {
         $this->height = intval($height);
         $this->width = intval($width);
+    }
+
+    // PHP 4
+    function CartesianSize($width, $height) {
+        $this->__construct($width, $height);
     }
 
     function aspect() {

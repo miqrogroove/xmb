@@ -114,7 +114,8 @@ class Captcha {
     var $bCompatible;
     var $bPoison;
 
-    function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+    // PHP 5+
+    function __construct($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
         // get parameters
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
         $this->SetNumDots(CAPTCHA_NUM_DOTS);
@@ -133,6 +134,11 @@ class Captcha {
         // Initialize XMB Members
         $this->bPoison = FALSE;
         $this->CheckCompatibility();
+    }
+
+    // PHP 4
+    function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+        $this->__construct($iWidth, $iHeight);
     }
 
     function CalculateSpacing() {
