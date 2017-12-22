@@ -43,6 +43,7 @@ case 1:
 case 2:
 //    $url = "{$virtual_path}files/$pid/$aid/";
     $result = explode('/', $url);
+    if ( count($result) < 4 ) break;
     if ($result[count($result) - 4] == 'files') { // Remember count() is 1-based
         $pid = intval($result[count($result) - 3]);
         $aid = intval($result[count($result) - 2]);
@@ -51,6 +52,7 @@ case 2:
 case 3:
 //    $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
+    if ( count($result) < 3 ) break;
     if ($result[count($result) - 3] == 'files') {
         $aid = intval($result[count($result) - 2]);
         $filename = urldecode($result[count($result) - 1]);
@@ -59,12 +61,14 @@ case 3:
 case 4:
 //    $url = "{$virtual_path}/$pid/$aid/";
     $result = explode('/', $url);
+    if ( count($result) < 3 ) break;
     $pid = intval($result[count($result) - 3]);
     $aid = intval($result[count($result) - 2]);
     break;
 case 5:
 //    $url = "{$virtual_path}/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
+    if ( count($result) < 2 ) break;
     $aid = intval($result[count($result) - 2]);
     $filename = urldecode($result[count($result) - 1]);
     break;
