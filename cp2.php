@@ -377,7 +377,7 @@ if ($action == 'lang') {
             if ($filetype != X_EMPTY_UPLOAD) {
                 $message .= ' '.$attachmentErrors[$filetype];
             }
-            error($message, FALSE);
+            error($message, FALSE, '</td></tr></table></td></tr></table><br />');
         }
         unlink($_FILES['themefile']['tmp_name']);
 
@@ -398,7 +398,7 @@ if ($action == 'lang') {
         $phraseid = getInt('phraseid', 'r');
         $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
         if ($db->num_rows($result) == 0) {
-            error($lang['generic_missing'], FALSE);
+            error($lang['generic_missing'], FALSE, '</td></tr></table></td></tr></table><br />');
         }
         $row = $db->fetch_array($result);
         $langkey = $row['langkey'];
@@ -673,7 +673,7 @@ if ($action == 'themes') {
     if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
         request_secure('massedthemes', '', X_NONCE_FORM_EXP, FALSE);
         if (!is_uploaded_file($_FILES['themefile']['tmp_name'])) {
-            error($lang['textthemeimportfail'], FALSE);
+            error($lang['textthemeimportfail'], FALSE, '</td></tr></table></td></tr></table><br />');
         }
         $themebits = readFileAsINI($_FILES['themefile']['tmp_name']);
         $start = "INSERT INTO ".X_PREFIX."themes";
@@ -695,7 +695,7 @@ if ($action == 'themes') {
 
         $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='$dbname'");
         if ($db->result($query, 0) > 0) {
-            error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table>');
+            error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table><br />');
         }
 
         $sql = "INSERT INTO ".X_PREFIX."themes ($keysql) VALUES ($valsql);";
@@ -703,9 +703,9 @@ if ($action == 'themes') {
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
         if (!$query) {
-            echo $lang['textthemeimportfail'];
+            error($lang['textthemeimportfail'], false, '</td></tr></table></td></tr></table><br />');
         } else {
-            echo $lang['textthemeimportsuccess'];
+            echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textthemeimportsuccess'].'</td></tr>';
         }
         echo '</td></tr>';
     } else if (onSubmit('themesubmit')) {
@@ -716,7 +716,7 @@ if ($action == 'themes') {
         $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM ".X_PREFIX."themes"), 0);
 
         if ($theme_delete && count($theme_delete) >= $number_of_themes) {
-            error($lang['delete_all_themes'], false, '</td></tr></table></td></tr></table>');
+            error($lang['delete_all_themes'], false, '</td></tr></table></td></tr></table><br />');
         }
 
         if ($theme_delete) {
