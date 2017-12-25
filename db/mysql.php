@@ -74,14 +74,16 @@ class dbstuff {
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
 
         // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
-        $result = mysql_set_charset('latin1', $this->link);
-
-        if (FALSE === $result) {
-            echo '<h3>Database connection error!</h3>';
-            echo 'The database connection could not be configured for XMB.<br />';
-            echo 'Please ensure the mysql_set_charset function is available.<br /><br />';
-            $sql = '';
-            $this->panic($sql);
+        // Available in PHP 5.2.3.
+        if ( function_exists( 'mysql_set_charset' ) ) {
+            $result = mysql_set_charset('latin1', $this->link);
+            if (FALSE === $result) {
+                echo '<h3>Database connection error!</h3>';
+                echo 'The database connection could not be configured for XMB.<br />';
+                echo 'Please ensure the mysql_set_charset function is working.<br /><br />';
+                $sql = '';
+                $this->panic($sql);
+            }
         }
 
         return $this->select_db($dbname, $force_db);
@@ -100,7 +102,7 @@ class dbstuff {
             return TRUE;
         }
         if ($force) {
-            $sql = "USE $database -- XMB couldn't find the database! Please reconfigure the config.php file.";
+            $sql = "USE $database -- XMB couldn't find the database or didn't have permission! Please reconfigure the config.php file.";
             $this->panic($sql);
         } else {
             return FALSE;
@@ -123,13 +125,16 @@ class dbstuff {
 
             while ($table = $this->fetch_array($q)) {
                 if ($tablepre.'settings' == $table[0]) {
-                    if (mysql_select_db($db['Database'], $this->link)) {
-                        $this->db = $db['Database'];
+                    if ( $this->select_db( $db['Database'], false ) ) {
+                        mysql_free_result( $dbs );
+                        mysql_free_result( $q );
                         return TRUE;
                     }
                 }
             }
+            mysql_free_result( $q );
         }
+        mysql_free_result( $dbs );
         return FALSE;
     }
 
@@ -200,7 +205,7 @@ class dbstuff {
         if (LOG_MYSQL_ERRORS) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
             if (strlen($sql) > 0) {
-                if (1153 == $errno and strlen($sql) > 16000) {
+                if ( ( 1153 == $errno || 2006 == $errno ) && strlen( $sql ) > 16000) {
                     $log .= "In the following query (log truncated):\n" . substr($sql, 0, 16000);
                 } else {
                     $log .= "In the following query:\n$sql";
@@ -246,16 +251,6 @@ class dbstuff {
         set_error_handler($this->errcallb);
         $sql = mysql_real_escape_string($sql, $this->link);
         restore_error_handler();
-    }
-
-    /**
-     * DEPRECATED by version 1.9.11.12
-     */
-    function escape_var(&$rawstring) {
-        set_error_handler($this->errcallb);
-        $return = mysql_real_escape_string($rawstring, $this->link);
-        restore_error_handler();
-        return $return;
     }
 
     function like_escape($rawstring) {
@@ -304,7 +299,7 @@ class dbstuff {
                         $output = "MySQL generated $warnings warnings in the following query:\n$sql\n";
                     }
                     $query3 = mysql_query('SHOW WARNINGS', $this->link);
-                    while ($row = mysql_fetch_array($query3, SQL_ASSOC)) {
+                    while ( $row = mysql_fetch_assoc( $query3 ) ) {
                         $output .= var_export($row, TRUE)."\n";
                     }
                     error_log($output);
@@ -351,17 +346,25 @@ class dbstuff {
         $this->select_db($dbname);
 
         $q = $this->query("SHOW TABLES");
-        while($table = $this->fetch_array($q, SQL_NUM)) {
+        while( $table = $this->fetch_row( $q ) ) {
             $array[] = $table[0];
         }
         return $array;
     }
 
-    function result($query, $row, $field=NULL) {
+    /**
+     * Retrieves the contents of one cell from a MySQL result set.
+     *
+     * @param resource $query
+     * @param int      $row   The row number from the result that's being retrieved.
+     * @param mixed    $field The name or offset of the field being retrieved.
+     * @return string
+     */
+    function result( $query, $row, $field = 0 ) {
         set_error_handler($this->errcallb);
-        $query = mysql_result($query, $row, $field);
+        $return = mysql_result($query, $row, $field);
         restore_error_handler();
-        return $query;
+        return $return;
     }
 
     function num_rows($query) {

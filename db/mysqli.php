@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2012, The XMB Group
+ * Copyright (c) 2001-2017, The XMB Group
  * http://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -52,17 +52,23 @@ class dbstuff {
      * @param string $dbname
      * @param bool   $pconnect Keep the connection open after the script ends.
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
-     * @param bool   $new_link Use to connect to a second database on the same server at the same time.
+     * @param bool   $new_link Ignored in mysqli and always TRUE.
      */
-    function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=FALSE) {
+    function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=TRUE) {
 
-        if ($pconnect) {
-            $this->link = @mysqli_connect("p:$dbhost", $dbuser, $dbpw, $new_link);
-        } else {
-            $this->link = @mysqli_connect($dbhost, $dbuser, $dbpw, $new_link);
+        if ( $pconnect ) {
+            $dbhost = "p:$dbhost";
         }
 
-        if (FALSE === $this->link) {
+        if ( $force_db ) {
+            $database = $dbname;
+        } else {
+            $database = '';
+        }
+
+        $this->link = @new mysqli( $dbhost, $dbuser, $dbpw, $database );
+
+        if ( mysqli_connect_error() ) {
             echo '<h3>Database connection error!</h3>';
             echo 'A connection to the Database could not be established.<br />';
             echo 'Please check your username, password, database name and host.<br />';
@@ -70,10 +76,28 @@ class dbstuff {
             $sql = '';
             $this->panic($sql);
         }
-
+        
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
 
-        return $this->select_db($dbname, $force_db);
+        // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
+        // Available in PHP 5.0.5.
+        if ( method_exists( $this->link, 'set_charset' ) ) {
+            $result = $this->link->set_charset( 'latin1' );
+            if (FALSE === $result) {
+                echo '<h3>Database connection error!</h3>';
+                echo 'The database connection could not be configured for XMB.<br />';
+                echo 'Please ensure the mysqli_set_charset function is working.<br /><br />';
+                $sql = '';
+                $this->panic($sql);
+            }
+        }
+        
+        if ( $force_db ) {
+            $this->db = $dbname;
+            return true;
+        } else {
+            return $this->select_db( $dbname, $force_db );
+        }
     }
 
     /**
@@ -84,12 +108,12 @@ class dbstuff {
      * @return bool TRUE on success, FALSE on failure with !$force.
      */
     function select_db($database, $force = TRUE) {
-        if (mysqli_select_db($this->link, $database)) {
+        if ( $this->link->select_db( $database ) ) {
             $this->db = $database;
             return TRUE;
         }
         if ($force) {
-            $sql = "USE $database -- XMB couldn't find the database! Please reconfigure the config.php file.";
+            $sql = "USE $database -- XMB couldn't find the database or didn't have permission! Please reconfigure the config.php file.";
             $this->panic($sql);
         } else {
             return FALSE;
@@ -103,7 +127,7 @@ class dbstuff {
      * @return bool
      */
     function find_database($tablepre) {
-        $dbs = mysqli_query($this->link, 'SHOW DATABASES');
+        $dbs = $this->query('SHOW DATABASES');
         while($db = $this->fetch_array($dbs)) {
             if ('information_schema' == $db['Database']) {
                 continue;
@@ -112,46 +136,40 @@ class dbstuff {
 
             while ($table = $this->fetch_array($q)) {
                 if ($tablepre.'settings' == $table[0]) {
-                    if (mysqli_select_db($this->link, $db['Database'])) {
-                        $this->db = $db['Database'];
+                    if ( $this->select_db( $db['Database'], false ) ) {
+                        $dbs->free();
+                        $q->free();
                         return TRUE;
                     }
                 }
             }
+            $q->free();
         }
+        $dbs->free();
         return FALSE;
     }
 
     function error() {
-        return mysqli_error($this->link);
+        return $this->link->error;
     }
 
     function free_result($query) {
         set_error_handler($this->errcallb);
-        $return = mysqli_free_result($query);
+        $query->free();
         restore_error_handler();
-        return $return;
+        return true;
     }
 	
-    function fetch_array($query, $type=MYSQLI_ASSOC) {
+    function fetch_array($query, $type=SQL_ASSOC) {
         set_error_handler($this->errcallb);
-		switch($type){
-			case MYSQLI_NUM:
-			case MYSQLI_BOTH:
-				break;
-			default:
-				$type = MYSQLI_ASSOC;
-				break;
-		}
-        $array = mysqli_fetch_array($query, $type);
+        $array = $query->fetch_array($type);
         restore_error_handler();
         return $array;
     }
 
     function field_name($query, $field) {
         set_error_handler($this->errcallb);
-        $fieldInfo = mysqli_fetch_field_direct($query, $field);
-        $return = $fieldInfo->name;
+        $query->fetch_field_direct( $field )->name;
         restore_error_handler();
         return $return;
     }
@@ -166,8 +184,7 @@ class dbstuff {
      */
     function field_len($query, $field) {
         set_error_handler($this->errcallb);
-        $fieldInfo = mysqli_fetch_field_direct($query, $field);
-        $return = $fieldInfo->length;
+        $query->fetch_field_direct( $field )->length;
         restore_error_handler();
         return $return;
     }
@@ -178,12 +195,12 @@ class dbstuff {
         }
 
         // Check that we actually made a connection
-        if ($this->link === FALSE) {
-            $error = mysqli_error();
-            $errno = mysqli_errno();
+        if ( mysqli_connect_error() ) {
+            $error = mysqli_connect_error();
+            $errno = mysqli_connect_errno();
         } else {
-            $error = mysqli_error($this->link);
-            $errno = mysqli_errno($this->link);
+            $error = $this->link->error;
+            $errno = $this->link->errno;
         }
 
     	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
@@ -199,7 +216,7 @@ class dbstuff {
         if (LOG_MYSQL_ERRORS) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
             if (strlen($sql) > 0) {
-                if (1153 == $errno and strlen($sql) > 16000) {
+                if ( ( 1153 == $errno || 2006 == $errno ) && strlen( $sql ) > 16000) {
                     $log .= "In the following query (log truncated):\n" . substr($sql, 0, 16000);
                 } else {
                     $log .= "In the following query:\n$sql";
@@ -224,7 +241,7 @@ class dbstuff {
      */
     function escape($rawstring) {
         set_error_handler($this->errcallb);
-        $return = mysqli_real_escape_string($this->link, $rawstring);
+        $return = $this->link->real_escape_string( $rawstring );
         restore_error_handler();
         return $return;
     }
@@ -243,46 +260,24 @@ class dbstuff {
      */
     function escape_fast(&$sql) {
         set_error_handler($this->errcallb);
-        $sql = mysqli_real_escape_string($this->link, $sql);
+        $sql = $this->link->real_escape_string( $sql );
         restore_error_handler();
-    }
-
-    /**
-     * DEPRECATED by version 1.9.11.12
-     */
-    function escape_var(&$rawstring) {
-        set_error_handler($this->errcallb);
-        $return = mysqli_real_escape_string($this->link, $rawstring);
-        restore_error_handler();
-        return $return;
     }
 
     function like_escape($rawstring) {
         set_error_handler($this->errcallb);
-        $return = mysqli_real_escape_string($this->link, str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring));
+        $return = $this->link->real_escape_string( str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring) );
         restore_error_handler();
         return $return;
     }
 
     function regexp_escape($rawstring) {
         set_error_handler($this->errcallb);
-        $return = mysqli_real_escape_string($this->link, preg_quote($rawstring));
+        $return = $this->link->real_escape_string( preg_quote( $rawstring ) );
         restore_error_handler();
         return $return;
     }
 
-    function mysqli_result($res,$row=0,$col=0){ 
-        $numrows = mysqli_num_rows($res); 
-        if ($numrows && $row <= ($numrows-1) && $row >=0){
-            mysqli_data_seek($res,$row);
-            $resrow = (is_numeric($col)) ? mysqli_fetch_row($res) : mysqli_fetch_assoc($res);
-            if (isset($resrow[$col])){
-                return $resrow[$col];
-            }
-        }
-        return false;
-    }
-	
     /**
      * Executes a MySQL Query
      *
@@ -292,7 +287,7 @@ class dbstuff {
      */
     function query($sql, $panic = TRUE) {
         $this->start_timer();
-        $query = mysqli_query($this->link, $sql);
+        $query = $this->link->query( $sql );
         if (FALSE === $query and $panic) {
             $this->panic($sql);
         }
@@ -300,11 +295,11 @@ class dbstuff {
         $this->querynum++;
     	if (DEBUG) {
             if (LOG_MYSQL_ERRORS) {
-                $this->last_id = mysqli_insert_id($this->link);
-                $this->last_rows = mysqli_affected_rows($this->link);
+                $this->last_id = $this->link->insert_id;
+                $this->last_rows = $this->link->affected_rows;
 
-                $query2 = mysqli_query($this->link, 'SHOW COUNT(*) WARNINGS');
-                if (($warnings = mysqli_data_seek($query2, 0)) > 0) {
+                $query2 = $this->link->query( 'SHOW COUNT(*) WARNINGS' );
+                if ( ( $warnings = $query2->fetch_row()[0] ) > 0 ) {
                     if (!ini_get('log_errors')) {
                         ini_set('log_errors', TRUE);
                         ini_set('error_log', 'error_log');
@@ -314,14 +309,14 @@ class dbstuff {
                     } else {
                         $output = "MySQL generated $warnings warnings in the following query:\n$sql\n";
                     }
-                    $query3 = mysqli_query($this->link, 'SHOW WARNINGS');
-                    while ($row = mysqli_fetch_array($query3, MYSQLI_ASSOC)) {
+                    $query3 = $this->link->query( 'SHOW WARNINGS' );
+                    while ( $row = $query3->fetch_assoc() ) {
                         $output .= var_export($row, TRUE)."\n";
                     }
                     error_log($output);
-                    mysqli_free_result($query3);
+                    $query3->free();
                 }
-                mysqli_free_result($query2);
+                $query2->free();
             }
             if (!defined('X_SADMIN') or X_SADMIN) {
                 $this->querylist[] = $sql;
@@ -333,9 +328,9 @@ class dbstuff {
     /**
      * Sends a MySQL query without fetching the result rows.
      *
-     * You cannot use mysql_num_rows() and mysql_data_seek() on a result set
-     * returned from mysql_unbuffered_query(). You also have to fetch all result
-     * rows from an unbuffered query before you can send a new query to MySQL.
+     * You cannot use mysqli_num_rows() and mysqli_data_seek() on a result set
+     * returned from mysqli_use_result(). You also have to call
+     * mysqli_free_result() before you can send a new query to MySQL.
      *
      * @param string $sql Unique MySQL query (multiple queries are not supported). The query string should not end with a semicolon.
      * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
@@ -343,7 +338,7 @@ class dbstuff {
      */
     function unbuffered_query($sql, $panic = TRUE) {
         $this->start_timer();
-        $query = mysqli_query($this->link, $sql, MYSQLI_USE_RESULT);
+        $query = $this->link->query( $sql, MYSQLI_USE_RESULT );
         if (FALSE === $query and $panic) {
             $this->panic($sql);
         }
@@ -362,40 +357,38 @@ class dbstuff {
         $this->select_db($dbname);
 
         $q = $this->query("SHOW TABLES");
-        while($table = $this->fetch_array($q, MYSQLI_NUM)) {
+        while( $table = $this->fetch_row( $q ) ) {
             $array[] = $table[0];
         }
         return $array;
     }
 
-    function result($query, $row, $field=NULL) {
+    /**
+     * Retrieves the contents of one cell from a MySQL result set.
+     *
+     * @param resource $query
+     * @param int      $row   The row number from the result that's being retrieved.
+     * @param mixed    $field The name or offset of the field being retrieved.
+     * @return string
+     */
+    function result( $query, $row, $field = 0 ) {
         set_error_handler($this->errcallb);
-		mysqli_data_seek($query, $row);
-		if(!empty($field)) {
-			while($finfo = mysqli_fetch_field($query)) {
-				if($field == $finfo->name) {
-					$f = mysqli_fetch_assoc($query);
-					$query = $f[$field];
-				}
-			}
-		} else {
-			$f = mysqli_fetch_array($query);
-			$query = $f[0];
-		}
+		$query->data_seek( $row );
+        $return = $query->fetch_array()[$field];
         restore_error_handler();
-        return $query;
+        return $return;
     }
 
     function num_rows($query) {
         set_error_handler($this->errcallb);
-        $query = mysqli_num_rows($query);
+        $query = $query->num_rows;
         restore_error_handler();
         return $query;
     }
 
     function num_fields($query) {
         set_error_handler($this->errcallb);
-        $return = mysqli_num_fields($query);
+        $return = $query->field_count;
         restore_error_handler();
         return $return;
     }
@@ -405,7 +398,7 @@ class dbstuff {
             $id = $this->last_id;
         } else {
             set_error_handler($this->errcallb);
-            $id = mysqli_insert_id($this->link);
+            $id = $this->link->insert_id;
             restore_error_handler();
         }
         return $id;
@@ -413,14 +406,14 @@ class dbstuff {
 
     function fetch_row($query) {
         set_error_handler($this->errcallb);
-        $query = mysqli_fetch_row($query);
+        $query = $query->fetch_row();
         restore_error_handler();
         return $query;
     }
 
     function data_seek($query, $row) {
         set_error_handler($this->errcallb);
-        $return = mysqli_data_seek($query, $row);
+        $return = $query->data_seek( $row );
         restore_error_handler();
         return $return;
     }
@@ -430,7 +423,7 @@ class dbstuff {
             $return = $this->last_rows;
         } else {
             set_error_handler($this->errcallb);
-            $return = mysqli_affected_rows($this->link);
+            $return = $this->link->affected_rows;
             restore_error_handler();
         }
         return $return;
@@ -464,16 +457,15 @@ class dbstuff {
      * @return string
      */
     function server_version(){
-        return mysqli_get_server_info($this->link);
+        return $this->link->server_info;
     }
 }
 
 /**
- * Proper error reporting for abstracted mysql_* function calls.
+ * Proper error reporting for abstracted mysqli_* function calls.
  *
  * @param int $errno
  * @param string $errstr
- * @author Robert Chapin (miqrogroove)
  */
 function xmb_mysql_error($errno, $errstr) {
     $output = '';
@@ -487,7 +479,7 @@ function xmb_mysql_error($errno, $errstr) {
         $functionname = $trace[$depth]['function'];
         $filename = $trace[$depth]['file'];
         $linenum = $trace[$depth]['line'];
-        $output = "MySQL encountered the following error: $errstr in \$db->{$functionname}() called by {$filename} on line {$linenum}";
+        $output = "MySQLi encountered the following error: $errstr in \$db->{$functionname}() called by {$filename} on line {$linenum}";
         unset($trace, $functionname, $filename, $linenum);
     }
 
