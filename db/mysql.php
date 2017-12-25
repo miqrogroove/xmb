@@ -345,6 +345,7 @@ class dbstuff {
         }
         $this->select_db($dbname);
 
+        $array = array();
         $q = $this->query("SHOW TABLES");
         while( $table = $this->fetch_row( $q ) ) {
             $array[] = $table[0];

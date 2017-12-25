@@ -169,7 +169,7 @@ class dbstuff {
 
     function field_name($query, $field) {
         set_error_handler($this->errcallb);
-        $query->fetch_field_direct( $field )->name;
+        $return = $query->fetch_field_direct( $field )->name;
         restore_error_handler();
         return $return;
     }
@@ -184,7 +184,7 @@ class dbstuff {
      */
     function field_len($query, $field) {
         set_error_handler($this->errcallb);
-        $query->fetch_field_direct( $field )->length;
+        $return = $query->fetch_field_direct( $field )->length;
         restore_error_handler();
         return $return;
     }
@@ -356,6 +356,7 @@ class dbstuff {
         }
         $this->select_db($dbname);
 
+        $array = array();
         $q = $this->query("SHOW TABLES");
         while( $table = $this->fetch_row( $q ) ) {
             $array[] = $table[0];
