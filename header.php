@@ -475,7 +475,26 @@ if (X_SCRIPT == 'upgrade.php') return;
 if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
     header("Content-type: text/html;charset={$lang['charset']}");
 }
-ini_set('default_charset', $lang['charset']);
+if ( function_exists( 'mb_list_encodings' ) ) {
+    // The list of charsets common to mb_string and htmlspecialchars is extremely restrictive.
+    switch ( strtoupper( $lang['charset'] ) ) {
+    case 'UTF-8':
+        $newcharset = 'UTF-8';
+        break;
+    case 'WINDOWS-1251':
+        $newcharset = 'Windows-1251';
+        break;
+    default:
+        $newcharset = 'ISO-8859-1';
+        break;
+    }
+    if ( ! in_array( $newcharset, mb_list_encodings() ) ) {
+        $newcharset = 'ISO-8859-1';
+    }
+} else {
+    $newcharset = 'ISO-8859-1';
+}
+ini_set( 'default_charset', $newcharset );
 
 // Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
 // XMB expects all links to be relative to $full_url + script name + query string.
