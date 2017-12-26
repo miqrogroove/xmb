@@ -35,6 +35,7 @@ $req['files'] = array(
     'cp.php',
     'cp2.php',
     'db/mysql.php',
+    'db/mysqli.php',
     'editprofile.php',
     'faq.php',
     'files.php',
@@ -144,24 +145,54 @@ function show_result($type) {
  * Haults the script if XMB is already installed.
  *
  * @since 1.9.11.09
+ * @param string $database
+ * @param string $dbhost
+ * @param string $dbuser
+ * @param string $dbpw
+ * @param string $dbname
+ * @param bool   $pconnect
+ * @param string $tablepre
  */
-function already_installed() {
-    global $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre;
+function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre ) {
+    if ( 'mysql' != $database && 'mysqli' != $database ) return;
 
-    if ('mysql' == $database and is_readable(ROOT.'db/mysql.php')) {
-        $link = @mysql_connect($dbhost, $dbuser, $dbpw);
-        if (FALSE !== $link) {
-            $result = mysql_select_db($dbname);
-            if (FALSE !== $result) {
-                $result = mysql_query("SHOW TABLES LIKE '{$tablepre}settings'", $link);
-                if (FALSE !== $result) {
-                    if (1 == mysql_num_rows($result)) {
-                        error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
-                    }
+    // Force upgrade to mysqli when available.
+    if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
+
+    if ( ! is_readable( ROOT."db/$database.php" ) ) return;
+
+    if ( 'mysql' == $database ) {
+
+        $link = @mysql_connect( $dbhost, $dbuser, $dbpw );
+        if ( false === $link ) return;
+
+        $result = mysql_select_db( $dbname );
+        if ( false !== $result ) {
+            $result = mysql_query( "SHOW TABLES LIKE '{$tablepre}settings'", $link );
+            if ( false !== $result ) {
+                $count = mysql_num_rows( $result );
+                mysql_free_result( $result );
+                if ( 1 === $count ) {
+                    error( 'XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.' );
                 }
             }
-            mysql_close($link);
         }
+        mysql_close( $link );
+
+    } else if ( 'mysqli' == $database ) {
+
+        $link = @new mysqli( $dbhost, $dbuser, $dbpw, $dbname );
+        if ( mysqli_connect_error() ) return;
+
+        $result = $link->query( "SHOW TABLES LIKE '{$tablepre}settings'" );
+        if ( false !== $result ) {
+            $count = $result->num_rows;
+            $result->free();
+            if ( 1 === $count ) {
+                error( 'XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.' );
+            }
+        }
+        $link->close();
     }
 }
 
@@ -187,7 +218,7 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 if (is_readable(ROOT.'config.php')) {
     require(ROOT.'config.php');
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
-        already_installed();
+        already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre );
     }
 }
 
@@ -1112,7 +1143,11 @@ Public License instead of this License.  But first, please read
             break;
 
         default:
-        // Get the DB types...
+            $scheme = 'http';
+            if ( ! empty( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ) {
+                $scheme = 'https';
+            }
+            // Get the DB types...
             $types = '<select name="db_type"><option selected="selected" value="mysql">mysql</option></select>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -1199,7 +1234,7 @@ Public License instead of this License.  But first, please read
                     </tr>
                     <tr>
                         <td>Full URL<br /><span>Put the full URL of your boards here, without any file names. Be sure to include a slash at the end.</span></td>
-                        <td><input type="text" name="fullurl" size="40" value="<?php echo 'http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')-7);?>" /></td>
+                        <td><input type="text" name="fullurl" size="40" value="<?php echo "$scheme://".$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')-7);?>" /></td>
                     </tr>
                     <tr>
                         <td>Maximum Attachment Size<br /><span>Enter the maximum allowed attachment size for your board here. (250*1024) for example, would be 250KB</span></td>
@@ -1436,7 +1471,9 @@ Public License instead of this License.  But first, please read
         $err = false;
         switch($database) {
             case 'mysql':
-                if (!defined('MYSQL_NUM')) {
+                if ( extension_loaded( 'mysqli' ) ) {
+                    $database = 'mysqli';
+                } else if (!defined('MYSQL_NUM')) {
                     show_result(X_INST_ERR);
                     $err = true;
                 }
@@ -1463,6 +1500,8 @@ Public License instead of this License.  But first, please read
         }
 
         show_act('Checking Database Connection');
+        // Force upgrade to mysqli when available.
+        if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
         switch($database) {
             case 'mysql':
                 $link = mysql_connect($dbhost, $dbuser, $dbpw);
@@ -1480,6 +1519,24 @@ Public License instead of this License.  But first, please read
                     error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
                 } else {
                     show_result(X_INST_OK);
+                }
+                break;
+            case 'mysqli':
+                $link = new mysqli( $dbhost, $dbuser, $dbpw );
+                if ( mysqli_connect_error() ) {
+                    show_result( X_INST_ERR );
+                    error( 'Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_error().': '.mysqli_connect_errno(), true );
+                } else {
+                    show_result( X_INST_OK );
+                }
+                $sqlver = $link->server_info;
+                $link->close();
+                show_act( 'Checking Database Version' );
+                if ( version_compare( $sqlver, MYSQL_MIN_VER, '<' ) ) {
+                    show_result( X_INST_ERR );
+                    error( 'Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true );
+                } else {
+                    show_result( X_INST_OK );
                 }
                 break;
             default:

@@ -139,7 +139,6 @@ function xmb_upgrade() {
  *
  * Some tables (such as xmb_logs) will be upgraded directly to schema_version 3 for simplicity.
  *
- * @author Robert Chapin (miqrogroove)
  * @since 1.9.11.11
  */
 function upgrade_schema_to_v0() {
@@ -1420,7 +1419,6 @@ function upgrade_schema_to_v0() {
  * This function is officially compatible with schema_version 1 as well as the following
  * XMB versions that did not have a schema_version number: 1.9.9, 1.9.10, and 1.9.11 Alpha (all).
  *
- * @author Robert Chapin (miqrogroove)
  * @since 1.9.11 Beta 3
  */
 function upgrade_schema_to_v2() {

@@ -93,7 +93,6 @@ require(ROOT.'include/schema.inc.php');
 define('X_PREFIX', $tablepre);
 
 $db = new dbstuff;
-$tmphost = $dbhost; // dbhost gets cleared by the following method.
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, true);
 
 show_act("Checking Super Administrator Account");
@@ -126,7 +125,7 @@ if (xmb_schema_table_exists('settings')) {
     show_result(X_INST_WARN);
     $errStr = 'An existing installation of XMB has been detected in the "'
     . $dbname . '" database located on "'
-    . $tmphost . '". <br />If you wish to overwrite this installation, please drop your "'
+    . $dbhost . '". <br />If you wish to overwrite this installation, please drop your "'
     . X_PREFIX . 'settings" table by using <pre>DROP TABLE `'
     . X_PREFIX . 'settings`;</pre>To install another forum on the same database, go back and enter a different table prefix.';
     error('XMB Already Installed', $errStr);

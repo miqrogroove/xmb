@@ -306,6 +306,9 @@ if ($ipcheck == 'on') {
     }
 }
 
+// Force upgrade to mysqli when available.
+if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
+
 
 /* Load Common Files and Establish Database Connection */
 
