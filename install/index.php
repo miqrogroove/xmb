@@ -5,7 +5,7 @@
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2017, The XMB Group
- * http://www.xmbforum2.com/
+ * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,7 +108,7 @@ function error($head, $msg, $die=true) {
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span><a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
+            <span><a href="https://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
             Forum Software</strong></a>&nbsp;&copy; '.COPY_YEAR.' The XMB Group</span>
         </div>
         <div class="bottom"><span></span></div>
@@ -280,7 +280,7 @@ switch($vStep) {
             <p>This page displays your version of XMB, and the latest version available from XMB. If there is a later version, XMB strongly recommends you do not install this version, but choose the latest stable release.</p>
             <ul>
                 <li>Install This Version: XMB <?php echo X_VERSION_EXT;?></li>
-                <li>Latest Available Version: <img src="http://www.xmbforum2.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
+                <li>Latest Available Version: <img src="https://www.xmbforum2.com/phpbin/xmbvc/vc.php?bg=f0f0f0&amp;fg=000000" alt="XMB Version Cant Be Found" style="position: relative; top: 8px;" /></li>
             </ul>
             <form action="./index.php?step=3" method="post">
                 <p class="button"><input type="submit" value="Install XMB <?php echo X_VERSION;?> &gt;" /></p>
@@ -1569,7 +1569,7 @@ Public License instead of this License.  But first, please read
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">
-            <span><a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
+            <span><a href="https://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
             Forum Software</strong></a>&nbsp;&copy; <?php echo COPY_YEAR; ?> The XMB Group</span>
         </div>
         <div class="bottom"><span></span></div>
