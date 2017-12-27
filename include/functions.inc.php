@@ -2476,4 +2476,33 @@ function format_member_site($site) {
 }
 
 return;
+
+/**
+ * Send email with default headers.
+ *
+ * @since 1.9.11.15
+ * @param string $to
+ * @param string $subject
+ * @param string $message
+ * @param string $charset
+ * @return bool
+ */
+function xmb_mail( $to, $subject, $message, $charset ) {
+    global $self, $bbname, $adminemail, $cookiedomain;
+    
+    $rawbbname = htmlspecialchars_decode( $bbname, ENT_NOQUOTES );
+    $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
+
+    $headers = array();
+    $headers[] = smtpHeaderFrom( $rawbbname, $adminemail );
+    $headers[] = "X-Mailer: PHP";
+    $headers[] = "X-AntiAbuse: Board servername - $cookiedomain";
+    $headers[] = "X-AntiAbuse: Username - $rawusername";
+    $headers[] = "Content-Type: text/plain; charset=$charset";
+    $headers = implode( "\r\n", $headers );
+
+    $params = "-f $adminemail";
+
+    return altMail( $to, $subject, $message, $headers, $params );
+}
 ?>

@@ -614,15 +614,9 @@ switch($action) {
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
-                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                $headers = array();
-                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-                $headers[] = 'X-Mailer: PHP';
-                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
-                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
-                $headers = implode("\r\n", $headers);
-                altMail($rawemail, $rawsubject.' ('.$translate['textsubsubject'].')', $rawusername.' '.$translate['textsubbody']." \n".$threadurl, $headers);
+                $title = "$rawsubject ({$translate['textsubsubject']})";
+                $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
+                xmb_mail( $rawemail, $title, $body, $translate['charset'] );
             }
             $db->free_result($subquery);
 

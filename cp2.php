@@ -1532,13 +1532,7 @@ if ($action == "newsletter") {
             $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
             $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
             $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-            $headers = array();
-            $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-            $headers[] = 'X-Mailer: PHP';
-            $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-            $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
-            $headers[] = 'Content-Type: text/plain; charset='.$charset;
-            $headers = implode("\r\n", $headers);
+            $subject = "[$rawbbname] $rawnewssubject";
 
             $i = 0;
             $total = 0;
@@ -1558,7 +1552,7 @@ if ($action == "newsletter") {
                 }
 
                 $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
-                altMail($rawemail, '['.$rawbbname.'] '.$rawnewssubject, $rawnewsmessage, $headers);
+                xmb_mail( $rawemail, $subject, $rawnewsmessage, $charset );
                 $total++;
             }
             error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");

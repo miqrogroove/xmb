@@ -94,15 +94,8 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
                 $u2uurl = $full_url.'u2u.php';
                 $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
                 $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
-                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                $headers = array();
-                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-                $headers[] = 'X-Mailer: PHP';
-                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
-                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
-                $headers = implode("\r\n", $headers);
-                altMail($rawaddress, $translate['textnewu2uemail'], "$rawusername ".$translate['textnewu2ubody']." \n$u2uurl", $headers);
+                $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
+                xmb_mail( $rawaddress, $translate['textnewu2uemail'], $body, $translate['charset'] );
             }
         } else {
             $errors = '<br />'.$lang['u2ublocked'];
@@ -319,18 +312,10 @@ function u2u_print($u2uid, $eMail = false) {
         if ($eMail) {
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
-            $email = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
+            $title = "{$lang['textu2utoemail']} $u2usubject";
+            $body = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
             $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
-            $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-            $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-            $headers = array();
-            $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-            $headers[] = 'X-Mailer: PHP';
-            $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-            $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
-            $headers[] = 'Content-Type: text/html; charset='.$charset;
-            $headers = implode("\r\n", $headers);
-            $result = altMail($rawemail, $lang['textu2utoemail']." ".$u2usubject, $email, $headers);
+            $result = xmb_mail( $rawemail, $title, $body, $charset );
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
             eval('echo "'.template('u2u_printable').'";');

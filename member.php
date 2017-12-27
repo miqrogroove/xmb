@@ -563,18 +563,9 @@ switch($action) {
                     if ($SETTINGS['notifyonreg'] == 'u2u') {
                         $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                     } else {
-                        $rawuser = postedVar('username', '', FALSE, FALSE);
-                        $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                        $headers = array();
-                        $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-                        $headers[] = 'X-Mailer: PHP';
-                        $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                        $headers[] = 'X-AntiAbuse: Username - '.$rawuser;
-                        $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
-                        $headers = implode("\r\n", $headers);
-
                         $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
-                        altMail($adminemail, $translate['textnewmember'], $translate['textnewmember2']."\n\n$full_url", $headers);
+                        $body = "{$translate['textnewmember2']}\n\n$full_url";
+                        xmb_mail( $adminemail, $translate['textnewmember'], $body, $translate['charset'] );
                     }
                 }
                 $db->free_result($mailquery);
@@ -584,14 +575,9 @@ switch($action) {
                 $translate = $lang2[$langfilenew];
                 $username = trim(postedVar('username', '', FALSE, FALSE));
                 $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                $headers = array();
-                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-                $headers[] = 'X-Mailer: PHP';
-                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                $headers[] = 'X-AntiAbuse: Username - '.$username;
-                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
-                $headers = implode("\r\n", $headers);
-                altMail($rawemail, '['.$rawbbname.'] '.$translate['textyourpw'], "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url", $headers);
+                $subject = "[$rawbbname] {$translate['textyourpw']}";
+                $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
+                xmb_mail( $rawemail, $subject, $body, $translate['charset'] );
             } else {
                 $username = trim(postedVar('username', '', TRUE, FALSE));
                 $currtime = $onlinetime + (86400*30);
