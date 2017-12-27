@@ -14,7 +14,7 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textemail]</td>
-<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="http://network-tools.com/default.asp?prog=validate&amp;host=$member[email]" onclick="window.open(this.href); return false;">$lang[adminverifyemail]</a></td>
+<td bgcolor="$altbg2"><input type="text" name="newemail" size="25" value="$member[email]" /><br /><a href="https://gsuite.tools/verify-email?email=$member[email]" onclick="window.open(this.href); return false;">$lang[adminverifyemail]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">{$lang['textstatus']}</td>
@@ -153,7 +153,7 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="http://network-tools.com/default.asp?prog=whois&host=$member[regip]" onclick="window.open(this.href); return false;">$member[regip]</a></td>
+<td bgcolor="$altbg2"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="https://whois.domaintools.com/$member[regip]" onclick="window.open(this.href); return false;">$member[regip]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[editprosearch]</td>
@@ -1336,7 +1336,7 @@ $lang[bestmember]
 <td class="smalltxt" bgcolor="$altbg2">
 $versionlong
 <br />
-<a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
+<a href="https://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]
 <br />
 $footerstuff[totaltime]
 $footerstuff[querynum]
@@ -2137,15 +2137,15 @@ $emailblock
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[texticq]</td>
-<td bgcolor="$altbg2"><a href="http://people.icq.com/people/about_me.php?uin=$memberinfo[icq]" onclick="window.open(this.href); return false;">$memberinfo[icq]</a></td>
+<td bgcolor="$altbg2"><a href="icq:message?uin={$memberinfo['icq']}" onclick="window.open(this.href); return false;">$memberinfo[icq]</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textyahoo]</td>
-<td bgcolor="$altbg2"><a href="http://profiles.yahoo.com/{$memberinfo['yahoorecode']}" onclick="window.open(this.href); return false;">{$memberinfo['yahoo']}</a></td>
+<td bgcolor="$altbg2"><a href="ymsgr:sendim?{$memberinfo['yahoorecode']}" onclick="window.open(this.href); return false;">{$memberinfo['yahoo']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textmsn]</td>
-<td bgcolor="$altbg2"><a href="http://members.msn.com/{$memberinfo['msnrecode']}" onclick="window.open(this.href); return false;">{$memberinfo['msn']}</a></td>
+<td bgcolor="$altbg2"><a href="msnim:chat?{$memberinfo['msnrecode']}" onclick="window.open(this.href); return false;">{$memberinfo['msn']}</a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textlocation]</td>
@@ -3277,10 +3277,10 @@ $multipage
 <td align="center" width="10%">$onlinetime</td>
 <td>$online[location]</td>
 <td align="center">
-<a href="http://network-tools.com/default.asp?prog=whois&host=$online[ip]" onclick="window.open(this.href); return false;" />W</a>
-<a href="http://network-tools.com/default.asp?prog=trace&host=$online[ip]" onclick="window.open(this.href); return false;" />T</a>
-<a href="http://network-tools.com/default.asp?prog=lookup&host=$online[ip]" onclick="window.open(this.href); return false;">L</a>
-<a href="http://www.networldmap.com/TryIt.htm?GetLocation&amp;Template=demo.htm&amp;ipaddress=$online[ip]" onclick="window.open(this.href); return false;">M</a> $online[ip]</a></td>
+<a href="https://whois.domaintools.com/$online[ip]" onclick="window.open(this.href); return false;" />W</a>
+<a href="https://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$online[ip]" onclick="window.open(this.href); return false;" />T</a>
+<a href="https://mxtoolbox.com/SuperTool.aspx?action=ptr%3a$online[ip]" onclick="window.open(this.href); return false;">L</a>
+<a href="https://www.iptrackeronline.com/?ip_address=$online[ip]" onclick="window.open(this.href); return false;">M</a> $online[ip]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online_today|#*XMB TEMPLATE*#|
@@ -4301,7 +4301,7 @@ $self[u2ufolders]</textarea></td>
 <tr>
 <td align="center"><font style="font-size: 10px; font-family: Verdana">$versionlong
 <br />
-<a href="http://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]</font></td>
+<a href="https://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong>{$lang['xmbforum']}</strong></a>&nbsp;&copy; $copyright $lang[xmbgroup]</font></td>
 </tr>
 </table>
 </body>
@@ -4872,13 +4872,13 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="mailto:$post[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_icq|#*XMB TEMPLATE*#|
-<a href="http://people.icq.com/people/about_me.php?uin=$post[icq]" onclick="window.open(this.href); return false;" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
+<a href="icq:message?uin={$post['icq']}" onclick="window.open(this.href); return false;" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_ip|#*XMB TEMPLATE*#|
 <a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altgetip]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_msn|#*XMB TEMPLATE*#|
-<a href="http://members.msn.com/$post[msn]" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
+<a href="msnim:chat?{$post['msn']}" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
 </font>
@@ -4910,7 +4910,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;" title="{$lang['altu2umember']}"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_yahoo|#*XMB TEMPLATE*#|
-<a href="http://profiles.yahoo.com/$post[yahoo]" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
+<a href="ymsgr:sendim?{$post['yahoo']}" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
 <?xml version="1.0" encoding="$charset"?>
