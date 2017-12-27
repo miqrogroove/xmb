@@ -683,8 +683,14 @@ switch($action) {
 
         if ( ($rank['avatarrank'] || $memberinfo['avatar']) && $site != '' ) {
             $sitelink = $site;
+            if ($memberinfo['avatar'] != '') {
+                $newsitelink = "<a href=\"$sitelink\" onclick=\"window.open(this.href); return false;\">{$memberinfo['avatar']}</a></td>";
+            } else {
+                $newsitelink = '';
+            }
         } else {
             $sitelink = "about:blank";
+            $newsitelink = $memberinfo['avatar'];
         }
 
         $showtitle = $rank['title'];
