@@ -189,7 +189,7 @@ class dbstuff {
         return $return;
     }
 
-    function panic(&$sql) {
+    function panic($sql) {
         if (!headers_sent()) {
             header('HTTP/1.0 500 Internal Server Error');
         }
