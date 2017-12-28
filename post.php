@@ -226,7 +226,8 @@ if (!ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 } elseif ($forum['attachstatus'] == 'on') {
     require 'include/attach.inc.php';
-    $attachlimits = ' '.$lang['attachmaxsize'].' '.getSizeFormatted($SETTINGS['maxattachsize']).'.  '.$lang['attachmaxdims'].' '.$SETTINGS['max_image_size'].'.';
+    $maxsize = getSizeFormatted( min( phpShorthandValue( 'upload_max_filesize' ), (int) $SETTINGS['maxattachsize'] ) );
+    $attachlimits = " {$lang['attachmaxsize']} $maxsize.  {$lang['attachmaxdims']} {$SETTINGS['max_image_size']}.";
 }
 
 $posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);

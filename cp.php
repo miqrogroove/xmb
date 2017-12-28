@@ -549,7 +549,7 @@ if ($action == "settings") {
             $subdirchecked[$i] = ($SETTINGS['files_subdir_format'] == $i + 1);
         }
         printsetting2($lang['textfilesperpost'], 'filesperpostnew', ((int)$SETTINGS['filesperpost']), 3);
-        printsetting2($lang['max_attachment_size'], 'maxAttachSize', ((int)$SETTINGS['maxattachsize']), 12);
+        printsetting2($lang['max_attachment_size'], 'maxAttachSize', min( phpShorthandValue( 'upload_max_filesize' ), (int) $SETTINGS['maxattachsize'] ), 12);
         printsetting2($lang['textfilessizew'], 'max_image_size_w_new', $max_image_sizes[0], 5);
         printsetting2($lang['textfilessizeh'], 'max_image_size_h_new', $max_image_sizes[1], 5);
         printsetting2($lang['textfilesthumbw'], 'max_thumb_size_w_new', $max_thumb_sizes[0], 5);
@@ -706,7 +706,7 @@ if ($action == "settings") {
             $footer_options = '';
         }
 
-        $maxAttachSize = formInt('maxAttachSize');
+        $maxAttachSize = min( phpShorthandValue( 'upload_max_filesize' ), formInt( 'maxAttachSize' ) );
         $def_tz_new = isset($_POST['def_tz_new']) && is_numeric($_POST['def_tz_new']) ? $_POST['def_tz_new'] : 0;
         $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : 0;
         $sigbbcodenew = formOnOff('sigbbcodenew');
