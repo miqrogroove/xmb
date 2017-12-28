@@ -199,12 +199,13 @@ function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconne
 error_reporting(E_ALL&~E_NOTICE);
 
 if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4) {
+    header("Content-type: text/html;charset=ISO-8859-1");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>XMB Installer</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1" />
     <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen"/>
 </head>
 <body>
@@ -1036,12 +1037,13 @@ Public License instead of this License.  But first, please read
 
             switch($_REQUEST['method']) {
                 case 1: // Show configuration on screen
+                    header("Content-type: text/html;charset=ISO-8859-1");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>XMB Installer</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen"/>
 </head>
@@ -1072,12 +1074,13 @@ Public License instead of this License.  But first, please read
                     break;
 
                 case 2:
+                    header("Content-type: text/html;charset=ISO-8859-1");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>XMB Installer</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen, projection" />
 </head>
@@ -1143,6 +1146,7 @@ Public License instead of this License.  But first, please read
             break;
 
         default:
+            header("Content-type: text/html;charset=ISO-8859-1");
             $scheme = 'http';
             if ( ! empty( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ) {
                 $scheme = 'https';
@@ -1154,7 +1158,7 @@ Public License instead of this License.  But first, please read
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
     <title>XMB Installer</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <link rel="stylesheet" href="../images/install/install.css" type="text/css" media="screen, projection" />
 </head>

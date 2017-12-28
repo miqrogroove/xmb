@@ -100,7 +100,7 @@ $vUsername = trim($frmUsername);
 $frmPassword = trim($frmPassword);
 $vEmail = trim($frmEmail);
 
-if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
+if ($vUsername == '' || $frmPassword == '' || $vEmail == '' || $vUsername == 'Anonymous' || $vUsername == 'xguest123' || strlen($vUsername) > 32) {
     show_result(X_INST_ERR);
     $errStr = 'The username, password or e-mail address cannot be blank or malformed. Please press back and try again.';
     error('Bad super administrator credentials', $errStr);
@@ -110,6 +110,16 @@ if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
 if ($frmPassword != $frmPasswordCfm) {
     show_result(X_INST_ERR);
     $errStr = 'The passwords do not match. Please press back and try again.';
+    error('Bad super administrator credentials', $errStr);
+    exit();
+}
+
+$nonprinting = '\\x00-\\x1F\\x7F-\\x9F\\xAD';
+$specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
+$sequences = '|  ';  //Phrases disallowed, each separated by '|'
+if ( $vUsername != preg_replace( "#[{$nonprinting}{$specials}]{$sequences}#", '', $vUsername ) ) {
+    show_result(X_INST_ERR);
+    $errStr = 'The username may not contain special characters. Please press back and try again.';
     error('Bad super administrator credentials', $errStr);
     exit();
 }
