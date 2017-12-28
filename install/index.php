@@ -18,13 +18,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  **/
 
 // Script Parameters
 define('X_VERSION', '1.9.11');
-define('X_VERSION_EXT', '1.9.11.13');
+define('X_VERSION_EXT', '1.9.11.15');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 define('COPY_YEAR', '2001-2017');

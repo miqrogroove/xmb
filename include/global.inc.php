@@ -5,7 +5,7 @@
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2017, The XMB Group
- * http://www.xmbforum2.com/
+ * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  **/
 
@@ -39,7 +39,7 @@ extract($_REQUEST, EXTR_SKIP);
 /**
  * Assert presence and scope of PHP superglobal variables.
  *
- * @since 1.9.11.14
+ * @since 1.9.11.15
  */
 function testSuperGlobals() {
     if (!is_array($_GET) or !is_array($_POST) or !is_array($_COOKIE) or !is_array($_SERVER) or !is_array($_FILES) or !is_array($_REQUEST)) {

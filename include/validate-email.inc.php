@@ -5,7 +5,7 @@
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2017, The XMB Group
- * http://www.xmbforum2.com/
+ * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  **/
 
@@ -29,12 +29,12 @@ if (!defined('IN_CODE')) {
 
 /**
  * EmailAddressValidator Class
- * http://code.google.com/p/php-email-address-validation/
+ * https://code.google.com/archive/p/php-email-address-validation/
  *
  * Retrieved 4 November 2008
  * Ported to PHP 4 for use with XMB
  *
- * @license http://www.opensource.org/licenses/bsd-license.php New BSD license
+ * @license https://opensource.org/licenses/bsd-license.php New BSD license
  * @version Revision 5 dated 15 July 2008
  */
 class EmailAddressValidator {
