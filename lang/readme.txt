@@ -14,7 +14,7 @@ Do use the new English.lang.php file because it is saved during the upgrade.
 
 The latest language translation files can be found at:
 
-http://www.xmbforum2.com/
+https://www.xmbforum2.com/
 
  or
 

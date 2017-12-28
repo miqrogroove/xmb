@@ -42,7 +42,7 @@ extract($_REQUEST, EXTR_SKIP);
  * @since 1.9.11.15
  */
 function testSuperGlobals() {
-    if (!is_array($_GET) or !is_array($_POST) or !is_array($_COOKIE) or !is_array($_SERVER) or !is_array($_FILES) or !is_array($_REQUEST)) {
+    if ( ! is_array( $_GET ) || ! is_array( $_POST ) || ! is_array( $_COOKIE ) || ! is_array( $_SERVER ) || ! is_array( $_FILES ) || ! is_array( $_REQUEST ) ) {
         header('HTTP/1.0 500 Internal Server Error');
         exit('XMB could not find the PHP Superglobals.  Please check PHP configuration.  Detected variables_order setting: ' . ini_get('variables_order'));
     }

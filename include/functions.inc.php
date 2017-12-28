@@ -2473,8 +2473,6 @@ function format_member_site($site) {
     return $url;
 }
 
-return;
-
 /**
  * Send email with default headers.
  *
@@ -2507,4 +2505,5 @@ function xmb_mail( $to, $subject, $message, $charset ) {
 
     return altMail( $to, $subject, $message, $headers, $params );
 }
+return;
 ?>
