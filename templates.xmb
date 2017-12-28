@@ -3790,7 +3790,7 @@ $captchasearchcheck
 
 |#*XMB TEMPLATE FILE*#|search_nextlink|#*XMB TEMPLATE*#|
 <tr class="mediumtxt" bgcolor="$altbg1">
-<td colspan="3" align="right"><a href="search.php?page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct&amp;searchsubmit=a">$lang[nextsearch]</a></td>
+<td colspan="2" align="right"><a href="search.php?page=$pagenum&amp;$ext&amp;filter_distinct=$filter_distinct&amp;searchsubmit=a">$lang[nextsearch]</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|search_results|#*XMB TEMPLATE*#|
@@ -3799,7 +3799,7 @@ $captchasearchcheck
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="3"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
 </tr>
 $nextlink
 $searchresults
@@ -3811,7 +3811,7 @@ $nextlink
 
 |#*XMB TEMPLATE FILE*#|search_results_none|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="$altbg2" colspan="3"><span class="mediumtxt">$lang[noresults]</span></td>
+<td bgcolor="$altbg2" colspan="2"><span class="mediumtxt">$lang[noresults]</span></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|search_results_row|#*XMB TEMPLATE*#|
