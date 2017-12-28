@@ -537,6 +537,9 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="8" />&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
         </tr>
         <?php
+        if ( ! ini_get( 'file_uploads' ) ) {
+            printsetting5($lang['status'], 'The file upload feature is disabled.  Please check the configuration of your PHP server.');
+        }
         $max_image_sizes = explode('x', $SETTINGS['max_image_size']);
         $max_thumb_sizes = explode('x', $SETTINGS['max_thumb_size']);
         for($i=0; $i<=4; $i++) {
