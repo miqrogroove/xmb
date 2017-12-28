@@ -581,8 +581,8 @@ switch($action) {
             } else {
                 $username = trim(postedVar('username', '', TRUE, FALSE));
                 $currtime = $onlinetime + (86400*30);
-                put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain);
-                put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain);
+                put_cookie("xmbuser", $username, $currtime, $cookiepath, $cookiedomain, $cookiesecure);
+                put_cookie("xmbpw", $password, $currtime, $cookiepath, $cookiedomain, $cookiesecure);
             }
             $memberpage = ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
 

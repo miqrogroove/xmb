@@ -2238,7 +2238,7 @@ function getOneForumPerm($forum, $bitfield) {
 }
 
 function handlePasswordDialog($fid) {
-    global $db, $full_url, $url, $cookiepath, $cookiedomain;  // function vars
+    global $db, $full_url, $url, $cookiepath, $cookiedomain, $cookiesecure;  // function vars
     global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
 
     $fid = intval($fid);
@@ -2247,7 +2247,7 @@ function handlePasswordDialog($fid) {
     $forum = getForum($fid);
     if (strlen($pwinput) != 0 And $forum !== FALSE) {
         if ($pwinput == $forum['password']) {
-            put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)), $cookiepath, $cookiedomain);
+            put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)), $cookiepath, $cookiedomain, $cookiesecure);
             $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
             redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
         } else {

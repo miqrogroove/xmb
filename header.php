@@ -408,13 +408,13 @@ if ($xmblvb > 0) {
     $thetime = $onlinetime; // no cookie at all, so this is your first visit
 }
 
-put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain); // lvb =
+put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain, $cookiesecure); // lva == now
+put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain, $cookiesecure); // lvb =
 
 $lastvisit = $thetime;
 
 if (isset($oldtopics)) {
-    put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain);
+    put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain, $cookiesecure);
 }
 
 
@@ -464,8 +464,8 @@ $pinput = postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c');
 if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
     // Delete cookies when authentication fails.
     if ($uinput != '') {
-        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
-        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
+        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
+        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
     }
 }
 unset($uinput, $pinput);

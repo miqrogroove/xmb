@@ -208,10 +208,10 @@ $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 $expire = $onlinetime + X_ONLINE_TIMER;
 if (!isset($oldtopics)) {
-    put_cookie('oldtopics', '|'.$lastPid.'|', $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
+    put_cookie('oldtopics', '|'.$lastPid.'|', $expire, $cookiepath, $cookiedomain, $cookiesecure, X_SET_HEADER);
 } else if (false === strpos($oldtopics, '|'.$lastPid.'|')) {
     $oldtopics .= $lastPid.'|';
-    put_cookie('oldtopics', $oldtopics, $expire, $cookiepath, $cookiedomain, null, X_SET_HEADER);
+    put_cookie('oldtopics', $oldtopics, $expire, $cookiepath, $cookiedomain, $cookiesecure, X_SET_HEADER);
 }
 
 $fid = $thread['fid'];

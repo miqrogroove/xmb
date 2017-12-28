@@ -133,12 +133,12 @@ switch($action) {
 
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
 
-        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain);
-        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain);
+        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
+        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
 
         foreach($_COOKIE as $key=>$val) {
             if (preg_match('#^fidpw([0-9]+)$#', $key)) {
-                put_cookie($key, '', 0, $cookiepath, $cookiedomain);
+                put_cookie($key, '', 0, $cookiepath, $cookiedomain, $cookiesecure);
             }
         }
 
