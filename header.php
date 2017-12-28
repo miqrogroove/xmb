@@ -416,7 +416,8 @@ put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $coo
 
 $lastvisit = $thetime;
 
-if (isset($oldtopics)) {
+$oldtopics = postedVar( 'oldtopics', null, false, false, false, 'c' );
+if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain, $cookiesecure);
 }
 

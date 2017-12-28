@@ -1038,7 +1038,8 @@ function forum($forum, $template, $index_subforums) {
         eval('$lastpostrow = "'.template($template.'_nolastpost').'";');
     }
 
-    if ($lastvisit < $dalast && (strpos($oldtopics, '|'.$lastPid.'|') === false)) {
+    $oT = strpos( $oldtopics, "|$lastPid|" );
+    if ( $lastvisit < $dalast && $oT === false ) {
         $folder = '<img src="'.$THEME['imgdir'].'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
     } else {
         $folder = '<img src="'.$THEME['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';

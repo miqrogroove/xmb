@@ -164,8 +164,6 @@ if ($threadcount == 0) {
             $thread['icon'] = '';
         }
 
-        $oldtopics = isset($oldtopics) ? $oldtopics : '';
-
         if ($thread['closed'] == 'yes') {
             $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
         } else {
@@ -175,10 +173,13 @@ if ($threadcount == 0) {
                 $folder = 'folder.gif';
             }
 
-            if (($oT = strpos($oldtopics, '|'.$lastPid.'|')) === false && $thread['replies'] >= $SETTINGS['hottopic'] && $lastvisit < $dalast) {
-                $folder = 'hot_red_folder.gif';
-            } else if ($lastvisit < $dalast && $oT === false) {
-                $folder = 'red_folder.gif';
+            $oT = strpos( $oldtopics, "|$lastPid|" );
+            if ( $lastvisit < $dalast && $oT === false ) {
+                if ($thread['replies'] >= $SETTINGS['hottopic']) {
+                    $folder = 'hot_red_folder.gif';
+                } else {
+                    $folder = 'red_folder.gif';
+                }
             }
 
             if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (count($threadsInFid) > 0) && in_array($thread['tid'], $threadsInFid)) {
