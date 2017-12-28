@@ -18,3 +18,4 @@ Disallow: /search.php?
 Disallow: /today.php?daysold=
 Disallow: /u2u
 Disallow: /viewthread.php?fid=
+Disallow: /viewthread*goto=search
