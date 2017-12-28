@@ -752,8 +752,7 @@ switch($action) {
                  FROM ".X_PREFIX."posts
                  WHERE author='$member' AND fid IN ($fids)
                  GROUP BY fid
-                 HAVING COUNT(*) > 0
-                 ORDER BY COUNT(*) DESC
+                 ORDER BY posts DESC
                  LIMIT 1"
             );
             $found = ($db->num_rows($query) == 1);
