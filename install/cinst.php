@@ -97,12 +97,20 @@ $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, true);
 
 show_act("Checking Super Administrator Account");
 $vUsername = trim($frmUsername);
+$iUsername = strtolower($vUsername);
 $frmPassword = trim($frmPassword);
 $vEmail = trim($frmEmail);
 
-if ($vUsername == '' || $frmPassword == '' || $vEmail == '' || $vUsername == 'Anonymous' || $vUsername == 'xguest123' || strlen($vUsername) > 32) {
+if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
     show_result(X_INST_ERR);
     $errStr = 'The username, password or e-mail address cannot be blank or malformed. Please press back and try again.';
+    error('Bad super administrator credentials', $errStr);
+    exit();
+}
+
+if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername) > 32) {
+    show_result(X_INST_ERR);
+    $errStr = 'The username you provided is not valid for XMB. Please press back and create a different username.';
     error('Bad super administrator credentials', $errStr);
     exit();
 }
