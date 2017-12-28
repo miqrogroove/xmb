@@ -75,6 +75,11 @@ function avatarCheck(input, max_size) {
             avatarCheck.innerHTML = "Valid Image";
         }
     }
+    image.onerror = function() {
+        isValid.value = "no";
+        avatarCheck.style.color = "#ff0000";
+        avatarCheck.innerHTML = "Invalid: Image Not Found";
+    }
     if (imgRegex.test(input.value)) {
         avatarCheck.innerHTML = "Checking URL...";
         image.src = input.value;
