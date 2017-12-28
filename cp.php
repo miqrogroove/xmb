@@ -2296,13 +2296,13 @@ if ($action == "search") {
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr class="category">
-        <td colspan=2><strong><font color="<?php echo $cattext?>"><?php echo $lang['insertdata']?>:</font></strong></td>
+        <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['insertdata']?>:</font></strong></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td valign="top"><div align="center"><br />
-        <?php echo $lang['userip']?><br /><input type="text" name="userip" /></input><br /><br />
-        <?php echo $lang['postip']?><br /><input type="text" name="postip" /></input><br /><br />
-        <?php echo $lang['profileword']?><br /><input type="text" name="profileword" /></input><br /><br />
+        <?php echo $lang['userip']?><br /><input type="text" name="userip" /><br /><br />
+        <?php echo $lang['postip']?><br /><input type="text" name="postip" /><br /><br />
+        <?php echo $lang['profileword']?><br /><input type="text" name="profileword" /><br /><br />
         <?php echo $lang['postword']?><br />
         <?php
         $query = $db->query("SELECT find FROM ".X_PREFIX."words");
@@ -2315,6 +2315,7 @@ if ($action == "search") {
         ?>
         <br />
         <br />
+        </div>
         <div align="center"><br /><input type="submit" class="submit" name="searchsubmit" value="<?php echo $lang['cpsearch']; ?>" /><br /><br /></div>
         </td>
         </tr>

@@ -191,10 +191,10 @@ function displayAdminPanel() {
     <td bgcolor="<?php echo $THEME['bordercolor']?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
     <tr class="category">
-    <td colspan="30" align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcp']?></font></strong></td>
+    <td align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcp']?></font></strong></td>
     </tr>
     <tr bgcolor="<?php echo $THEME['altbg1']?>" class="ctrtablerow">
-    <td colspan="30">
+    <td>
     <br />
     <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
     <tr>
@@ -274,6 +274,8 @@ function displayAdminPanel() {
     </tr>
     </table>
     <br />
+    </td>
+    </tr>
     <?php
 }
 
