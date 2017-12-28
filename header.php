@@ -268,6 +268,9 @@ if (empty($full_url)) {
     } elseif (0 == strlen($url)) {
         header('HTTP/1.0 500 Internal Server Error');
         exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
+    } elseif ( $cookiesecure && $_SERVER['HTTPS'] !== 'on' ) {
+        header('HTTP/1.0 404 Not Found');
+        exit('XMB is configured for HTTPS access only.  Set DEBUG to TRUE in config.php to see diagnostic details.');
     }
     unset($array);
 }
