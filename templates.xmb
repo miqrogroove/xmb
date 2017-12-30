@@ -1499,7 +1499,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage_admin|#*XMB TEMPLATE*#|
 <tr class="tablerow" bgcolor="$altbg2">
-<td colspan="11" class="multi">&nbsp;$multipage</td>
+<td colspan="10" class="multi">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newpoll|#*XMB TEMPLATE*#|
