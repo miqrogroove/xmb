@@ -1017,7 +1017,7 @@ function forum($forum, $template, $index_subforums) {
     $forum['name'] = fnameOut($forum['name']);
     $forum['description'] = html_entity_decode($forum['description']);
 
-    if (isset($forum['moderator']) && $forum['lastpost'] != '') {
+    if ( ! empty( $forum['lastpost'] ) ) {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
         if ($lastpost[1] != 'Anonymous' && $lastpost[1] != '') {
@@ -1034,6 +1034,7 @@ function forum($forum, $template, $index_subforums) {
         eval('$lastpostrow = "'.template($template.'_lastpost').'";');
     } else {
         $dalast = 0;
+        $lastPid = 0;
         $lastpost = $lang['textnever'];
         eval('$lastpostrow = "'.template($template.'_nolastpost').'";');
     }
@@ -1051,7 +1052,7 @@ function forum($forum, $template, $index_subforums) {
 
     $foruminfo = '';
 
-    if (isset($forum['moderator']) && $forum['moderator'] != '') {
+    if ( ! empty( $forum['moderator'] ) ) {
         $moderators = explode(', ', $forum['moderator']);
         $forum['moderator'] = array();
         for($num = 0; $num < count($moderators); $num++) {
