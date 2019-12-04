@@ -35,7 +35,7 @@ function xmb_upgrade() {
 
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
-        $db->query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+        upgrade_query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
         show_warning('Your forums were turned off by the upgrader to prevent damage.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
         trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
     }
@@ -81,10 +81,10 @@ function xmb_upgrade() {
     $templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
 
     show_progress('Resetting the templates table');
-    $db->query('TRUNCATE TABLE '.X_PREFIX.'templates');
+    upgrade_query('TRUNCATE TABLE '.X_PREFIX.'templates');
 
     show_progress('Requesting to lock the templates table');
-    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
     show_progress('Saving the new templates');
     $values = array();
@@ -102,26 +102,26 @@ function xmb_upgrade() {
     unset($templates);
     if (count($values) > 0) {
         $values = implode(', ', $values);
-        $db->query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
+        upgrade_query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
     }
     unset($values);
-    $db->query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
+    upgrade_query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
 
     show_progress('Releasing the lock on the templates table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Deleting the templates.xmb file');
     unlink(ROOT.'templates.xmb');
 
 
     show_progress('Checking for new themes');
-    $query = $db->query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
+    $query = upgrade_query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
     if ($db->num_rows($query) == 0 and is_dir(ROOT.'images/davis')) {
         show_progress('Adding Davis as the new default theme');
-        $db->query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+        upgrade_query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                           ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
         $newTheme = $db->insert_id();
-        $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
+        upgrade_query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
     }
     $db->free_result($query);
 }
@@ -174,14 +174,14 @@ function upgrade_schema_to_v0() {
     show_progress('Beginning schema upgrade from legacy version');
 
     show_progress('Requesting to lock the banned table');
-    $db->query('LOCK TABLES '.X_PREFIX."banned WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."banned WRITE");
 
     show_progress('Gathering schema information from the banned table');
     $sql = array();
     $table = 'banned';
     $colname = 'id';
     $coltype = "smallint(6) NOT NULL AUTO_INCREMENT";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Extra']) != 'auto_increment') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -191,7 +191,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'dateline' => "int(10) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'bigint(30)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -213,11 +213,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the banned table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the buddys table');
-    $db->query('LOCK TABLES '.X_PREFIX."buddys WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."buddys WRITE");
 
     show_progress('Gathering schema information from the buddys table');
     $sql = array();
@@ -226,7 +226,7 @@ function upgrade_schema_to_v0() {
     'username' => "varchar(32) NOT NULL default ''",
     'buddyname' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -248,11 +248,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the buddys table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the favorites table');
-    $db->query('LOCK TABLES '.X_PREFIX."favorites WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."favorites WRITE");
 
     show_progress('Gathering schema information from the favorites table');
     $sql = array();
@@ -260,7 +260,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'tid' => "int(10) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'smallint(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -271,7 +271,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'username' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -282,7 +282,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'type' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(20)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -301,11 +301,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the favorites table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the themes table');
-    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."themes WRITE");
 
     show_progress('Gathering schema information from the themes table');
     $sql = array();
@@ -318,7 +318,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'themeid' => "smallint(3) NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -328,7 +328,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'name' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -339,7 +339,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'boardimg' => "varchar(128) default NULL");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(50)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -350,7 +350,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'dummy');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -373,11 +373,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the themes table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the forums table');
-    $db->query('LOCK TABLES '.
+    upgrade_query('LOCK TABLES '.
         X_PREFIX.'forums WRITE, '.
         X_PREFIX.'themes READ');
 
@@ -391,7 +391,7 @@ function upgrade_schema_to_v0() {
     'pollstatus',
     'guestposting');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         } else {
@@ -404,7 +404,7 @@ function upgrade_schema_to_v0() {
 
         // Verify new schema is not coexisting with the old one.  Results would be unpredictable.
         $colname = 'postperm';
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(11)') {
             show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
@@ -412,7 +412,7 @@ function upgrade_schema_to_v0() {
         }
 
         show_progress('Making room for the new values in the postperm column');
-        $db->query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
+        upgrade_query('ALTER TABLE '.X_PREFIX."forums MODIFY COLUMN postperm VARCHAR(11) NOT NULL DEFAULT '0,0,0,0'");
 
         show_progress('Restructuring the forum permissions data');
         fixPostPerm();   // 1.8 => 1.9.1
@@ -421,14 +421,14 @@ function upgrade_schema_to_v0() {
         // Drop columns now so that any errors later on wont leave both sets of permissions.
         show_progress('Deleting the old permissions data');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
         $sql = array();
 
     } else {
 
         // Verify new schema is not missing.  Results would be unpredictable.
         $colname = 'postperm';
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) != 'varchar(11)') {
             show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
@@ -441,7 +441,7 @@ function upgrade_schema_to_v0() {
     'mt_open',
     'mt_close');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -452,7 +452,7 @@ function upgrade_schema_to_v0() {
     'lastpost' => "varchar(54) NOT NULL default ''",
     'password' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -463,14 +463,14 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'theme' => "smallint(3) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
             $sql2 = "UPDATE ".X_PREFIX."$table "
                   . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
                   . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 0)";
-            $db->query($sql2);
+            upgrade_query($sql2);
 
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
@@ -479,7 +479,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'name';
     $coltype = "varchar(128) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -489,7 +489,7 @@ function upgrade_schema_to_v0() {
     'posts' => "int(10) NOT NULL default 0",
     'threads' => "int(10) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'int(100)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -511,11 +511,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Deleting/Modifying columns in the forums table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the settings table');
-    $db->query('LOCK TABLES '.
+    upgrade_query('LOCK TABLES '.
         X_PREFIX.'settings WRITE, '.
         X_PREFIX.'themes READ');
 
@@ -596,7 +596,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'adminemail';
     $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -606,7 +606,7 @@ function upgrade_schema_to_v0() {
     'langfile' => "varchar(34) NOT NULL default 'English'",
     'bbname' => "varchar(32) NOT NULL default 'Your Forums'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(50)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -617,14 +617,14 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'theme' => "smallint(3) NOT NULL default 1");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(30)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
             $sql2 = "UPDATE ".X_PREFIX."$table "
                   . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
                   . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 1)";
-            $db->query($sql2);
+            upgrade_query($sql2);
 
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
@@ -634,7 +634,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'dateformat' => "varchar(10) NOT NULL default 'dd-mm-yyyy'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(20)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -645,11 +645,11 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'tickerdelay' => "int(6) NOT NULL default 4000");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'char(10)') {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-            $db->query("UPDATE ".X_PREFIX."$table SET $colname = '4000' WHERE $colname = '' OR $colname IS NULL");
+            upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '4000' WHERE $colname = '' OR $colname IS NULL");
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -661,7 +661,7 @@ function upgrade_schema_to_v0() {
     'authorstatus' => "char(3) NOT NULL default 'on'",
     'tickercontents' => "text NOT NULL");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Null']) == 'yes') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -672,11 +672,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting/Modifying columns in the settings table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the members table');
-    $db->query('LOCK TABLES '.
+    upgrade_query('LOCK TABLES '.
         X_PREFIX.'members WRITE, '.
         X_PREFIX.'themes READ');
 
@@ -689,7 +689,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'webcam');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -698,7 +698,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'uid';
     $coltype = "int(12) NOT NULL auto_increment";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -706,7 +706,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'username';
     $coltype = "varchar(32) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(25)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -714,7 +714,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'password';
     $coltype = "varchar(32) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -722,7 +722,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'regdate';
     $coltype = "int(10) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'bigint(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -730,7 +730,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'postnum';
     $coltype = "MEDIUMINT NOT NULL DEFAULT 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'int(10)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -738,7 +738,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'timeoffset';
     $coltype = "DECIMAL(4,2) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'int(5)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -746,7 +746,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'avatar';
     $coltype = "varchar(120) default NULL";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(90)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -754,21 +754,21 @@ function upgrade_schema_to_v0() {
 
     $colname = 'theme';
     $coltype = "smallint(3) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
         $sql2 = "UPDATE ".X_PREFIX."$table "
               . "LEFT JOIN ".X_PREFIX."themes ON ".X_PREFIX."$table.$colname = ".X_PREFIX."themes.name "
               . "SET ".X_PREFIX."$table.$colname = IFNULL(".X_PREFIX."themes.themeid, 0)";
-        $db->query($sql2);
+        upgrade_query($sql2);
 
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'regip';
     $coltype = "varchar(15) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -776,17 +776,17 @@ function upgrade_schema_to_v0() {
 
     $colname = 'lastvisit';
     $coltype = "bigint(15) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Type']) == 'bigint(30)' or strtolower($row['Null']) == 'yes') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'mood';
     $coltype = "varchar(128) NOT NULL default 'Not Set'";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(15)' or strtolower($row['Type']) == 'varchar(32)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -794,7 +794,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'pwdate';
     $coltype = "int(10) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'bigint(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -808,7 +808,7 @@ function upgrade_schema_to_v0() {
     'bio' => "text NOT NULL",
     'ignoreu2u' => "text NOT NULL");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Null']) == 'yes') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -818,7 +818,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'bday' => "varchar(10) NOT NULL default '0000-00-00'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Null']) == 'yes' or strtolower($row['Type']) == 'varchar(50)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -833,7 +833,7 @@ function upgrade_schema_to_v0() {
     'emailonu2u' => "char(3) NOT NULL default ''",
     'useoldu2u' => "char(3) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -867,19 +867,19 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Deleting/Adding/Modifying columns in the members table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     // Mimic old function fixPPP()
     show_progress('Fixing missing posts per page values');
-    $db->query("UPDATE ".X_PREFIX."members SET ppp={$SETTINGS['postperpage']} WHERE ppp=0");
-    $db->query("UPDATE ".X_PREFIX."members SET tpp={$SETTINGS['topicperpage']} WHERE tpp=0");
+    upgrade_query("UPDATE ".X_PREFIX."members SET ppp={$SETTINGS['postperpage']} WHERE ppp=0");
+    upgrade_query("UPDATE ".X_PREFIX."members SET tpp={$SETTINGS['topicperpage']} WHERE tpp=0");
 
     show_progress('Updating outgoing U2U status');
-	$db->query("UPDATE ".X_PREFIX."members SET saveogu2u='yes'");
+	upgrade_query("UPDATE ".X_PREFIX."members SET saveogu2u='yes'");
 
     show_progress('Releasing the lock on the members table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Adding new tables for polls');
     xmb_schema_table('create', 'vote_desc');
@@ -887,7 +887,7 @@ function upgrade_schema_to_v0() {
     xmb_schema_table('create', 'vote_voters');
 
     show_progress('Requesting to lock the polls tables');
-    $db->query('LOCK TABLES '.
+    upgrade_query('LOCK TABLES '.
         X_PREFIX.'threads WRITE, '.
         X_PREFIX.'vote_desc WRITE, '.
         X_PREFIX.'vote_results WRITE, '.
@@ -902,7 +902,7 @@ function upgrade_schema_to_v0() {
     $table = 'threads';
     $colname = 'subject';
     $coltype = "varchar(128) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -910,7 +910,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'views';
     $coltype = "bigint(32) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'smallint(4)' or strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -918,7 +918,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'replies';
     $coltype = "int(10) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'smallint(5)' or strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -926,7 +926,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'lastpost';
     $coltype = "varchar(54) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -934,17 +934,17 @@ function upgrade_schema_to_v0() {
 
     $colname = 'pollopts';
     $coltype = "tinyint(1) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'text') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
-        $db->query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'author';
     $coltype = "varchar(32) NOT NULL default ''";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -952,7 +952,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'topped';
     $coltype = "tinyint(1) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'smallint(6)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -987,11 +987,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the threads table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the attachments table');
-    $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
     show_progress('Gathering schema information from the attachments table');
     $sql = array();
@@ -1001,7 +1001,7 @@ function upgrade_schema_to_v0() {
     'pid' => "int(10) NOT NULL default 0",
     'downloads' => "int(10) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'smallint(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1019,7 +1019,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'filesize' => "varchar(120) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
             $filesize_was_missing = TRUE;
@@ -1030,15 +1030,15 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the attachments table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     if ($filesize_was_missing) {
-        $db->query('UPDATE '.X_PREFIX.$table.' SET filesize = LENGTH(attachment)');
+        upgrade_query('UPDATE '.X_PREFIX.$table.' SET filesize = LENGTH(attachment)');
     }
 
     show_progress('Requesting to lock the posts table');
-    $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."posts WRITE");
 
     show_progress('Gathering schema information from the posts table');
     $sql = array();
@@ -1046,7 +1046,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'tid' => "int(10) NOT NULL default '0'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'smallint(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1058,7 +1058,7 @@ function upgrade_schema_to_v0() {
     'author' => "varchar(32) NOT NULL default ''",
     'useip' => "varchar(15) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1068,7 +1068,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'subject';
     $coltype = "tinytext NOT NULL";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1076,7 +1076,7 @@ function upgrade_schema_to_v0() {
 
     $colname = 'dateline';
     $coltype = "int(10) NOT NULL default 0";
-    $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'bigint(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1106,11 +1106,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the posts table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the ranks table');
-    $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."ranks WRITE");
 
     show_progress('Gathering schema information from the ranks table');
     $sql = array();
@@ -1118,7 +1118,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'title' => "varchar(100) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1130,7 +1130,7 @@ function upgrade_schema_to_v0() {
     'posts' => "MEDIUMINT DEFAULT 0",
     'id' => "smallint(5) NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'smallint(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1149,35 +1149,35 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the ranks table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Fixing special ranks');
-    $db->query("DELETE FROM ".X_PREFIX."ranks WHERE title IN ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
-    $db->query("INSERT INTO ".X_PREFIX."ranks
+    upgrade_query("DELETE FROM ".X_PREFIX."ranks WHERE title IN ('Moderator', 'Super Moderator', 'Administrator', 'Super Administrator')");
+    upgrade_query("INSERT INTO ".X_PREFIX."ranks
      (title,                 posts, stars, allowavatars, avatarrank) VALUES
      ('Moderator',           -1,    6,     'yes',  ''),
      ('Super Moderator',     -1,    7,     'yes',  ''),
      ('Administrator',       -1,    8,     'yes',  ''),
      ('Super Administrator', -1,    9,     'yes',  '')"
     );
-    $result = $db->query("SELECT title FROM ".X_PREFIX."ranks WHERE posts = 0");
+    $result = upgrade_query("SELECT title FROM ".X_PREFIX."ranks WHERE posts = 0");
     if ($db->num_rows($result) == 0) {
-        $result2 = $db->query("SELECT title FROM ".X_PREFIX."ranks WHERE title = 'Newbie'");
+        $result2 = upgrade_query("SELECT title FROM ".X_PREFIX."ranks WHERE title = 'Newbie'");
         if ($db->num_rows($result2) == 0) {
-            $db->query("INSERT INTO ".X_PREFIX."ranks
+            upgrade_query("INSERT INTO ".X_PREFIX."ranks
              (title,    posts, stars, allowavatars, avatarrank) VALUES
              ('Newbie', 0,     1,     'yes',  '')"
             );
         } else {
-            $db->query("UPDATE ".X_PREFIX."ranks SET posts = 0 WHERE title = 'Newbie'");
+            upgrade_query("UPDATE ".X_PREFIX."ranks SET posts = 0 WHERE title = 'Newbie'");
         }
         $db->free_result($result2);
     }
     $db->free_result($result);
 
     show_progress('Requesting to lock the templates table');
-    $db->query('LOCK TABLES '.X_PREFIX."templates WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."templates WRITE");
 
     show_progress('Gathering schema information from the templates table');
     $sql = array();
@@ -1185,7 +1185,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'name' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1204,11 +1204,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the templates table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the u2u table');
-    $db->query('LOCK TABLES '.X_PREFIX."u2u WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."u2u WRITE");
 
     $upgrade_u2u = FALSE;
 
@@ -1218,7 +1218,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'u2uid' => "bigint(10) NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1231,7 +1231,7 @@ function upgrade_schema_to_v0() {
     'msgfrom' => "varchar(32) NOT NULL default ''",
     'folder' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(40)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1242,7 +1242,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'dateline' => "int(10) NOT NULL default 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'bigint(30)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1253,7 +1253,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'subject' => "varchar(64) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(75)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1266,7 +1266,7 @@ function upgrade_schema_to_v0() {
     'owner' => "varchar(32) NOT NULL default ''",
     'sentstatus' => "set('yes','no') NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
             $upgrade_u2u = TRUE;
@@ -1279,29 +1279,29 @@ function upgrade_schema_to_v0() {
         if (count($sql) > 0) {
             show_progress('Modifying columns in the u2u table');
             $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-            $db->query($sql);
+            upgrade_query($sql);
         }
 
         $sql = array();
 
         // Mimic old function upgradeU2U() but with fewer queries
         show_progress('Upgrading U2Us');
-        $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgto WHERE folder='inbox'");
-        $db->query("UPDATE ".X_PREFIX."$table SET type='outgoing', owner=msgfrom WHERE folder='outbox'");
-        $db->query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgfrom WHERE folder != 'outbox' AND folder != 'inbox'");
-        $db->query("UPDATE ".X_PREFIX."$table SET readstatus='no' WHERE readstatus=''");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgto WHERE folder='inbox'");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET type='outgoing', owner=msgfrom WHERE folder='outbox'");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET type='incoming', owner=msgfrom WHERE folder != 'outbox' AND folder != 'inbox'");
+        upgrade_query("UPDATE ".X_PREFIX."$table SET readstatus='no' WHERE readstatus=''");
 
         $colname = 'new';
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
-            $db->query("UPDATE ".X_PREFIX."$table SET sentstatus='yes' WHERE new=''");
+            upgrade_query("UPDATE ".X_PREFIX."$table SET sentstatus='yes' WHERE new=''");
         }
     }
 
     $columns = array(
     'readstatus' => "set('yes','no') NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(3)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1312,7 +1312,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'new');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -1344,11 +1344,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the u2u table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the words table');
-    $db->query('LOCK TABLES '.X_PREFIX."words WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."words WRITE");
 
     show_progress('Gathering schema information from the words table');
     $sql = array();
@@ -1364,11 +1364,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Adding indexes in the words table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the restricted table');
-    $db->query('LOCK TABLES '.X_PREFIX."restricted WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."restricted WRITE");
 
     show_progress('Gathering schema information from the restricted table');
     $sql = array();
@@ -1376,7 +1376,7 @@ function upgrade_schema_to_v0() {
     $columns = array(
     'name' => "varchar(32) NOT NULL default ''");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(25)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -1388,7 +1388,7 @@ function upgrade_schema_to_v0() {
     'case_sensitivity' => "ENUM('0', '1') DEFAULT '1' NOT NULL",
     'partial' => "ENUM('0', '1') DEFAULT '1' NOT NULL");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -1398,11 +1398,11 @@ function upgrade_schema_to_v0() {
     if (count($sql) > 0) {
         show_progress('Modifying columns in the restricted table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Releasing the lock on the restricted table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Adding new tables');
     xmb_schema_table('create', 'captchaimages');
@@ -1424,7 +1424,7 @@ function upgrade_schema_to_v2() {
     show_progress('Beginning schema upgrade to version number 2');
 
     show_progress('Requesting to lock the settings table');
-    $db->query('LOCK TABLES '.X_PREFIX."settings WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."settings WRITE");
 
     show_progress('Gathering schema information from the settings table');
     $sql = array();
@@ -1432,7 +1432,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'boardurl');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -1460,11 +1460,11 @@ function upgrade_schema_to_v2() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting columns in the settings table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the attachments table');
-    $db->query('LOCK TABLES '.X_PREFIX."attachments WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."attachments WRITE");
 
     show_progress('Gathering schema information from the attachments table');
     $sql = array();
@@ -1472,7 +1472,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'tid');
     foreach($columns as $colname) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
@@ -1485,7 +1485,7 @@ function upgrade_schema_to_v2() {
     'uid' => "INT NOT NULL DEFAULT '0'",
     'updatetime' => "TIMESTAMP NOT NULL default current_timestamp");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -1504,11 +1504,11 @@ function upgrade_schema_to_v2() {
         show_progress('Adding/Deleting columns in the attachments table');
         // Important to do this all in one step because MySQL copies the entire table after every ALTER command.
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the members table');
-    $db->query('LOCK TABLES '.X_PREFIX."members WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."members WRITE");
 
     show_progress('Gathering schema information from the members table');
     $sql = array();
@@ -1516,7 +1516,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'u2ualert' => "TINYINT NOT NULL DEFAULT '0'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -1525,7 +1525,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'postnum' => "postnum MEDIUMINT NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'CHANGE '.$colname.' '.$coltype;
         }
@@ -1535,11 +1535,11 @@ function upgrade_schema_to_v2() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting columns in the members table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the ranks table');
-    $db->query('LOCK TABLES '.X_PREFIX."ranks WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."ranks WRITE");
 
     show_progress('Gathering schema information from the ranks table');
     $sql = array();
@@ -1547,7 +1547,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'posts' => "posts MEDIUMINT DEFAULT 0");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'CHANGE '.$colname.' '.$coltype;
         }
@@ -1557,11 +1557,11 @@ function upgrade_schema_to_v2() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting columns in the ranks table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the themes table');
-    $db->query('LOCK TABLES '.X_PREFIX."themes WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."themes WRITE");
 
     show_progress('Gathering schema information from the themes table');
     $sql = array();
@@ -1569,7 +1569,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'admdir' => "VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin'");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -1579,11 +1579,11 @@ function upgrade_schema_to_v2() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting columns in the themes table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the vote_desc table');
-    $db->query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
 
     show_progress('Gathering schema information from the vote_desc table');
     $sql = array();
@@ -1591,7 +1591,7 @@ function upgrade_schema_to_v2() {
     $columns = array(
     'topic_id' => "topic_id INT UNSIGNED NOT NULL");
     foreach($columns as $colname => $coltype) {
-        $query = $db->query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 1) {
             $sql[] = 'CHANGE '.$colname.' '.$coltype;
         }
@@ -1601,11 +1601,11 @@ function upgrade_schema_to_v2() {
     if (count($sql) > 0) {
         show_progress('Adding/Deleting columns in the vote_desc table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Releasing the lock on the vote_desc table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Adding new tables');
     xmb_schema_table('create', 'lang_base');
@@ -1613,7 +1613,7 @@ function upgrade_schema_to_v2() {
     xmb_schema_table('create', 'lang_text');
 
     show_progress('Resetting the schema version number');
-    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
+    upgrade_query("UPDATE ".X_PREFIX."settings SET schema_version = 2");
 }
 
 /**
@@ -1629,7 +1629,7 @@ function upgrade_schema_to_v3() {
     show_progress('Beginning schema upgrade to version number 3');
 
     show_progress('Requesting to lock the logs table');
-    $db->query('LOCK TABLES '.X_PREFIX."logs WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."logs WRITE");
 
     show_progress('Gathering schema information from the logs table');
     $sql = array();
@@ -1646,14 +1646,14 @@ function upgrade_schema_to_v3() {
     if (count($sql) > 0) {
         show_progress('Adding indexes to the logs table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Releasing the lock on the logs table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Resetting the schema version number');
-    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
+    upgrade_query("UPDATE ".X_PREFIX."settings SET schema_version = 3");
 }
 
 /**
@@ -1667,7 +1667,7 @@ function upgrade_schema_to_v4() {
     show_progress('Beginning schema upgrade to version number 4');
 
     show_progress('Requesting to lock the threads table');
-    $db->query('LOCK TABLES '.X_PREFIX."threads WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."threads WRITE");
 
     show_progress('Gathering schema information from the threads table');
     $sql = array();
@@ -1690,11 +1690,11 @@ function upgrade_schema_to_v4() {
     if (count($sql) > 0) {
         show_progress('Deleting/Adding indexes to the threads table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Requesting to lock the posts table');
-    $db->query('LOCK TABLES '.X_PREFIX."posts WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX."posts WRITE");
 
     show_progress('Gathering schema information from the posts table');
     $sql = array();
@@ -1717,14 +1717,14 @@ function upgrade_schema_to_v4() {
     if (count($sql) > 0) {
         show_progress('Deleting/Adding indexes to the posts table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
-        $db->query($sql);
+        upgrade_query($sql);
     }
 
     show_progress('Releasing the lock on the posts table');
-    $db->query('UNLOCK TABLES');
+    upgrade_query('UNLOCK TABLES');
 
     show_progress('Resetting the schema version number');
-    $db->query("UPDATE ".X_PREFIX."settings SET schema_version = 4");
+    upgrade_query("UPDATE ".X_PREFIX."settings SET schema_version = 4");
 }
 
 /**
@@ -1757,7 +1757,7 @@ function fixForumPerms() {
     ***/
 
     // store
-    $q = $db->query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
+    $q = upgrade_query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
     while($forum = $db->fetch_array($q)) {
         // check if we need to change it first
         $parts = explode('|', $forum['postperm']);
@@ -1818,7 +1818,7 @@ function fixForumPerms() {
             $newFormat[0] = 0;
         }
 
-        $db->query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $newFormat)."' WHERE fid=$fid");
+        upgrade_query("UPDATE ".X_PREFIX."forums SET postperm='".implode(',', $newFormat)."' WHERE fid=$fid");
     }
 }
 
@@ -1830,20 +1830,20 @@ function fixForumPerms() {
 function fixPolls() {
     global $db;
 
-    $q = $db->query("SHOW COLUMNS FROM ".X_PREFIX."threads LIKE 'pollopts'");
+    $q = upgrade_query("SHOW COLUMNS FROM ".X_PREFIX."threads LIKE 'pollopts'");
     $result = $db->fetch_array($q);
     $db->free_result($q);
 
     if (FALSE === $result) return; // Unexpected condition, do not attempt to use fixPolls().
     if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
 
-    $q = $db->query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != '' AND pollopts != '1'");
+    $q = upgrade_query("SELECT tid, subject, pollopts FROM ".X_PREFIX."threads WHERE pollopts != '' AND pollopts != '1'");
     while($thread = $db->fetch_array($q)) {
         // Poll titles are historically unslashed, but thread titles are double-slashed.
         $thread['subject'] = stripslashes($thread['subject']);
         $db->escape_fast($thread['subject']);
 
-        $db->query("INSERT INTO ".X_PREFIX."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
+        upgrade_query("INSERT INTO ".X_PREFIX."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
         $poll_id = $db->insert_id();
 
         $options = explode("#|#", $thread['pollopts']);
@@ -1861,14 +1861,14 @@ function fixPolls() {
                 $name[] = $db->escape(trim($v));
             }
             $name = "'".implode("', '", $name)."'";
-            $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE username IN ($name)");
+            $query = upgrade_query("SELECT uid FROM ".X_PREFIX."members WHERE username IN ($name)");
             $values = array();
             while($u = $db->fetch_array($query)) {
                 $values[] = "($poll_id, {$u['uid']})";
             }
             $db->free_result($query);
             if (count($values) > 0) {
-                $db->query("INSERT INTO ".X_PREFIX."vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
+                upgrade_query("INSERT INTO ".X_PREFIX."vote_voters (`vote_id`, `vote_user_id`) VALUES ".implode(',', $values));
             }
         }
 
@@ -1879,10 +1879,10 @@ function fixPolls() {
             $num_votes = (int) trim($bit[1]);
             $values[] = "($poll_id, ".($i+1).", '$option_name', $num_votes)";
         }
-        $db->query("INSERT INTO ".X_PREFIX."vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES ".implode(',', $values));
+        upgrade_query("INSERT INTO ".X_PREFIX."vote_results (`vote_id`, `vote_option_id`, `vote_option_text`, `vote_result`) VALUES ".implode(',', $values));
     }
     $db->free_result($q);
-    $db->query("UPDATE ".X_PREFIX."threads SET pollopts='1' WHERE pollopts != ''");
+    upgrade_query("UPDATE ".X_PREFIX."threads SET pollopts='1' WHERE pollopts != ''");
 }
 
 /**
@@ -1904,7 +1904,7 @@ function fixBirthdays() {
     $baselang = $lang;
     $cachedLanguages['English'] = $lang;
 
-    $q = $db->query("SELECT uid, bday, langfile FROM ".X_PREFIX."members WHERE bday != ''");
+    $q = upgrade_query("SELECT uid, bday, langfile FROM ".X_PREFIX."members WHERE bday != ''");
     while($m = $db->fetch_array($q)) {
         $uid = $m['uid'];
 
@@ -1924,7 +1924,7 @@ function fixBirthdays() {
                 if (isset($cachedLanguages[$test])) {
                     $m['langfile'] = $test;
                 } elseif (file_exists(ROOT.'lang/'.$test.'.lang.php')) {
-                    $db->query("UPDATE ".X_PREFIX."members SET langfile='$test' WHERE langfile = '{$m['langfile']}'");
+                    upgrade_query("UPDATE ".X_PREFIX."members SET langfile='$test' WHERE langfile = '{$m['langfile']}'");
                     $m['langfile'] = $test;
                 } else {
                     show_error('A needed file is missing for date translation: '.ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
@@ -1955,13 +1955,13 @@ function fixBirthdays() {
             $month = $monthList[$parts[0]];
             $day = substr($parts[1], 0, -1); // cut off trailing comma
             $year = $parts[2];
-            $db->query("UPDATE ".X_PREFIX."members SET bday='".iso8601_date($year, $month, $day)."' WHERE uid=$uid");
+            upgrade_query("UPDATE ".X_PREFIX."members SET bday='".iso8601_date($year, $month, $day)."' WHERE uid=$uid");
         } else {
-            $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
+            upgrade_query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE uid=$uid");
         }
     }
 	$db->free_result($q);
-    $db->query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE bday=''");
+    upgrade_query("UPDATE ".X_PREFIX."members SET bday='0000-00-00' WHERE bday=''");
 }
 
 /**
@@ -1972,7 +1972,7 @@ function fixBirthdays() {
 function fixPostPerm() {
     global $db;
 
-	$query = $db->query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
+	$query = upgrade_query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
 	while ( $forum = $db->fetch_array($query) ) {
 		$update = false;
 		$pp = trim($forum['postperm']);
@@ -1989,9 +1989,35 @@ function fixPostPerm() {
 			$update = true;
 		}
 		if ( $update ) {
-			$db->query("UPDATE ".X_PREFIX."forums SET postperm='{$forum['postperm']}', guestposting='{$forum['guestposting']}', private='{$forum['private']}' WHERE fid={$forum['fid']}");
+			upgrade_query("UPDATE ".X_PREFIX."forums SET postperm='{$forum['postperm']}', guestposting='{$forum['guestposting']}', private='{$forum['private']}' WHERE fid={$forum['fid']}");
 		}
 	}
 	$db->free_result($query);
+}
+
+/**
+ * Abstracts database queries for better error handling.
+ *
+ * @since 1.9.1.16
+ * @param string $sql
+ * @return mixed Result of $db->query()
+ */
+function upgrade_query( $sql ) {
+	global $db;
+	
+	$result = $db->query( $sql, false );
+	
+	if ( false === $result ) {
+		$error = '<pre>'.$database.' encountered the following error: '.cdataOut( $db->error() )."\n\n";
+		if ( '' != $sql ) {
+			$error .= 'In the following query: <em>'.cdataOut( $sql ).'</em>';
+		}
+		$error .= '</pre>';
+		
+		show_error( $error );
+		exit;
+	}
+	
+	return $result;
 }
 ?>

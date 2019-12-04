@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -274,11 +274,15 @@ class dbstuff {
      * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
      * @return mixed Returns a MySQL resource or a bool, depending on the query type and error status.
      */
-    function query($sql, $panic = TRUE) {
+    function query($sql, $panic = true) {
         $this->start_timer();
         $query = mysql_query($sql, $this->link);
-        if (FALSE === $query and $panic) {
-            $this->panic($sql);
+        if ( false === $query ) {
+			if ( $panic ) {
+				$this->panic($sql);
+			} else {
+				return false;
+			}
         }
         $this->querytimes[] = $this->stop_timer();
         $this->querynum++;
