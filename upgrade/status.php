@@ -29,12 +29,13 @@ define('LOG_FILE', './upgrade.log');
 
 $log = file_get_contents( LOG_FILE );
 $check = substr($log, -14);
-$done = '<!-- done. -->' == $check || '<!-- error -->' == $check;
+$done = '<!-- done. -->' == $check;
+$error = '<!-- error -->' == $check;
 
 ?>
 <html>
 <head>
-<?php if ( ! $done ) { ?>
+<?php if ( ! $done && ! $error ) { ?>
 <meta http-equiv="refresh" content="2" />
 <?php } ?>
 </head>
