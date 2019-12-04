@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -124,9 +124,6 @@ function xmb_upgrade() {
         $db->query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
     }
     $db->free_result($query);
-
-    show_progress('Deleting the upgrade files');
-    rmFromDir(ROOT.'upgrade');
 }
 
 /**
@@ -1996,26 +1993,5 @@ function fixPostPerm() {
 		}
 	}
 	$db->free_result($query);
-}
-
-/**
- * Recursively deletes all files in the given path.
- *
- * @param string $path
- */
-function rmFromDir($path) {
-    if (is_dir($path)) {
-        $stream = opendir($path);
-        while(($file = readdir($stream)) !== false) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            rmFromDir($path.'/'.$file);
-        }
-        closedir($stream);
-        @rmdir($path);
-    } else if (is_file($path)) {
-        @unlink($path);
-    }
 }
 ?>
