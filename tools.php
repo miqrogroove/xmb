@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -232,6 +232,7 @@ switch($action) {
 
             $lpquery = $db->query($newsql);
 
+			$count = 0;
             while($thread = $db->fetch_array($lpquery)) {
                 if (!is_null($thread['pid'])) {
                     if ($thread['dateline'] == '0' And substr($thread['closed'], 0, 6) == 'moved|') {
@@ -257,6 +258,11 @@ switch($action) {
                 }
 
                 if ($thread['lastpost'] != $lp) {
+					if ( DEBUG ) {
+						if ( $count++ > 1000 ) {
+							error( 'Please disable DEBUG mode before using this tool to avoid memory exhaustion.', false, '</table></table><br />' );
+						}
+					}
                     $db->escape_fast($lp);
                     $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$lp' WHERE tid={$thread['tid']}");
                 }
