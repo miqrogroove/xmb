@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -651,7 +651,7 @@ switch($action) {
                      . "WHERE f.tid='$othertid' AND query2.fcount=0");
             $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$othertid'");
 
-            $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid=$tid OR tid='$othertid' ORDER BY pid ASC LIMIT 1");
+            $query = $db->query("SELECT subject, author, icon FROM ".X_PREFIX."posts WHERE tid=$tid OR tid='$othertid' ORDER BY dateline, pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);
             $db->free_result($query);
             $query = $db->query("SELECT author, dateline, pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC LIMIT 0, 1");
@@ -840,7 +840,7 @@ switch($action) {
 
                 $newtid = $db->insert_id();
 
-                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY pid ASC");
+                $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline, pid ASC");
                 while($post = $db->fetch_array($query)) {
                     $oldPid = $post['pid'];
                     $post['fid'] = $newfid;
