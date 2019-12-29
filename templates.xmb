@@ -2966,7 +2966,7 @@ $header
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
-<td bgcolor="$altbg2"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[fnasorry3]<br/></td>
+<td bgcolor="$altbg2">$lang[fnasorry3]<br/></td>
 </tr>
 </table>
 </td>
