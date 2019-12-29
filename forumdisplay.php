@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -109,7 +109,7 @@ $searchlink = makeSearchLink($forum['fid']);
 validateTpp();
 validatePpp();
 
-$threadcount = $db->result($db->query("SELECT COUNT(tid) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
+$threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
 
 // Perform automatic maintenance
 if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
@@ -327,7 +327,7 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['replies'] = "-";
         $thread['views'] = "-";
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
         $postnum = 0;
         if ($query !== false) {
             $postnum = $db->result($query, 0);

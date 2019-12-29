@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -579,7 +579,7 @@ switch($action) {
                 }
             }
 
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
+            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
             $posts = $db->result($query,0);
             $db->free_result($query);
 
@@ -758,7 +758,7 @@ switch($action) {
                 $closeoption = '';
             }
 
-            $querytop = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+            $querytop = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
             $replynum = $db->result($querytop, 0);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
@@ -1066,7 +1066,7 @@ switch($action) {
                 }
             }
 
-            $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
             $posts = $db->result($query, 0);
             $db->free_result($query);
 
@@ -1309,7 +1309,7 @@ switch($action) {
                 deleteAllAttachments($pid);
 
                 if ($isfirstpost['pid'] == $pid) {
-                    $query = $db->query("SELECT COUNT(pid) AS pcount FROM ".X_PREFIX."posts WHERE tid=$tid");
+                    $query = $db->query("SELECT COUNT(*) AS pcount FROM ".X_PREFIX."posts WHERE tid=$tid");
                     $numrows = $db->fetch_array($query);
                     $numrows = $numrows['pcount'];
                     $db->free_result($query);
@@ -1337,7 +1337,7 @@ switch($action) {
             }
 
             if ($threaddelete == 'no') {
-                $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE dateline <= {$orig['dateline']} AND tid=$tid");
+                $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE dateline <= {$orig['dateline']} AND tid=$tid");
                 $posts = $db->result($query,0);
                 $db->free_result($query);
                 $topicpages = quickpage($posts, $ppp);

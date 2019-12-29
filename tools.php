@@ -57,16 +57,16 @@ switch($action) {
     case 'fixftotals':
         // Update all forums using as few queries as possible.
         $sql = "UPDATE ".X_PREFIX."forums AS f "
-             . " LEFT JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query2 ON f.fid=query2.fid "
-             . " LEFT JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query3 ON f.fid=query3.fid "
+             . " LEFT JOIN (SELECT fid, COUNT(*) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query2 ON f.fid=query2.fid "
+             . " LEFT JOIN (SELECT fid, COUNT(*) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query3 ON f.fid=query3.fid "
              . "SET f.threads = IFNULL(query2.tcount, 0), f.posts = IFNULL(query3.pcount, 0) "
              . "WHERE f.type = 'sub'";
         $db->query($sql);
 
         $sql = "UPDATE ".X_PREFIX."forums AS f "
              . " LEFT JOIN (SELECT fup, SUM(threads) AS tcount, SUM(posts) AS pcount FROM ".X_PREFIX."forums GROUP BY fup) AS query2 ON f.fid=query2.fup "
-             . " LEFT JOIN (SELECT fid, COUNT(tid) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query3 ON f.fid=query3.fid "
-             . " LEFT JOIN (SELECT fid, COUNT(pid) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query4 ON f.fid=query4.fid "
+             . " LEFT JOIN (SELECT fid, COUNT(*) AS tcount FROM ".X_PREFIX."threads GROUP BY fid) AS query3 ON f.fid=query3.fid "
+             . " LEFT JOIN (SELECT fid, COUNT(*) AS pcount FROM ".X_PREFIX."posts GROUP BY fid) AS query4 ON f.fid=query4.fid "
              . "SET f.threads = IFNULL(query2.tcount, 0) + IFNULL(query3.tcount, 0), "
              . "    f.posts   = IFNULL(query2.pcount, 0) + IFNULL(query4.pcount, 0) "
              . "WHERE f.type = 'forum'";
@@ -82,7 +82,7 @@ switch($action) {
     case 'fixttotals':
         // Update all threads using as few queries as possible.
         $sql = "UPDATE ".X_PREFIX."threads AS t "
-             . " INNER JOIN (SELECT tid, COUNT(pid) as pcount FROM ".X_PREFIX."posts GROUP BY tid) AS query2 USING (tid) "
+             . " INNER JOIN (SELECT tid, COUNT(*) as pcount FROM ".X_PREFIX."posts GROUP BY tid) AS query2 USING (tid) "
              . "SET t.replies = query2.pcount - 1";
         $db->query($sql);
 
@@ -96,7 +96,7 @@ switch($action) {
     case 'fixmposts':
         // Update all members using as few queries as possible.
         $sql = "UPDATE ".X_PREFIX."members AS m "
-             . " LEFT JOIN (SELECT author, COUNT(pid) as pcount FROM ".X_PREFIX."posts GROUP BY author) AS query2 ON m.username = query2.author "
+             . " LEFT JOIN (SELECT author, COUNT(*) as pcount FROM ".X_PREFIX."posts GROUP BY author) AS query2 ON m.username = query2.author "
              . "SET m.postnum = IFNULL(query2.pcount, 0)";
         $db->query($sql);
 

@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ if ($goto == 'lastpost') {
             $post = $db->fetch_array($query);
             $tid = $post['tid'];
 
-            $query = $db->query("SELECT COUNT(pid) as postcount FROM ".X_PREFIX."posts WHERE tid=$tid AND dateline <= {$post['dateline']}");
+            $query = $db->query("SELECT COUNT(*) as postcount FROM ".X_PREFIX."posts WHERE tid=$tid AND dateline <= {$post['dateline']}");
             $posts = $db->result($query, 0);
             $db->free_result($query);
         } else {
@@ -51,7 +51,7 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
         $db->free_result($query);
 
@@ -96,7 +96,7 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid");
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid");
         $posts = $db->result($query, 0);
         $db->free_result($query);
     } else {
@@ -116,7 +116,7 @@ if ($goto == 'lastpost') {
     $tidtest = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid");
     if ($db->num_rows($tidtest) == 1) {
         $post = $db->fetch_array($tidtest);
-        $posts = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid = $tid AND dateline <= {$post['dateline']}"), 0);
+        $posts = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid = $tid AND dateline <= {$post['dateline']}"), 0);
         $page = quickpage(($posts), $ppp);
         if ($page == 1) {
             $page = '';
@@ -177,7 +177,7 @@ eval('$css = "'.template('css').'";');
 
 $posts = '';
 
-$query = $db->query("SELECT t.*, COUNT(pid) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
+$query = $db->query("SELECT t.*, COUNT(*) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
 if ($db->num_rows($query) != 1) {
     $db->free_result($query);
     header('HTTP/1.0 404 Not Found');

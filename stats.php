@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ if (strlen($fids) == 0) {
     $restrict = ' fid IN ('.$fids.')';
 }
 
-$query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(tid) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+$query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
 $members = $db->result($query, 0);
 if ($members == false) {
     $members = 0;

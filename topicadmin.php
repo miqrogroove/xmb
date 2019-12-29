@@ -194,7 +194,7 @@ switch($action) {
             require('include/attach.inc.php');
 
             foreach($tids AS $tid) {
-                $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
+                $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
                 while($result = $db->fetch_array($query)) {
                     $db->escape_fast($result['author']);
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
@@ -506,7 +506,7 @@ switch($action) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
                     $pid = $db->result($query, 0);
-                    $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid GROUP BY author");
+                    $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid GROUP BY author");
                     while($result = $db->fetch_array($query)) {
                         $db->escape_fast($result['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
@@ -731,7 +731,7 @@ switch($action) {
             eval('echo "'.$template.'";');
         } else {
             request_secure('tapru', min($tids), X_NONCE_AYS_EXP, FALSE);
-            $postcount = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
+            $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
             $delcount = 0;
             foreach($_POST as $key=>$val) {
                 if (substr($key, 0, 4) == 'move') {
@@ -863,7 +863,7 @@ switch($action) {
                     copyAllAttachments($oldPid, $newpid);
                 }
 
-                $query = $db->query("SELECT author, COUNT(pid) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
+                $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
                 while($result = $db->fetch_array($query)) {
                     $db->escape_fast($result['author']);
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+{$result['pidcount']} WHERE username='{$result['author']}'");

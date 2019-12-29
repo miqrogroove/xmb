@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -1297,11 +1297,11 @@ function updateforumcount($fid) {
     global $db;
     $fid = intval($fid);
 
-    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
+    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $postcount = $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
+    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
     $threadcount = $db->result($query, 0);
     $db->free_result($query);
 

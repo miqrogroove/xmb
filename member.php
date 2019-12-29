@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2019, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -359,7 +359,7 @@ switch($action) {
                 error($lang['alreadyreg']);
             }
 
-            $postcount = $db->result($db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE author='$username'"), 0);
+            $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE author='$username'"), 0);
             if (intval($postcount) > 0) {
                 error($lang['alreadyreg']);
             }
@@ -698,7 +698,7 @@ switch($action) {
             $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
         }
 
-        $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts");
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts");
         $posts = $db->result($query, 0);
         $db->free_result($query);
 
