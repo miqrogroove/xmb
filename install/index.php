@@ -91,8 +91,9 @@ define('SPECQ', false);
 define('SHOWFULLINFO', false);
 define('IN_CODE', true);
 
-ini_set('magic_quotes_runtime', 0);
-@ini_set('magic_quotes_gpc', '1');
+if (version_compare(PHP_VERSION, '5.4', '<')) {
+    if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
+}
 
 function error($head, $msg, $die=true) {
     echo "\n";

@@ -31,7 +31,9 @@ if (!defined('IN_CODE')) {
 testSuperGlobals();
 
 // make sure magic_quotes_runtime doesn't kill XMB
-if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
+if (version_compare(PHP_VERSION, '5.4', '<')) {
+    if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
+}
 
 // force registerglobals
 extract($_REQUEST, EXTR_SKIP);
