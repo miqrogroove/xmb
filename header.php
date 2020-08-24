@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -38,14 +38,14 @@ require ROOT.'include/global.inc.php';
 /* Global Constants and Initialized Values */
 
 $versioncompany = 'The XMB Group';
-$versionshort = '1.9.11';
-$versiongeneral = 'XMB 1.9.11';
-$copyright = '2001-2017';
+$versionshort = '1.9.12-a';
+$versiongeneral = 'XMB 1.9.12-alpha';
+$copyright = '2001-2020';
 $alpha = '';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20171228;
+$versionbuild = 20200823;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -411,14 +411,14 @@ if ($xmblvb > 0) {
     $thetime = $onlinetime; // no cookie at all, so this is your first visit
 }
 
-put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365)), $cookiepath, $cookiedomain, $cookiesecure); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain, $cookiesecure); // lvb =
+put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365))); // lva == now
+put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb =
 
 $lastvisit = $thetime;
 
 $oldtopics = postedVar( 'oldtopics', null, false, false, false, 'c' );
 if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
-    put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER), $cookiepath, $cookiedomain, $cookiesecure);
+    put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
 }
 
 
@@ -468,8 +468,8 @@ $pinput = postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c');
 if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
     // Delete cookies when authentication fails.
     if ($uinput != '') {
-        put_cookie("xmbuser", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
-        put_cookie("xmbpw", '', 0, $cookiepath, $cookiedomain, $cookiesecure);
+        put_cookie('xmbuser');
+        put_cookie('xmbpw');
     }
 }
 unset($uinput, $pinput);

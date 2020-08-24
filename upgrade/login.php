@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -62,10 +62,9 @@ if (strlen($xmbuser) == 0) {
 
     require ROOT.'include/functions.inc.php';
 
-    $setusing = X_SET_HEADER;
     $currtime = 0;
-    put_cookie("xmbuser", $xmbuser, $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
-    put_cookie("xmbpw", md5($_POST['xmbpw']), $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
+    put_cookie("xmbuser", $xmbuser, $currtime);
+    put_cookie("xmbpw", md5($_POST['xmbpw']), $currtime);
 
     echo "Cookies set.  <a href='{$full_url}upgrade/'>Return to upgrade.</a>";
 }

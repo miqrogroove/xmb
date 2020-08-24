@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -36,17 +36,17 @@ if (!defined('IN_CODE')) {
  * @param  bool   $tempcookie   Optional.
  * @return bool
  */
-function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALSE) {
-    global $server, $self, $onlineip, $onlinetime, $db, $cookiepath, $cookiedomain, $cookiesecure;
+function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=false) {
+    global $self, $onlineip, $onlinetime, $db;
 
     if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
         $dbname = $db->escape($self['username']);
 
         if (!is_null($invisible)) {
-            if ($invisible And $self['invisible'] == 0) {
+            if ($invisible && $self['invisible'] == 0) {
                 $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
                 $self['invisible'] = 1;
-            } elseif (!$invisible And $self['invisible'] == 1) {
+            } elseif (!$invisible && $self['invisible'] == 1) {
                 $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
                 $self['invisible'] = 0;
             }
@@ -58,16 +58,11 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=NULL, $tempcookie=FALS
             $currtime = $onlinetime + (86400*30);
         }
 
-        if ($server == 'Mic') {
-            $setusing = X_SET_JS;
-        } else {
-            $setusing = X_SET_HEADER;
-        }
-        put_cookie("xmbuser", $self['username'], $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
-        put_cookie("xmbpw", $xmbpwinput, $currtime, $cookiepath, $cookiedomain, $cookiesecure, $setusing);
-        return TRUE;
+        put_cookie("xmbuser", $self['username'], $currtime);
+        put_cookie("xmbpw", $xmbpwinput, $currtime);
+        return true;
     } else {
-        return FALSE;
+        return false;
     }
 }
 
@@ -1606,29 +1601,39 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     return $return;
 }
 
-function put_cookie($name, $value=null, $expire=0, $path=null, $domain=null, $secure=FALSE, $setVia=X_SET_HEADER) {
-    if (!headers_sent() && $setVia != X_SET_JS) {
-        return setcookie($name, $value, $expire, $path, $domain, $secure);
+/**
+ * XMB's Cookie helper.
+ *
+ * @since 1.9.1
+ */
+function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false, $setVia=X_SET_HEADER) {
+    global $cookiepath, $cookiedomain, $cookiesecure;
+
+    // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
+    if (headers_sent()) {
+        trigger_error( 'Attempted use of put_cookie() after headers already sent.', E_USER_WARNING );
+        return false;
+    }
+
+    // Default arguments were poorly chosen, so let's try to fill them in now.
+    if (is_null($path)) $path = $cookiepath;
+    if (is_null($domain)) $domain = $cookiedomain;
+    if (!$secure) $secure = $cookiesecure;
+    $httponly = true;
+    $samesite = 'Lax';
+
+    if (version_compare(PHP_VERSION, '7.3.0', '<')) {
+        return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
     } else {
-        if ($expire > 0) {
-            $expire = gmdate('r', $expire);
-        } else {
-            $expire = '';
-        }
-        ?>
-        <script type="text/javascript">
-            function put_cookie(name, value, expires, path, domain, secure) {
-                var curCookie = name + "=" + escape(value) +
-                ((expires) ? "; expires=" + expires : "") +
-                ((path) ? "; path=" + path : "") +
-                ((domain) ? "; domain=" + domain : "") +
-                ((secure) ? "; secure" : "");
-                document.cookie = curCookie;
-            }
-            put_cookie('<?php echo $name?>', '<?php echo $value?>', '<?php echo $expire?>', '<?php echo $path?>', '<?php echo $domain?>', '<?php echo $secure?>');
-        </script>
-        <?php
-        return true;
+        $options = [
+            'expires' => $expire,
+            'path' => $path,
+            'domain' => $domain,
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite,
+        ];
+        return setcookie($name, $value, $options);
     }
 }
 
@@ -2240,8 +2245,8 @@ function getOneForumPerm($forum, $bitfield) {
 }
 
 function handlePasswordDialog($fid) {
-    global $db, $full_url, $url, $cookiepath, $cookiedomain, $cookiesecure;  // function vars
-    global $THEME, $lang, $oToken, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
+    global $db, $full_url, $url;  // function vars
+    global $THEME, $lang, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
 
     $fid = intval($fid);
     $pwinput = postedVar('pw', '', FALSE, FALSE);
@@ -2249,7 +2254,7 @@ function handlePasswordDialog($fid) {
     $forum = getForum($fid);
     if (strlen($pwinput) != 0 And $forum !== FALSE) {
         if ($pwinput == $forum['password']) {
-            put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)), $cookiepath, $cookiedomain, $cookiesecure);
+            put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
             $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
             redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
         } else {
