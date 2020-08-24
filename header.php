@@ -399,23 +399,6 @@ if (X_SCRIPT != 'files.php') {
 
 ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
 
-// Update last visit cookies
-$xmblva = getInt('xmblva', 'c'); // Last visit
-$xmblvb = getInt('xmblvb', 'c'); // Duration of this visit (considered to be up to 600 seconds)
-
-if ($xmblvb > 0) {
-    $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're in a current session
-} else if ($xmblva > 0) {
-    $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit
-} else {
-    $thetime = $onlinetime; // no cookie at all, so this is your first visit
-}
-
-put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365))); // lva == now
-put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb =
-
-$lastvisit = $thetime;
-
 $oldtopics = postedVar( 'oldtopics', null, false, false, false, 'c' );
 if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
@@ -516,6 +499,18 @@ if ($url == $cookiepath) {
     $baseelement = '<base href="'.$full_url.X_SCRIPT.attrOut($querystring).'" />';
 }
 
+// Read last visit cookies
+$xmblva = getInt('xmblva', 'c'); // Previous request timestamp.
+$xmblvb = getInt('xmblvb', 'c'); // Ending timestamp of previous session.
+
+if ($xmblvb > 0) {
+    $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're still in a session and persisting the value from the last visit.
+} else if ($xmblva > 0) {
+    $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit and save it
+} else {
+    $thetime = $onlinetime; // no cookie at all, so this is your first visit
+}
+
 // login/logout links
 if (X_MEMBER) {
     if (X_ADMIN) {
@@ -529,9 +524,12 @@ if (X_MEMBER) {
     $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.recodeOut($xmbuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 
     // Update lastvisit in the header shown
-    $theTime = $xmblva + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
-    $lastdate = gmdate($dateformat, $theTime);
-    $lasttime = gmdate($timecode, $theTime);
+    if ($self['lastvisit'] < $thetime || ($self['lastvisit'] > $thetime + X_ONLINE_TIMER && $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
+        $thetime = $self['lastvisit'];
+    }
+    $lastvisit = $thetime + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
+    $lastdate = gmdate($dateformat, $lastvisit);
+    $lasttime = gmdate($timecode, $lastvisit);
     $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
     // Checks for the possibility to register
@@ -544,6 +542,10 @@ if (X_MEMBER) {
     $notify = $lang['notloggedin'].' ['.$loginout.' '.$reglink.']';
     $lastvisittext = '';
 }
+
+// Update last visit cookies
+put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365))); // lva == now
+put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
 
 // Get themes, [fid, [tid]]
 $forumtheme = 0;
