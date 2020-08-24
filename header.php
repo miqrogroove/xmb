@@ -551,10 +551,15 @@ $fid = getInt('fid', 'r');
 $tid = getInt('tid', 'r');
 if ($tid > 0 && $action != 'templates') {
     $query = $db->query("SELECT f.fid, f.theme FROM ".X_PREFIX."forums f RIGHT JOIN ".X_PREFIX."threads t USING (fid) WHERE t.tid=$tid");
-    $locate = $db->fetch_array($query);
+    if ($db->num_rows($query) == 0) {
+        $tid = 0;
+        $fid = 0;
+    } else {
+        $locate = $db->fetch_array($query);
+        $fid = $locate['fid'];
+        $forumtheme = $locate['theme'];
+    }
     $db->free_result($query);
-    $fid = $locate['fid'];
-    $forumtheme = $locate['theme'];
 } else if ($fid > 0) {
     $forum = getForum($fid);
     if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
