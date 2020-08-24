@@ -754,7 +754,7 @@ $lang['texteditpost'] = "Edit Post";
 $lang['texteditpro'] = "Edit Profile";
 $lang['textemail'] = "E-Mail";
 $lang['textemailnotify'] = "Receive e-mail on reply?";
-$lang['textemailonu2u'] = "Receive e-mail notification on new U2U<br/><font class='smalltxt'>(Only sent when you are not logged in)</font>";
+$lang['textemailonu2u'] = "Receive e-mail notification on new U2U";
 $lang['textemptyquery'] = 'Empty upgrade submissions are not permitted. Please go back and try again.';
 $lang['textemptythread'] = 'Empty Thread';
 $lang['textemptytrash'] = "Empty";
