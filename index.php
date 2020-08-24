@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -107,29 +107,31 @@ eval('$header = "'.template('header').'";');
 $statsbar = '';
 if ($SETTINGS['index_stats'] == 'on') {
     $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY regdate DESC LIMIT 1");
-    $lastmember = $db->fetch_array($query);
-    $db->free_result($query);
+    if ($db->num_rows($query) == 1) {
+        $lastmember = $db->fetch_array($query);
+        $db->free_result($query);
 
-    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
-    $members = $db->result($query, 0);
-    if ($members == false) {
-        $members = 0;
+        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
+        $members = $db->result($query, 0);
+        if ($members == false) {
+            $members = 0;
+        }
+
+        $threads = $db->result($query, 1);
+        if ($threads == false) {
+            $threads = 0;
+        }
+
+        $posts = $db->result($query, 2);
+        if ($posts == false) {
+            $posts = 0;
+        }
+        $db->free_result($query);
+
+        $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
+        eval($lang['evalindexstats']);
+        eval('$statsbar = "'.template('index_stats').'";');
     }
-
-    $threads = $db->result($query, 1);
-    if ($threads == false) {
-        $threads = 0;
-    }
-
-    $posts = $db->result($query, 2);
-    if ($posts == false) {
-        $posts = 0;
-    }
-    $db->free_result($query);
-
-    $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
-    eval($lang['evalindexstats']);
-    eval('$statsbar = "'.template('index_stats').'";');
 }
 
 if ($gid == 0) {
