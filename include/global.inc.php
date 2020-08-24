@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -30,11 +30,6 @@ if (!defined('IN_CODE')) {
 // For all supported versions of PHP, we can trust but verify the variables_order setting.
 testSuperGlobals();
 
-// make sure magic_quotes_runtime doesn't kill XMB
-if (version_compare(PHP_VERSION, '5.4', '<')) {
-    if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
-}
-
 // force registerglobals
 extract($_REQUEST, EXTR_SKIP);
 
@@ -53,7 +48,6 @@ function testSuperGlobals() {
 /**
  * Kill the script and debug dirty output streams.
  *
- * @author Robert Chapin (miqrogroove)
  * @param string $error_source File name to mention if a dirty buffer is found.
  * @param bool   $use_debug    Optional.  When FALSE the value of DEBUG is ignored.
  * @since 1.9.11

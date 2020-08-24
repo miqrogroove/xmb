@@ -1367,13 +1367,6 @@ function smcwcache() {
     return false;
 }
 
-if (!function_exists('htmlspecialchars_decode')) {
-    function htmlspecialchars_decode($string, $type=ENT_QUOTES) {
-        $array = array_flip(get_html_translation_table(HTML_SPECIALCHARS, $type));
-        return strtr($string, $array);
-    }
-}
-
 /**
  * Generates sub-templates in the $footerstuff global array.
  */

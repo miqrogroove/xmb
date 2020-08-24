@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -171,9 +171,7 @@ assertEmptyOutputStream('files.php');
 // an entity will not be returned from the server; instead, a 304 (not modified) response
 // will be returned without any message-body."
 if ($_SERVER['REQUEST_METHOD'] == 'GET' And isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-    if (function_exists('date_default_timezone_set')) {
-        date_default_timezone_set('UTC'); // Workaround for stupid PHP 5 problems.
-    }
+    date_default_timezone_set('UTC'); // Workaround for stupid PHP 5 problems.
     if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $file['updatestamp']) {
         header('HTTP/1.0 304 Not Modified');
         exit;

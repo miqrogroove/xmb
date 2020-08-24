@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -78,13 +78,6 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
     if (isset($sourcearray[$varname])) {
         if (is_string($sourcearray[$varname])) {
             $retval = $sourcearray[$varname];
-
-            if (version_compare(PHP_VERSION, '5.4', '<')) {
-                if (get_magic_quotes_gpc()) {
-                    $retval = stripslashes($retval);
-                }
-            }
-
             $retval = str_replace("\x00", '', $retval);
 
             if ($word != '') {
@@ -167,12 +160,6 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
             case 'string':
             default:
                 if (is_string($theObject)) {
-                    if (version_compare(PHP_VERSION, '5.4', '<')) {
-                        if (get_magic_quotes_gpc()) {
-                            $theObject = stripslashes($theObject);
-                        }
-                    }
-
                     $theObject = str_replace("\x00", '', $theObject);
 
                     if ($word != '') {
@@ -258,23 +245,6 @@ function decimalEntityDecode($rawstring) {
 //   Forum names historically used double-slashed db values and default (ENT_COMPAT) quote decoding.
 function fnameOut($rawstring) {
     return htmlspecialchars_decode(stripslashes($rawstring), ENT_COMPAT);
-}
-
-if (!function_exists('stripos')) {
-    function stripos($haystack, $needle, $offset = 0) {
-        return strpos(strtolower($haystack), strtolower($needle), $offset);
-    }
-}
-
-if (!function_exists('str_ireplace')) {
-    function str_ireplace($search, $replace, $subject) {
-        $ipos = 0;
-        while(($ipos = stripos($subject, $search, $ipos)) !== FALSE) {
-            $subject = substr($subject, 0, $ipos).$replace.substr($subject, $ipos + strlen($search));
-            $ipos += strlen($replace);
-        }
-        return $subject;
-    }
 }
 
 /**

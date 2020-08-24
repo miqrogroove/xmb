@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ header( 'X-Frame-Options: deny' );
 
 // Script constants
 define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '4.3.0');
+define('PHP_MIN_VER', '7.0.0');
 define('X_SCRIPT', 'upgrade.php');
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
@@ -85,9 +85,9 @@ if ( false === $result ) {
 // Ready to Upgrade
 if (!isset($_GET['step']) or $_GET['step'] == 1) {
 ?>
-<h1>XMB 1.9.11 Upgrade Script</h1>
+<h1>XMB 1.9.12 Upgrade Script</h1>
 
-<p>This script is compatible with XMB versions 1.8 through 1.9.10, and XMB 1.9.11 Betas.
+<p>This script is compatible with XMB versions 1.8 through 1.9.11, and XMB 1.9.12 Betas.
 
 <p>This script is NOT compatible with older versions.
 
@@ -97,7 +97,7 @@ if (!isset($_GET['step']) or $_GET['step'] == 1) {
 <li>BACKUP YOUR DATABASE - This script cannot be undone!
 <li>Confirm your forum database account is granted ALTER, CREATE, INDEX, and LOCK privileges.
 <li>Copy your config.php settings into the new file.
-<li>Upload the XMB 1.9.11 files.  Do not upload the install folder (delete it if necessary).
+<li>Upload the XMB 1.9.12 files.  Do not upload the install folder (delete it if necessary).
 <li>Upload the upgrade directory to your board's root directory.
 <li>Run this script by hitting the upgrade URL, for example:  http://www.example.com/forum/upgrade/
 <li>When the upgrade finishes successfully, delete the upgrade directory.
@@ -124,7 +124,7 @@ function disableButton() {
 } else if ($_GET['step'] == 2) {
 
     ?>
-    <h1>XMB 1.9.11 Upgrade Script</h1>
+    <h1>XMB 1.9.12 Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
 

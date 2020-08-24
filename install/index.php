@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -23,18 +23,17 @@
  **/
 
 // Script Parameters
-define('X_VERSION', '1.9.11');
-define('X_VERSION_EXT', '1.9.11.15');
+define('X_VERSION', '1.9.12');
+define('X_VERSION_EXT', '1.9.12-alpha');
 define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '4.3.0');
-define('COPY_YEAR', '2001-2017');
+define('PHP_MIN_VER', '7.0.0');
+define('COPY_YEAR', '2001-2020');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
     'config.php',
     'cp.php',
     'cp2.php',
-    'db/mysql.php',
     'db/mysqli.php',
     'editprofile.php',
     'faq.php',
@@ -90,10 +89,6 @@ define('IPCHECK', 'off');
 define('SPECQ', false);
 define('SHOWFULLINFO', false);
 define('IN_CODE', true);
-
-if (version_compare(PHP_VERSION, '5.4', '<')) {
-    if (get_magic_quotes_runtime()) set_magic_quotes_runtime(false);
-}
 
 function error($head, $msg, $die=true) {
     echo "\n";

@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ header( 'X-Frame-Options: sameorigin' );
 
 //Script constants
 define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '4.3.0');
+define('PHP_MIN_VER', '7.0.0');
 define('X_SCRIPT', 'upgrade.php');
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');

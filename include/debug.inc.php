@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -44,11 +44,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
         if (FALSE === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
             exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
         } elseif(!extension_loaded('ISAPI') and !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
-            if (version_compare(phpversion(), '5.2.8', '>')) {
-                exit('Error: FastCGI is missing or not configured on your server.');
-            } else {
-                exit('Error: XMB is not compatible with PHP IIS CGI mode.  ISAPI mode is recommended.');
-            }
+            exit('Error: FastCGI is missing or not configured on your server.');
         } else {
             exit('Error: Unexpected environment.  Please make sure FastCGI is working.');
         }

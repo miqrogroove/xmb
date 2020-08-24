@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -61,7 +61,6 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  * @param string $varname Form variable name, used in the $_FILES associative index.
  * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
- * @author Robert Chapin (miqrogroove)
  */
 function attachUploadedFile($varname, $pid=0) {
     global $attachmentErrors, $db, $self, $SETTINGS;
