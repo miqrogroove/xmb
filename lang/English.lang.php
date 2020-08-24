@@ -140,7 +140,7 @@ $lang['bbcode_advmode'] = "Advanced Mode\\nThe BB Code will be inserted without 
 $lang['bbcode_helpmode'] = "Help Mode\\nClick on any of the formatting buttons for a description and instructions.";
 $lang['bbcode_help_bold'] = "Bold Tag\\nMakes the enclosed text bold.\\nUsage: [b]This is some bold text[/b]";
 $lang['bbcode_help_center'] = "Centered tag\\nCenters the enclosed text.\\nUsage: [align=center]This text is centered[/align]";
-$lang['bbcode_help_code'] = "Code Tag\\nBlockquotes the text you reference and preserves the formatting.\\nuseful for posting code.\\nUsage: [code]This is formatted text[/code]";
+$lang['bbcode_help_code'] = "Code Tag\\nPreserves the formatting of whitespace and some special characters.\\nUseful for posting code.\\nUsage: [code]$this = 'My code block';[/code]";
 $lang['bbcode_help_color'] = "Color Tag\\nSets the text color. Any named color can be used.\\nUsage: [color=red]This is some \\\"red\\\" text[/color]";
 $lang['bbcode_help_email'] = "E-mail Tag\\nTurns an e-mail address into a mailto hyperlink.\\nUsage: [email]someone@anywhere.com[/email]\\nUsage: [email=someone@anywhere.com]link text[/email]";
 $lang['bbcode_help_font'] = "Font Tag\\nSets the font face for the enclosed text.\\nUsage: [font=Arial]The font of this text is Arial[/font]";
@@ -154,7 +154,7 @@ $lang['bbcode_help_underline'] = "Underline Tag\\nUnderlines the enclosed text.\
 $lang['bbcode_normode'] = "Normal Mode\\nPopups will bring you step by step through the process of inserting BB Code.";
 $lang['bbcode_prompt_bold'] = "Please enter the text that should be bolded.";
 $lang['bbcode_prompt_center'] = "Please enter the text that should be centered.";
-$lang['bbcode_prompt_code'] = "Please enter the text you wanted block quoted.";
+$lang['bbcode_prompt_code'] = "Please enter the code snippet.";
 $lang['bbcode_prompt_color'] = "Please enter the text that should be colored ";
 $lang['bbcode_prompt_email_desc'] = "What name should be shown\\nIf this field is empty the e-mail address will be visible.";
 $lang['bbcode_prompt_email_email'] = "What e-mail address should be linked to?";
