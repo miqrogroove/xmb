@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -170,7 +170,7 @@ switch($p_extension) {
 $cusdate = formInt('cusdate');
 if ($cusdate) {
     $cusdate = $onlinetime - $cusdate;
-    $cusdate = "AND (substring_index(lastpost, '|',1)+1) >= '$cusdate'";
+    $cusdate = "AND lastpost > '$cusdate'";
 } else {
     $cusdate = '';
 }

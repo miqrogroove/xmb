@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -1736,14 +1736,14 @@ if ($action == "prune") {
         if (isset($pruneByDate['check']) && $pruneByDate['check'] == 1) {
             switch($pruneByDate['type']) {
                 case 'less':
-                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) >= ' . (time()-(24*3600*$pruneByDate['date']));
+                    $queryWhere[] = 'lastpost > "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
                     break;
                 case 'is':
-                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) >= ' . (time()-(24*3600*($pruneByDate['date']-1))) . ' AND SUBSTRING_INDEX(lastpost, '|', 1) <= ' . (time()-(24*3600*$pruneByDate['date']));
+                    $queryWhere[] = 'lastpost BETWEEN "' . (time()-(24*3600*($pruneByDate['date']-1))) . '" AND "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
                     break;
                 case 'more':
                 default:
-                    $queryWhere[] = 'SUBSTRING_INDEX(lastpost, '|', 1) <= ' . (time()-(24*3600*$pruneByDate['date']));
+                    $queryWhere[] = 'lastpost < "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
                     break;
             }
         } else if ($sign == '') {
