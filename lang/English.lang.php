@@ -700,7 +700,7 @@ $lang['textbanip'] = "Ban IP";
 $lang['textbanned'] = "Banned";
 $lang['textbannedip'] = "<br />This IP is currently banned.";
 $lang['textbbcode'] = "BB Code";
-$lang['textbbcodeis'] = "<a href=\"faq.php\">BB Code</a> is";
+$lang['textbbcodeis'] = "<a href='faq.php?page=messages#7'>BB Code</a> is";
 $lang['textbboffreason'] = "If your BB is off please enter a reason";
 $lang['textbbrules'] = "Board Rules";
 $lang['textbbrulestxt'] = "If rules are on, please enter your rules:";
