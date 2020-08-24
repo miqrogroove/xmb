@@ -476,6 +476,8 @@ switch($action) {
             $year = formInt('year');
             $month = formInt('month');
             $day = formInt('day');
+            // For year of birth, reject all integers from 100 through 1899.
+            if ($year >= 100 && $year <= 1899) $year = 0;
             $bday = iso8601_date($year, $month, $day);
 
             $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);

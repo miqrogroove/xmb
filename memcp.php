@@ -451,6 +451,8 @@ if ($action == 'profile') {
         $year = formInt('year');
         $month = formInt('month');
         $day = formInt('day');
+        // For year of birth, reject all integers from 100 through 1899.
+        if ($year >= 100 && $year <= 1899) $year = 0;
         $bday = iso8601_date($year, $month, $day);
         $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
         $icq = postedVar('newicq', '', FALSE, FALSE);

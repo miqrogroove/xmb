@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -275,6 +275,8 @@ if (noSubmit('editsubmit')) {
     $year = formInt('year');
     $month = formInt('month');
     $day = formInt('day');
+    // For year of birth, reject all integers from 100 through 1899.
+    if ($year >= 100 && $year <= 1899) $year = 0;
     $bday = iso8601_date($year, $month, $day);
     $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
     $icq = postedVar('newicq', '', FALSE, FALSE);

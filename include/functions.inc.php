@@ -1852,7 +1852,7 @@ function iso8601_date($year=0, $month=0, $day=0) {
         $day = 1;
     }
 
-    return $year.'-'.str_pad($month, 2, 0, STR_PAD_LEFT).'-'.str_pad($day, 2, 0, STR_PAD_LEFT);
+    return str_pad($year, 4, '0', STR_PAD_LEFT).'-'.str_pad($month, 2, '0', STR_PAD_LEFT).'-'.str_pad($day, 2, '0', STR_PAD_LEFT);
 }
 
 function month2text($num) {
