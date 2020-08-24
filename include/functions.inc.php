@@ -2504,5 +2504,142 @@ function xmb_mail( $to, $subject, $message, $charset ) {
 
     return altMail( $to, $subject, $message, $headers, $params );
 }
+
+/**
+ * Generates the HTML for the timezone dropdown list.
+ *
+ * Caller needs to pre-load the timezone_control template for efficiency.
+ *
+ * @since 1.9.12
+ * @param string $offset Must be in the MySQL Decimal format with 2 places after the decimal.
+ * @return string HTML
+ */
+function timezone_control( string $offset ): string {
+    global $lang, $selHTML;
+    
+    $total = 37;
+    
+    $sel = [];
+    for ($i = 1; $i <= $total; $i++) {
+        $sel[$i] = '';
+    }
+
+    switch($offset) {
+    case '-12.00':
+        $sel[1] = $selHTML;
+        break;
+    case '-11.00':
+        $sel[2] = $selHTML;
+        break;
+    case '-10.00':
+        $sel[3] = $selHTML;
+        break;
+    case '-9.50':
+        $sel[37] = $selHTML;
+        break;
+    case '-9.00':
+        $sel[4] = $selHTML;
+        break;
+    case '-8.00':
+        $sel[5] = $selHTML;
+        break;
+    case '-7.00':
+        $sel[6] = $selHTML;
+        break;
+    case '-6.00':
+        $sel[7] = $selHTML;
+        break;
+    case '-5.00':
+        $sel[8] = $selHTML;
+        break;
+    case '-4.00':
+        $sel[9] = $selHTML;
+        break;
+    case '-3.50':
+        $sel[10] = $selHTML;
+        break;
+    case '-3.00':
+        $sel[11] = $selHTML;
+        break;
+    case '-2.00':
+        $sel[12] = $selHTML;
+        break;
+    case '-1.00':
+        $sel[13] = $selHTML;
+        break;
+    case '1.00':
+        $sel[15] = $selHTML;
+        break;
+    case '2.00':
+        $sel[16] = $selHTML;
+        break;
+    case '3.00':
+        $sel[17] = $selHTML;
+        break;
+    case '3.50':
+        $sel[18] = $selHTML;
+        break;
+    case '4.00':
+        $sel[19] = $selHTML;
+        break;
+    case '4.50':
+        $sel[20] = $selHTML;
+        break;
+    case '5.00':
+        $sel[21] = $selHTML;
+        break;
+    case '5.50':
+        $sel[22] = $selHTML;
+        break;
+    case '5.75':
+        $sel[23] = $selHTML;
+        break;
+    case '6.00':
+        $sel[24] = $selHTML;
+        break;
+    case '6.50':
+        $sel[25] = $selHTML;
+        break;
+    case '7.00':
+        $sel[26] = $selHTML;
+        break;
+    case '8.00':
+        $sel[27] = $selHTML;
+        break;
+    case '9.00':
+        $sel[28] = $selHTML;
+        break;
+    case '9.50':
+        $sel[29] = $selHTML;
+        break;
+    case '10.00':
+        $sel[30] = $selHTML;
+        break;
+    case '10.50':
+        $sel[36] = $selHTML;
+        break;
+    case '11.00':
+        $sel[31] = $selHTML;
+        break;
+    case '12.00':
+        $sel[32] = $selHTML;
+        break;
+    case '12.75':
+        $sel[35] = $selHTML;
+        break;
+    case '13.00':
+        $sel[33] = $selHTML;
+        break;
+    case '14.00':
+        $sel[34] = $selHTML;
+        break;
+    case '0.00':
+    default:
+        $sel[14] = $selHTML;
+    }
+
+    eval('$control = "'.template('timezone_control').'";');
+    return $control;
+}
+
 return;
-?>

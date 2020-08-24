@@ -38,7 +38,8 @@ loadtemplates(
 'member_profile_email',
 'member_profile',
 'misc_feature_not_while_loggedin',
-'misc_feature_notavailable'
+'misc_feature_notavailable',
+'timezone_control'
 );
 
 smcwcache();
@@ -159,114 +160,7 @@ switch($action) {
                     $timeFormat24Checked = '';
                 }
 
-                $timezone1 = $timezone2 = $timezone3 = $timezone4 = $timezone5 = $timezone6 = '';
-                $timezone7 = $timezone8 = $timezone9 = $timezone10 = $timezone11 = $timezone12 = '';
-                $timezone13 = $timezone14 = $timezone15 = $timezone16 = $timezone17 = $timezone18 = '';
-                $timezone19 = $timezone20 = $timezone21 = $timezone22 = $timezone23 = $timezone24 = '';
-                $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = '';
-                $timezone31 = $timezone32 = $timezone33 = '';
-                switch($SETTINGS['def_tz']) {
-                    case '-12.00':
-                        $timezone1 = $selHTML;
-                        break;
-                    case '-11.00':
-                        $timezone2 = $selHTML;
-                        break;
-                    case '-10.00':
-                        $timezone3 = $selHTML;
-                        break;
-                    case '-9.00':
-                        $timezone4 = $selHTML;
-                        break;
-                    case '-8.00':
-                        $timezone5 = $selHTML;
-                        break;
-                    case '-7.00':
-                        $timezone6 = $selHTML;
-                        break;
-                    case '-6.00':
-                        $timezone7 = $selHTML;
-                        break;
-                    case '-5.00':
-                        $timezone8 = $selHTML;
-                        break;
-                    case '-4.00':
-                        $timezone9 = $selHTML;
-                        break;
-                    case '-3.50':
-                        $timezone10 = $selHTML;
-                        break;
-                    case '-3.00':
-                        $timezone11 = $selHTML;
-                        break;
-                    case '-2.00':
-                        $timezone12 = $selHTML;
-                        break;
-                    case '-1.00':
-                        $timezone13 = $selHTML;
-                        break;
-                    case '1.00':
-                        $timezone15 = $selHTML;
-                        break;
-                    case '2.00':
-                        $timezone16 = $selHTML;
-                        break;
-                    case '3.00':
-                        $timezone17 = $selHTML;
-                        break;
-                    case '3.50':
-                        $timezone18 = $selHTML;
-                        break;
-                    case '4.00':
-                        $timezone19 = $selHTML;
-                        break;
-                    case '4.50':
-                        $timezone20 = $selHTML;
-                        break;
-                    case '5.00':
-                        $timezone21 = $selHTML;
-                        break;
-                    case '5.50':
-                        $timezone22 = $selHTML;
-                        break;
-                    case '5.75':
-                        $timezone23 = $selHTML;
-                        break;
-                    case '6.00':
-                        $timezone24 = $selHTML;
-                        break;
-                    case '6.50':
-                        $timezone25 = $selHTML;
-                        break;
-                    case '7.00':
-                        $timezone26 = $selHTML;
-                        break;
-                    case '8.00':
-                        $timezone27 = $selHTML;
-                        break;
-                    case '9.00':
-                        $timezone28 = $selHTML;
-                        break;
-                    case '9.50':
-                        $timezone29 = $selHTML;
-                        break;
-                    case '10.00':
-                        $timezone30 = $selHTML;
-                        break;
-                    case '11.00':
-                        $timezone31 = $selHTML;
-                        break;
-                    case '12.00':
-                        $timezone32 = $selHTML;
-                        break;
-                    case '13.00':
-                        $timezone33 = $selHTML;
-                        break;
-                    case '0.00':
-                    default:
-                        $timezone14 = $selHTML;
-                        break;
-                }
+                $timezones = timezone_control( $SETTINGS['def_tz'] );
 
                 $avatd = '';
                 if ($SETTINGS['avastatus'] == 'on') {
