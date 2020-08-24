@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -1124,6 +1124,11 @@ $lang['textyourpwis'] = "This is an automatic e-mail. Your new login credentials
 $lang['themes'] = "Themes";
 $lang['themeupdate'] = "Themes updated successfully!";
 $lang['theme_already_exists'] = "A theme with this name already exists!";
+$lang['th_action'] = "Action:";
+$lang['th_ip'] = "IP:";
+$lang['th_time'] = "Time:";
+$lang['th_url'] = "URL:";
+$lang['th_username'] = "Username:";
 $lang['threads'] = 'Threads';
 $lang['thumbnail'] = 'Thumbnail';
 $lang['tickercontents'] = "News In Newsticker:";

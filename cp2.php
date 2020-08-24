@@ -2355,10 +2355,10 @@ if ($action == "modlog") {
     <td bgcolor="<?php echo $bordercolor?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
-    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']; ?>:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['texttime']; ?></font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">URL:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_username']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_time']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_url']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_action']; ?></font></strong></td>
     </tr>
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE NOT (fid='0' AND tid='0')"), 0);
@@ -2479,11 +2479,11 @@ if ($action == "cplog") {
     <td bgcolor="<?php echo $bordercolor?>">
     <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
     <tr class="category">
-    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textusername']; ?>:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['texttime']; ?></font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">URL:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>">Action:</font></strong></td>
-    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textip']; ?>:</font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_username']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_time']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_url']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_action']; ?></font></strong></td>
+    <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_ip']; ?></font></strong></td>
     </tr>
     <?php
     $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
