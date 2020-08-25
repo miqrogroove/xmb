@@ -37,7 +37,7 @@ if (!defined('IN_CODE')) {
  * @return bool
  */
 function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=false) {
-    global $self, $onlineip, $onlinetime, $db;
+    global $self, $onlineip, $onlinetime, $db, $thetime, $lastvisit;
 
     if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
         $dbname = $db->escape($self['username']);
@@ -60,6 +60,12 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=fals
 
         put_cookie("xmbuser", $self['username'], $currtime);
         put_cookie("xmbpw", $xmbpwinput, $currtime);
+
+        // This cookie was already set in header.php, but let's try to overwrite it.
+        $thetime = $self['lastvisit'];
+        put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
+        $lastvisit = $thetime; // Used by forumdisplay
+
         return true;
     } else {
         return false;

@@ -110,11 +110,7 @@ switch($action) {
             eval('$misc = "'.template('misc_login_incorrectdetails').'";');
             eval('$misc .= "'.template('misc_login').'";');
         } elseif (loginUser(postedVar('username'), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
-            if ($server == 'Mic') {
-                $misc = message($lang['onlinelogin'], FALSE, '', '', $full_url, FALSE, TRUE, FALSE);
-            } else {
-                redirect($full_url, 0);
-            }
+            redirect($full_url, 0);
         } else {
             if ($self['status'] == "Banned") {
                 error($lang['bannedmessage']);
