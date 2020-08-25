@@ -527,9 +527,9 @@ if (X_MEMBER) {
     if ($self['lastvisit'] < $thetime || ($self['lastvisit'] > $thetime + X_ONLINE_TIMER && $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
         $thetime = $self['lastvisit'];
     }
-    $lastvisit = $thetime + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
-    $lastdate = gmdate($dateformat, $lastvisit);
-    $lasttime = gmdate($timecode, $lastvisit);
+    $lastlocal = $thetime + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
+    $lastdate = gmdate($dateformat, $lastlocal);
+    $lasttime = gmdate($timecode, $lastlocal);
     $lastvisittext = $lang['lastactive'].' '.$lastdate.' '.$lang['textat'].' '.$lasttime;
 } else {
     // Checks for the possibility to register
@@ -546,6 +546,7 @@ if (X_MEMBER) {
 // Update last visit cookies
 put_cookie('xmblva', $onlinetime, ($onlinetime + (86400*365))); // lva == now
 put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
+$lastvisit = $thetime; // Used by forumdisplay
 
 // Get themes, [fid, [tid]]
 $forumtheme = 0;
