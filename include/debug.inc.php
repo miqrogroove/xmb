@@ -139,4 +139,4 @@ function mysql_syn_highlight($query) {
     return '<em>'.str_replace($find, $replace, $query).'</em>';
 }
 
-?>
+return;

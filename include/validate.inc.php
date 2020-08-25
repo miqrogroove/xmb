@@ -445,4 +445,5 @@ function encode_ip($dotquad_ip) {
 function isValidFilename($filename) {
     return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
-?>
+
+return;

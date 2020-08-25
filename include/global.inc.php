@@ -80,4 +80,5 @@ function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
         exit;
     }
 }
-?>
+
+return;

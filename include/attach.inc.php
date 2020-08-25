@@ -1102,4 +1102,5 @@ function extractRemoteImages($pid, &$message) {
 
     return $return;
 }
-?>
+
+return;

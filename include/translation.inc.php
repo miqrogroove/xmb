@@ -351,4 +351,5 @@ function langPanic() {
         exit ('Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.');
     }
 }
-?>
+
+return;
