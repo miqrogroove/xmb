@@ -34,10 +34,10 @@ if (X_SADMIN) {
     $x_error = '';
 
     //@todo translation needed
-    if (file_exists(ROOT.'install/') and !@rmdir(ROOT.'install/')) {
+    if (file_exists(ROOT.'install/') && !@rmdir(ROOT.'install/')) {
         $x_error = 'The installation files ("./install/") have been found on the server, but could not be removed automatically. Please remove them as soon as possible.';
     }
-    if (file_exists(ROOT.'Upgrade/') and !@rmdir(ROOT.'Upgrade/') or file_exists(ROOT.'upgrade/') and !@rmdir(ROOT.'upgrade/')) {
+    if (file_exists(ROOT.'Upgrade/') && !@rmdir(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') && !@rmdir(ROOT.'upgrade/')) {
         $x_error = 'The upgrade tool ("./upgrade/") has been found on the server, but could not be removed automatically. Please remove it as soon as possible.';
     }
     if (file_exists(ROOT.'upgrade.php')) {

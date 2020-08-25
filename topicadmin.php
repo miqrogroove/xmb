@@ -306,12 +306,12 @@ switch($action) {
             if ($movetorow === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
-            if ($movetorow['type'] == 'group' Or $moveto == $fid) {
+            if ($movetorow['type'] == 'group' || $moveto == $fid) {
                 error($lang['errormovingthreads'], FALSE);
             }
 
             //Perform sanity checks on all redirects
-            if ($type != 'normal' And count($tids) > 0) {
+            if ($type != 'normal' && count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $tids = array();
                 $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid IN ($csv)");

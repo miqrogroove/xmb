@@ -42,7 +42,7 @@ if (ini_get('display_errors')) {
 }
 
 //Check location
-if (!(is_file(ROOT.'header.php') and is_dir(ROOT.'include'))) {
+if (!(is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
     show_error( 'Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.' );
     trigger_error('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.', E_USER_ERROR);
 }
@@ -60,7 +60,7 @@ if (DEBUG) {
     echo 'Debug is False - You will not see any errors.';
 }
 
-if (!defined('X_SADMIN') or !X_SADMIN) {
+if (!defined('X_SADMIN') || !X_SADMIN) {
     show_error( 'This script may be run only by a Super Administrator.<br />Please <a href="login.php" target="_parent">Log In</a> first to begin the upgrade successfully.' );
     trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
 }
@@ -78,7 +78,7 @@ if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
 
 show_progress( 'Confirming the upgrade files are present' );
 
-if (is_dir(ROOT.'install') or is_dir(ROOT.'Install')) {
+if (is_dir(ROOT.'install') || is_dir(ROOT.'Install')) {
 	show_error( 'Wrong files present!<br />Please delete any folders named install or upgrade.' );
 	trigger_error('Admin attempted upgrade while non-upgrade files were present.', E_USER_ERROR);
 }

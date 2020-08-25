@@ -46,7 +46,7 @@ require ROOT.'db/'.$database.'.php';
 require ROOT.'include/functions.inc.php';
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
-$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG and LOG_MYSQL_ERRORS));
+$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG && LOG_MYSQL_ERRORS));
 if (FALSE === $squery) exit('Fatal Error: XMB is not installed.');
 if ($db->num_rows($squery) == 0) exit('Fatal Error: The XMB settings table is empty.');
 $SETTINGS = array();

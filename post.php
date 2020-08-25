@@ -258,7 +258,7 @@ if ($action != 'edit') {
     }
 }
 
-$allowimgcode = ($forum['allowimgcode'] == 'yes' And $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowimgcode = ($forum['allowimgcode'] == 'yes' && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
@@ -273,11 +273,11 @@ $emailnotifycheck = ($emailnotify == 'yes') ? $cheHTML : '';
 $smileoffcheck = ($smileyoff == 'yes') ? $cheHTML : '';
 
 // New bool vars to clear up the confusion about effective settings.
-$bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' And $forum['allowbbcode'] == 'yes');
-$bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $bbcodeoff == 'no');
-$bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
-$bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' And $forum['allowsmilies'] == 'yes');
-$bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $smileyoff == 'no');
+$bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' && $forum['allowbbcode'] == 'yes');
+$bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no');
+$bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
+$bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes');
+$bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $smileyoff == 'no');
 
 if (isset($subaction) && $subaction == 'spellcheck' && (isset($spellchecksubmit) || isset($updates_submit))) {
     $sc = TRUE;
@@ -358,7 +358,7 @@ $bbcodeinsert = '';
 $bbcodescript = '';
 $moresmilies = '';
 $smilieinsert = '';
-if ($bBBcodeInserterEnabled Or $bSmilieInserterEnabled) {
+if ($bBBcodeInserterEnabled || $bSmilieInserterEnabled) {
     eval('$bbcodescript = "'.template('functions_bbcode').'";');
     if ($bBBcodeInserterEnabled) {
         $mode0check = '';
@@ -400,11 +400,11 @@ switch($action) {
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
-        if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+        if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
                     $result = attachUploadedFile('attach'.$i);
-                    if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                    if ($result < 0 && $result != X_EMPTY_UPLOAD) {
                         $errors .= softerror($attachmentErrors[$result]);
                         $replyvalid = FALSE;
                     }
@@ -418,7 +418,7 @@ switch($action) {
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
-            if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
+            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
@@ -431,7 +431,7 @@ switch($action) {
         }
 
         //Check all replying permissions for this $tid.
-        if (!X_SADMIN And $thread['closed'] != '') {
+        if (!X_SADMIN && $thread['closed'] != '') {
             if ($replyvalid) {
                 $errors .= softerror($lang['closedmsg']);
             } else {
@@ -443,7 +443,7 @@ switch($action) {
         if ($replyvalid) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+                if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
                     if (loginUser(postedVar('username'), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
                             $errors .= softerror($lang['bannedmessage']);
@@ -533,7 +533,7 @@ switch($action) {
             $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
             $dbsubject = addslashes($subjectinput);
 
-            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+            if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
                 // Inputs are suspiciously long.  Has the schema been customized?
                 $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
                 $msgmax = $db->field_len($query, 0);
@@ -628,7 +628,7 @@ switch($action) {
                             attachUploadedFile('attach'.$i, $pid);
                         }
                     }
-                    if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
+                    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = addslashes($messageinput);
                         $db->escape_fast($newdbmessage);
@@ -652,7 +652,7 @@ switch($action) {
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
                 $quoteperms = checkForumPermissions(getForum($thaquote['fid']));
-                if ($quoteperms[X_PERMS_VIEW] And $quoteperms[X_PERMS_PASSWORD]) {
+                if ($quoteperms[X_PERMS_VIEW] && $quoteperms[X_PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
                     $quoteblock = rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
                     if ($bBBcodeOnForThisPost) {
@@ -667,7 +667,7 @@ switch($action) {
 
             // Fill $attachfile
             $files = array();
-            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+            if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
                 $attachfile = '';
                 $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
                 $counter = 0;
@@ -679,7 +679,7 @@ switch($action) {
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
-                            if ($counter == 0 Or $postinfo['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
+                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize = '' || $SETTINGS['attachimgpost'] == 'off') {
                                 $messageinput .= "\r\n\r\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
@@ -816,11 +816,11 @@ switch($action) {
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
-        if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+        if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
                     $result = attachUploadedFile('attach'.$i);
-                    if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                    if ($result < 0 && $result != X_EMPTY_UPLOAD) {
                         $errors .= softerror($attachmentErrors[$result]);
                         $topicvalid = FALSE;
                     }
@@ -834,7 +834,7 @@ switch($action) {
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
-            if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
+            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                 $result = extractRemoteImages(0, $messageinput);
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
@@ -849,7 +849,7 @@ switch($action) {
         if ($topicvalid) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (strlen(postedVar('username')) > 0 And isset($_POST['password'])) {
+                if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
                     if (loginUser(postedVar('username'), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
                             $errors .= softerror($lang['bannedmessage']);
@@ -957,7 +957,7 @@ switch($action) {
             $dbsubject = addslashes($subjectinput);
             $dbtsubject = $dbsubject;
 
-            if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 128) {
+            if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 128) {
                 // Inputs are suspiciously long.  Has the schema been customized?
                 $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
                 $msgmax = $db->field_len($query, 0);
@@ -1053,7 +1053,7 @@ switch($action) {
                             attachUploadedFile('attach'.$i, $pid);
                         }
                     }
-                    if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
+                    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = addslashes($messageinput);
                         $db->escape_fast($newdbmessage);
@@ -1078,7 +1078,7 @@ switch($action) {
         if (!$topicvalid) {
             // Fill $attachfile
             $files = array();
-            if ($forum['attachstatus'] == 'on' And $username != 'Anonymous') {
+            if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
                 $attachfile = '';
                 $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
                 $counter = 0;
@@ -1090,7 +1090,7 @@ switch($action) {
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
                         if (strpos($messageinput, $bbcode) === FALSE) {
-                            if ($counter == 0 Or $postinfo['img_size'] == '' Or $prevsize == '' Or $SETTINGS['attachimgpost'] == 'off') {
+                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
                                 $messageinput .= "\r\n\r\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
@@ -1204,7 +1204,7 @@ switch($action) {
 
         $status1 = modcheckPost($self['username'], $forum['moderator'], $orig['status']);
 
-        if ($status1 != 'Moderator' And ($self['username'] != $orig['author'] Or $thread['closed'] != '')) {
+        if ($status1 != 'Moderator' && ($self['username'] != $orig['author'] || $thread['closed'] != '')) {
             $errors .= softerror($lang['noedit']);
             $editvalid = FALSE;
         }
@@ -1214,7 +1214,7 @@ switch($action) {
                 for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                     if (isset($_FILES['attach'.$i])) {
                         $result = attachUploadedFile('attach'.$i, $pid);
-                        if ($result < 0 And $result != X_EMPTY_UPLOAD) {
+                        if ($result < 0 && $result != X_EMPTY_UPLOAD) {
                             $errors .= softerror($attachmentErrors[$result]);
                             $editvalid = FALSE;
                         }
@@ -1229,7 +1229,7 @@ switch($action) {
                     $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
                 }
                 $temp = '';
-                if ($SETTINGS['attach_remote_images'] == 'on' And $bIMGcodeOnForThisPost) {
+                if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                     $result = extractRemoteImages($pid, $messageinput);
                     if ($result < 0) {
                         $errors .= softerror($attachmentErrors[$result]);
@@ -1278,7 +1278,7 @@ switch($action) {
                 $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
                 $dbsubject = addslashes($subjectinput);
 
-                if (strlen($dbmessage) > 65535 or strlen($dbsubject) > 255) {
+                if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
                     // Inputs are suspiciously long.  Has the schema been customized?
                     $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
                     $msgmax = $db->field_len($query, 0);
@@ -1356,9 +1356,9 @@ switch($action) {
                 $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
                 $postinfo['subject'] = stripslashes($postinfo['subject']);
-                $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' And $postinfo['bbcodeoff'] == 'no');
-                $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost And $forum['allowimgcode'] == 'yes');
-                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' And $postinfo['smileyoff'] == 'no');
+                $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
+                $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
+                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
             }
 
             // Fill $attachment
@@ -1378,7 +1378,7 @@ switch($action) {
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$attach['aid']}[/file]";
                         if (strpos($postinfo['message'], $bbcode) === FALSE) {
-                            if ($counter == 0 Or $attach['img_size'] == '' Or $prevsize = '' Or $SETTINGS['attachimgpost'] == 'off') {
+                            if ($counter == 0 || $attach['img_size'] == '' || $prevsize = '' || $SETTINGS['attachimgpost'] == 'off') {
                                 $postinfo['message'] .= "\r\n\r\n";
                             }
                             $postinfo['message'] .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
@@ -1494,7 +1494,7 @@ function postLinkBBcode(&$message) {
     $query = $db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) WHERE pid IN ($pids)");
     while($row = $db->fetch_array($query)) {
         $perms = checkForumPermissions(getForum($row['fid']));
-        if ($perms[X_PERMS_VIEW] And $perms[X_PERMS_PASSWORD]) {
+        if ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD]) {
             if ($row['subject'] != '') {
                 $subject = stripslashes($row['subject']);
             } else {

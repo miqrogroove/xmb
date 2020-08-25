@@ -233,7 +233,7 @@ if ($action == 'restrictions') {
 
 // Management for Translation Database
 if ($action == 'lang') {
-    if (noSubmit('importsubmit') And noSubmit('edit') And noSubmit('editsubmit') And noSubmit('detail') And noSubmit('deletesubmit')) {
+    if (noSubmit('importsubmit') && noSubmit('edit') && noSubmit('editsubmit') && noSubmit('detail') && noSubmit('deletesubmit')) {
         // Default screen: Language List, Options to Install, Uninstall, and Export.
         $langnonce = nonce_create('massedtrnsls');
         ?>
@@ -264,7 +264,7 @@ if ($action == 'lang') {
         while($themeinfo = $db->fetch_array($query)) {
             $themeid = $themeinfo['langid'];
             $members = $themeinfo['cnt'];
-            if ($themeinfo['devname'] == $langfile Or $themeinfo['devname'] == $SETTINGS['langfile']) {
+            if ($themeinfo['devname'] == $langfile || $themeinfo['devname'] == $SETTINGS['langfile']) {
                 $disabledelete = ' disabled="disabled"';
             } else {
                 $disabledelete = '';
@@ -2275,7 +2275,7 @@ if ($action == "attachments") {
                 $db->data_seek($query2, 0);
             }
             while($child = $db->fetch_array($query2)) {
-                if ($child['parentid'] == $attachment['aid'] And substr($child['filename'], -10) == '-thumb.jpg') {
+                if ($child['parentid'] == $attachment['aid'] && substr($child['filename'], -10) == '-thumb.jpg') {
                     $attachsize = getSizeFormatted($child['filesize']);
                     $movelink = '';
                     if ($child['subdir'] == '') {
@@ -2326,7 +2326,7 @@ if ($action == "attachments") {
         require('include/attach.inc.php');
         $filelist = array();
         foreach($_POST as $postedname => $rawvalue) {
-            if (substr($postedname, 0, 8) == 'filename' And is_numeric($fileaid = substr($postedname, 8))) {
+            if (substr($postedname, 0, 8) == 'filename' && is_numeric($fileaid = substr($postedname, 8))) {
                 $filelist[] = $fileaid;
             }
         }

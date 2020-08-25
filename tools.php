@@ -235,7 +235,7 @@ switch($action) {
 			$count = 0;
             while($thread = $db->fetch_array($lpquery)) {
                 if (!is_null($thread['pid'])) {
-                    if ($thread['dateline'] == '0' And substr($thread['closed'], 0, 6) == 'moved|') {
+                    if ($thread['dateline'] == '0' && substr($thread['closed'], 0, 6) == 'moved|') {
                         // Handle situation where versions before 1.9.11 set posts.dateline=0 when redirecting threads.
                         $newtid = intval(substr($thread['closed'], 6));
                         $lastdate = $db->result($db->query("SELECT MAX(dateline) AS lastdate FROM ".X_PREFIX."posts WHERE tid=$newtid"), 0);
@@ -286,7 +286,7 @@ switch($action) {
         } else {
             $export_fid = formInt('export_fid');
             $export_forum = getForum($export_fid);
-            if ($export_forum['type'] != 'forum' And $export_forum['type'] != 'sub') {
+            if ($export_forum['type'] != 'forum' && $export_forum['type'] != 'sub') {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
 

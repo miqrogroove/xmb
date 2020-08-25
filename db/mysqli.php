@@ -203,7 +203,7 @@ class dbstuff {
             $errno = $this->link->errno;
         }
 
-    	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+    	if (DEBUG && (!defined('X_SADMIN') || X_SADMIN)) {
             require_once(ROOT.'include/validate.inc.php');
 			echo '<pre>MySQL encountered the following error: '.cdataOut($error)."(errno = ".$errno.")\n<br />";
             if ($sql != '') {
@@ -322,7 +322,7 @@ class dbstuff {
                 }
                 $query2->free();
             }
-            if (!defined('X_SADMIN') or X_SADMIN) {
+            if (!defined('X_SADMIN') || X_SADMIN) {
                 $this->querylist[] = $sql;
             }
         }
@@ -343,11 +343,11 @@ class dbstuff {
     function unbuffered_query($sql, $panic = TRUE) {
         $this->start_timer();
         $query = $this->link->query( $sql, MYSQLI_USE_RESULT );
-        if (FALSE === $query and $panic) {
+        if (FALSE === $query && $panic) {
             $this->panic($sql);
         }
         $this->querynum++;
-    	if (DEBUG and (!defined('X_SADMIN') or X_SADMIN)) {
+    	if (DEBUG && (!defined('X_SADMIN') || X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();
@@ -399,7 +399,7 @@ class dbstuff {
     }
 
     function insert_id() {
-    	if (DEBUG and LOG_MYSQL_ERRORS) {
+    	if (DEBUG && LOG_MYSQL_ERRORS) {
             $id = $this->last_id;
         } else {
             set_error_handler($this->errcallb);
@@ -424,7 +424,7 @@ class dbstuff {
     }
 
     function affected_rows() {
-    	if (DEBUG and LOG_MYSQL_ERRORS) {
+    	if (DEBUG && LOG_MYSQL_ERRORS) {
             $return = $this->last_rows;
         } else {
             set_error_handler($this->errcallb);
@@ -491,7 +491,7 @@ function xmb_mysql_error($errno, $errstr) {
     if (!headers_sent()) {
         header('HTTP/1.0 500 Internal Server Error');
     }
-	if (DEBUG And (!defined('X_SADMIN') Or X_SADMIN)) {
+	if (DEBUG && (!defined('X_SADMIN') || X_SADMIN)) {
         require_once(ROOT.'include/validate.inc.php');
 		echo "<pre>".cdataOut($output)."</pre>";
     } else {

@@ -267,7 +267,7 @@ switch($action) {
                     $password .= $chars[mt_rand(0, $get)];
                 }
                 $password2 = $password;
-            } elseif (!isset($_POST['password']) Or !isset($_POST['password2'])) {
+            } elseif (!isset($_POST['password']) || !isset($_POST['password2'])) {
                 error($lang['textpw1']);
             } else {
                 $password = $_POST['password'];
@@ -376,13 +376,13 @@ switch($action) {
 
             $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
             $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-            if (strlen($dateformatnew) == 0 Or $dateformatnew != $dateformattest) {
+            if (strlen($dateformatnew) == 0 || $dateformatnew != $dateformattest) {
                 $dateformatnew = $SETTINGS['dateformat'];
             }
             unset($dateformattest);
 
             $timeformatnew = formInt('timeformatnew');
-            if ($timeformatnew != 12 And $timeformatnew != 24) {
+            if ($timeformatnew != 12 && $timeformatnew != 24) {
                 $timeformatnew = $SETTINGS['timeformat'];
             }
 
@@ -413,7 +413,7 @@ switch($action) {
                     if (preg_match('/^' . get_img_regexp() . '$/i', $rawavatar) == 0) {
                         $avatar = '';
                     } elseif (ini_get('allow_url_fopen')) {
-                        if ($max_size[0] > 0 And $max_size[1] > 0 And strlen($rawavatar) > 0) {
+                        if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
                             $size = @getimagesize($rawavatar);
                             if ($size === FALSE) {
                                 $avatar = '';

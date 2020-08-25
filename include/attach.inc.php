@@ -84,7 +84,7 @@ function attachUploadedFile($varname, $pid=0) {
     }
 
     // Sanity checks
-    if ($pid == 0 And intval($self['uid']) <= 0) {
+    if ($pid == 0 && intval($self['uid']) <= 0) {
         return X_GENERIC_ATTACH_ERROR;
     }
 
@@ -101,7 +101,7 @@ function attachUploadedFile($varname, $pid=0) {
     }
 
     // Check minimum file size for disk storage
-    if ($filesize < $SETTINGS['files_min_disk_size'] And !$usedb) {
+    if ($filesize < $SETTINGS['files_min_disk_size'] && !$usedb) {
         $usedb = TRUE;
         $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
     }
@@ -156,7 +156,7 @@ function attachRemoteFile($url, $pid=0) {
         $filename = array_pop($filename);
     }
     $dbfilename = $db->escape($filename);
-    if ($pid == 0 And intval($self['uid']) <= 0) {
+    if ($pid == 0 && intval($self['uid']) <= 0) {
         return X_GENERIC_ATTACH_ERROR;
     }
 
@@ -263,7 +263,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
         $sqlsize = $result[0].'x'.$result[1];
 
         $maxsize = explode('x', $SETTINGS['max_image_size']);
-        if ($maxsize[0] > 0 and $maxsize[1] > 0) {
+        if ($maxsize[0] > 0 && $maxsize[1] > 0) {
             $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
             if ($imgSize->isBiggerThan($maxImgSize)) {
                 return X_IMAGE_DIMS_EXCEEDED;
@@ -274,7 +274,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
         $filetypei = strtolower($dbfiletype);
         switch($result[2]) {
         case IMAGETYPE_JPEG:
-            if ($extension != 'jpg' and $extension != 'jpeg' and $extension != 'jpe') {
+            if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
                 $dbfilename .= '.jpg';
                 $rawfilename .= '.jpg';
             }
@@ -310,7 +310,7 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
             }
             break;
         case 15: //IMAGETYPE_WBMP
-            if ($extension != 'wbmp' and $extension != 'wbm') {
+            if ($extension != 'wbmp' && $extension != 'wbm') {
                 $dbfilename .= '.wbmp';
                 $rawfilename .= '.wbmp';
             }
@@ -374,7 +374,7 @@ function doAttachmentEdits(&$deletes, $pid=0) {
                 deleteAttachment($aid, $pid);
                 $deletes[] = $aid;
                 $status = attachUploadedFile('replace_'.$aid, $pid);
-                if ($status < 0 And $status != X_EMPTY_UPLOAD) {
+                if ($status < 0 && $status != X_EMPTY_UPLOAD) {
                     $return = $status;
                 }
                 break;
@@ -556,7 +556,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
             break;
         default:
             // See the PHP Manual for additional information.
-            if (DEBUG and is_numeric($file['error'])) {
+            if (DEBUG && is_numeric($file['error'])) {
                 header('HTTP/1.0 500 Internal Server Error');
                 exit('XMB Upload Haulted by PHP error code '.$file['error']);
             }
@@ -757,7 +757,7 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=
 
     // Determine if a thumbnail is needed.
     $result = explode('x', $SETTINGS['max_thumb_size']);
-    if ($result[0] > 0 And $result[1] > 0) {
+    if ($result[0] > 0 && $result[1] > 0) {
         $thumbSize = new CartesianSize($result[0], $result[1]);
     } else {
         return FALSE;
@@ -849,7 +849,7 @@ function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALS
     $imgSize = new CartesianSize($result[0], $result[1]);
 
     $maxsize = explode('x', $SETTINGS['max_image_size']);
-    if ($maxsize[0] > 0 and $maxsize[1] > 0) {
+    if ($maxsize[0] > 0 && $maxsize[1] > 0) {
         $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
         if ($imgSize->isBiggerThan($maxImgSize)) {
             return FALSE;
@@ -985,7 +985,7 @@ function regenerateThumbnail($aid, $pid) {
     $sqlsize = $result[0].'x'.$result[1];
 
     $result = explode('x', $SETTINGS['max_image_size']);
-    if ($result[0] > 0 And $result[1] > 0) {
+    if ($result[0] > 0 && $result[1] > 0) {
         $maxImgSize = new CartesianSize($result[0], $result[1]);
         if ($imgSize->isBiggerThan($maxImgSize)) {
             if ($attach['subdir'] == '') {
@@ -1040,12 +1040,12 @@ class CartesianSize {
 
     function isBiggerThan($otherSize) {
         // Would overload '>' operator
-        return ($this->width > $otherSize->width Or $this->height > $otherSize->height);
+        return ($this->width > $otherSize->width || $this->height > $otherSize->height);
     }
 
     function isSmallerThan($otherSize) {
         // Would overload '<=' operator
-        return ($this->width <= $otherSize->width And $this->height <= $otherSize->height);
+        return ($this->width <= $otherSize->width && $this->height <= $otherSize->height);
     }
 }
 

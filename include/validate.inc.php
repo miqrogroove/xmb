@@ -226,10 +226,10 @@ function decimalEntityDecode($rawstring) {
     while(($currPos = strpos($rawstring, '&amp;#', $currPos)) !== FALSE) {
         $tempPos = strpos($rawstring, ';', $currPos + 6);
         $entLen = $tempPos - ($currPos + 6);
-        if ($entLen >= 3 And $entLen <= 5) {
+        if ($entLen >= 3 && $entLen <= 5) {
             $entNum = substr($rawstring, $currPos + 6, $entLen);
             if (is_numeric($entNum)) {
-                if (intval($entNum) >= 160 And intval($entNum) <= 65533) {
+                if (intval($entNum) >= 160 && intval($entNum) <= 65533) {
                     $rawstring = str_replace("&amp;#$entNum;", "&#$entNum;", $rawstring);
                 }
             }
@@ -284,7 +284,7 @@ function getInt($varname, $sourcearray='g') {
             break;
     }
 
-    if ($foundvar And is_numeric($retval)) {
+    if ($foundvar && is_numeric($retval)) {
         $retval = intval($retval);
     } else {
         $retval = 0;

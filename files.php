@@ -79,14 +79,14 @@ default:
 }
 
 // Sanity Checks
-if ($aid <= 0 Or $pid < 0 Or ($pid == 0 And $filename == '' And $self['uid'] == 0)) {
+if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && $self['uid'] == 0)) {
     fileError();
 }
 
 // Retrieve attachment metadata
 if ($filename == '') {
     $where = "WHERE a.aid=$aid AND a.pid=$pid";
-    if ($pid == 0 And !X_ADMIN) {
+    if ($pid == 0 && !X_ADMIN) {
         $where .= " AND a.uid={$self['uid']}"; // Allow preview of own attachments when URL format requires a PID.
     }
 } else {
@@ -100,10 +100,10 @@ if ($db->num_rows($query) != 1) {
 $file = $db->fetch_array($query);
 $db->free_result($query);
 
-if ($pid > 0 Or $file['fid'] != '') {
+if ($pid > 0 || $file['fid'] != '') {
     $forum = getForum($file['fid']);
 
-    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' And !X_ADMIN)) {
+    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
         fileError();
     }
 
@@ -170,7 +170,7 @@ assertEmptyOutputStream('files.php');
 // "If the requested variant has not been modified since the time specified in this field,
 // an entity will not be returned from the server; instead, a 304 (not modified) response
 // will be returned without any message-body."
-if ($_SERVER['REQUEST_METHOD'] == 'GET' And isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     date_default_timezone_set('UTC'); // Workaround for stupid PHP 5 problems.
     if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $file['updatestamp']) {
         header('HTTP/1.0 304 Not Modified');

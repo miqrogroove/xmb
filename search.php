@@ -99,7 +99,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
     if (!X_STAFF) {
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        if ($srchtxt != censor($srchtxt) Or strpos($srchtxt, '<') !== FALSE Or strpos($srchuname, '<') !== FALSE) {
+        if ($srchtxt != censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
             error($lang['searchinvalid']);
         }
         $url_check = Array('%3c', '<', ':/');
@@ -211,9 +211,9 @@ if (!isset($searchsubmit) && !isset($page)) {
     $temparray = array();
     $searchresults = '';
 
-    while($results != 0 And $counter < $ppp And $post = $db->fetch_array($querysrch)) {
+    while($results != 0 && $counter < $ppp && $post = $db->fetch_array($querysrch)) {
         $counter++;
-        if ($filter_distinct != 'yes' Or !array_key_exists($post['tid'], $temparray)) {
+        if ($filter_distinct != 'yes' || !array_key_exists($post['tid'], $temparray)) {
             $temparray[$post['tid']] = true;
             $message = stripslashes($post['message']);
 

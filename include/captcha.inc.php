@@ -474,7 +474,7 @@ class Captcha {
 
         $this->bPoison = TRUE;
 
-        if (strlen($sUserCode) != $this->iNumChars or $imghash == 'test') {
+        if (strlen($sUserCode) != $this->iNumChars || $imghash == 'test') {
             return FALSE;
         }
 

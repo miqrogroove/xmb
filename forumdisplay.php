@@ -112,7 +112,7 @@ validatePpp();
 $threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
 
 // Perform automatic maintenance
-if ($forum['type'] == 'sub' And $forum['threads'] != $threadcount) {
+if ($forum['type'] == 'sub' && $forum['threads'] != $threadcount) {
     updateforumcount($fid);
 }
 
@@ -138,7 +138,7 @@ if ($forum['type'] == 'forum') {
     $forumlist = '';
     $permitted = permittedForums(forumCache(), 'forum');
     foreach($permitted as $sub) {
-        if ($sub['type'] == 'sub' And $sub['fup'] == $fid) {
+        if ($sub['type'] == 'sub' && $sub['fup'] == $fid) {
             $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
         }
     }

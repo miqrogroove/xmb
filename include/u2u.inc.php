@@ -227,16 +227,16 @@ function u2u_view($u2uid, $folders) {
         $u2uavatar = '';
         if ($u2u['type'] == 'incoming') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$xmbuser')");
-            if ($SETTINGS['avastatus'] != 'off' And $u2u['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' && $u2u['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$u2u['avatar'].'" />';
             }
         } else if ($u2u['type'] == 'draft') {
             $db->query("UPDATE ".X_PREFIX."u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
-            if ($SETTINGS['avastatus'] != 'off' And $self['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' && $self['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
             }
         } else {
-            if ($SETTINGS['avastatus'] != 'off' And $self['avatar'] != '') {
+            if ($SETTINGS['avastatus'] != 'off' && $self['avatar'] != '') {
                 $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
             }
         }
@@ -479,7 +479,7 @@ function u2u_folderSubmit($u2ufolders, $folders) {
     $testarray = array();
     foreach($newfolders as $key => $value) {
         $newfolders[$key] = trim($value);
-        if (empty($newfolders[$key]) Or in_array(strtolower($newfolders[$key]), $testarray) Or in_array(strtolower($newfolders[$key]), array('inbox', 'outbox', 'drafts', 'trash'))) {
+        if (empty($newfolders[$key]) || in_array(strtolower($newfolders[$key]), $testarray) || in_array(strtolower($newfolders[$key]), array('inbox', 'outbox', 'drafts', 'trash'))) {
             unset($newfolders[$key]);
         } else if (strlen($newfolders[$key]) > U2U_FOLDER_COL_SIZE) {
             $newfolders[$key] = substr($newfolders[$key], 0, U2U_FOLDER_COL_SIZE);
@@ -568,7 +568,7 @@ function u2u_display($folder, $folders) {
 
         $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
 
-        if ($u2u['type'] == 'incoming' or $u2u['type'] == 'outgoing') {
+        if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
             if ($onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
                 if ($u2u['invisible'] == 1) {

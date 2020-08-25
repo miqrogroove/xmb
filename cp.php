@@ -62,12 +62,12 @@ displayAdminPanel();
 
 if ($action == "settings") {
     if (noSubmit('settingsubmit1')
-    And noSubmit('settingsubmit2')
-    And noSubmit('settingsubmit3')
-    And noSubmit('settingsubmit4')
-    And noSubmit('settingsubmit5')
-    And noSubmit('settingsubmit6')
-    And noSubmit('settingsubmit7')) {
+     && noSubmit('settingsubmit2')
+     && noSubmit('settingsubmit3')
+     && noSubmit('settingsubmit4')
+     && noSubmit('settingsubmit5')
+     && noSubmit('settingsubmit6')
+     && noSubmit('settingsubmit7')) {
         $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
         $themelist = array();
@@ -689,7 +689,7 @@ if ($action == "settings") {
         $floodctrlnew = formInt('floodctrlnew');
         $u2uquotanew = formInt('u2uquotanew');
         $avastatusnew = postedVar('avastatusnew');
-        if ($avastatusnew != 'on' And $avastatusnew != 'list') {
+        if ($avastatusnew != 'on' && $avastatusnew != 'list') {
             $avastatusnew = 'off';
         }
         $resetSigNew = formOnOff('resetSigNew');
@@ -986,7 +986,7 @@ if ($action == 'forum') {
             }
             foreach($groups as $moveforum) { //Groups and grouped forum options.
                 echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
-                if (isset($forums[$moveforum['fid']]) And !isset($subs[$forum['fid']])) {
+                if (isset($forums[$moveforum['fid']]) && !isset($subs[$forum['fid']])) {
                     foreach($forums[$moveforum['fid']] as $moveforum) {
                         echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
                     }
@@ -1088,7 +1088,7 @@ if ($action == 'forum') {
                             $curgroup = '';
                         }
                         echo '<option value="'.$moveforum['fid'].'" '.$curgroup.'>'.stripslashes($moveforum['name']).'</option>';
-                        if (!isset($subs[$forum['fid']]) And isset($forums[$moveforum['fid']])) {
+                        if (!isset($subs[$forum['fid']]) && isset($forums[$moveforum['fid']])) {
                             foreach($forums[$moveforum['fid']] as $moveforum) {
                                 if ($moveforum['fid'] != $forum['fid']) {
                                     echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
@@ -1296,8 +1296,8 @@ if ($action == 'forum') {
         <?php
         $perms = explode(',', $forum['postperm']);
         foreach($status_enum as $key=>$val) {
-            if ($key != '' And $val <= $status_enum['Guest']) {
-                if (!X_SADMIN and $key == 'Super Administrator') {
+            if ($key != '' && $val <= $status_enum['Guest']) {
+                if (!X_SADMIN && $key == 'Super Administrator') {
                     $disabled = 'disabled="disabled"';
                 } else {
                     $disabled = '';
@@ -1372,7 +1372,7 @@ if ($action == 'forum') {
 
             if (!$dsuccess) {
                 $settype = '';
-                if ($forum['fup'] != $moveto And $moveto != $forum['fid'] And $forum['type'] != 'group') { //Forum is being moved
+                if ($forum['fup'] != $moveto && $moveto != $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
                     if ($moveto == 0) {
                         $settype = ", type='forum', fup=0";
                     } else {
@@ -1431,15 +1431,15 @@ if ($action == 'forum') {
         $newffup = formInt('newffup');
         $newsubfup = formInt('newsubfup');
 
-        if ($newfname != $lang['textnewforum'] And $newfname != '') {
+        if ($newfname != $lang['textnewforum'] && $newfname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
-        if ($newgname != $lang['textnewgroup'] And $newgname != '') {
+        if ($newgname != $lang['textnewgroup'] && $newgname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
-        if ($newsubname != $lang['textnewsubf'] And $newsubname != '') {
+        if ($newsubname != $lang['textnewsubf'] && $newsubname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
@@ -1803,13 +1803,13 @@ if ($action == "members") {
         $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
 
         // Guarantee this request will not remove all Super Administrators.
-        if (X_SADMIN And $db->num_rows($query) > 0) {
+        if (X_SADMIN && $db->num_rows($query) > 0) {
             $saquery = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
             $sa_count = $db->result($saquery, 0);
             $db->free_result($saquery);
 
             while($mem = $db->fetch_array($query)) {
-                if ($mem['status'] == 'Super Administrator' And postedVar('status'.$mem['uid']) != 'Super Administrator') {
+                if ($mem['status'] == 'Super Administrator' && postedVar('status'.$mem['uid']) != 'Super Administrator') {
                     $sa_count--;
                 }
             }
@@ -1861,7 +1861,7 @@ if ($action == "members") {
 
 if ($action == "ipban") {
     if ($SETTINGS['ip_banning'] == 'on') {
-        if (noSubmit('ipbansubmit') And noSubmit('ipbandisable')) {
+        if (noSubmit('ipbansubmit') && noSubmit('ipbandisable')) {
             ?>
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
@@ -1926,10 +1926,10 @@ if ($action == "ipban") {
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         } else {
             $newip = array();
-            $newip[] = (is_numeric(postedVar('newip1')) Or postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
-            $newip[] = (is_numeric(postedVar('newip2')) Or postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
-            $newip[] = (is_numeric(postedVar('newip3')) Or postedVar('newip3') == '*') ? trim(postedVar('newip3')) : '0' ;
-            $newip[] = (is_numeric(postedVar('newip4')) Or postedVar('newip4') == '*') ? trim(postedVar('newip4')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip1')) || postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip2')) || postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip3')) || postedVar('newip3') == '*') ? trim(postedVar('newip3')) : '0' ;
+            $newip[] = (is_numeric(postedVar('newip4')) || postedVar('newip4') == '*') ? trim(postedVar('newip4')) : '0' ;
             $delete = postedArray('delete', 'int');
 
             if ($delete) {
@@ -1952,7 +1952,7 @@ if ($action == "ipban") {
                 for($i=0; $i<=3 && !$invalid; ++$i) {
                     if ($newip[$i] == "*") {
                         $ip[$i+1] = -1;
-                    } else if (intval($newip[$i]) >=0 And intval($newip[$i]) <= 255) {
+                    } else if (intval($newip[$i]) >=0 && intval($newip[$i]) <= 255) {
                         $ip[$i+1] = intval($newip[$i]);
                     } else {
                         $invalid = 1;

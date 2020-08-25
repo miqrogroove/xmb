@@ -40,7 +40,7 @@ if (ini_get('display_errors')) {
 }
 
 // Check location
-if (!(is_file(ROOT.'header.php') and is_dir(ROOT.'include'))) {
+if (!(is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
     echo 'Could not find XMB!<br />'
         .'Please make sure the upgrade folder is in the same folder as index.php and header.php.<br />';
     trigger_error('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.', E_USER_ERROR);
@@ -59,7 +59,7 @@ if (DEBUG) {
     echo 'Debug is False - You will not see any errors.';
 }
 
-if (!defined('X_SADMIN') or !X_SADMIN) {
+if (!defined('X_SADMIN') || !X_SADMIN) {
     echo '<br /><br />This script may be run only by a Super Administrator.<br />'
         .'Please <a href="login.php">Log In</a> first to begin the upgrade successfully.<br />';
     trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
@@ -83,7 +83,7 @@ if ( false === $result ) {
 }
 
 // Ready to Upgrade
-if (!isset($_GET['step']) or $_GET['step'] == 1) {
+if (!isset($_GET['step']) || $_GET['step'] == 1) {
 ?>
 <h1>XMB 1.9.12 Upgrade Script</h1>
 

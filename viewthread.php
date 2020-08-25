@@ -293,7 +293,7 @@ if ($action == '') {
 
     eval('$header = "'.template('header').'";');
 
-    if ($perms[X_PERMS_REPLY] And ($thread['closed'] == '' Or X_SADMIN)) {
+    if ($perms[X_PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
         eval('$replylink = "'.template('viewthread_reply').'";');
         if ($SETTINGS['quickreply_status'] == 'on') {
             $usesigcheck = ($self['sig'] != '') ? $cheHTML : '';
@@ -310,7 +310,7 @@ if ($action == '') {
                 }
             }
 
-            if ($SETTINGS['smileyinsert'] == 'on' And $forum['allowsmilies'] == 'yes' And $smiliesnum > 0) {
+            if ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes' && $smiliesnum > 0) {
                 eval('$quickbbcode = "'.template('functions_bbcode_quickreply').'";');
 
                 $smilies = '<div align="center"><hr /><table border="0"><tr>';
@@ -501,7 +501,7 @@ if ($action == '') {
     $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
     while($post = $db->fetch_array($querypost)) {
         // Perform automatic maintenance
-        if ($post['type'] == 'post' And $post['fid'] != $thread['fid']) {
+        if ($post['type'] == 'post' && $post['fid'] != $thread['fid']) {
             $db->query('UPDATE '.X_PREFIX.'posts SET fid='.$thread['fid'].' WHERE pid='.$post['pid']);
         }
 
@@ -675,7 +675,7 @@ if ($action == '') {
         }
 
         $repquote = '';
-        if ($perms[X_PERMS_REPLY] and ($thread['closed'] != 'yes' or X_SADMIN)) {
+        if ($perms[X_PERMS_REPLY] && ($thread['closed'] != 'yes' || X_SADMIN)) {
             eval('$repquote = "'.template('viewthread_post_repquote').'";');
         }
 
@@ -692,7 +692,7 @@ if ($action == '') {
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];
 
-        if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
+        if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
@@ -701,7 +701,7 @@ if ($action == '') {
                 }
             }
             if (count($files) > 0) {
-                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'));
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'));
             }
         }
 
@@ -755,7 +755,7 @@ if ($action == '') {
     echo $header, $viewthread, $footer;
 } else if ($action == 'attachment') {
     // Validate action
-    if (!($forum['attachstatus'] == 'on' And $pid > 0 And $tid > 0)) {
+    if (!($forum['attachstatus'] == 'on' && $pid > 0 && $tid > 0)) {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
     }
@@ -833,7 +833,7 @@ if ($action == '') {
         } else {
             $subject = rawHTMLsubject(stripslashes($post['subject']));
         }
-        if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
+        if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
@@ -842,7 +842,7 @@ if ($action == '') {
                 }
             }
             if (count($files) > 0) {
-                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'));
+                bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'));
             }
         }
         $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);

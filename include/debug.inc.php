@@ -43,7 +43,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
         if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
         if (FALSE === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
             exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
-        } elseif(!extension_loaded('ISAPI') and !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
+        } elseif(!extension_loaded('ISAPI') && !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
             exit('Error: FastCGI is missing or not configured on your server.');
         } else {
             exit('Error: Unexpected environment.  Please make sure FastCGI is working.');
@@ -66,13 +66,13 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ($hostsetting != $host And $host != 'www.'.$hostsetting) {
+    if ($hostsetting != $host && $host != 'www.'.$hostsetting) {
         if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
         if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-    } elseif ($pathsetting != $path And $pathsetting != '') {
+    } elseif ($pathsetting != $path && $pathsetting != '') {
         $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.$path;
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';

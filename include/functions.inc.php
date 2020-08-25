@@ -37,7 +37,7 @@ if (!defined('IN_CODE')) {
  * @return bool
  */
 function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=false) {
-    global $self, $onlineip, $onlinetime, $db, $thetime, $lastvisit;
+    global $self, $onlineip, $onlinetime, $db, $lastvisit;
 
     if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
         $dbname = $db->escape($self['username']);
@@ -58,13 +58,11 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=fals
             $currtime = $onlinetime + (86400*30);
         }
 
-        put_cookie("xmbuser", $self['username'], $currtime);
-        put_cookie("xmbpw", $xmbpwinput, $currtime);
-
-        // This cookie was already set in header.php, but let's try to overwrite it.
-        $thetime = $self['lastvisit'];
-        put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
-        $lastvisit = $thetime; // Used by forumdisplay
+        // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
+        put_cookie('xmbuser', $self['username'], $currtime);
+        put_cookie('xmbpw', $xmbpwinput, $currtime);
+        put_cookie('xmblvb', $self['lastvisit'], ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
+        $lastvisit = $self['lastvisit']; // Used by forumdisplay
 
         return true;
     } else {
@@ -221,7 +219,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
     // Save This Session
-    if (X_SCRIPT != 'upgrade.php' and (X_ADMIN or $serror == '' or $serror == 'guest' and X_MEMBER)) {
+    if (X_SCRIPT != 'upgrade.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
         global $onlineip, $onlinetime, $url;
 
         $wollocation = substr($url, 0, $maxurl);
@@ -939,7 +937,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
         $prefix = '';
         $extension = strtolower(get_extension($post['filename']));
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
-        if ($SETTINGS['attachimgpost'] == 'on' and in_array($extension, $img_extensions)) {
+        if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
             if (intval($attach['thumbid'] > 0)) {
                 $post['thumburl'] = getAttachmentURL($attach['thumbid'], $pid, $attach['thumbname']);
                 $result = explode('x', $attach['thumbsize']);
@@ -1007,7 +1005,7 @@ function modcheckPost(&$username, &$mods, &$origstatus) {
     global $SETTINGS;
     $retval = modcheck($username, $mods);
 
-    if ($retval != '' And $SETTINGS['allowrankedit'] != 'off') {
+    if ($retval != '' && $SETTINGS['allowrankedit'] != 'off') {
         switch($origstatus) {
             case 'Super Administrator':
                 if (!X_SADMIN) {
@@ -1133,7 +1131,7 @@ function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
     if ($page > 1 && $page <= $max_page) {
         $return['start'] = ($page-1) * $perpage;
         if ($canonical !== FALSE) setCanonicalLink($canonical.((strpos($baseurl, '?') !== FALSE) ? '&amp;' : '?').'page='.$page);
-    } elseif ($page == 0 And !isset($_GET['page'])) {
+    } elseif ($page == 0 && !isset($_GET['page'])) {
         $return['start'] = 0;
         $page = 1;
         if ($canonical !== FALSE) setCanonicalLink($canonical);
@@ -1172,7 +1170,7 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
 
     $multipage = $lang['textpages'];
 
-    if ($page >= 1 And $lastpage > 1 And $page <= $lastpage) {
+    if ($page >= 1 && $lastpage > 1 && $page <= $lastpage) {
         if ($page >= $lastpage - 3) {
             $to = $lastpage;
         } else {
@@ -1192,7 +1190,7 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
 
         // Link to first page
         $multipage .= "\n";
-        if ($page != 1 or !$isself) {
+        if ($page != 1 || !$isself) {
             $extra = '';
             if ($isself) {
                 if (2 == $page) {
@@ -1279,7 +1277,7 @@ function smilieinsert($type='normal') {
         $smtotal = 0;
     }
 
-    if ($SETTINGS['smileyinsert'] == 'on' And $smcols > 0 And $smiliesnum > 0) {
+    if ($SETTINGS['smileyinsert'] == 'on' && $smcols > 0 && $smiliesnum > 0) {
         foreach($smiliecache as $key=>$val) {
             $smilie['code'] = $key;
             $smilie['url'] = $val;
@@ -1453,7 +1451,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         error('Tried to redirect to potentially insecure url.');
     }
 
-    if (headers_sent() Or $type == X_REDIRECT_JS) {
+    if (headers_sent() || $type == X_REDIRECT_JS) {
         ?>
         <script language="javascript" type="text/javascript">
         function redirect() {
@@ -2128,7 +2126,7 @@ function forumJump() {
     // Populate $forumselect
     $permitted = getStructuredForums(TRUE);
 
-    if (0 == count($permitted['group']['0']) and 0 == count($permitted['forum']['0'])) {
+    if (0 == count($permitted['group']['0']) && 0 == count($permitted['forum']['0'])) {
         return '';
     }
 
@@ -2238,7 +2236,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
 
     // 5. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-    if ($forum['password'] == '' Or $pwinput == $forum['password']) {
+    if ($forum['password'] == '' || $pwinput == $forum['password']) {
         $ret[X_PERMS_PASSWORD] = TRUE;
     }
 
@@ -2273,7 +2271,7 @@ function handlePasswordDialog($fid) {
     $pwinput = postedVar('pw', '', FALSE, FALSE);
 
     $forum = getForum($fid);
-    if (strlen($pwinput) != 0 And $forum !== FALSE) {
+    if (strlen($pwinput) != 0 && $forum !== FALSE) {
         if ($pwinput == $forum['password']) {
             put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
             $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
@@ -2448,7 +2446,7 @@ function nonce_use($key, $nonce, $expire = 0) {
     $db->escape_fast($nonce);
     $time = time() - X_NONCE_MAX_AGE;
     $sql_expire = "dateline < $time";
-    if ($expire > 0 and $expire < X_NONCE_MAX_AGE) {
+    if ($expire > 0 && $expire < X_NONCE_MAX_AGE) {
         $time = time() - $expire;
         $sql_expire .= " OR imagestring='$key' AND dateline < $time";
     }

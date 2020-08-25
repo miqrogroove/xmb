@@ -38,10 +38,10 @@ define('XMB_SCHEMA_VER', 4);
 function xmb_schema_table($action, $name) {
     global $db;
 
-    if ('drop' == $action or 'overwrite' == $action) {
+    if ('drop' == $action || 'overwrite' == $action) {
         $db->query(xmb_schema_drop($name));
     }
-    if ('create' == $action or 'overwrite' == $action) {
+    if ('create' == $action || 'overwrite' == $action) {
         $db->query(xmb_schema_create($name));
     }
 }
@@ -618,16 +618,16 @@ function xmb_schema_table_exists($name) {
 function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
     global $db;
 
-    if (empty($column) and empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
+    if (empty($column) && empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
 
     $result = $db->query("SHOW INDEX FROM ".X_PREFIX.$table);
 
     while ($row = $db->fetch_array($result)) {
-        if (!empty($column) and $row['Column_name'] != $column) {
+        if (!empty($column) && $row['Column_name'] != $column) {
             continue;
-        } elseif (!empty($index) and $row['Key_name'] != $index) {
+        } elseif (!empty($index) && $row['Key_name'] != $index) {
             continue;
-        } elseif (!empty($subpart) and $row['Sub_part'] != $subpart) {
+        } elseif (!empty($subpart) && $row['Sub_part'] != $subpart) {
             continue;
         } else {
             $db->free_result($result);

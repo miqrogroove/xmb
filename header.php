@@ -288,9 +288,9 @@ if (X_SCRIPT != 'search.php') {
 }
 
 // Check for double-slash problems in REQUEST_URI
-if (substr($url, 0, strlen($cookiepath)) != $cookiepath Or substr($url, strlen($cookiepath), 1) == '/') {
+if (substr($url, 0, strlen($cookiepath)) != $cookiepath || substr($url, strlen($cookiepath), 1) == '/') {
     $fixed_url = str_replace('//', '/', $url);
-    if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath Or substr($fixed_url, strlen($cookiepath), 1) == '/' Or $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
+    if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath || substr($fixed_url, strlen($cookiepath), 1) == '/' || $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
         header('HTTP/1.0 404 Not Found');
         exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
     } else {
@@ -331,7 +331,7 @@ $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
 
 // Make all settings global, and put them in the $SETTINGS[] array
 // This is the first query, so do not panic unless query logging is enabled.
-$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG and LOG_MYSQL_ERRORS));
+$squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG && LOG_MYSQL_ERRORS));
 // Assume XMB is not installed if first query fails.
 if (FALSE === $squery) {
     header('HTTP/1.0 500 Internal Server Error');
@@ -375,7 +375,7 @@ if ($SETTINGS['smcols'] < 1) {
     $SETTINGS['smcols'] = 4;
 }
 
-if ($SETTINGS['captcha_code_length'] < 3 or $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
+if ($SETTINGS['captcha_code_length'] < 3 || $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
     $captcha_code_length = 8;
     $SETTINGS['captcha_code_length'] = 8;
 }
@@ -423,10 +423,10 @@ if ($SETTINGS['ip_banning'] == 'on') {
 }
 
 // Check if the board is offline
-if ($SETTINGS['bbstatus'] == 'off' And $serror == '') {
-    if (($action == 'login' Or $action == 'lostpw') And X_SCRIPT == 'misc.php') {
+if ($SETTINGS['bbstatus'] == 'off' && $serror == '') {
+    if (($action == 'login' || $action == 'lostpw') && X_SCRIPT == 'misc.php') {
         // Allow login
-    } elseif ($SETTINGS['regstatus'] == 'on' And ($action == 'reg' Or $action == 'coppa' Or $action == 'captchaimage') And (X_SCRIPT == 'misc.php' Or X_SCRIPT == 'member.php')) {
+    } elseif ($SETTINGS['regstatus'] == 'on' && ($action == 'reg' || $action == 'coppa' || $action == 'captchaimage') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php')) {
         // Allow registration
     } else {
         // Block all non-admins
@@ -435,10 +435,10 @@ if ($SETTINGS['bbstatus'] == 'off' And $serror == '') {
 }
 
 // Check if the board is set to 'reg-only'
-if ($SETTINGS['regviewonly'] == 'on' And $serror == '') {
-    if (($action == 'login' Or $action == 'lostpw') And X_SCRIPT == 'misc.php') {
+if ($SETTINGS['regviewonly'] == 'on' && $serror == '') {
+    if (($action == 'login' || $action == 'lostpw') && X_SCRIPT == 'misc.php') {
         // Allow login
-    } elseif ($SETTINGS['regstatus'] == 'on' And ($action == 'reg' Or $action == 'coppa' Or $action == 'captchaimage') And (X_SCRIPT == 'misc.php' Or X_SCRIPT == 'member.php')) {
+    } elseif ($SETTINGS['regstatus'] == 'on' && ($action == 'reg' || $action == 'coppa' || $action == 'captchaimage') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php')) {
         // Allow registration
     } else {
         // Block all guests
@@ -574,7 +574,7 @@ if ($tid > 0 && $action != 'templates') {
 
 // Check what theme to use
 $validtheme = FALSE;
-if (!$validtheme And (int) $themeuser > 0) {
+if (!$validtheme && (int) $themeuser > 0) {
     $theme = (int) $themeuser;
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
     if (!$validtheme = ($db->num_rows($query) > 0)) {
@@ -582,7 +582,7 @@ if (!$validtheme And (int) $themeuser > 0) {
         $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
     }
 }
-if (!$validtheme And (int) $forumtheme > 0) {
+if (!$validtheme && (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
     if (!$validtheme = ($db->num_rows($query) > 0)) {
@@ -711,7 +711,7 @@ case 'guest':
 
 /* Finish HTML Templates */
 
-if ((X_ADMIN Or $SETTINGS['bbstatus'] == 'on') And (X_MEMBER Or $SETTINGS['regviewonly'] == 'off')) {
+if ((X_ADMIN || $SETTINGS['bbstatus'] == 'on') && (X_MEMBER || $SETTINGS['regviewonly'] == 'off')) {
 
     $links = array();
 
@@ -780,7 +780,7 @@ if ((X_ADMIN Or $SETTINGS['bbstatus'] == 'on') And (X_MEMBER Or $SETTINGS['regvi
         if ($newu2unum > 0) {
             $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
             // Popup Alert
-            if ($self['u2ualert'] == 2 Or ($self['u2ualert'] == 1 And X_SCRIPT == 'index.php')) {
+            if ($self['u2ualert'] == 2 || ($self['u2ualert'] == 1 && X_SCRIPT == 'index.php')) {
                 $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
                 if ($newu2unum == 1) {
                     $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';

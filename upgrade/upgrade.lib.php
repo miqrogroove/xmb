@@ -116,7 +116,7 @@ function xmb_upgrade() {
 
     show_progress('Checking for new themes');
     $query = upgrade_query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
-    if ($db->num_rows($query) == 0 and is_dir(ROOT.'images/davis')) {
+    if ($db->num_rows($query) == 0 && is_dir(ROOT.'images/davis')) {
         show_progress('Adding Davis as the new default theme');
         upgrade_query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                           ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
@@ -311,7 +311,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'themes';
     $colname = 'themeid';
-    if (xmb_schema_index_exists($table, '', 'PRIMARY') and !xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
+    if (xmb_schema_index_exists($table, '', 'PRIMARY') && !xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
         $sql[] = "DROP PRIMARY KEY";
     }
 
@@ -598,7 +598,7 @@ function upgrade_schema_to_v0() {
     $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(50)') {
+    if (strtolower($row['Type']) == 'varchar(32)' || strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -700,7 +700,7 @@ function upgrade_schema_to_v0() {
     $coltype = "int(12) NOT NULL auto_increment";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
+    if (strtolower($row['Type']) == 'smallint(6)' || strtolower($row['Type']) == 'int(6)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -778,7 +778,7 @@ function upgrade_schema_to_v0() {
     $coltype = "bigint(15) NOT NULL default 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(30)' or strtolower($row['Type']) == 'bigint(30)' or strtolower($row['Null']) == 'yes') {
+    if (strtolower($row['Type']) == 'varchar(30)' || strtolower($row['Type']) == 'bigint(30)' || strtolower($row['Null']) == 'yes') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
         upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
@@ -788,7 +788,7 @@ function upgrade_schema_to_v0() {
     $coltype = "varchar(128) NOT NULL default 'Not Set'";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(15)' or strtolower($row['Type']) == 'varchar(32)') {
+    if (strtolower($row['Type']) == 'varchar(15)' || strtolower($row['Type']) == 'varchar(32)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -820,7 +820,7 @@ function upgrade_schema_to_v0() {
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Null']) == 'yes' or strtolower($row['Type']) == 'varchar(50)') {
+        if (strtolower($row['Null']) == 'yes' || strtolower($row['Type']) == 'varchar(50)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -912,7 +912,7 @@ function upgrade_schema_to_v0() {
     $coltype = "bigint(32) NOT NULL default 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(4)' or strtolower($row['Type']) == 'int(100)') {
+    if (strtolower($row['Type']) == 'smallint(4)' || strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -920,7 +920,7 @@ function upgrade_schema_to_v0() {
     $coltype = "int(10) NOT NULL default 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(5)' or strtolower($row['Type']) == 'int(100)') {
+    if (strtolower($row['Type']) == 'smallint(5)' || strtolower($row['Type']) == 'int(100)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -928,7 +928,7 @@ function upgrade_schema_to_v0() {
     $coltype = "varchar(54) NOT NULL default ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(32)' or strtolower($row['Type']) == 'varchar(30)') {
+    if (strtolower($row['Type']) == 'varchar(32)' || strtolower($row['Type']) == 'varchar(30)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -1220,7 +1220,7 @@ function upgrade_schema_to_v0() {
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)' or strtolower($row['Type']) == 'int(6)') {
+        if (strtolower($row['Type']) == 'smallint(6)' || strtolower($row['Type']) == 'int(6)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -1757,7 +1757,7 @@ function fixForumPerms() {
     ***/
 
     // store
-    $q = upgrade_query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' or type='sub')");
+    $q = upgrade_query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM ".X_PREFIX."forums WHERE (type='forum' OR type='sub')");
     while($forum = $db->fetch_array($q)) {
         // check if we need to change it first
         $parts = explode('|', $forum['postperm']);
@@ -1853,7 +1853,7 @@ function fixPolls() {
 
         $voters = explode('    ', trim($options[$num_options]));
 
-        if (1 == count($voters) and strlen($voters[0]) < 3) {
+        if (1 == count($voters) && strlen($voters[0]) < 3) {
             // The most likely values for $options[$num_options] are '' and '1'.  Treat them equivalent to null.
         } else {
             $name = array();
@@ -1980,7 +1980,7 @@ function fixPostPerm() {
 			$update = true;
 			$forum['postperm'] = $pp . '|' . $pp;	// make the postperm the same for thread and reply
 		}
-		if ( $forum['guestposting'] != 'on' and $forum['guestposting'] != 'off' ) {
+		if ( $forum['guestposting'] != 'on' && $forum['guestposting'] != 'off' ) {
 			$forum['guestposting'] = 'off';
 			$update = true;
 		}

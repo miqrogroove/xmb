@@ -58,10 +58,10 @@ function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
     $buffered_fault = (ob_get_length() > 0); // Checks top of buffer stack only.
     $unbuffered_fault = headers_sent();
     
-    if ($buffered_fault Or $unbuffered_fault) {
+    if ($buffered_fault || $unbuffered_fault) {
         if ($buffered_fault) header('HTTP/1.0 500 Internal Server Error');
 
-        if ($use_debug And defined('DEBUG') And DEBUG == FALSE) {
+        if ($use_debug && defined('DEBUG') && DEBUG == FALSE) {
             echo "Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.";
         } elseif ($unbuffered_fault) {
             headers_sent($filepath, $linenum);

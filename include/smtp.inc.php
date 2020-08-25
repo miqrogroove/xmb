@@ -64,7 +64,7 @@ class socket_SMTP {
         }
         $parts = explode("\r\n", $s);
         foreach($parts as $ns) {
-            if (substr($ns, 0, 3) == '250' And substr($ns, 4, 4) == 'AUTH') {
+            if (substr($ns, 0, 3) == '250' && substr($ns, 4, 4) == 'AUTH') {
                 $authAvailable = true;
                 $methods = substr($ns, 8);
                 $methods = explode(' ', trim($methods));

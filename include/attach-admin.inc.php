@@ -65,10 +65,10 @@ function moveAttachmentToDisk($aid, $pid) {
         return FALSE;
     }
     $attach = $db->fetch_array($query);
-    if ($attach['subdir'] != '' Or strlen($attach['attachment']) != $attach['filesize']) {
+    if ($attach['subdir'] != '' || strlen($attach['attachment']) != $attach['filesize']) {
         return FALSE;
     }
-    if (intval($attach['updatestamp']) == 0 And intval($attach['dateline']) > 0) {
+    if (intval($attach['updatestamp']) == 0 && intval($attach['dateline']) > 0) {
         $attach['updatestamp'] = $attach['dateline'];
     }
     $subdir = getNewSubdir($attach['updatestamp']);
