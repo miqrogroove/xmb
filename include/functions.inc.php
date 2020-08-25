@@ -92,9 +92,7 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
         $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
         if ($db->num_rows($query) == 1) {
             $self = $db->fetch_array($query); //The self array will remain available, global.
-            if ($serror == 'ip' And $self['status'] != 'Super Administrator' And $self['status'] != 'Administrator') {
-                // User is IP-Banned
-            } elseif ($self['password'] == $xmbpwinput) {
+            if ($self['password'] == $xmbpwinput) {
                 $xmbuser = $db->escape($self['username']);
             }
             $self['password'] = '';
@@ -105,47 +103,50 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     $xmbuserinput = '';
     $xmbpwinput = '';
 
-    //Database routine complete.  Now set the user status constants.
-
+    // Database routine complete.  Now check authorization policy.
     if ($xmbuser != '') {
-        // Initialize the new translation system
-        if (X_SCRIPT != 'upgrade.php') {
-            if (!loadLang($self['langfile'])) {
-                if (!loadLang($SETTINGS['langfile'])) {
-                    require_once(ROOT.'include/translation.inc.php');
-                    langPanic();
-                }
-            }
-        }
-
-        if ($self['status'] == 'Banned') {
-            $xmbuser = '';
-            $self = array();
-            $self['status'] = 'Banned';
-            if (!defined('X_GUEST')) {
-                define('X_MEMBER', FALSE);
-                define('X_GUEST', TRUE);
-            }
+        if ( loginAuthorization( $self ) ) {
+            // User is authorized, proceed.
         } else {
-            if (!defined('X_GUEST')) {
-                define('X_MEMBER', TRUE);
-                define('X_GUEST', FALSE);
+            $xmbuser = '';
+            $newself = ['langfile' => $self['langfile']];
+            if ($self['status'] == 'Banned') {
+                $newself['status'] = 'Banned';
+            } else {
+                $newself['status'] = '';
             }
-            // Save some write locks by updating in 60-second intervals.
-            if (abs(time() - (int)$self['lastvisit']) > 60) {
-                $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
-            }
+            $self = $newself;
         }
     } else {
-        if (X_SCRIPT != 'upgrade.php') {
-            if (!loadLang($SETTINGS['langfile'])) {
-                require_once(ROOT.'include/translation.inc.php');
-                langPanic();
-            }
-        }
+        $self = ['status' => ''];
+    }
 
-        $self = array();
-        $self['status'] = '';
+    // Initialize the new translation system
+    if (X_SCRIPT != 'upgrade.php') {
+        $success = false;
+        if (!empty($self['langfile'])) {
+            $success = loadLang($self['langfile']);
+        }
+        if (!$success) {
+            $success = loadLang($SETTINGS['langfile']);
+        }
+        if (!$success) {
+            require_once(ROOT.'include/translation.inc.php');
+            langPanic();
+        }
+    }
+    
+    // Set the user status constants.
+    if ($xmbuser != '') {
+        if (!defined('X_GUEST')) {
+            define('X_MEMBER', TRUE);
+            define('X_GUEST', FALSE);
+        }
+        // Save some write locks by updating in 60-second intervals.
+        if (abs(time() - (int)$self['lastvisit']) > 60) {
+            $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
+        }
+    } else {
         if (!defined('X_GUEST')) {
             define('X_MEMBER', FALSE);
             define('X_GUEST', TRUE);
@@ -225,6 +226,27 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     }
 
     return ($xmbuser != '');
+}
+
+/**
+ * Determine if the authenticated user is allowed to access this website.
+ *
+ * @since 1.9.12
+ * @param array $member The member's database record.
+ * @return bool
+ */
+function loginAuthorization( array $member ): bool {
+    global $serror;
+    
+    if ($serror == 'ip' && $member['status'] != 'Super Administrator' && $member['status'] != 'Administrator') {
+        // User is IP-Banned
+        return false;
+    } else if ($member['status'] == 'Banned') {
+        // User's account is blocked
+        return false;
+    } else {
+        return true;
+    }
 }
 
 /**
