@@ -191,12 +191,11 @@ switch($action) {
                 error($lang['lostpw_in24hrs']);
             }
 
-            $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
             $newpass = '';
-            mt_srand((double)microtime() * 1000000);
+            $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
             $get = strlen($chars) - 1;
             for($i = 0; $i < 13; $i++) {
-                $newpass .= $chars[mt_rand(0, $get)];
+                $newpass .= $chars[random_int(0, $get)];
             }
             $newmd5pass = md5($newpass);
 

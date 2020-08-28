@@ -2396,8 +2396,7 @@ function nonce_create($key) {
 
     $key = substr($key, 0, X_NONCE_KEY_LEN);
     $db->escape_fast($key);
-    $salt = isset($self['email']) ? $self['email'] : $key;
-    $nonce = md5( $salt . mt_rand() );
+    $nonce = bin2hex(random_bytes(16));
     $time = time();
     $db->query("INSERT INTO ".X_PREFIX."captchaimages (imagehash, imagestring, dateline) VALUES ('$nonce', '$key', '$time')");
 
