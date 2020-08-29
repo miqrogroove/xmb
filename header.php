@@ -320,6 +320,9 @@ define('X_PREFIX', $tablepre); // Secured table prefix constant
 require ROOT.'db/'.$database.'.php';
 assertEmptyOutputStream('db/'.$database.'.php');
 
+require ROOT.'include/sql.inc.php';
+assertEmptyOutputStream('sql.inc.php');
+
 require ROOT.'include/validate.inc.php';
 assertEmptyOutputStream('validate.inc.php');
 
@@ -446,7 +449,7 @@ if ($SETTINGS['regviewonly'] == 'on' && $serror == '') {
     }
 }
 
-$uinput = postedVar('xmbuser', '', FALSE, TRUE, FALSE, 'c');
+$uinput = postedVar('xmbuser', '', FALSE, FALSE, FALSE, 'c');
 $pinput = postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c');
 if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
     // Delete cookies when authentication fails.

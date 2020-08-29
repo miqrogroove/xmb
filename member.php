@@ -492,16 +492,16 @@ switch($action) {
             error($lang['nomember']);
         }
 
-        $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
+        $memberinfo = \XMB\SQL\getMemberByName( $member );
 
-        $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$member'");
-        if ($db->num_rows($query) != 1) {
+        if ( empty( $memberinfo ) ) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         }
-        $memberinfo = $db->fetch_array($query);
+
         $memberinfo['password'] = '';
-        $db->free_result($query);
+
+        $member = $db->escape( $member );
 
         if ($memberinfo['status'] == 'Banned') {
             $memberinfo['avatar'] = '';

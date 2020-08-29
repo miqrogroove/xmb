@@ -48,13 +48,16 @@ if (!X_SADMIN) {
     error($lang['superadminonly']);
 }
 
-$user = postedVar('user', '', TRUE, TRUE, FALSE, 'g');
+$user = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
+$member = \XMB\SQL\getMemberByName( $user );
 
-$query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$user'");
-if ($db->num_rows($query) != 1) {
+if ( empty( $member ) ) {
     error($lang['nomember']);
 }
-$member = $db->fetch_array($query);
+
+$member['password'] = '';
+
+$user = $db->escape( $user );
 
 if (noSubmit('editsubmit')) {
     $sadminselect = $adminselect = $smodselect = '';

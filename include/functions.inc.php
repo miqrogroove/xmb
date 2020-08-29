@@ -73,7 +73,7 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=fals
 /**
  * Responsible for authenticating established sessions and setting up session variables.
  *
- * @param  string $xmbuserinput Must be html escaped & db escaped username input.
+ * @param  string $xmbuserinput Must be html escaped username input.
  * @param  string $xmbpwinput Must be raw password hash input.
  * @param  int    $force_inv Optional.
  * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
@@ -93,15 +93,15 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     //$xmbpw was historically abused and will no longer contain a value.
 
     if (strlen($xmbuserinput) >= 3) {
-        $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuserinput'");
-        if ($db->num_rows($query) == 1) {
-            $self = $db->fetch_array($query); //The self array will remain available, global.
+        //The $self array will remain available, global.
+        $self = \XMB\SQL\getMemberByName( $xmbuserinput );
+
+        if ( ! empty( $self ) ) {
             if ($self['password'] == $xmbpwinput) {
                 $xmbuser = $db->escape($self['username']);
             }
             $self['password'] = '';
         }
-        $db->free_result($query);
     }
 
     $xmbuserinput = '';

@@ -688,9 +688,7 @@ if ($action == 'profile') {
     }
     $db->free_result($q);
 
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$xmbuser'");
-    $member = $db->fetch_array($query);
-    $db->free_result($query);
+    $member = $self;
 
     if ($member['avatar'] == '') {
         $member['avatar'] = '';
