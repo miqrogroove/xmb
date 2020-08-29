@@ -3548,16 +3548,6 @@ $captchapostcheck
 $suggestions
 </form>
 
-|#*XMB TEMPLATE FILE*#|post_notloggedin|#*XMB TEMPLATE*#|
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" value="" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1">$lang[textpassword]</td>
-<td bgcolor="$altbg2"><input type="password" name="password" size="25" value="" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span></td>
-</tr>
-
 |#*XMB TEMPLATE FILE*#|post_preview|#*XMB TEMPLATE*#|
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>

@@ -95,28 +95,34 @@ $misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
-        $password = '';
-        $invisible = formInt('hide');
-        if ($invisible == 2) { // '2' may be set explicitly when we want to ignore this input.
-            $invisible = NULL;
-        } else {
-            $invisible = ($invisible == 1);
-        }
-        if (X_MEMBER) {
-            eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
-        } elseif (noSubmit('loginsubmit')) {
+        if (noSubmit('loginsubmit')) {
             eval('$misc = "'.template('misc_login').'";');
-        } elseif (empty($_POST['password'])) {
-            eval('$misc = "'.template('misc_login_incorrectdetails').'";');
-            eval('$misc .= "'.template('misc_login').'";');
-        } elseif (loginUser(postedVar('username', '', true, false), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
-            redirect($full_url, 0);
         } else {
-            if ($self['status'] == "Banned") {
-                error($lang['bannedmessage']);
-            } else {
-                eval('$misc = "'.template('misc_login_incorrectdetails').'";');
-                eval('$misc .= "'.template('misc_login').'";');
+            switch( $session->getStatus() ) {
+                case 'good':
+                    // Set $invisible to true, false, or null.
+                    $invisible = formInt('hide');
+                    if ($invisible == 2) { // '2' may be set explicitly when we want to ignore this input.
+                        $invisible = null;
+                    } else {
+                        $invisible = ($invisible == 1);
+                    }
+                    
+                    loginUser( $invisible );
+                    redirect( $full_url, 0 );
+                    break;
+                case 'already-logged-in':
+                    eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
+                    break;
+                case 'login-unauthorized':
+                    error( $lang['bannedmessage'] );
+                    break;
+                case 'login-no-input':
+                case 'bad-password':
+                default:
+                    eval('$misc = "'.template('misc_login_incorrectdetails').'";');
+                    eval('$misc .= "'.template('misc_login').'";');
+                    break;
             }
         }
         break;

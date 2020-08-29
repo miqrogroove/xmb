@@ -283,9 +283,11 @@ if ($action == 'profile') {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            if (!elevateUser($self['username'], md5($_POST['oldpassword']))) {
+            $member = \XMB\SQL\getMemberByName( $self['username'] );
+            if ( $member['password'] != md5($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
+            unset( $member );
             if (empty($_POST['newpasswordcf'])) {
                 error($lang['pwnomatch']);
             }
@@ -299,15 +301,7 @@ if ($action == 'profile') {
 
             // Force logout and delete cookies.
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
-
-            put_cookie('xmbuser');
-            put_cookie('xmbpw');
-
-            foreach($_COOKIE as $key=>$val) {
-                if (preg_match('#^fidpw([0-9]+)$#', $key)) {
-                    put_cookie($key);
-                }
-            }
+            $session->logoutAll();
         } else {
             $pwtxt = '';
         }

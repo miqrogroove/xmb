@@ -28,18 +28,14 @@ if (!defined('IN_CODE')) {
 }
 
 /**
- * Responsible for accepting credentials for new sessions.
+ * Sets up some extra variables after a new login.
  *
- * @param  string $xmbuserinput Must be html escaped username input.
- * @param  string $xmbpwinput   Must be raw password hash input.
  * @param  bool   $invisible    Optional.
- * @param  bool   $tempcookie   Optional.
- * @return bool
  */
-function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=false) {
-    global $self, $onlineip, $onlinetime, $db, $lastvisit;
+function loginUser($invisible = null) {
+    global $self, $session, $db, $lastvisit;
 
-    if (elevateUser($xmbuserinput, $xmbpwinput, $invisible)) {
+    if ( $session->getStatus() == 'good' ) {
         $dbname = $db->escape($self['username']);
 
         if (!is_null($invisible)) {
@@ -52,39 +48,22 @@ function loginUser($xmbuserinput, $xmbpwinput, $invisible=null, $tempcookie=fals
             }
         }
 
-        if ($tempcookie) {
-            $currtime = 0;
-        } else {
-            $currtime = $onlinetime + (86400*30);
-        }
-
         // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-        put_cookie('xmbuser', $self['username'], $currtime);
-        put_cookie('xmbpw', $xmbpwinput, $currtime);
         put_cookie('xmblvb', $self['lastvisit'], ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
         $lastvisit = $self['lastvisit']; // Used by forumdisplay
-
-        return true;
-    } else {
-        return false;
     }
 }
 
 /**
- * Responsible for authenticating established sessions and setting up session variables.
+ * Responsible for setting up session variables.
  *
- * @param  string $xmbuserinput Must be html escaped username input.
- * @param  string $xmbpwinput Must be raw password hash input.
  * @param  int    $force_inv Optional.
  * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
  * @return bool
  */
-function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '') {
-    global $xmbuser, $xmbpw, $self, $db, $SETTINGS, $status_enum;
+function elevateUser($force_inv = false, $serror = '') {
+    global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum;
 
-    $xmbuser = '';
-    $xmbpw = '';
-    $self = array();
     $maxurl = 150; //Schema constant.
 
     //Usernames are historically html encoded in the XMB database, as well as in cookies.
@@ -92,38 +71,16 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
     //$self['username'] is a good alternative for future template use.
     //$xmbpw was historically abused and will no longer contain a value.
 
-    if (strlen($xmbuserinput) >= 3) {
-        //The $self array will remain available, global.
-        $self = \XMB\SQL\getMemberByName( $xmbuserinput );
-
-        if ( ! empty( $self ) ) {
-            if ($self['password'] == $xmbpwinput) {
-                $xmbuser = $db->escape($self['username']);
-            }
-            $self['password'] = '';
-        }
-    }
-
-    $xmbuserinput = '';
-    $xmbpwinput = '';
-
-    // Database routine complete.  Now check authorization policy.
-    if ($xmbuser != '') {
-        if ( loginAuthorization( $self ) ) {
-            // User is authorized, proceed.
-        } else {
-            $xmbuser = '';
-            $newself = ['langfile' => $self['langfile']];
-            if ($self['status'] == 'Banned') {
-                $newself['status'] = 'Banned';
-            } else {
-                $newself['status'] = '';
-            }
-            $self = $newself;
-        }
+    if ( $session->getStatus() == 'good' ) {
+        $self = $session->getMember();
+        $xmbuser = $db->escape( $self['username'] );
     } else {
-        $self = ['status' => ''];
+        $self = array();
+        $self['status'] = '';
+        $xmbuser = '';
     }
+
+    $self['password'] = '';
 
     // Initialize the new translation system
     if (X_SCRIPT != 'upgrade.php') {
@@ -228,8 +185,6 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
         $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
     }
-
-    return ($xmbuser != '');
 }
 
 /**
@@ -242,14 +197,68 @@ function elevateUser($xmbuserinput, $xmbpwinput, $force_inv=FALSE, $serror = '')
 function loginAuthorization( array $member ): bool {
     global $serror;
     
+    $guess_limit = 10;
+    $lockout_timer = 3600 * 2;
+    
     if ($serror == 'ip' && $member['status'] != 'Super Administrator' && $member['status'] != 'Administrator') {
         // User is IP-Banned
         return false;
     } else if ($member['status'] == 'Banned') {
         // User's account is blocked
         return false;
+    } else if ( $member['bad_login_count'] >= $guess_limit && now() < $member['bad_login_date'] + $lockout_timer ) {
+        // Account is locked out until the timer expires.
+        auditBadLogin( $member['username'] );
+        return false;
     } else {
         return true;
+    }
+}
+
+/**
+ * Record a failed login attempt.
+ *
+ * @since 1.9.12
+ * @param array $member The member's database record.
+ */
+function auditBadLogin( array $member ) {
+    $guess_limit = 10;
+    $reset_timer = 86400;
+    
+    if ( now() > $member['bad_login_date'] + $reset_timer ) {
+        \XMB\SQL\resetLoginCounter( $member['username'], now() );
+    } else {
+        $count = \XMB\SQL\raiseLoginCounter( $member['username'] );
+        if ( $count == $guess_limit ) {
+            // Email the Super Administrators about this.
+            $lang2 = loadPhrases(array('charset','security_subject','login_audit_mail'));
+
+            $mailquery = \XMB\SQL\getSuperEmails();
+            while($admin = $db->fetch_array($mailquery)) {
+                $translate = $lang2[$admin['langfile']];
+                $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
+                $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
+                $body = "{$translate['login_audit_mail']}\n\n$name";
+                xmb_mail( $adminemail, $translate['security_subject'], $body, $translate['charset'] );
+            }
+            $db->free_result($mailquery);
+        }
+    }
+}
+
+/**
+ * Record a failed session hijack attempt.
+ *
+ * @since 1.9.12
+ * @param array $member The member's database record.
+ */
+function auditBadSession( array $member ) {
+    $reset_timer = 86400;
+    
+    if ( now() > $member['bad_login_date'] + $reset_timer ) {
+        \XMB\SQL\resetSessionCounter( $member['username'], now() );
+    } else {
+        $count = \XMB\SQL\raiseSessionCounter( $member['username'] );
     }
 }
 
@@ -2515,13 +2524,17 @@ function xmb_mail( $to, $subject, $message, $charset ) {
     }
 
     $rawbbname = htmlspecialchars_decode( $bbname, ENT_NOQUOTES );
-    $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
+    if ( ! empty( $self ) ) {
+        $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
+    }
 
     $headers = array();
     $headers[] = smtpHeaderFrom( $rawbbname, $adminemail );
     $headers[] = "X-Mailer: PHP";
     $headers[] = "X-AntiAbuse: Board servername - $cookiedomain";
-    $headers[] = "X-AntiAbuse: Username - $rawusername";
+    if ( ! empty( $self ) ) {
+        $headers[] = "X-AntiAbuse: Username - $rawusername";
+    }
     $headers[] = "Content-Type: text/plain; charset=$charset";
     $headers = implode( "\r\n", $headers );
 

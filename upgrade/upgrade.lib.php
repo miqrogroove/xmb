@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -60,6 +60,8 @@ function xmb_upgrade() {
         case 3:
             upgrade_schema_to_v4();
         case 4:
+            upgrade_schema_to_v5();
+        case 5:
             //Future use. Break only before case default.
             break;
         default:
@@ -1728,6 +1730,47 @@ function upgrade_schema_to_v4() {
 }
 
 /**
+ * Performs all tasks needed to raise the database schema_version number to 5.
+ *
+ * @since 1.9.12
+ */
+function upgrade_schema_to_v5() {
+    show_progress('Requesting to lock the members table');
+    upgrade_query('LOCK TABLES '.X_PREFIX."members WRITE");
+
+    show_progress('Gathering schema information from the members table');
+    $sql = array();
+    $table = 'members';
+    $columns = array(
+    'bad_login_date' => "int(10) unsigned NOT NULL default 0",
+    'bad_login_count' => "int(10) unsigned NOT NULL default 0",
+    'bad_session_date' => "int(10) unsigned NOT NULL default 0",
+    'bad_session_count' => "int(10) unsigned NOT NULL default 0");
+    foreach($columns as $colname => $coltype) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Adding columns in the members table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress('Releasing the lock on the members table');
+    upgrade_query('UNLOCK TABLES');
+
+    show_progress('Adding new tables');
+    xmb_schema_table('create', 'sessions');
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET schema_version = 5");
+}
+
+/**
  * Recalculates the value of every field in the forums.postperm column.
  *
  * Function has been modified to run without parameters.
@@ -1998,7 +2041,7 @@ function fixPostPerm() {
 /**
  * Abstracts database queries for better error handling.
  *
- * @since 1.9.1.16
+ * @since 1.9.12
  * @param string $sql
  * @return mixed Result of $db->query()
  */

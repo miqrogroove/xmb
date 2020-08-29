@@ -240,6 +240,10 @@ function xmb_schema_create($name){
           `emailonu2u` char(3) NOT NULL default '',
           `useoldu2u` char(3) NOT NULL default '',
           `u2ualert` TINYINT NOT NULL DEFAULT '0',
+          `bad_login_date` int(10) unsigned NOT NULL default 0,
+          `bad_login_count` int(10) unsigned NOT NULL default 0,
+          `bad_session_date` int(10) unsigned NOT NULL default 0,
+          `bad_session_count` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY  (`uid`),
           KEY `username` (username (8)),
           KEY `status` (`status`),
@@ -293,6 +297,21 @@ function xmb_schema_create($name){
           `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
           `partial` ENUM('0', '1') DEFAULT '1' NOT NULL,
           PRIMARY KEY  (`id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'sessions':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `token` varchar(32) NOT NULL,
+          `username` varchar(32) NOT NULL,
+          `login_date` int(10) unsigned NOT NULL,
+          `expire` int(10) unsigned NOT NULL,
+          `regenerate` int(10) unsigned NOT NULL,
+          `replaces` varchar(32) NOT NULL,
+          `agent` varchar(255) NOT NULL,
+          PRIMARY KEY (`token`),
+          KEY `username` (`username`),
+          KEY `replaces` (`replaces`(6))
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'settings':

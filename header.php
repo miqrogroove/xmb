@@ -69,6 +69,7 @@ $full_url = '';
 $navigation = '';
 $newu2umsg = '';
 $othertid = '';
+$password = '';
 $pluglink = '';
 $quickjump = '';
 $searchlink = '';
@@ -329,6 +330,9 @@ assertEmptyOutputStream('validate.inc.php');
 require ROOT.'include/functions.inc.php';
 assertEmptyOutputStream('functions.inc.php');
 
+require ROOT.'include/sessions.inc.php';
+assertEmptyOutputStream('sessions.inc.php');
+
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
 
@@ -449,16 +453,22 @@ if ($SETTINGS['regviewonly'] == 'on' && $serror == '') {
     }
 }
 
-$uinput = postedVar('xmbuser', '', FALSE, FALSE, FALSE, 'c');
-$pinput = postedVar('xmbpw', '', FALSE, FALSE, FALSE, 'c');
-if (!elevateUser($uinput, $pinput, FALSE, $serror)) {
-    // Delete cookies when authentication fails.
-    if ($uinput != '') {
-        put_cookie('xmbuser');
-        put_cookie('xmbpw');
-    }
+// Authenticate session or login credentials.
+if ($action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php') {
+    $mode = 'login';
+    $force_inv = (formInt('hide') == 1);
+} else if ($action == 'logout' && X_SCRIPT == 'misc.php') {
+    $mode = 'logout';
+    $force_inv = false;
+} else {
+    $mode = 'resume';
+    $force_inv = false;
 }
-unset($uinput, $pinput);
+
+$session = new \XMB\Session\Manager( $mode );
+
+elevateUser( $force_inv, $serror );
+
 if (X_SCRIPT == 'upgrade.php') return;
 
 

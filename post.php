@@ -57,7 +57,7 @@ loadtemplates(
 eval('$css = "'.template('css').'";');
 
 if (X_GUEST) {
-    eval('$loggedin = "'.template('post_notloggedin').'";');
+    $loggedin = '';
 } else {
     eval('$loggedin = "'.template('post_loggedin').'";');
 }
@@ -443,41 +443,7 @@ switch($action) {
         if ($replyvalid) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
-                    if (loginUser(postedVar('username', '', true, false), md5($_POST['password']))) {
-                        if ($self['status'] == "Banned") {
-                            $errors .= softerror($lang['bannedmessage']);
-                            $replyvalid = FALSE;
-                        } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                            $errors .= softerror($lang['textbanfrompost']);
-                            $replyvalid = FALSE;
-                        } else {
-                            $username = $xmbuser;
-
-                            // check permissions on this forum (and top forum if it's a sub?)
-                            $perms = checkForumPermissions($forum);
-                            if (!$perms[X_PERMS_VIEW]) {
-                                $errors .= softerror($lang['privforummsg']);
-                                $topicvalid = FALSE;
-                            } else if (!$perms[X_PERMS_REPLY]) {
-                                $errors .= softerror($lang['textnoaction']);
-                                $topicvalid = FALSE;
-                            }
-
-                            if ($forum['type'] == 'sub') {
-                                // prevent access to subforum when upper forum can't be viewed.
-                                $fupPerms = checkForumPermissions($fup);
-                                if (!$fupPerms[X_PERMS_VIEW]) {
-                                    $errors .= softerror($lang['privforummsg']);
-                                    $topicvalid = FALSE;
-                                }
-                            }
-                        }
-                    } else {
-                        $errors .= softerror($lang['textpw1']);
-                        $replyvalid = FALSE;
-                    }
-                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
                     $Captcha = new Captcha();
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);
@@ -849,41 +815,7 @@ switch($action) {
         if ($topicvalid) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
-                if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
-                    if (loginUser(postedVar('username', '', true, false), md5($_POST['password']))) {
-                        if ($self['status'] == "Banned") {
-                            $errors .= softerror($lang['bannedmessage']);
-                            $topicvalid = FALSE;
-                        } else if ($self['ban'] == "posts" || $self['ban'] == "both") {
-                            $errors .= softerror($lang['textbanfrompost']);
-                            $topicvalid = FALSE;
-                        } else {
-                            $username = $xmbuser;
-
-                            // check permissions on this forum (and top forum if it's a sub?)
-                            $perms = checkForumPermissions($forum);
-                            if (!$perms[X_PERMS_VIEW]) {
-                                $errors .= softerror($lang['privforummsg']);
-                                $topicvalid = FALSE;
-                            } else if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
-                                $errors .= softerror($lang['textnoaction']);
-                                $topicvalid = FALSE;
-                            }
-
-                            if ($forum['type'] == 'sub') {
-                                // prevent access to subforum when upper forum can't be viewed.
-                                $fupPerms = checkForumPermissions($fup);
-                                if (!$fupPerms[X_PERMS_VIEW]) {
-                                    $errors .= softerror($lang['privforummsg']);
-                                    $topicvalid = FALSE;
-                                }
-                            }
-                        }
-                    } else {
-                        $errors .= softerror($lang['textpw1']);
-                        $topicvalid = FALSE;
-                    }
-                } else if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
                     $Captcha = new Captcha();
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = postedVar('imgcode', '', FALSE, FALSE);

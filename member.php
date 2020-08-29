@@ -452,7 +452,7 @@ switch($action) {
             $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
 
             if ($SETTINGS['notifyonreg'] != 'off') {
-                $mailquery = $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
+                $mailquery = \XMB\SQL\getSuperEmails();
                 while($admin = $db->fetch_array($mailquery)) {
                     $translate = $lang2[$admin['langfile']];
                     if ($SETTINGS['notifyonreg'] == 'u2u') {
