@@ -444,7 +444,7 @@ switch($action) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
                 if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
-                    if (loginUser(postedVar('username'), md5($_POST['password']))) {
+                    if (loginUser(postedVar('username', '', true, false), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
                             $errors .= softerror($lang['bannedmessage']);
                             $replyvalid = FALSE;
@@ -850,7 +850,7 @@ switch($action) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
                 if (strlen(postedVar('username')) > 0 && isset($_POST['password'])) {
-                    if (loginUser(postedVar('username'), md5($_POST['password']))) {
+                    if (loginUser(postedVar('username', '', true, false), md5($_POST['password']))) {
                         if ($self['status'] == "Banned") {
                             $errors .= softerror($lang['bannedmessage']);
                             $topicvalid = FALSE;

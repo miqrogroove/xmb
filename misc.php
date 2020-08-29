@@ -109,7 +109,7 @@ switch($action) {
         } elseif (empty($_POST['password'])) {
             eval('$misc = "'.template('misc_login_incorrectdetails').'";');
             eval('$misc .= "'.template('misc_login').'";');
-        } elseif (loginUser(postedVar('username'), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
+        } elseif (loginUser(postedVar('username', '', true, false), md5($_POST['password']), $invisible, (formYesNo('secure') == 'yes'))) {
             redirect($full_url, 0);
         } else {
             if ($self['status'] == "Banned") {

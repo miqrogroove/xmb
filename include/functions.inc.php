@@ -30,7 +30,7 @@ if (!defined('IN_CODE')) {
 /**
  * Responsible for accepting credentials for new sessions.
  *
- * @param  string $xmbuserinput Must be html escaped & db escaped username input.
+ * @param  string $xmbuserinput Must be html escaped username input.
  * @param  string $xmbpwinput   Must be raw password hash input.
  * @param  bool   $invisible    Optional.
  * @param  bool   $tempcookie   Optional.

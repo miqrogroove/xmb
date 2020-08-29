@@ -283,7 +283,7 @@ if ($action == 'profile') {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            if (!elevateUser($xmbuser, md5($_POST['oldpassword']))) {
+            if (!elevateUser($self['username'], md5($_POST['oldpassword']))) {
                 error($lang['textpwincorrect']);
             }
             if (empty($_POST['newpasswordcf'])) {
