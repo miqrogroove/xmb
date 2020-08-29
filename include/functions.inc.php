@@ -206,7 +206,7 @@ function loginAuthorization( array $member ): bool {
     } else if ($member['status'] == 'Banned') {
         // User's account is blocked
         return false;
-    } else if ( $member['bad_login_count'] >= $guess_limit && now() < $member['bad_login_date'] + $lockout_timer ) {
+    } else if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
         // Account is locked out until the timer expires.
         auditBadLogin( $member['username'] );
         return false;
@@ -225,8 +225,8 @@ function auditBadLogin( array $member ) {
     $guess_limit = 10;
     $reset_timer = 86400;
     
-    if ( now() > $member['bad_login_date'] + $reset_timer ) {
-        \XMB\SQL\resetLoginCounter( $member['username'], now() );
+    if ( time() > $member['bad_login_date'] + $reset_timer ) {
+        \XMB\SQL\resetLoginCounter( $member['username'], time() );
     } else {
         $count = \XMB\SQL\raiseLoginCounter( $member['username'] );
         if ( $count == $guess_limit ) {
@@ -255,8 +255,8 @@ function auditBadLogin( array $member ) {
 function auditBadSession( array $member ) {
     $reset_timer = 86400;
     
-    if ( now() > $member['bad_login_date'] + $reset_timer ) {
-        \XMB\SQL\resetSessionCounter( $member['username'], now() );
+    if ( time() > $member['bad_login_date'] + $reset_timer ) {
+        \XMB\SQL\resetSessionCounter( $member['username'], time() );
     } else {
         $count = \XMB\SQL\raiseSessionCounter( $member['username'] );
     }

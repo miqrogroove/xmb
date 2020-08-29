@@ -107,7 +107,7 @@ class Manager {
      */
     public function logoutAll() {
         if ( 'good' == $this->status ) {
-            foreach($mechanisms as $session) {
+            foreach($this->mechanisms as $session) {
                 $session->logoutAll( $this->saved );
             }
         }
@@ -116,11 +116,11 @@ class Manager {
     /**
      * Initialize the Session Manager for a login action.
      */
-    private function login(): Data {
+    private function login() {
         $this->status = 'login-no-input';
 
         // First, check that all mechanisms are working and not already in a session.
-        foreach($mechanisms as $session) {
+        foreach($this->mechanisms as $session) {
             if ( $session->checkSavedSession()->status == 'good' ) {
                 $this->status = 'already-logged-in';
                 $this->saved = new Data;
@@ -134,7 +134,7 @@ class Manager {
         }
         
         // Next, authenticate the login.
-        foreach($mechanisms as $session) {
+        foreach($this->mechanisms as $session) {
             $data = $session->checkCredentials();
             
             // Check for errors
@@ -173,7 +173,7 @@ class Manager {
     private function logout() {
 		$this->saved = new Data;
 		$this->status = 'logged-out';
-        foreach($mechanisms as $session) {
+        foreach($this->mechanisms as $session) {
             $data = $session->logout();
             if ( $data->status == 'none' ) {
                 continue;
@@ -195,7 +195,7 @@ class Manager {
         $this->status = 'session-no-input';
 
         // Authenticate any session token.
-        foreach($mechanisms as $session) {
+        foreach($this->mechanisms as $session) {
             $data = $session->checkSavedSession();
             
             // Check for errors
@@ -382,7 +382,7 @@ class FormsAndCookies implements Mechanism {
         if ( strlen($uinput) >= self::USER_MIN_LEN || self::TEST_DATA == $test ) {
             return true;
         } else {
-            put_cookie( 'test', self::TEST_DATA, $onlinetime + (86400*365) );
+            put_cookie( 'test', self::TEST_DATA, time() + (86400*365) );
             return false;
         }
     }
@@ -415,7 +415,7 @@ class FormsAndCookies implements Mechanism {
             return $data;
         }
         
-        if ( now() > $details['expire'] ) {
+        if ( time() > $details['expire'] ) {
             auditBadSession( $member );
             $data->status = 'bad';
             return $data;
@@ -425,7 +425,7 @@ class FormsAndCookies implements Mechanism {
         if ( self::REGEN_ENABLED ) {
             // Figure out where we are in the regeneration cycle.
             $cookie2 = $this->get_cookie( self::REGEN_COOKIE );
-            if ( now() > $details['regenerate'] ) {
+            if ( time() > $details['regenerate'] ) {
                 // Current session needs to be regenerated.
                 $newdetails = \XMB\SQL\getSessionReplacement( $pinput, $uinput );
                 if ( empty( $newdetails ) ) {
@@ -519,12 +519,12 @@ class FormsAndCookies implements Mechanism {
         $token = bin2hex( random_bytes( self::TOKEN_BYTES ) );
 
         if ( $data->permanent ) {
-            $expires = now() + self::SESSION_LIFE_LONG;
+            $expires = time() + self::SESSION_LIFE_LONG;
         } else {
-            $expires = now() + self::SESSION_LIFE_SHORT;
+            $expires = time() + self::SESSION_LIFE_SHORT;
         }
 
-        $regenerate = now() + self::REGEN_AFTER;
+        $regenerate = time() + self::REGEN_AFTER;
 
         $replaces = '';
 
@@ -533,12 +533,12 @@ class FormsAndCookies implements Mechanism {
             $agent = substr( $_SERVER['HTTP_USER_AGENT'], 0, 255 );
         }
 
-        $success = \XMB\SQL\saveSession( $token, $data->member['username'], now(), $expires, $regenerate, $replaces, $agent );
+        $success = \XMB\SQL\saveSession( $token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent );
 
         if ( ! $success ) {
             // Retry once.
             $token = bin2hex( random_bytes( self::TOKEN_BYTES ) );
-            $success = \XMB\SQL\saveSession( $token, $data->member['username'], now(), $expires, $regenerate, $replaces, $agent );
+            $success = \XMB\SQL\saveSession( $token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent );
         }
 
         if ( ! $success ) {
@@ -561,7 +561,7 @@ class FormsAndCookies implements Mechanism {
     private function regenerate( array $oldsession ) {
         $token = bin2hex( random_bytes( self::TOKEN_BYTES ) );
 
-        $regenerate = now() + self::REGEN_AFTER;
+        $regenerate = time() + self::REGEN_AFTER;
 
         $replaces = $oldsession['token'];
 
@@ -582,7 +582,7 @@ class FormsAndCookies implements Mechanism {
             trigger_error( 'XMB was unable to save a new session token.', E_USER_ERROR );
         }
 
-        if ( $oldsession['expire'] > now() + self::SESSION_LIFE_SHORT ) {
+        if ( $oldsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
             $expires = $oldsession['expire'];
         } else {
             $expires = 0;
@@ -599,7 +599,7 @@ class FormsAndCookies implements Mechanism {
      * @param array $newsession
      */
     private function recover( array $newsession ) {
-        if ( $newsession['expire'] > now() + self::SESSION_LIFE_SHORT ) {
+        if ( $newsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
             $expires = $newsession['expire'];
         } else {
             $expires = 0;
