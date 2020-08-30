@@ -349,7 +349,7 @@ class FormsAndCookies implements Mechanism {
         $uinput = postedVar('username', '', true, false);
         $pinput = $_POST['password'];
 
-        if ( strlen($uinput) < self::USER_MIN_LEN == 0 || empty($pinput) ) {
+        if ( strlen($uinput) < self::USER_MIN_LEN || empty($pinput) ) {
             $data->status = 'none';
             return $data;
         }
@@ -436,7 +436,7 @@ class FormsAndCookies implements Mechanism {
                     // Caused by interruption or race conditions.
                     $this->recover( $newdetails );
                 }
-            } elseif ( $cookie2 == $details['replaces'] ) {
+            } elseif ( $cookie2 != '' && $cookie2 == $details['replaces'] ) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
                 \XMB\SQL\deleteSession( $details['replaces'] );
                 \XMB\SQL\clearSessionParent( $details['token'] );
@@ -588,7 +588,7 @@ class FormsAndCookies implements Mechanism {
             $expires = 0;
         }
 
-        put_cookie( self::USER_COOKIE, $data->member['username'], $expires );
+        put_cookie( self::USER_COOKIE, $oldsession['username'], $expires );
         put_cookie( self::SESSION_COOKIE, $token, $expires );
         put_cookie( self::REGEN_COOKIE, $replaces, $expires );
     }

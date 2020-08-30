@@ -60,14 +60,14 @@ function getMemberByName( string $username ): array {
  */
 function saveSession( string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent ): bool {
     global $db;
-    
+
     $sqltoken = $db->escape( $token );
     $sqluser = $db->escape( $username );
     $sqlreplace = $db->escape( $replace );
     $sqlagent = $db->escape( $agent );
 
     $db->query("INSERT IGNORE INTO ".X_PREFIX."sessions SET token = '$sqltoken', username = '$sqluser', login_date = $date,
-        expires = $expire, regenerate = $regenerate, replaces = '$sqlreplace', agent = '$sqlagent'");
+        expire = $expire, regenerate = $regenerate, replaces = '$sqlreplace', agent = '$sqlagent'");
 
     return ($db->affected_rows() == 1);
 }

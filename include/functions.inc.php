@@ -49,7 +49,7 @@ function loginUser($invisible = null) {
         }
 
         // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-        put_cookie('xmblvb', $self['lastvisit'], ($onlinetime + X_ONLINE_TIMER)); // lvb == last visit
+        put_cookie('xmblvb', $self['lastvisit'], (time() + X_ONLINE_TIMER)); // lvb == last visit
         $lastvisit = $self['lastvisit']; // Used by forumdisplay
     }
 }
