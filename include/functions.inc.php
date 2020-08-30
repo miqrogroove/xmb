@@ -836,24 +836,6 @@ function bbcodeBalanceTags(&$message, $regex){
 }
 
 /**
- * DEPRECATED by XMB 1.9.11.12
- */
-function fixUrl($matches) {
-    $fullurl = '';
-    if (!empty($matches[2])) {
-        if ($matches[3] != 'www') {
-            $fullurl = $matches[2];
-        } else {
-            $fullurl = 'http://'.$matches[2];
-        }
-    }
-
-    $fullurl = strip_tags($fullurl);
-
-    return $matches[1].'[url]'.$fullurl.'[/url]';
-}
-
-/**
  * Handles the [url] BBCode.
  *
  * This helper function is algorithmically required in order to fully support
