@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2019, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -165,21 +165,19 @@ $postsday = number_format($posts / $days, 2);
 
 // Get best member
 $timesearch = $onlinetime - 86400;
-$eval = $lang['evalnobestmember'];
 
 $query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
-$info = $db->fetch_array($query);
 
-$bestmember = $info['author'];
-if ($bestmember == '') {
+if ( $db->num_rows( $query ) == 0 ) {
     $bestmember = 'Nobody';
     $bestmemberpost = 'No';
+    $eval = $lang['evalnobestmember'];
 } else {
-    if ($info['Total'] != 0) {
-        $membesthtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($bestmember).'"><strong>'.$bestmember.'</strong></a>';
-        $bestmemberpost = $info['Total'];
-        $eval = $lang['evalbestmember'];
-    }
+    $info = $db->fetch_array($query);
+    $bestmember = $info['author'];
+    $membesthtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($bestmember).'"><strong>'.$bestmember.'</strong></a>';
+    $bestmemberpost = $info['Total'];
+    $eval = $lang['evalbestmember'];
 }
 $db->free_result($query);
 
