@@ -114,8 +114,12 @@ switch($action) {
                 case 'already-logged-in':
                     eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
                     break;
-                case 'login-unauthorized':
+                case 'ip-banned':
+                case 'member-banned':
                     error( $lang['bannedmessage'] );
+                    break;
+                case 'password-locked':
+                    error( $lang['login-lockout'] );
                     break;
                 case 'login-no-input':
                 case 'bad-password':

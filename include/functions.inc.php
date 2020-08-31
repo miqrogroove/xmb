@@ -192,26 +192,23 @@ function elevateUser($force_inv = false, $serror = '') {
  *
  * @since 1.9.12
  * @param array $member The member's database record.
- * @return bool
+ * @return string Specific error codes, otherwise 'good'.
  */
-function loginAuthorization( array $member ): bool {
+function loginAuthorization( array $member ): string {
     global $serror;
     
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
     
     if ($serror == 'ip' && $member['status'] != 'Super Administrator' && $member['status'] != 'Administrator') {
-        // User is IP-Banned
-        return false;
+        return 'ip-banned';
     } else if ($member['status'] == 'Banned') {
-        // User's account is blocked
-        return false;
+        return 'member-banned';
     } else if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
-        // Account is locked out until the timer expires.
         auditBadLogin( $member['username'] );
-        return false;
+        return 'password-locked';
     } else {
-        return true;
+        return 'good';
     }
 }
 

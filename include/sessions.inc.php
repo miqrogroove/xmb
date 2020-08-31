@@ -140,11 +140,9 @@ class Manager {
             // Check for errors
             if ( 'good' == $data->status ) {
                 // We have authentication, now check authorization.
-                if ( loginAuthorization( $data->member ) ) {
-                    $this->status = 'good';
-                } else {
+                $this->status = loginAuthorization( $data->member );
+                if ( 'good' != $this->status ) ) {
                     $data->status = 'bad';
-                    $this->status = 'login-unauthorized';
                 }
             } elseif ( 'bad' == $data->status ) {
                 $this->status = 'bad-password';
@@ -201,11 +199,9 @@ class Manager {
             // Check for errors
             if ( 'good' == $data->status ) {
                 // We have authentication, now check authorization.
-                if ( loginAuthorization( $data->member ) ) {
-                    $this->status = 'good';
-                } else {
+                $this->status = loginAuthorization( $data->member );
+                if ( 'good' != $this->status ) ) {
                     $data->status = 'bad';
-                    $this->status = 'session-unauthorized';
                 }
             } elseif ( 'bad' == $data->status ) {
                 $this->status = 'invalid-session';
@@ -213,8 +209,7 @@ class Manager {
             
             // Update the Mechanism
             if ( 'good' == $data->status ) {
-                // Cookie refresh or Token regeneration needed here?
-                // Or was this done during checkSavedSession?  (probably better)
+                // Current session found.  Done looping.
                 break;
             } elseif ( 'bad' == $data->status ) {
                 $session->deleteClientData();
