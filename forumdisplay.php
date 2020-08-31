@@ -35,6 +35,7 @@ loadtemplates(
 'forumdisplay_newpoll',
 'forumdisplay_newtopic',
 'forumdisplay_nothreads',
+'forumdisplay_nothreads_admin',
 'forumdisplay_password',
 'forumdisplay_subforum',
 'forumdisplay_subforum_lastpost',
@@ -236,7 +237,11 @@ $querytop = $db->query(
 );
 
 if ($db->num_rows($querytop) == 0) {
-    eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
+    if ($status1 == 'Moderator') {
+        eval('$threadlist = "'.template('forumdisplay_nothreads_admin').'";');
+    } else {
+        eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
+    }
 } elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];

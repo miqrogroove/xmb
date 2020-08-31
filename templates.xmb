@@ -1510,7 +1510,12 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_nothreads|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td colspan="11" bgcolor="$altbg2">$lang[noposts]</td>
+<td colspan="7" bgcolor="$altbg2">$lang[noposts]</td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|forumdisplay_nothreads_admin|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td colspan="10" bgcolor="$altbg2">$lang[noposts]</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_password|#*XMB TEMPLATE*#|

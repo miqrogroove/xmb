@@ -141,7 +141,7 @@ class Manager {
             if ( 'good' == $data->status ) {
                 // We have authentication, now check authorization.
                 $this->status = loginAuthorization( $data->member );
-                if ( 'good' != $this->status ) ) {
+                if ( 'good' != $this->status ) {
                     $data->status = 'bad';
                 }
             } elseif ( 'bad' == $data->status ) {
@@ -200,7 +200,7 @@ class Manager {
             if ( 'good' == $data->status ) {
                 // We have authentication, now check authorization.
                 $this->status = loginAuthorization( $data->member );
-                if ( 'good' != $this->status ) ) {
+                if ( 'good' != $this->status ) {
                     $data->status = 'bad';
                 }
             } elseif ( 'bad' == $data->status ) {
