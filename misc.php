@@ -111,6 +111,9 @@ switch($action) {
                     loginUser( $invisible );
                     redirect( $full_url, 0 );
                     break;
+                case 'login-client-disabled':
+                    error( $lang['cookies_disabled'] );
+                    break;
                 case 'already-logged-in':
                     eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
                     break;

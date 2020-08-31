@@ -230,6 +230,7 @@ $lang['closethreadmsg'] = "Thank you, the topic has been closed/ opened. You are
 $lang['complete_threadprune'] = "Thank you, the topic has been pruned. You are now being forwarded back to the thread list";
 $lang['confirmDeletePosts'] = "You are about to delete all this user's posts. Are you sure you wish to continue?";
 $lang['confirmDeleteUser'] = "The following members will be deleted:";
+$lang['cookies_disabled'] = "Your web browser settings are blocking cookies.  To login, please enable cookies, refresh the login page, and then re-enter your password.";
 $lang['coppaagree'] = "I Agree That I Am 13 or Above";
 $lang['coppastatus'] = "COPPA Compliancy Status:";
 $lang['copythread'] = "Copy Thread";
