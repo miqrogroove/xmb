@@ -48,8 +48,8 @@ if (!X_SADMIN) {
     error($lang['superadminonly']);
 }
 
-$user = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
-$member = \XMB\SQL\getMemberByName( $user );
+$rawuser = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
+$member = \XMB\SQL\getMemberByName( $rawuser );
 
 if ( empty( $member ) ) {
     error($lang['nomember']);
@@ -57,7 +57,7 @@ if ( empty( $member ) ) {
 
 $member['password'] = '';
 
-$user = $db->escape( $user );
+$user = $db->escape( $rawuser );
 
 if (noSubmit('editsubmit')) {
     $sadminselect = $adminselect = $smodselect = '';
@@ -343,6 +343,10 @@ if (noSubmit('editsubmit')) {
     if ($newpassword) {
         $newpassword = md5($newpassword);
         $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");
+
+        // Force logout and delete cookies.
+        $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
+        $session->logoutAll( $rawuser );
     }
 
     message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);

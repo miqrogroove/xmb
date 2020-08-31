@@ -104,12 +104,22 @@ class Manager {
     
     /**
      * Deletes all tokens for all sessions after the user sets new credentials.
+     *
+     * @param string $username If not specified, logs out the member linked to the current session.
      */
-    public function logoutAll() {
-        if ( 'good' == $this->status ) {
-            foreach($this->mechanisms as $session) {
-                $session->logoutAll( $this->saved );
+    public function logoutAll( string $username = '' ) {
+        if ( '' == $username ) {
+            $current_client = true;
+            if ( 'good' == $this->status ) {
+                $username = $this->saved->member['username'];
+            } else {
+                return;
             }
+        } else {
+            $current_client = false;
+        }
+        foreach($this->mechanisms as $session) {
+            $session->logoutAll( $username, $current_client );
         }
     }
 
@@ -292,8 +302,11 @@ interface Mechanism {
      * Delete all tokens for all sessions after setting new credentials.
      *
      * The mechanism must clear all tokens associated with this member.
+     *
+     * @param string $username The member being deleted from the sessions table.
+     * @param bool $current_client Is it safe to call deleteClientData() for the current session?
      */
-    public function logoutAll( Data $data );
+    public function logoutAll( string $username, bool $current_client );
 
     /**
      * Delete tokens from client for logout.
@@ -481,9 +494,11 @@ class FormsAndCookies implements Mechanism {
         return new Data;
     }
     
-    public function logoutAll( Data $data ) {
-        \XMB\SQL\deleteSessionsByName( $data->member['username'] );
-        $this->deleteClientData();
+    public function logoutAll( string $username, bool $current_client ) {
+        \XMB\SQL\deleteSessionsByName( $username );
+        if ( $current_client ) {
+            $this->deleteClientData();
+        }
     }
     
     public function deleteClientData() {
