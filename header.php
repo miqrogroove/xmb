@@ -39,13 +39,13 @@ require ROOT.'include/global.inc.php';
 
 $versioncompany = 'The XMB Group';
 $versionshort = '1.9.12-a';
-$versiongeneral = 'XMB 1.9.12-alpha';
+$versiongeneral = 'XMB 1.9.12';
 $copyright = '2001-2020';
-$alpha = '';
+$alpha = '-alpha';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20200823;
+$versionbuild = 20200901;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -91,7 +91,7 @@ $plugimg = array();
 $plugname = array();
 $plugurl = array();
 $smiliecache = array();
-$tables = array(
+$tables = [
 'attachments',
 'banned',
 'buddys',
@@ -106,6 +106,7 @@ $tables = array(
 'posts',
 'ranks',
 'restricted',
+'sessions',
 'settings',
 'smilies',
 'templates',
@@ -116,8 +117,8 @@ $tables = array(
 'words',
 'vote_desc',
 'vote_results',
-'vote_voters'
-);
+'vote_voters',
+];
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -214,7 +215,7 @@ if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
     assertEmptyOutputStream('debug.inc.php');
 } else {
-    error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR | E_USER_ERROR);
+    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR);
 }
 
 $config_array = array(

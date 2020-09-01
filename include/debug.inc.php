@@ -102,13 +102,13 @@ function printAllQueries() {
 }
 
 function mysql_syn_highlight($query) {
-    global $tables, $tablepre;
+    global $tables;
 
     $find = array();
     $replace = array();
 
     foreach($tables as $name) {
-        $find[] = $tablepre.$name;
+        $find[] = X_PREFIX.$name;
     }
 
     $find[] = 'SELECT';

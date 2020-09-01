@@ -434,7 +434,14 @@ class dbstuff {
         return $return;
     }
 
+    /**
+     * DEPRECATED by XMB 1.9.12
+     *
+     * dbstuff::time() was totally unrelated to the MySQL data types named TIME and TIMESTAMP.
+     * Its purpose was ambiguous and usage seemed fully unnecessary.
+     */
     function time($time=NULL) {
+        trigger_error( 'dbstuff:time() is deprecated in this version of XMB', E_USER_DEPRECATED );
         if ($time === NULL) {
             $time = time();
         }

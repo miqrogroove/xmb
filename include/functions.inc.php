@@ -62,7 +62,7 @@ function loginUser($invisible = null) {
  * @return bool
  */
 function elevateUser($force_inv = false, $serror = '') {
-    global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum;
+    global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum, $onlinetime;
 
     $maxurl = 150; //Schema constant.
 
@@ -105,7 +105,7 @@ function elevateUser($force_inv = false, $serror = '') {
         }
         // Save some write locks by updating in 60-second intervals.
         if (abs(time() - (int)$self['lastvisit']) > 60) {
-            $db->query("UPDATE ".X_PREFIX."members SET lastvisit=".$db->time(time())." WHERE username='$xmbuser'");
+            $db->query("UPDATE ".X_PREFIX."members SET lastvisit = $onlinetime WHERE username = '$xmbuser'");
         }
     } else {
         if (!defined('X_GUEST')) {
@@ -177,13 +177,13 @@ function elevateUser($force_inv = false, $serror = '') {
 
     // Save This Session
     if (X_SCRIPT != 'upgrade.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
-        global $onlineip, $onlinetime, $url;
+        global $onlineip, $url;
 
         $wollocation = substr($url, 0, $maxurl);
         $db->escape_fast($wollocation);
         $newtime = $onlinetime - X_ONLINE_TIMER;
         $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
-        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', ".$db->time($onlinetime).", '$wollocation', '$invisible')");
+        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', $onlinetime, '$wollocation', '$invisible')");
     }
 }
 
@@ -1645,7 +1645,7 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
 }
 
 function audit($user='', $action, $fid, $tid, $reason='') {
-    global $xmbuser, $db;
+    global $xmbuser, $db, $onlinetime;
 
     if ($user == '') {
         $user = $xmbuser;
@@ -1657,7 +1657,7 @@ function audit($user='', $action, $fid, $tid, $reason='') {
     $user = cdataOut($user);
     $reason = cdataOut($reason);
 
-    $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', " . $db->time() . ")");
+    $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', $onlinetime)");
     return true;
 }
 

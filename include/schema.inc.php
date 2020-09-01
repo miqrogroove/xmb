@@ -32,6 +32,7 @@ define('XMB_SCHEMA_VER', 4);
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
  *
+ * @since 1.9.11.11
  * @param string $action Must be 'drop', 'create', or 'overwrite'.
  * @param string $name The name of the XMB table, with no prefix.
  */
@@ -49,6 +50,7 @@ function xmb_schema_table($action, $name) {
 /**
  * Generates a DROP TABLE query for the XMB schema in MySQL.
  *
+ * @since 1.9.11.11
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
@@ -59,6 +61,7 @@ function xmb_schema_drop($name){
 /**
  * Generates a CREATE TABLE query for the XMB schema in MySQL.
  *
+ * @since 1.9.11.11
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
@@ -231,7 +234,7 @@ function xmb_schema_create($name){
           `ban` varchar(15) NOT NULL default '0',
           `dateformat` varchar(10) NOT NULL default '',
           `ignoreu2u` text NOT NULL,
-          `lastvisit` bigint(15) NOT NULL default 0,
+          `lastvisit` int(10) unsigned NOT NULL default 0,
           `mood` varchar(128) NOT NULL default 'Not Set',
           `pwdate` int(10) NOT NULL default 0,
           `invisible` SET('1','0') default 0,
@@ -245,13 +248,12 @@ function xmb_schema_create($name){
           `bad_session_date` int(10) unsigned NOT NULL default 0,
           `bad_session_count` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY  (`uid`),
-          KEY `username` (username (8)),
+          KEY `username` (`username`(8)),
           KEY `status` (`status`),
           KEY `postnum` (`postnum`),
-          KEY `password` (`password`),
           KEY `email` (`email`),
           KEY `regdate` (`regdate`),
-          KEY `invisible` (`invisible`)
+          KEY `lastvisit` (`lastvisit`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'posts':
@@ -577,10 +579,11 @@ function xmb_schema_create($name){
 /**
  * Generates an array of table names in the XMB schema.
  *
+ * @since 1.9.11.11
  * @return array
  */
-function xmb_schema_list(){
-    return array(
+function xmb_schema_list(): array {
+    return [
     'attachments',
     'banned',
     'buddys',
@@ -595,6 +598,7 @@ function xmb_schema_list(){
     'posts',
     'ranks',
     'restricted',
+    'sessions',
     'settings',
     'smilies',
     'templates',
@@ -605,13 +609,14 @@ function xmb_schema_list(){
     'words',
     'vote_desc',
     'vote_results',
-    'vote_voters'
-    );
+    'vote_voters',
+    ];
 }
 
 /**
  * Determines if a specific table already exists in the database.
  *
+ * @since 1.9.11.11
  * @param string $name The name of the XMB table, with no prefix.
  * @return bool
  */
@@ -628,6 +633,7 @@ function xmb_schema_table_exists($name) {
 /**
  * Determines if a specific index already exists in the database.
  *
+ * @since 1.9.11.11
  * @param string $table The name of the XMB table, with no prefix.
  * @param string $column The name of the column on which you want to find any index. Set to '' if you want to search by index name only.
  * @param string $index Optional. The name of the index to check.
@@ -661,6 +667,7 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
 /**
  * Get the names of all existing columns in a table.
  *
+ * @since 1.9.11.11
  * @param string $table The name of the XMB table, with no prefix.
  * @return array
  */

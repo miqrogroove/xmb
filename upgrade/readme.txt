@@ -1,4 +1,4 @@
-XMB 1.8 through 1.9.10 Upgrade Utility for XMB 1.9.11
+XMB 1.8 through 1.9.11 Upgrade Utility for XMB 1.9.12
 
 
 IMPORTANT:  You must follow these steps in the correct order.
@@ -18,11 +18,11 @@ Instructions
 
 4. Copy your config.php settings into the new file.
 
-5. Upload the XMB 1.9.11 files.  Do not upload the install folder (delete it if necessary).
+5. Upload the XMB 1.9.12 files.  Do not upload the install folder (delete it if necessary).
 
 6. Upload the upgrade directory to your board's root directory.
 
-7. Run this script by hitting the upgrade URL, for example:  http://www.example.com/forum/upgrade/
+7. Run this script by hitting the upgrade URL, for example:  https://www.example.com/forum/upgrade/
 
 8. When finished, remember to delete the upgrade directory and enable your forums using the Board Status setting.
 

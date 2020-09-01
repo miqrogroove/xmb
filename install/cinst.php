@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -134,7 +134,7 @@ if ( $vUsername != preg_replace( "#[{$nonprinting}{$specials}]{$sequences}#", ''
 
 // these two are used waaaaay down below.
 $vPassword = md5($frmPassword);
-$myDate = $db->time(time());
+$myDate = time();
 show_result(X_INST_OK);
 
 // is XMB already installed?

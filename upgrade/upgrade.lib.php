@@ -777,7 +777,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'lastvisit';
-    $coltype = "bigint(15) NOT NULL default 0";
+    $coltype = "int(10) unsigned NOT NULL default 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)' || strtolower($row['Type']) == 'bigint(30)' || strtolower($row['Null']) == 'yes') {
@@ -1754,8 +1754,33 @@ function upgrade_schema_to_v5() {
         $db->free_result($query);
     }
 
+    $colname = 'lastvisit';
+    $coltype = "int(10) unsigned NOT NULL default 0";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) != 'int(10) unsigned') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    $columns = array(
+    'invisible' => 'invisible',
+    'password' => 'password');
+    foreach($columns as $colname => $coltype) {
+        if (xmb_schema_index_exists($table, $coltype, $colname)) {
+            $sql[] = "DROP INDEX $colname";
+        }
+    }
+
+    $columns = array(
+    'lastvisit' => 'lastvisit');
+    foreach($columns as $colname => $coltype) {
+        if (!xmb_schema_index_exists($table, $coltype, $colname)) {
+            $sql[] = "ADD INDEX $colname ($coltype)";
+        }
+    }
+
     if (count($sql) > 0) {
-        show_progress('Adding columns in the members table');
+        show_progress('Adding/Deleting columns in the members table');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
