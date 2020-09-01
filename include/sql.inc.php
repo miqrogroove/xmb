@@ -236,15 +236,11 @@ function checkUpgradeOldLogin( string $username, string $password ): bool {
     $sqlpass = $db->escape( $password );
     $sqluser = $db->escape( $username );
 
-    $query = $db->query("SELECT status FROM ".X_PREFIX."members WHERE username = '$sqluser' AND password = '$sqlpass'");
-    if ($db->num_rows($query) == 1) {
-        $member = $db->fetch_array($query);
-        $result = 'Super Administrator' == $member['status'];
-    } else {
-        $result = false;
-    }
+    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members WHERE username = '$sqluser' AND password = '$sqlpass' AND status = 'Super Administrator'");
+    $count = (int) $db->result( $query, 0 );
     $db->free_result($query);
-    return $result;
+
+    return $count == 1;
 }
 
 return;
