@@ -24,8 +24,6 @@
 
 define('ROOT', '../');
 define('X_SCRIPT', 'upgrade.php');
-define('X_SET_HEADER', 1);
-define('X_SET_JS', 2);
 
 require ROOT.'header.php';
 
@@ -40,15 +38,22 @@ if ( strlen( $username ) == 0 ) {
         <input type="submit" />
     </form>
     <?php
-} else if ( ! X_SADMIN ) { {
-    echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
-    trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
 } else {
     if ( $SETTINGS['schema_version'] >= 5 ) {
         // Already logged in by \XMB\Session\Manager
+        if ( ! X_SADMIN ) {
+            echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
+            trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+        }
     } else {
-        put_cookie( 'xmbuser', $username );
-        put_cookie( 'xmbpw', md5( $_POST['password'] ) );
+        $password = md5( $_POST['password'] );
+        if ( \XMB\SQL\checkUpgradeOldLogin( $username, $password ) ) {
+            put_cookie( 'xmbuser', $username );
+            put_cookie( 'xmbpw', $password );
+        } else {
+            echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
+            trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+        }
     }
 
     echo "Cookies set.  <a href='{$full_url}upgrade/'>Return to upgrade.</a>";

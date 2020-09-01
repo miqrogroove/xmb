@@ -43,8 +43,9 @@ $error = '<!-- error -->' == $check;
 <?php
 // Display the log file in reverse order, so latest message is first.
 $lines = explode( "\r\n", $log );
+$counter = count( $lines );
 while( count( $lines ) > 0 ) {
-	echo array_pop( $lines ), "<br>\n";
+	echo $counter--, ". ", array_pop( $lines ), "<br>\n";
 }
 ?>
 </body>

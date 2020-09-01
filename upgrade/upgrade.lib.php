@@ -1735,6 +1735,8 @@ function upgrade_schema_to_v4() {
  * @since 1.9.12
  */
 function upgrade_schema_to_v5() {
+    global $db;
+
     show_progress('Requesting to lock the members table');
     upgrade_query('LOCK TABLES '.X_PREFIX."members WRITE");
 
@@ -1764,11 +1766,23 @@ function upgrade_schema_to_v5() {
 
     $columns = array(
     'invisible' => 'invisible',
-    'password' => 'password');
+    'password' => 'password',
+    'username' => 'username');
     foreach($columns as $colname => $coltype) {
         if (xmb_schema_index_exists($table, $coltype, $colname)) {
             $sql[] = "DROP INDEX $colname";
         }
+    }
+
+    if ( ! xmb_schema_index_exists( $table, 'username', 'userunique' ) ) {
+        show_progress('Removing duplicate username records');
+        $query = upgrade_query('SELECT username, MIN(uid) AS firstuser FROM '.X_PREFIX.$table.' GROUP BY username HAVING COUNT(*) > 1');
+        while( $dupe = $db->fetch_array( $query ) ) {
+            $name = $db->escape( $dupe['username'] );
+            $id = $dupe['firstuser'];
+            upgrade_query( 'DELETE FROM '.X_PREFIX.$table." WHERE username = '$name' AND uid != $id" );
+        }
+        $sql[] = "ADD UNIQUE INDEX `userunique` (`username`)";
     }
 
     $columns = array(

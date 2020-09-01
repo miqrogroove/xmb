@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define('XMB_SCHEMA_VER', 4);
+define('XMB_SCHEMA_VER', 5);
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
@@ -248,7 +248,7 @@ function xmb_schema_create($name){
           `bad_session_date` int(10) unsigned NOT NULL default 0,
           `bad_session_count` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY  (`uid`),
-          KEY `username` (`username`(8)),
+          UNIQUE KEY `userunique` (`username`),
           KEY `status` (`status`),
           KEY `postnum` (`postnum`),
           KEY `email` (`email`),

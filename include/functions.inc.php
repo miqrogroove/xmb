@@ -1613,7 +1613,7 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
  *
  * @since 1.9.1
  */
-function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false, $setVia=X_SET_HEADER) {
+function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false) {
     global $cookiepath, $cookiedomain, $cookiesecure;
 
     // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.

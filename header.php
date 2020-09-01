@@ -41,7 +41,7 @@ $versioncompany = 'The XMB Group';
 $versionshort = '1.9.12-a';
 $versiongeneral = 'XMB 1.9.12';
 $copyright = '2001-2020';
-$alpha = '-alpha';
+$alpha = 'alpha';
 $beta = '';
 $gamma = '';
 $service_pack = '';
@@ -129,8 +129,6 @@ define('X_NONCE_KEY_LEN', 12); // Size of captchaimages.imagestring.
 define('X_ONLINE_TIMER', 600); // Visitors are offline after this many seconds.
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
-define('X_SET_HEADER', 1);
-define('X_SET_JS', 2);
 define('X_SHORTEN_SOFT', 1);
 define('X_SHORTEN_HARD', 2);
 // permissions constants
