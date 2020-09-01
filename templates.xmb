@@ -2034,8 +2034,13 @@ setTickerEvent();
 </td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" colspan="2" class="mediumtxt">
-$lang[key]<strong><u><em>$lang[superadmin]</em></u></strong> - <strong><u>$lang[textsendadmin]</u></strong> - <em><strong>$lang[textsendsupermod]</strong></em> - <strong>$lang[textsendmod]</strong> - $lang[textsendall]$hidden
+<td bgcolor="$altbg1" colspan="2" class="smalltxt">
+$lang[key]
+<span class="status_Super_Administrator">$lang[superadmin]</span> - 
+<span class="status_Administrator">$lang[textsendadmin]</span> - 
+<span class="status_Super_Moderator">$lang[textsendsupermod]</span> - 
+<span class="status_Moderator">$lang[textsendmod]</span> - 
+<span class="status_Member">$lang[textsendall]</span>$hidden
 </td>
 </tr>
 <tr>
