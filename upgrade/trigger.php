@@ -79,7 +79,7 @@ if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
 show_progress( 'Confirming the upgrade files are present' );
 
 if (is_dir(ROOT.'install') || is_dir(ROOT.'Install')) {
-	show_error( 'Wrong files present!<br />Please delete any folders named install or upgrade.' );
+	show_error( 'Wrong files present!<br />Please delete any folders named "install".' );
 	trigger_error('Admin attempted upgrade while non-upgrade files were present.', E_USER_ERROR);
 }
 if (!is_file(ROOT.'templates.xmb')) {

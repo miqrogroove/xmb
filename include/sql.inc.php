@@ -225,6 +225,26 @@ function getSuperEmails() {
     return $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
 }
 
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function checkUpgradeOldLogin( string $username, string $password ): bool {
+    global $db;
+    
+    $sqlpass = $db->escape( $password );
+    $sqluser = $db->escape( $username );
 
+    $query = $db->query("SELECT status FROM ".X_PREFIX."members WHERE username = '$sqluser' AND password = '$sqlpass'");
+    if ($db->num_rows($query) == 1) {
+        $member = $db->fetch_array($query);
+        $result = 'Super Administrator' == $member['status'];
+    } else {
+        $result = false;
+    }
+    $db->free_result($query);
+    return $result;
+}
 
 return;

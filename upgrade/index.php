@@ -99,7 +99,7 @@ if (!isset($_GET['step']) || $_GET['step'] == 1) {
 <li>Copy your config.php settings into the new file.
 <li>Upload the XMB 1.9.12 files.  Do not upload the install folder (delete it if necessary).
 <li>Upload the upgrade directory to your board's root directory.
-<li>Run this script by hitting the upgrade URL, for example:  http://www.example.com/forum/upgrade/
+<li>Run this script by hitting the upgrade URL, for example:  https://www.example.com/forum/upgrade/
 <li>When the upgrade finishes successfully, delete the upgrade directory.
 <li>Enable your forums using the Board Status setting.
 </ol>

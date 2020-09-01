@@ -22,49 +22,34 @@
  *
  **/
 
-define('IN_CODE', TRUE);
 define('ROOT', '../');
+define('X_SCRIPT', 'upgrade.php');
 define('X_SET_HEADER', 1);
 define('X_SET_JS', 2);
 
-require ROOT.'config.php';
+require ROOT.'header.php';
 
-require ROOT.'include/validate.inc.php';
+$username = postedVar( 'username', '', TRUE, FALSE );
 
-$xmbuser = postedVar('xmbuser', '', TRUE, FALSE);
-
-if (strlen($xmbuser) == 0) {
+if ( strlen( $username ) == 0 ) {
+    put_cookie( 'xmbuser' );  // Make sure user is logged out.
     ?>
     <form method="post" action="">
-        <label>Username: <input type="text" name="xmbuser" /></label><br />
-        <label>Password: <input type="password" name="xmbpw" /></label><br />
+        <label>Username: <input type="text" name="username" /></label><br />
+        <label>Password: <input type="password" name="password" /></label><br />
         <input type="submit" />
     </form>
     <?php
+} else if ( ! X_SADMIN ) { {
+    echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
+    trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
 } else {
-
-    $array = parse_url($full_url);
-
-    $cookiesecure = ($array['scheme'] == 'https');
-
-    $cookiedomain = $array['host'];
-    if (strpos($cookiedomain, '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
-        $cookiedomain = '';
-    } elseif (substr($cookiedomain, 0, 4) === 'www.') {
-        $cookiedomain = substr($cookiedomain, 3);
+    if ( $SETTINGS['schema_version'] >= 5 ) {
+        // Already logged in by \XMB\Session\Manager
+    } else {
+        put_cookie( 'xmbuser', $username );
+        put_cookie( 'xmbpw', md5( $_POST['password'] ) );
     }
-
-    if (!isset($array['path'])) {
-        $array['path'] = '/';
-    }
-    $cookiepath = $array['path'];
-
-
-    require ROOT.'include/functions.inc.php';
-
-    $currtime = 0;
-    put_cookie("xmbuser", $xmbuser, $currtime);
-    put_cookie("xmbpw", md5($_POST['xmbpw']), $currtime);
 
     echo "Cookies set.  <a href='{$full_url}upgrade/'>Return to upgrade.</a>";
 }

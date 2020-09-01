@@ -352,48 +352,52 @@ if ($db->num_rows($squery) == 0) {
     exit('Fatal Error: The XMB settings table is empty.');
 }
 foreach($db->fetch_array($squery) as $key => $val) {
-    $$key = $val;
     $SETTINGS[$key] = $val;
 }
 $db->free_result($squery);
 
-if ($postperpage < 5) {
-    $postperpage = 30;
+if ( $SETTINGS['postperpage'] < 5 ) {
     $SETTINGS['postperpage'] = 30;
 }
 
-if ($topicperpage < 5) {
-    $topicperpage = 30;
+if ( $SETTINGS['topicperpage'] < 5 ) {
     $SETTINGS['topicperpage'] = 30;
 }
 
-if ($memberperpage < 5) {
-    $memberperpage = 30;
+if ( $SETTINGS['memberperpage'] < 5 ) {
     $SETTINGS['memberperpage'] = 30;
 }
 
-if ($onlinetodaycount < 5) {
-    $onlinetodaycount = 30;
-    $SETTINGS['onlinetodaycount'] = 30;
-}
-
-if ($SETTINGS['smcols'] < 1) {
-    $smcols = 4;
+if ( $SETTINGS['smcols'] < 1 ) {
     $SETTINGS['smcols'] = 4;
 }
 
-if ($SETTINGS['captcha_code_length'] < 3 || $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
-    $captcha_code_length = 8;
+// The latest upgrade script advertises compatibility with v1.8 SP2.  These defaults might not exist yet.
+if ( empty( $SETTINGS['onlinetodaycount'] ) || $SETTINGS['onlinetodaycount'] < 5 ) {
+    $SETTINGS['onlinetodaycount'] = 30;
+}
+
+if ( empty( $SETTINGS['captcha_code_length'] ) || $SETTINGS['captcha_code_length'] < 3 || $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
     $SETTINGS['captcha_code_length'] = 8;
+}
+
+if ( empty( $SETTINGS['ip_banning'] ) ) {
+    $SETTINGS['ip_banning'] == 'off';
+}
+
+if ( empty( $SETTINGS['schema_version'] ) ) {
+    $SETTINGS['schema_version'] == 0;
 }
 
 // Validate maxattachsize with PHP configuration.
 $inimax = phpShorthandValue('upload_max_filesize');
-if ($inimax < $SETTINGS['maxattachsize']) {
-    $maxattachsize = $inimax;
+if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < $SETTINGS['maxattachsize'] ) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);
+
+// XMB settings are historically available as individual variables.
+extract( $SETTINGS );
 
 
 /* Set Global HTTP Headers */
@@ -409,6 +413,11 @@ ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
 $oldtopics = postedVar( 'oldtopics', null, false, false, false, 'c' );
 if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
+}
+
+if ( X_SCRIPT == 'upgrade.php' && $SETTINGS['schema_version'] < 5 ) {
+    define( 'X_SADMIN', \XMB\SQL\checkUpgradeOldLogin( postedVar( 'xmbuser', '', true, false, false, 'c' ), postedVar( 'xmbpw', '', false, false, false, 'c' ) ) );
+    return;
 }
 
 
@@ -454,22 +463,23 @@ if ($SETTINGS['regviewonly'] == 'on' && $serror == '') {
 }
 
 // Authenticate session or login credentials.
-if ($action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php') {
+$force_inv = false;
+if ( X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'] ) ) {
+    $mode = 'login';
+} else if ( $action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php' ) {
     $mode = 'login';
     $force_inv = (formInt('hide') == 1);
-} else if ($action == 'logout' && X_SCRIPT == 'misc.php') {
+} else if ( $action == 'logout' && X_SCRIPT == 'misc.php' ) {
     $mode = 'logout';
-    $force_inv = false;
 } else {
     $mode = 'resume';
-    $force_inv = false;
 }
 
 $session = new \XMB\Session\Manager( $mode );
 
 elevateUser( $force_inv, $serror );
 
-if (X_SCRIPT == 'upgrade.php') return;
+if ( X_SCRIPT == 'upgrade.php' ) return;
 
 
 /* Set Up HTML Templates and Themes */
