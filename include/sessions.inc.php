@@ -161,6 +161,7 @@ class Manager {
             // Update the Mechanism
             if ( 'good' == $data->status ) {
                 $session->saveClientData( $data );
+                $session->collectGarbage();
                 break;
             } elseif ( 'bad' == $data->status ) {
                 $session->deleteClientData();
@@ -328,6 +329,11 @@ interface Mechanism {
      * @param Data
      */
     public function saveClientData( Data $data );
+    
+    /**
+     * Delete all records of expired sessions for all users.
+     */
+    public function collectGarbage();
 }
 
 /**
@@ -620,10 +626,17 @@ class FormsAndCookies implements Mechanism {
         put_cookie( self::REGEN_COOKIE, $newsession['replaces'], $expires );
     }
 
+    /**
+     * Deletes all expired tokens in the sessions table.
+     */
+    public function collectGarbage() {
+        \XMB\SQL\deleteSessionsByDate( time() );
+    }
+
     private function get_cookie( string $name ): string {
         return postedVar( $name, '', false, false, false, 'c' );
     }
-    
+
     private function delete_cookie( string $name ) {
         if ( $this->get_cookie( $name ) != '' ) {
             put_cookie( $name );

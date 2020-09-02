@@ -124,6 +124,17 @@ function deleteSessionsByName( string $username ) {
  *
  * @since 1.9.12
  */
+function deleteSessionsByDate( int $expired ) {
+    global $db;
+    
+    $db->query("DELETE FROM ".X_PREFIX."sessions WHERE expire < $expired");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function clearSessionParent( string $token ) {
     global $db;
 

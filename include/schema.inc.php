@@ -313,7 +313,8 @@ function xmb_schema_create($name){
           `agent` varchar(255) NOT NULL,
           PRIMARY KEY (`token`),
           KEY `username` (`username`),
-          KEY `replaces` (`replaces`(6))
+          KEY `replaces` (`replaces`(6)),
+          KEY `expire` (`expire`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'settings':
