@@ -1283,14 +1283,14 @@ function smilieinsert($type='normal') {
             $smilies .= $sms[$i];
             if (($i+1)%$smcols == 0) {
                 $smilies .= '</tr>';
-                if (($i+1) < $smtotal) {
+                if (($i+1) < count($sms)) {
                     $smilies .= '<tr>';
                 }
             }
         }
 
-        if ($smtotal%$smcols > 0) {
-            $left = $smcols-($smtotal%$smcols);
+        if (count($sms)%$smcols > 0) {
+            $left = $smcols-(count($sms)%$smcols);
             for($i=0;$i<$left;$i++) {
                 $smilies .= '<td />';
             }

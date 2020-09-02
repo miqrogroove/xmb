@@ -173,6 +173,7 @@ $dayselect
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 <script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
@@ -238,6 +239,7 @@ $buddys[offline]
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 <script type="text/javascript" language="JavaScript" src="./js/buddylistedit.js"></script>
@@ -308,6 +310,7 @@ $buddys
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 </head>
@@ -331,6 +334,7 @@ $css
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 $css
 <script type="text/javascript" language="JavaScript" src="./js/buddy.js"></script>
 <title>$bbname - $lang[textbuddylist] - $lang[textpowered]</title>
@@ -1794,6 +1798,7 @@ $smilies
 <head>
 $baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js"></script>
@@ -3305,11 +3310,9 @@ $multipage
 </table>
 
 |#*XMB TEMPLATE FILE*#|misc_smilies|#*XMB TEMPLATE*#|
-<div align="center">
 <table border="0">
-<div align="center">$smilies</div>
+<tr>$smilies</tr>
 </table>
-</div>
 
 |#*XMB TEMPLATE FILE*#|popup_footer|#*XMB TEMPLATE*#|
 </div>
@@ -3317,10 +3320,12 @@ $multipage
 </html>
 
 |#*XMB TEMPLATE FILE*#|popup_header|#*XMB TEMPLATE*#|
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<?xml version="1.0" encoding="$charset"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=$charset">
+<meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 $css
 <script language="JavaScript" type="text/javascript">
 var messageElement = opener.document.getElementById("message");
@@ -4341,6 +4346,7 @@ $self[u2ufolders]</textarea></td>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>$bbname - $lang[textpowered]</title>
 <script language="JavaScript" type="text/javascript" src="./js/u2uheader.js"></script>
 $css
@@ -4507,11 +4513,12 @@ $u2usout
 </table>
 
 |#*XMB TEMPLATE FILE*#|u2u_printable|#*XMB TEMPLATE*#|
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<?xml version="1.0" encoding="$charset"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=$charset">
+<meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style type="text/css">
 p {
 font-size: 14px;
@@ -4951,6 +4958,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <head>
 $baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 <style type="text/css">
 .mediumtxt {

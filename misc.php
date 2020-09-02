@@ -521,15 +521,12 @@ switch($action) {
         break;
 
     case 'smilies':
-        $header = '';
         eval('$css = "'.template('css').'";');
         eval('$header = "'.template('popup_header').'";');
         eval('$footer = "'.template('popup_footer').'";');
         $smilies = smilieinsert('full');
         eval('$misc = "'.template('misc_smilies').'";');
-        echo $header;
-        echo $misc;
-        echo $footer;
+        echo $header, $misc, $footer;
         exit();
         break;
 
