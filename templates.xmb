@@ -654,6 +654,16 @@ textarea, select, input, object {
     font-family: Verdana;
     font-size: 10px;
 }
+
+.tablelinks td {
+    overflow: hidden;
+}
+.tablelinks td a {
+    display: block;
+    width: 100%;
+    margin: -1em;
+    padding: 1em;
+}
 /*]]>*/
 </style>
 $cssInclude
@@ -2430,6 +2440,52 @@ $avatd
 </tr>
 </table>
 </form>
+
+|#*XMB TEMPLATE FILE*#|memcp_devices|#*XMB TEMPLATE*#|
+<form method="post" action="memcp.php?action=devices">
+<input type="hidden" name="token" value="" />
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">{$lang['devices_category']}</font></strong></td>
+</tr>
+<tr class="header">
+<td width="4%" align="center">{$lang['deletebutton']}</td>
+<td width="6%" align="center">{$lang['device_id_hdr']}</td>
+<td width="20%">{$lang['device_login_date']}</td>
+<td width="70%">{$lang['device_agent_hdr']}</td>
+</tr>
+$current
+$other
+$devicesbtn
+</table>
+</td>
+</tr>
+</table>
+</form>
+
+|#*XMB TEMPLATE FILE*#|memcp_devices_button|#*XMB TEMPLATE*#|
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="4"><input type="submit" class="submit" name="devicesubmit" value="{$lang['device_delete_btn']}" /></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|memcp_devices_firstrow|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1"></td>
+<td bgcolor="$altbg2" align="center">{$lang['device_this']}</td>
+<td bgcolor="$altbg1">$dlogin</td>
+<td bgcolor="$altbg2">$dagent</a></td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|memcp_devices_row|#*XMB TEMPLATE*#|
+<tr class="tablerow">
+<td bgcolor="$altbg1" align="center"><input type="checkbox" name="delete$did" value="$did" /></td>
+<td bgcolor="$altbg2" align="center">$did</td>
+<td bgcolor="$altbg1">$dlogin</td>
+<td bgcolor="$altbg2">$dagent</a></td>
+</tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_favs|#*XMB TEMPLATE*#|
 <form method="post" action="memcp.php?action=favorites">

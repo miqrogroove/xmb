@@ -103,6 +103,35 @@ class Manager {
     }
     
     /**
+     * Session Lists
+     *
+     * Provides an array of arrays, indexed by the name of each Mechanism.
+     */
+    public function getSessionLists(): array {
+        $lists = [];
+        if ( 'good' == $this->status ) {
+            foreach($this->mechanisms as $session) {
+                $lists[get_class($session)] = $session->getSessionList( $this->saved->member['username'] );
+            }
+        }
+        return $lists;
+    }
+
+    /**
+     * Deletes tokens for specific sessions selected by the current user.
+     *
+     * @param array $selection Should be structured similar to the return of getSessionLists().
+     */
+    public function logoutByLists( array $selection ) {
+        foreach($this->mechanisms as $session) {
+            $name = get_class($session);
+            if ( ! empty( $selection[$name] ) ) {
+                $session->logoutByList( $this->saved->member['username'], $selection[$name] );
+            }
+        }
+    }
+
+    /**
      * Deletes all tokens for all sessions after the user sets new credentials.
      *
      * @param string $username If not specified, logs out the member linked to the current session.
@@ -334,6 +363,20 @@ interface Mechanism {
      * Delete all records of expired sessions for all users.
      */
     public function collectGarbage();
+    
+    /**
+     * Retrieve list of all valid sessions for the current user.
+     *
+     * Each mechanism may customize the structure of its list.
+     */
+    public function getSessionList( string $username ): array;
+
+    /**
+     * Delete all tokens for specified sessions.
+     *
+     * Each mechanism may customize the structure of its list.
+     */
+    public function logoutByList( string $username, array $selection );
 }
 
 /**
@@ -631,6 +674,39 @@ class FormsAndCookies implements Mechanism {
      */
     public function collectGarbage() {
         \XMB\SQL\deleteSessionsByDate( time() );
+    }
+    
+    /**
+     * Retrieve list of all valid sessions for the current user.
+     *
+     * @param string $username
+     * @return array
+     */
+    public function getSessionList( string $username ): array {
+        global $db;
+
+        $sessions = [];
+        $pinput = $this->get_cookie( self::SESSION_COOKIE );
+
+        $result = \XMB\SQL\getSessionsByName( $username );
+        while ( $session = $db->fetch_array( $result ) ) {
+            if ( $session['expire'] < time() ) {
+                continue;
+            }
+            $session['current'] = ( $pinput == $session['token'] || $pinput == $session['replaces'] );
+            $session['token'] = substr( $session['token'], 0, 4 );
+            unset( $session['replaces'] );
+            $sessions[] = $session;
+        }
+        $db->free_result( $result );
+
+        return $sessions;
+    }
+
+    public function logoutByList( string $username, array $selection ) {
+        if ( ! empty( $selection ) ) {
+            \XMB\SQL\deleteSessionsByList( $username, $selection );
+        }
     }
 
     private function get_cookie( string $name ): string {

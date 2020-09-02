@@ -31,6 +31,10 @@ header('X-Robots-Tag: noindex');
 loadtemplates(
 'buddylist_buddy_offline',
 'buddylist_buddy_online',
+'memcp_devices',
+'memcp_devices_button',
+'memcp_devices_firstrow',
+'memcp_devices_row',
 'memcp_favs',
 'memcp_favs_button',
 'memcp_favs_none',
@@ -75,6 +79,10 @@ switch($action) {
         nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
         nav($lang['textfavorites']);
         break;
+    case 'devices':
+        nav('<a href="memcp.php">'.$lang['textusercp'].'</a>');
+        nav($lang['devices']);
+        break;
     default:
         nav($lang['textusercp']);
         break;
@@ -85,36 +93,27 @@ function makenav($current) {
 
     $output =
       '<table cellpadding="0" cellspacing="0" border="0" bgcolor="'.$bordercolor.'" width="'.$tablewidth.'" align="center"><tr><td>
-      <table cellpadding="4" cellspacing="'.$THEME['borderwidth'].'" border="0" width="100%">
+      <table cellpadding="4" cellspacing="'.$THEME['borderwidth'].'" border="0" width="100%" class="tablelinks">
       <tr align="center" class="tablerow">';
 
-    if ($current == '') {
-        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textmyhome']. "</td>";
-    } else {
-        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php\">" .$lang['textmyhome']. "</a></td>";
-    }
+    
+    $color = ($current == '') ? $altbg1 : $altbg2;
+    $output .= "<td bgcolor='$color' width='15%' class='ctrtablerow'><a href='memcp.php'>{$lang['textmyhome']}</a></td>";
 
-    if ($current == 'profile') {
-        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['texteditpro']. "</td>";
-    } else {
-        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=profile\">" .$lang['texteditpro']. "</a></td>";
-    }
+    $color = ($current == 'profile') ? $altbg1 : $altbg2;
+    $output .= "<td bgcolor='$color' width='15%' class='ctrtablerow'><a href='memcp.php?action=profile'>{$lang['texteditpro']}</a></td>";
 
-    if ($current == 'subscriptions') {
-        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textsubscriptions']. "</td>";
-    } else {
-        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=subscriptions\">" .$lang['textsubscriptions']. "</a></td>";
-    }
+    $color = ($current == 'subscriptions') ? $altbg1 : $altbg2;
+    $output .= "<td bgcolor='$color' width='15%' class='ctrtablerow'><a href='memcp.php?action=subscriptions'>{$lang['textsubscriptions']}</a></td>";
 
-    if ($current == 'favorites') {
-        $output .= "<td bgcolor=\"$altbg1\" width=\"15%\" class=\"ctrtablerow\">" .$lang['textfavorites']. "</td>";
-    } else {
-        $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"memcp.php?action=favorites\">" .$lang['textfavorites']. "</a></td>";
-    }
+    $color = ($current == 'favorites') ? $altbg1 : $altbg2;
+    $output .= "<td bgcolor='$color' width='15%' class='ctrtablerow'><a href='memcp.php?action=favorites'>{$lang['textfavorites']}</a></td>";
 
-    $output .= "<td bgcolor=\"$altbg2\" width=\"20%\" class=\"ctrtablerow\"><a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" .$lang['textu2umessenger']. "</a></td>";
-    $output .= "<td bgcolor=\"$altbg2\" width=\"15%\" class=\"ctrtablerow\"><a href=\"buddy.php\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">" .$lang['textbuddylist']. "</a></td>";
-    $output .= "<td bgcolor=\"$altbg2\" width=\"10%\" class=\"ctrtablerow\"><a href=\"faq.php\">" .$lang['helpbar']. "</a></td>";
+    $color = ($current == 'devices') ? $altbg1 : $altbg2;
+    $output .= "<td bgcolor='$color' width='15%' class='ctrtablerow'><a href='memcp.php?action=devices'>{$lang['devices']}</a></td>";
+
+    $output .= "<td bgcolor='$altbg2' width='13%' class='ctrtablerow'><a href='u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2umessenger']}</a></td>";
+    $output .= "<td bgcolor='$altbg2' width='12%' class='ctrtablerow'><a href='buddy.php' onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['textbuddylist']}</a></td>";
     $output .=
       '</tr>
       </table>
@@ -653,6 +652,52 @@ if ($action == 'profile') {
         }
         message($lang['subsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
     }
+} else if ( $action == 'devices' ) {
+    if ( onSubmit( 'devicesubmit' ) ) {
+        $ids = [];
+        foreach( $_POST as $name => $value ) {
+            if ( substr( $name, 0, 6 ) == 'delete' && strlen( $value ) == 4 && $name == "delete$value" ) {
+                $ids[] = $value;
+            }
+        }
+        if ( ! empty( $ids ) ) {
+            // This page only handles the default session mechanism for now.
+            $lists = [\XMB\Session\FormsAndCookies::class => $ids];
+            $session->logoutByLists( $lists );
+        }
+    }
+
+    eval('$header = "'.template('header').'";');
+    $header .= makenav($action);
+    $current = '';
+    $other = '';
+
+    $lists = $session->getSessionLists();
+    foreach ( $lists as $name => $list ) {
+        if ( $name != \XMB\Session\FormsAndCookies::class ) {
+            // This page only handles the default session mechanism for now.
+            continue;
+        }
+        foreach ( $list as $device ) {
+            $did = $device['token'];
+            $time = ($timeoffset * 3600) + ($addtime * 3600) + (int) $device['login_date'];
+            $dlogin = gmdate( $dateformat, $time ).' '.$lang['textat'].' '.gmdate( $timecode, $time );
+            $dagent = parse_user_agent( $device['agent'] );
+            if ( $device['current'] ) {
+                eval('$current .= "'.template('memcp_devices_firstrow').'";');
+            } else {
+                eval('$other .= "'.template('memcp_devices_row').'";');
+            }
+        }
+    }
+    
+    if ( '' == $other ) {
+        $devicesbtn = '';
+    } else {
+        eval('$devicesbtn = "'.template('memcp_devices_button').'";');
+    }
+    
+    eval('$mempage = "'.template('memcp_devices').'";');
 } else {
     eval('$header = "'.template('header').'";');
     eval($lang['evalusercpwelcome']);

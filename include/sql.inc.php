@@ -98,6 +98,19 @@ function getSession( string $token, string $username ): array {
  *
  * @since 1.9.12
  */
+function getSessionsByName( string $username ) {
+    global $db;
+    
+    $sqluser = $db->escape( $username );
+
+    return $db->query("SELECT * FROM ".X_PREFIX."sessions WHERE username = '$sqluser'");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function deleteSession( string $token ) {
     global $db;
     
@@ -128,6 +141,23 @@ function deleteSessionsByDate( int $expired ) {
     global $db;
     
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE expire < $expired");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function deleteSessionsByList( string $username, array $ids ) {
+    global $db;
+    
+    if ( empty( $ids ) ) return;
+    
+    $sqluser = $db->escape( $username );
+    $ids = array_map( [$db, 'escape'], $ids );
+    $ids = "'" . implode( "','", $ids ) . "'";
+
+    $db->query("DELETE FROM ".X_PREFIX."sessions WHERE username = '$sqluser' AND LEFT(token, 4) IN ($ids)");
 }
 
 /**

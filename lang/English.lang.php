@@ -261,6 +261,13 @@ $lang['deletethreadmsg'] = "Thank you, the topic has been deleted. You are now b
 $lang['delete_all_themes'] = "You can not delete your last theme! Your board won't work without it!";
 $lang['desc'] = "Descending";
 $lang['developedby'] = "Developed By";
+$lang['devices'] = "Devices";
+$lang['devices_category'] = "Devices Currently Logged In - You may safely delete them to force a logout.";
+$lang['device_agent_hdr'] = "Browser";
+$lang['device_delete_btn'] = "Delete Selected Devices";
+$lang['device_id_hdr'] = "ID";
+$lang['device_login_date'] = "Login Date";
+$lang['device_this'] = "Current";
 $lang['dotfolders'] = "'dot' Folders:<br /><span class=\"smalltxt\">Do you want to show dots on folders for the users that have posted in them?</span>";
 $lang['doublee'] = "Allow duplicate mails?";
 $lang['dump_attachments'] = "Dump Attachments";

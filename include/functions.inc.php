@@ -2659,4 +2659,23 @@ function timezone_control( string $offset ): string {
     return $control;
 }
 
+/**
+ * Determine which browser is in use, and return a human-friendly description.
+ *
+ * @since 1.9.12
+ * @param string $raw
+ * @return string
+ */
+function parse_user_agent( string $raw ): string {
+    if     (strpos($raw, 'Opera'     ) || strpos($raw, 'OPR/')     ) return 'Opera'            ;
+    elseif (strpos($raw, 'Edge'      )                             ) return 'Edge'             ;
+    elseif (strpos($raw, 'Chromium'  )                             ) return 'Chromium'         ;
+    elseif (strpos($raw, 'Chrome'    )                             ) return 'Chrome'           ;
+    elseif (strpos($raw, 'Safari'    )                             ) return 'Safari'           ;
+    elseif (strpos($raw, 'Seamonkey' )                             ) return 'Seamonkey'        ;
+    elseif (strpos($raw, 'Firefox'   )                             ) return 'Firefox'          ;
+    elseif (strpos($raw, 'MSIE'      ) || strpos($raw, 'Trident/7')) return 'Internet Explorer';
+    else return $raw;
+}
+
 return;
