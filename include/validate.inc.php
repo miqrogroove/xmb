@@ -386,13 +386,12 @@ function formYesNo($varname) {
 }
 
 /**
-* Retrieve a POST variable and check it for yes value
-*
-* @param   string   $varname   name of the variable
-* @param   boolean   $glob   is this variable also a global?
-* @return   string   yes if set to yes, no otherwise
-*/
+ * DEPRECATED by XMB 1.9.12
+ *
+ * This function makes no sense and has no usage.
+ */
 function valYesNo($varname, $glob = true) {
+    trigger_error( 'valYesNo() is deprecated in this version of XMB', E_USER_DEPRECATED );
     if ($glob) {
         global $varname;
     }
