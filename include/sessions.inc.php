@@ -428,7 +428,7 @@ class FormsAndCookies implements Mechanism {
         $member['password'] = '';
         $data->member = &$member;
         $data->status = 'good';
-        $data->permanent = formYesNo('secure') == 'no';
+        $data->permanent = formYesNo('trust') == 'yes';
         return $data;
     }
 

@@ -403,6 +403,7 @@ $lang['loggedin'] = "Logged in as";
 $lang['loggedinuser'] = "Logged In User:";
 $lang['login_audit_mail'] = "The following member account received too many bad login attempts and is temporarily locked out.";
 $lang['login_lockout'] = "Your password is temporarily locked due to too many guesses.";
+$lang['login_trusted'] = "Trust This Device - Stay logged in";
 $lang['logs'] = 'Logs';
 $lang['logsdump_confirm'] = 'Are you sure you want to empty the logs?';
 $lang['look_feel'] = 'Look &amp; Feel';

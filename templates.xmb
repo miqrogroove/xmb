@@ -3012,12 +3012,12 @@ $header
 <td bgcolor="$altbg2"><input type="password" name="password" size="25" />&nbsp;<span class="smalltxt"><a href="misc.php?action=lostpw">$lang[forgotpw]</a></span><br /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[textinvisible]</td>
-<td bgcolor="$altbg2"><input type="checkbox" name="hide" value="1" /></td>
+<td bgcolor="$altbg1">{$lang['login_trusted']}</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="trust" value="yes" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1">$lang[secure_login]</td>
-<td bgcolor="$altbg2"><input type="checkbox" name="secure" value="yes" /></td>
+<td bgcolor="$altbg1">$lang[textinvisible]</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="hide" value="1" /></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="$lang[textlogin]" /></td>
