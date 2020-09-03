@@ -1853,6 +1853,9 @@ if ($action == "members") {
                 $db->query("UPDATE ".X_PREFIX."whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
             } else {
                 $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
+                if ( '' != $queryadd ) {
+                    $session->logoutAll( $mem['username'] );
+                }
             }
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmembersupdate'].'</td></tr>';
