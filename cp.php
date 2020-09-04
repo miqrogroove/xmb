@@ -29,7 +29,10 @@ require ROOT.'include/admin.inc.php';
 
 header('X-Robots-Tag: noindex');
 
-loadtemplates('error_nologinsession');
+loadtemplates(
+'error_nologinsession',
+'timezone_control'
+);
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
@@ -292,115 +295,6 @@ if ($action == "settings") {
             $avchecked[0] = true;
         }
 
-        $timezone1 = $timezone2 = $timezone3 = $timezone4 = $timezone5 = $timezone6 = false;
-        $timezone7 = $timezone8 = $timezone9 = $timezone10 = $timezone11 = $timezone12 = false;
-        $timezone13 = $timezone14 = $timezone15 = $timezone16 = $timezone17 = $timezone18 = false;
-        $timezone19 = $timezone20 = $timezone21 = $timezone22 = $timezone23 = $timezone24 = false;
-        $timezone25 = $timezone26 = $timezone27 = $timezone28 = $timezone29 = $timezone30 = false;
-        $timezone31 = $timezone32 = $timezone33 = false;
-        switch($SETTINGS['def_tz']) {
-            case '-12.00':
-                $timezone1 = true;
-                break;
-            case '-11.00':
-                $timezone2 = true;
-                break;
-            case '-10.00':
-                $timezone3 = true;
-                break;
-            case '-9.00':
-                $timezone4 = true;
-                break;
-            case '-8.00':
-                $timezone5 = true;
-                break;
-            case '-7.00':
-                $timezone6 = true;
-                break;
-            case '-6.00':
-                $timezone7 = true;
-                break;
-            case '-5.00':
-                $timezone8 = true;
-                break;
-            case '-4.00':
-                $timezone9 = true;
-                break;
-            case '-3.50':
-                $timezone10 = true;
-                break;
-            case '-3.00':
-                $timezone11 = true;
-                break;
-            case '-2.00':
-                $timezone12 = true;
-                break;
-            case '-1.00':
-                $timezone13 = true;
-                break;
-            case '1.00':
-                $timezone15 = true;
-                break;
-            case '2.00':
-                $timezone16 = true;
-                break;
-            case '3.00':
-                $timezone17 = true;
-                break;
-            case '3.50':
-                $timezone18 = true;
-                break;
-            case '4.00':
-                $timezone19 = true;
-                break;
-            case '4.50':
-                $timezone20 = true;
-                break;
-            case '5.00':
-                $timezone21 = true;
-                break;
-            case '5.50':
-                $timezone22 = true;
-                break;
-            case '5.75':
-                $timezone23 = true;
-                break;
-            case '6.00':
-                $timezone24 = true;
-                break;
-            case '6.50':
-                $timezone25 = true;
-                break;
-            case '7.00':
-                $timezone26 = true;
-                break;
-            case '8.00':
-                $timezone27 = true;
-                break;
-            case '9.00':
-                $timezone28 = true;
-                break;
-            case '9.50':
-                $timezone29 = true;
-                break;
-            case '10.00':
-                $timezone30 = true;
-                break;
-            case '11.00':
-                $timezone31 = true;
-                break;
-            case '12.00':
-                $timezone32 = true;
-                break;
-            case '13.00':
-                $timezone33 = true;
-                break;
-            case '0.00':
-            default:
-                $timezone14 = true;
-                break;
-        }
-
         $values = array('serverload', 'queries', 'phpsql', 'loadtimes');
         $names = array($lang['Enable_Server_Load'], $lang['Enable_Queries'], $lang['Enable_PHP_SQL'], $lang['Enable_Page_load']);
         $checked = array($sel_serverload, $sel_queries, $sel_phpsql, $sel_loadtimes);
@@ -577,7 +471,7 @@ if ($action == "settings") {
         printsetting1($lang['bbinsert'], 'bbinsertnew', $bbinserton, $bbinsertoff);
         printsetting1($lang['smileyinsert'], 'smileyinsertnew', $smileyinserton, $smileyinsertoff);
         printsetting3($lang['footer_options'], 'new_footer_options', $names, $values, $checked);
-        printsetting3($lang['defaultTimezoneDesc'], 'def_tz_new', array($lang['timezone1'], $lang['timezone2'], $lang['timezone3'], $lang['timezone4'], $lang['timezone5'], $lang['timezone6'], $lang['timezone7'], $lang['timezone8'], $lang['timezone9'], $lang['timezone10'], $lang['timezone11'], $lang['timezone12'], $lang['timezone13'], $lang['timezone14'], $lang['timezone15'], $lang['timezone16'], $lang['timezone17'], $lang['timezone18'], $lang['timezone19'], $lang['timezone20'], $lang['timezone21'], $lang['timezone22'], $lang['timezone23'], $lang['timezone24'], $lang['timezone25'], $lang['timezone26'], $lang['timezone27'], $lang['timezone28'], $lang['timezone29'], $lang['timezone30'], $lang['timezone31'], $lang['timezone32'], $lang['timezone33']), array('-12', '-11', '-10', '-9', '-8', '-7', '-6', '-5', '-4', '-3.5', '-3', '-2', '-1', '0', '1', '2', '3', '3.5', '4', '4.5', '5', '5.5', '5.75', '6', '6.5', '7', '8', '9', '9.5', '10', '11', '12', '13'), array($timezone1, $timezone2, $timezone3, $timezone4, $timezone5, $timezone6, $timezone7, $timezone8, $timezone9, $timezone10, $timezone11, $timezone12, $timezone13, $timezone14, $timezone15, $timezone16, $timezone17, $timezone18, $timezone19, $timezone20, $timezone21, $timezone22, $timezone23, $timezone24, $timezone25, $timezone26, $timezone27, $timezone28, $timezone29, $timezone30, $timezone31, $timezone32, $timezone33), false);
+        printsetting5( $lang['defaultTimezoneDesc'], timezone_control( $SETTINGS['def_tz'] ) );
         printsetting2($lang['addtime'], 'addtimenew', $SETTINGS['addtime'], 3);
         printsetting1($lang['sigbbcode'], 'sigbbcodenew', $sigbbcodeon, $sigbbcodeoff);
         printsetting1($lang['sightml'], 'sightmlnew', $sightmlon, $sightmloff);
@@ -707,7 +601,7 @@ if ($action == "settings") {
         }
 
         $maxAttachSize = min( phpShorthandValue( 'upload_max_filesize' ), formInt( 'maxAttachSize' ) );
-        $def_tz_new = isset($_POST['def_tz_new']) && is_numeric($_POST['def_tz_new']) ? $_POST['def_tz_new'] : 0;
+        $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
         $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : 0;
         $sigbbcodenew = formOnOff('sigbbcodenew');
         $sightmlnew = formOnOff('sightmlnew');

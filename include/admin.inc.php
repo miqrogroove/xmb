@@ -293,6 +293,11 @@ function settingHTML($setting, &$on, &$off) {
     }
 }
 
+/**
+ * On/Off drop down control.
+ *
+ * @since 1.5.0
+ */
 function printsetting1($setname, $varname, $check1, $check2) {
     global $lang, $THEME;
 
@@ -309,6 +314,11 @@ function printsetting1($setname, $varname, $check1, $check2) {
     <?php
 }
 
+/**
+ * Single line text control.
+ *
+ * @since 1.5.0
+ */
 function printsetting2($setname, $varname, $value, $size) {
     global $THEME;
 
@@ -320,6 +330,11 @@ function printsetting2($setname, $varname, $value, $size) {
     <?php
 }
 
+/**
+ * Drop down list or multi-select control.
+ *
+ * @since 1.9.1
+ */
 function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=true) {
     global $THEME, $selHTML;
 
@@ -339,6 +354,11 @@ function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=
     <?php
 }
 
+/**
+ * Multi-line text control.
+ *
+ * @since 1.9.4
+ */
 function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     global $THEME;
 
@@ -353,6 +373,11 @@ function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
     <?php
 }
 
+/**
+ * Table row with plain text or raw HTML instead of a specific input control.
+ *
+ * @since 1.9.11
+ */
 function printsetting5($settingDesc, $errorMsg) {
     global $THEME;
 
