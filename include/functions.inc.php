@@ -1657,7 +1657,7 @@ function audit($user='', $action, $fid, $tid, $reason='') {
     $user = cdataOut($user);
     $reason = cdataOut($reason);
 
-    $db->query("INSERT ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', $onlinetime)");
+    $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', $onlinetime)");
     return true;
 }
 
