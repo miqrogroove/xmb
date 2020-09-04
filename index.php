@@ -55,7 +55,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
             continue;
         }
 
-        $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'yes', 'yes', 'yes', false, 'no', 'no')));
+        $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no')));
         $contents .= "\tcontents[$counter]='{$news[$i]}';\n";
         $counter++;
     }

@@ -493,7 +493,10 @@ function smile(&$txt) {
     return TRUE;
 }
 
-function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='yes', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
+function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
+    if ( 'yes' == $allowhtml ) {
+        trigger_error( 'The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED );
+    }
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
     $smiliesallow = ($allowsmilies == 'yes' || $allowsmilies == 'on') ? (($smileyoff != 'off' && $smileyoff != 'yes') ? true : false) : false;

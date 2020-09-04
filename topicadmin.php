@@ -548,7 +548,7 @@ switch($action) {
                 $bbcodeoff = $post['bbcodeoff'];
                 $smileyoff = $post['smileyoff'];
                 $post['message'] = stripslashes($post['message']);
-                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
+                $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, 'no', 'no', 'no');
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
@@ -705,7 +705,7 @@ switch($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, 'no', 'no', 'no');
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);
@@ -722,7 +722,7 @@ switch($action) {
                     $bbcodeoff = $post['bbcodeoff'];
                     $smileyoff = $post['smileyoff'];
                     $post['message'] = stripslashes($post['message']);
-                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, $bordercolor, 'no', 'no');
+                    $post['message'] = postify($post['message'], $smileyoff, $bbcodeoff, $fid, 'no', 'no', 'no');
                     eval('$posts .= "'.template('topicadmin_threadprune_row').'";');
                 }
                 $db->free_result($query);

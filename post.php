@@ -259,7 +259,7 @@ if ($action != 'edit') {
 }
 
 $allowimgcode = ($forum['allowimgcode'] == 'yes' && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
-$allowhtml = ($forum['allowhtml'] == 'yes') ? $lang['texton'] : $lang['textoff'];
+$allowhtml = $lang['textoff'];
 $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
@@ -692,10 +692,10 @@ switch($action) {
                 if (count($files) > 0) {
                     bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
                 }
-                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
                     eval('$message1 .= "'.template('viewthread_post_sig').'";');
                 } else {
                     eval('$message1 .= "'.template('viewthread_post_nosig').'";');
@@ -746,7 +746,7 @@ switch($action) {
                     }
 
                     $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
-                    $post['message'] = postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                    $post['message'] = postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
                     eval('$posts .= "'.template('post_reply_review_post').'";');
                     if ($thisbg == $altbg2) {
                         $thisbg = $altbg1;
@@ -1069,10 +1069,10 @@ switch($action) {
                 if (count($files) > 0) {
                     bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
                 }
-                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
                     eval('$message1 .= "'.template('viewthread_post_sig').'";');
                 } else {
                     eval('$message1 .= "'.template('viewthread_post_nosig').'";');
@@ -1361,10 +1361,10 @@ switch($action) {
                 if (count($files) > 0) {
                     bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
                 }
-                $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+                $message1 = postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                    $post['sig'] = postify($self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
                     eval('$message1 .= "'.template('viewthread_post_sig').'";');
                 } else {
                     eval('$message1 .= "'.template('viewthread_post_nosig').'";');

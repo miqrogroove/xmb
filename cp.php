@@ -135,9 +135,6 @@ if ($action == "settings") {
         $sigbbcodeon = $sigbbcodeoff = '';
         settingHTML('sigbbcode', $sigbbcodeon, $sigbbcodeoff);
 
-        $sightmlon = $sightmloff = '';
-        settingHTML('sightml', $sightmlon, $sightmloff);
-
         $reportposton = $reportpostoff = '';
         settingHTML('reportpost', $reportposton, $reportpostoff);
 
@@ -474,7 +471,6 @@ if ($action == "settings") {
         printsetting5( $lang['defaultTimezoneDesc'], timezone_control( $SETTINGS['def_tz'] ) );
         printsetting2($lang['addtime'], 'addtimenew', $SETTINGS['addtime'], 3);
         printsetting1($lang['sigbbcode'], 'sigbbcodenew', $sigbbcodeon, $sigbbcodeoff);
-        printsetting1($lang['sightml'], 'sightmlnew', $sightmlon, $sightmloff);
         if (!ini_get('allow_url_fopen')) {
             printsetting5($lang['max_avatar_size_w'], $lang['no_url_fopen']);
         } else {
@@ -604,7 +600,6 @@ if ($action == "settings") {
         $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
         $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : 0;
         $sigbbcodenew = formOnOff('sigbbcodenew');
-        $sightmlnew = formOnOff('sightmlnew');
         $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
         $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
         $tickerstatusnew = formOnOff('tickerstatusnew');
@@ -666,7 +661,6 @@ if ($action == "settings") {
             adminemail='$adminemailnew',
             dateformat='$dateformatnew',
             sigbbcode='$sigbbcodenew',
-            sightml='$sightmlnew',
             reportpost='$reportpostnew',
             bbinsert='$bbinsertnew',
             smileyinsert='$smileyinsertnew',
@@ -1119,12 +1113,6 @@ if ($action == 'forum') {
         $themelist = implode("\n", $themelist);
         $db->free_result($query);
 
-        if ($forum['allowhtml'] == "yes") {
-            $checked2 = $cheHTML;
-        } else {
-            $checked2 = '';
-        }
-
         if ($forum['allowsmilies'] == "yes") {
             $checked3 = $cheHTML;
         } else {
@@ -1165,7 +1153,6 @@ if ($action == 'forum') {
         <tr class="tablerow">
         <td bgcolor="<?php echo $altbg1?>" valign="top"><?php echo $lang['textallow']?></td>
         <td bgcolor="<?php echo $altbg2?>" class="smalltxt">
-        <input type="checkbox" name="allowhtmlnew" value="yes" <?php echo $checked2?> /><?php echo $lang['texthtml']?><br />
         <input type="checkbox" name="allowsmiliesnew" value="yes" <?php echo $checked3?> /><?php echo $lang['textsmilies']?><br />
         <input type="checkbox" name="allowbbcodenew" value="yes" <?php echo $checked4?> /><?php echo $lang['textbbcode']?><br />
         <input type="checkbox" name="allowimgcodenew" value="yes" <?php echo $checked5?> /><?php echo $lang['textimgcode']?><br />
@@ -1341,7 +1328,6 @@ if ($action == 'forum') {
         request_secure('editfid', $fdetails, X_NONCE_FORM_EXP, FALSE);
         $namenew = addslashes(htmlspecialchars(postedVar('namenew', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $descnew = postedVar('descnew');
-        $allowhtmlnew = formYesNo('allowhtmlnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
@@ -1373,7 +1359,6 @@ if ($action == 'forum') {
         $db->query("UPDATE ".X_PREFIX."forums SET
             name='$namenew',
             description='$descnew',
-            allowhtml='$allowhtmlnew',
             allowsmilies='$allowsmiliesnew',
             allowbbcode='$allowbbcodenew',
             theme='$themeforumnew',
