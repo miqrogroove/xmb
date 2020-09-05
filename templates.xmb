@@ -2845,6 +2845,10 @@ $dayselect
 <td bgcolor="$altbg2"><input type="checkbox" name="newinv" value="1" $invchecked /></td>
 </tr>
 <tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['subdefault']}</td>
+<td bgcolor="$altbg2"><input type="checkbox" name="newsubs" value="yes" $subschecked /> </td>
+</tr>
+<tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textgetnews]</td>
 <td bgcolor="$altbg2"><input type="checkbox" name="newnewsletter" value="yes" $newschecked /> </td>
 </tr>

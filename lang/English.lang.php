@@ -662,6 +662,7 @@ $lang['stats_incomplete'] = "Could not generate board statistics, stats can not 
 $lang['status'] = "Status";
 $lang['stopticker'] = "Pause";
 $lang['subaddedmsg'] = "You have successfully subscribed to the thread. You will now be taken to your subscriptions list.";
+$lang['subdefault'] = "Subscribe to replies by default?";
 $lang['subjectInTitle'] = "Show thread subject in page title";
 $lang['submitvote'] = "Submit Vote";
 $lang['subonlistmsg'] = "You are already subscribed to this thread.";

@@ -264,7 +264,11 @@ $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['tex
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
 $bbcodeoff = formYesNo('bbcodeoff');
-$emailnotify = formYesNo('emailnotify');
+if ( ! isset( $_POST['emailnotify'] ) ) {
+    $emailnotify = $self['sub_each_post'];
+} else {
+    $emailnotify = formYesNo('emailnotify');
+}
 $smileyoff = formYesNo('smileyoff');
 $usesig = formYesNo('usesig');
 
