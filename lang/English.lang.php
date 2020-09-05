@@ -634,6 +634,7 @@ $lang['secure_login'] = "Secure Login - increased security on public computers";
 $lang['security_subject'] = "Security Event";
 $lang['selecttemplate'] = "Please select a template...";
 $lang['seperatebycomma'] = "Separate multiple entries using commas";
+$lang['show_logs_in_threads'] = "Show moderator logs when viewing threads?";
 $lang['showsubforums'] = "Sub-forums on index status:<br /><span class=\"smalltxt\">This will enable or disable sub-forums display on index.</span>";
 $lang['showtopics'] = "Show topics from";
 $lang['sigbbcode'] = "BB Code in Sigs:";

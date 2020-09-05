@@ -216,6 +216,9 @@ if ($action == "settings") {
         $remoteimageson = $remoteimagesoff = '';
         settingHTML('attach_remote_images', $remoteimageson, $remoteimagesoff);
 
+        $showlogson = $showlogsoff = '';
+        settingHTML('show_logs_in_threads', $showlogson, $showlogsoff);
+
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -398,6 +401,7 @@ if ($action == "settings") {
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
+        printsetting1($lang['show_logs_in_threads'], 'showlogsnew', $showlogson, $showlogsoff);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -631,6 +635,7 @@ if ($action == "settings") {
         input_onoff_setting( 'resetsigs', 'resetSigNew' );
         input_onoff_setting( 'searchstatus', 'searchstatusnew' );
         input_onoff_setting( 'showsubforums', 'showsubforumsnew' );
+        input_onoff_setting( 'show_logs_in_threads', 'showlogsnew' );
         input_onoff_setting( 'sigbbcode', 'sigbbcodenew' );
         input_string_setting( 'sitename', 'sitenamenew' );
         input_string_setting( 'siteurl', 'siteurlnew' );

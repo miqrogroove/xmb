@@ -472,25 +472,35 @@ if ($action == '') {
     $db->free_result($query1);
 
     $thisbg = $altbg2;
-    $sql = "SELECT p.*, m.* "
-         . "FROM "
-         . "( "
-         . "  ( "
-         . "    SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff "
-         . "    FROM ".X_PREFIX."posts "
-         . "    WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
-         . "    ORDER BY dateline ASC, pid ASC "
-         . "    LIMIT $ppp "
-         . "  ) "
-         . "  UNION ALL "
-         . "  ( "
-         . "    SELECT 'modlog' AS type, fid, tid, username AS author, action AS subject, date AS dateline, '', '', '', '', '', '', '' "
-         . "    FROM ".X_PREFIX."logs "
-         . "    WHERE tid=$tid AND date >= $startdate AND date < $enddate "
-         . "  ) "
-         . ") AS p "
-         . "LEFT JOIN ".X_PREFIX."members m ON m.username=p.author "
-         . "ORDER BY p.dateline ASC, p.type DESC, p.pid ASC ";
+    
+    if ( $SETTINGS['show_logs_in_threads'] == 'on' ) {
+        $sql = "SELECT p.*, m.* "
+             . "FROM "
+             . "( "
+             . "  ( "
+             . "    SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff "
+             . "    FROM ".X_PREFIX."posts "
+             . "    WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
+             . "    ORDER BY dateline ASC, pid ASC "
+             . "    LIMIT $ppp "
+             . "  ) "
+             . "  UNION ALL "
+             . "  ( "
+             . "    SELECT 'modlog' AS type, fid, tid, username AS author, action AS subject, date AS dateline, '', '', '', '', '', '', '' "
+             . "    FROM ".X_PREFIX."logs "
+             . "    WHERE tid=$tid AND date >= $startdate AND date < $enddate "
+             . "  ) "
+             . ") AS p "
+             . "LEFT JOIN ".X_PREFIX."members m ON m.username=p.author "
+             . "ORDER BY p.dateline ASC, p.type DESC, p.pid ASC ";
+    } else {
+        $sql = "SELECT 'post' AS type, p.fid, p.tid, p.author, p.subject, p.dateline, p.pid, p.message, p.icon, p.usesig, p.useip, p.bbcodeoff, p.smileyoff, m.* "
+             . "FROM ".X_PREFIX."posts AS p "
+             . "LEFT JOIN ".X_PREFIX."members AS m ON m.username=p.author "
+             . "WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
+             . "ORDER BY dateline ASC, pid ASC "
+             . "LIMIT $ppp ";
+    }
     $querypost = $db->query($sql);
 
     if ($forum['attachstatus'] == 'on') {
