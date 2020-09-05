@@ -322,7 +322,7 @@ function xmb_schema_create($name){
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `name` varchar(32) NOT NULL,
-          `value` varchar(255) NOT NULL,
+          `value` text NOT NULL,
           PRIMARY KEY (`name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
