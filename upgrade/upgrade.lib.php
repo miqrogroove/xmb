@@ -2152,4 +2152,5 @@ function upgrade_query( $sql ) {
 	
 	return $result;
 }
-?>
+
+return;

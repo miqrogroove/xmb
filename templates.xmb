@@ -668,6 +668,23 @@ textarea, select, input, object {
     margin: -1em;
     padding: 1em;
 }
+.video {
+    border: none;
+    height: 344px;
+    width: 600px;
+}
+@media screen and (max-width: 850px) {
+    .video {
+        height: 300px;
+        width: 425px;
+    }
+}
+@media screen and (max-width: 600px) {
+    .video {
+        height: 300px;
+        width: 250px;
+    }
+}
 /*]]>*/
 </style>
 $cssInclude
@@ -1695,6 +1712,8 @@ var bbcode_prompt_list_error = "$lang[bbcode_prompt_list_error]";
 var bbcode_prompt_list_end = "$lang[bbcode_prompt_list_end]";
 var bbcode_help_underline = "$lang[bbcode_help_underline]";
 var bbcode_prompt_underline = "$lang[bbcode_prompt_underline]";
+var bbcode_help_youtube = "$lang[bbcode_help_youtube]";
+var bbcode_prompt_youtube = "$lang[bbcode_prompt_youtube]";
 
 var messageElement;
 </script>
@@ -1768,7 +1787,9 @@ $spelling_lang
 <a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
 <a href="javascript:code()" title="$lang[cb_insert_code]" ><img src="$imgdir/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
 <a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
-<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a></td>
+<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a>
+<a href="javascript:youtube()" title="$lang[cb_insert_youtube]"><img src="$imgdir/bb_youtube.gif" border="0" width="23" height="22" alt="$lang[cb_insert_youtube]" /></a>
+</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|functions_bbcode_quickreply|#*XMB TEMPLATE*#|

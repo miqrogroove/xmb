@@ -243,7 +243,7 @@ function list() {
 }
 
 function underline() {
-      if (helpmode) {
+    if (helpmode) {
         alert(bbcode_help_underline);
     } else if (advmode) {
         AddText('', '', "[u] [/u]", messageElement);
@@ -251,6 +251,19 @@ function underline() {
         txt=prompt(bbcode_prompt_underline,"Text");
         if (txt!=null) {
             AddText('', '', "[u]"+txt+"[/u]", messageElement);
+        }
+    }
+}
+
+function youtube() {
+    if (helpmode) {
+        alert(bbcode_help_youtube);
+    } else if (advmode) {
+        AddText('', '', "[youtube] [/youtube]", messageElement);
+    } else {
+        txt=prompt(bbcode_prompt_youtube,"videoID");
+        if (txt!=null) {
+            AddText('', '', "[youtube]"+txt+"[/youtube]", messageElement);
         }
     }
 }

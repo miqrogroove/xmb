@@ -704,6 +704,8 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
             $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
             $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
         }
+        $patterns[] = '/\[youtube\]([a-z0-9_-]+)\[\/youtube\]/i';
+        $replacements[] = '<iframe class="video" <!-- nobr -->src="https://www.youtube.com/embed/\1"<!-- /nobr --> allowfullscreen></iframe>';
     }
 
     $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
