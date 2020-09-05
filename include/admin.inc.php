@@ -389,6 +389,60 @@ function printsetting5($settingDesc, $errorMsg) {
     <?php
 }
 
+/**
+ * Take string input and save it to settings.
+ *
+ * @since 1.9.12
+ * @param string $dbname     The name of the setting as saved in the database.
+ * @param string $postname   The HTML input name.
+ * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
+ */
+function input_string_setting( string $dbname, string $postname, bool $htmlencode = true ) {
+    $value = postedVar( $postname, '', $htmlencode, false );
+    input_custom_setting( $dbname, $value );
+}
+
+/**
+ * Take integer input and save it to settings.
+ *
+ * @since 1.9.12
+ * @param string $dbname The name of the setting as saved in the database.
+ * @param string $postname The HTML input name.
+ */
+function input_int_setting( string $dbname, string $postname ) {
+    $value = (string) formInt( $postname );
+    input_custom_setting( $dbname, $value );
+}
+
+/**
+ * Take on/off input and save it to settings.
+ *
+ * @since 1.9.12
+ * @param string $dbname The name of the setting as saved in the database.
+ * @param string $postname The HTML input name.
+ */
+function input_onoff_setting( string $dbname, string $postname ) {
+    $value = formOnOff( $postname );
+    input_custom_setting( $dbname, $value );
+}
+
+/**
+ * Take a string variable and save it to settings.
+ *
+ * @since 1.9.12
+ * @param string $dbname The name of the setting as saved in the database.
+ * @param string $value
+ */
+function input_custom_setting( string $dbname, string $value ) {
+    global $SETTINGS;
+
+    if ( ! isset( $SETTINGS[$dbname] ) ) {
+        \XMB\SQL\addSetting( $dbname, $value );
+    } else if ( $SETTINGS[$dbname] != $value ) {
+        \XMB\SQL\updateSetting( $dbname, $value );
+    }
+}
+
 function readFileAsINI($filename) {
     $lines = file($filename);
     foreach($lines as $line_num => $line) {

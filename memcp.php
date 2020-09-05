@@ -238,11 +238,7 @@ if ($action == 'profile') {
             $bbcodeis = $lang['textoff'];
         }
 
-        if ($SETTINGS['sightml'] == 'on') {
-            $htmlis = $lang['texton'];
-        } else {
-            $htmlis = $lang['textoff'];
-        }
+        $htmlis = $lang['textoff'];
 
         $avatar = '';
         if ($SETTINGS['avastatus'] == 'on') {

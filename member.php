@@ -141,11 +141,7 @@ switch($action) {
                     $bbcodeis = $lang['textoff'];
                 }
 
-                if ($SETTINGS['sightml'] == 'on') {
-                    $htmlis = $lang['texton'];
-                } else {
-                    $htmlis = $lang['textoff'];
-                }
+                $htmlis = $lang['textoff'];
 
                 $pwtd = '';
                 if ($SETTINGS['emailcheck'] == 'off') {

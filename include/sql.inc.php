@@ -284,4 +284,47 @@ function checkUpgradeOldLogin( string $username, string $password ): bool {
     return $count == 1;
 }
 
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function addSetting( string $name, string $value ) {
+    global $db;
+
+    $sqlname = $db->escape( $name );
+    $sqlvalue = $db->escape( $value );
+
+    $db->query("INSERT INTO ".X_PREFIX."settings SET name = '$sqlname', value = '$sqlvalue' ON DUPLICATE KEY UPDATE value = '$sqlvalue' ");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function updateSetting( string $name, string $value ) {
+    global $db;
+
+    $sqlname = $db->escape( $name );
+    $sqlvalue = $db->escape( $value );
+
+    $db->query("UPDATE ".X_PREFIX."settings SET value = '$sqlvalue' WHERE name = '$sqlname'");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function deleteSetting( string $name ) {
+    global $db;
+
+    $sqlname = $db->escape( $name );
+
+    $db->query("DELETE FROM ".X_PREFIX."settings WHERE name = '$sqlname'");
+
+    return $db->insert_id();
+}
+
 return;

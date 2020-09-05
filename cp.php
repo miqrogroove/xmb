@@ -528,66 +528,12 @@ if ($action == "settings") {
     } else {
         request_secure('mainsettings', '', X_NONCE_FORM_EXP, FALSE);
 
-        $sitenamenew = postedVar('sitenamenew');
-        $bbnamenew = postedVar('bbnamenew');
-        $siteurlnew = postedVar('siteurlnew');
-        $adminemailnew = postedVar('adminemailnew');
-        $bbrulesnew = formOnOff('bbrulesnew');
-        $bbrulestxtnew = postedVar('bbrulestxtnew', '', FALSE);
-        $bbstatusnew = formOnOff('bbstatusnew');
-        $bboffreasonnew = postedVar('bboffreasonnew');
-        $gzipcompressnew = formOnOff('gzipcompressnew');
-
-        $langfilenew = postedVar('langfilenew');
-        $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
-        if ($db->num_rows($result) == 0) {
-            $langfilenew = $SETTINGS['langfile'];
-        }
-
-        $themenew = formInt('themenew');
-        $postperpagenew = formInt('postperpagenew');
-        $topicperpagenew = formInt('topicperpagenew');
-        $memberperpagenew = formInt('memberperpagenew');
-        $timeformatnew = formInt('timeformatnew');
-        $dateformatnew = postedVar('dateformatnew');
-        $searchstatusnew = formOnOff('searchstatusnew');
-        $faqstatusnew = formOnOff('faqstatusnew');
-        $todaystatusnew = formOnOff('todaystatusnew');
-        $statsstatusnew = formOnOff('statsstatusnew');
-        $memliststatusnew = formOnOff('memliststatusnew');
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
-        $coppanew = formOnOff('coppanew');
-        $reportpostnew = formOnOff('reportpostnew');
-        $space_catsnew = formOnOff('space_catsnew');
-        $indexShowBarNew = formInt('indexShowBarNew');
-        $allowrankeditnew = formOnOff('allowrankeditnew');
-        $subjectInTitleNew = formOnOff('subjectInTitleNew');
-        $catsonlynew = formOnOff('catsonlynew');
-        $whos_on = formOnOff('whos_on');
-        $smtotalnew = formInt('smtotalnew');
-        $smcolsnew = formInt('smcolsnew');
-        $dotfoldersnew = formOnOff('dotfoldersnew');
-        $editedbynew = formOnOff('editedbynew');
-        $attachimgpostnew = formOnOff('attachimgpostnew');
-        $reg_on = formOnOff('reg_on');
-        $ipReg = formOnOff('ipReg');
-        $maxDayReg = formInt('maxDayReg');
         $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
-        $regviewnew = formOnOff('regviewnew');
-        $hidepriv = formOnOff('hidepriv');
-        $emailchecknew = formOnOff('emailchecknew');
-        $floodctrlnew = formInt('floodctrlnew');
-        $u2uquotanew = formInt('u2uquotanew');
         $avastatusnew = postedVar('avastatusnew');
         if ($avastatusnew != 'on' && $avastatusnew != 'list') {
             $avastatusnew = 'off';
         }
-        $resetSigNew = formOnOff('resetSigNew');
-        $doubleenew = formOnOff('doubleenew');
-        $pruneusersnew = formInt('pruneusersnew');
-        $hottopicnew = formInt('hottopicnew');
-        $bbinsertnew = formOnOff('bbinsertnew');
-        $smileyinsertnew = formOnOff('smileyinsertnew');
 
         $new_footer_options = postedArray('new_footer_options');
         if (!empty($new_footer_options)) {
@@ -596,159 +542,114 @@ if ($action == "settings") {
             $footer_options = '';
         }
 
-        $maxAttachSize = min( phpShorthandValue( 'upload_max_filesize' ), formInt( 'maxAttachSize' ) );
-        $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-        $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : 0;
-        $sigbbcodenew = formOnOff('sigbbcodenew');
+        $maxAttachSize = (string) min( phpShorthandValue( 'upload_max_filesize' ), formInt( 'maxAttachSize' ) );
+        $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : '0';
+        $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : '0';
         $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
         $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
-        $tickerstatusnew = formOnOff('tickerstatusnew');
-        $tickerdelaynew = formInt('tickerdelaynew');
-        $tickercontentsnew = postedVar('tickercontentsnew');
-        $maxDayReg = formInt('maxDayReg');
-        $showsubforumsnew = formOnOff('showsubforumsnew');
         $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
-        $regoptionalnew = formOnOff('regoptionalnew');
-        $quickreply_statusnew = formOnOff('quickreply_statusnew');
-        $quickjump_statusnew = formOnOff('quickjump_statusnew');
-        $index_statsnew = formOnOff('index_statsnew');
-        $onlinetodaycountnew = formInt('onlinetodaycountnew');
-        $onlinetoday_statusnew = formOnOff('onlinetoday_statusnew');
 
-        $filespathnew = postedVar('filespathnew');
-        $filesbasenew = postedVar('filesbasenew');
-        $filesminsizenew = formInt('filesminsizenew');
-        $filesperpostnew = formInt('filesperpostnew');
-        $filesurlpathnew = formInt('filesurlpathnew');
-        $filessubdirnew = formInt('filessubdirnew');
         $max_image_size_w_new = formInt('max_image_size_w_new');
         $max_image_size_h_new = formInt('max_image_size_h_new');
         $max_thumb_size_w_new = formInt('max_thumb_size_w_new');
         $max_thumb_size_h_new = formInt('max_thumb_size_h_new');
         $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
         $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
-        $remoteimages = formOnOff('remoteimages');
 
-        $sql = "UPDATE ".X_PREFIX."settings SET
-            langfile='$langfilenew',
-            bbname='$bbnamenew',
-            postperpage='$postperpagenew',
-            topicperpage='$topicperpagenew',
-            hottopic='$hottopicnew',
-            theme='$themenew',
-            bbstatus='$bbstatusnew',
-            whosonlinestatus='$whos_on',
-            regstatus='$reg_on',
-            bboffreason='$bboffreasonnew',
-            regviewonly='$regviewnew',
-            floodctrl='$floodctrlnew',
-            memberperpage='$memberperpagenew',
-            catsonly='$catsonlynew',
-            hideprivate='$hidepriv',
-            emailcheck='$emailchecknew',
-            bbrules='$bbrulesnew',
-            bbrulestxt='$bbrulestxtnew',
-            searchstatus='$searchstatusnew',
-            faqstatus='$faqstatusnew',
-            memliststatus='$memliststatusnew',
-            sitename='$sitenamenew',
-            siteurl='$siteurlnew',
-            avastatus='$avastatusnew',
-            u2uquota='$u2uquotanew',
-            gzipcompress='$gzipcompressnew',
-            coppa='$coppanew',
-            timeformat='$timeformatnew',
-            adminemail='$adminemailnew',
-            dateformat='$dateformatnew',
-            sigbbcode='$sigbbcodenew',
-            reportpost='$reportpostnew',
-            bbinsert='$bbinsertnew',
-            smileyinsert='$smileyinsertnew',
-            doublee='$doubleenew',
-            smtotal='$smtotalnew',
-            smcols='$smcolsnew',
-            editedby='$editedbynew',
-            dotfolders='$dotfoldersnew',
-            attachimgpost='$attachimgpostnew',
-            tickerstatus='$tickerstatusnew',
-            tickercontents='$tickercontentsnew',
-            tickerdelay='$tickerdelaynew',
-            addtime='$addtimenew',
-            todaysposts='$todaystatusnew',
-            stats='$statsstatusnew',
-            max_avatar_size='$max_avatar_size',
-            footer_options='$footer_options',
-            space_cats='$space_catsnew',
-            spellcheck='$spellchecknew',
-            allowrankedit='$allowrankeditnew',
-            notifyonreg='$notifyonregnew',
-            indexshowbar='$indexShowBarNew',
-            subject_in_title='$subjectInTitleNew',
-            def_tz='$def_tz_new',
-            resetsigs='$resetSigNew',
-            pruneusers='$pruneusersnew',
-            ipreg='$ipReg',
-            maxdayreg='$maxDayReg',
-            maxattachsize='$maxAttachSize',
-            showsubforums='$showsubforumsnew',
-            regoptional='$regoptionalnew',
-            quickreply_status='$quickreply_statusnew',
-            quickjump_status='$quickjump_statusnew',
-            index_stats='$index_statsnew',
-            onlinetodaycount='$onlinetodaycountnew',
-            onlinetoday_status='$onlinetoday_statusnew',
-            attach_remote_images='$remoteimages',
-            files_min_disk_size='$filesminsizenew',
-            files_storage_path='$filespathnew',
-            files_subdir_format='$filessubdirnew',
-            file_url_format='$filesurlpathnew',
-            files_virtual_url='$filesbasenew',
-            filesperpost='$filesperpostnew',
-            max_image_size='$max_image_size',
-            max_thumb_size='$max_thumb_size'
-        ";
-
-        $captchanew = formOnOff('captchanew');
-        $captcharegnew = formOnOff('captcharegnew');
-        $captchapostnew = formOnOff('captchapostnew');
-        $captchasearchnew = formOnOff('captchasearchnew');
-        $captchacharsetnew = postedVar('captchacharsetnew');
-        $captchacodenew = formInt('captchacodenew');
-        $captchacodecasenew = formOnOff('captchacodecasenew');
-        $captchacodeshadownew = formOnOff('captchacodeshadownew');
-        $captchaimagetypenew = postedVar('captchaimagetypenew');
-        $captchaimagewidthnew = formInt('captchaimagewidthnew');
-        $captchaimageheightnew = formInt('captchaimageheightnew');
-        $captchaimagebgnew = postedVar('captchaimagebgnew');
-        $captchaimagedotsnew = formInt('captchaimagedotsnew');
-        $captchaimagelinesnew = formInt('captchaimagelinesnew');
-        $captchaimagefontsnew = postedVar('captchaimagefontsnew');
-        $captchaimageminfontnew = formInt('captchaimageminfontnew');
-        $captchaimagemaxfontnew = formInt('captchaimagemaxfontnew');
-        $captchaimagecolornew = formOnOff('captchaimagecolornew');
-
-        $sql .= ",
-        captcha_status='$captchanew',
-        captcha_reg_status='$captcharegnew',
-        captcha_post_status='$captchapostnew',
-        captcha_search_status='$captchasearchnew',
-        captcha_code_charset='$captchacharsetnew',
-        captcha_code_length='$captchacodenew',
-        captcha_code_casesensitive='$captchacodecasenew',
-        captcha_code_shadow='$captchacodeshadownew',
-        captcha_image_type='$captchaimagetypenew',
-        captcha_image_width='$captchaimagewidthnew',
-        captcha_image_height='$captchaimageheightnew',
-        captcha_image_bg='$captchaimagebgnew',
-        captcha_image_dots='$captchaimagedotsnew',
-        captcha_image_lines='$captchaimagelinesnew',
-        captcha_image_fonts='$captchaimagefontsnew',
-        captcha_image_minfont='$captchaimageminfontnew',
-        captcha_image_maxfont='$captchaimagemaxfontnew',
-        captcha_image_color='$captchaimagecolornew'
-        ";
-
-        $db->query($sql);
+        input_custom_setting( 'addtime', $addtimenew );
+        input_string_setting( 'adminemail', 'adminemailnew' );
+        input_onoff_setting( 'allowrankedit', 'allowrankeditnew' );
+        input_onoff_setting( 'attachimgpost', 'attachimgpostnew' );
+        input_onoff_setting( 'attach_remote_images', 'remoteimages' );
+        input_custom_setting( 'avastatus', $avastatusnew );
+        input_onoff_setting( 'bbinsert', 'bbinsertnew' );
+        input_string_setting( 'bbname', 'bbnamenew' );
+        input_string_setting( 'bboffreason', 'bboffreasonnew' );
+        input_onoff_setting( 'bbrules', 'bbrulesnew' );
+        input_string_setting( 'bbrulestxt', 'bbrulestxtnew', false );
+        input_onoff_setting( 'bbstatus', 'bbstatusnew' );
+        input_onoff_setting( 'captcha_code_casesensitive', 'captchacodecasenew' );
+        input_string_setting( 'captcha_code_charset', 'captchacharsetnew' );
+        input_int_setting( 'captcha_code_length', 'captchacodenew' );
+        input_onoff_setting( 'captcha_code_shadow', 'captchacodeshadownew' );
+        input_string_setting( 'captcha_image_bg', 'captchaimagebgnew' );
+        input_onoff_setting( 'captcha_image_color', 'captchaimagecolornew' );
+        input_int_setting( 'captcha_image_dots', 'captchaimagedotsnew' );
+        input_string_setting( 'captcha_image_fonts', 'captchaimagefontsnew' );
+        input_int_setting( 'captcha_image_height', 'captchaimageheightnew' );
+        input_int_setting( 'captcha_image_lines', 'captchaimagelinesnew' );
+        input_int_setting( 'captcha_image_maxfont', 'captchaimagemaxfontnew' );
+        input_int_setting( 'captcha_image_minfont', 'captchaimageminfontnew' );
+        input_string_setting( 'captcha_image_type', 'captchaimagetypenew' );
+        input_int_setting( 'captcha_image_width', 'captchaimagewidthnew' );
+        input_onoff_setting( 'captcha_post_status', 'captchapostnew' );
+        input_onoff_setting( 'captcha_reg_status', 'captcharegnew' );
+        input_onoff_setting( 'captcha_search_status', 'captchasearchnew' );
+        input_onoff_setting( 'captcha_status', 'captchanew' );
+        input_onoff_setting( 'catsonly', 'catsonlynew' );
+        input_onoff_setting( 'coppa', 'coppanew' );
+        input_string_setting( 'dateformat', 'dateformatnew' );
+        input_custom_setting( 'def_tz', $def_tz_new );
+        input_onoff_setting( 'dotfolders', 'dotfoldersnew' );
+        input_onoff_setting( 'doublee', 'doubleenew' );
+        input_onoff_setting( 'editedby', 'editedbynew' );
+        input_onoff_setting( 'emailcheck', 'emailchecknew' );
+        input_onoff_setting( 'faqstatus', 'faqstatusnew' );
+        input_int_setting( 'filesperpost', 'filesperpostnew' );
+        input_int_setting( 'files_min_disk_size', 'filesminsizenew' );
+        input_string_setting( 'files_storage_path', 'filespathnew' );
+        input_int_setting( 'files_subdir_format', 'filessubdirnew' );
+        input_int_setting( 'file_url_format', 'filesurlpathnew' );
+        input_string_setting( 'files_virtual_url', 'filesbasenew' );
+        input_int_setting( 'floodctrl', 'floodctrlnew' );
+        input_custom_setting( 'footer_options', $footer_options );
+        input_onoff_setting( 'gzipcompress', 'gzipcompressnew' );
+        input_onoff_setting( 'hideprivate', 'hidepriv' );
+        input_int_setting( 'hottopic', 'hottopicnew' );
+        input_int_setting( 'indexshowbar', 'indexShowBarNew' );
+        input_onoff_setting( 'index_stats', 'index_statsnew' );
+        input_onoff_setting( 'ipreg', 'ipReg' );
+        input_string_setting( 'langfile', 'langfilenew' );
+        input_custom_setting( 'maxattachsize', $maxAttachSize );
+        input_int_setting( 'maxdayreg', 'maxDayReg' );
+        input_custom_setting( 'max_avatar_size', $max_avatar_size );
+        input_custom_setting( 'max_image_size', $max_image_size );
+        input_custom_setting( 'max_thumb_size', $max_thumb_size );
+        input_int_setting( 'memberperpage', 'memberperpagenew' );
+        input_onoff_setting( 'memliststatus', 'memliststatusnew' );
+        input_custom_setting( 'notifyonreg', $notifyonregnew );
+        input_int_setting( 'onlinetodaycount', 'onlinetodaycountnew' );
+        input_onoff_setting( 'onlinetoday_status', 'onlinetoday_statusnew' );
+        input_int_setting( 'postperpage', 'postperpagenew' );
+        input_int_setting( 'pruneusers', 'pruneusersnew' );
+        input_onoff_setting( 'quickjump_status', 'quickjump_statusnew' );
+        input_onoff_setting( 'quickreply_status', 'quickreply_statusnew' );
+        input_onoff_setting( 'regoptional', 'regoptionalnew' );
+        input_onoff_setting( 'regstatus', 'reg_on' );
+        input_onoff_setting( 'regviewonly', 'regviewnew' );
+        input_onoff_setting( 'reportpost', 'reportpostnew' );
+        input_onoff_setting( 'resetsigs', 'resetSigNew' );
+        input_onoff_setting( 'searchstatus', 'searchstatusnew' );
+        input_onoff_setting( 'showsubforums', 'showsubforumsnew' );
+        input_onoff_setting( 'sigbbcode', 'sigbbcodenew' );
+        input_string_setting( 'sitename', 'sitenamenew' );
+        input_string_setting( 'siteurl', 'siteurlnew' );
+        input_int_setting( 'smcols', 'smcolsnew' );
+        input_onoff_setting( 'smileyinsert', 'smileyinsertnew' );
+        input_int_setting( 'smtotal', 'smtotalnew' );
+        input_onoff_setting( 'space_cats', 'space_catsnew' );
+        input_custom_setting( 'spellcheck', $spellchecknew );
+        input_onoff_setting( 'stats', 'statsstatusnew' );
+        input_onoff_setting( 'subject_in_title', 'subjectInTitleNew' );
+        input_int_setting( 'theme', 'themenew' );
+        input_string_setting( 'tickercontents', 'tickercontentsnew' );
+        input_int_setting( 'tickerdelay', 'tickerdelaynew' );
+        input_onoff_setting( 'tickerstatus', 'tickerstatusnew' );
+        input_int_setting( 'timeformat', 'timeformatnew' );
+        input_onoff_setting( 'todaysposts', 'todaystatusnew' );
+        input_int_setting( 'topicperpage', 'topicperpagenew' );
+        input_int_setting( 'u2uquota', 'u2uquotanew' );
+        input_onoff_setting( 'whosonlinestatus', 'whos_on' );
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
     }

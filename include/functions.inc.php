@@ -2543,8 +2543,10 @@ function timezone_control( string $offset ): string {
     for ($i = 1; $i <= $total; $i++) {
         $sel[$i] = '';
     }
+    
+    $offset = number_format( (float) $offset, 2 );
 
-    switch($offset) {
+    switch( $offset ) {
     case '-12.00':
         $sel[1] = $selHTML;
         break;

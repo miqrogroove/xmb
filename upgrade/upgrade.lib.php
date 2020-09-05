@@ -27,6 +27,8 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
+require(ROOT.'include/schema.inc.php');
+
 /**
  * Performs all tasks necessary for a normal upgrade.
  */
@@ -35,16 +37,16 @@ function xmb_upgrade() {
 
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
-        upgrade_query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+        if ( $SETTINGS['schema_version'] < 5 ) {
+            upgrade_query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
+        } else {
+            upgrade_query("UPDATE ".X_PREFIX."settings SET value = 'off' WHERE name = 'bbstatus'");
+        }
         show_warning('Your forums were turned off by the upgrader to prevent damage.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
         trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
     }
 
-    show_progress('Determining the database schema version');
-    require(ROOT.'include/schema.inc.php');
-    if (!isset($SETTINGS['schema_version'])) {
-        $SETTINGS['schema_version'] = 0;
-    }
+    show_progress('Selecting the appropriate change set');
     switch ($SETTINGS['schema_version']) {
         case XMB_SCHEMA_VER:
             show_progress('Database schema is current, skipping ALTER commands');
@@ -123,7 +125,7 @@ function xmb_upgrade() {
         upgrade_query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                           ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
         $newTheme = $db->insert_id();
-        upgrade_query("UPDATE ".X_PREFIX."settings SET theme=$newTheme");
+        upgrade_query("UPDATE ".X_PREFIX."settings SET value='$newTheme' WHERE name='theme'");
     }
     $db->free_result($query);
 }
@@ -550,6 +552,7 @@ function upgrade_schema_to_v0() {
     foreach($obsolete as $colname) {
         $sql[] = 'DROP COLUMN '.$colname;
     }
+
     $columns = array(
     'addtime' => "DECIMAL(4,2) NOT NULL default 0",
     'max_avatar_size' => "varchar(9) NOT NULL default '100x100'",
@@ -602,7 +605,7 @@ function upgrade_schema_to_v0() {
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(32)' || strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-    }
+        }
 
     $columns = array(
     'langfile' => "varchar(34) NOT NULL default 'English'",
@@ -612,7 +615,7 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(50)') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
+    }
         $db->free_result($query);
     }
 
@@ -630,8 +633,8 @@ function upgrade_schema_to_v0() {
 
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
-        $db->free_result($query);
-    }
+            $db->free_result($query);
+        }
 
     $columns = array(
     'dateformat' => "varchar(10) NOT NULL default 'dd-mm-yyyy'");
@@ -653,7 +656,7 @@ function upgrade_schema_to_v0() {
             // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
             upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '4000' WHERE $colname = '' OR $colname IS NULL");
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
+            }
         $db->free_result($query);
     }
 
@@ -667,7 +670,7 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Null']) == 'yes') {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
+            }
         $db->free_result($query);
     }
 
@@ -1452,7 +1455,7 @@ function upgrade_schema_to_v2() {
     'ip_banning' => "SET('on', 'off') NOT NULL DEFAULT 'on'",
     'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '1000x1000'",
     'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'",
-    'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT ".XMB_SCHEMA_VER);
+    'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT 1");
     $missing = array_diff(array_keys($columns), xmb_schema_columns_list($table));
     foreach($missing as $colname) {
         $coltype = $columns[$colname];
@@ -1741,13 +1744,15 @@ function upgrade_schema_to_v5() {
     upgrade_query('LOCK TABLES '.X_PREFIX."members WRITE");
 
     show_progress('Gathering schema information from the members table');
-    $sql = array();
+    $sql = [];
     $table = 'members';
-    $columns = array(
+    $columns = [
     'bad_login_date' => "int(10) unsigned NOT NULL default 0",
     'bad_login_count' => "int(10) unsigned NOT NULL default 0",
     'bad_session_date' => "int(10) unsigned NOT NULL default 0",
-    'bad_session_count' => "int(10) unsigned NOT NULL default 0");
+    'bad_session_count' => "int(10) unsigned NOT NULL default 0",
+    'sub_each_post' => "varchar(3) NOT NULL default 'no'",
+    ];
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -1764,10 +1769,11 @@ function upgrade_schema_to_v5() {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
-    $columns = array(
+    $columns = [
     'invisible' => 'invisible',
     'password' => 'password',
-    'username' => 'username');
+    'username' => 'username',
+    ];
     foreach($columns as $colname => $coltype) {
         if (xmb_schema_index_exists($table, $coltype, $colname)) {
             $sql[] = "DROP INDEX $colname";
@@ -1785,8 +1791,9 @@ function upgrade_schema_to_v5() {
         $sql[] = "ADD UNIQUE INDEX `userunique` (`username`)";
     }
 
-    $columns = array(
-    'lastvisit' => 'lastvisit');
+    $columns = [
+    'lastvisit' => 'lastvisit',
+    ];
     foreach($columns as $colname => $coltype) {
         if (!xmb_schema_index_exists($table, $coltype, $colname)) {
             $sql[] = "ADD INDEX $colname ($coltype)";
@@ -1799,14 +1806,57 @@ function upgrade_schema_to_v5() {
         upgrade_query($sql);
     }
 
-    show_progress('Releasing the lock on the members table');
+    $table = 'settings';
+    show_progress('Requesting to lock the settings table');
+    upgrade_query('LOCK TABLES '.X_PREFIX."$table WRITE");
+
+    show_progress('Reading the settings table data');
+    $query = upgrade_query('SELECT * FROM '.X_PREFIX.$table);
+    $settings = $db->fetch_array( $query );
+    $settings['show_logs_in_threads'] = 'no';
+    unset( $settings['sightml'] );
+
+    show_progress('Replacing the settings table');
+    xmb_schema_table( 'overwrite', 'settings' );
+    $sql = [];
+    foreach( $settings as $name => $value ) {
+        $db->escape_fast( $value );
+        $sql[] = "('$name', '$value')";
+    }
+    upgrade_query('INSERT INTO '.X_PREFIX."settings (name, value) VALUES ". implode( ',', $sql ));
+
+    show_progress('Requesting to lock the forums table');
+    upgrade_query('LOCK TABLES '.X_PREFIX."forums WRITE");
+
+    show_progress('Gathering schema information from the forums table');
+    $sql = [];
+    $table = 'forums';
+    $columns = [
+    'allowhtml',
+    ];
+    foreach($columns as $colname) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Deleting columns in the forums table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress('Releasing the lock on the forums table');
     upgrade_query('UNLOCK TABLES');
 
     show_progress('Adding new tables');
     xmb_schema_table('create', 'sessions');
+    xmb_schema_table('create', 'tokens');
 
     show_progress('Resetting the schema version number');
-    upgrade_query("UPDATE ".X_PREFIX."settings SET schema_version = 5");
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '5' WHERE name = 'schema_version'");
 }
 
 /**

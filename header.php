@@ -112,6 +112,7 @@ $tables = [
 'templates',
 'themes',
 'threads',
+'tokens',
 'u2u',
 'whosonline',
 'words',
@@ -350,10 +351,24 @@ if ($db->num_rows($squery) == 0) {
     header('HTTP/1.0 500 Internal Server Error');
     exit('Fatal Error: The XMB settings table is empty.');
 }
-foreach($db->fetch_array($squery) as $key => $val) {
-    $SETTINGS[$key] = $val;
+// Check schema for upgrade compatibility back to 1.8 SP2.
+$row = $db->fetch_array( $squery );
+if ( X_SCRIPT == 'upgrade.php' && isset( $row['langfile'] ) ) {
+    // Schema version <= 4 has only one row.
+    foreach ( $row as $key => $val ) {
+        $SETTINGS[$key] = $val;
+    }
+    if ( ! isset( $SETTINGS['schema_version'] ) ) {
+        $SETTINGS['schema_version'] = 0;
+    }
+} else {
+    // Current schema uses a separate row for each setting.
+    do {
+        $SETTINGS[$row['name']] = $row['value'];
+    } while ( $row = $db->fetch_array( $squery ) );
 }
-$db->free_result($squery);
+$db->free_result( $squery );
+unset( $row );
 
 if ( $SETTINGS['postperpage'] < 5 ) {
     $SETTINGS['postperpage'] = 30;

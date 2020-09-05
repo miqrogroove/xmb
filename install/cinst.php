@@ -108,7 +108,7 @@ if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
     exit();
 }
 
-if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername) > 32) {
+if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername) > 32 || strlen($vUsername) < 3) {
     show_result(X_INST_ERR);
     $errStr = 'The username you provided is not valid for XMB. Please press back and create a different username.';
     error('Bad super administrator credentials', $errStr);
@@ -160,6 +160,7 @@ foreach(xmb_schema_list() as $table) {
 
 
 // -- Insert Data -- //
+// Reminder: Columns without explicit default values must be set on insert for STRICT_ALL_TABLES mode compatibility.
 show_act("Inserting data into ".X_PREFIX."restricted");
 $db->query(
     "INSERT INTO ".X_PREFIX."restricted
@@ -171,7 +172,7 @@ $db->query(
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".X_PREFIX."forums");
-$db->query("INSERT INTO ".X_PREFIX."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'no', 'yes', 'yes', '', 0, 0, 0, 0, '31,31,31,63', 'yes', 'on', '');");
+$db->query("INSERT INTO ".X_PREFIX."forums VALUES ('forum', 1, 'Default Forum', 'on', '', '', 0, 'This is the default forum created during installation<br />To create or modify forums go to the forum section of the administration panel', 'yes', 'yes', '', 0, 0, 0, 0, '31,31,31,63', 'yes', 'on', '');");
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".X_PREFIX."ranks");
@@ -190,16 +191,107 @@ $db->query(
 );
 show_result(X_INST_OK);
 
-// Reminder: Columns without explicit default values must be set on insert for STRICT_ALL_TABLES mode compatibility.
 show_act("Inserting data into ".X_PREFIX."settings");
-$db->query(
- "INSERT INTO ".X_PREFIX."settings "
-."SET bboffreason = '', "
-    ."bbrulestxt = '', "
-    ."files_storage_path = '', "
-    ."files_virtual_url = '', "
-    ."siteurl = '$full_url', "
-    ."tickercontents = '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"cp.php?action=settings\">settings</a> first.'"
+$db->query( "INSERT INTO ".X_PREFIX."settings
+(name, value) VALUES
+('addtime', '0'),
+('adminemail', 'webmaster@domain.ext'),
+('allowrankedit', 'on'),
+('attachimgpost', 'on'),
+('attach_remote_images', 'off'),
+('authorstatus', 'on'),
+('avastatus', 'on'),
+('bbinsert', 'on'),
+('bbname', 'Your Forums'),
+('bboffreason', ''),
+('bbrules', 'off'),
+('bbrulestxt', ''),
+('bbstatus', 'on'),
+('captcha_status', 'on'),
+('captcha_reg_status', 'on'),
+('captcha_post_status', 'on'),
+('captcha_search_status', 'off'),
+('captcha_code_charset', 'A-Z'),
+('captcha_code_length', '8'),
+('captcha_code_casesensitive', 'off'),
+('captcha_code_shadow', 'off'),
+('captcha_image_type', 'png'),
+('captcha_image_width', '250'),
+('captcha_image_height', '50'),
+('captcha_image_bg', ''),
+('captcha_image_dots', '0'),
+('captcha_image_lines', '70'),
+('captcha_image_fonts', ''),
+('captcha_image_minfont', '16'),
+('captcha_image_maxfont', '25'),
+('captcha_image_color', 'off'),
+('catsonly', 'off'),
+('coppa', 'off'),
+('dateformat', 'dd-mm-yyyy'),
+('def_tz', '0.00'),
+('dotfolders', 'on'),
+('doublee', 'off'),
+('editedby', 'off'),
+('emailcheck', 'off'),
+('faqstatus', 'on'),
+('filesperpost', '10'),
+('files_min_disk_size', '9216'),
+('files_storage_path', ''),
+('files_subdir_format', '1'),
+('file_url_format', '1'),
+('files_virtual_url', ''),
+('floodctrl', '5'),
+('footer_options', 'queries-phpsql-loadtimes-totaltime'),
+('gzipcompress', 'on'),
+('hideprivate', 'on'),
+('hottopic', '20'),
+('indexshowbar', '2'),
+('index_stats', 'on'),
+('ipreg', 'on'),
+('ip_banning', 'off'),
+('langfile', 'English'),
+('maxattachsize', '256000'),
+('maxdayreg', '25'),
+('max_avatar_size', '100x100'),
+('max_image_size', '1000x1000'),
+('max_thumb_size', '200x200'),
+('memberperpage', '45'),
+('memliststatus', 'on'),
+('notifyonreg', 'off'),
+('onlinetodaycount', '50'),
+('onlinetoday_status', 'on'),
+('postperpage', '25'),
+('pruneusers', '0'),
+('quickjump_status', 'on'),
+('quickreply_status', 'on'),
+('regoptional', 'off'),
+('regstatus', 'on'),
+('regviewonly', 'off'),
+('reportpost', 'on'),
+('resetsigs', 'off'),
+('schema_version', '".XMB_SCHEMA_VER."'),
+('searchstatus', 'on'),
+('showsubforums', 'off'),
+('show_logs_in_threads', 'no'),
+('sigbbcode', 'on'),
+('sitename', 'YourDomain.com'),
+('siteurl', '$full_url'),
+('smcols', '4'),
+('smileyinsert', 'on'),
+('smtotal', '16'),
+('space_cats', 'no'),
+('spellcheck', 'off'),
+('stats', 'on'),
+('subject_in_title', 'off'),
+('theme', '1'),
+('tickercontents', '[b]Welcome to your new XMB Forum![/b]\nWe recommend changing your forums [url={$full_url}cp.php?action=settings]settings[/url] first.'),
+('tickerdelay', '4000'),
+('tickerstatus', 'on'),
+('timeformat', '12'),
+('todaysposts', 'on'),
+('topicperpage', '30'),
+('u2uquota', '600'),
+('whosonlinestatus', 'on')"
 );
 show_result(X_INST_OK);
 
@@ -305,7 +397,7 @@ $db->query(
 show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
-$db->query("INSERT INTO ".X_PREFIX."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 12, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no');");
+$db->query("INSERT INTO ".X_PREFIX."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 12, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no')");
 show_result(X_INST_OK);
 
 show_act("Inserting data into translation tables");
