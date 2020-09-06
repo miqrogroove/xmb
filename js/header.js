@@ -94,4 +94,13 @@ function avatarCheck(input, max_size) {
     }
 }
 
+function disableButton(myform) {
+    if (myform.getAttribute("data-used") == "yes") {
+        return false;
+    } else {
+        myform.setAttribute("data-used", "yes");
+        return true;
+    }
+}
+
 self.name = 'mainwindow';

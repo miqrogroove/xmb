@@ -1822,7 +1822,7 @@ $baseelement$canonical_link
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 $css
-<script language="JavaScript" type="text/javascript" src="./js/header.js"></script>
+<script language="JavaScript" type="text/javascript" src="./js/header.js?v=1.9.12"></script>
 </head>
 <body text="$text">
 $bbcodescript
@@ -3534,7 +3534,7 @@ $lang[textdownloads] <em>$postinfo[downloads]</em>
 
 |#*XMB TEMPLATE FILE*#|post_newpoll|#*XMB TEMPLATE*#|
 $preview
-<form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" enctype="multipart/form-data">
+<form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" enctype="multipart/form-data" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3591,7 +3591,7 @@ $suggestions
 
 |#*XMB TEMPLATE FILE*#|post_newthread|#*XMB TEMPLATE*#|
 $preview
-<form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid" enctype="multipart/form-data" >
+<form method="post" name="input" action="post.php?action=newthread&amp;fid=$fid" enctype="multipart/form-data" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -3666,7 +3666,7 @@ $suggestions
 
 |#*XMB TEMPLATE FILE*#|post_reply|#*XMB TEMPLATE*#|
 $preview
-<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid" enctype="multipart/form-data">
+<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid" enctype="multipart/form-data" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
@@ -5030,7 +5030,7 @@ $multipage
 |#*XMB TEMPLATE FILE*#|viewthread_quickreply|#*XMB TEMPLATE*#|
 <br />
 <a name="qreply"></a>
-<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid">
+<form method="post" name="input" action="post.php?action=reply&amp;tid=$tid" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table width="$tablewidth" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="$bordercolor">
 <tr>

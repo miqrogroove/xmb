@@ -104,18 +104,7 @@ if (!isset($_GET['step']) || $_GET['step'] == 1) {
 <li>Enable your forums using the Board Status setting.
 </ol>
 
-<script type="text/javascript">
-<!--//--><![CDATA[//><!--
-function disableButton() {
-    var newAttr = document.createAttribute("disabled");
-    newAttr.nodeValue = "disabled";
-    document.getElementById("submit1").setAttributeNode(newAttr);
-    return true;
-}
-//--><!]]>
-</script>
-
-<form method="get" onsubmit="disableButton();">
+<form method="get" onsubmit="this.submit1.disabled=true; return true;">
 <input type="hidden" name="step" value="2" />
 <p>When you are ready, <input type="submit" value="Click Here if you already have a backup and want to begin the upgrade" id="submit1" />.
 </form>
