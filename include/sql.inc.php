@@ -148,16 +148,17 @@ function deleteSessionsByDate( int $expired ) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByList( string $username, array $ids ) {
+function deleteSessionsByList( string $username, array $ids, string $current_token ) {
     global $db;
     
     if ( empty( $ids ) ) return;
     
     $sqluser = $db->escape( $username );
+    $sqltoken = $db->escape( $current_token );
     $ids = array_map( [$db, 'escape'], $ids );
     $ids = "'" . implode( "','", $ids ) . "'";
 
-    $db->query("DELETE FROM ".X_PREFIX."sessions WHERE username = '$sqluser' AND LEFT(token, 4) IN ($ids)");
+    $db->query("DELETE FROM ".X_PREFIX."sessions WHERE username = '$sqluser' AND LEFT(token, 4) IN ($ids) AND token != '$sqltoken' AND replaces != '$sqltoken'");
 }
 
 /**

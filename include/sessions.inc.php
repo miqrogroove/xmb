@@ -123,6 +123,8 @@ class Manager {
      * @param array $selection Should be structured similar to the return of getSessionLists().
      */
     public function logoutByLists( array $selection ) {
+        if ( 'good' != $this->status ) return;
+
         foreach($this->mechanisms as $session) {
             $name = get_class($session);
             if ( ! empty( $selection[$name] ) ) {
@@ -482,18 +484,7 @@ class FormsAndCookies implements Mechanism {
         if ( self::REGEN_ENABLED ) {
             // Figure out where we are in the regeneration cycle.
             $cookie2 = $this->get_cookie( self::REGEN_COOKIE );
-            if ( time() > $details['regenerate'] ) {
-                // Current session needs to be regenerated.
-                $newdetails = \XMB\SQL\getSessionReplacement( $pinput, $uinput );
-                if ( empty( $newdetails ) ) {
-                    // Normal: This is the first stale hit. New token is needed.
-                    $this->regenerate( $details );
-                } else {
-                    // Abnormal: Client responded with old token after new token was created.
-                    // Caused by interruption or race conditions.
-                    $this->recover( $newdetails );
-                }
-            } elseif ( $cookie2 != '' && $cookie2 == $details['replaces'] ) {
+            if ( $cookie2 != '' && $cookie2 == $details['replaces'] ) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
                 \XMB\SQL\deleteSession( $details['replaces'] );
                 \XMB\SQL\clearSessionParent( $details['token'] );
@@ -507,6 +498,17 @@ class FormsAndCookies implements Mechanism {
                 auditBadSession( $member );
                 $data->status = 'bad';
                 return $data;
+            } elseif ( time() > $details['regenerate'] ) {
+                // Current session needs to be regenerated.
+                $newdetails = \XMB\SQL\getSessionReplacement( $pinput, $uinput );
+                if ( empty( $newdetails ) ) {
+                    // Normal: This is the first stale hit. New token is needed.
+                    $this->regenerate( $details );
+                } else {
+                    // Abnormal: Client responded with old token after new token was created.
+                    // Caused by interruption or race conditions.
+                    $this->recover( $newdetails );
+                }
             } elseif ( $cookie2 != '' ) {
                 // Abnormal: Client responded with both tokens after the old token was deleted.
                 // Caused by interruption or race conditions.
@@ -704,8 +706,9 @@ class FormsAndCookies implements Mechanism {
     }
 
     public function logoutByList( string $username, array $selection ) {
+        $pinput = $this->get_cookie( self::SESSION_COOKIE );
         if ( ! empty( $selection ) ) {
-            \XMB\SQL\deleteSessionsByList( $username, $selection );
+            \XMB\SQL\deleteSessionsByList( $username, $selection, $pinput );
         }
     }
 
