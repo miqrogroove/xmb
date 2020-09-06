@@ -521,15 +521,15 @@ if ($action == 'profile') {
 
                 $lastpost = explode('|', $fav['lastpost']);
 
-                if ($lastpost[1] == 'Anonymous') {
-                    $lastpost[1] = $lang['textanonymous'];
-                } elseif (!is_null($fav['lastauthor'])) {
-                    $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-                } // else leave value unchanged
+                // Translate "Anonymous" author.
+                $lastpostname = trim( $lastpost[1] );
+                if ( 'Anonymous' == $lastpostname ) {
+                    $lastpostname = $lang['textanonymous'];
+                }
 
                 $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
                 $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-                $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
+                $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
                 $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
                 if ($fav['icon'] != '') {
@@ -602,15 +602,15 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
 
-            if ($lastpost[1] == 'Anonymous') {
-                $lastpost[1] = $lang['textanonymous'];
-            } elseif (!is_null($fav['lastauthor'])) {
-                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-            } // else leave value unchanged
+            // Translate "Anonymous" author.
+            $lastpostname = trim( $lastpost[1] );
+            if ( 'Anonymous' == $lastpostname ) {
+                $lastpostname = $lang['textanonymous'];
+            }
 
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
+            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
@@ -794,15 +794,15 @@ if ($action == 'profile') {
 
             $lastpost = explode('|', $fav['lastpost']);
 
-            if ($lastpost[1] == 'Anonymous') {
-                $lastpost[1] = $lang['textanonymous'];
-            } elseif (!is_null($fav['lastauthor'])) {
-                $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-            } // else leave value unchanged
+            // Translate "Anonymous" author.
+            $lastpostname = trim( $lastpost[1] );
+            if ( 'Anonymous' == $lastpostname ) {
+                $lastpostname = $lang['textanonymous'];
+            }
 
             $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
             $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpost[1];
+            $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {

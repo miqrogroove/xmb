@@ -44,8 +44,8 @@ if (!defined('IN_CODE')) {
     $full_url       = 'FULLURL';
 
 // Other settings
-    // There are situations where you don't want to see the <!-- template start: index -->...<!-- template end: index -->
-    // tags around each template. In those cases, change the following to false, or true to turn it back on.
+    // Adds comments to all template output like <!-- template start: index -->...<!-- template end: index -->
+    // These comments may invalidate HTML DTDs and should be used for development purposes only.
     // Default value: false;
     $comment_output = FALSE;
 

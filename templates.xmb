@@ -587,6 +587,22 @@ textarea, select, input, object {
     text-align: right;
 }
 
+.lastpostcell {
+    color: {$THEME['tabletext']};
+    table-layout: fixed;
+    text-align: right;
+    padding: 0;
+}
+
+.lastpostcell img {
+    padding-right: 0.5em;
+}
+
+.tablelinks .lastpostcell a {
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+}
+
 .sig {
     border-top: 1px dashed {$THEME['bordercolor']};
     padding: 13px 0 0 3px;
@@ -667,6 +683,12 @@ textarea, select, input, object {
     width: 100%;
     margin: -1em;
     padding: 1em;
+}
+.tablelinks .plainlinks a {
+    display: inline;
+    width: unset;
+    margin: 0;
+    padding: 0;
 }
 .video {
     border: none;
@@ -1406,7 +1428,7 @@ $subforums
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" bgcolor="$bordercolor">
 <tr>
 <td>
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 $multipage
 <tr class="header" align="center">
 <td width="4%">&nbsp;</td>
@@ -1453,7 +1475,7 @@ $subforums
 <td>
 <form method="post" name="geatneet" action="topicadmin.php?fid=$forum[fid]">
 <input type="hidden" name="token" value="" />
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 $multipage
 <tr class="header" align="center">
 <td width="4%">$fadminlink</td>
@@ -1602,14 +1624,14 @@ $lang[sortby]
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforum|#*XMB TEMPLATE*#|
 <tr>
 <td bgcolor="$altbg1" class="ctrtablerow" align="center">$folder</td>
-<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></font>&nbsp;<font class="smalltxt">$forum[moderator]</font><br /><font class="smalltxt">$forum[description]</font></td>
+<td bgcolor="$altbg2" class="tablerow"><a href="forumdisplay.php?fid=$forum[fid]"><font class="mediumtxt">$forum[name]</font>&nbsp;<font class="smalltxt">$forum[moderator]</font><br /><font class="smalltxt">$forum[description]</font></a></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$forum[threads]</font></td>
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$forum[posts]</font></td>
-<td bgcolor="$altbg1" class="ctrtablerow">$lastpostrow</td>
+<td bgcolor="$altbg1" class="lastpostcell">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforums|#*XMB TEMPLATE*#|
-<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center" class="tablelinks">
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" align="center">
 <tr class="header">
@@ -1629,8 +1651,8 @@ $forumlist
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforum_lastpost|#*XMB TEMPLATE*#|
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
+<td bgcolor="$altbg1" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1645,23 +1667,23 @@ $forumlist
 <tr>
 <td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
 <td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
-<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a>  $multipage2</font></td>
+<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
-<td bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
+<td bgcolor="$altbg2" class="lastpostcell">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_thread_admin|#*XMB TEMPLATE*#|
 <tr>
 <td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
 <td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
-<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a>  $multipage2</font></td>
+<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt"><a href = "topicadmin.php?tid=$thread[tid]&amp;fid=$forum[fid]&amp;action=top">$topimage</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
-<td bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
+<td bgcolor="$altbg2" class="lastpostcell">$lastpostrow</td>
 <td bgcolor="$altbg1" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="$admdir/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><input type="checkbox" name="tid[]" value="$thread[realtid]" /></td>
 </tr>
@@ -1669,8 +1691,8 @@ $forumlist
 |#*XMB TEMPLATE FILE*#|forumdisplay_thread_lastpost|#*XMB TEMPLATE*#|
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
-<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap">&nbsp;<a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
+<td bgcolor="$altbg2" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1878,7 +1900,7 @@ $welcome
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" align="center">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" align="center" class="tablelinks">
 $indexBarTop
 $forumlist
 </table>
@@ -1911,22 +1933,22 @@ $statsbar
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 
 |#*XMB TEMPLATE FILE*#|index_forum|#*XMB TEMPLATE*#|
 <tr>
 <td bgcolor="$altbg1" class="ctrtablerow" width="4%">$folder</td>
-<td bgcolor="$altbg2" class="tablerow" width="54%"><font class="mediumtxt"><a href="./forumdisplay.php?fid=$forum[fid]"><strong>$forum[name]</strong></a></font>&nbsp;<font class="smalltxt">$forum[moderator]&nbsp;</font><br /><font class="smalltxt">$forum[description]$subforums</font></td>
+<td bgcolor="$altbg2" class="tablerow" width="54%"><a href="./forumdisplay.php?fid=$forum[fid]"><font class="mediumtxt"><strong>$forum[name]</strong></font><br /><br /><font class="smalltxt">{$forum['description']}</font></a><span class="smalltxt plainlinks">{$forum['moderator']}</span><font class="smalltxt">$subforums</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[threads]</font></td>
 <td bgcolor="$altbg2" class="ctrtablerow" width="6%"><font class="mediumtxt">$forum[posts]</font></td>
-<td bgcolor="$altbg1" class="rghttablerow" width="19%">$lastpostrow</td>
+<td bgcolor="$altbg1" class="lastpostcell" width="19%">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index_forum_lastpost|#*XMB TEMPLATE*#|
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr class="rghttablerow">
-<td bgcolor="$altbg1" nowrap="nowrap"><font class="smalltxt">$lastpost</font></td>
-<td bgcolor="$altbg1" nowrap="nowrap">&nbsp;<a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="$altbg1" nowrap="nowrap"><a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
+<td bgcolor="$altbg1" nowrap="nowrap"><a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -2009,7 +2031,7 @@ setTickerEvent();
 <tr bgcolor="$altbg2" class="tablerow">
 <td><font size="1">$lang[welcomeunreg]</font></td>
 <td align="right" width="25%">
-<form method="post" action="misc.php?action=login">
+<form method="post" action="misc.php?action=login" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <input type="hidden" name="hide" value="2" />
 <table border="0" cellpadding="0" cellspacing="0">
@@ -2036,7 +2058,8 @@ setTickerEvent();
 <td>
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr class="category">
-<td colspan="3"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+<td colspan="3">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="tablerow">
 <td align="left"><font color="$cattext"><strong>$lang[textpersonalfeat]</strong></font></td>
 <td align="right"><font color="$cattext"><strong>$lang[textloggedinas] $self[username]</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
@@ -2044,7 +2067,7 @@ setTickerEvent();
 </table>
 </td>
 </tr>
-<tr class="ctrtablerow" bgcolor="$altbg2">
+<tr class="ctrtablerow tablelinks" bgcolor="$altbg2">
 <td width="33%"><a href="memcp.php"><strong>$lang[textusercp]</strong></a></td>
 <td width="33%"><a href="u2u.php" onclick="Popup(this.href,'Window', 700, 450); return false;"><strong>{$lang['textu2umessenger']}</strong></a></td>
 <td width="33%"><a href="buddy.php" onclick="Popup(this.href, 'Window', 450, 400); return false;"><strong>{$lang['launchbuddylist']}</strong></a></td>
@@ -2519,7 +2542,7 @@ $devicesbtn
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textfavorites]</font></strong></td>
 </tr>
@@ -2556,7 +2579,7 @@ $favsbtn
 <td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
 <td bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
 <td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<td bgcolor="$altbg2" width="19%"><a href="viewthread.php?goto=lastpost&amp;tid={$fav['tid']}" title="{$lang['altlastpost']}" class="smalltxt">$lastpost</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home|#*XMB TEMPLATE*#|
@@ -2653,7 +2676,7 @@ $buddys[offline]
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr class="category">
 <td colspan="4"><font color="$cattext"><strong>$lang[textlatestu2us]</strong></font></td>
 </tr>
@@ -2675,7 +2698,7 @@ $messages
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr class="category">
 <td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
@@ -2706,7 +2729,7 @@ $favs
 <td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
 <td bgcolor="$altbg2" width="24%"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
 <td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<td bgcolor="$altbg2" width="19%"><a href="viewthread.php?goto=lastpost&amp;tid={$fav['tid']}" title="{$lang['altlastpost']}" class="smalltxt">$lastpost</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_home_u2u_none|#*XMB TEMPLATE*#|
@@ -2920,7 +2943,7 @@ $timezones
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textsubscriptions]</font></strong></td>
 </tr>
@@ -2964,7 +2987,7 @@ $subsbtn
 <td bgcolor="$altbg1" width="43%"><a href="viewthread.php?tid=$fav[tid]">$fav[subject]</a></td>
 <td bgcolor="$altbg2"><a href="forumdisplay.php?fid=$forum[fid]">$forum[name]</a></td>
 <td bgcolor="$altbg1" width="6%" align="center">$fav[replies]</td>
-<td bgcolor="$altbg2" width="19%"><font size="1" face="verdana">$lastpost</font></td>
+<td bgcolor="$altbg2" width="19%"><a href="viewthread.php?goto=lastpost&amp;tid={$fav['tid']}" title="{$lang['altlastpost']}" class="smalltxt">$lastpost</a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|message|#*XMB TEMPLATE*#|
@@ -3103,7 +3126,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
@@ -3126,7 +3149,7 @@ $header
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
@@ -3155,7 +3178,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
 </tr>
@@ -3178,7 +3201,7 @@ $multipage
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
@@ -3951,7 +3974,7 @@ $mistake
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
-<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%" class="tablelinks">
 <tr>
 <td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
 </tr>
@@ -3991,12 +4014,12 @@ $multipage
 <tr class="tablerow">
 <td width="4%" bgcolor="$altbg1" class="ctrtablerow">$folder</td>
 <td width="4%" bgcolor="$altbg2" class="ctrtablerow">$thread[icon]</td>
-<td width="43%" bgcolor="$altbg1" class="tablerow"><font class="12px">$prefix <a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a> $multipage2</font></td>
+<td width="43%" bgcolor="$altbg1" class="tablerow"><font class="12px">$prefix <a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
 <td width="14%" bgcolor="$altbg2" class="ctrtablerow">$authorlink</td>
 <td width="14%" bgcolor="$altbg1" class="ctrtablerow"><font class="11px"><a href="forumdisplay.php?fid=$thread[fid]">$thread[name]</a></font></td>
 <td width="5%" bgcolor="$altbg2" class="ctrtablerow"><font class="11px">$thread[replies]</font></td>
 <td width="5%" bgcolor="$altbg1" class="ctrtablerow"><font class="11px">$thread[views]</font></td>
-<td width="23%" bgcolor="$altbg2" class="rghttablerow">$lastpostrow</td>
+<td width="23%" bgcolor="$altbg2" class="lastpostcell">$lastpostrow</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|topicadmin_bump|#*XMB TEMPLATE*#|

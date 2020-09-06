@@ -148,15 +148,15 @@ if ($threadcount == 0) {
         $dalast = $lastpost[0];
         $lastPid = $lastpost[2];
 
-        if ($lastpost[1] == 'Anonymous') {
-            $lastpost[1] = $lang['textanonymous'];
-        } elseif (!is_null($thread['lastauthor'])) {
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
-        } // else leave value unchanged
+        // Translate "Anonymous" author.
+        $lastpostname = trim( $lastpost[1] );
+        if ( 'Anonymous' == $lastpostname ) {
+            $lastpostname = $lang['textanonymous'];
+        }
 
         $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
         $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
-        $lastpost = $lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
+        $lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
         if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
             $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
@@ -205,12 +205,7 @@ if ($threadcount == 0) {
             $prefix = $lang['toppedprefix'].' '.$prefix;
         }
 
-        $mpurl = 'viewthread.php?tid='.$thread['tid'];
-        $multipage2 = multi(1, quickpage($thread['replies']+1, $ppp), $mpurl, FALSE);
-        if (strlen($multipage2) != 0) {
-            $multipage2 = "(<small>$multipage2</small>)";
-        }
-        unset($mpurl);
+        $multipage2 = '';
 
         eval('$today_row[] = "'.template('today_row').'";');
     }

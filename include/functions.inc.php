@@ -1034,17 +1034,18 @@ function forum($forum, $template, $index_subforums) {
     if ( ! empty( $forum['lastpost'] ) ) {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
-        if ($lastpost[1] != 'Anonymous' && $lastpost[1] != '') {
-            $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastpost[1]).'">'.$lastpost[1].'</a>';
-        } else {
-            $lastpost[1] = $lang['textanonymous'];
+
+        // Translate "Anonymous" author.
+        $lastpostname = trim( $lastpost[1] );
+        if ( 'Anonymous' == $lastpostname ) {
+            $lastpostname = $lang['textanonymous'];
         }
 
         $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
         $lastpostdate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
         $lastposttime = gmdate($timecode, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-        $lastpost = $lastpostdate.' '.$lang['textat'].' '.$lastposttime.'<br />'.$lang['textby'].' '.$lastpost[1];
+        $lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
         eval('$lastpostrow = "'.template($template.'_lastpost').'";');
     } else {
         $dalast = 0;
@@ -1067,13 +1068,16 @@ function forum($forum, $template, $index_subforums) {
     $foruminfo = '';
 
     if ( ! empty( $forum['moderator'] ) ) {
+        $list = [];
         $moderators = explode(', ', $forum['moderator']);
-        $forum['moderator'] = array();
-        for($num = 0; $num < count($moderators); $num++) {
-            $forum['moderator'][] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderators[$num]).'">'.$moderators[$num].'</a>';
+        foreach ( $moderators as $moderator ) {
+            $list[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut( $moderator ).'">'.$moderator.'</a>';
         }
-        $forum['moderator'] = implode(', ', $forum['moderator']);
-        $forum['moderator'] = '('.$lang['textmodby'].' '.$forum['moderator'].')';
+        $moderators = implode( ', ', $list );
+        $forum['moderator'] = "{$lang['textmodby']} $moderators";
+        if ( '' != $forum['description'] ) {
+            $forum['moderator'] = '<br />' . $forum['moderator'];
+        }
     }
 
     $subforums = array();
@@ -1088,7 +1092,10 @@ function forum($forum, $template, $index_subforums) {
 
     if (!empty($subforums)) {
         $subforums = implode(', ', $subforums);
-        $subforums = '<br /><strong>'.$lang['textsubforums'].'</strong> '.$subforums;
+        $subforums = "{$lang['textsubforums']} <span class='plainlinks'>$subforums</span>";
+        if ( '' != $forum['description'] || '' != $forum['moderator'] ) {
+            $subforums = '<br />' . $subforums;
+        }
     } else {
         $subforums = '';
     }

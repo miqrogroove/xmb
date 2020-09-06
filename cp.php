@@ -1219,15 +1219,15 @@ if ($action == 'forum') {
         $newsubfup = formInt('newsubfup');
 
         if ($newfname != $lang['textnewforum'] && $newfname != '') {
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
         if ($newgname != $lang['textnewgroup'] && $newgname != '') {
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
         if ($newsubname != $lang['textnewsubf'] && $newsubname != '') {
-            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowhtml, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'no', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
+            $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {

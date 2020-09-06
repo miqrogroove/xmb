@@ -286,11 +286,11 @@ while($thread = $db->fetch_array($querytop)) {
     $lastpost = explode('|', $thread['lastpost']);
     $dalast = trim($lastpost[0]);
 
-    if ($lastpost[1] == 'Anonymous') {
-        $lastpost[1] = $lang['textanonymous'];
-    } elseif (!is_null($thread['lastauthor'])) {
-        $lastpost[1] = '<a href="member.php?action=viewpro&amp;member='.recodeOut(trim($lastpost[1])).'">'.trim($lastpost[1]).'</a>';
-    } // else leave value unchanged
+    // Translate "Anonymous" author.
+    $lastpostname = trim( $lastpost[1] );
+    if ( 'Anonymous' == $lastpostname ) {
+        $lastpostname = $lang['textanonymous'];
+    }
 
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
@@ -322,7 +322,7 @@ while($thread = $db->fetch_array($querytop)) {
     $lastreplydate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($addtime * 3600));
     $lastreplytime = gmdate($timecode, $lastpost[0] + ($timeoffset * 3600) + ($addtime * 3600));
 
-    $lastpost = $lastreplydate.' '.$lang['textat'].' '.$lastreplytime.'<br />'.$lang['textby'].' '.$lastpost[1];
+    $lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
     $moved = explode('|', $thread['closed']);
     if ($moved[0] == 'moved') {
@@ -351,12 +351,7 @@ while($thread = $db->fetch_array($querytop)) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
-    $mpurl = 'viewthread.php?tid='.$thread['tid'];
-    $multipage2 = multi(1, quickpage($thread['replies']+1, $ppp), $mpurl, FALSE);
-    if (strlen($multipage2) != 0) {
-        $multipage2 = "(<small>$multipage2</small>)";
-    }
-    unset($mpurl);
+    $multipage2 = '';
 
     eval('$threadlist .= "'.template($forumdisplay_thread).'";');
 
