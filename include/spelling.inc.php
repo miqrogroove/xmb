@@ -32,7 +32,7 @@ class spelling {
     var $link     = 0;
     var $mode     = 0;
 
-    function spelling($language='en', $mode=PSPELL_NORMAL) {
+    function __construct($language='en', $mode=PSPELL_NORMAL) {
         global $charset;
 
         if (!extension_loaded('pspell')) {

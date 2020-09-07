@@ -136,11 +136,6 @@ class Captcha {
         $this->CheckCompatibility();
     }
 
-    // PHP 4
-    function Captcha($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
-        $this->__construct($iWidth, $iHeight);
-    }
-
     function CalculateSpacing() {
         $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
     }

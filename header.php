@@ -806,5 +806,5 @@ if ($SETTINGS['gzipcompress'] == 'on'
 }
 
 assertEmptyOutputStream('header.php');
+
 return;
-?>
