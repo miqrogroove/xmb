@@ -48,7 +48,6 @@ loadtemplates(
 
 smcwcache();
 
-eval('$css = "'.template('css').'";');
 eval($lang['hottopiceval']);
 
 $fid = getInt('fid');

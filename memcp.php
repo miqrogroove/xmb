@@ -57,8 +57,6 @@ loadtemplates(
 
 smcwcache();
 
-eval('$css = "'.template('css').'";');
-
 $buddys = array();
 $favs = '';
 $footer = '';

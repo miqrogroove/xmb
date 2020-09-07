@@ -328,4 +328,53 @@ function deleteSetting( string $name ) {
     return $db->insert_id();
 }
 
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getTemplateByID( int $id ): array {
+    global $db;
+    
+    $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id = $id");
+    if ($db->num_rows($query) == 1) {
+        $result = $db->fetch_array($query);
+    } else {
+        $result = [];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getThemeByID( int $id ): array {
+    global $db;
+    
+    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid = $id");
+    if ($db->num_rows($query) == 1) {
+        $result = $db->fetch_array($query);
+    } else {
+        $result = [];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function raiseThemeVersions() {
+    global $db;
+
+    $db->query("UPDATE ".X_PREFIX."themes SET version = version + 1");
+}
+
 return;

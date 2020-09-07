@@ -30,7 +30,6 @@ require ROOT.'include/admin.inc.php';
 header('X-Robots-Tag: noindex');
 
 loadtemplates('error_nologinsession');
-eval('$css = "'.template('css').'";');
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
@@ -995,7 +994,7 @@ if ($action == 'themes') {
         $admdirnew = postedVar('admdirnew');
         $smdirnew = postedVar('smdirnew');
 
-        $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew' WHERE themeid='$orig'");
+        $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } else if ($single_str == "submit" && $newtheme) {
         request_secure('makenewtheme', '', X_NONCE_FORM_EXP, FALSE);
@@ -1924,6 +1923,7 @@ if ($action == "templates") {
         }
 
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
+        \XMB\SQL\raiseThemeVersions();
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesrestoredone'].'</td></tr>';
         redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
@@ -1995,6 +1995,10 @@ if ($action == "templates") {
             }
         } else {
             $tid = getInt('tid');
+            $oldtemplate = \XMB\SQL\getTemplateByID( $tid );
+            if ( 'css' == $oldtemplate['name'] ) {
+                \XMB\SQL\raiseThemeVersions();
+            }
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id=$tid");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesupdate'].'</td></tr>';

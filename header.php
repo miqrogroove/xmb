@@ -60,6 +60,7 @@ $canonical_link = '';
 $cookiepath = '';
 $cookiedomain = '';
 $bbcodescript = '';
+$cssInclude = '';
 $database = '';
 $threadSubject = '';
 $filesize = 0;
@@ -416,7 +417,7 @@ extract( $SETTINGS );
 
 /* Set Global HTTP Headers */
 
-if (X_SCRIPT != 'files.php') {
+if ( X_SCRIPT != 'files.php' && X_SCRIPT != 'css.php' ) {
     header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
@@ -609,37 +610,37 @@ if ($tid > 0 && $action != 'templates') {
     }
 }
 
-// Check what theme to use
+// Check which theme to use
 $validtheme = FALSE;
 if (!$validtheme && (int) $themeuser > 0) {
     $theme = (int) $themeuser;
-    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
-    if (!$validtheme = ($db->num_rows($query) > 0)) {
+    $row = \XMB\SQL\getThemeByID( $theme );
+    if ( ! $validtheme = ( ! empty( $row ) ) ) {
         $themeuser = 0;
         $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
     }
 }
 if (!$validtheme && (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
-    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
-    if (!$validtheme = ($db->num_rows($query) > 0)) {
+    $row = \XMB\SQL\getThemeByID( $theme );
+    if ( ! $validtheme = ( ! empty( $row ) ) ) {
         $themeuser = 0;
         $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE fid=$fid");
     }
 }
 if (!$validtheme) {
     $theme = (int) $SETTINGS['theme'];
-    $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid=$theme");
-    $validtheme = ($db->num_rows($query) > 0);
+    $row = \XMB\SQL\getThemeByID( $theme );
+    $validtheme = ( ! empty( $row ) );
 }
 if (!$validtheme) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes LIMIT 1");
     if ($validtheme = ($db->num_rows($query) > 0)) {
         $row = $db->fetch_array($query);
         $SETTINGS['theme'] = $row['themeid'];
-        $db->query("UPDATE ".X_PREFIX."settings SET theme={$SETTINGS['theme']}");
-        $db->data_seek($query, 0);
+        \XMB\SQL\updateSetting( 'theme', $SETTINGS['theme'] );
     }
+    $db->free_result($query);
 }
 if (!$validtheme) {
     header('HTTP/1.0 500 Internal Server Error');
@@ -647,70 +648,17 @@ if (!$validtheme) {
 }
 
 // Make theme-vars semi-global
-foreach($db->fetch_array($query) as $key=>$val) {
-    if ($key != "name") {
-        $$key = $val;
-    }
-    $THEME[$key] = $val;
-}
-$db->free_result($query);
+$THEME = &$row;
+unset( $row );
+more_theme_vars();
+extract( $THEME );
+
+$css = "<link rel='stylesheet' type='text/css' href='{$full_url}css.php?id={$THEME['themeid']}&amp;v={$THEME['version']}' />";
 
 // additional CSS to load?
-if (file_exists(ROOT.$imgdir.'/theme.css')) {
-    $cssInclude = '<style type="text/css">'."\n"."@import url('".$imgdir."/theme.css');"."\n".'</style>';
-} else {
-    $cssInclude = '';
+if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
+    $css .= "\n<link rel='stylesheet' type='text/css' href='{$full_url}{$THEME['imgdir']}/theme.css' />";
 }
-
-// Alters certain visibility-variables
-if (false === strpos($bgcolor, '.')) {
-    $bgcode = "background-color: $bgcolor;";
-} else {
-    $bgcode = "background-image: url('$imgdir/$bgcolor');";
-}
-
-if (false === strpos($catcolor, '.')) {
-    $catbgcode = "bgcolor=\"$catcolor\"";
-    $catcss = 'background-color: '.$catcolor.';';
-} else {
-    $catbgcode = "style=\"background-image: url($imgdir/$catcolor)\"";
-    $catcss = 'background-image: url('.$imgdir.'/'.$catcolor.');';
-}
-
-if (false === strpos($top, '.')) {
-    $topbgcode = "bgcolor=\"$top\"";
-} else {
-    $topbgcode = "style=\"background-image: url($imgdir/$top)\"";
-}
-
-if (false !== strpos($boardimg, ',')) {
-    $flashlogo = explode(",",$boardimg);
-    //check if it's an URL or just a filename
-    $l = array();
-    $l = parse_url($flashlogo[0]);
-    if (!isset($l['scheme']) || !isset($l['host'])) {
-        $flashlogo[0] = $imgdir.'/'.$flashlogo[0];
-    }
-    $logo = '<object type="application/x-shockwave-flash" data="'.$flashlogo[0].'" width="'.$flashlogo[1].'" height="'.$flashlogo[2].'"><param name="movie" value="'.$flashlogo[0].'" /><param name="AllowScriptAccess" value="never" /></object>';
-} else {
-    $l = array();
-    $l = parse_url($boardimg);
-    if (!isset($l['scheme']) || !isset($l['host'])) {
-        $boardimg = $imgdir.'/'.$boardimg;
-    }
-    $logo = '<a href="./"><img src="'.$boardimg.'" alt="'.$bbname.'" border="0" /></a>';
-}
-
-// Font stuff...
-$fontedit = preg_replace('#(\D)#', '', $fontsize);
-$fontsuf = preg_replace('#(\d)#', '', $fontsize);
-$font1 = $fontedit-1 . $fontsuf;
-$font3 = $fontedit+2 . $fontsuf;
-
-// Set Extra Theme Keys
-$THEME['bgcode'] = $bgcode;
-$THEME['font1'] = $font1;
-$THEME['font3'] = $font3;
 
 
 /* Theme Ready.  Make pretty errors. */
@@ -757,27 +705,27 @@ if ((X_ADMIN || $SETTINGS['bbstatus'] == 'on') && (X_MEMBER || $SETTINGS['regvie
 
     // Faq-link
     if ($SETTINGS['faqstatus'] == 'on') {
-        $links[] = '<img src="'.$imgdir.'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
+        $links[] = '<img src="'.$THEME['imgdir'].'/top_faq.gif" alt="'.$lang['altfaq'].'" border="0" /> <a href="faq.php"><font class="navtd">'.$lang['textfaq'].'</font></a>';
     }
 
     // Memberlist-link
     if ($SETTINGS['memliststatus'] == 'on') {
-        $links[] = '<img src="'.$imgdir.'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
+        $links[] = '<img src="'.$THEME['imgdir'].'/top_memberslist.gif" alt="'.$lang['altmemberlist'].'" border="0" /> <a href="misc.php?action=list"><font class="navtd">'.$lang['textmemberlist'].'</font></a>';
     }
 
     // Today's posts-link
     if ($SETTINGS['todaysposts'] == 'on') {
-        $links[] = '<img src="'.$imgdir.'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
+        $links[] = '<img src="'.$THEME['imgdir'].'/top_todaysposts.gif" alt="'.$lang['alttodayposts'].'" border="0" /> <a href="today.php"><font class="navtd">'.$lang['navtodaysposts'].'</font></a>';
     }
 
     // Stats-link
     if ($SETTINGS['stats'] == 'on') {
-        $links[] = '<img src="'.$imgdir.'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
+        $links[] = '<img src="'.$THEME['imgdir'].'/top_stats.gif" alt="'.$lang['altstats'].'" border="0" /> <a href="stats.php"><font class="navtd">'.$lang['navstats'].'</font></a>';
     }
 
     // 'Forum Rules'-link
     if ($SETTINGS['bbrules'] == 'on') {
-        $links[] = '<img src="'.$imgdir.'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
+        $links[] = '<img src="'.$THEME['imgdir'].'/top_bbrules.gif" alt="'.$lang['altrules'].'" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">'.$lang['textbbrules'].'</font></a>';
     }
 
     $links = implode(' &nbsp; ', $links);

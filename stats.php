@@ -38,7 +38,6 @@ if ($SETTINGS['stats'] == 'off') {
 }
 
 setCanonicalLink('stats.php');
-eval('$css = "'.template('css').'";');
 eval('$header = "'.template('header').'";');
 
 $fids = permittedForums(forumCache(), 'thread', 'csv');

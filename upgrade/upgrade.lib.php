@@ -64,6 +64,8 @@ function xmb_upgrade() {
         case 4:
             upgrade_schema_to_v5();
         case 5:
+            upgrade_schema_to_v6();
+        case 6:
             //Future use. Break only before case default.
             break;
         default:
@@ -1857,6 +1859,44 @@ function upgrade_schema_to_v5() {
 
     show_progress('Resetting the schema version number');
     upgrade_query("UPDATE ".X_PREFIX."settings SET value = '5' WHERE name = 'schema_version'");
+}
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 6.
+ *
+ * @since 1.9.12
+ */
+function upgrade_schema_to_v6() {
+    global $db;
+
+    show_progress('Requesting to lock the themes table');
+    upgrade_query('LOCK TABLES '.X_PREFIX."themes WRITE");
+
+    show_progress('Gathering schema information from the themes table');
+    $sql = [];
+    $table = 'themes';
+    $columns = [
+    'version' => "int(10) unsigned NOT NULL default 0",
+    ];
+    foreach($columns as $colname => $coltype) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Adding columns to the themes table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress('Releasing the lock on the themes table');
+    upgrade_query('UNLOCK TABLES');
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '6' WHERE name = 'schema_version'");
 }
 
 /**

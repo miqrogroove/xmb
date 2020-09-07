@@ -55,7 +55,6 @@ loadtemplates(
 );
 
 smcwcache();
-eval('$css = "'.template('css').'";');
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
@@ -521,7 +520,6 @@ switch($action) {
         break;
 
     case 'smilies':
-        eval('$css = "'.template('css').'";');
         eval('$header = "'.template('popup_header').'";');
         eval('$footer = "'.template('popup_footer').'";');
         $smilies = smilieinsert('full');

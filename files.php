@@ -27,7 +27,6 @@ define('X_SCRIPT', 'files.php');
 require 'header.php';
 
 loadtemplates('');
-eval('$css = "'.template('css').'";');
 
 $aid = 0;
 $pid = 0;

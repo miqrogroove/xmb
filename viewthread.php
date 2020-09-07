@@ -47,7 +47,6 @@ if ($goto == 'lastpost') {
             $db->free_result($query);
         } else {
             header('HTTP/1.0 404 Not Found');
-            eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
@@ -57,7 +56,6 @@ if ($goto == 'lastpost') {
 
         if ($posts == 0) {
             header('HTTP/1.0 404 Not Found');
-            eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
 
@@ -92,7 +90,6 @@ if ($goto == 'lastpost') {
 
         if ($pid == 0) {
             header('HTTP/1.0 404 Not Found');
-            eval('$css = "'.template('css').'";');
             error($lang['textnothread']);
         }
 
@@ -101,7 +98,6 @@ if ($goto == 'lastpost') {
         $db->free_result($query);
     } else {
         header('HTTP/1.0 404 Not Found');
-        eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
     $page = quickpage($posts, $ppp);
@@ -126,7 +122,6 @@ if ($goto == 'lastpost') {
         redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", 0);
     } else {
         header('HTTP/1.0 404 Not Found');
-        eval('$css = "'.template('css').'";');
         error($lang['textnothread']);
     }
 }
@@ -172,8 +167,6 @@ loadtemplates(
 );
 
 smcwcache();
-
-eval('$css = "'.template('css').'";');
 
 $posts = '';
 

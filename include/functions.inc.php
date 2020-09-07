@@ -392,7 +392,7 @@ function loadtemplates() {
         echo 'Not enough arguments given to loadtemplates() on line: '.__LINE__;
         return false;
     } else {
-        $namesarray = array_unique(array_merge(func_get_args(), array('header','css','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
+        $namesarray = array_unique(array_merge(func_get_args(), array('header','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
         $query = $db->query("SELECT name, template FROM ".X_PREFIX."templates WHERE name IN ($sql)");
         while($template = $db->fetch_array($query)) {
@@ -1529,9 +1529,6 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     if ($showheader === false) {
         $header = '';
     } else {
-        if (!isset($css) || strlen($css) ==0) {
-            eval('$css = "'.template('css').'";');
-        }
         eval('$header = "'.template('header').'";');
     }
 
@@ -1591,9 +1588,6 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
     if ($showheader === false) {
         $header = '';
     } else {
-        if (!isset($css) || strlen($css) ==0) {
-            eval('$css = "'.template('css').'";');
-        }
         eval('$header = "'.template('header').'";');
     }
 
@@ -2690,6 +2684,48 @@ function parse_user_agent( string $raw ): string {
     elseif (strpos($raw, 'Firefox'   )                             ) return 'Firefox'          ;
     elseif (strpos($raw, 'MSIE'      ) || strpos($raw, 'Trident/7')) return 'Internet Explorer';
     else return $raw;
+}
+
+/**
+ * Calculates extra theme strings that are dynamically generated for every hit.
+ *
+ * @since 1.9.12
+ */
+function more_theme_vars() {
+    global $THEME, $SETTINGS;
+
+    // Alters certain visibility-variables
+    if (false === strpos($THEME['bgcolor'], '.')) {
+        $THEME['bgcode'] = "background-color: {$THEME['bgcolor']};";
+    } else {
+        $THEME['bgcode'] = "background-image: url('{$THEME['imgdir']}/{$THEME['bgcolor']}');";
+    }
+
+    if (false === strpos($THEME['catcolor'], '.')) {
+        $THEME['catbgcode'] = "bgcolor='{$THEME['catcolor']}'";
+        $THEME['catcss'] = "background-color: {$THEME['catcolor']};";
+    } else {
+        $THEME['catbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['catcolor']})'";
+        $THEME['catcss'] = "background-image: url({$THEME['imgdir']}/{$THEME['catcolor']});";
+    }
+
+    if (false === strpos($THEME['top'], '.')) {
+        $THEME['topbgcode'] = "bgcolor='{$THEME['top']}'";
+    } else {
+        $THEME['topbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['top']})'";
+    }
+
+    $l = parse_url($THEME['boardimg']);
+    if (!isset($l['scheme']) || !isset($l['host'])) {
+        $boardimg = $THEME['imgdir'].'/'.$THEME['boardimg'];
+    }
+    $THEME['logo'] = '<a href="./"><img src="'.$boardimg.'" alt="'.$SETTINGS['bbname'].'" border="0" /></a>';
+
+    // Font stuff...
+    $fontedit = preg_replace('#(\D)#', '', $THEME['fontsize']);
+    $fontsuf = preg_replace('#(\d)#', '', $THEME['fontsize']);
+    $THEME['font1'] = $fontedit-1 . $fontsuf;
+    $THEME['font3'] = $fontedit+2 . $fontsuf;
 }
 
 return;

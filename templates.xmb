@@ -392,8 +392,7 @@ $buddys[offline]
 </tr>
 
 |#*XMB TEMPLATE FILE*#|css|#*XMB TEMPLATE*#|
-<style type="text/css">
-/*<![CDATA[*/
+/* XMB Stylesheet */
 body {
     scrollbar-arrow-color: {$THEME['header']};
     scrollbar-base-color: {$THEME['altbg1']};
@@ -707,9 +706,6 @@ textarea, select, input, object {
         width: 250px;
     }
 }
-/*]]>*/
-</style>
-$cssInclude
 
 |#*XMB TEMPLATE FILE*#|email_html_footer|#*XMB TEMPLATE*#|
 </body>

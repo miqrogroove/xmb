@@ -58,8 +58,6 @@ if (strlen($fids) == 0) {
     $threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE lastpost > '$srchfrom' AND fid IN ($fids)"), 0);
 }
 
-eval('$css = "'.template('css').'";');
-
 if ($threadcount == 0) {
     eval('$header = "'.template('header').'";');
     $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];

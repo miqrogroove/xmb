@@ -28,7 +28,6 @@ require 'header.php';
 require ROOT.'include/admin.inc.php';
 
 loadtemplates('error_nologinsession');
-eval('$css = "'.template('css').'";');
 
 nav('<a href="cp.php">'.$lang['textcp'].'</a>');
 eval('echo ("'.template('header').'");');

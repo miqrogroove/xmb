@@ -42,7 +42,6 @@ if ($action == "settings") {
 
 nav($lang['textcp']);
 
-eval('$css = "'.template('css').'";');
 eval('echo "'.template('header').'";');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
 
@@ -1710,7 +1709,7 @@ if ($action == "ipban") {
             </tr>
             <?php
         } elseif (onSubmit('ipbandisable')) {
-            $db->query('UPDATE '.X_PREFIX.'settings SET ip_banning="off"');
+            \XMB\SQL\updateSetting( 'ip_banning', 'off' );
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         } else {
             $newip = array();
@@ -1779,7 +1778,7 @@ if ($action == "ipban") {
             </tr>
             <?php
         } else {
-            $db->query('UPDATE '.X_PREFIX.'settings SET ip_banning="on"');
+            \XMB\SQL\updateSetting( 'ip_banning', 'on' );
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         }
     }

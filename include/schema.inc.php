@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define('XMB_SCHEMA_VER', 5);
+define('XMB_SCHEMA_VER', 6);
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
@@ -372,6 +372,7 @@ function xmb_schema_create($name){
           `admdir` VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin',
           `smdir` varchar(120) NOT NULL default 'images/smilies',
           `cattext` varchar(15) NOT NULL default '',
+          `version` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY  (`themeid`),
           KEY `name` (`name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";

@@ -57,8 +57,6 @@ loadtemplates(
 'topicadmin_copy'
 );
 
-eval('$css = "'.template('css').'";');
-
 if (count($tids) == 1) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid={$tids[0]}");
     $thread = $db->fetch_array($query);

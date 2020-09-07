@@ -43,8 +43,6 @@ loadtemplates(
 'index_whosonline_today'
 );
 
-eval('$css = "'.template('css').'";');
-
 $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
     $contents = '';

@@ -35,8 +35,6 @@ loadtemplates(
 nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
 nav($lang['texteditpro']);
 
-eval('$css = "'.template('css').'";');
-
 eval('$header = "'.template('header').'";');
 
 if (X_GUEST) {

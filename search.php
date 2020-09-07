@@ -37,7 +37,6 @@ loadtemplates(
 );
 
 smcwcache();
-eval('$css = "'.template('css').'";');
 nav($lang['textsearch']);
 
 $misc = $multipage = $nextlink = '';

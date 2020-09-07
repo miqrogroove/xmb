@@ -54,8 +54,6 @@ loadtemplates(
 'viewthread_post_sig'
 );
 
-eval('$css = "'.template('css').'";');
-
 if (X_GUEST) {
     $loggedin = '';
 } else {

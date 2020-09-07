@@ -44,8 +44,6 @@ loadtemplates(
 
 smcwcache();
 
-eval('$css = "'.template('css').'";');
-
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'reg':
