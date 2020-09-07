@@ -268,7 +268,7 @@ if ($action == 'profile') {
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
         if (X_STAFF) {
-            $template = template_secure('memcp_profile', 'edpro', $self['uid']);
+            $template = template_secure( 'memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP );
         } else {
             $template = template('memcp_profile');
         }
@@ -276,7 +276,7 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        if (X_STAFF) request_secure('edpro', $self['uid'], X_NONCE_FORM_EXP);
+        if (X_STAFF) request_secure( 'User Control Panel/Edit Profile', $self['uid'], null, true );
         if (!empty($_POST['newpassword'])) {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);

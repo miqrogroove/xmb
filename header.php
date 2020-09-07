@@ -334,6 +334,9 @@ assertEmptyOutputStream('functions.inc.php');
 require ROOT.'include/sessions.inc.php';
 assertEmptyOutputStream('sessions.inc.php');
 
+require ROOT.'include/tokens.inc.php';
+assertEmptyOutputStream('tokens.inc.php');
+
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
 
@@ -671,7 +674,7 @@ case 'ip':
     }
     break;
 case 'bstatus':
-    if (!X_ADMIN) {
+    if ( ! X_ADMIN && X_SCRIPT != 'css.php' ) {
         header('HTTP/1.0 503 Service Unavailable');
         header('Retry-After: 3600');
         if ($bboffreason != '') {

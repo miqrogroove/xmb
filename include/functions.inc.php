@@ -357,6 +357,7 @@ function template($name) {
         $db->free_result($query);
     }
 
+    // PHP will not strip slashes from mismatched quotes so we have to do it here first e.g. "Not \' Good"
     $template = str_replace("\\'","'", $template);
 
     if ($name != 'phpinclude' && $comment_output === true) {
@@ -405,45 +406,51 @@ function loadtemplates() {
 /**
  * Get a template with the token filled in.
  *
- * @param string $name The template name.
+ * @since 1.9.11.11
+ * @param string $name   The template name.
  * @param string $action The action for which the token is valid.
- * @param string $id The object for which the token is valid.
+ * @param string $id     The object for which the token is valid.
+ * @param int    $ttl    Validity time in seconds.
  * @return string
  */
-function template_secure($name, $action, $id) {
-    $key = template_key($action, $id);
-    $nonce = nonce_create($key);
+function template_secure( string $name, string $action, string $id, int $ttl ) {
+    $token = \XMB\Token\create( $action, $id, $ttl );
     $placeholder = '<input type="hidden" name="token" value="" />';
-    $replace = '<input type="hidden" name="token" value="'.$nonce.'" />';
-    return str_replace(addslashes($placeholder), addslashes($replace), template($name));
+    $replace = "<input type='hidden' name='token' value='$token' />";
+    return str_replace( addslashes( $placeholder ), $replace, template( $name ) );
 }
 
 /**
  * Assert token validity for a user request.
  *
+ * @since 1.9.11.11
  * @param string $action The action for which the token is valid.
- * @param string $id The object for which the token is valid.
- * @param int    $expire Number of seconds for which the token was valid.
+ * @param string $id     The object for which the token is valid.
+ * @param int    $expire Deprecated.
  * @param bool   $error_header Display header template on errors?
  */
-function request_secure($action, $id, $expire, $error_header = TRUE) {
+function request_secure( string $action, string $id, int $expire = 0, bool $error_header = false ) {
     global $lang;
 
-    $key = template_key($action, $id);
-    $nonce = postedVar('token');
-    if (!nonce_use($key, $nonce, $expire)) {
+    if ( 0 != $expire ) {
+        trigger_error( 'The $expire parameter of request_secure() does not work in this version of XMB.', E_USER_DEPRECATED );
+    }
+
+    $token = postedVar( 'token', '', false, false );
+
+    if ( ! \XMB\Token\consume( $token, $action, $id ) ) {
         error($lang['noadminsession'], $error_header);
     }
 }
 
 /**
- * Make a key for the nonce/key pair.
+ * DEPRECATED by XMB 1.9.12
  *
- * @param string $action The action for which the token is valid.
- * @param string $id The object for which the token is valid.
- * @return string
+ * template_key() is no longer needed because we can now store more information in the tokens table.
  */
 function template_key($action, $id) {
+    trigger_error( 'template_key() is deprecated in this version of XMB.', E_USER_DEPRECATED );
+
     $id_len = X_NONCE_KEY_LEN - strlen($action);
     if (strlen($id) > $id_len) {
         $id = substr($id, -$id_len);
@@ -2381,8 +2388,10 @@ function smtpHeaderFrom($fromname, $fromaddress) {
  * The XMB schema is currently limited to a 12-byte key length, and as such
  * does not offer user uniqueness beyond simple randomization.
  *
+ * \XMB\Token\create() replaces this function for all purposes other than anonymous captcha.
+ *
+ * @since 1.9.11.11
  * @param string $key The known value, such as what the nonce may be used for.
- * @param string $salt A semi-secret value such as the id of the current user.
  * @return string
  */
 function nonce_create($key) {
@@ -2400,6 +2409,7 @@ function nonce_create($key) {
 /**
  * Reveal the nonce/key pair to the user, as in CAPTCHA.
  *
+ * @since 1.9.11.11
  * @param  string $nonce The user input.
  * @param  int    $key_length The known length of the key.
  * @return string The key value.
@@ -2426,6 +2436,7 @@ function nonce_peek($nonce, $key_length) {
 /**
  * Test a nonce.
  *
+ * @since 1.9.11.11
  * @param string $key The same value used in nonce_create().
  * @param string $nonce The user input.
  * @param int    $expire Optional. Number of seconds for which any nonce having the same $key will be valid.

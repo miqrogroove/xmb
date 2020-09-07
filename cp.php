@@ -314,7 +314,7 @@ if ($action == "settings") {
         <a href="#7"><?php echo $lang['admin_main_settings7']; ?></a><br />
         </span>
         <form method="post" action="cp.php?action=settings">
-        <input type="hidden" name="token" value="<?php echo nonce_create('mainsettings'); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/settings', 'global', X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -529,7 +529,7 @@ if ($action == "settings") {
         </tr>
         <?php
     } else {
-        request_secure('mainsettings', '', X_NONCE_FORM_EXP, FALSE);
+        request_secure( 'Control Panel/settings', 'global' );
 
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
@@ -665,7 +665,7 @@ if ($action == 'rename') {
     }
 
     if (onSubmit('renamesubmit')) {
-        request_secure('renamemember', '', X_NONCE_AYS_EXP, FALSE);
+        request_secure( 'Control Panel/Rename User', '' );
         $vUserFrom = postedVar('frmUserFrom', '', TRUE, FALSE);
         $vUserTo = postedVar('frmUserTo', '', TRUE, FALSE);
         $adm = new admin();
@@ -676,7 +676,7 @@ if ($action == 'rename') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form action="cp.php?action=rename" method="post">
-        <input type="hidden" name="token" value="<?php echo nonce_create('renamemember'); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Rename User', '', X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -745,7 +745,7 @@ if ($action == 'forum') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=forum">
-        <input type="hidden" name="token" value="<?php echo nonce_create('massedforums'); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Forums', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -986,12 +986,11 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if ($fdetails && noSubmit('forumsubmit')) {
-        $key = template_key('editfid', $fdetails);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=forum&amp;fdetails=<?php echo $fdetails?>">
-        <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Forums', (string) $fdetails, X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1130,7 +1129,7 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if (onSubmit('forumsubmit') && !$fdetails) {
-        request_secure('massedforums', '', X_NONCE_FORM_EXP, FALSE);
+        request_secure( 'Control Panel/Forums', 'mass-edit' );
         $queryforum = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
@@ -1230,7 +1229,7 @@ if ($action == 'forum') {
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
-        request_secure('editfid', $fdetails, X_NONCE_FORM_EXP, FALSE);
+        request_secure( 'Control Panel/Forums', (string) $fdetails );
         $namenew = addslashes(htmlspecialchars(postedVar('namenew', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $descnew = postedVar('descnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
@@ -1461,7 +1460,7 @@ if ($action == "members") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
-            <input type="hidden" name="token" value="<?php echo nonce_create('masseditmems'); ?>" />
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Members', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
             <table cellspacing="0" cellpadding="0" border="0" width="91%" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
@@ -1583,7 +1582,7 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        request_secure('masseditmems', '', X_NONCE_FORM_EXP, FALSE);
+        request_secure( 'Control Panel/Members', 'mass-edit' );
         $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
 
         // Guarantee this request will not remove all Super Administrators.
@@ -1785,23 +1784,23 @@ if ($action == "ipban") {
 }
 
 if ($action == "deleteposts") {
-    $member = postedVar('member', '', TRUE, TRUE, FALSE, 'g');
+    $member = postedVar('member', '', true, false, false, 'g');
     if (noSubmit('yessubmit')) {
-        $key = template_key('delps', $member);
         ?>
         <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['confirmDeletePosts']; ?><br />
         <form action="cp.php?action=deleteposts&amp;member=<?php echo recodeOut($member); ?>" method="post">
-          <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
+          <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Members/Del Posts', $member, X_NONCE_AYS_EXP ); ?>" />
           <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
         </form></td></tr>
         <?php
     } elseif ($lang['textyes'] == $yessubmit) {
-        request_secure('delps', $member, X_NONCE_AYS_EXP, FALSE);
+        request_secure( 'Control Panel/Members/Del Posts', $member );
         require('include/attach-admin.inc.php');
 
         // Get TIDs
         $dirty = array();
+        $member = postedVar('member', '', true, true, false, 'g');
         $countquery = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
         while($post = $db->fetch_array($countquery)) {
             $dirty[] = $post['tid'];
@@ -1876,7 +1875,7 @@ if ($action == "upgrade") {
     }
 
     if (onSubmit('upgradesubmit')) {
-        request_secure('insertrawsql', '', X_NONCE_FORM_EXP, FALSE);
+        request_secure( 'Control Panel/Insert Raw SQL', '' );
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
             require('include/attach.inc.php');
@@ -1966,7 +1965,7 @@ if ($action == "upgrade") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=upgrade" enctype="multipart/form-data">
-        <input type="hidden" name="token" value="<?php echo nonce_create('insertrawsql'); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Insert Raw SQL', '', X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">

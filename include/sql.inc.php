@@ -324,8 +324,6 @@ function deleteSetting( string $name ) {
     $sqlname = $db->escape( $name );
 
     $db->query("DELETE FROM ".X_PREFIX."settings WHERE name = '$sqlname'");
-
-    return $db->insert_id();
 }
 
 /**
@@ -375,6 +373,53 @@ function raiseThemeVersions() {
     global $db;
 
     $db->query("UPDATE ".X_PREFIX."themes SET version = version + 1");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function addToken( string $token, string $username, string $action, string $object, int $expire ): bool {
+    global $db;
+
+    $sqltoken = $db->escape( $token );
+    $sqluser = $db->escape( $username );
+    $sqlaction = $db->escape( $action );
+    $sqlobject = $db->escape( $object );
+
+    $db->query("INSERT IGNORE INTO ".X_PREFIX."tokens SET token = '$sqltoken', username = '$sqluser', action = '$sqlaction', object = '$sqlobject', expire = $expire ");
+
+    return ($db->affected_rows() == 1);
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function deleteToken( string $token, string $username, string $action, string $object ): bool {
+    global $db;
+
+    $sqltoken = $db->escape( $token );
+    $sqluser = $db->escape( $username );
+    $sqlaction = $db->escape( $action );
+    $sqlobject = $db->escape( $object );
+
+    $db->query("DELETE FROM ".X_PREFIX."tokens WHERE token = '$sqltoken' AND username = '$sqluser' AND action = '$sqlaction' AND object = '$sqlobject'");
+
+    return ($db->affected_rows() == 1);
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function deleteTokensByDate( int $expire ) {
+    global $db;
+
+    $db->query("DELETE FROM ".X_PREFIX."tokens WHERE expire < $expire");
 }
 
 return;

@@ -185,10 +185,10 @@ switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_delete', 'tadel', min($tids));
+            $template = template_secure( 'topicadmin_delete', 'Thread Admin Options/Delete', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tadel', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Delete', (string) min( $tids ) );
             require('include/attach.inc.php');
 
             foreach($tids AS $tid) {
@@ -255,10 +255,10 @@ switch($action) {
     case 'f_close':
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_openclose', 'taclo', min($tids));
+            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/Close', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('taclo', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Close', (string) min( $tids ) );
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid IN ($csv)");
@@ -274,10 +274,10 @@ switch($action) {
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
             $lang['textclosethread'] = $lang['textopenthread'];
-            $template = template_secure('topicadmin_openclose', 'taope', min($tids));
+            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/Open', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('taope', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Open', (string) min( $tids ) );
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid IN ($csv)");
@@ -293,10 +293,10 @@ switch($action) {
         if (noSubmit('movesubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('moveto', false, false, $fid);
-            $template = template_secure('topicadmin_move', 'tamov', min($tids));
+            $template = template_secure( 'topicadmin_move', 'Thread Admin Options/Move', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tamov', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Move', (string) min( $tids ) );
             $moveto = formInt('moveto');
             $type = postedVar('type');
 
@@ -378,10 +378,10 @@ switch($action) {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_topuntop', 'tatop', min($tids));
+            $template = template_secure( 'topicadmin_topuntop', 'Thread Admin Options/Top', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tatop', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Top', (string) min( $tids ) );
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE tid=$tid");
                 if ($db->num_rows($query) == 0) {
@@ -466,10 +466,10 @@ switch($action) {
     case 'bump':
         if (noSubmit('bumpsubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_bump', 'tabum', min($tids));
+            $template = template_secure( 'topicadmin_bump', 'Thread Admin Options/Bump', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tabum', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Bump', (string) min( $tids ) );
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC, pid DESC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -495,10 +495,10 @@ switch($action) {
     case 'empty':
         if (noSubmit('emptysubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_empty', 'taemp', min($tids));
+            $template = template_secure('topicadmin_empty', 'Thread Admin Options/Empty', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('taemp', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Empty', (string) min( $tids ) );
             require('include/attach.inc.php');
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
@@ -550,10 +550,10 @@ switch($action) {
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
-            $template = template_secure('topicadmin_split', 'taspl', min($tids));
+            $template = template_secure( 'topicadmin_split', 'Thread Admin Options/Split', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('taspl', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Split', (string) min( $tids ) );
             $subject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));  // Subjects are historically double-quoted
             if ($subject == '') {
                 error($lang['textnosubject'], false);
@@ -604,10 +604,10 @@ switch($action) {
     case 'merge':
         $tid = $tids[0];
         if (noSubmit('mergesubmit')) {
-            $template = template_secure('topicadmin_merge', 'tamer', min($tids));
+            $template = template_secure('topicadmin_merge', 'Thread Admin Options/Merge', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tamer', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Merge', (string) min( $tids ) );
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
             } else if ($tid == $othertid) {
@@ -725,10 +725,10 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            $template = template_secure('topicadmin_threadprune', 'tapru', min($tids));
+            $template = template_secure( 'topicadmin_threadprune', 'Thread Admin Options/Prune', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tapru', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Prune', (string) min( $tids ) );
             $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
             $delcount = 0;
             foreach($_POST as $key=>$val) {
@@ -798,10 +798,10 @@ switch($action) {
         if (noSubmit('copysubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('newfid', false, false);
-            $template = template_secure('topicadmin_copy', 'tacop', min($tids));
+            $template = template_secure( 'topicadmin_copy', 'Thread Admin Options/Copy', (string) min( $tids ), X_NONCE_AYS_EXP );
             eval('echo "'.$template.'";');
         } else {
-            request_secure('tacop', min($tids), X_NONCE_AYS_EXP, FALSE);
+            request_secure( 'Thread Admin Options/Copy', (string) min( $tids ) );
             require('include/attach.inc.php');
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);

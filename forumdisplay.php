@@ -32,6 +32,7 @@ loadtemplates(
 'forumdisplay_sortby',
 'forumdisplay_multipage',
 'forumdisplay_multipage_admin',
+'forumdisplay_multipage_admin3',
 'forumdisplay_newpoll',
 'forumdisplay_newtopic',
 'forumdisplay_nothreads',
@@ -391,10 +392,13 @@ switch($cusdate) {
 
 eval('$sortby = "'.template('forumdisplay_sortby').'";');
 
-$multipage =& $mpage['html'];
-if (strlen($mpage['html']) != 0) {
+$mpage = $mpage['html'];
+$multipage = '';
+$multipage3 = '';
+if ( strlen( $mpage ) != 0 ) {
     if ($status1 == 'Moderator') {
         eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
+        eval('$multipage3 = "'.template('forumdisplay_multipage_admin3').'";');
     } else {
         eval('$multipage = "'.template('forumdisplay_multipage').'";');
     }

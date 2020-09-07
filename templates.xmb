@@ -173,7 +173,7 @@ $dayselect
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 <script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
@@ -239,7 +239,7 @@ $buddys[offline]
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 <script type="text/javascript" language="JavaScript" src="./js/buddylistedit.js"></script>
@@ -310,7 +310,7 @@ $buddys
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 $css
 <title>$bbname - $lang[textpowered]</title>
 </head>
@@ -334,7 +334,7 @@ $css
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 $css
 <script type="text/javascript" language="JavaScript" src="./js/buddy.js"></script>
 <title>$bbname - $lang[textbuddylist] - $lang[textpowered]</title>
@@ -594,6 +594,7 @@ textarea, select, input, object {
 }
 
 .lastpostcell img {
+    padding-left: 0.5em;
     padding-right: 0.5em;
 }
 
@@ -683,7 +684,7 @@ textarea, select, input, object {
     margin: -1em;
     padding: 1em;
 }
-.tablelinks .plainlinks a {
+.tablelinks .plainlinks a, .tablelinks .multi a {
     display: inline;
     width: unset;
     margin: 0;
@@ -703,7 +704,7 @@ textarea, select, input, object {
 @media screen and (max-width: 600px) {
     .video {
         height: 300px;
-        width: 250px;
+        width: 350px;
     }
 }
 
@@ -1436,7 +1437,11 @@ $multipage
 <td width="19%">$lang[textlastpost]</td>
 </tr>
 $threadlist
+<tr>
+<td colspan="7" class="ctrtablerow" bgcolor="$altbg2">
 $sortby
+</td>
+</tr>
 $multipage
 </table>
 </td>
@@ -1516,8 +1521,12 @@ $threadlist
 </table>
 </form>
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="ctrtablerow" bgcolor="$altbg2">
 $sortby
-$multipage
+</td>
+</tr>
+$multipage3
 </table>
 </td>
 </tr>
@@ -1543,12 +1552,17 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow" bgcolor="$altbg2">
-<td colspan="7" class="multi">&nbsp;$multipage</td>
+<td colspan="7" class="multi">&nbsp;$mpage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_multipage_admin|#*XMB TEMPLATE*#|
 <tr class="tablerow" bgcolor="$altbg2">
-<td colspan="10" class="multi">&nbsp;$multipage</td>
+<td colspan="10" class="multi">&nbsp;$mpage</td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|forumdisplay_multipage_admin3|#*XMB TEMPLATE*#|
+<tr class="tablerow" bgcolor="$altbg2">
+<td class="multi">&nbsp;$mpage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newpoll|#*XMB TEMPLATE*#|
@@ -1589,8 +1603,6 @@ $multipage
 </form>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_sortby|#*XMB TEMPLATE*#|
-<tr>
-<td colspan="10" class="ctrtablerow" bgcolor="$altbg2">
 <form method="post" action="forumdisplay.php?fid=$fid">
 <input type="hidden" name="token" value="" />
 $lang[showtopics]
@@ -1614,8 +1626,6 @@ $lang[sortby]
 </select>
 &nbsp;&nbsp;<input type="submit" class="submit" value="$lang[textgo]" />
 </form>
-</td>
-</tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_subforum|#*XMB TEMPLATE*#|
 <tr>
@@ -1837,7 +1847,7 @@ $smilies
 <head>
 $baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js?v=1.9.12"></script>
@@ -4390,7 +4400,7 @@ $self[u2ufolders]</textarea></td>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 <title>$bbname - $lang[textpowered]</title>
 <script language="JavaScript" type="text/javascript" src="./js/u2uheader.js"></script>
 $css
@@ -4562,7 +4572,7 @@ $u2usout
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 <style type="text/css">
 p {
 font-size: 14px;
@@ -5002,7 +5012,7 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <head>
 $baseelement$canonical_link
 <meta http-equiv="Content-Type" content="text/html; charset=$charset" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=500, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 <style type="text/css">
 .mediumtxt {

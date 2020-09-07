@@ -109,6 +109,7 @@ function xmb_upgrade() {
     if (count($values) > 0) {
         $values = implode(', ', $values);
         upgrade_query("INSERT INTO `".X_PREFIX."templates` (`name`, `template`) VALUES $values");
+        upgrade_query("UPDATE `".X_PREFIX."themes` SET version = version + 1");
     }
     unset($values);
     upgrade_query("DELETE FROM `".X_PREFIX."templates` WHERE name=''");
@@ -1894,6 +1895,9 @@ function upgrade_schema_to_v6() {
 
     show_progress('Releasing the lock on the themes table');
     upgrade_query('UNLOCK TABLES');
+
+    show_progress('Emptying the captcha table');
+    upgrade_query('TRUNCATE TABLE '.X_PREFIX."captchaimages");
 
     show_progress('Resetting the schema version number');
     upgrade_query("UPDATE ".X_PREFIX."settings SET value = '6' WHERE name = 'schema_version'");

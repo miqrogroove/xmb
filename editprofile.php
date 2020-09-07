@@ -226,10 +226,10 @@ if (noSubmit('editsubmit')) {
 
     $userrecode = recodeOut($member['username']);
 
-    $template = template_secure('admintool_editprofile', 'edpro', $member['uid']);
+    $template = template_secure( 'admintool_editprofile', 'Edit User Account', $member['uid'], X_NONCE_FORM_EXP );
     eval('$editpage = "'.$template.'";');
 } else {
-    request_secure('edpro', $member['uid'], X_NONCE_FORM_EXP);
+    request_secure( 'Edit User Account', $member['uid'] );
     $status = postedVar('status');
     $origstatus = $member['status'];
     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
