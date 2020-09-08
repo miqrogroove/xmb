@@ -2140,6 +2140,40 @@ $todaymembers&nbsp;
 <td bgcolor="$altbg1" colspan="2" class="mediumtxt">$memontoday</td>
 </tr>
 
+|#*XMB TEMPLATE FILE*#|lost_pw_reset|#*XMB TEMPLATE*#|
+<form method="post" action="lost.php" onsubmit="return disableButton(this);">
+<input type="hidden" name="token" value="$token" />
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category" colspan="2"><font color="$cattext"><strong>{$lang['textlostpw']}</strong></font></td>
+</tr>
+<tr>
+<td bgcolor="$altbg1" class="tablerow" colspan="2">{$lang['textlostpwnote2']}</td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['textusername']}</td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['textnewpassword']}</td>
+<td bgcolor="$altbg2"><input type="password" name="password1" size="25" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">{$lang['textpasswordcf']}</td>
+<td bgcolor="$altbg2"><input type="password" name="password2" size="25" /><br /></td>
+</tr>
+<tr class="ctrtablerow">
+<td bgcolor="$altbg2" colspan="2"><input type="submit" class="submit" name="lostpwsubmit" value="{$lang['textsubmit']}" /></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+
 |#*XMB TEMPLATE FILE*#|member_coppa|#*XMB TEMPLATE*#|
 <form method="post" action="member.php?action=reg">
 <input type="hidden" name="token" value="" />
@@ -3099,7 +3133,7 @@ $header
 </table>
 
 |#*XMB TEMPLATE FILE*#|misc_lostpw|#*XMB TEMPLATE*#|
-<form method="post" action="misc.php?action=lostpw">
+<form method="post" action="misc.php?action=lostpw" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>

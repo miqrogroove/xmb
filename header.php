@@ -456,27 +456,22 @@ if ($SETTINGS['ip_banning'] == 'on') {
     }
 }
 
-// Check if the board is offline
-if ($SETTINGS['bbstatus'] == 'off' && $serror == '') {
-    if (($action == 'login' || $action == 'lostpw') && X_SCRIPT == 'misc.php') {
+// Check other access restrictions
+if ( '' == $serror ) {
+    if ( ( $action == 'login' || $action == 'lostpw' ) && X_SCRIPT == 'misc.php' ) {
         // Allow login
-    } elseif ($SETTINGS['regstatus'] == 'on' && ($action == 'reg' || $action == 'coppa' || $action == 'captchaimage') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php')) {
-        // Allow registration
-    } else {
+    } elseif ( X_SCRIPT == 'css.php' || X_SCRIPT == 'lost.php' ) {
+        // Allow stylesheets and password resets
+    } elseif ( $SETTINGS['bbstatus'] == 'off' ) {
         // Block all non-admins
         $serror = 'bstatus';
-    }
-}
-
-// Check if the board is set to 'reg-only'
-if ($SETTINGS['regviewonly'] == 'on' && $serror == '') {
-    if (($action == 'login' || $action == 'lostpw') && X_SCRIPT == 'misc.php') {
-        // Allow login
-    } elseif ($SETTINGS['regstatus'] == 'on' && ($action == 'reg' || $action == 'coppa' || $action == 'captchaimage') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php')) {
+    } elseif ( $SETTINGS['regstatus'] == 'on' && ( $action == 'reg' || $action == 'coppa' || $action == 'captchaimage' ) && ( X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php' ) ) {
         // Allow registration
-    } else {
+    } elseif ( $SETTINGS['regviewonly'] == 'on' ) {
         // Block all guests
         $serror = 'guest';
+    } else {
+        // Allow everything else
     }
 }
 
@@ -668,13 +663,13 @@ if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
 
 switch ($serror) {
 case 'ip':
-    if (!X_ADMIN) {
+    if ( ! X_ADMIN ) {
         header('HTTP/1.0 403 Forbidden');
         error($lang['bannedmessage']);
     }
     break;
 case 'bstatus':
-    if ( ! X_ADMIN && X_SCRIPT != 'css.php' ) {
+    if ( ! X_ADMIN ) {
         header('HTTP/1.0 503 Service Unavailable');
         header('Retry-After: 3600');
         if ($bboffreason != '') {
@@ -685,7 +680,7 @@ case 'bstatus':
     }
     break;
 case 'guest':
-    if (X_GUEST) {
+    if ( X_GUEST ) {
         if ($SETTINGS['regstatus'] == 'on') {
             $message = $lang['reggedonly'].' '.$reglink.' '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         } else {

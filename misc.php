@@ -121,7 +121,7 @@ switch($action) {
                     error( $lang['bannedmessage'] );
                     break;
                 case 'password-locked':
-                    error( $lang['login-lockout'] );
+                    error( $lang['login_lockout'] );
                     break;
                 case 'login-no-input':
                 case 'bad-password':
@@ -188,7 +188,7 @@ switch($action) {
                 error($lang['badinfo']);
             }
             $email = postedVar('email');
-            $query = $db->query("SELECT username, email, pwdate, langfile, status FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
+            $query = $db->query("SELECT uid, username, email, pwdate, langfile, status FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             if ($db->num_rows($query) != 1) {
                 error($lang['badinfo']);
             }
@@ -202,28 +202,21 @@ switch($action) {
             if ($member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
             }
+            
+            \XMB\SQL\setLostPasswordDate( $member['uid'], time() );
+            $token = \XMB\Token\create( 'Lost Password', $member['username'], X_NONCE_MAX_AGE, true );
+            $link = "{$full_url}lost.php?a=$token";
 
-            $newpass = '';
-            $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
-            $get = strlen($chars) - 1;
-            for($i = 0; $i < 13; $i++) {
-                $newpass .= $chars[random_int(0, $get)];
-            }
-            $newmd5pass = md5($newpass);
-
-            $db->query("UPDATE ".X_PREFIX."members SET password='$newmd5pass', pwdate='".$onlinetime."' WHERE username='$member[username]' AND email='$member[email]'");
-
-            $lang2 = loadPhrases(array('charset','textyourpw','textyourpwis','textusername','textpassword'));
+            $lang2 = loadPhrases( ['charset', 'textyourpw', 'lostpw_body_eval'] );
             $translate = $lang2[$member['langfile']];
-            $emailuname = htmlspecialchars_decode($member['username'], ENT_QUOTES);
+            $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
             $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
-            $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $emailuname\n{$translate['textpassword']} $newpass\n\n$full_url";
+            eval( '$body = "'.$lang['lostpw_body_eval'].'";' );
             xmb_mail( $emailaddy, $subject, $body, $translate['charset'] );
 
-            $misc .= '<span class="mediumtxt"><center>'.$lang['emailpw'].'</span></center><br />';
-            $misc .= '<script>function redirect() {window.location.replace("index.php");}setTimeout("redirect();", 1250);</script>';
+            message( $lang['emailpw'] );
         }
         break;
 

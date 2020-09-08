@@ -417,7 +417,7 @@ class FormsAndCookies implements Mechanism {
 
         $member = \XMB\SQL\getMemberByName( $uinput );
         
-        if ( empty($member) ) {
+        if ( empty( $member ) ) {
             $data->status = 'bad';
             return $data;
         }

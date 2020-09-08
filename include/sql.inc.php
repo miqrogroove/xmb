@@ -290,6 +290,31 @@ function checkUpgradeOldLogin( string $username, string $password ): bool {
  *
  * @since 1.9.12
  */
+function setLostPasswordDate( int $uid, int $date ) {
+    global $db;
+    
+    $db->query("UPDATE ".X_PREFIX."members SET pwdate = $date WHERE uid = $uid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function setNewPassword( string $username, string $password ) {
+    global $db;
+    
+    $sqlpass = $db->escape( $password );
+    $sqluser = $db->escape( $username );
+
+    $db->query("UPDATE ".X_PREFIX."members SET password = '$sqlpass', bad_login_count = 0 WHERE username = '$sqluser'");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function addSetting( string $name, string $value ) {
     global $db;
 

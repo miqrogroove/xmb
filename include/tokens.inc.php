@@ -41,13 +41,14 @@ if (!defined('IN_CODE')) {
  * @param string $action The known value or purpose, such as what the nonce may be used for.  Verbose string between 5 and 32 chars required.
  * @param string $object Detailed ID of the specific item that may be used.  Empty string allowed, e.g. for object creation.
  * @param int    $ttl    Validity time in seconds.
+ * @param bool   $anonymous Optional. Must be true if intentionally setting a token for a guest user.  Useful for lost passwords.
  * @return string
  */
-function create( string $action, string $object, int $ttl ) {
+function create( string $action, string $object, int $ttl, $anonymous = false ) {
     global $db, $self;
 
-    if ( '' == $self['username'] ) {
-        trigger_error( '\XMB\Token\create() does not support guest users.', E_USER_ERROR );
+    if ( '' == $self['username'] && ! $anonymous ) {
+        trigger_error( '\XMB\Token\create() was called for a guest user with the wrong arguments.', E_USER_ERROR );
     }
     if ( strlen( $action ) > 32 || strlen( $action ) < 5 || strlen( $object ) > 32 ) {
         trigger_error( 'Invalid argument for token creation.', E_USER_ERROR );
