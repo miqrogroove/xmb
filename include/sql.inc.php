@@ -35,28 +35,6 @@ if (!defined('IN_CODE')) {
  * SQL command
  *
  * @since 1.9.12
- * @param string $username Must be HTML encoded.
- * @return array Member record or empty array.
- */
-function getMemberByName( string $username ): array {
-    global $db;
-    
-    $sqluser = $db->escape( $username );
-
-    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username = '$sqluser'");
-    if ($db->num_rows($query) == 1) {
-        $member = $db->fetch_array($query);
-    } else {
-        $member = [];
-    }
-    $db->free_result($query);
-    return $member;
-}
-
-/**
- * SQL command
- *
- * @since 1.9.12
  */
 function saveSession( string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent ): bool {
     global $db;
@@ -193,6 +171,28 @@ function getSessionReplacement( string $token, string $username ): array {
     }
     $db->free_result($query);
     return $session;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ * @param string $username Must be HTML encoded.
+ * @return array Member record or empty array.
+ */
+function getMemberByName( string $username ): array {
+    global $db;
+    
+    $sqluser = $db->escape( $username );
+
+    $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username = '$sqluser'");
+    if ($db->num_rows($query) == 1) {
+        $member = $db->fetch_array($query);
+    } else {
+        $member = [];
+    }
+    $db->free_result($query);
+    return $member;
 }
 
 /**
@@ -445,6 +445,102 @@ function deleteTokensByDate( int $expire ) {
     global $db;
 
     $db->query("DELETE FROM ".X_PREFIX."tokens WHERE expire < $expire");
+}
+
+/**
+ * SQL command
+ *
+ * @param array $values Field name & value list.
+ * @param bool $quarantine Save this record in a private table for later review?
+ * @return int Post ID number.
+ * @since 1.9.12
+ */
+function addPost( array $values, bool $quarantine = false ): int {
+    global $db;
+
+    // Required values:
+    $ints = ['fid', 'tid', 'dateline'];
+    $strings = ['author', 'message', 'subject', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff'];
+
+    $all = array_merge( $ints, $strings );
+    foreach( $all as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addPost()", E_USER_ERROR );
+    foreach( $ints as $field ) if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR );
+    foreach( $strings as $field ) {
+        if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR );
+        $db->escape_fast( $values[$field] );
+    }
+    
+    $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+
+    $db->query("INSERT INTO $table SET
+    fid = {$values['fid']},
+    tid = {$values['tid']},
+    dateline = {$values['dateline']},
+    author = '{$values['author']}',
+    message = '{$values['message']}',
+    subject = '{$values['subject']}',
+    icon = '{$values['icon']}',
+    usesig = '{$values['usesig']}',
+    useip = '{$values['useip']}',
+    bbcodeoff = '{$values['bbcodeoff']}',
+    smileyoff = '{$values['smileyoff']}'
+    ");
+
+    return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function addFavoriteIfMissing( int $tid, string $username, string $type, bool $quarantine = false ) {
+    global $db;
+
+    $sqluser = $db->escape( $username );
+    $sqltype = $db->escape( $type );
+
+    $table = $quarantine ? X_PREFIX.'hold_favorites' : X_PREFIX.'favorites';
+
+    $query = $db->query("SELECT COUNT(*) FROM $table WHERE tid = $tid AND username = '$sqluser' AND type = '$sqltype'");
+    if ( 0 == (int) $db->result($query, 0) ) {
+        $db->query("INSERT INTO $table SET tid = $tid, username = '$sqluser', type = '$sqltype'");
+    }
+    $db->free_result($query);
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function countOrphanedAttachments( int $uid, bool $quarantine = false ): int {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid" );
+    $count = (int) $db->result( $query, 0 );
+    $db->free_result($query);
+
+    return $count;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function countAttachmentsByPost( int $pid, bool $quarantine = false ): int {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE pid = $pid AND parentid = 0" );
+    $count = (int) $db->result( $query, 0 );
+    $db->free_result($query);
+
+    return $count;
 }
 
 return;

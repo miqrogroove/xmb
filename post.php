@@ -145,9 +145,11 @@ $spelling_submit2 = '';
 $subject = '';
 $suggestions = '';
 if (X_GUEST) {
+    $sql_username = 'Anonymous';
     $username = 'Anonymous';
 } else {
-    $username = $xmbuser;
+    $sql_username = $xmbuser;
+    $username = $self['username'];
 }
 
 validatePpp();
@@ -232,7 +234,8 @@ if (!ini_get('file_uploads')) {
     $attachlimits = " {$lang['attachmaxsize']} $maxsize.  {$lang['attachmaxdims']} {$SETTINGS['max_image_size']}.";
 }
 
-$posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
+$sql_posticon = postedVar('posticon', 'javascript', TRUE, TRUE, TRUE);
+$posticon = postedVar( 'posticon', 'javascript', true, false, true );
 if (!isValidFilename($posticon)) {
     $posticon = '';
 } elseif (!file_exists($smdir.'/'.$posticon)) {
@@ -473,8 +476,9 @@ switch($action) {
 
         if ($replyvalid) {
             if ($posticon != '') {
-                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
+                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$sql_posticon'");
                 if ($db->num_rows($query) == 0) {
+                    $sql_posticon = '';
                     $posticon = '';
                     $errors .= softerror($lang['error']);
                     $replyvalid = FALSE;
@@ -519,35 +523,41 @@ switch($action) {
                 }
             }
 
-            $db->escape_fast($dbmessage);
-            $db->escape_fast($dbsubject);
+            $values = [
+                'fid' => (int) $fid,
+                'tid' => (int) $tid,
+                'dateline' => $onlinetime,
+                'author' => $username,
+                'message' => $dbmessage,
+                'subject' => $dbsubject,
+                'icon' => $posticon,
+                'usesig' => $usesig,
+                'useip' => $onlineip,
+                'bbcodeoff' => $bbcodeoff,
+                'smileyoff' => $smileyoff,
+            ];
 
-            $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', $onlinetime, '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
-            $pid = $db->insert_id();
+            $pid = \XMB\SQL\addPost( $values );
 
-            $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
+            $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
             if ($moderator && $closetopic == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$username|$pid', replies=replies+1 WHERE tid=$tid");
+            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$sql_username|$pid', replies=replies+1 WHERE tid=$tid");
 
             $where = "WHERE fid=$fid";
             if ($forum['type'] == 'sub') {
                 $where .= " OR fid={$forum['fup']}";
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', posts=posts+1 $where");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', posts=posts+1 $where");
             unset($where);
 
             if ($username != 'Anonymous') {
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
 
                 if ($emailnotify == 'yes') {
-                    $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
-                    if ($db->num_rows($query) < 1) {
-                        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
-                    }
-                    $db->free_result($query);
+                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
                 }
             }
 
@@ -570,7 +580,7 @@ switch($action) {
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                                  . "FROM ".X_PREFIX."favorites f "
                                  . "INNER JOIN ".X_PREFIX."members m USING (username) "
-                                 . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$username' AND m.lastvisit >= $date");
+                                 . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
             while($subs = $db->fetch_array($subquery)) {
                 if ($viewperm < $status_enum[$subs['status']]) {
                     continue;
@@ -724,7 +734,7 @@ switch($action) {
 
             $posts = '';
 
-            if (modcheck($username, $forum['moderator']) == 'Moderator') {
+            if (modcheck($sql_username, $forum['moderator']) == 'Moderator') {
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {
                 $closeoption = '';
@@ -845,8 +855,9 @@ switch($action) {
 
         if ($topicvalid) {
             if ($posticon != '') {
-                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
+                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$sql_posticon'");
                 if ($db->num_rows($query) == 0) {
+                    $sql_posticon = '';
                     $posticon = '';
                     $errors .= softerror($lang['error']);
                     $topicvalid = FALSE;
@@ -916,15 +927,26 @@ switch($action) {
                 }
             }
 
-            $db->escape_fast($dbmessage);
-            $db->escape_fast($dbsubject);
             $db->escape_fast($dbtsubject);
 
-            $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbtsubject', '$posticon', '$thatime|$username', 0, 0, '$username', '', 0)");
+            $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbtsubject', '$sql_posticon', '$thatime|$sql_username', 0, 0, '$sql_username', '', 0)");
             $tid = $db->insert_id();
 
-            $db->query("INSERT INTO ".X_PREFIX."posts (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) VALUES ($fid, $tid, '$username', '$dbmessage', '$dbsubject', $thatime, '$posticon', '$usesig', '$onlineip', '$bbcodeoff', '$smileyoff')");
-            $pid = $db->insert_id();
+            $values = [
+                'fid' => (int) $fid,
+                'tid' => (int) $tid,
+                'dateline' => $onlinetime,
+                'author' => $username,
+                'message' => $dbmessage,
+                'subject' => $dbsubject,
+                'icon' => $posticon,
+                'usesig' => $usesig,
+                'useip' => $onlineip,
+                'bbcodeoff' => $bbcodeoff,
+                'smileyoff' => $smileyoff,
+            ];
+
+            $pid = \XMB\SQL\addPost( $values );
 
             $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid='$tid'");
 
@@ -932,7 +954,7 @@ switch($action) {
             if ($forum['type'] == 'sub') {
                 $where .= " OR fid={$forum['fup']}";
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$username|$pid', threads=threads+1, posts=posts+1 $where");
+            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', threads=threads+1, posts=posts+1 $where");
             unset($where);
 
             if ($poll == 'yes') {
@@ -963,17 +985,12 @@ switch($action) {
 
             if ($username != 'Anonymous') {
                 if ($emailnotify == 'yes') {
-                    $query = $db->query("SELECT tid FROM ".X_PREFIX."favorites WHERE tid='$tid' AND username='$username' AND type='subscription'");
-                    $thread = $db->fetch_array($query);
-                    $db->free_result($query);
-                    if (!$thread) {
-                        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($tid, '$username', 'subscription')");
-                    }
+                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
                 }
 
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$username'");
+                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
 
-                $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
+                $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
                 if ($moderator) {
                     if ($toptopic == 'yes') {
                         $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
@@ -994,8 +1011,8 @@ switch($action) {
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = addslashes($messageinput);
-                        $db->escape_fast($newdbmessage);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                            $db->escape_fast($newdbmessage);
                             $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
                         }
                     }
@@ -1099,7 +1116,7 @@ switch($action) {
                 unset($Captcha);
             }
 
-            if (modcheck($username, $forum['moderator']) == 'Moderator') {
+            if (modcheck($sql_username, $forum['moderator']) == 'Moderator') {
                 $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {
@@ -1181,8 +1198,9 @@ switch($action) {
 
         if ($editvalid) {
             if ($posticon != '') {
-                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$posticon'");
+                $query = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon' AND url='$sql_posticon'");
                 if ($db->num_rows($query) == 0) {
+                    $sql_posticon = '';
                     $posticon = '';
                     $errors .= softerror($lang['error']);
                     $editvalid = FALSE;
@@ -1234,10 +1252,10 @@ switch($action) {
                 $db->escape_fast($dbsubject);
 
                 if ($isfirstpost['pid'] == $pid) {
-                    $db->query("UPDATE ".X_PREFIX."threads SET icon='$posticon', subject='$dbsubject' WHERE tid=$tid");
+                    $db->query("UPDATE ".X_PREFIX."threads SET icon='$sql_posticon', subject='$dbsubject' WHERE tid=$tid");
                 }
 
-                $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$posticon', subject='$dbsubject' WHERE pid=$pid");
+                $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$sql_posticon', subject='$dbsubject' WHERE pid=$pid");
             } else {
                 require_once('include/attach.inc.php');
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
@@ -1289,7 +1307,7 @@ switch($action) {
         if (!$editvalid) {
             // Fill $postinfo
             if (onSubmit('editsubmit') || isset($previewpost) || $sc) {
-                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$posticon, 'dateline'=>$orig['dateline']);
+                $postinfo = array("usesig"=>$usesig, "bbcodeoff"=>$bbcodeoff, "smileyoff"=>$smileyoff, "message"=>$messageinput, "subject"=>$subjectinput, 'icon'=>$sql_posticon, 'dateline'=>$orig['dateline']);
             } else {
                 $postinfo = $orig;
                 $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.

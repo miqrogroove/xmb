@@ -60,13 +60,13 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  *
  * @param string $varname Form variable name, used in the $_FILES associative index.
  * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
+ * @param bool $quarantine Save this record in a private table for later review?
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
  */
-function attachUploadedFile($varname, $pid=0) {
+function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $db, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
-    $pid = intval($pid);
     $usedb = TRUE;
 
     if ($path !== FALSE) {
@@ -90,13 +90,11 @@ function attachUploadedFile($varname, $pid=0) {
 
     // Check maximum attachments per post
     if ($pid == 0) {
-        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
+        $count = \XMB\SQL\countOrphanedAttachments( (int) $self['uid'], $quarantine );
     } else {
-        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0";
+        $count = \XMB\SQL\countAttachmentsByPost( $pid, $quarantine );
     }
-    $query = $db->query($sql);
-    $query = $db->fetch_array($query);
-    if ($query['atcount'] >= $SETTINGS['filesperpost']) {
+    if ( $count >= $SETTINGS['filesperpost'] ) {
         return X_ATTACH_COUNT_EXCEEDED;
     }
 
@@ -109,11 +107,10 @@ function attachUploadedFile($varname, $pid=0) {
     return private_attachGenericFile($pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $_FILES[$varname]['name'], $filetype, $filesize);
 }
 
-function attachRemoteFile($url, $pid=0) {
+function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $db, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
-    $pid = intval($pid);
     $usedb = TRUE;
 
     if ($path !== FALSE) {
@@ -162,13 +159,11 @@ function attachRemoteFile($url, $pid=0) {
 
     // Check maximum attachments per post
     if ($pid == 0) {
-        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=0 AND parentid=0 AND uid={$self['uid']}";
+        $count = \XMB\SQL\countOrphanedAttachments( (int) $self['uid'], $quarantine );
     } else {
-        $sql = "SELECT COUNT(aid) AS atcount FROM ".X_PREFIX."attachments WHERE pid=$pid AND parentid=0";
+        $count = \XMB\SQL\countAttachmentsByPost( $pid, $quarantine );
     }
-    $query = $db->query($sql);
-    $query = $db->fetch_array($query);
-    if ($query['atcount'] >= $SETTINGS['filesperpost']) {
+    if ( $count >= $SETTINGS['filesperpost'] ) {
         return X_ATTACH_COUNT_EXCEEDED;
     }
 
