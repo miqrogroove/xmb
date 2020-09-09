@@ -450,12 +450,12 @@ function deleteTokensByDate( int $expire ) {
 /**
  * SQL command
  *
- * @param array $values Field name & value list.
+ * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Post ID number.
  * @since 1.9.12
  */
-function addPost( array $values, bool $quarantine = false ): int {
+function addPost( array &$values, bool $quarantine = false ): int {
     global $db;
 
     // Required values:
