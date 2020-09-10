@@ -419,7 +419,8 @@ switch($action) {
                     }
                 }
             }
-            $result = doAttachmentEdits($deletes);
+            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'] );
+            $result = doAttachmentEdits( $deletes, $aid_list );
             if ($result < 0) {
                 $errors .= softerror($attachmentErrors[$result]);
                 $replyvalid = FALSE;
@@ -619,7 +620,7 @@ switch($action) {
                         }
                     }
                 } elseif ($username != 'Anonymous') {
-                    claimOrphanedAttachments($pid);
+                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'] );
                 }
             }
 
@@ -808,7 +809,8 @@ switch($action) {
                     }
                 }
             }
-            $result = doAttachmentEdits($deletes);
+            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'] );
+            $result = doAttachmentEdits( $deletes, $aid_list );
             if ($result < 0) {
                 $errors .= softerror($attachmentErrors[$result]);
                 $topicvalid = FALSE;
@@ -1017,7 +1019,7 @@ switch($action) {
                         }
                     }
                 } elseif ($username != 'Anonymous') {
-                    claimOrphanedAttachments($pid);
+                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'] );
                 }
             }
 
@@ -1175,7 +1177,9 @@ switch($action) {
                         }
                     }
                 }
-                $result = doAttachmentEdits($deletes, $pid);
+                $children = false;
+                $aid_list = \XMB\SQL\getAttachmentIDsByPost( $pid, $children );
+                $result = doAttachmentEdits( $deletes, $aid_list, $pid );
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
                     $editvalid = FALSE;

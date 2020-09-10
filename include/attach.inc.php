@@ -64,7 +64,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
  */
 function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = false ): int {
-    global $attachmentErrors, $db, $self, $SETTINGS;
+    global $attachmentErrors, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
     $usedb = TRUE;
@@ -78,7 +78,7 @@ function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = f
         }
     }
 
-    $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+    $file = get_attached_file($varname, $filename, $filetype, $filesize, false, $usedb);
     if ($file === FALSE) {
         return $filetype;
     }
@@ -101,14 +101,14 @@ function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = f
     // Check minimum file size for disk storage
     if ($filesize < $SETTINGS['files_min_disk_size'] && !$usedb) {
         $usedb = TRUE;
-        $file = get_attached_file($varname, $filename, $filetype, $filesize, TRUE, $usedb);
+        $file = get_attached_file($varname, $filename, $filetype, $filesize, false, $usedb);
     }
 
-    return private_attachGenericFile($pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $_FILES[$varname]['name'], $filetype, $filesize);
+    return private_attachGenericFile( $pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $filetype, $filesize, $quarantine );
 }
 
 function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false ): int {
-    global $attachmentErrors, $db, $self, $SETTINGS;
+    global $attachmentErrors, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
     $usedb = TRUE;
@@ -152,7 +152,7 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
         $filename = explode('/', $filepath);
         $filename = array_pop($filename);
     }
-    $dbfilename = $db->escape($filename);
+
     if ($pid == 0 && intval($self['uid']) <= 0) {
         return X_GENERIC_ATTACH_ERROR;
     }
@@ -197,7 +197,6 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
         return X_NOT_AN_IMAGE;
     }
     $filetype = image_type_to_mime_type($result[2]);
-    $db->escape_fast($filetype);
 
     // Try to make sure the filename extension is okay
     $extension = strtolower(get_extension($filename));
@@ -217,7 +216,6 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
             $extension = '.png';
         }
         $filename .= $extension;
-        $dbfilename .= $extension;
     }
 
     // Check minimum file size for disk storage
@@ -229,8 +227,7 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
         }
     }
 
-    $db->escape_fast($file);
-    $aid = private_attachGenericFile($pid, $usedb, $file, $filepath, $dbfilename, $filename, $filetype, $filesize);
+    $aid = private_attachGenericFile( $pid, $usedb, $file, $filepath, $filename, $filetype, $filesize, $quarantine );
 
     // Clean up disk if attachment failed.
     if ($aid <= 0) {
@@ -240,11 +237,11 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
     return $aid;
 }
 
-function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilename, &$rawfilename, &$dbfiletype, $dbfilesize) {
-    global $db, $self, $SETTINGS;
+function private_attachGenericFile( int $pid, bool $usedb, string &$file, string &$filepath, string &$filename, string &$filetype, int $filesize, bool $quarantine ) {
+    global $self, $SETTINGS;
 
     // Check if we can store image metadata
-    $extension = strtolower(get_extension($rawfilename));
+    $extension = strtolower( get_extension( $filename ) );
     $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
     if (in_array($extension, $img_extensions)) {
         $result = getimagesize($filepath);
@@ -254,63 +251,58 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
 
     $sqlsize = '';
     if ($result !== FALSE) {
-        $imgSize = new CartesianSize($result[0], $result[1]);
-        $sqlsize = $result[0].'x'.$result[1];
+        $imgSize = new CartesianSize();
+        $imgSize->fromArray( $result );
+        $sqlsize = (string) $imgSize;
 
-        $maxsize = explode('x', $SETTINGS['max_image_size']);
-        if ($maxsize[0] > 0 && $maxsize[1] > 0) {
-            $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
-            if ($imgSize->isBiggerThan($maxImgSize)) {
+        $maxImgSize = new CartesianSize();
+        if ( $maxImgSize->fromString( $SETTINGS['max_image_size'] ) ) {
+            if ( $imgSize->isBiggerThan( $maxImgSize ) ) {
                 return X_IMAGE_DIMS_EXCEEDED;
             }
         }
 
         // Coerce filename extension and mime type when they are incorrect.
-        $filetypei = strtolower($dbfiletype);
+        $filetypei = strtolower( $filetype );
         switch($result[2]) {
         case IMAGETYPE_JPEG:
             if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
-                $dbfilename .= '.jpg';
-                $rawfilename .= '.jpg';
+                $filename .= '.jpg';
             }
             if (strpos($filetypei, 'jpeg') === FALSE) {
-                $dbfiletype = 'image/jpeg';
+                $filetype = 'image/jpeg';
             }
             break;
         case IMAGETYPE_GIF:
             if ($extension != 'gif') {
-                $dbfilename .= '.gif';
-                $rawfilename .= '.gif';
+                $filename .= '.gif';
             }
             if (strpos($filetypei, 'gif') === FALSE) {
-                $dbfiletype = 'image/gif';
+                $filetype = 'image/gif';
             }
             break;
         case IMAGETYPE_PNG:
             if ($extension != 'png') {
-                $dbfilename .= '.png';
-                $rawfilename .= '.png';
+                $filename .= '.png';
             }
             if (strpos($filetypei, 'png') === FALSE) {
-                $dbfiletype = 'image/png';
+                $filetype = 'image/png';
             }
             break;
         case IMAGETYPE_BMP:
             if ($extension != 'bmp') {
-                $dbfilename .= '.bmp';
-                $rawfilename .= '.bmp';
+                $filename .= '.bmp';
             }
             if (strpos($filetypei, 'bmp') === FALSE) {
-                $dbfiletype = 'image/bmp';
+                $filetype = 'image/bmp';
             }
             break;
-        case 15: //IMAGETYPE_WBMP
+        case IMAGETYPE_WBMP: // Added in PHP 4.4.
             if ($extension != 'wbmp' && $extension != 'wbm') {
-                $dbfilename .= '.wbmp';
-                $rawfilename .= '.wbmp';
+                $filename .= '.wbmp';
             }
             if (strpos($filetypei, 'wbmp') === FALSE) {
-                $dbfiletype = 'image/vnd.wap.wbmp';
+                $filetype = 'image/vnd.wap.wbmp';
             }
             break;
         }
@@ -320,28 +312,35 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     if ($usedb) {
         $subdir = '';
     } else {
-        $dbfile = '';
+        $file = '';
         $subdir = getNewSubdir();
-        $path = getFullPathFromSubdir($subdir, TRUE);
     }
-    $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, img_size, subdir) VALUES ($pid, '$dbfilename', '$dbfiletype', $dbfilesize, '$dbfile', {$self['uid']}, '$sqlsize', '$subdir')");
-    $dbfile = '';
-    if ($db->affected_rows() == 1) {
-        $aid = $db->insert_id();
-    } else {
-        return X_GENERIC_ATTACH_ERROR;
-    }
+
+    $values = [
+        'pid' => $pid,
+        'filename' => $filename,
+        'filetype' => $filetype,
+        'filesize' => (string) $filesize,
+        'attachment' => &$file,
+        'uid' => (int) $self['uid'],
+        'img_size' => $sqlsize,
+        'subdir' => $subdir,
+    ];
+
+    $aid = \XMB\SQL\addAttachment( $values, $quarantine );
+
     if ($usedb) {
+        $file = '';
         $path = $filepath;
     } else {
         $newfilename = $aid;
-        $path .= $newfilename;
+        $path = getFullPathFromSubdir($subdir, TRUE) . $newfilename;
         rename($filepath, $path);
     }
 
     // Make Thumbnail
     if ($result !== FALSE) {
-        createThumbnail($rawfilename, $path, $dbfilesize, $imgSize, '', $aid, $pid, $subdir);
+        createThumbnail( $filename, $path, $filesize, $imgSize, $quarantine, $aid, $pid, $subdir );
     }
 
     // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
@@ -352,59 +351,78 @@ function private_attachGenericFile($pid, $usedb, &$dbfile, &$filepath, &$dbfilen
     return $aid;
 }
 
+/**
+ * DEPRECATED by XMB 1.9.12
+ *
+ * \XMB\SQL\claimOrphanedAttachments() replaces this function.
+ */
 function claimOrphanedAttachments($pid) {
     global $db, $self;
+    
+    trigger_error( 'claimOrphanedAttachments() is deprecated in this version of XMB.', E_USER_DEPRECATED );
+    
     $pid = intval($pid);
     $db->query("UPDATE ".X_PREFIX."attachments SET pid=$pid WHERE pid=0 AND uid={$self['uid']}");
 }
 
-function doAttachmentEdits(&$deletes, $pid=0) {
-    $return = TRUE;
+/**
+ * Handle user inputs related to post editing.
+ *
+ * @param array $deletes    Returns a list of deleted attachment IDs, by reference.
+ * @param array $aid_list   List of attachment IDs related to the current post.
+ * @param int   $pid        Optional. PID of the related post. Attachment becomes orphaned if omitted.
+ * @param bool  $quarantine Save this record in a private table for later review?
+ * @return mixed
+ */
+function doAttachmentEdits( &$deletes, array $aid_list, int $pid = 0, bool $quarantine = false ) {
+    $return = true;
     $deletes = array();
-    if (isset($_POST['attachment']) && is_array($_POST['attachment'])) {
-        $pid = intval($pid);
-        foreach($_POST['attachment'] as $aid => $attachment) {
-            switch($attachment['action']) {
-            case 'replace':
-                deleteAttachment($aid, $pid);
-                $deletes[] = $aid;
-                $status = attachUploadedFile('replace_'.$aid, $pid);
-                if ($status < 0 && $status != X_EMPTY_UPLOAD) {
-                    $return = $status;
-                }
-                break;
-            case 'rename':
-                $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
-                $status = renameAttachment($aid, $pid, $rename);
-                if ($status < 0) {
-                    $return = $status;
-                }
-                break;
-            case 'delete':
-                deleteAttachment($aid, $pid);
-                $deletes[] = $aid;
-                break;
-            default:
-                break;
+    if ( ! isset( $_POST['attachment'] ) ) {
+        return $return;
+    }
+    if ( ! is_array( $_POST['attachment'] ) ) {
+        return $return;
+    }
+    foreach( $_POST['attachment'] as $aid => $attachment ) {
+        if ( false === array_search( $aid, $aid_list ) ) {
+            continue;
+        }
+        switch($attachment['action']) {
+        case 'replace':
+            deleteAttachment( $aid, $quarantine );
+            $deletes[] = $aid;
+            $status = attachUploadedFile( 'replace_'.$aid, $pid, $quarantine );
+            if ($status < 0 && $status != X_EMPTY_UPLOAD) {
+                $return = $status;
             }
+            break;
+        case 'rename':
+            $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
+            $status = renameAttachment( $aid, $pid, $rename, $quarantine );
+            if ($status < 0) {
+                $return = $status;
+            }
+            break;
+        case 'delete':
+            deleteAttachment( $aid, $quarantine );
+            $deletes[] = $aid;
+            break;
+        default:
+            break;
         }
     }
     return $return;
 }
 
-function renameAttachment($aid, $pid, $rawnewname) {
-    global $db;
-    if (isValidFilename($rawnewname)) {
-        $aid = intval($aid);
-        $pid = intval($pid);
-        $extension = strtolower(get_extension($rawnewname));
-        $db->escape_fast($rawnewname);
-        $db->query("UPDATE ".X_PREFIX."attachments SET filename='$rawnewname' WHERE aid=$aid AND pid=$pid");
+function renameAttachment( int $aid, int $pid, string $newname, bool $quarantine = false ) {
+    if ( isValidFilename( $newname ) ) {
+        \XMB\SQL\renameAttachment( $aid, $newname, $quarantine );
+
+        $extension = strtolower( get_extension( $newname ) );
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if (in_array($extension, $img_extensions)) {
-            $query = $db->query("SELECT aid FROM ".X_PREFIX."attachments WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
-            if ($db->num_rows($query) == 0) {
-                regenerateThumbnail($aid, $pid);
+            if ( 0 == \XMB\SQL\countThumbnails( $aid, $quarantine ) ) {
+                regenerateThumbnail( $aid, $pid, $quarantine );
             }
         }
         return TRUE;
@@ -464,31 +482,36 @@ function private_copyDiskAttachment($fromaid, $toaid, $subdir) {
     }
 }
 
-function deleteAttachment($aid, $pid) {
-    $aid = intval($aid);
-    $pid = intval($pid);
-    private_deleteAttachments("WHERE (aid=$aid OR parentid=$aid) AND pid=$pid");
+function deleteAttachment( int $aid, bool $quarantine = false ) {
+    $thumbs_only = false;
+    $aid_list = \XMB\SQL\getAttachmentChildIDs( $aid, $thumbs_only, $quarantine );
+    $aid_list[] = $aid;
+    private_deleteAttachments( $aid_list, $quarantine );
 }
 
-function deleteAllAttachments($pid) {
-    $pid = intval($pid);
-    private_deleteAttachments("WHERE pid=$pid");
+function deleteAllAttachments( int $pid, bool $quarantine = false ) {
+    $children = true;
+    $aid_list = \XMB\SQL\getAttachmentIDsByPost( $pid, $children, $quarantine );
+    private_deleteAttachments( $aid_list, $quarantine );
 }
 
 // Important: call deleteThreadAttachments() BEFORE deleting posts, because it uses a multi-table query.
-function deleteThreadAttachments($tid) {
-    $tid = intval($tid);
-    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts USING (pid) WHERE tid=$tid");
-}
-function emptyThreadAttachments($tid, $pid) {
-    $tid = intval($tid);
-    $pid = intval($pid);
-    private_deleteAttachments("INNER JOIN ".X_PREFIX."posts AS p USING (pid) WHERE p.tid=$tid AND p.pid!=$pid");
+function deleteThreadAttachments( int $tid, bool $quarantine = false ) {
+    $tid_list = [ $tid ];
+    $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine );
+    private_deleteAttachments( $aid_list, $quarantine );
 }
 
-function private_deleteAttachments($where) {
+function emptyThreadAttachments( int $tid, int $notpid, bool $quarantine = false ) {
+    $tid_list = [ $tid ];
+    $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine, $notpid );
+    private_deleteAttachments( $aid_list, $quarantine );
+}
+
+function private_deleteAttachments( array $aid_list, bool $quarantine = false ) {
     global $db;
-    $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments $where");
+    
+    $query = \XMB\SQL\getAttachmentPaths( $aid_list, $quarantine );
     while($attachment = $db->fetch_array($query)) {
         $path = getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
         if ($path !== FALSE) {
@@ -498,8 +521,9 @@ function private_deleteAttachments($where) {
             }
         }
     }
+    $db->free_result( $query );
 
-    $db->query("DELETE ".X_PREFIX."attachments FROM ".X_PREFIX."attachments $where");
+    \XMB\SQL\deleteAttachmentsByID( $aid_list, $quarantine );
 }
 
 /**
@@ -510,15 +534,19 @@ function private_deleteAttachments($where) {
  * All return values must be treated as invalid if (FALSE === get_attached_file(...)).
  *
  * @param string $varname The name of the file input on the form.
- * @param string $filename Variable Required. Returns the filename provided by the user. Uses param $dbescape.
- * @param string|int $filetype Variable Required. Returns the MIME type provided by the user on success. Returns one of the $attachmentErrors constants on failure. Uses param $dbescape.
+ * @param string $filename Variable Required. Returns the filename provided by the user.
+ * @param string|int $filetype Variable Required. Returns the MIME type provided by the user on success. Returns one of the $attachmentErrors constants on failure.
  * @param int    $filesize Variable Required. Returns the actual byte size of the uploaded file.
- * @param bool   $dbescape Optional. When set to TRUE, the string parameters and the return value itself will all be SQL sanitized.
+ * @param bool   $dbescape Ignored.
  * @param bool   $loadfile Optional. When set to TRUE, the uploaded file will be loaded into memory and returned as a string value.
- * @return string|bool The uploaded file or an empty string will be returned on success. FALSE on failure. Uses params $dbescape and $loadfile.
+ * @return string|bool The uploaded file or an empty string will be returned on success. FALSE on failure. Uses param $loadfile.
  */
-function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbescape=TRUE, $loadfile=TRUE) {
-    global $db, $SETTINGS;
+function get_attached_file($varname, &$filename, &$filetype, &$filesize, bool $dbescape = false, $loadfile=TRUE) {
+    global $SETTINGS;
+
+    if ( $dbescape ) {
+        trigger_error( 'The dbescape param is deprecated in this version of XMB.', E_USER_DEPRECATED );
+    }
 
     // Initialize Return Values
     $attachment = '';
@@ -600,12 +628,6 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, $dbesca
     }
     $filename = $file['name'];
     $filetype = preg_replace('#[\\x00\\r\\n%]#', '', $file['type']);
-
-    if ($dbescape) {
-        $db->escape_fast($attachment);
-        $db->escape_fast($filename);
-        $db->escape_fast($filetype);
-    }
 
     return $attachment;
 }
@@ -737,28 +759,27 @@ function getTempFile($path=FALSE) {
  * The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
  * Otherwise, the thumbnail will simply be saved to disk at $filepath.'-thumb.jpg'
  *
- * @param string $filename Original name of the input file.
- * @param string $filepath Current name and location (full path) of the input file.
- * @param int    $filesize The size, in bytes, that you want printed on the thumbnail.
- * @param object $imgSize  Caller must construct a CartesianSize object to specify the dimensions of the input image.
- * @param string $dep1     This parameter is ignored.
- * @param int    $aid      Optional. AID to be used as the parentid if attaching the thumbnail to a post.
- * @param int    $pid      Optional. PID to attach the thumbnail to.
- * @param string $subdir   Optional. Subdirectory to use inside the file storage path, or null string to store it in the database.
+ * @param string $filename   Original name of the input file.
+ * @param string $filepath   Current name and location (full path) of the input file.
+ * @param int    $filesize   The size, in bytes, that you want printed on the thumbnail.
+ * @param object $imgSize    Caller must construct a CartesianSize object to specify the dimensions of the input image.
+ * @param bool   $quarantine Save this record in a private table for later review?
+ * @param int    $aid        Optional. AID to be used as the parentid if attaching the thumbnail to a post.
+ * @param int    $pid        Optional. PID to attach the thumbnail to.
+ * @param string $subdir     Optional. Subdirectory to use inside the file storage path, or null string to store it in the database.
  * @return bool
  */
-function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=0, $pid=0, $subdir='') {
-    global $db, $self, $SETTINGS;
+function createThumbnail( string $filename, string $filepath, int $filesize, CartesianSize $imgSize, bool $quarantine = false, int $aid = 0, int $pid = 0, string $subdir = '') {
+    global $self, $SETTINGS;
 
     // Determine if a thumbnail is needed.
-    $result = explode('x', $SETTINGS['max_thumb_size']);
-    if ($result[0] > 0 && $result[1] > 0) {
-        $thumbSize = new CartesianSize($result[0], $result[1]);
-    } else {
-        return FALSE;
+    $thumbSize = new CartesianSize();
+    if ( ! $thumbSize->fromString( $SETTINGS['max_thumb_size'] ) ) {
+        // This setting is invalid.
+        return false;
     }
 
-    $thumb = load_and_resize_image($filepath, $thumbSize->width, $thumbSize->height);
+    $thumb = load_and_resize_image( $filepath, $thumbSize );
 
     if (FALSE === $thumb) {
         return FALSE;
@@ -766,15 +787,14 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=
 
     // Write full size and dimensions on thumbnail
     if (function_exists('imagefttext')) {
-        $string = getSizeFormatted($filesize).' '.$imgSize->width.'x'.$imgSize->height;
+        $string = getSizeFormatted($filesize).' '.$imgSize;
         $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
-        imagefilledrectangle($thumb, 0, $thumbSize->height - 20, $thumbSize->width, $thumbSize->height, $grey);
-        imagefttext($thumb, 10, 0, 5, $thumbSize->height - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
+        imagefilledrectangle($thumb, 0, $thumbSize->getHeight() - 20, $thumbSize->getWidth(), $thumbSize->getHeight(), $grey);
+        imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
     }
 
     $filepath .= '-thumb.jpg';
     $filename .= '-thumb.jpg';
-    $db->escape_fast($filename);
 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
@@ -783,7 +803,7 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=
     // Gather metadata
     $filesize = intval(filesize($filepath));
     $filetype = 'image/jpeg';
-    $sqlsize = $thumbSize->width.'x'.$thumbSize->height;
+    $sqlsize = (string) $thumbSize;
 
     // Attach thumbnail to the post
     if ($aid != 0) {
@@ -796,24 +816,31 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=
         // Add database record
         if ($subdir == '') {
             $file = file_get_contents($filepath);
-            $db->escape_fast($file);
             unlink($filepath);
         } else {
             $file = '';
         }
-        $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, uid, parentid, img_size, subdir) VALUES ($pid, '$filename', '$filetype', $filesize, '$file', {$self['uid']}, $aid, '$sqlsize', '$subdir')");
-        unset($file);
-        if ($db->affected_rows() == 1) {
-            $aid = $db->insert_id();
-        } else {
-            return FALSE;
-        }
+
+        $values = [
+            'pid' => $pid,
+            'filename' => $filename,
+            'filetype' => $filetype,
+            'filesize' => (string) $filesize,
+            'attachment' => &$file,
+            'uid' => (int) $self['uid'],
+            'parentid' => $aid,
+            'img_size' => $sqlsize,
+            'subdir' => $subdir,
+        ];
+
+        $aid = \XMB\SQL\addAttachment( $values, $quarantine );
+
         if ($subdir != '') {
             $newfilename = $aid;
-            rename($filepath, getFullPathFromSubdir($subdir).$newfilename);
+            rename( $filepath, getFullPathFromSubdir( $subdir ) . $newfilename );
         }
     }
-    return TRUE;
+    return true;
 }
 
 /**
@@ -821,13 +848,12 @@ function createThumbnail($filename, $filepath, $filesize, $imgSize, $dep1, $aid=
  *
  * @since 1.9.11.12
  * @param string $path Current name and location (full path) of the input file.
- * @param int    $width Takes the width limit.  Returns the actual width.
- * @param int    $height Takes the height limit.  Returns the actual height.
+ * @param object $thumbMaxSize Takes the size limit.  Returns the actual size.
  * @param bool   $load_if_smaller Do you want to load the image if it's smaller than both $width and $height?
  * @param bool   $enlarge_if_smaller Do you want to resize the image if it's smaller than both $width and $height?
  * @return resource|bool The image GD resource on success.  FALSE when $path is not an image file, or if the image is larger than $SETTINGS['max_image_size'].
  */
-function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALSE, $enlarge_if_smaller = FALSE) {
+function load_and_resize_image( string $path, CartesianSize &$thumbMaxSize, bool $load_if_smaller = FALSE, bool $enlarge_if_smaller = FALSE) {
     global $SETTINGS;
 
     // Check if GD is available
@@ -841,12 +867,12 @@ function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALS
         return FALSE;
     }
 
-    $imgSize = new CartesianSize($result[0], $result[1]);
+    $imgSize = new CartesianSize();
+    $imgSize->fromArray( $result );
 
-    $maxsize = explode('x', $SETTINGS['max_image_size']);
-    if ($maxsize[0] > 0 && $maxsize[1] > 0) {
-        $maxImgSize = new CartesianSize($maxsize[0], $maxsize[1]);
-        if ($imgSize->isBiggerThan($maxImgSize)) {
+    $maxImgSize = new CartesianSize();
+    if ( $maxImgSize->fromString( $SETTINGS['max_image_size'] ) ) {
+        if ( $imgSize->isBiggerThan( $maxImgSize ) ) {
             return FALSE;
         }
     }
@@ -888,55 +914,47 @@ function load_and_resize_image($path, &$width, &$height, $load_if_smaller = FALS
     }
 
     // Determine if a thumbnail is needed.
-    $thumbMaxSize = new CartesianSize($width, $height);
-
     if ($imgSize->isSmallerThan($thumbMaxSize)) {
         if (!$load_if_smaller) {
             return FALSE;
         } elseif (!$enlarge_if_smaller) {
-            $width  = $imgSize->width;
-            $height = $imgSize->height;
+            $thumbMaxSize = $imgSize;
             return $img;
         }
     }
 
     // Create a thumbnail for this attachment.
     if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
-        $thumbSize = new CartesianSize($thumbMaxSize->width, round($thumbMaxSize->width / $imgSize->aspect()));
+        $thumbSize = new CartesianSize($thumbMaxSize->getWidth(), round($thumbMaxSize->getWidth() / $imgSize->aspect()));
     } else {
-        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->height), $thumbMaxSize->height);
+        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->getHeight() ), $thumbMaxSize->getHeight() );
     }
 
-    $thumb = imagecreatetruecolor($thumbSize->width, $thumbSize->height);
+    $thumb = imagecreatetruecolor($thumbSize->getWidth(), $thumbSize->getHeight());
 
     // Resize $img
-    if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->width, $thumbSize->height, $imgSize->width, $imgSize->height)) {
+    if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
         return FALSE;
     }
 
     imagedestroy($img);
 
-    $width  = $thumbSize->width;
-    $height = $thumbSize->height;
+    $thumbMaxSize = $thumbSize;
     return $thumb;
 }
 
-function regenerateThumbnail($aid, $pid) {
-    global $db, $SETTINGS;
-    $aid = intval($aid);
-    $pid = intval($pid);
+function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
+    global $SETTINGS;
 
     // Initialize
     $path = getFullPathFromSubdir('');
     $usedb = TRUE;
 
     // Write attachment to disk
-    $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
-    if ($db->num_rows($query) != 1) {
-        return FALSE;
+    $attach = getAttachment( $aid );
+    if ( empty( $attach ) ) {
+        return false;
     }
-    $attach = $db->fetch_array($query);
-    $db->free_result($query);
     if ($attach['subdir'] == '') {
         if (strlen($attach['attachment']) != $attach['filesize']) {
             return FALSE;
@@ -976,13 +994,13 @@ function regenerateThumbnail($aid, $pid) {
         }
         return FALSE;
     }
-    $imgSize = new CartesianSize($result[0], $result[1]);
-    $sqlsize = $result[0].'x'.$result[1];
+    $imgSize = new CartesianSize();
+    $imgSize->fromArray( $result );
+    $sqlsize = (string) $imgSize;
 
-    $result = explode('x', $SETTINGS['max_image_size']);
-    if ($result[0] > 0 && $result[1] > 0) {
-        $maxImgSize = new CartesianSize($result[0], $result[1]);
-        if ($imgSize->isBiggerThan($maxImgSize)) {
+    $maxImgSize = new CartesianSize();
+    if ( $maxImgSize->fromString( $SETTINGS['max_image_size'] ) ) {
+        if ( $imgSize->isBiggerThan( $maxImgSize ) ) {
             if ($attach['subdir'] == '') {
                 unlink($path);
             }
@@ -990,12 +1008,12 @@ function regenerateThumbnail($aid, $pid) {
         }
     }
 
-    if ($attach['img_size'] != $sqlsize) {
-        $db->query("UPDATE ".X_PREFIX."attachments SET img_size='$sqlsize' WHERE aid=$aid AND pid=$pid");
+    if ( $attach['img_size'] != $sqlsize ) {
+        \XMB\SQL\setImageDims( $aid, $sqlsize );
     }
 
-    deleteThumbnail($aid, $pid);
-    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, '', $aid, $pid, $attach['subdir']);
+    deleteThumbnail( $aid, $quarantine );
+    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $quarantine, $aid, $pid, $attach['subdir']);
 
     // Clean up temp files
     if ($attach['subdir'] == '') {
@@ -1004,43 +1022,58 @@ function regenerateThumbnail($aid, $pid) {
     return TRUE;
 }
 
-function deleteThumbnail($aid, $pid) {
-    $aid = intval($aid);
-    $pid = intval($pid);
-    private_deleteAttachments("WHERE parentid=$aid AND pid=$pid AND filename LIKE '%-thumb.jpg'");
+function deleteThumbnail( int $aid, bool $quarantine = false ) {
+    $thumbs = true;
+    $aid_list = \XMB\SQL\getAttachmentChildIDs( $aid, $thumbs, $quarantine );
+    private_deleteAttachments( $aid_list, $quarantine );
 }
 
 /**
  * Rectangluar dimension object for simple operations and properties.
  */
 class CartesianSize {
-    var $height;
-    var $width;
+    private $height;
+    private $width;
 
-    // PHP 5+
-    function __construct($width, $height) {
-        $this->height = intval($height);
-        $this->width = intval($width);
+    public function __construct( int $width = 0, int $height = 0 ) {
+        $this->height = $height;
+        $this->width = $width;
     }
 
-    // PHP 4
-    function CartesianSize($width, $height) {
-        $this->__construct($width, $height);
-    }
-
-    function aspect() {
-        // Read-Only Property
+    public function aspect() {
         return $this->width / $this->height;
     }
 
-    function isBiggerThan($otherSize) {
-        // Would overload '>' operator
-        return ($this->width > $otherSize->width || $this->height > $otherSize->height);
+    public function getHeight(): int {
+        return $this->height;
     }
 
-    function isSmallerThan($otherSize) {
+    public function getWidth(): int {
+        return $this->width;
+    }
+
+    public function isBiggerThan( CartesianSize $otherSize ) {
+        // Would overload '>' operator
+        return ( $this->width > $otherSize->getWidth() || $this->height > $otherSize->getHeight() );
+    }
+
+    public function isSmallerThan( CartesianSize $otherSize ) {
         // Would overload '<=' operator
-        return ($this->width <= $otherSize->width && $this->height <= $otherSize->height);
+        return ( $this->width <= $otherSize->getWidth() && $this->height <= $otherSize->getHeight() );
+    }
+    
+    public function fromArray( array $input ): bool {
+        $this->width = (int) $input[0];
+        $this->height = (int) $input[1];
+        return ( $this->width > 0 && $this->height > 0 );
+    }
+    
+    public function fromString( string $input ): bool {
+        return $this->fromArray( explode('x', $input) );
+    }
+    
+    public function __toString(): string {
+        return $this->width . 'x' . $this->height;
     }
 }
 

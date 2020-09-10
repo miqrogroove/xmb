@@ -450,10 +450,10 @@ function deleteTokensByDate( int $expire ) {
 /**
  * SQL command
  *
+ * @since 1.9.12
  * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Post ID number.
- * @since 1.9.12
  */
 function addPost( array &$values, bool $quarantine = false ): int {
     global $db;
@@ -513,6 +513,131 @@ function addFavoriteIfMissing( int $tid, string $username, string $type, bool $q
  * SQL command
  *
  * @since 1.9.12
+ * @param array $values Field name & value list. Passed by reference and modified. Expects 'attachment' to be assigned by reference for performance.
+ * @param bool $quarantine Save this record in a private table for later review?
+ * @return int Attachment ID number.
+ */
+function addAttachment( array &$values, bool $quarantine = false ): int {
+    global $db;
+
+    // Required values:
+    $req = ['filename', 'filetype', 'filesize', 'subdir', 'uid'];
+
+    // Optional values:
+    // pid, attachment, img_size, parentid
+
+    // Types:
+    $ints = ['pid', 'parentid', 'uid'];
+    $strings = ['filename', 'filetype', 'filesize', 'attachment', 'img_size', 'subdir'];
+
+    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
+    foreach( $ints as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
+        } else {
+            $values[$field] = 0;
+        }
+    }
+    foreach( $strings as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
+            $db->escape_fast( $values[$field] );
+        } else {
+            $values[$field] = '';
+        }
+    }
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query("INSERT INTO $table SET
+    pid = {$values['pid']},
+    parentid = {$values['parentid']},
+    uid = {$values['uid']},
+    filename = '{$values['filename']}',
+    filetype = '{$values['filetype']}',
+    filesize = '{$values['filesize']}',
+    attachment = '{$values['attachment']}',
+    img_size = '{$values['img_size']}',
+    subdir = '{$values['subdir']}'
+    ");
+
+    return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachment( int $aid, bool $quarantine = false ): array {
+    global $db;
+    
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM $table WHERE aid = $aid");
+    if ($db->num_rows($query) == 1) {
+        $result = $db->fetch_array($query);
+    } else {
+        $result = [];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function deleteAttachmentsByID( array $aid_list, bool $quarantine = false ) {
+    global $db;
+
+    if ( empty( $aid_list ) ) return;
+
+    $ids = array_map( 'intval', $aid_list );
+    $ids = implode( ",", $ids );
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query("DELETE FROM $table WHERE aid IN ($ids)");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentPaths( array $aid_list, bool $quarantine = false ) {
+    global $db;
+
+    if ( empty( $aid_list ) ) return;
+
+    $ids = array_map( 'intval', $aid_list );
+    $ids = implode( ",", $ids );
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    return $db->query("SELECT aid, subdir FROM $table WHERE aid IN ($ids)");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function claimOrphanedAttachments( int $pid, int $uid, bool $quarantine = false ) {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query("UPDATE $table SET pid = $pid WHERE pid = 0 AND uid = $uid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
  */
 function countOrphanedAttachments( int $uid, bool $quarantine = false ): int {
     global $db;
@@ -541,6 +666,191 @@ function countAttachmentsByPost( int $pid, bool $quarantine = false ): int {
     $db->free_result($query);
 
     return $count;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function countThumbnails( int $aid, bool $quarantine = false ): int {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE parentid = $aid AND filename LIKE '%-thumb.jpg'" );
+    $count = (int) $db->result( $query, 0 );
+    $db->free_result($query);
+
+    return $count;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentChildIDs( int $aid, bool $thumbnails_only, bool $quarantine = false ): array {
+    global $db;
+
+    $result = [];
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+    
+    if ( $thumbnails_only ) {
+        $where = "AND filename LIKE '%-thumb.jpg'";
+    } else {
+        $where = '';
+    }
+
+    $query = $db->query( "SELECT aid FROM $table WHERE parentid = $aid $where" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getOrphanedAttachmentIDs( int $uid, bool $quarantine = false ): array {
+    global $db;
+
+    $result = [];
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query( "SELECT aid FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentIDsByPost( int $pid, bool $include_children, bool $quarantine = false ): array {
+    global $db;
+
+    $result = [];
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    if ( $include_children ) {
+        $where = '';
+    } else {
+        $where = 'AND parentid = 0';
+    }
+
+    $query = $db->query( "SELECT aid FROM $table WHERE pid = $pid $where" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentIDsByThread( array $tid_list, bool $quarantine = false, int $notpid = 0 ): array {
+    global $db;
+
+    $result = [];
+
+    if ( empty( $tid_list ) ) return $result;
+
+    $ids = array_map( 'intval', $tid_list );
+    $ids = implode( ",", $ids );
+
+    $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+    $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+    
+    if ( 0 == $notpid ) {
+        $where = '';
+    } else {
+        $where = "AND p.pid != $notpid";
+    }
+
+    $query = $db->query( "SELECT a.aid FROM $table1 AS a INNER JOIN $table2 AS p USING (pid) WHERE p.tid IN ($ids) $where" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentIDsByUser( string $username, bool $quarantine = false ): array {
+    global $db;
+
+    $sqluser = $db->escape( $username );
+
+    $result = [];
+
+    $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+    $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+    
+    $query = $db->query( "SELECT aid FROM $table1 INNER JOIN $table2 USING (pid) WHERE author = '$sqluser'" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    $query = $db->query( "SELECT aid FROM $table1 INNER JOIN ".X_PREFIX."members USING (uid) WHERE username = '$sqluser'" );
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row['aid'];
+    }
+    $db->free_result($query);
+
+    return array_unique( $result );
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function renameAttachment( int $aid, string $name, bool $quarantine = false ) {
+    global $db;
+
+    $sqlname = $db->escape( $name );
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query( "UPDATE $table SET filename='$sqlname' WHERE aid = $aid" );
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function setImageDims( int $aid, string $img_size, bool $quarantine = false ) {
+    global $db;
+
+    $sqlsize = $db->escape( $img_size );
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query( "UPDATE $table SET img_size='$sqlsize' WHERE aid = $aid" );
 }
 
 return;

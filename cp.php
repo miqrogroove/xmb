@@ -1800,7 +1800,8 @@ if ($action == "deleteposts") {
 
         // Get TIDs
         $dirty = array();
-        $member = postedVar('member', '', true, true, false, 'g');
+        $rawuser = $member = postedVar('member', '', true, false, false, 'g');
+        $member = $db->escape( $rawuser );
         $countquery = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
         while($post = $db->fetch_array($countquery)) {
             $dirty[] = $post['tid'];
@@ -1819,7 +1820,7 @@ if ($action == "deleteposts") {
         }
 
         // Delete Member's Posts
-        deleteAttachmentsByUser($member);
+        deleteAttachmentsByUser( $rawuser );
         $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
         $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
 

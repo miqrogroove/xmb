@@ -1770,10 +1770,10 @@ if ($action == "prune") {
                     $tids[] = $t['tid'];
                     $fids[] = $t['fid'];
                 }
-                $tids = implode(',', $tids);
                 set_time_limit(30); // Potentially expensive operations coming up.
-                deleteMultiThreadAttachments($tids); // Must delete attachments before posts!
+                deleteMultiThreadAttachments( $tids ); // Must delete attachments before posts!
                 set_time_limit(30);
+                $tids = implode(',', $tids);
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid IN ($tids)");
                 set_time_limit(30);
@@ -2337,7 +2337,7 @@ if ($action == "attachments") {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
             if ($attachment['filename'] != $postedvalue) {
-                renameAttachment($attachment['aid'], $attachment['pid'], $postedvalue);
+                renameAttachment( (int) $attachment['aid'], (int) $attachment['pid'], $postedvalue );
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2590,11 +2590,10 @@ if ($action == "cplog") {
 
 if ($action == "delete_attachment") {
     $aid = getInt('aid');
-    $pid = getInt('pid');
     if (noSubmit('yessubmit')) {
         ?>
         <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td>Are you sure you want to delete this attachment?<br />
-        <form action="cp2.php?action=delete_attachment&amp;aid=<?php echo $aid; ?>&amp;pid=<?php echo $pid; ?>" method="post">
+        <form action="cp2.php?action=delete_attachment&amp;aid=<?php echo $aid; ?>" method="post">
           <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Attachments/Delete', (string) $aid, X_NONCE_AYS_EXP ); ?>" />
           <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
@@ -2603,7 +2602,7 @@ if ($action == "delete_attachment") {
     } elseif ($lang['textyes'] == $yessubmit) {
         request_secure( 'Control Panel/Attachments/Delete', (string) $aid );
         require('include/attach.inc.php');
-        deleteAttachment($aid, $pid);
+        deleteAttachment( $aid );
         echo "<p align=\"center\">Deleted ...</br>";
     }
 }
