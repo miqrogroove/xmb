@@ -453,6 +453,77 @@ function deleteTokensByDate( int $expire ) {
  * @since 1.9.12
  * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
  * @param bool $quarantine Save this record in a private table for later review?
+ * @return int Thread ID number.
+ */
+function addThread( array &$values, bool $quarantine = false ): int {
+    global $db;
+
+    // Required values:
+    $req = ['fid', 'author', 'lastpost', 'subject', 'icon'];
+
+    // Optional values:
+    // views, replies, topped, pollopts, closed
+
+    // Types:
+    $ints = ['fid', 'views', 'replies', 'topped', 'pollopts'];
+    $strings = ['author', 'lastpost', 'subject', 'icon', 'closed'];
+
+    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addThread()", E_USER_ERROR );
+    foreach( $ints as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR );
+        } else {
+            $values[$field] = 0;
+        }
+    }
+    foreach( $strings as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR );
+            $db->escape_fast( $values[$field] );
+        } else {
+            $values[$field] = '';
+        }
+    }
+    
+    $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
+
+    $db->query("INSERT INTO $table SET
+    fid = {$values['fid']},
+    views = {$values['views']},
+    replies = {$values['replies']},
+    topped = {$values['topped']},
+    pollopts = {$values['pollopts']},
+    subject = '{$values['subject']}',
+    icon = '{$values['icon']}',
+    lastpost = '{$values['lastpost']}',
+    author = '{$values['author']}',
+    closed = '{$values['closed']}'
+    ");
+
+    return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function setThreadLastpost( int $tid, string $lastpost, bool $quarantine = false ) {
+    global $db;
+
+    $sqllast = $db->escape( $lastpost );
+
+    $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
+
+    $db->query( "UPDATE $table SET lastpost = '$sqllast' WHERE tid = $tid" );
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
+ * @param bool $quarantine Save this record in a private table for later review?
  * @return int Post ID number.
  */
 function addPost( array &$values, bool $quarantine = false ): int {
@@ -487,6 +558,21 @@ function addPost( array &$values, bool $quarantine = false ): int {
     ");
 
     return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function savePostBody( int $pid, string $body, bool $quarantine = false ) {
+    global $db;
+
+    $sqlbody = $db->escape( $body );
+
+    $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+
+    $db->query("UPDATE $table SET message = '$sqlbody' WHERE pid = $pid");
 }
 
 /**
@@ -579,6 +665,30 @@ function getAttachment( int $aid, bool $quarantine = false ): array {
         $result = $db->fetch_array($query);
     } else {
         $result = [];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getOrphanedAttachments( int $uid, bool $quarantine = false ): array {
+    global $db;
+    
+    $result = [];
+    
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
+    thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
+    FROM $table AS a LEFT JOIN $table AS thumbs ON a.aid=thumbs.parentid WHERE a.uid = $uid AND a.pid = 0 AND a.parentid = 0");
+
+    while ( $row = $db->fetch_array( $query ) ) {
+        $result[] = $row;
     }
     $db->free_result($query);
 
@@ -851,6 +961,73 @@ function setImageDims( int $aid, string $img_size, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     $db->query( "UPDATE $table SET img_size='$sqlsize' WHERE aid = $aid" );
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function addVoteDesc( int $tid, string $text, bool $quarantine = false ): int {
+    global $db;
+
+    $sqltext = $db->escape( $text );
+
+    $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
+
+    $db->query( "INSERT INTO $table SET topic_id = $tid, vote_text = '$sqltext'" );
+
+    return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ * @param array $rows Must be an array of arrays representing rows, then values associated to field names.
+ * @param bool $quarantine Save these records in a private table for later review?
+ */
+function addVoteOptions( array $rows, bool $quarantine = false ) {
+    global $db;
+
+    if ( empty( $rows ) ) return;
+
+    $sqlrows = [];
+
+    // Required values:
+    $req = ['vote_id', 'vote_option_id', 'vote_option_text'];
+
+    // Optional values:
+    // vote_result
+
+    // Types:
+    $ints = ['vote_id', 'vote_option_id', 'vote_result'];
+    $strings = ['vote_option_text'];
+
+    foreach( $rows as $values ) {
+        foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
+        foreach( $ints as $field ) {
+            if ( isset( $values[$field] ) ) {
+                if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
+            } else {
+                $values[$field] = 0;
+            }
+        }
+        foreach( $strings as $field ) {
+            if ( isset( $values[$field] ) ) {
+                if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
+                $db->escape_fast( $values[$field] );
+            } else {
+                $values[$field] = '';
+            }
+        }
+        $sqlrows[] = "( {$values['vote_id']}, {$values['vote_option_id']}, '{$values['vote_option_text']}', {$values['vote_result']} )";
+    }
+    $sqlrows = implode( ',', $sqlrows );
+    
+    $table = $quarantine ? X_PREFIX.'hold_vote_results' : X_PREFIX.'vote_results';
+
+    $db->query("INSERT INTO $table (vote_id, vote_option_id, vote_option_text, vote_result) VALUES $sqlrows");
 }
 
 return;

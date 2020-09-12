@@ -269,7 +269,7 @@ $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['tex
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
 $bbcodeoff = formYesNo('bbcodeoff');
-if ( ! isset( $_POST['emailnotify'] ) ) {
+if ( X_MEMBER && ! isset( $_POST['emailnotify'] ) ) {
     $emailnotify = $self['sub_each_post'];
 } else {
     $emailnotify = formYesNo('emailnotify');
@@ -304,23 +304,20 @@ if ((isset($previewpost) || $sc) && $usesig == 'yes') {
     $usesigcheck = '';
 }
 
-if (X_STAFF) {
-    if (isset($toptopic) && $toptopic == 'yes') {
+$topcheck = '';
+$closecheck = '';
+$toptopic = 'no';
+$closetopic = 'no';
+if ( X_STAFF ) {
+    $toptopic = formYesNo( 'toptopic' );
+    $closetopic = formYesNo( 'closetopic' );
+    
+    if ( 'yes' == $toptopic ) {
         $topcheck = $cheHTML;
-    } else {
-        $topcheck = '';
-        $toptopic = 'no';
     }
-
-    if (isset($closetopic) && $closetopic == 'yes') {
+    if ( 'yes' == $closetopic ) {
         $closecheck = $cheHTML;
-    } else {
-        $closecheck = '';
-        $closetopic = 'no';
     }
-} else {
-    $topcheck = '';
-    $closecheck = '';
 }
 
 $messageinput = postedVar('message', '', TRUE, FALSE);  //postify() is responsible for DECODING if html is allowed.
@@ -614,9 +611,8 @@ switch($action) {
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         extractRemoteImages($pid, $messageinput);
                         $newdbmessage = addslashes($messageinput);
-                        $db->escape_fast($newdbmessage);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
+                            \XMB\SQL\savePostBody( $pid, $newdbmessage );
                         }
                     }
                 } elseif ($username != 'Anonymous') {
@@ -652,9 +648,9 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
                 $attachfile = '';
-                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
+                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
                 $counter = 0;
-                while ($postinfo = $db->fetch_array($query)) {
+                foreach ( $orphans as $postinfo ) {
                     $files[] = $postinfo;
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
@@ -677,13 +673,13 @@ switch($action) {
                 } else {
                     $lang['attachmaxtotal'] = '';
                 }
-                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                $maxuploads = $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
-                $db->free_result($query);
+                unset( $orphans );
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
@@ -928,15 +924,38 @@ switch($action) {
                     $dbtsubject = substr($dbtsubject, 0, $tsubmax);
                 }
             }
+            
+            $lastpost = "$thatime|$username";
+            $closed = 'no';
+            $topped = 0;
+            $dbpollopts = ( 'yes' == $poll ) ? 1 : 0;
 
-            $db->escape_fast($dbtsubject);
-
-            $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$dbtsubject', '$sql_posticon', '$thatime|$sql_username', 0, 0, '$sql_username', '', 0)");
-            $tid = $db->insert_id();
+            if ( $username != 'Anonymous' ) {
+                $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
+                if ( $moderator ) {
+                    $closed = $closetopic;
+                    if ( $toptopic == 'yes' ) {
+                        $topped = 1;
+                    }
+                }
+            }
 
             $values = [
                 'fid' => (int) $fid,
-                'tid' => (int) $tid,
+                'subject' => $dbtsubject,
+                'icon' => $posticon,
+                'lastpost' => $lastpost,
+                'author' => $username,
+                'closed' => $closed,
+                'topped' => $topped,
+                'pollopts' => $dbpollopts,
+            ];
+
+            $tid = \XMB\SQL\addThread( $values );
+
+            $values = [
+                'fid' => (int) $fid,
+                'tid' => $tid,
                 'dateline' => $onlinetime,
                 'author' => $username,
                 'message' => $dbmessage,
@@ -950,7 +969,8 @@ switch($action) {
 
             $pid = \XMB\SQL\addPost( $values );
 
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|".$pid."') WHERE tid='$tid'");
+            $lastpost .= "|$pid";
+            \XMB\SQL\setThreadLastpost( $tid, $lastpost );
 
             $where = "WHERE fid=$fid";
             if ($forum['type'] == 'sub') {
@@ -960,29 +980,21 @@ switch($action) {
             unset($where);
 
             if ($poll == 'yes') {
-                $query = $db->query("SELECT vote_id, topic_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
-                if ($query) {
-                    $vote_id = $db->fetch_array($query);
-                    $vote_id = $vote_id['vote_id'];
-                    if ($vote_id > 0) {
-                        $db->query("DELETE FROM ".X_PREFIX."vote_results WHERE vote_id='$vote_id'");
-                        $db->query("DELETE FROM ".X_PREFIX."vote_voters WHERE vote_id='$vote_id'");
-                        $db->query("DELETE FROM ".X_PREFIX."vote_desc WHERE vote_id='$vote_id'");
-                    }
-                }
-                $db->free_result($query);
-
+                // Create a poll subject.  Totally redundant, unused value.  Works more like a junction table with a bunch of extra useless columns.
                 $dbsubject = addslashes($subjectinput);
-                $db->escape_fast($dbsubject);
-                $db->query("INSERT INTO ".X_PREFIX."vote_desc (topic_id, vote_text) VALUES ($tid, '$dbsubject')");
-                $vote_id =  $db->insert_id();
+                $vote_id = \XMB\SQL\addVoteDesc( $tid, $dbsubject );
+                
+                // Create poll options.  This is the part we care about.
+                $options = [];
                 $i = 1;
                 foreach($pollopts as $p) {
-                    $db->escape_fast($p);
-                    $db->query("INSERT INTO ".X_PREFIX."vote_results (vote_id, vote_option_id, vote_option_text, vote_result) VALUES ($vote_id, $i, '$p', 0)");
-                    $i++;
+                    $options[] = [
+                        'vote_id' => $vote_id,
+                        'vote_option_id' => $i++,
+                        'vote_option_text' => $p,
+                    ];
                 }
-                $db->query("UPDATE ".X_PREFIX."threads SET pollopts=1 WHERE tid='$tid'");
+                \XMB\SQL\addVoteOptions( $options );
             }
 
             if ($username != 'Anonymous') {
@@ -991,16 +1003,6 @@ switch($action) {
                 }
 
                 $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
-
-                $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
-                if ($moderator) {
-                    if ($toptopic == 'yes') {
-                        $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid='$tid' AND fid='$fid'");
-                    }
-                    if ($closetopic == 'yes') {
-                        $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
-                    }
-                }
             }
 
             if ($forum['attachstatus'] == 'on') {
@@ -1037,9 +1039,9 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
                 $attachfile = '';
-                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.uid={$self['uid']} AND a.pid=0 AND a.parentid=0");
+                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
                 $counter = 0;
-                while ($postinfo = $db->fetch_array($query)) {
+                foreach ( $orphans as $postinfo ) {
                     $files[] = $postinfo;
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
@@ -1062,13 +1064,13 @@ switch($action) {
                 } else {
                     $lang['attachmaxtotal'] = '';
                 }
-                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                $maxuploads = $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
-                $db->free_result($query);
+                unset( $orphans );
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error

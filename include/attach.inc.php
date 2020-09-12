@@ -496,20 +496,23 @@ function deleteAllAttachments( int $pid, bool $quarantine = false ) {
 }
 
 // Important: call deleteThreadAttachments() BEFORE deleting posts, because it uses a multi-table query.
-function deleteThreadAttachments( int $tid, bool $quarantine = false ) {
+function deleteThreadAttachments( int $tid ) {
     $tid_list = [ $tid ];
-    $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine );
-    private_deleteAttachments( $aid_list, $quarantine );
+    $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list );
+    private_deleteAttachments( $aid_list );
 }
 
-function emptyThreadAttachments( int $tid, int $notpid, bool $quarantine = false ) {
+function emptyThreadAttachments( int $tid, int $notpid ) {
     $tid_list = [ $tid ];
+    $quarantine = false;
     $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine, $notpid );
     private_deleteAttachments( $aid_list, $quarantine );
 }
 
 function private_deleteAttachments( array $aid_list, bool $quarantine = false ) {
     global $db;
+    
+    if ( empty( $aid_list ) ) return;
     
     $query = \XMB\SQL\getAttachmentPaths( $aid_list, $quarantine );
     while($attachment = $db->fetch_array($query)) {

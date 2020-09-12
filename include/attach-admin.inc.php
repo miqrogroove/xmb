@@ -101,6 +101,7 @@ function deleteOrphans() {
 }
 
 function deleteMultiThreadAttachments( array $tid_list, bool $quarantine = false ) {
+    if ( empty( $tid_list ) ) return;
     $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine );
     private_deleteAttachments( $aid_list, $quarantine );
 }
