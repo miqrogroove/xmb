@@ -92,35 +92,6 @@ $plugimg = array();
 $plugname = array();
 $plugurl = array();
 $smiliecache = array();
-$tables = [
-'attachments',
-'banned',
-'buddys',
-'captchaimages',
-'favorites',
-'forums',
-'lang_base',
-'lang_keys',
-'lang_text',
-'logs',
-'members',
-'posts',
-'ranks',
-'restricted',
-'sessions',
-'settings',
-'smilies',
-'templates',
-'themes',
-'threads',
-'tokens',
-'u2u',
-'whosonline',
-'words',
-'vote_desc',
-'vote_results',
-'vote_voters',
-];
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);

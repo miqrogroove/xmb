@@ -102,25 +102,23 @@ function printAllQueries() {
 }
 
 function mysql_syn_highlight($query) {
-    global $tables;
-
     $find = array();
     $replace = array();
 
-    foreach($tables as $name) {
-        $find[] = X_PREFIX.$name;
-    }
-
     $find[] = 'SELECT';
-    $find[] = 'UPDATE';
+    $find[] = 'UPDATE ';
     $find[] = 'DELETE';
     $find[] = 'INSERT INTO ';
+    $find[] = 'INSERT IGNORE INTO ';
+    $find[] = ' DUPLICATE KEY ';
     $find[] = ' WHERE ';
     $find[] = ' ON ';
     $find[] = ' FROM ';
     $find[] = ' GROUP BY ';
     $find[] = 'ORDER BY ';
     $find[] = ' LEFT JOIN ';
+    $find[] = ' RIGHT JOIN ';
+    $find[] = ' INNER JOIN ';
     $find[] = ' IN ';
     $find[] = ' SET ';
     $find[] = ' AS ';
@@ -131,6 +129,9 @@ function mysql_syn_highlight($query) {
     $find[] = ' AND ';
     $find[] = ' OR ';
     $find[] = ' NOT';
+    $find[] = ' USING';
+    $find[] = ' VALUES ';
+    $find[] = ' UNION ALL ';
 
     foreach($find as $key=>$val) {
         $replace[$key] = '</em><strong>'.$val.'</strong><em>';

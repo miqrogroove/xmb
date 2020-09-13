@@ -522,6 +522,25 @@ function setThreadLastpost( int $tid, string $lastpost, bool $quarantine = false
  * SQL command
  *
  * @since 1.9.12
+ */
+function countThreadsByUser( string $username, int $fid, bool $quarantine = false ): int {
+    global $db;
+
+    $sqluser = $db->escape( $username );
+
+    $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
+
+    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE author = '$sqluser' AND fid = $fid" );
+    $result = (int) $db->result( $query, 0 );
+    $db->free_result( $query );
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
  * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Post ID number.
@@ -573,6 +592,38 @@ function savePostBody( int $pid, string $body, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
     $db->query("UPDATE $table SET message = '$sqlbody' WHERE pid = $pid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function countPosts( bool $quarantine = false, int $tid = 0, string $username = '' ): int {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+    
+    $where = [];
+    if ( $tid != 0 ) {
+        $where[] = "tid = $tid";
+    }
+    if ( $username != '' ) {
+        $sqluser = $db->escape( $username );
+        $where[] = "author = '$sqluser'";
+    }
+
+    if ( empty( $where ) ) {
+        $where = '';
+    } else {
+        $where = "WHERE " . implode( ' AND ', $where );
+    }
+
+    $query = $db->query( "SELECT COUNT(*) FROM $table $where" );
+    $result = (int) $db->result( $query, 0 );
+    $db->free_result( $query );
+
+    return $result;
 }
 
 /**

@@ -26,6 +26,7 @@ define('X_SCRIPT', 'tools.php');
 
 require 'header.php';
 require ROOT.'include/admin.inc.php';
+require ROOT.'include/schema.inc.php';
 
 loadtemplates('error_nologinsession');
 
@@ -486,6 +487,7 @@ switch($action) {
         break;
 
     case 'repairtables':
+        $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
         foreach($tables as $val) {
@@ -495,6 +497,7 @@ switch($action) {
         break;
 
     case 'optimizetables':
+        $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
         foreach($tables as $val) {
@@ -504,6 +507,7 @@ switch($action) {
         break;
 
     case 'analyzetables':
+        $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
         foreach($tables as $val) {
@@ -513,6 +517,7 @@ switch($action) {
         break;
 
     case 'checktables':
+        $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
         foreach($tables as $val) {

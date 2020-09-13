@@ -272,9 +272,9 @@ function loadLang($devname = "English") {
 
     // Query The Translation Database
     $sql = 'SELECT k.langkey, t.cdata '
-         . 'FROM '.X_PREFIX.'lang_keys AS k'
-         . ' LEFT JOIN '.X_PREFIX.'lang_text AS t USING (phraseid)'
-         . ' INNER JOIN '.X_PREFIX.'lang_base AS b USING (langid)'
+         . 'FROM '.X_PREFIX.'lang_keys AS k '
+         . 'LEFT JOIN '.X_PREFIX.'lang_text AS t USING (phraseid) '
+         . 'INNER JOIN '.X_PREFIX.'lang_base AS b USING (langid) '
          . "WHERE b.devname = '$devname'";
     $result = $db->query($sql);
 
