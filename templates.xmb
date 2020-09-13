@@ -1673,7 +1673,7 @@ $forumlist
 <tr>
 <td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
 <td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
-<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
+<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt"><a href="viewthread.php?tid=$thread[tid]">$prefix{$thread['subject']}</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
@@ -1684,7 +1684,7 @@ $forumlist
 <tr>
 <td bgcolor="$altbg2" class="ctrtablerow">$folder</td>
 <td bgcolor="$altbg1" class="ctrtablerow">$thread[icon]</td>
-<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt">$prefix<a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
+<td bgcolor="$altbg2" class="tablerow"><font class="mediumtxt"><a href="viewthread.php?tid=$thread[tid]">$prefix{$thread['subject']}</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow"><font class="mediumtxt"><a href = "topicadmin.php?tid=$thread[tid]&amp;fid=$forum[fid]&amp;action=top">$topimage</a></font></td>
 <td bgcolor="$altbg1" class="ctrtablerow">$authorlink</td>
 <td bgcolor="$altbg2" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
@@ -4054,7 +4054,7 @@ $multipage
 <tr class="tablerow">
 <td width="4%" bgcolor="$altbg1" class="ctrtablerow">$folder</td>
 <td width="4%" bgcolor="$altbg2" class="ctrtablerow">$thread[icon]</td>
-<td width="43%" bgcolor="$altbg1" class="tablerow"><font class="12px">$prefix <a href="viewthread.php?tid=$thread[tid]">$thread[subject]</a></font></td>
+<td width="43%" bgcolor="$altbg1" class="tablerow"><font class="12px"><a href="viewthread.php?tid=$thread[tid]">$prefix{$thread['subject']}</a></font></td>
 <td width="14%" bgcolor="$altbg2" class="ctrtablerow">$authorlink</td>
 <td width="14%" bgcolor="$altbg1" class="ctrtablerow"><font class="11px"><a href="forumdisplay.php?fid=$thread[fid]">$thread[name]</a></font></td>
 <td width="5%" bgcolor="$altbg2" class="ctrtablerow"><font class="11px">$thread[replies]</font></td>

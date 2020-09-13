@@ -676,6 +676,43 @@ function getAttachment( int $aid, bool $quarantine = false ): array {
  *
  * @since 1.9.12
  */
+function getAttachmentAndFID( int $aid, bool $quarantine = false, int $pid = 0, string $filename = '', int $uid = 0 ): array {
+    global $db;
+    
+    $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+    $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+    
+    $where = "a.aid = $aid";
+    
+    if ( $pid != 0 ) {
+        $where .= " AND a.pid = $pid";
+    }
+
+    if ( $uid != 0 ) {
+        $where .= " AND a.uid = $uid";
+    }
+    
+    if ( $filename != '' ) {
+        $db->escape_fast( $filename );
+        $where .= " AND a.filename = '$filename'";
+    }
+
+    $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM $table1 AS a LEFT JOIN $table2 AS p USING (pid) WHERE $where");
+    if ($db->num_rows($query) == 1) {
+        $result = $db->fetch_array($query);
+    } else {
+        $result = [];
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function getOrphanedAttachments( int $uid, bool $quarantine = false ): array {
     global $db;
     
@@ -961,6 +998,19 @@ function setImageDims( int $aid, string $img_size, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     $db->query( "UPDATE $table SET img_size='$sqlsize' WHERE aid = $aid" );
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function raiseDownloadCounter( int $aid, bool $quarantine = false ) {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $db->query( "UPDATE $table SET downloads = downloads + 1 WHERE aid = $aid" );
 }
 
 /**

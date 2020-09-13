@@ -83,21 +83,20 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && $self['uid'] == 0)
 }
 
 // Retrieve attachment metadata
+$quarantine = false;
 if ($filename == '') {
-    $where = "WHERE a.aid=$aid AND a.pid=$pid";
     if ($pid == 0 && !X_ADMIN) {
-        $where .= " AND a.uid={$self['uid']}"; // Allow preview of own attachments when URL format requires a PID.
+        // Allow preview of own attachments when the URL format requires a PID.
+        $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, $pid, $filename, (int) $self['uid'] );
+    } else {
+        $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, $pid );
     }
 } else {
-    $db->escape_fast($filename);
-    $where = "WHERE a.aid=$aid AND a.filename='$filename'";
+    $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, 0, $filename );
 }
-$query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.fid FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) $where");
-if ($db->num_rows($query) != 1) {
+if ( empty( $file ) ) {
     fileError();
 }
-$file = $db->fetch_array($query);
-$db->free_result($query);
 
 if ($pid > 0 || $file['fid'] != '') {
     $forum = getForum($file['fid']);
@@ -178,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINC
 }
 
 // Increment hit counter
-$db->query("UPDATE ".X_PREFIX."attachments SET downloads=downloads+1 WHERE aid=$aid");
+\XMB\SQL\raiseDownloadCounter( $aid );
 
 // Set response headers
 if ($file['img_size'] == '') {
