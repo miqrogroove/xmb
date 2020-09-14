@@ -58,6 +58,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  * orphaned attachments that the registered user will be allowed to manage.
  * Storage responsibilities include subdirectory and thumbnail creation.
  *
+ * @since 1.9.11
  * @param string $varname Form variable name, used in the $_FILES associative index.
  * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
  * @param bool $quarantine Save this record in a private table for later review?
@@ -368,6 +369,7 @@ function claimOrphanedAttachments($pid) {
 /**
  * Handle user inputs related to post editing.
  *
+ * @since 1.9.11
  * @param array $deletes    Returns a list of deleted attachment IDs, by reference.
  * @param array $aid_list   List of attachment IDs related to the current post.
  * @param int   $pid        Optional. PID of the related post. Attachment becomes orphaned if omitted.
@@ -536,6 +538,7 @@ function private_deleteAttachments( array $aid_list, bool $quarantine = false ) 
  * This function does not provide the upload path, which is $_FILES[$varname]['tmp_name']
  * All return values must be treated as invalid if (FALSE === get_attached_file(...)).
  *
+ * @since 1.9.11
  * @param string $varname The name of the file input on the form.
  * @param string $filename Variable Required. Returns the filename provided by the user.
  * @param string|int $filetype Variable Required. Returns the MIME type provided by the user on success. Returns one of the $attachmentErrors constants on failure.
@@ -685,6 +688,7 @@ function getSizeFormatted($attachsize) {
 /**
  * Generates the value that should be stored in the subdir column of a new row in the attachment table.
  *
+ * @since 1.9.11
  * @param string $date Optional. Unix timestamp of the attachment, if not now.
  * @return string
  */
@@ -707,6 +711,7 @@ function getNewSubdir($date='') {
  * the file storage path and a specified subdir value.
  * A trailing forward-slash is guaranteed in the return value.
  *
+ * @since 1.9.11
  * @param string $subdir The name typically has no leading or trailing slashes, e.g. 'dir1' or 'dir2/sub3'
  * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created in a PHP4-compatible manner.
  * @return string|bool FALSE if the file storage path is empty.
@@ -762,6 +767,7 @@ function getTempFile($path=FALSE) {
  * The thumbnail will be attached to its corresponding parent image and post if the last three parameters are set.
  * Otherwise, the thumbnail will simply be saved to disk at $filepath.'-thumb.jpg'
  *
+ * @since 1.9.11
  * @param string $filename   Original name of the input file.
  * @param string $filepath   Current name and location (full path) of the input file.
  * @param int    $filesize   The size, in bytes, that you want printed on the thumbnail.
@@ -1033,6 +1039,8 @@ function deleteThumbnail( int $aid, bool $quarantine = false ) {
 
 /**
  * Rectangluar dimension object for simple operations and properties.
+ *
+ * @since 1.9.11
  */
 class CartesianSize {
     private $height;
@@ -1080,7 +1088,16 @@ class CartesianSize {
     }
 }
 
-function extractRemoteImages($pid, &$message) {
+/**
+ * Converts all [img] tags to attachments.
+ *
+ * @since 1.9.11
+ * @param int $pid ID of the related post. Attachment becomes orphaned if set to zero.
+ * @param string $message Post body, passed by reference and modified with new tags.
+ * @param bool $quarantine Save this record in a private table for later review?
+ * @return mixed True on success, or error code from attachRemoteFile().
+ */
+function extractRemoteImages( int $pid, string &$message, bool $quarantine = false ) {
     // Sanity Checks
     if (!ini_get('allow_url_fopen')) {
         return TRUE;
@@ -1111,7 +1128,7 @@ function extractRemoteImages($pid, &$message) {
 
     // Process URLs
     foreach($items as $result) {
-        $aid = attachRemoteFile($result['url'], $pid);
+        $aid = attachRemoteFile( $result['url'], $pid, $quarantine );
         if ($aid <= 0) {
             $return = $aid;
             $replace = '[bad '.substr($result['code'], 1, -6).'[/bad img]';

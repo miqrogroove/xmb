@@ -262,6 +262,7 @@ $db->query( "INSERT INTO ".X_PREFIX."settings
 ('onlinetoday_status', 'on'),
 ('postperpage', '25'),
 ('pruneusers', '0'),
+('quarantine_new_users', 'off'),
 ('quickjump_status', 'on'),
 ('quickreply_status', 'on'),
 ('regoptional', 'off'),

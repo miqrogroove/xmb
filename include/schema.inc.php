@@ -247,6 +247,7 @@ function xmb_schema_create($name){
           `bad_session_date` int(10) unsigned NOT NULL default 0,
           `bad_session_count` int(10) unsigned NOT NULL default 0,
           `sub_each_post` varchar(3) NOT NULL default 'no',
+          `waiting_for_mod` varchar(3) NOT NULL default 'no',
           PRIMARY KEY  (`uid`),
           UNIQUE KEY `userunique` (`username`),
           KEY `status` (`status`),

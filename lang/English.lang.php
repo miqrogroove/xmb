@@ -435,6 +435,7 @@ $lang['mergewithmsg'] = "TID of the topic to be merged and deleted:<br /><span c
 $lang['message'] = "Message";
 $lang['misconlinetoday'] = "The following ";
 $lang['misconlinetoday2'] = " members have visited today...";
+$lang['moderation_hold'] = "Thank you for posting.  Your message will be reviewed by a staff member before it is displayed in the forum.";
 $lang['modlog_bump'] = "Thread Bumped";
 $lang['modlog_close'] = "Thread Closed";
 $lang['modlog_copy'] = "Thread Copied";

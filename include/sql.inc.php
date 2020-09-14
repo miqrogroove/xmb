@@ -301,6 +301,28 @@ function setLostPasswordDate( int $uid, int $date ) {
  *
  * @since 1.9.12
  */
+function startMemberQuarantine( int $uid ) {
+    global $db;
+    
+    $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'yes' WHERE uid = $uid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function endMemberQuarantine( int $uid ) {
+    global $db;
+    
+    $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE uid = $uid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function setNewPassword( string $username, string $password ) {
     global $db;
     

@@ -226,6 +226,27 @@ nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 // Search-link
 $searchlink = makeSearchLink($forum['fid']);
 
+// Moderation of new users
+if ( X_STAFF || 'off' == $SETTINGS['quarantine_new_users'] ) {
+    // Default immunity
+    $quarantine = false;
+} else {
+    $quarantine = true;
+    if ( X_MEMBER ) {
+        if ( 'yes' == $self['waiting_for_mod'] ) {
+            // Member is already flagged for quarantine.
+        } elseif ( $self['postnum'] > 0 ) {
+            // Member has posted before and is immune.
+            $quarantine = false;
+        } else {
+            // Member has not posted before and will be flagged for quarantine starting now.
+            \XMB\SQL\startMemberQuarantine( (int) $self['uid'] );
+        }
+    } else {
+        // Guests have no immunity.
+    }
+}
+
 if (!ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 } elseif ($forum['attachstatus'] == 'on') {
@@ -269,10 +290,13 @@ $allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : $lang['tex
 $allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
 $bbcodeoff = formYesNo('bbcodeoff');
-if ( X_MEMBER && ! isset( $_POST['emailnotify'] ) ) {
-    $emailnotify = $self['sub_each_post'];
-} else {
+if ( X_MEMBER ) {
     $emailnotify = formYesNo('emailnotify');
+    if ( $emailnotify != 'yes' ) {
+        $emailnotify = $self['sub_each_post'];
+    }
+} else {
+    $emailnotify = 'no';
 }
 $smileyoff = formYesNo('smileyoff');
 $usesig = formYesNo('usesig');
@@ -406,18 +430,18 @@ switch($action) {
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
-        if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
+        if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = attachUploadedFile('attach'.$i);
+                    $result = attachUploadedFile( 'attach'.$i, 0, $quarantine );
                     if ($result < 0 && $result != X_EMPTY_UPLOAD) {
                         $errors .= softerror($attachmentErrors[$result]);
                         $replyvalid = FALSE;
                     }
                 }
             }
-            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'] );
-            $result = doAttachmentEdits( $deletes, $aid_list );
+            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'], $quarantine );
+            $result = doAttachmentEdits( $deletes, $aid_list, 0, $quarantine );
             if ($result < 0) {
                 $errors .= softerror($attachmentErrors[$result]);
                 $replyvalid = FALSE;
@@ -426,7 +450,7 @@ switch($action) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $result = extractRemoteImages(0, $messageinput);
+                $result = extractRemoteImages( 0, $messageinput, $quarantine );
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
                     $replyvalid = FALSE;
@@ -535,94 +559,102 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost( $values );
+            $pid = \XMB\SQL\addPost( $values, $quarantine );
 
-            $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
+            $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
             if ($moderator && $closetopic == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid='$tid' AND fid='$fid'");
             }
 
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$sql_username|$pid', replies=replies+1 WHERE tid=$tid");
+            if ( ! $quarantine ) {
+                // Update stats
+                $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$sql_username|$pid', replies=replies+1 WHERE tid=$tid");
 
-            $where = "WHERE fid=$fid";
-            if ($forum['type'] == 'sub') {
-                $where .= " OR fid={$forum['fup']}";
-            }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', posts=posts+1 $where");
-            unset($where);
-
-            if ($username != 'Anonymous') {
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
-
-                if ($emailnotify == 'yes') {
-                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
+                $where = "WHERE fid=$fid";
+                if ($forum['type'] == 'sub') {
+                    $where .= " OR fid={$forum['fup']}";
                 }
-            }
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', posts=posts+1 $where");
+                unset($where);
 
-            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
-            $posts = $db->result($query,0);
-            $db->free_result($query);
-
-            $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
-            $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
-
-            $query = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
-            if ($db->num_rows($query) > 0) {
-                $date = $db->result($query, 0);
-            } else {
-                // Replying to a thread that has zero posts.
-                $date = '0';
-            }
-            $db->free_result($query);
-
-            $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
-                                 . "FROM ".X_PREFIX."favorites f "
-                                 . "INNER JOIN ".X_PREFIX."members m USING (username) "
-                                 . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
-            while($subs = $db->fetch_array($subquery)) {
-                if ($viewperm < $status_enum[$subs['status']]) {
-                    continue;
+                if ( X_MEMBER ) {
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
                 }
 
-                if ($subs['ppp'] < 1) {
-                    $subs['ppp'] = $posts;
-                }
+                // Send subscription notifications
+                $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE pid <= $pid AND tid='$tid'");
+                $posts = $db->result($query,0);
+                $db->free_result($query);
 
-                $translate = $lang2[$subs['langfile']];
-                $topicpages = quickpage($posts, $subs['ppp']);
-                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-                $threadurl = $full_url.'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
-                $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-                $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
-                $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
-                $title = "$rawsubject ({$translate['textsubsubject']})";
-                $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
-                xmb_mail( $rawemail, $title, $body, $translate['charset'] );
+                $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
+                $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+
+                $query = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
+                if ($db->num_rows($query) > 0) {
+                    $date = $db->result($query, 0);
+                } else {
+                    // Replying to a thread that has zero posts.
+                    $date = '0';
+                }
+                $db->free_result($query);
+
+                $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
+                                     . "FROM ".X_PREFIX."favorites f "
+                                     . "INNER JOIN ".X_PREFIX."members m USING (username) "
+                                     . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
+                while($subs = $db->fetch_array($subquery)) {
+                    if ($viewperm < $status_enum[$subs['status']]) {
+                        continue;
+                    }
+
+                    if ($subs['ppp'] < 1) {
+                        $subs['ppp'] = $posts;
+                    }
+
+                    $translate = $lang2[$subs['langfile']];
+                    $topicpages = quickpage($posts, $subs['ppp']);
+                    $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                    $threadurl = $full_url.'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
+                    $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
+                    $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
+                    $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+                    $title = "$rawsubject ({$translate['textsubsubject']})";
+                    $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
+                    xmb_mail( $rawemail, $title, $body, $translate['charset'] );
+                }
+                $db->free_result($subquery);
             }
-            $db->free_result($subquery);
+
+            if ( 'yes' == $emailnotify ) {
+                \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
+            }
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            attachUploadedFile('attach'.$i, $pid);
+                            attachUploadedFile( 'attach'.$i, $pid, $quarantine );
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        extractRemoteImages($pid, $messageinput);
+                        extractRemoteImages( $pid, $messageinput, $quarantine );
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            \XMB\SQL\savePostBody( $pid, $newdbmessage );
+                            \XMB\SQL\savePostBody( $pid, $newdbmessage, $quarantine );
                         }
                     }
-                } elseif ($username != 'Anonymous') {
-                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'] );
+                } elseif ( X_MEMBER ) {
+                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'], $quarantine );
                 }
             }
 
-            $topicpages = quickpage($posts, $ppp);
-            $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-            message($lang['replymsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+            if ( $quarantine ) {
+                message( $lang['moderation_hold'] );
+            } else {
+                $topicpages = quickpage($posts, $ppp);
+                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                message($lang['replymsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+            }
         }
 
         if (!$replyvalid) {
@@ -646,7 +678,7 @@ switch($action) {
 
             // Fill $attachfile
             $files = array();
-            if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
+            if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
                 $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
                 $counter = 0;
@@ -731,7 +763,7 @@ switch($action) {
 
             $posts = '';
 
-            if (modcheck($sql_username, $forum['moderator']) == 'Moderator') {
+            if (modcheck($username, $forum['moderator']) == 'Moderator') {
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {
                 $closeoption = '';
@@ -795,7 +827,7 @@ switch($action) {
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
-        if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
+        if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
                     $result = attachUploadedFile('attach'.$i);
@@ -930,8 +962,8 @@ switch($action) {
             $topped = 0;
             $dbpollopts = ( 'yes' == $poll ) ? 1 : 0;
 
-            if ( $username != 'Anonymous' ) {
-                $moderator = (modcheck($sql_username, $forum['moderator']) == 'Moderator');
+            if ( X_MEMBER ) {
+                $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
                 if ( $moderator ) {
                     $closed = $closetopic;
                     if ( $toptopic == 'yes' ) {
@@ -997,7 +1029,7 @@ switch($action) {
                 \XMB\SQL\addVoteOptions( $options );
             }
 
-            if ($username != 'Anonymous') {
+            if ( X_MEMBER ) {
                 if ($emailnotify == 'yes') {
                     \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
                 }
@@ -1020,7 +1052,7 @@ switch($action) {
                             $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
                         }
                     }
-                } elseif ($username != 'Anonymous') {
+                } elseif ( X_MEMBER ) {
                     \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'] );
                 }
             }
@@ -1037,7 +1069,7 @@ switch($action) {
         if (!$topicvalid) {
             // Fill $attachfile
             $files = array();
-            if ($forum['attachstatus'] == 'on' && $username != 'Anonymous') {
+            if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
                 $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
                 $counter = 0;
@@ -1120,7 +1152,7 @@ switch($action) {
                 unset($Captcha);
             }
 
-            if (modcheck($sql_username, $forum['moderator']) == 'Moderator') {
+            if (modcheck($username, $forum['moderator']) == 'Moderator') {
                 $topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
                 $closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
             } else {

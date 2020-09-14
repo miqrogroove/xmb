@@ -1755,6 +1755,7 @@ function upgrade_schema_to_v5() {
     'bad_session_date' => "int(10) unsigned NOT NULL default 0",
     'bad_session_count' => "int(10) unsigned NOT NULL default 0",
     'sub_each_post' => "varchar(3) NOT NULL default 'no'",
+    'waiting_for_mod' => "varchar(3) NOT NULL default 'no'",
     ];
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1816,7 +1817,8 @@ function upgrade_schema_to_v5() {
     show_progress('Reading the settings table data');
     $query = upgrade_query('SELECT * FROM '.X_PREFIX.$table);
     $settings = $db->fetch_array( $query );
-    $settings['show_logs_in_threads'] = 'no';
+    $settings['show_logs_in_threads'] = 'off';
+    $settings['quarantine_new_users'] = 'off';
     unset( $settings['sightml'] );
 
     show_progress('Replacing the settings table');
