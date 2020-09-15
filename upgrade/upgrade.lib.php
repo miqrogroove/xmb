@@ -66,6 +66,8 @@ function xmb_upgrade() {
         case 5:
             upgrade_schema_to_v6();
         case 6:
+            upgrade_schema_to_v7();
+        case 7:
             //Future use. Break only before case default.
             break;
         default:
@@ -1903,6 +1905,26 @@ function upgrade_schema_to_v6() {
 
     show_progress('Resetting the schema version number');
     upgrade_query("UPDATE ".X_PREFIX."settings SET value = '6' WHERE name = 'schema_version'");
+}
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 7.
+ *
+ * @since 1.9.12
+ */
+function upgrade_schema_to_v7() {
+    global $db;
+
+    show_progress('Adding new tables');
+    xmb_schema_table('create', 'hold_attachments');
+    xmb_schema_table('create', 'hold_favorites');
+    xmb_schema_table('create', 'hold_posts');
+    xmb_schema_table('create', 'hold_threads');
+    xmb_schema_table('create', 'hold_vote_desc');
+    xmb_schema_table('create', 'hold_vote_results');
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '7' WHERE name = 'schema_version'");
 }
 
 /**

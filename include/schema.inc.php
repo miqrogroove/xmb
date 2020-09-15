@@ -159,6 +159,102 @@ function xmb_schema_create($name){
           KEY `status` (`status`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
+    case 'hold_attachments':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `aid` int(10) NOT NULL auto_increment,
+          `pid` int(10) NOT NULL default 0,
+          `filename` varchar(120) NOT NULL default '',
+          `filetype` varchar(120) NOT NULL default '',
+          `filesize` varchar(120) NOT NULL default '',
+          `attachment` longblob NOT NULL,
+          `downloads` int(10) NOT NULL default 0,
+          `img_size` VARCHAR(9) NOT NULL,
+          `parentid` INT NOT NULL DEFAULT '0',
+          `subdir` VARCHAR( 15 ) NOT NULL,
+          `uid` INT NOT NULL DEFAULT '0',
+          `updatetime` TIMESTAMP NOT NULL default current_timestamp,
+          PRIMARY KEY  (`aid`),
+          KEY `pid` (`pid`),
+          KEY `parentid` (`parentid`),
+          KEY `uid` (`uid`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'hold_favorites':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `tid` int(10) NOT NULL default 0,
+          `username` varchar(32) NOT NULL default '',
+          `type` varchar(32) NOT NULL default '',
+          KEY `tid` (`tid`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'hold_posts':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `fid` smallint(6) NOT NULL default '0',
+          `tid` int(10) NOT NULL default '0',
+          `pid` int(10) NOT NULL auto_increment,
+          `author` varchar(32) NOT NULL default '',
+          `message` text NOT NULL,
+          `subject` tinytext NOT NULL,
+          `dateline` int(10) NOT NULL default 0,
+          `icon` varchar(50) default NULL,
+          `usesig` varchar(15) NOT NULL default '',
+          `useip` varchar(15) NOT NULL default '',
+          `bbcodeoff` varchar(15) NOT NULL default '',
+          `smileyoff` varchar(15) NOT NULL default '',
+          PRIMARY KEY  (`pid`),
+          KEY `fid` (`fid`),
+          KEY `dateline` (`dateline`),
+          KEY `author` (author (8)),
+          KEY `thread_optimize` (`tid`, `dateline`, `pid`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'hold_threads':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `tid` int(10) NOT NULL auto_increment,
+          `fid` smallint(6) NOT NULL default 0,
+          `subject` varchar(128) NOT NULL default '',
+          `icon` varchar(75) NOT NULL default '',
+          `lastpost` varchar(54) NOT NULL default '',
+          `views` bigint(32) NOT NULL default 0,
+          `replies` int(10) NOT NULL default 0,
+          `author` varchar(32) NOT NULL default '',
+          `closed` varchar(15) NOT NULL default '',
+          `topped` tinyint(1) NOT NULL default 0,
+          `pollopts` tinyint(1) NOT NULL default 0,
+          PRIMARY KEY  (`tid`),
+          KEY `lastpost` (`lastpost`),
+          KEY `author` (author (8)),
+          KEY `closed` (`closed`),
+          KEY `forum_optimize` (`fid`, `topped`, `lastpost`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'hold_vote_desc':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
+          `topic_id` INT UNSIGNED NOT NULL,
+          `vote_text` text NOT NULL,
+          `vote_start` int(11) NOT NULL default '0',
+          `vote_length` int(11) NOT NULL default '0',
+          PRIMARY KEY  (`vote_id`),
+          KEY `topic_id` (`topic_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
+    case 'hold_vote_results':
+        $sql =
+        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
+          `vote_id` mediumint(8) unsigned NOT NULL default '0',
+          `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
+          `vote_option_text` varchar(255) NOT NULL default '',
+          `vote_result` int(11) NOT NULL default '0',
+          KEY `vote_option_id` (`vote_option_id`),
+          KEY `vote_id` (`vote_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
+        break;
     case 'lang_base':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
@@ -511,6 +607,12 @@ function xmb_schema_list(): array {
     'captchaimages',
     'favorites',
     'forums',
+    'hold_attachments',
+    'hold_favorites',
+    'hold_posts',
+    'hold_threads',
+    'hold_vote_desc',
+    'hold_vote_results',
     'lang_base',
     'lang_keys',
     'lang_text',

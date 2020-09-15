@@ -818,7 +818,7 @@ function getNewSubdir($date='') {
 }
 
 /**
- * Retrieve the full path given just a subdirectory name.
+ * Retrieve the file storage path given just a subdirectory name.
  *
  * getFullPathFromSubdir() returns the concatenation of
  * the file storage path and a specified subdir value.
@@ -826,34 +826,32 @@ function getNewSubdir($date='') {
  *
  * @since 1.9.11
  * @param string $subdir The name typically has no leading or trailing slashes, e.g. 'dir1' or 'dir2/sub3'
- * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created in a PHP4-compatible manner.
+ * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created.
  * @return string|bool FALSE if the file storage path is empty.
  */
-function getFullPathFromSubdir($subdir, $mkdir = FALSE) {
+function getFullPathFromSubdir( string $subdir, bool $mkdir = false, bool $quarantine = false ) {
     global $SETTINGS;
+
     $path = $SETTINGS['files_storage_path'];
-    if (strlen($path) == 0) {
-        return FALSE;
+    if ( $quarantine || '' == $path ) {
+        return false;
     }
     if (substr($path, -1) != '/') {
         $path .= '/';
     }
-    if ($mkdir) {
-        $dirs = explode('/', $subdir);
-        foreach($dirs as $value) {
-            if (strlen($value) != 0) {
-                $path .= $value.'/';
-                if (!is_dir($path)) {
-                    mkdir($path, 0777);
-                }
-            }
-        }
-    } else {
-        $path .= $subdir;
-        if (substr($path, -1) != '/') {
-            $path .= '/';
+
+    $path .= $subdir;
+
+    if (substr($path, -1) != '/') {
+        $path .= '/';
+    }
+
+    if ( $mkdir ) {
+        if ( ! is_dir( $path ) ) {
+            mkdir( $path, 0777, true );
         }
     }
+
     return $path;
 }
 

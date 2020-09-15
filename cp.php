@@ -217,6 +217,9 @@ if ($action == "settings") {
 
         $showlogson = $showlogsoff = '';
         settingHTML('show_logs_in_threads', $showlogson, $showlogsoff);
+        
+        $quarantineon = $quarantineoff = '';
+        settingHTML('quarantine_new_users', $quarantineon, $quarantineoff);
 
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
@@ -417,6 +420,7 @@ if ($action == "settings") {
         printsetting1($lang['texthidepriv'], 'hidepriv', $hideon, $hideoff);
         printsetting1($lang['emailverify'], 'emailchecknew',$echeckon, $echeckoff);
         printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
+        printsetting1($lang['moderation_setting'], 'quarantinenew',$quarantineon, $quarantineoff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
         printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
@@ -625,6 +629,7 @@ if ($action == "settings") {
         input_onoff_setting( 'onlinetoday_status', 'onlinetoday_statusnew' );
         input_int_setting( 'postperpage', 'postperpagenew' );
         input_int_setting( 'pruneusers', 'pruneusersnew' );
+        input_onoff_setting( 'quarantine_new_users', 'quarantinenew' );
         input_onoff_setting( 'quickjump_status', 'quickjump_statusnew' );
         input_onoff_setting( 'quickreply_status', 'quickreply_statusnew' );
         input_onoff_setting( 'regoptional', 'regoptionalnew' );
