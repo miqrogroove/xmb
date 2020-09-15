@@ -276,7 +276,7 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        if (X_STAFF) request_secure( 'User Control Panel/Edit Profile', $self['uid'], null, true );
+        if (X_STAFF) request_secure( 'User Control Panel/Edit Profile', $self['uid'], 0, true );
         if (!empty($_POST['newpassword'])) {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
