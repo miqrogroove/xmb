@@ -931,8 +931,8 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
         $post = array();
         $post['filename'] = attrOut($attach['filename']);
         $post['filetype'] = attrOut($attach['filetype']);
-        $post['fileurl'] = getAttachmentURL( (int) $attach['aid'], $pid, $attach['filename'], $quarantine );
-        $attachsize = getSizeFormatted($attach['filesize']);
+        $post['fileurl'] = \XMB\Attach\getURL( (int) $attach['aid'], $pid, $attach['filename'], $quarantine );
+        $attachsize = \XMB\Attach\getSizeFormatted($attach['filesize']);
 
         $post['filedims'] = '';
         $output = '';
@@ -941,7 +941,7 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
             if (intval($attach['thumbid'] > 0)) {
-                $post['thumburl'] = getAttachmentURL( (int) $attach['thumbid'], $pid, $attach['thumbname'], $quarantine );
+                $post['thumburl'] = \XMB\Attach\getURL( (int) $attach['thumbid'], $pid, $attach['thumbname'], $quarantine );
                 $result = explode('x', $attach['thumbsize']);
                 $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
                 eval('$output = "'.template('viewthread_post_attachmentthumb').'";');

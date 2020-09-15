@@ -199,7 +199,7 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                deleteThreadAttachments($tid);  // Must delete attachments before posts!
+                \XMB\Attach\deleteByThread($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$tid");
 
@@ -511,7 +511,7 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
                     }
 
-                    emptyThreadAttachments($tid, $pid);  // Must delete attachments before posts!
+                    \XMB\Attach\emptyThread($tid, $pid);  // Must delete attachments before posts!
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
 
                     updatethreadcount($tid); //Also updates lastpost
@@ -750,7 +750,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        deleteAllAttachments($move);
+                        \XMB\Attach\deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -768,7 +768,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        deleteAllAttachments($move);
+                        \XMB\Attach\deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -859,7 +859,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    copyAllAttachments($oldPid, $newpid);
+                    \XMB\Attach\copyAll( (int) $oldPid, $newpid );
                 }
 
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");

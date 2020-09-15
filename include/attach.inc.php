@@ -22,6 +22,10 @@
  *
  **/
 
+declare(strict_types=1);
+
+namespace XMB\Attach;
+
 if (!defined('IN_CODE')) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
@@ -52,7 +56,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
 /**
  * Attaches a single uploaded file to a specific forum post.
  *
- * attachUploadedFile() checks for the presence of $_FILES[$varname].
+ * uploadedFile() checks for the presence of $_FILES[$varname].
  * If found, the file will be stored and attached to the specified $pid.
  * The $pid can be omitted in post preview mode, thus creating
  * orphaned attachments that the registered user will be allowed to manage.
@@ -64,7 +68,7 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
  */
-function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = false ): int {
+function uploadedFile( string $varname, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
@@ -79,7 +83,7 @@ function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = f
         }
     }
 
-    $file = get_attached_file($varname, $filename, $filetype, $filesize, false, $usedb);
+    $file = getUpload($varname, $filename, $filetype, $filesize, false, $usedb);
     if ($file === FALSE) {
         return $filetype;
     }
@@ -102,13 +106,28 @@ function attachUploadedFile( string $varname, int $pid = 0, bool $quarantine = f
     // Check minimum file size for disk storage
     if ($filesize < $SETTINGS['files_min_disk_size'] && !$usedb) {
         $usedb = TRUE;
-        $file = get_attached_file($varname, $filename, $filetype, $filesize, false, $usedb);
+        $file = getUpload($varname, $filename, $filetype, $filesize, false, $usedb);
     }
 
-    return private_attachGenericFile( $pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $filetype, $filesize, $quarantine );
+    return private_genericFile( $pid, $usedb, $file, $_FILES[$varname]['tmp_name'], $filename, $filetype, $filesize, $quarantine );
 }
 
-function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false ): int {
+/**
+ * Attaches a single remote file to a specific forum post.
+ *
+ * remoteFile() checks the validity of $url.
+ * If found, the file will be stored and attached to the specified $pid.
+ * The $pid can be omitted in post preview mode, thus creating
+ * orphaned attachments that the registered user will be allowed to manage.
+ * Storage responsibilities include subdirectory and thumbnail creation.
+ *
+ * @since 1.9.11
+ * @param string $url Web address of the remote file.
+ * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
+ * @param bool $quarantine Save this record in a private table for later review?
+ * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
+ */
+function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $self, $SETTINGS;
 
     $path = getFullPathFromSubdir('');
@@ -228,7 +247,7 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
         }
     }
 
-    $aid = private_attachGenericFile( $pid, $usedb, $file, $filepath, $filename, $filetype, $filesize, $quarantine );
+    $aid = private_genericFile( $pid, $usedb, $file, $filepath, $filename, $filetype, $filesize, $quarantine );
 
     // Clean up disk if attachment failed.
     if ($aid <= 0) {
@@ -238,7 +257,7 @@ function attachRemoteFile( string $url, int $pid = 0, bool $quarantine = false )
     return $aid;
 }
 
-function private_attachGenericFile( int $pid, bool $usedb, string &$file, string &$filepath, string &$filename, string &$filetype, int $filesize, bool $quarantine ) {
+function private_genericFile( int $pid, bool $usedb, string &$file, string &$filepath, string &$filename, string &$filetype, int $filesize, bool $quarantine ) {
     global $self, $SETTINGS;
 
     // Check if we can store image metadata
@@ -344,26 +363,12 @@ function private_attachGenericFile( int $pid, bool $usedb, string &$file, string
         createThumbnail( $filename, $path, $filesize, $imgSize, $quarantine, $aid, $pid, $subdir );
     }
 
-    // Remove temp upload file, is_uploaded_file was checked in get_attached_file()
+    // Remove temp upload file, getUpload() was checked in get_attached_file()
     if ($usedb) {
         unlink($path);
     }
 
     return $aid;
-}
-
-/**
- * DEPRECATED by XMB 1.9.12
- *
- * \XMB\SQL\claimOrphanedAttachments() replaces this function.
- */
-function claimOrphanedAttachments($pid) {
-    global $db, $self;
-    
-    trigger_error( 'claimOrphanedAttachments() is deprecated in this version of XMB.', E_USER_DEPRECATED );
-    
-    $pid = intval($pid);
-    $db->query("UPDATE ".X_PREFIX."attachments SET pid=$pid WHERE pid=0 AND uid={$self['uid']}");
 }
 
 /**
@@ -376,7 +381,7 @@ function claimOrphanedAttachments($pid) {
  * @param bool  $quarantine Save this record in a private table for later review?
  * @return mixed
  */
-function doAttachmentEdits( &$deletes, array $aid_list, int $pid = 0, bool $quarantine = false ) {
+function doEdits( &$deletes, array $aid_list, int $pid = 0, bool $quarantine = false ) {
     $return = true;
     $deletes = array();
     if ( ! isset( $_POST['attachment'] ) ) {
@@ -391,22 +396,22 @@ function doAttachmentEdits( &$deletes, array $aid_list, int $pid = 0, bool $quar
         }
         switch($attachment['action']) {
         case 'replace':
-            deleteAttachment( $aid, $quarantine );
+            deleteByID( $aid, $quarantine );
             $deletes[] = $aid;
-            $status = attachUploadedFile( 'replace_'.$aid, $pid, $quarantine );
+            $status = uploadedFile( 'replace_'.$aid, $pid, $quarantine );
             if ($status < 0 && $status != X_EMPTY_UPLOAD) {
                 $return = $status;
             }
             break;
         case 'rename':
             $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
-            $status = renameAttachment( $aid, $pid, $rename, $quarantine );
+            $status = changeName( $aid, $pid, $rename, $quarantine );
             if ($status < 0) {
                 $return = $status;
             }
             break;
         case 'delete':
-            deleteAttachment( $aid, $quarantine );
+            deleteByID( $aid, $quarantine );
             $deletes[] = $aid;
             break;
         default:
@@ -416,7 +421,7 @@ function doAttachmentEdits( &$deletes, array $aid_list, int $pid = 0, bool $quar
     return $return;
 }
 
-function renameAttachment( int $aid, int $pid, string $newname, bool $quarantine = false ) {
+function changeName( int $aid, int $pid, string $newname, bool $quarantine = false ) {
     if ( isValidFilename( $newname ) ) {
         \XMB\SQL\renameAttachment( $aid, $newname, $quarantine );
 
@@ -433,10 +438,10 @@ function renameAttachment( int $aid, int $pid, string $newname, bool $quarantine
     }
 }
 
-function copyAllAttachments($frompid, $topid) {
+function copyAll( int $frompid, int $topid ) {
     global $db;
-    $frompid = intval($frompid);
-    $topid = intval($topid);
+
+    if ( ! X_STAFF ) trigger_error( 'Unprivileged access to function', E_USER_ERROR );
 
     // Find all primary attachments for $frompid
     $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid=0");
@@ -446,7 +451,7 @@ function copyAllAttachments($frompid, $topid) {
         if ($db->affected_rows() == 1) {
             $aid = $db->insert_id();
             if ($attach['subdir'] != '') {
-                private_copyDiskAttachment($attach['aid'], $aid, $attach['subdir']);
+                private_copyDiskFile($attach['aid'], $aid, $attach['subdir']);
             }
         }
 
@@ -468,14 +473,14 @@ function copyAllAttachments($frompid, $topid) {
             if ($db->affected_rows() == 1) {
                 $childaid = $db->insert_id();
                 if ($childattach['subdir'] != '') {
-                    private_copyDiskAttachment($childattach['aid'], $childaid, $childattach['subdir']);
+                    private_copyDiskFile($childattach['aid'], $childaid, $childattach['subdir']);
                 }
             }
         }
     }
 }
 
-function private_copyDiskAttachment($fromaid, $toaid, $subdir) {
+function private_copyDiskFile($fromaid, $toaid, $subdir) {
     $path = getFullPathFromSubdir($subdir);
     if ($path !== FALSE) {
         if (is_file($path.$fromaid)) {
@@ -484,34 +489,131 @@ function private_copyDiskAttachment($fromaid, $toaid, $subdir) {
     }
 }
 
-function deleteAttachment( int $aid, bool $quarantine = false ) {
+function moveToDB( int $aid, int $pid ) {
+    global $db;
+
+    if ( ! X_ADMIN ) trigger_error( 'Unprivileged access to special function', E_USER_ERROR );
+
+    $query = $db->query("SELECT aid, filesize, subdir FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+    if ($db->num_rows($query) != 1) {
+        return FALSE;
+    }
+    $attach = $db->fetch_array($query);
+    if ($attach['subdir'] == '') {
+        return FALSE;
+    }
+    $path = getFullPathFromSubdir($attach['subdir']).$attach['aid'];
+    if (intval(filesize($path)) != intval($attach['filesize'])) {
+        return FALSE;
+    }
+    $attachment = file_get_contents($path);
+    $db->escape_fast($attachment);
+    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment' WHERE aid=$aid AND pid=$pid");
+    if ($db->affected_rows() !== 1) {
+        return FALSE;
+    }
+    unlink($path);
+}
+
+function moveToDisk( int $aid, int $pid ) {
+    global $db;
+
+    if ( ! X_ADMIN ) trigger_error( 'Unprivileged access to special function', E_USER_ERROR );
+
+    $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.dateline "
+                      . "FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
+                      . "WHERE a.aid=$aid AND a.pid=$pid");
+    if ($db->num_rows($query) != 1) {
+        return FALSE;
+    }
+    $attach = $db->fetch_array($query);
+    if ($attach['subdir'] != '' || strlen($attach['attachment']) != $attach['filesize']) {
+        return FALSE;
+    }
+    if (intval($attach['updatestamp']) == 0 && intval($attach['dateline']) > 0) {
+        $attach['updatestamp'] = $attach['dateline'];
+    }
+    $subdir = getNewSubdir($attach['updatestamp']);
+    $path = getFullPathFromSubdir($subdir, TRUE);
+    $newfilename = $aid;
+    $path .= $newfilename;
+    $file = fopen($path, 'wb');
+    if ($file === FALSE) {
+        return FALSE;
+    }
+    if (fwrite($file, $attach['attachment']) != $attach['filesize']) {
+        return FALSE;
+    }
+    fclose($file);
+    $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
+}
+
+function deleteByID( int $aid, bool $quarantine = false ) {
     $thumbs_only = false;
     $aid_list = \XMB\SQL\getAttachmentChildIDs( $aid, $thumbs_only, $quarantine );
     $aid_list[] = $aid;
-    private_deleteAttachments( $aid_list, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
 }
 
-function deleteAllAttachments( int $pid, bool $quarantine = false ) {
+function deleteByPost( int $pid, bool $quarantine = false ) {
     $children = true;
     $aid_list = \XMB\SQL\getAttachmentIDsByPost( $pid, $children, $quarantine );
-    private_deleteAttachments( $aid_list, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
 }
 
-// Important: call deleteThreadAttachments() BEFORE deleting posts, because it uses a multi-table query.
-function deleteThreadAttachments( int $tid ) {
+// Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
+function deleteByThread( int $tid ) {
+    if ( ! X_STAFF ) trigger_error( 'Unprivileged access to function', E_USER_ERROR );
     $tid_list = [ $tid ];
     $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list );
-    private_deleteAttachments( $aid_list );
+    private_deleteByIDs( $aid_list );
 }
 
-function emptyThreadAttachments( int $tid, int $notpid ) {
+// Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
+function emptyThread( int $tid, int $notpid ) {
+    if ( ! X_STAFF ) trigger_error( 'Unprivileged access to function', E_USER_ERROR );
     $tid_list = [ $tid ];
     $quarantine = false;
     $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine, $notpid );
-    private_deleteAttachments( $aid_list, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
 }
 
-function private_deleteAttachments( array $aid_list, bool $quarantine = false ) {
+// Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
+function deleteByThreads( array $tid_list, bool $quarantine = false ) {
+    if ( ! X_ADMIN ) trigger_error( 'Unprivileged access to special function', E_USER_ERROR );
+    if ( empty( $tid_list ) ) return;
+    $aid_list = \XMB\SQL\getAttachmentIDsByThread( $tid_list, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
+}
+
+function deleteByUser( string $username, bool $quarantine = false ) {
+    if ( ! X_ADMIN ) trigger_error( 'Unprivileged access to special function', E_USER_ERROR );
+    $aid_list = \XMB\SQL\getAttachmentIDsByUser( $username, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
+}
+
+function deleteOrphans(): int {
+    global $db;
+
+    if ( ! X_ADMIN ) trigger_error( 'Unprivileged access to special function', E_USER_ERROR );
+
+    $q = $db->query("SELECT a.aid FROM ".X_PREFIX."attachments AS a "
+                  . "LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
+                  . "LEFT JOIN ".X_PREFIX."attachments AS b ON a.parentid=b.aid "
+                  . "WHERE ((a.uid=0 OR a.pid > 0) AND p.pid IS NULL) OR (a.parentid > 0 AND b.aid IS NULL)");
+
+    $aid_list = [];
+    while( $a = $db->fetch_array( $q ) ) {
+        $aid_list[] = $a['aid'];
+    }
+    $db->free_result( $q );
+    
+    private_deleteByIDs( $aid_list );
+
+    return count( $aid_list );
+}
+
+function private_deleteByIDs( array $aid_list, bool $quarantine = false ) {
     global $db;
     
     if ( empty( $aid_list ) ) return;
@@ -536,7 +638,7 @@ function private_deleteAttachments( array $aid_list, bool $quarantine = false ) 
  *
  * This function sets appropriate error levels and returns several variables.
  * This function does not provide the upload path, which is $_FILES[$varname]['tmp_name']
- * All return values must be treated as invalid if (FALSE === get_attached_file(...)).
+ * All return values must be treated as invalid if (FALSE === getUpload(...)).
  *
  * @since 1.9.11
  * @param string $varname The name of the file input on the form.
@@ -547,7 +649,7 @@ function private_deleteAttachments( array $aid_list, bool $quarantine = false ) 
  * @param bool   $loadfile Optional. When set to TRUE, the uploaded file will be loaded into memory and returned as a string value.
  * @return string|bool The uploaded file or an empty string will be returned on success. FALSE on failure. Uses param $loadfile.
  */
-function get_attached_file($varname, &$filename, &$filetype, &$filesize, bool $dbescape = false, $loadfile=TRUE) {
+function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape = false, $loadfile=TRUE) {
     global $SETTINGS;
 
     if ( $dbescape ) {
@@ -638,7 +740,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, bool $d
     return $attachment;
 }
 
-function getAttachmentURL( int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false ): string {
+function getURL( int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false ): string {
     global $full_url, $SETTINGS;
 
     if ($SETTINGS['files_virtual_url'] == '') {
@@ -1045,7 +1147,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
 function deleteThumbnail( int $aid, bool $quarantine = false ) {
     $thumbs = true;
     $aid_list = \XMB\SQL\getAttachmentChildIDs( $aid, $thumbs, $quarantine );
-    private_deleteAttachments( $aid_list, $quarantine );
+    private_deleteByIDs( $aid_list, $quarantine );
 }
 
 /**
@@ -1106,9 +1208,9 @@ class CartesianSize {
  * @param int $pid ID of the related post. Attachment becomes orphaned if set to zero.
  * @param string $message Post body, passed by reference and modified with new tags.
  * @param bool $quarantine Save this record in a private table for later review?
- * @return mixed True on success, or error code from attachRemoteFile().
+ * @return mixed True on success, or error code from remoteFile().
  */
-function extractRemoteImages( int $pid, string &$message, bool $quarantine = false ) {
+function remoteImages( int $pid, string &$message, bool $quarantine = false ) {
     // Sanity Checks
     if (!ini_get('allow_url_fopen')) {
         return TRUE;
@@ -1139,7 +1241,7 @@ function extractRemoteImages( int $pid, string &$message, bool $quarantine = fal
 
     // Process URLs
     foreach($items as $result) {
-        $aid = attachRemoteFile( $result['url'], $pid, $quarantine );
+        $aid = remoteFile( $result['url'], $pid, $quarantine );
         if ($aid <= 0) {
             $return = $aid;
             $replace = '[bad '.substr($result['code'], 1, -6).'[/bad img]';

@@ -1801,7 +1801,7 @@ if ($action == "deleteposts") {
         <?php
     } elseif ($lang['textyes'] == $yessubmit) {
         request_secure( 'Control Panel/Members/Del Posts', $member );
-        require('include/attach-admin.inc.php');
+        require('include/attach.inc.php');
 
         // Get TIDs
         $dirty = array();
@@ -1825,7 +1825,7 @@ if ($action == "deleteposts") {
         }
 
         // Delete Member's Posts
-        deleteAttachmentsByUser( $rawuser );
+        \XMB\Attach\deleteByUser( $rawuser );
         $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
         $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
 
@@ -1888,7 +1888,7 @@ if ($action == "upgrade") {
             $filename = '';
             $filetype = '';
             $filesize = 0;
-            $add = get_attached_file('sql_file', $filename, $filetype, $filesize, FALSE);
+            $add = \XMB\Attach\getUpload('sql_file', $filename, $filetype, $filesize, FALSE);
             if ($add !== FALSE) {
                 $upgrade .= $add;
                 unlink($_FILES['sql_file']['tmp_name']);

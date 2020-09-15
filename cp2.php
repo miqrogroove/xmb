@@ -370,7 +370,7 @@ if ($action == 'lang') {
         $filename = '';
         $filetype = '';
         $filesize = 0;
-        $upload = get_attached_file('themefile', $filename, $filetype, $filesize, FALSE);
+        $upload = \XMB\Attach\getUpload('themefile', $filename, $filetype, $filesize, FALSE);
         if ($upload === FALSE) {
             $message = $lang['langimportfail'];
             if ($filetype != X_EMPTY_UPLOAD) {
@@ -1760,7 +1760,7 @@ if ($action == "prune") {
         }
 
         if (count($queryWhere) > 0) {
-            require('include/attach-admin.inc.php');
+            require('include/attach.inc.php');
             $tids = array();
             $fids = array();
             $queryWhere = implode(' AND ', $queryWhere);
@@ -1771,7 +1771,7 @@ if ($action == "prune") {
                     $fids[] = $t['fid'];
                 }
                 set_time_limit(30); // Potentially expensive operations coming up.
-                deleteMultiThreadAttachments( $tids ); // Must delete attachments before posts!
+                \XMB\Attach\deleteByThreads( $tids ); // Must delete attachments before posts!
                 set_time_limit(30);
                 $tids = implode(',', $tids);
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
@@ -2223,12 +2223,12 @@ if ($action == "attachments") {
                           . "LEFT JOIN ".X_PREFIX."threads t ON t.tid=p.tid "
                           . "LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid "
                           . "LEFT JOIN ".X_PREFIX."members m ON a.uid=m.uid $restriction1 $orderby");
-        $diskpath = getFullPathFromSubdir('');
+        $diskpath = \XMB\Attach\getFullPathFromSubdir('');
         if ($diskpath !== FALSE) {
             $diskpath = is_dir($diskpath);
         }
         while($attachment = $db->fetch_array($query)) {
-            $attachsize = getSizeFormatted($attachment['filesize']);
+            $attachsize = \XMB\Attach\getSizeFormatted($attachment['filesize']);
 
             $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
             $attachment['fname'] = fnameOut($attachment['fname']);
@@ -2250,7 +2250,7 @@ if ($action == "attachments") {
                 $attachment['author'] = $attachment['username'];
                 $downloadlink = '';
             } else {
-                $downloadlink = '<a href="'.getAttachmentURL( (int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename'] ).'" target="_blank">'.$lang['textdownload'].'</a>';
+                $downloadlink = '<a href="'.\XMB\Attach\getURL( (int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename'] ).'" target="_blank">'.$lang['textdownload'].'</a>';
                 if (function_exists('imagecreatetruecolor')) {
                     $newthumblink = '<a href="cp2.php?action=regeneratethumbnail&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['regeneratethumbnail'].'</a>';
                 }
@@ -2276,7 +2276,7 @@ if ($action == "attachments") {
             }
             while($child = $db->fetch_array($query2)) {
                 if ($child['parentid'] == $attachment['aid'] && substr($child['filename'], -10) == '-thumb.jpg') {
-                    $attachsize = getSizeFormatted($child['filesize']);
+                    $attachsize = \XMB\Attach\getSizeFormatted($child['filesize']);
                     $movelink = '';
                     if ($child['subdir'] == '') {
                         $child['subdir'] = 'DB';
@@ -2292,7 +2292,7 @@ if ($action == "attachments") {
                     if ($child['pid'] == 0) {
                         $downloadlink = $lang['thumbnail'];
                     } else {
-                        $downloadlink = '<a href="'.getAttachmentURL( (int) $child['aid'], (int) $child['pid'], $child['filename'] ).'" target="_blank">'.$lang['thumbnail'].'</a>';
+                        $downloadlink = '<a href="'.\XMB\Attach\getURL( (int) $child['aid'], (int) $child['pid'], $child['filename'] ).'" target="_blank">'.$lang['thumbnail'].'</a>';
                     }
                     ?>
                         <tr>
@@ -2337,7 +2337,7 @@ if ($action == "attachments") {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
             if ($attachment['filename'] != $postedvalue) {
-                renameAttachment( (int) $attachment['aid'], (int) $attachment['pid'], $postedvalue );
+                \XMB\Attach\changeName( (int) $attachment['aid'], (int) $attachment['pid'], $postedvalue );
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2602,32 +2602,32 @@ if ($action == "delete_attachment") {
     } elseif ($lang['textyes'] == $yessubmit) {
         request_secure( 'Control Panel/Attachments/Delete', (string) $aid );
         require('include/attach.inc.php');
-        deleteAttachment( $aid );
+        \XMB\Attach\deleteByID( $aid );
         echo "<p align=\"center\">Deleted ...</br>";
     }
 }
 
 if ($action == "movetodb_attachment") {
-    require('include/attach-admin.inc.php');
+    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    moveAttachmentToDB($aid, $pid);
+    \XMB\Attach\moveToDB($aid, $pid);
     echo "<p align=\"center\">Moved ...</br>";
 }
 
 if ($action == "movetodisk_attachment") {
-    require('include/attach-admin.inc.php');
+    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    moveAttachmentToDisk($aid, $pid);
+    \XMB\Attach\moveToDisk($aid, $pid);
     echo "<p align=\"center\">Moved ...</br>";
 }
 
 if ($action == "regeneratethumbnail") {
-    require('include/attach-admin.inc.php');
+    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    $result = regenerateThumbnail($aid, $pid);
+    $result = \XMB\Attach\regenerateThumbnail($aid, $pid);
     if ($result < 0) {
         $msg = $attachmentErrors[$result];
     } elseif (FALSE === $result) {

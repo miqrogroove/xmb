@@ -363,8 +363,8 @@ switch($action) {
             echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" /></td></tr>';
             echo '</form>';
         } else {
-            require('include/attach-admin.inc.php');
-            $i = deleteOrphans();
+            require('include/attach.inc.php');
+            $i = \XMB\Attach\deleteOrphans();
 
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_attachments_found'].'</td></tr>';

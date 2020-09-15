@@ -43,7 +43,6 @@ $req['files'] = array(
     'header.php',
     'include/admin.inc.php',
     'include/attach.inc.php',
-    'include/attach-admin.inc.php',
     'include/buddy.inc.php',
     'include/captcha.inc.php',
     'include/debug.inc.php',
