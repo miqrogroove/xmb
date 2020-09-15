@@ -148,6 +148,19 @@ if ($forum['type'] == 'forum') {
     }
 }
 
+if ( X_MEMBER && 'yes' == $self['waiting_for_mod'] ) {
+    $quarantine = true;
+    $result = \XMB\SQL\countThreadsByUser( $self['username'], $fid, $quarantine );
+    if ( $result > 0 ) {
+        if ( 1 == $result ) {
+            $msg = $lang['moderation_threads_single'];
+        } else {
+            $msg = str_replace( '$result', $result, $lang['moderation_threads_eval'] );
+        }
+        $subforums .= message( $msg, false, '', '', false, false, true, false ) . "<br />\n";
+    }
+}
+
 $t_extension = get_extension($lang['toppedprefix']);
 switch($t_extension) {
     case 'gif':
