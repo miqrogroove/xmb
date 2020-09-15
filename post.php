@@ -773,7 +773,7 @@ switch($action) {
             $replynum = $db->result($querytop, 0);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
-                eval($lang['evaltrevlt']);
+                $trevltmsg = str_replace( '$threadlink', $threadlink, $lang['evaltrevlt'] );
                 eval('$posts .= "'.template('post_reply_review_toolong').'";');
             } else {
                 $thisbg = $altbg1;

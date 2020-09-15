@@ -168,8 +168,8 @@ $timesearch = $onlinetime - 86400;
 $query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 
 if ( $db->num_rows( $query ) == 0 ) {
-    $bestmember = 'Nobody';
-    $bestmemberpost = 'No';
+    $bestmember = '';
+    $bestmemberpost = '';
     $eval = $lang['evalnobestmember'];
 } else {
     $info = $db->fetch_array($query);
@@ -180,22 +180,33 @@ if ( $db->num_rows( $query ) == 0 ) {
 }
 $db->free_result($query);
 
-eval($eval);
-eval($lang['evalstats1']);
-eval($lang['evalstats2']);
-eval($lang['evalstats3']);
-eval($lang['evalstats4']);
-eval($lang['evalstats5']);
-eval($lang['evalstats6']);
-eval($lang['evalstats7']);
-eval($lang['evalstats8']);
-eval($lang['evalstats9']);
-eval($lang['evalstats10']);
-eval($lang['evalstats11']);
-eval($lang['evalstats12']);
-eval($lang['evalstats13']);
-eval($lang['evalstats14']);
-eval($lang['evalstats15']);
+$search  = [ '$membesthtml', '$bestmemberpost' ];
+$replace = [  $membesthtml,   $bestmemberpost  ];
+$bestmember = str_replace( $search, $replace, $eval );
+
+$stats1 = str_replace( '$bbname', $bbname, $lang['evalstats1'] );
+$stats2 = str_replace( '$posts', $posts, $lang['evalstats2'] );
+$stats3 = str_replace( '$threads', $threads, $lang['evalstats3'] );
+
+$search  = [ '$forumsa', '$forums' ];
+$replace = [  $forumsa,   $forums  ];
+$stats4 = str_replace( $search, $replace, $lang['evalstats4'] );
+
+$stats5 = str_replace( '$members', $members, $lang['evalstats5'] );
+$stats6 = str_replace( '$viewmost', $viewmost, $lang['evalstats6'] );
+$stats7 = str_replace( '$replymost', $replymost, $lang['evalstats7'] );
+
+$search  = [ '$popforum', '$pop[posts]', '$pop[threads]'  ];
+$replace = [  $popforum,   $pop['posts'], $pop['threads'] ];
+$stats8 = str_replace( $search, $replace, $lang['evalstats8'] );
+
+$stats9 = str_replace( '$mempost', $mempost, $lang['evalstats9'] );
+$stats10 = str_replace( '$forumpost', $forumpost, $lang['evalstats10'] );
+$stats11 = str_replace( '$threadreply', $threadreply, $lang['evalstats11'] );
+$stats12 = str_replace( '$postsday', $postsday, $lang['evalstats12'] );
+$stats13 = str_replace( '$membersday', $membersday, $lang['evalstats13'] );
+$stats14 = str_replace( '$latest', $latest, $lang['evalstats14'] );
+$stats15 = str_replace( '$mapercent', $mapercent, $lang['evalstats15'] );
 
 eval('$statspage = "'.template('feature_statistics').'";');
 

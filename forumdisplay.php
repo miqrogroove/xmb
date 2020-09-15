@@ -49,7 +49,7 @@ loadtemplates(
 
 smcwcache();
 
-eval($lang['hottopiceval']);
+$hottopic = str_replace( '$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval'] );
 
 $fid = getInt('fid');
 

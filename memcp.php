@@ -171,7 +171,7 @@ if ($action == 'profile') {
         }
 
         $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
-        eval($lang['evaloffset']);
+        $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
         $timezones = timezone_control( $member['timeoffset'] );
 
@@ -703,7 +703,7 @@ if ($action == 'profile') {
     eval('$mempage = "'.template('memcp_devices').'";');
 } else {
     eval('$header = "'.template('header').'";');
-    eval($lang['evalusercpwelcome']);
+    $usercpwelcome = str_replace( '$xmbuser', $self['username'], $lang['evalusercpwelcome'] );
     $header .= makenav($action);
 
     $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");

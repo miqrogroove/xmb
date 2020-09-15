@@ -127,7 +127,9 @@ if ($SETTINGS['index_stats'] == 'on') {
         $db->free_result($query);
 
         $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
-        eval($lang['evalindexstats']);
+        $search  = [ '$threads', '$posts', '$members' ];
+        $replace = [  $threads,   $posts,   $members  ];
+        $indexstats = str_replace( $search, $replace, $lang['evalindexstats'] );
         eval('$statsbar = "'.template('index_stats').'";');
     }
 }
@@ -179,8 +181,10 @@ if ($gid == 0) {
             $hiddenn = '<strong>1</strong> '.$lang['texthmem'];
         }
 
-        eval($lang['whosoneval']);
-        $memonmsg = '<span class="smalltxt">'.$lang['whosonmsg'].'</span>';
+        $search  = [ '$guestn', '$membern', '$hiddenn', '$bbname' ];
+        $replace = [  $guestn,   $membern,   $hiddenn,   $bbname  ];
+        $whosonmsg = str_replace( $search, $replace, $lang['whosoneval'] );
+        $memonmsg = "<span class='smalltxt'>$whosonmsg</span>";
 
         $memtally = array();
         $num = 1;
@@ -254,7 +258,7 @@ if ($gid == 0) {
             } else {
                 $memontoday = $todaymembersnum.$lang['textmemberstoday'];
             }
-            eval($lang['last50todayeval']);
+            $last50today = str_replace( '$onlinetodaycount', $onlinetodaycount, $lang['last50todayeval'] );
             eval('$whosonlinetoday = "'.template('index_whosonline_today').'";');
         }
 

@@ -213,7 +213,9 @@ switch($action) {
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
             $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
-            eval( '$body = "'.$lang['lostpw_body_eval'].'";' );
+            $search  = [ '$name', '$link' ];
+            $replace = [  $name,   $link  ];
+            $body = str_replace( $search, $replace, $lang['lostpw_body_eval'] );
             xmb_mail( $emailaddy, $subject, $body, $translate['charset'] );
 
             message( $lang['emailpw'] );

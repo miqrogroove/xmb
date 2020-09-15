@@ -130,7 +130,7 @@ $dayselect
 <input type="checkbox" name="useoldu2u" value="yes" $uou2uchecked /> $lang[textuseoldu2u]<br />
 <input type="checkbox" name="saveogu2u" value="yes" $ogu2uchecked /> $lang[textsaveog]<br />
 <input type="checkbox" name="emailonu2u" value="yes" $eouchecked /> $lang[textemailonu2u]<br />
-<input type="text" name="timeoffset1" size="3" value="$member[timeoffset]" /> $lang[textoffset]
+<input type="text" name="timeoffset1" size="3" value="$member[timeoffset]" /> $textoffset
 </td>
 </tr>
 <tr class="tablerow">
@@ -1311,27 +1311,27 @@ $rankrows
 </tr>
 <tr bgcolor="$altbg1" class="tablerow">
 <td>
-<strong>$lang[stats1]</strong>
+<strong>$stats1</strong>
 <br />
-$lang[stats2]
+$stats2
 <br />
-$lang[stats3]
+$stats3
 <br />
-$lang[stats4]
+$stats4
 <br />
-$lang[stats5]
-<br />
-<br />
-$lang[stats6]
+$stats5
 <br />
 <br />
-$lang[stats7]
+$stats6
 <br />
 <br />
-$lang[stats14]
+$stats7
 <br />
 <br />
-$lang[stats8]
+$stats14
+<br />
+<br />
+$stats8
 <br />
 <br />
 </td>
@@ -1340,21 +1340,21 @@ $lang[stats8]
 <td>
 <strong>$lang[textaverages]</strong>
 <br />
-$lang[stats9]
+$stats9
 <br />
-$lang[stats10]
+$stats10
 <br />
-$lang[stats11]
+$stats11
 <br />
-$lang[stats12]
+$stats12
 <br />
-$lang[stats13]
+$stats13
 <br />
-$lang[stats15]
+$stats15
 <br />
 <br />
 <br />
-$lang[bestmember]
+$bestmember
 </td>
 </tr>
 </table>
@@ -1455,10 +1455,10 @@ $multipage
 <br />
 <table width="$tablewidth" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" align="center"><tr>
 <td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
-<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
+<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
 <img src="$imgdir/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
-<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
+<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
 <img src="$imgdir/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
 </tr>
@@ -1541,10 +1541,10 @@ $multipage3
 <tr>
 <td class="tablerow">
 <img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
-<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
+<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
 <img src="$imgdir/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
-<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$lang[hottopic]&nbsp;)<br />
+<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
 <img src="$imgdir/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
 </tr>
@@ -1981,7 +1981,7 @@ $statsbar
 <td align="left" class="category"><font color="$cattext"><strong>$lang[key]</strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="$altbg2">
-<td width="50%" align="left" valign="top">$lang[indexstats]<br />$lang[stats4] $memhtml</td>
+<td width="50%" align="left" valign="top">$indexstats<br />$lang[stats4] $memhtml</td>
 <td width="50%" align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
 </tr>
 </table>
@@ -2128,7 +2128,7 @@ $whosonlinetoday
 |#*XMB TEMPLATE FILE*#|index_whosonline_today|#*XMB TEMPLATE*#|
 <tr>
 <td colspan="2" class="category">
-<a href="misc.php?action=onlinetoday"><strong><font color="$cattext">[+] $lang[last50today]</font></strong></a>
+<a href="misc.php?action=onlinetoday"><strong><font color="$cattext">[+] $last50today</font></strong></a>
 </td>
 </tr>
 <tr>
@@ -2408,7 +2408,7 @@ $dayselect
 <td bgcolor="$altbg2"><input type="text" name="dateformatnew" size="25" value="$dformatorig" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textoffset]</td>
+<td bgcolor="$altbg1" width="22%">$textoffset</td>
 <td bgcolor="$altbg2">
 $timezones
 </td>
@@ -2631,7 +2631,7 @@ $favsbtn
 <td bgcolor="$altbg1">
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td align="center" colspan="2" style="padding-bottom: 3px"><font class="mediumtxt">$lang[usercpwelcome]</font></td>
+<td align="center" colspan="2" style="padding-bottom: 3px"><font class="mediumtxt">$usercpwelcome</font></td>
 </tr>
 <tr>
 <td bgcolor="$bordercolor"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
@@ -2947,7 +2947,7 @@ $dayselect
 <td bgcolor="$altbg2"><input type="text" name="dateformatnew" size="25" value="$member[dateformat]" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textoffset]</td>
+<td bgcolor="$altbg1" width="22%">$textoffset</td>
 <td bgcolor="$altbg2">
 $timezones
 </td>
@@ -3802,7 +3802,7 @@ $posts
 
 |#*XMB TEMPLATE FILE*#|post_reply_review_toolong|#*XMB TEMPLATE*#|
 <tr bgcolor="$altbg2" class="tablerow">
-<td colspan="2" valign="top" width="19%">$lang[trevltmsg]</td>
+<td colspan="2" valign="top" width="19%">$trevltmsg</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|search|#*XMB TEMPLATE*#|
@@ -4649,7 +4649,7 @@ $lang[textsent] $u2udateline</span>
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
 <td class="mediumtxt" bgcolor="$altbg1">
-<div align="center">$lang[uqinfo]</div>
+<div align="center">$uqinfo</div>
 <img src="$imgdir/pollbar.gif" width="$barwidth%" height="10" alt="$lang[altpollpercentage]" />
 </td>
 </tr>
@@ -5126,7 +5126,7 @@ $quickbbcode
 <td width="85%"> <div align="left">$lang[bbcodeoff] </div></td>
 </tr>
 <tr $disableguest>
-<td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" /></div></td>
+<td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" $subcheck /></div></td>
 <td width="85%"> <div align="left">$lang[textemailnotify] </div></td>
 </tr>
 </table></div>

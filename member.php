@@ -109,7 +109,7 @@ switch($action) {
                 eval('$memberpage = "'.template('member_reg_rules').'";');
             } else {
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
-                eval($lang['evaloffset']);
+                $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
                 $themelist = array();
                 $themelist[] = '<select name="thememem">';

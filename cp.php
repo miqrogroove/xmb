@@ -1652,6 +1652,7 @@ if ($action == "ipban") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=ipban">
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
             <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
             <tr><td bgcolor="<?php echo $bordercolor?>">
             <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -1708,9 +1709,11 @@ if ($action == "ipban") {
             </tr>
             <?php
         } elseif (onSubmit('ipbandisable')) {
+            request_secure( 'Control Panel/IP Banning', 'mass-edit' );
             \XMB\SQL\updateSetting( 'ip_banning', 'off' );
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         } else {
+            request_secure( 'Control Panel/IP Banning', 'mass-edit' );
             $newip = array();
             $newip[] = (is_numeric(postedVar('newip1')) || postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
             $newip[] = (is_numeric(postedVar('newip2')) || postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
@@ -1769,6 +1772,7 @@ if ($action == "ipban") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=ipban">
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'enable', X_NONCE_AYS_EXP ); ?>" />
             <div align="center">
             <input type="submit" class="submit" name="ipbanenable" value="<?php echo $lang['ipbanenable']; ?>" />
             </div>
@@ -1777,6 +1781,7 @@ if ($action == "ipban") {
             </tr>
             <?php
         } else {
+            request_secure( 'Control Panel/IP Banning', 'enable' );
             \XMB\SQL\updateSetting( 'ip_banning', 'on' );
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         }

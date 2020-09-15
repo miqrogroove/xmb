@@ -415,6 +415,7 @@ switch($action) {
         $db->free_result($query);
         ?>
         <form method="post" action="cp.php?action=ipban">
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="60%" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -441,12 +442,12 @@ switch($action) {
 
             if ($foundmask) {
                 $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
-                eval($lang['evalipmask']);
-                echo $lang['bannedipmask'];
+                $bannedipmask = str_replace( '$ipmask', $ipmask, $lang['evalipmask'] );
+                echo $bannedipmask;
             } else {
                 echo $lang['textbannedip'];
             }
-            echo "<input type=\"hidden\" name=\"delete$result[id]\" value=\"$result[id]\" />";
+            echo "<input type='hidden' name='delete[{$result['id']}]' value='1' />";
         } else {
             $buttontext = $lang['textbanip'];
             for($i=1; $i<=4; ++$i) {

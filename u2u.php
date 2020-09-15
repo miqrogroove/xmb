@@ -212,15 +212,19 @@ if (!X_STAFF) {
     $percentage = (0 == $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / $SETTINGS['u2uquota']) * 100);
     if ($percentage > 100) {
         $barwidth = 100;
-        eval($lang['evaluqinfo_over']);
+        $search  = [ '$u2ucount', '$u2uquota'            ];
+        $replace = [  $u2ucount,   $SETTINGS['u2uquota'] ];
+        $uqinfo = str_replace( $search, $replace, $lang['evaluqinfo_over'] );
     } else {
         $percent = number_format($percentage, 2);
         $barwidth = number_format($percentage, 0);
-        eval($lang['evaluqinfo']);
+        $search  = [ '$u2ucount', '$percent', '$u2uquota'            ];
+        $replace = [  $u2ucount,   $percent,   $SETTINGS['u2uquota'] ];
+        $uqinfo = str_replace( $search, $replace, $lang['evaluqinfo'] );
     }
 } else {
     $barwidth = $percentage = 0;
-    eval($lang['evalu2ustaffquota']);
+    $uqinfo = str_replace( '$u2ucount', $u2ucount, $lang['evalu2ustaffquota'] );
 }
 eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
 $tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';

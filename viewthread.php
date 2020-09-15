@@ -289,7 +289,13 @@ if ($action == '') {
     if ($perms[X_PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
         eval('$replylink = "'.template('viewthread_reply').'";');
         if ($SETTINGS['quickreply_status'] == 'on') {
-            $usesigcheck = ($self['sig'] != '') ? $cheHTML : '';
+            if ( X_MEMBER ) {
+                $usesigcheck = ($self['sig'] != '') ? $cheHTML : '';
+                $subcheck = ( 'yes' == $self['sub_each_post'] ) ? $cheHTML : '';
+            } else {
+                $usesigcheck = '';
+                $subcheck = '';
+            }
             $captchapostcheck = '';
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
                 require ROOT.'include/captcha.inc.php';
