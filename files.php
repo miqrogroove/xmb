@@ -32,8 +32,21 @@ $aid = 0;
 $pid = 0;
 $filename = '';
 
+// Moderation of new users
+$quarantine = false;
+$format = (int) $SETTINGS['file_url_format'];
+if ( 'off' == $SETTINGS['quarantine_new_users'] && ! X_SMOD ) {
+    // Access to quarantined files is restricted when that system is not in use.
+} elseif ( getInt('newaid') > 0 ) {
+    // Otherwise, the newaid variable indicates a request to read attachments for preview or moderation.
+    $quarantine = true;
+    $format = 99;
+} else {
+    // Most requests are not for quarantined files.
+}
+
 // Parse "Pretty" URLs
-switch(intval($SETTINGS['file_url_format'])) {
+switch( $format ) {
 case 1:
 //    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
     $aid = getInt('aid');
@@ -71,6 +84,11 @@ case 5:
     $aid = intval($result[count($result) - 2]);
     $filename = urldecode($result[count($result) - 1]);
     break;
+case 99:
+//    $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
+    $aid = getInt( 'newaid' );
+    $pid = getInt( 'newpid' );
+    break;
 default:
     $aid = getInt('aid');
     $pid = getInt('pid');
@@ -83,7 +101,6 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && $self['uid'] == 0)
 }
 
 // Retrieve attachment metadata
-$quarantine = false;
 if ($filename == '') {
     if ($pid == 0 && !X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
@@ -177,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINC
 }
 
 // Increment hit counter
-\XMB\SQL\raiseDownloadCounter( $aid );
+\XMB\SQL\raiseDownloadCounter( $aid, $quarantine );
 
 // Set response headers
 if ($file['img_size'] == '') {

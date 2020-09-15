@@ -680,7 +680,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
+                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'], $quarantine );
                 $counter = 0;
                 foreach ( $orphans as $postinfo ) {
                     $files[] = $postinfo;
@@ -735,7 +735,7 @@ switch($action) {
                     postLinkBBcode($messageinput);
                 }
                 if (count($files) > 0) {
-                    bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
+                    bbcodeFileTags( $messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine );
                 }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
@@ -830,15 +830,15 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = attachUploadedFile('attach'.$i);
+                    $result = attachUploadedFile( 'attach'.$i, 0, $quarantine );
                     if ($result < 0 && $result != X_EMPTY_UPLOAD) {
                         $errors .= softerror($attachmentErrors[$result]);
                         $topicvalid = FALSE;
                     }
                 }
             }
-            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'] );
-            $result = doAttachmentEdits( $deletes, $aid_list );
+            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs( (int) $self['uid'], $quarantine );
+            $result = doAttachmentEdits( $deletes, $aid_list, 0, $quarantine );
             if ($result < 0) {
                 $errors .= softerror($attachmentErrors[$result]);
                 $topicvalid = FALSE;
@@ -847,7 +847,7 @@ switch($action) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $result = extractRemoteImages(0, $messageinput);
+                $result = extractRemoteImages( 0, $messageinput, $quarantine );
                 if ($result < 0) {
                     $errors .= softerror($attachmentErrors[$result]);
                     $topicvalid = FALSE;
@@ -983,7 +983,7 @@ switch($action) {
                 'pollopts' => $dbpollopts,
             ];
 
-            $tid = \XMB\SQL\addThread( $values );
+            $tid = \XMB\SQL\addThread( $values, $quarantine );
 
             $values = [
                 'fid' => (int) $fid,
@@ -999,22 +999,24 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost( $values );
+            $pid = \XMB\SQL\addPost( $values, $quarantine );
 
             $lastpost .= "|$pid";
-            \XMB\SQL\setThreadLastpost( $tid, $lastpost );
+            \XMB\SQL\setThreadLastpost( $tid, $lastpost, $quarantine );
 
-            $where = "WHERE fid=$fid";
-            if ($forum['type'] == 'sub') {
-                $where .= " OR fid={$forum['fup']}";
+            if ( ! $quarantine ) {
+                $where = "WHERE fid=$fid";
+                if ($forum['type'] == 'sub') {
+                    $where .= " OR fid={$forum['fup']}";
+                }
+                $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', threads=threads+1, posts=posts+1 $where");
+                unset($where);
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$sql_username|$pid', threads=threads+1, posts=posts+1 $where");
-            unset($where);
 
             if ($poll == 'yes') {
                 // Create a poll subject.  Totally redundant, unused value.  Works more like a junction table with a bunch of extra useless columns.
                 $dbsubject = addslashes($subjectinput);
-                $vote_id = \XMB\SQL\addVoteDesc( $tid, $dbsubject );
+                $vote_id = \XMB\SQL\addVoteDesc( $tid, $dbsubject, $quarantine );
                 
                 // Create poll options.  This is the part we care about.
                 $options = [];
@@ -1026,44 +1028,49 @@ switch($action) {
                         'vote_option_text' => $p,
                     ];
                 }
-                \XMB\SQL\addVoteOptions( $options );
+                \XMB\SQL\addVoteOptions( $options, $quarantine );
             }
 
             if ( X_MEMBER ) {
                 if ($emailnotify == 'yes') {
-                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription' );
+                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription', $quarantine );
                 }
 
-                $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
+                if ( ! $quarantine ) {
+                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
+                }
             }
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            attachUploadedFile('attach'.$i, $pid);
+                            attachUploadedFile( 'attach'.$i, $pid, $quarantine );
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        extractRemoteImages($pid, $messageinput);
+                        extractRemoteImages( $pid, $messageinput, $quarantine );
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            $db->escape_fast($newdbmessage);
-                            $db->query("UPDATE ".X_PREFIX."posts SET message='$newdbmessage' WHERE pid=$pid");
+                            \XMB\SQL\savePostBody( $pid, $newdbmessage, $quarantine );
                         }
                     }
                 } elseif ( X_MEMBER ) {
-                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'] );
+                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'], $quarantine );
                 }
             }
 
-            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-            $posts = $db->result($query, 0);
-            $db->free_result($query);
+            if ( $quarantine ) {
+                message( $lang['moderation_hold'] );
+            } else {
+                $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
+                $posts = $db->result($query, 0);
+                $db->free_result($query);
 
-            $topicpages = quickpage($posts, $ppp);
-            $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-            message($lang['postmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+                $topicpages = quickpage($posts, $ppp);
+                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                message($lang['postmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
+            }
         }
 
         if (!$topicvalid) {
@@ -1071,7 +1078,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'] );
+                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'], $quarantine );
                 $counter = 0;
                 foreach ( $orphans as $postinfo ) {
                     $files[] = $postinfo;
@@ -1126,7 +1133,7 @@ switch($action) {
                     postLinkBBcode($messageinput);
                 }
                 if (count($files) > 0) {
-                    bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost);
+                    bbcodeFileTags( $messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine );
                 }
                 $message1 = postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
@@ -1367,7 +1374,7 @@ switch($action) {
                     $postinfo['downloads'] = $attach['downloads'];
                     $postinfo['filename'] = attrOut($attach['filename']);
                     $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
-                    $postinfo['url'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
+                    $postinfo['url'] = getAttachmentURL( (int) $attach['aid'], $pid, $attach['filename'] );
                     eval('$attachment .= "'.template('post_edit_attachment').'";');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$attach['aid']}[/file]";

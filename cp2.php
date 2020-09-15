@@ -2250,7 +2250,7 @@ if ($action == "attachments") {
                 $attachment['author'] = $attachment['username'];
                 $downloadlink = '';
             } else {
-                $downloadlink = '<a href="'.getAttachmentURL($attachment['aid'], $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
+                $downloadlink = '<a href="'.getAttachmentURL( (int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename'] ).'" target="_blank">'.$lang['textdownload'].'</a>';
                 if (function_exists('imagecreatetruecolor')) {
                     $newthumblink = '<a href="cp2.php?action=regeneratethumbnail&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['regeneratethumbnail'].'</a>';
                 }
@@ -2292,7 +2292,7 @@ if ($action == "attachments") {
                     if ($child['pid'] == 0) {
                         $downloadlink = $lang['thumbnail'];
                     } else {
-                        $downloadlink = '<a href="'.getAttachmentURL($child['aid'], $child['pid'], $child['filename']).'" target="_blank">'.$lang['thumbnail'].'</a>';
+                        $downloadlink = '<a href="'.getAttachmentURL( (int) $child['aid'], (int) $child['pid'], $child['filename'] ).'" target="_blank">'.$lang['thumbnail'].'</a>';
                     }
                     ?>
                         <tr>

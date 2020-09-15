@@ -914,12 +914,14 @@ function bbcodeSizeTags($matches) {
  * Caller must include attach.inc.php, query the attachments table,
  * and load the needed templates.
  *
+ * @since 1.9.11
  * @param string $message Read/Write Variable.  Returns the processed HTML.
  * @param array  $files   Read-Only Variable.  Contains the result rows from an attachment query.
  * @param int    $pid     Pass zero when in newthread or reply preview.
  * @param bool   $bBBcodeOnForThisPost
+ * @param bool   $quarantine Are these files in a private table for later review?
  */
-function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
+function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false ) {
     global $lang, $SETTINGS;
 
     $pid = intval($pid);
@@ -929,7 +931,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
         $post = array();
         $post['filename'] = attrOut($attach['filename']);
         $post['filetype'] = attrOut($attach['filetype']);
-        $post['fileurl'] = getAttachmentURL($attach['aid'], $pid, $attach['filename']);
+        $post['fileurl'] = getAttachmentURL( (int) $attach['aid'], $pid, $attach['filename'], $quarantine );
         $attachsize = getSizeFormatted($attach['filesize']);
 
         $post['filedims'] = '';
@@ -939,7 +941,7 @@ function bbcodeFileTags(&$message, &$files, $pid, $bBBcodeOnForThisPost) {
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
             if (intval($attach['thumbid'] > 0)) {
-                $post['thumburl'] = getAttachmentURL($attach['thumbid'], $pid, $attach['thumbname']);
+                $post['thumburl'] = getAttachmentURL( (int) $attach['thumbid'], $pid, $attach['thumbname'], $quarantine );
                 $result = explode('x', $attach['thumbsize']);
                 $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
                 eval('$output = "'.template('viewthread_post_attachmentthumb').'";');

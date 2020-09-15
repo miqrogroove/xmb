@@ -638,7 +638,7 @@ function get_attached_file($varname, &$filename, &$filetype, &$filesize, bool $d
     return $attachment;
 }
 
-function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
+function getAttachmentURL( int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false ): string {
     global $full_url, $SETTINGS;
 
     if ($SETTINGS['files_virtual_url'] == '') {
@@ -647,7 +647,13 @@ function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
         $virtual_path = $SETTINGS['files_virtual_url'];
     }
 
-    switch($SETTINGS['file_url_format']) {
+    if ( $quarantine ) {
+        $format = 99;
+    } else {
+        $format = (int) $SETTINGS['file_url_format'];
+    }
+
+    switch( $format ) {
     case 1:
         if ($htmlencode) {
             $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
@@ -667,6 +673,11 @@ function getAttachmentURL($aid, $pid, $filename, $htmlencode=TRUE) {
     case 5:
         $url = "{$virtual_path}$aid/".rawurlencode($filename);
         break;
+    case 99:
+        $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
+        break;
+    default:
+        $url = '';
     }
 
     return $url;

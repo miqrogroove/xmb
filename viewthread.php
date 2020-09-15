@@ -780,7 +780,7 @@ if ($action == '') {
     $file = $db->fetch_array($query);
     $db->free_result($query);
     require('include/attach.inc.php');
-    $url = getAttachmentURL($file['aid'], $pid, $file['filename'], FALSE);
+    $url = getAttachmentURL( (int) $file['aid'], $pid, $file['filename'], false );
     header('HTTP/1.0 301 Moved Permanently');
     header('Location: '.$url);
 } else if ($action == 'printable') {
