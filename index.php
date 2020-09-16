@@ -48,13 +48,17 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     $contents = '';
     $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $SETTINGS['tickercontents']));
     $counter = 0;
-    for($i=0;$i<count($news);$i++) {
-        if (strlen(trim($news[$i])) == 0) {
+    foreach ( $news as $item ) {
+        if (strlen(trim( $item )) == 0) {
             continue;
         }
-
-        $news[$i] = str_replace('\"', '"', addslashes(postify($news[$i], 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no')));
-        $contents .= "\tcontents[$counter]='{$news[$i]}';\n";
+        if ( 'bbcode' == $SETTINGS['tickercode'] ) {
+            $item = postify( $item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no' );
+        } elseif ( 'html' == $SETTINGS['tickercode'] ) {
+            $item = rawHTMLmessage( $item, 'yes' );
+        }
+        $item = str_replace( '\"', '"', addslashes( $item ) );
+        $contents .= "\tcontents[$counter]='$item';\n";
         $counter++;
     }
     eval('$ticker = "'.template('index_ticker').'";');

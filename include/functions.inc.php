@@ -439,7 +439,7 @@ function request_secure( string $action, string $id, int $expire = 0, bool $erro
     $token = postedVar( 'token', '', false, false );
 
     if ( ! \XMB\Token\consume( $token, $action, $id ) ) {
-        error($lang['noadminsession'], $error_header);
+        error( $lang['bad_token'], $error_header );
     }
 }
 

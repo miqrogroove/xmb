@@ -456,17 +456,16 @@ case 'modays':
       <input type="hidden" name="token" value="<?php echo \XMB\Token\create( "Quarantine Panel/$act", $member, X_NONCE_AYS_EXP ); ?>" />
       <input type="hidden" name="u" value="<?php echo $member; ?>" />
       <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
-      <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
+      <input type="submit" name="nosubmit" value="<?php echo $lang['textno']; ?>" />
     </form></td></tr>
     <?php
     break;
 case 'approveall':
     $member = postedVar('u');
     $rawmember = postedVar( 'u', '', true, false );
-    $ays = postedVar('yessubmit');
     request_secure( "Quarantine Panel/approveall", $rawmember );
 
-    if ($ays == $lang['textyes']) {
+    if ( onSubmit( 'yessubmit' ) ) {
         require_once ROOT.'include/attach.inc.php';
         $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE username='$member'");
         $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts WHERE author='$member'"), 0);
@@ -598,10 +597,9 @@ case 'deleteall':
 case 'deleteban':
     $member = postedVar('u');
     $rawmember = postedVar( 'u', '', true, false );
-    $ays = postedVar('yessubmit');
     request_secure( "Quarantine Panel/$action", $rawmember );
 
-    if ($ays == $lang['textyes']) {
+    if ( onSubmit( 'yessubmit' ) ) {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
         while($thread = $db->fetch_array($result)) {
             $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);

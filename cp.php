@@ -296,6 +296,8 @@ if ($action == "settings") {
         } else {
             $avchecked[0] = true;
         }
+        
+        $tickercodechecked = [ $SETTINGS['tickercode'] == 'plain', $SETTINGS['tickercode'] == 'bbcode', $SETTINGS['tickercode'] == 'html' ];
 
         $values = array('serverload', 'queries', 'phpsql', 'loadtimes');
         $names = array($lang['Enable_Server_Load'], $lang['Enable_Queries'], $lang['Enable_PHP_SQL'], $lang['Enable_Page_load']);
@@ -311,6 +313,7 @@ if ($action == "settings") {
         <a href="#2"><?php echo $lang['admin_main_settings2']; ?></a><br />
         <a href="#3"><?php echo $lang['admin_main_settings3']; ?></a><br />
         <a href="#4"><?php echo $lang['admin_main_settings4']; ?></a><br />
+        <a href="#9"><?php echo $lang['admin_main_settings9']; ?></a><br />
         <a href="#5"><?php echo $lang['admin_main_settings5']; ?></a><br />
         <a href="#8"><?php echo $lang['admin_main_settings8']; ?></a><br />
         <a href="#6"><?php echo $lang['admin_main_settings6']; ?></a><br />
@@ -390,20 +393,32 @@ if ($action == "settings") {
         printsetting1($lang['showsubforums'], 'showsubforumsnew', $showsubson, $showsubsoff);
         printsetting1($lang['space_cats'], 'space_catsnew', $spacecatson, $spacecatsoff);
         printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
-        printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
         printsetting1($lang['quickreply_status'], 'quickreply_statusnew', $quickreply_statuson, $quickreply_statusoff);
         printsetting1($lang['quickjump_status'], 'quickjump_statusnew', $quickjump_statuson, $quickjump_statusoff);
         printsetting1($lang['allowrankedit'], 'allowrankeditnew', $allowrankediton, $allowrankeditoff);
         printsetting1($lang['subjectInTitle'], 'subjectInTitleNew', $subjectInTitleOn, $subjectInTitleOff);
-        printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
-        printsetting1($lang['whosonline_on'], 'whos_on', $whosonlineon, $whosonlineoff);
-        printsetting1($lang['onlinetoday_status'], 'onlinetoday_statusnew', $onlinetoday_statuson, $onlinetoday_statusoff);
-        printsetting2($lang['max_onlinetodaycount'], 'onlinetodaycountnew', ((int)$SETTINGS['onlinetodaycount']), 5);
         printsetting2($lang['smtotal'], 'smtotalnew', ((int)$SETTINGS['smtotal']), 5);
         printsetting2($lang['smcols'], 'smcolsnew', ((int)$SETTINGS['smcols']), 5);
         printsetting1($lang['dotfolders'], 'dotfoldersnew', $dotfolderson, $dotfoldersoff);
         printsetting1($lang['editedby'], 'editedbynew', $editedbyon, $editedbyoff);
         printsetting1($lang['show_logs_in_threads'], 'showlogsnew', $showlogson, $showlogsoff);
+        ?>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        </tr>
+        <tr class="category">
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="9" />&raquo;&nbsp;<?php echo $lang['admin_main_settings9']?></font></strong></td>
+        </tr>
+        <?php
+        printsetting1($lang['index_stats'], 'index_statsnew', $index_statson, $index_statsoff);
+        printsetting1($lang['textcatsonly'], 'catsonlynew', $catsonlyon, $catsonlyoff);
+        printsetting1($lang['whosonline_on'], 'whos_on', $whosonlineon, $whosonlineoff);
+        printsetting1($lang['onlinetoday_status'], 'onlinetoday_statusnew', $onlinetoday_statuson, $onlinetoday_statusoff);
+        printsetting2($lang['max_onlinetodaycount'], 'onlinetodaycountnew', ((int)$SETTINGS['onlinetodaycount']), 5);
+        printsetting1($lang['what_tickerstatus'], 'tickerstatusnew', $tickerstatuson, $tickerstatusoff);
+        printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
+        printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
+        printsetting3($lang['tickercode'], 'tickercodenew', array( $lang['plaintext'], $lang['textbbcode'], $lang['texthtml'] ), array( 'plain', 'bbcode', 'html' ), $tickercodechecked, false);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -420,13 +435,13 @@ if ($action == "settings") {
         printsetting1($lang['texthidepriv'], 'hidepriv', $hideon, $hideoff);
         printsetting1($lang['emailverify'], 'emailchecknew',$echeckon, $echeckoff);
         printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
-        printsetting1($lang['moderation_setting'], 'quarantinenew',$quarantineon, $quarantineoff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
         printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
         printsetting1($lang['resetSigDesc'], 'resetSigNew', $resetSigOn, $resetSigOff);
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
+        printsetting1($lang['moderation_setting'], 'quarantinenew',$quarantineon, $quarantineoff);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit4" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -484,9 +499,6 @@ if ($action == "settings") {
             printsetting2($lang['max_avatar_size_w'], 'max_avatar_size_w_new', $max_avatar_sizes[0], 4);
             printsetting2($lang['max_avatar_size_h'], 'max_avatar_size_h_new', $max_avatar_sizes[1], 4);
         }
-        printsetting1($lang['what_tickerstatus'], 'tickerstatusnew', $tickerstatuson, $tickerstatusoff);
-        printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
-        printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -651,6 +663,7 @@ if ($action == "settings") {
         input_onoff_setting( 'stats', 'statsstatusnew' );
         input_onoff_setting( 'subject_in_title', 'subjectInTitleNew' );
         input_int_setting( 'theme', 'themenew' );
+        input_string_setting( 'tickercode', 'tickercodenew' );
         input_string_setting( 'tickercontents', 'tickercontentsnew' );
         input_int_setting( 'tickerdelay', 'tickerdelaynew' );
         input_onoff_setting( 'tickerstatus', 'tickerstatusnew' );

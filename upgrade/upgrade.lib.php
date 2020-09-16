@@ -1820,6 +1820,7 @@ function upgrade_schema_to_v5() {
     $query = upgrade_query('SELECT * FROM '.X_PREFIX.$table);
     $settings = $db->fetch_array( $query );
     $settings['show_logs_in_threads'] = 'off';
+    $settings['tickercode'] = 'html';
     $settings['quarantine_new_users'] = 'off';
     unset( $settings['sightml'] );
 
