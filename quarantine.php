@@ -439,17 +439,17 @@ case 'modays':
     $sub = postedVar('sub');
     if ( onSubmit( 'approveall' ) ) {
         $act = 'approveall';
-        $phrase = 'moderation_conf_appr';
+        $phrase = 'moderation_ays_appr';
     } elseif ( onSubmit( 'deleteall' ) ) {
         $act = 'deleteall';
-        $phrase = 'moderation_conf_dele';
+        $phrase = 'moderation_ays_dele';
     } elseif ( onSubmit( 'deleteban' ) && X_ADMIN ) {
         $act = 'deleteban';
-        $phrase = 'moderation_conf_dele';
+        $phrase = 'moderation_ays_dele';
     } else {
         error($lang['textnoaction'], FALSE, '', '</td></tr></table></td></tr></table>');
     }
-    $phrase = str_replace('*user*', $member, $lang[$phrase]);
+    $phrase = str_replace( '$user', $member, $lang[$phrase] );
     ?>
     <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
     <form action="moderation.php?action=<?php echo $act; ?>" method="post">
