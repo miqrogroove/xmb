@@ -1014,9 +1014,9 @@ switch($action) {
             }
 
             if ($poll == 'yes') {
-                // Create a poll subject.  Totally redundant, unused value.  Works more like a junction table with a bunch of extra useless columns.
+                // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
                 $dbsubject = addslashes($subjectinput);
-                $vote_id = \XMB\SQL\addVoteDesc( $tid, $dbsubject, $quarantine );
+                $vote_id = \XMB\SQL\addVoteDesc( $tid, $quarantine );
                 
                 // Create poll options.  This is the part we care about.
                 $options = [];

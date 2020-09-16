@@ -238,9 +238,6 @@ function xmb_schema_create($name){
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
           `topic_id` INT UNSIGNED NOT NULL,
-          `vote_text` text NOT NULL,
-          `vote_start` int(11) NOT NULL default '0',
-          `vote_length` int(11) NOT NULL default '0',
           PRIMARY KEY  (`vote_id`),
           KEY `topic_id` (`topic_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -535,9 +532,6 @@ function xmb_schema_create($name){
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
           `topic_id` INT UNSIGNED NOT NULL,
-          `vote_text` text NOT NULL,
-          `vote_start` int(11) NOT NULL default '0',
-          `vote_length` int(11) NOT NULL default '0',
           PRIMARY KEY  (`vote_id`),
           KEY `topic_id` (`topic_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";

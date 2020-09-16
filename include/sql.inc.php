@@ -1150,14 +1150,14 @@ function raiseDownloadCounter( int $aid, bool $quarantine = false ) {
  *
  * @since 1.9.12
  */
-function addVoteDesc( int $tid, string $text, bool $quarantine = false ): int {
+function addVoteDesc( int $tid, bool $quarantine = false ): int {
     global $db;
 
     $sqltext = $db->escape( $text );
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
 
-    $db->query( "INSERT INTO $table SET topic_id = $tid, vote_text = '$sqltext'" );
+    $db->query( "INSERT INTO $table SET topic_id = $tid" );
 
     return $db->insert_id();
 }

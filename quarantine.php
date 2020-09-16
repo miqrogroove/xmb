@@ -500,12 +500,7 @@ case 'approveall':
             \XMB\Attach\approve( $oldpid, $newpid );
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
-                $db->query(
-                    "INSERT INTO ".X_PREFIX."vote_desc " .
-                    "      (topic_id, vote_text, vote_start, vote_length) " .
-                    "SELECT  $newtid, vote_text, vote_start, vote_length " .
-                    "FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"
-                );
+                $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
                 $newpoll = $db->insert_id();
                 $db->query(
                     "INSERT INTO ".X_PREFIX."vote_results " .

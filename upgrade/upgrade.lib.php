@@ -1924,6 +1924,34 @@ function upgrade_schema_to_v7() {
     xmb_schema_table('create', 'hold_vote_desc');
     xmb_schema_table('create', 'hold_vote_results');
 
+    show_progress('Requesting to lock the vote_desc table');
+    upgrade_query('LOCK TABLES '.X_PREFIX."vote_desc WRITE");
+
+    show_progress('Gathering schema information from the vote_desc table');
+    $sql = [];
+    $table = 'vote_desc';
+    $columns = [
+    'vote_length',
+    'vote_start',
+    'vote_text',
+    ];
+    foreach($columns as $colname) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Deleting columns in the vote_desc table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress('Releasing the lock on the vote_desc table');
+    upgrade_query('UNLOCK TABLES');
+
     show_progress('Resetting the schema version number');
     upgrade_query("UPDATE ".X_PREFIX."settings SET value = '7' WHERE name = 'schema_version'");
 }
@@ -2044,7 +2072,7 @@ function fixPolls() {
         $thread['subject'] = stripslashes($thread['subject']);
         $db->escape_fast($thread['subject']);
 
-        upgrade_query("INSERT INTO ".X_PREFIX."vote_desc (`topic_id`, `vote_text`, `vote_start`) VALUES ({$thread['tid']}, '{$thread['subject']}', 0)");
+        upgrade_query("INSERT INTO ".X_PREFIX."vote_desc SET `topic_id` = {$thread['tid']}");
         $poll_id = $db->insert_id();
 
         $options = explode("#|#", $thread['pollopts']);
