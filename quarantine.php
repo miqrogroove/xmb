@@ -426,38 +426,34 @@ case 'viewuser':
     echo "<h3>{$lang['moderation_actions']}</h3>\n";
     echo "<form action='quarantine.php?action=modays' method='post'>\n";
     echo "<input type='hidden' name='u' value=\"{$member['username']}\" />\n";
-    echo "<input type='submit' name='sub' value='{$lang['moderation_approve_all']}' />\n";
-    echo "<input type='submit' name='sub' value='{$lang['moderation_delete_all']}' />\n";
+    echo "<input type='submit' name='approveall' value='{$lang['moderation_approve_all']}' />\n";
+    echo "<input type='submit' name='deleteall' value='{$lang['moderation_delete_all']}' />\n";
     if (X_ADMIN) {
-        echo "<input type='submit' name='sub' value='{$lang['moderation_delete_ban']}' />\n";
+        echo "<input type='submit' name='deleteban' value='{$lang['moderation_delete_ban']}' />\n";
     }
     echo "</form>\n";
 
     break;
 case 'modays':
-    $member = postedVar('u');
+    $member = postedVar( 'u', '', true, false );
     $sub = postedVar('sub');
-    if ($sub == $lang['moderation_approve_all']) {
+    if ( onSubmit( 'approveall' ) ) {
         $act = 'approveall';
-        $key = 'pmapp';
         $phrase = 'moderation_conf_appr';
-    } elseif ($sub == $lang['moderation_delete_all']) {
+    } elseif ( onSubmit( 'deleteall' ) ) {
         $act = 'deleteall';
-        $key = 'pmdel';
         $phrase = 'moderation_conf_dele';
-    } elseif ($sub == $lang['moderation_delete_ban']) {
+    } elseif ( onSubmit( 'deleteban' ) && X_ADMIN ) {
         $act = 'deleteban';
-        $key = 'pmdel';
         $phrase = 'moderation_conf_dele';
     } else {
         error($lang['textnoaction'], FALSE, '', '</td></tr></table></td></tr></table>');
     }
-    $key = template_key($key, $member);
     $phrase = str_replace('*user*', $member, $lang[$phrase]);
     ?>
     <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
     <form action="moderation.php?action=<?php echo $act; ?>" method="post">
-      <input type="hidden" name="token" value="<?php echo nonce_create($key); ?>" />
+      <input type="hidden" name="token" value="<?php echo \XMB\Token\create( "Quarantine Panel/$act", $member, X_NONCE_AYS_EXP ); ?>" />
       <input type="hidden" name="u" value="<?php echo $member; ?>" />
       <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
       <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
@@ -466,8 +462,9 @@ case 'modays':
     break;
 case 'approveall':
     $member = postedVar('u');
+    $rawmember = postedVar( 'u', '', true, false );
     $ays = postedVar('yessubmit');
-    request_secure('pmapp', $member, X_NONCE_AYS_EXP, FALSE);
+    request_secure( "Quarantine Panel/approveall", $rawmember );
 
     if ($ays == $lang['textyes']) {
         require_once ROOT.'include/attach.inc.php';
@@ -600,8 +597,9 @@ case 'approveall':
 case 'deleteall':
 case 'deleteban':
     $member = postedVar('u');
+    $rawmember = postedVar( 'u', '', true, false );
     $ays = postedVar('yessubmit');
-    request_secure('pmdel', $member, X_NONCE_AYS_EXP, FALSE);
+    request_secure( "Quarantine Panel/$action", $rawmember );
 
     if ($ays == $lang['textyes']) {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
