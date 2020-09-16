@@ -121,6 +121,7 @@ case 'viewuser':
                 $results = '- [<a href=""><font color="'.$cattext.'">'.$lang['viewresults'].'</font></a>]';
                 $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."hold_vote_results WHERE vote_id='$vote_id'");
                 while($result = $db->fetch_array($query)) {
+                    $poll = [];
                     $poll['id'] = (int) $result['vote_option_id'];
                     $poll['name'] = $result['vote_option_text'];
                     eval('$pollhtml .= "'.template('viewthread_poll_options').'";');
@@ -236,12 +237,12 @@ case 'viewuser':
             $edit = '';
             $bbcodeoff = $post['bbcodeoff'];
             $smileyoff = $post['smileyoff'];
-            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
                 require_once ROOT.'include/attach.inc.php';
                 $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."hold_attachments AS a LEFT JOIN ".X_PREFIX."hold_attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid = {$post['pid']} AND a.parentid=0");
             }
-            if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
+            if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
                 $db->data_seek($queryattach, 0);
                 while($attach = $db->fetch_array($queryattach)) {
@@ -250,18 +251,18 @@ case 'viewuser':
                     }
                 }
                 if (count($files) > 0) {
-                    bbcodeFileTags( $post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'), $quarantine );
+                    bbcodeFileTags( $post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'), $quarantine );
                 }
             }
             if ($post['usesig'] == 'yes') {
-                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
                 eval('$post["message"] .= "'.template('viewthread_post_sig').'";');
             } else {
                 eval('$post["message"] .= "'.template('viewthread_post_nosig').'";');
             }
             if ($post['subject'] != '') {
                 $linktitle = rawHTMLsubject(stripslashes($post['subject']));
-                $post['subject'] = $linktitle.'<br />';
+                $post['subject'] = wordwrap( $linktitle, 150, '<br />', true ).'<br />';
             } else {
                 $linktitle = $thread['subject'];
             }
@@ -385,12 +386,12 @@ case 'viewuser':
             $edit = '';
             $bbcodeoff = $post['bbcodeoff'];
             $smileyoff = $post['smileyoff'];
-            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], $forum['allowhtml'], $forum['allowbbcode'], $forum['allowimgcode']);
+            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
                 require_once ROOT.'include/attach.inc.php';
                 $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."hold_attachments AS a LEFT JOIN ".X_PREFIX."hold_attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid={$post['pid']} AND a.parentid=0");
             }
-            if ($forum['attachstatus'] == 'on' and $db->num_rows($queryattach) > 0) {
+            if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
                 $db->data_seek($queryattach, 0);
                 while($attach = $db->fetch_array($queryattach)) {
@@ -399,11 +400,11 @@ case 'viewuser':
                     }
                 }
                 if (count($files) > 0) {
-                    bbcodeFileTags( $post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' and $bbcodeoff == 'no'), $quarantine );
+                    bbcodeFileTags( $post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'), $quarantine );
                 }
             }
             if ($post['usesig'] == 'yes') {
-                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], $SETTINGS['sightml'], $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
+                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
                 eval('$post["message"] .= "'.template('viewthread_post_sig').'";');
             } else {
                 eval('$post["message"] .= "'.template('viewthread_post_nosig').'";');
@@ -470,7 +471,7 @@ case 'approveall':
 
     if ($ays == $lang['textyes']) {
         require_once ROOT.'include/attach.inc.php';
-        $db->query("UPDATE ".X_PREFIX."members SET moderation = 0 WHERE username='$member'");
+        $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE username='$member'");
         $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts WHERE author='$member'"), 0);
         $thatime = $onlinetime - $count;
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
@@ -500,7 +501,7 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            approve_attachments($oldpid, $newpid);
+            \XMB\Attach\approve( $oldpid, $newpid );
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
                 $db->query(
@@ -547,7 +548,7 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            approve_attachments($post['pid'], $newpid);
+            \XMB\Attach\approve( (int) $post['pid'], $newpid );
             $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
 
             $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
@@ -555,7 +556,7 @@ case 'approveall':
             $db->free_result($result2);
             $threadname = rawHTMLsubject(stripslashes($thread['subject']));
 
-            $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $newpid AND tid={$post['tid']}");
+            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE pid <= $newpid AND tid={$post['tid']}");
             $posts = $db->result($query,0);
             $db->free_result($query);
 
@@ -582,15 +583,9 @@ case 'approveall':
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 $rawusername = htmlspecialchars_decode($member, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
-                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                $headers = array();
-                $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-                $headers[] = 'X-Mailer: PHP';
-                $headers[] = 'X-AntiAbuse: Board servername - '.$cookiedomain;
-                $headers[] = 'X-AntiAbuse: Username - '.$rawusername;
-                $headers[] = 'Content-Type: text/plain; charset='.$translate['charset'];
-                $headers = implode("\r\n", $headers);
-                altMail($rawemail, $rawsubject.' ('.$translate['textsubsubject'].')', $rawusername.' '.$translate['textsubbody']." \n".$threadurl, $headers);
+                $title = "$rawsubject ({$translate['textsubsubject']})";
+                $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
+                xmb_mail( $rawemail, $title, $body, $translate['charset'] );
             }
             $db->free_result($subquery);
         }
@@ -630,7 +625,7 @@ case 'deleteban':
         }
         $db->free_result($result);
         moderate_cleanup($member);
-        if ('deleteban' == $action and X_ADMIN) {
+        if ('deleteban' == $action && X_ADMIN) {
             $db->query("UPDATE ".X_PREFIX."members SET status = 'Banned', customstatus = 'Spammer' WHERE username = '$member'");
         }
         echo $lang['moderation_deleted'];
@@ -665,14 +660,9 @@ default:
 
 
     echo "<h2>{$lang['moderation_anonq']}</h2>\n";
-    $where = "WHERE author='Anonymous'";
-    if (count($moderate_forums) > 0) {
-        $fids = implode(',', $moderate_forums);
-        $where .= " AND fid NOT IN ($fids)";
-    }
     $result = $db->query(
         "SELECT fid, COUNT(*) AS postnum " .
-        "FROM ".X_PREFIX."hold_posts $where " .
+        "FROM ".X_PREFIX."hold_posts WHERE author='Anonymous' " .
         "GROUP BY fid "
     );
     if ($db->num_rows($result) == 0) {
@@ -697,81 +687,12 @@ end_time();
 eval('echo "</td></tr></table></td></tr></table>'.template('footer').'";');
 
 /**
- * Move uploaded files from the moderation table to the public table.
- *
- * Handles disk-based storage logic and also updates the file tags for BBCode.
- *
- * @param int $oldpid The PID number used in the moderation table hold_posts.
- * @param int $newpid The PID number used in the public table posts.
- */
-function approve_attachments($oldpid, $newpid) {
-    global $db, $SETTINGS;
-
-    $oldpid = intval($oldpid);
-    $newpid = intval($newpid);
-    $aidmap = array();
-
-    $path = getFullPathFromSubdir('');
-    $usedb = TRUE;
-    if ($path !== FALSE) {
-        if (is_dir($path)) {
-            $usedb = FALSE;
-        }
-    }
-
-    $result = $db->query("SELECT aid, filesize, parentid FROM ".X_PREFIX."hold_attachments WHERE pid=$oldpid ORDER BY parentid");
-    while($attach = $db->fetch_array($result)) {
-        if (intval($attach['parentid']) != 0) {
-            $newparentid = $aidmap[intval($attach['parentid'])];
-        } else {
-            $newparentid = 0;
-        }
-        $db->query(
-            "INSERT INTO ".X_PREFIX."attachments " .
-            "      (    pid, filename, filetype, filesize, attachment, downloads,     parentid, uid, updatetime, img_size, subdir) " .
-            "SELECT $newpid, filename, filetype, filesize, attachment, downloads, $newparentid, uid, updatetime, img_size, subdir " .
-            "FROM ".X_PREFIX."hold_attachments WHERE aid = {$attach['aid']}"
-        );
-        $newaid = $db->insert_id();
-        $aidmap[intval($attach['aid'])] = intval($newaid);
-        if ($attach['filesize'] >= $SETTINGS['files_min_disk_size'] and !$usedb) {
-            moveAttachmentToDisk($newaid, $newpid);
-        }
-    }
-    if (count($aidmap) > 0) {
-        $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid=$oldpid");
-        $postbody = $db->result($db->query("SELECT message FROM ".X_PREFIX."posts WHERE pid = $newpid"), 0);
-        $search = array();
-        $replace = array();
-        $search[] = "[file]";
-        $replace[] = "[oldfile]";
-        $search[] = "[/file]";
-        $replace[] = "[/oldfile]";
-        foreach($aidmap as $oldid => $newid) {
-            $search[] = "[oldfile]{$oldid}[/oldfile]";
-            $replace[] = "[file]{$newid}[/file]";
-        }
-        $search[] = "[oldfile]";
-        $replace[] = "[file]";
-        $search[] = "[/oldfile]";
-        $replace[] = "[/file]";
-        $newpostbody = str_replace($search, $replace, $postbody);
-        if ($newpostbody != $postbody) {
-            $newpostbody = $db->escape($newpostbody);
-            $db->query("UPDATE ".X_PREFIX."posts SET message='$newpostbody' WHERE pid = $newpid");
-        }
-    }
-}
-
-/**
  * Get rid of potentially orphaned objects.
- *
- * Deletes unattached uploads and resets forum-based moderation flags.
  *
  * @param string $xmbuser A DB-safe username.
  */
 function moderate_cleanup($xmbuser) {
-    global $db, $moderate_forums;
+    global $db;
 
     if ('Anonymous' == $xmbuser) return;
 
@@ -779,18 +700,6 @@ function moderate_cleanup($xmbuser) {
     if ($db->num_rows($result) != 0) {
         $uid = $db->result($result, 0);
         $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE uid=$uid AND pid=0");
-
-        if (count($moderate_forums) > 0) {
-            $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts WHERE author='$xmbuser'"), 0);
-            if (0 == $count) {
-                $where = 'WHERE moderation = 2';
-                $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts"), 0);
-                if (0 != $count) {
-                    $where .= " AND username='$xmbuser'";
-                }
-                $db->query("UPDATE ".X_PREFIX."members SET moderation = 0 $where");
-            }
-        }
     }
     $db->free_result($result);
 }

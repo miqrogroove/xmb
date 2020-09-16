@@ -204,6 +204,7 @@ function xmb_schema_create($name){
           `useip` varchar(15) NOT NULL default '',
           `bbcodeoff` varchar(15) NOT NULL default '',
           `smileyoff` varchar(15) NOT NULL default '',
+          `newtid` int(10) NOT NULL default '0',
           PRIMARY KEY  (`pid`),
           KEY `fid` (`fid`),
           KEY `dateline` (`dateline`),

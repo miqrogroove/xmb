@@ -859,7 +859,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    \XMB\Attach\copyAll( (int) $oldPid, $newpid );
+                    \XMB\Attach\copyByPost( (int) $oldPid, $newpid );
                 }
 
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");

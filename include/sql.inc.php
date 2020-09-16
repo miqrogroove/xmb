@@ -583,10 +583,11 @@ function addPost( array &$values, bool $quarantine = false ): int {
     }
     
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+    $tid_field = $quarantine ? 'newtid' : 'tid';
 
     $db->query("INSERT INTO $table SET
     fid = {$values['fid']},
-    tid = {$values['tid']},
+    $tid_field = {$values['tid']},
     dateline = {$values['dateline']},
     author = '{$values['author']}',
     message = '{$values['message']}',
@@ -614,6 +615,25 @@ function savePostBody( int $pid, string $body, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
     $db->query("UPDATE $table SET message = '$sqlbody' WHERE pid = $pid");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getPostBody( int $pid, bool $quarantine = false ): string {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
+
+    $query = $db->query("SELECT message FROM $table WHERE pid = $pid");
+    if ( $db->num_rows() == 1 ) {
+        $result = $db->result( $query, 0 );
+    } else {
+        $result = '';
+    }
+    return $result;
 }
 
 /**
@@ -719,6 +739,24 @@ function addAttachment( array &$values, bool $quarantine = false ): int {
     img_size = '{$values['img_size']}',
     subdir = '{$values['subdir']}'
     ");
+
+    return $db->insert_id();
+}
+
+/**
+ * Copy a quarantined attachment record to the public table.
+ *
+ * @since 1.9.12
+ */
+function approveAttachment( int $oldaid, int $newpid, int $newparent ): int {
+    global $db;
+    
+    $db->query(
+        "INSERT INTO ".X_PREFIX."attachments " .
+        "      (    pid, filename, filetype, filesize, attachment, downloads,   parentid, uid, updatetime, img_size, subdir) " .
+        "SELECT $newpid, filename, filetype, filesize, attachment, downloads, $newparent, uid, updatetime, img_size, subdir " .
+        "FROM ".X_PREFIX."hold_attachments WHERE aid = $oldaid"
+    );
 
     return $db->insert_id();
 }
@@ -839,6 +877,27 @@ function getAttachmentPaths( array $aid_list, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     return $db->query("SELECT aid, subdir FROM $table WHERE aid IN ($ids)");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function getAttachmentParents( int $pid, bool $quarantine = false ): array {
+    global $db;
+
+    $results = [];
+
+    $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
+
+    $query = $db->query("SELECT aid, filesize, parentid FROM $table WHERE pid = $pid ORDER BY parentid");
+    while( $row = $db->fetch_array( $query ) ) {
+        $results[] = $row;
+    }
+    $db->free_result( $query );
+    
+    return $results;
 }
 
 /**

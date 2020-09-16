@@ -71,15 +71,17 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
 function uploadedFile( string $varname, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $self, $SETTINGS;
 
-    $path = getFullPathFromSubdir('');
-    $usedb = TRUE;
+    $usedb = true;
+    if ( ! $quarantine ) {
+        $path = getFullPathFromSubdir( '' );
 
-    if ($path !== FALSE) {
-        if (is_dir($path)) {
-            $usedb = FALSE;
-        } else {
-            header('HTTP/1.0 500 Internal Server Error');
-            exit($attachmentErrors[X_BAD_STORAGE_PATH]);
+        if ( $path !== false ) {
+            if ( is_dir( $path ) ) {
+                $usedb = false;
+            } else {
+                header('HTTP/1.0 500 Internal Server Error');
+                exit($attachmentErrors[X_BAD_STORAGE_PATH]);
+            }
         }
     }
 
@@ -130,18 +132,21 @@ function uploadedFile( string $varname, int $pid = 0, bool $quarantine = false )
 function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int {
     global $attachmentErrors, $self, $SETTINGS;
 
-    $path = getFullPathFromSubdir('');
-    $usedb = TRUE;
+    $usedb = true;
+    $path = false;
+    if ( ! $quarantine ) {
+        $path = getFullPathFromSubdir( '' );
 
-    if ($path !== FALSE) {
-        if (is_dir($path)) {
-            $usedb = FALSE;
-        } else {
-            header('HTTP/1.0 500 Internal Server Error');
-            exit($attachmentErrors[X_BAD_STORAGE_PATH]);
+        if ( $path !== false ) {
+            if ( is_dir( $path ) ) {
+                $usedb = false;
+            } else {
+                header('HTTP/1.0 500 Internal Server Error');
+                exit($attachmentErrors[X_BAD_STORAGE_PATH]);
+            }
         }
     }
-    $filepath = getTempFile($path);
+    $filepath = getTempFile( $path );
 
     // Sanity checks
     if (1 != preg_match('/^' . get_img_regexp() . '$/i', $url)) {
@@ -349,7 +354,7 @@ function private_genericFile( int $pid, bool $usedb, string &$file, string &$fil
 
     $aid = \XMB\SQL\addAttachment( $values, $quarantine );
 
-    if ($usedb) {
+    if ( $usedb ) {
         $file = '';
         $path = $filepath;
     } else {
@@ -438,7 +443,7 @@ function changeName( int $aid, int $pid, string $newname, bool $quarantine = fal
     }
 }
 
-function copyAll( int $frompid, int $topid ) {
+function copyByPost( int $frompid, int $topid ) {
     global $db;
 
     if ( ! X_STAFF ) trigger_error( 'Unprivileged access to function', E_USER_ERROR );
@@ -548,6 +553,73 @@ function moveToDisk( int $aid, int $pid ) {
     $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
 }
 
+/**
+ * Move uploaded files from the quarantine table to the public table.
+ *
+ * Handles disk-based storage logic and also updates the file tags for BBCode.
+ *
+ * @since 1.9.12
+ * @param int $oldpid The PID number used in the quarantine table `hold_posts`.
+ * @param int $newpid The PID number used in the public table `posts`.
+ */
+function approve( int $oldpid, int $newpid ) {
+    global $db, $SETTINGS;
+
+    $aidmap = [];
+
+    $path = getFullPathFromSubdir( '' );
+    $usedb = true;
+    if ( $path !== false ) {
+        if ( is_dir( $path ) ) {
+            $usedb = false;
+        }
+    }
+
+    $quarantine = true;
+    $result = \XMB\SQL\getAttachmentParents( $oldpid, $quarantine );
+    if ( count( $result ) == 0 ) {
+        // Nothing to do.
+        return;
+    }
+    foreach ( $result as $attach ) {
+        $parent = (int) $attach['parentid'];
+        if ( $parent != 0 ) {
+            // $result is sorted by parentid ascending, so the $aidmap gets filled by parents first before children.
+            $newparentid = $aidmap[$parent];
+        } else {
+            $newparentid = 0;
+        }
+        $oldaid = (int) $attach['aid'];
+        $newaid = \XMB\SQL\approveAttachment( $oldaid, $newpid, $newparent );
+        $aidmap[$oldaid] = $newaid;
+        if ( $attach['filesize'] >= $SETTINGS['files_min_disk_size'] && ! $usedb ) {
+            moveToDisk( $newaid, $newpid );
+        }
+    }
+
+    \XMB\SQL\deleteAttachmentsByID( array_keys( $aidmap ), $quarantine );
+
+    $postbody = \XMB\SQL\getPostBody( $newpid );
+    $search = array();
+    $replace = array();
+    $search[] = "[file]";
+    $replace[] = "[oldfile]";
+    $search[] = "[/file]";
+    $replace[] = "[/oldfile]";
+    foreach( $aidmap as $oldid => $newid ) {
+        $search[] = "[oldfile]{$oldid}[/oldfile]";
+        $replace[] = "[file]{$newid}[/file]";
+    }
+    $search[] = "[oldfile]";
+    $replace[] = "[file]";
+    $search[] = "[/oldfile]";
+    $replace[] = "[/file]";
+    $newpostbody = str_replace( $search, $replace, $postbody );
+    if ( $newpostbody != $postbody ) {
+        \XMB\SQL\savePostBody( $newpid, $newpostbody );
+    }
+}
+
 function deleteByID( int $aid, bool $quarantine = false ) {
     $thumbs_only = false;
     $aid_list = \XMB\SQL\getAttachmentChildIDs( $aid, $thumbs_only, $quarantine );
@@ -617,18 +689,20 @@ function private_deleteByIDs( array $aid_list, bool $quarantine = false ) {
     global $db;
     
     if ( empty( $aid_list ) ) return;
-    
-    $query = \XMB\SQL\getAttachmentPaths( $aid_list, $quarantine );
-    while($attachment = $db->fetch_array($query)) {
-        $path = getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
-        if ($path !== FALSE) {
-            $path .= $attachment['aid'];
-            if (is_file($path)) {
-                unlink($path);
+
+    if ( ! $quarantine ) {
+        $query = \XMB\SQL\getAttachmentPaths( $aid_list );
+        while($attachment = $db->fetch_array($query)) {
+            $path = getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
+            if ($path !== FALSE) {
+                $path .= $attachment['aid'];
+                if (is_file($path)) {
+                    unlink($path);
+                }
             }
         }
+        $db->free_result( $query );
     }
-    $db->free_result( $query );
 
     \XMB\SQL\deleteAttachmentsByID( $aid_list, $quarantine );
 }
@@ -829,11 +903,11 @@ function getNewSubdir($date='') {
  * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created.
  * @return string|bool FALSE if the file storage path is empty.
  */
-function getFullPathFromSubdir( string $subdir, bool $mkdir = false, bool $quarantine = false ) {
+function getFullPathFromSubdir( string $subdir, bool $mkdir = false ) {
     global $SETTINGS;
 
     $path = $SETTINGS['files_storage_path'];
-    if ( $quarantine || '' == $path ) {
+    if ( '' == $path ) {
         return false;
     }
     if (substr($path, -1) != '/') {
@@ -1066,10 +1140,6 @@ function load_and_resize_image( string $path, CartesianSize &$thumbMaxSize, bool
 function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
     global $SETTINGS;
 
-    // Initialize
-    $path = getFullPathFromSubdir('');
-    $usedb = TRUE;
-
     // Write attachment to disk
     $attach = getAttachment( $aid );
     if ( empty( $attach ) ) {
@@ -1079,8 +1149,12 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         if (strlen($attach['attachment']) != $attach['filesize']) {
             return FALSE;
         }
-        $subdir = getNewSubdir($attach['updatestamp']);
-        $path = getFullPathFromSubdir($subdir, TRUE);
+        $path = false;
+        // IDs in the two tables may collide, so keep quarantined files strictly outside of the normal path.
+        if ( ! $quarantine ) {
+            $subdir = getNewSubdir( $attach['updatestamp'] );
+            $path = getFullPathFromSubdir( $subdir, true );
+        }
         if ($path === FALSE) {
             $path = getTempFile();
         } else {
