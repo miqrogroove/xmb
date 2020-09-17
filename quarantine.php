@@ -709,15 +709,15 @@ case 'approvethread':
     $oldpid = (int) $post['pid'];
     $db->query(
         "INSERT INTO ".X_PREFIX."threads " .
-        "      (fid, subject, icon,                      lastpost, views, replies, author, closed, topped, pollopts) " .
-        "SELECT fid, subject, icon, '{$post['dateline']}|$member', views, replies, author, closed, topped, pollopts " .
+        "      (fid, subject, icon,              lastpost, views, replies, author, closed, topped, pollopts) " .
+        "SELECT fid, subject, icon, '$onlinetime|$member', views, replies, author, closed, topped, pollopts " .
         "FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}"
     );
     $newtid = $db->insert_id();
     $db->query(
         "INSERT INTO ".X_PREFIX."posts " .
-        "      (fid,     tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
-        "SELECT fid, $newtid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff " .
+        "      (fid,     tid, author, message, subject,    dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
+        "SELECT fid, $newtid, author, message, subject, $onlinetime, icon, usesig, useip, bbcodeoff, smileyoff " .
         "FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid"
     );
     $newpid = $db->insert_id();
@@ -726,7 +726,7 @@ case 'approvethread':
     if ($forum['type'] == 'sub') {
         $where .= " OR fid={$forum['fup']}";
     }
-    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='{$post['dateline']}|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
     \XMB\Attach\approve( $oldpid, $newpid );
@@ -734,8 +734,8 @@ case 'approvethread':
         $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
         $db->query(
             "INSERT INTO ".X_PREFIX."vote_desc " .
-            "      (topic_id, vote_text, vote_start, vote_length) " .
-            "SELECT  $newtid, vote_text, vote_start, vote_length " .
+            "      (topic_id) " .
+            "SELECT  $newtid " .
             "FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"
         );
         $newpoll = $db->insert_id();
@@ -774,17 +774,17 @@ case 'approvereply':
     $member = $db->escape($post['author']);
     $db->query(
         "INSERT INTO ".X_PREFIX."posts " .
-        "      (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
-        "SELECT fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff " .
+        "      (fid, tid, author, message, subject,    dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
+        "SELECT fid, tid, author, message, subject, $onlinetime, icon, usesig, useip, bbcodeoff, smileyoff " .
         "FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}"
     );
     $newpid = $db->insert_id();
-    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='{$post['dateline']}|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
+    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$onlinetime|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
     $where = "WHERE fid={$post['fid']}";
     if ($forum['type'] == 'sub') {
         $where .= " OR fid={$forum['fup']}";
     }
-    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='{$post['dateline']}|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
     \XMB\Attach\approve( (int) $post['pid'], $newpid );

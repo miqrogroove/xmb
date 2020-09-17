@@ -488,12 +488,12 @@ function censor($txt) {
 }
 
 function smile(&$txt) {
-    global $smiliesnum, $smiliecache, $smdir;
+    global $smiliesnum, $smiliecache, $THEME;
 
     if ($smiliesnum > 0) {
         reset($smiliecache);
         foreach($smiliecache as $code=>$url) {
-            $txt = str_replace($code, '<img src="./'.$smdir.'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
+            $txt = str_replace($code, '<img src="./'.$THEME['smdir'].'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
         }
     }
 
@@ -561,7 +561,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode(&$message, $allowimgcode, $allowurlcode) {
-    global $lang, $imgdir;
+    global $lang, $THEME;
 
     //Balance simple tags.
     $begin = array(
@@ -688,7 +688,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements = array();
 
     $patterns[] = $regex['rquote'];
-    $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
+    $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
     $patterns[] = $regex['color']['named'];
     $replacements[] = '<span style="color: $1;">';
     $patterns[] = $regex['color']['hex'];
@@ -701,7 +701,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements[] = '<div style="text-align: $1;">';
 
     $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
-    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$imgdir.'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
+    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
@@ -888,11 +888,11 @@ function bbcodeLongURLs($url) {
  * @since 1.9.11 Alpha Three
  */
 function bbcodeSizeTags($matches) {
-    global $fontsize;
+    global $THEME;
     static $cachedFs;
 
     if (!is_array($cachedFs) || count($cachedFs) != 2) {
-        preg_match('#([0-9]+)([a-z]+)?#i', $fontsize, $res);
+        preg_match('#([0-9]+)([a-z]+)?#i', $THEME['fontsize'], $res);
         $cachedFs[0] = $res[1];
         $cachedFs[1] = $res[2];
 
@@ -1034,8 +1034,7 @@ function modcheckPost(&$username, &$mods, &$origstatus) {
 // As of version 1.9.11, function forum() is not responsible for any permissions checking.
 // Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
 function forum($forum, $template, $index_subforums) {
-    global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit;
-    global $altbg1, $altbg2, $imgdir, $THEME, $SETTINGS;
+    global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
     $forum['description'] = html_entity_decode($forum['description']);
@@ -2270,8 +2269,7 @@ function getOneForumPerm($forum, $bitfield) {
 }
 
 function handlePasswordDialog($fid) {
-    global $db, $full_url, $url;  // function vars
-    global $THEME, $lang, $altbg1, $altbg2, $tablewidth, $tablespace, $bordercolor;  // template vars
+    global $db, $full_url, $url, $THEME, $lang;
 
     $fid = intval($fid);
     $pwinput = postedVar('pw', '', FALSE, FALSE);
@@ -2320,7 +2318,7 @@ function createLangFileSelect($currentLangFile) {
  * @return string Empty string if the forum search page is disabled.
  */
 function makeSearchLink($fid=0) {
-    global $imgdir, $lang, $SETTINGS;
+    global $THEME, $lang, $SETTINGS;
 
     $fid = intval($fid);
 
@@ -2331,7 +2329,7 @@ function makeSearchLink($fid=0) {
         } else {
             $fid = "?fid=$fid";
         }
-        return '<img src="'.$imgdir.'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="search.php'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a> &nbsp; ';
+        return '<img src="'.$THEME['imgdir'].'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="search.php'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a> &nbsp; ';
     } else {
         return '';
     }
