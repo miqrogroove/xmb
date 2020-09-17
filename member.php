@@ -144,7 +144,7 @@ switch($action) {
                         $count = 1;
                         $limit = 2;
                         $raw_result = curl_exec( $curl );
-                        while ( false === $raw_result ) {
+                        while ( false === $raw_result && $count <= $limit ) {
                             // Some transient errors tend to occur.
                             if ( $count >= $limit ) {
                                 // This should be rare.
