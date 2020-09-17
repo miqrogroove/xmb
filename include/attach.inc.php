@@ -225,7 +225,7 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
 
     // Try to make sure the filename extension is okay
     $extension = strtolower(get_extension($filename));
-    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
     if (!in_array($extension, $img_extensions)) {
         $extension = '';
         $filetypei = strtolower($filetype);
@@ -239,6 +239,8 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
             $extension = '.bmp';
         } elseif (strpos($filetypei, 'png') !== FALSE) {
             $extension = '.png';
+        } elseif (strpos($filetypei, 'ico') !== FALSE) {
+            $extension = '.ico';
         }
         $filename .= $extension;
     }
@@ -267,7 +269,7 @@ function private_genericFile( int $pid, bool $usedb, string &$file, string &$fil
 
     // Check if we can store image metadata
     $extension = strtolower( get_extension( $filename ) );
-    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
+    $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
     if (in_array($extension, $img_extensions)) {
         $result = getimagesize($filepath);
     } else {
@@ -328,6 +330,14 @@ function private_genericFile( int $pid, bool $usedb, string &$file, string &$fil
             }
             if (strpos($filetypei, 'wbmp') === FALSE) {
                 $filetype = 'image/vnd.wap.wbmp';
+            }
+            break;
+        case IMAGETYPE_ICO:
+            if ($extension != 'ico') {
+                $filename .= '.ico';
+            }
+            if (strpos($filetypei, 'ico') === FALSE) {
+                $filetype = 'image/vnd.microsoft.icon';
             }
             break;
         }
