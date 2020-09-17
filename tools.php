@@ -28,7 +28,11 @@ require 'header.php';
 require ROOT.'include/admin.inc.php';
 require ROOT.'include/schema.inc.php';
 
-loadtemplates('error_nologinsession');
+loadtemplates(
+'cp_dump_query_bottom',
+'cp_dump_query_top',
+'error_nologinsession'
+);
 
 nav('<a href="cp.php">'.$lang['textcp'].'</a>');
 eval('echo ("'.template('header').'");');
@@ -490,40 +494,64 @@ switch($action) {
         $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
+        $command = '';
+        $numfields = 4;
+        echo '</table></td></tr></table>';
+        echo '<br />';
+        eval('echo "'.template('cp_dump_query_top').'";');
         foreach($tables as $val) {
             dump_query($db->query('REPAIR TABLE `'.X_PREFIX.$val.'`'), $start);
             $start = FALSE;
         }
+        eval('echo "'.template('cp_dump_query_bottom').'";');
         break;
 
     case 'optimizetables':
         $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
+        $command = '';
+        $numfields = 4;
+        echo '</table></td></tr></table>';
+        echo '<br />';
+        eval('echo "'.template('cp_dump_query_top').'";');
         foreach($tables as $val) {
             dump_query($db->query('OPTIMIZE TABLE `'.X_PREFIX.$val.'`'), $start);
             $start = FALSE;
         }
+        eval('echo "'.template('cp_dump_query_bottom').'";');
         break;
 
     case 'analyzetables':
         $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
+        $command = '';
+        $numfields = 4;
+        echo '</table></td></tr></table>';
+        echo '<br />';
+        eval('echo "'.template('cp_dump_query_top').'";');
         foreach($tables as $val) {
             dump_query($db->query('ANALYZE TABLE `'.X_PREFIX.$val.'`'), $start);
             $start = FALSE;
         }
+        eval('echo "'.template('cp_dump_query_bottom').'";');
         break;
 
     case 'checktables':
         $tables = xmb_schema_list();
         $start = TRUE;
         @set_time_limit(180);
+        $command = '';
+        $numfields = 4;
+        echo '</table></td></tr></table>';
+        echo '<br />';
+        eval('echo "'.template('cp_dump_query_top').'";');
         foreach($tables as $val) {
             dump_query($db->query('CHECK TABLE `'.X_PREFIX.$val.'`'), $start);
             $start = FALSE;
         }
+        eval('echo "'.template('cp_dump_query_bottom').'";');
         break;
 }
 

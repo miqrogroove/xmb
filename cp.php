@@ -30,6 +30,8 @@ require ROOT.'include/admin.inc.php';
 header('X-Robots-Tag: noindex');
 
 loadtemplates(
+'cp_dump_query_bottom',
+'cp_dump_query_top',
 'error_nologinsession',
 'timezone_control'
 );
@@ -1961,10 +1963,10 @@ if ($action == "upgrade") {
                     error($lang['textillegalquery'], false, '</td></tr></table></td></tr></table><br />');
                 }
             }
-
-            if ($explode[$num] != '') {
-                $query = $db->query($explode[$num]." -- Injected by $xmbuser using cp.php");
-
+            $command = $explode[$num];
+            if ( $command != '' ) {
+                $query = $db->query("$command -- Injected by $xmbuser using cp.php");
+                $command = cdataOut( $command );
                 if (is_bool($query)) {
                     $numfields = 1;
                 } else {
@@ -1972,30 +1974,14 @@ if ($action == "upgrade") {
                 }
 
                 echo '<br />';
-                ?>
-                <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
-                <tr>
-                <td bgcolor="<?php echo $bordercolor?>">
-                <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
-                <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-                <td colspan="<?php echo $numfields; ?>"><strong><?php echo $lang['upgraderesults']?></strong>&nbsp;<?php echo cdataOut($explode[$num]); ?>
-                <?php
-                $xn = strtoupper($explode[$num]);
-                if (!is_bool($query)) {
-                    dump_query($query, true);
-                } else {
-                    $selq=false;
+                
+                eval('echo "'.template('cp_dump_query_top').'";');
+
+                if ( ! is_bool( $query ) ) {
+                    dump_query( $query );
                 }
-                ?>
-                </td>
-                </tr>
-                </td>
-                </tr>
-                </table>
-                </td>
-                </tr>
-                </table>
-                <?php
+
+                eval('echo "'.template('cp_dump_query_bottom').'";');
             }
         }
         ?>
