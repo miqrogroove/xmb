@@ -73,7 +73,6 @@ switch($action) {
         $testname = 'regtest';
         $testval = 'xmb';
         $cookietest = postedVar( $testname, '', false, false, false, 'c' );
-        $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
         $regvalid = true;
 
         if ( 'off' == $SETTINGS['regstatus'] ) {
@@ -88,9 +87,9 @@ switch($action) {
             if ( $stepin > 0 ) {
                 error( $lang['cookies_disabled'] );
             }
-        } elseif ( 'xmb' == $privacy ) {
+        } elseif ( ! coppa_check() ) {
             // User previously attempted registration with age < 13.
-            error( $lang['coppa_fail'] );
+            message( $lang['coppa_fail'] );
         }
 
         if ( $regvalid ) {
@@ -197,7 +196,7 @@ switch($action) {
                             $stepout = 2;
                         } elseif ( $age < 13 ) {
                             put_cookie( 'privacy', 'xmb' );
-                            error( $lang['coppa_fail'] );
+                            message( $lang['coppa_fail'] );
                         }
                     } else {
                         error( $lang['bad_request'] );

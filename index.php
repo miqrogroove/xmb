@@ -156,10 +156,12 @@ if ($SETTINGS['index_stats'] == 'on') {
 }
 
 if ($gid == 0) {
-    if (X_MEMBER) {
+    if ( X_MEMBER ) {
         eval('$welcome = "'.template('index_welcome_member').'";');
-    } else {
+    } elseif ( coppa_check() ) {
         eval('$welcome = "'.template('index_welcome_guest').'";');
+    } else {
+        $welcome = '';
     }
 
     $whosonline = $whosonlinetoday = '';

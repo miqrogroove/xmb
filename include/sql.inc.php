@@ -184,10 +184,8 @@ function addMember( array $values ): int {
     global $db;
 
     // Defaults:
-    if ( ! isset( $values['ban'] ) ) $values['ban'] = '0';
     if ( ! isset( $values['bday'] ) ) $values['bday'] = '0000-00-00';
     if ( ! isset( $values['invisible'] ) ) $values['invisible'] = '0';
-    if ( ! isset( $values['mood'] ) ) $values['mood'] = 'Not Set';
     if ( ! isset( $values['sub_each_post'] ) ) $values['sub_each_post'] = 'no';
     if ( ! isset( $values['waiting_for_mod'] ) ) $values['waiting_for_mod'] = 'no';
 
@@ -645,9 +643,10 @@ function countThreadsByUser( string $username, int $fid, bool $quarantine = fals
  * @since 1.9.12
  * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
  * @param bool $quarantine Save this record in a private table for later review?
+ * @param bool $qthread When starting a quarantined thread, we need to know not to use the tid field for the post to prevent ID collisions.
  * @return int Post ID number.
  */
-function addPost( array &$values, bool $quarantine = false ): int {
+function addPost( array &$values, bool $quarantine = false, bool $qthread = false ): int {
     global $db;
 
     // Required values:
@@ -663,7 +662,7 @@ function addPost( array &$values, bool $quarantine = false ): int {
     }
     
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
-    $tid_field = $quarantine ? 'newtid' : 'tid';
+    $tid_field = $qthread ? 'newtid' : 'tid';
 
     $db->query("INSERT INTO $table SET
     fid = {$values['fid']},
@@ -725,7 +724,7 @@ function countPosts( bool $quarantine = false, int $tid = 0, string $username = 
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
-    
+
     $where = [];
     if ( $tid != 0 ) {
         $where[] = "tid = $tid";

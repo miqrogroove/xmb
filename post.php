@@ -59,10 +59,9 @@ loadtemplates(
 );
 
 if ( X_GUEST ) {
-    $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
-    if ( 'xmb' == $privacy ) {
+    if ( ! coppa_check() ) {
         // User previously attempted registration with age < 13.
-        error( $lang['coppa_fail'] );
+        message( $lang['coppa_fail'] );
     }
     $loggedin = '';
 } else {
@@ -70,7 +69,7 @@ if ( X_GUEST ) {
 }
 
 if ($self['ban'] == "posts" || $self['ban'] == "both") {
-    error($lang['textbanfrompost']);
+    message( $lang['textbanfrompost'] );
 }
 
 //Validate $pid, $tid, $fid, and $repquote
@@ -963,14 +962,17 @@ switch($action) {
             }
             
             $lastpost = "$thatime|$username";
-            $closed = 'no';
+            $closed = '';
             $topped = 0;
             $dbpollopts = ( 'yes' == $poll ) ? 1 : 0;
 
             if ( X_MEMBER ) {
                 $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
                 if ( $moderator ) {
-                    $closed = $closetopic;
+                    if ( 'yes' == $closetopic ) {
+                        // Be careful here; threads.closed is historically yes/moved/empty rather than yes/no.
+                        $closed = 'yes';
+                    }
                     if ( $toptopic == 'yes' ) {
                         $topped = 1;
                     }
@@ -1004,7 +1006,7 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost( $values, $quarantine );
+            $pid = \XMB\SQL\addPost( $values, $quarantine, $quarantine ); // 3rd arg signals that this is not a reply.
 
             $lastpost .= "|$pid";
             \XMB\SQL\setThreadLastpost( $tid, $lastpost, $quarantine );

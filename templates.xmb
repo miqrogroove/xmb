@@ -2184,15 +2184,18 @@ $todaymembers&nbsp;
 <td class="category" colspan="2"><font color="$cattext"><strong>{$lang['coppa_title']}</strong></font></td>
 </tr>
 <tr>
- <td bgcolor="$altbg1" class="ctrtablerow">{$lang['coppa_directions']}
-  <select name="age" id="age">
-   $optionlist
-  </select>
-  <input type="submit" class="submit" name="regsubmit" value="{$lang['continue_button']}" />
-  <input type="hidden" name="step" value="$stepout" />
-  <input type="hidden" name="token" value="$token" />
-  <br />
-  {$lang['coppa_explained']}
+ <td bgcolor="$altbg1" class="ctrtablerow">
+  <p>{$lang['coppa_directions']}
+   <select name="age" id="age">
+    $optionlist
+   </select>
+  </p>
+  <p>{$lang['coppa_explained']}</p>
+  <p>
+   <input type="submit" class="submit" name="regsubmit" value="{$lang['continue_button']}" />
+   <input type="hidden" name="step" value="$stepout" />
+   <input type="hidden" name="token" value="$token" />
+  </p>
  </td>
 </tr>
 </table>

@@ -94,7 +94,9 @@ $misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
-        if (noSubmit('loginsubmit')) {
+        if ( ! coppa_check() ) {
+            message( $lang['coppa_fail'] );
+        } elseif ( noSubmit( 'loginsubmit' ) ) {
             eval('$misc = "'.template('misc_login').'";');
         } else {
             switch( $session->getStatus() ) {

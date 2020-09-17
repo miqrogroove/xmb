@@ -2231,13 +2231,16 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
         }
     }
 
-    // 4. Set Effective Permissions
-    $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL];
-    $ret[X_PERMS_THREAD] = $ret[X_PERMS_RAWTHREAD];
-    $ret[X_PERMS_REPLY]  = $ret[X_PERMS_RAWREPLY];
+    // 4. Check COPPA Flag
+    $coppa = coppa_check();
+
+    // 5. Set Effective Permissions
+    $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL]   && $coppa;
+    $ret[X_PERMS_THREAD] = $ret[X_PERMS_RAWTHREAD] && $coppa;
+    $ret[X_PERMS_REPLY]  = $ret[X_PERMS_RAWREPLY]  && $coppa;
     $ret[X_PERMS_VIEW]   = $ret[X_PERMS_RAWVIEW] || $ret[X_PERMS_USERLIST];
 
-    // 5. Check Forum Password
+    // 6. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
     if ($forum['password'] == '' || $pwinput == $forum['password']) {
         $ret[X_PERMS_PASSWORD] = TRUE;
@@ -2739,6 +2742,17 @@ function more_theme_vars() {
     $fontsuf = preg_replace('#(\d)#', '', $THEME['fontsize']);
     $THEME['font1'] = $fontedit-1 . $fontsuf;
     $THEME['font3'] = $fontedit+2 . $fontsuf;
+}
+
+/**
+ * Checks if guest recently tried to register and disclosed age < 13
+ *
+ * @since 1.9.12
+ * @return bool When false the website must not collect any information from the guest.
+ */
+function coppa_check(): bool {
+    $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
+    return 'xmb' != $privacy;
 }
 
 return;
