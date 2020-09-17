@@ -508,7 +508,7 @@ textarea, select, input, object {
 }
 
 .category {
-    $catcss
+    {$THEME['catcss']}
     font-family: {$THEME['font']};
     font-size: {$THEME['fontsize']};
     table-layout: fixed;
@@ -516,7 +516,7 @@ textarea, select, input, object {
 }
 
 .ctrcategory {
-    $catcss
+    {$THEME['catcss']}
     font-family: {$THEME['font']};
     font-size: {$THEME['fontsize']};
     table-layout: fixed;
@@ -1875,10 +1875,10 @@ $bbcodescript
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="6" width="100%">
 <tr>
-<td width="74%" $topbgcode>
+<td width="74%" {$THEME['topbgcode']}>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
 <tr>
-<td valign="top" rowspan="2">$logo</td>
+<td valign="top" rowspan="2">{$THEME['logo']}</td>
 <td align="right" valign="top"><font class="smalltxt">$lastvisittext<br />$newu2umsg</font></td>
 </tr>
 <tr>
@@ -2605,7 +2605,7 @@ $avatd
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">{$lang['devices_category']}</font></strong></td>
+<td colspan="6" class="category" align="center" {$THEME['catbgcode']}><strong><font color="{$THEME['cattext']}">{$lang['devices_category']}</font></strong></td>
 </tr>
 <tr class="header">
 <td width="4%" align="center">{$lang['deletebutton']}</td>
@@ -2651,7 +2651,7 @@ $devicesbtn
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">$lang[textfavorites]</font></strong></td>
+<td colspan="6" class="category" align="center" {$THEME['catbgcode']}><strong><font color="{$THEME['cattext']}">$lang[textfavorites]</font></strong></td>
 </tr>
 <tr class="header">
 <td align="center" width="4%">$lang[deletebutton]</td>
@@ -3055,7 +3055,7 @@ $member[sig]</textarea></td>
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">$lang[textsubscriptions]</font></strong></td>
+<td colspan="6" class="category" align="center" {$THEME['catbgcode']}><strong><font color="{$THEME['cattext']}">$lang[textsubscriptions]</font></strong></td>
 </tr>
 $multipage
 <tr class="header">
@@ -4700,7 +4700,7 @@ font-family: arial, verdana;
 <title>$bbname - $lang[textpowered]</title>
 </head>
 <body>
-$logo<br /><br />
+{$THEME['logo']}<br /><br />
 <span class="16px">$lang[textsubject] $u2usubject<br />
 $lang[textfrom] $u2ufrom<br />
 $lang[textto] $u2uto<br />
@@ -5146,7 +5146,7 @@ white-space: pre-wrap;
 </style>
 </head>
 <body>
-$logo
+{$THEME['logo']}
 <br />
 <br />
 <h2><a href="$threadlink" rev="alternate">$thread[subject]</a></h2>
