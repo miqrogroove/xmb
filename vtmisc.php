@@ -121,7 +121,7 @@ if ($action == 'report') {
     nav($lang['textreportpost']);
     eval('echo "'.template('header').'";');
 
-    if ($SETTINGS['reportpost'] == 'off') {
+    if ( 'off' == $SETTINGS['reportpost'] || ( 'on' == $SETTINGS['quarantine_new_users'] && ( 0 == $self['postnum'] || 'yes' == $self['waiting_for_mod'] ) && ! X_STAFF ) ) {
         header('HTTP/1.0 403 Forbidden');
         eval('echo "'.template('misc_feature_notavailable').'";');
         end_time();

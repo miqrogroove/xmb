@@ -541,7 +541,7 @@ if (X_MEMBER) {
 } else {
     // Checks for the possibility to register
     if ($SETTINGS['regstatus'] == 'on') {
-        $reglink = '- <a href="member.php?action=coppa">'.$lang['textregister'].'</a>';
+        $reglink = '- <a href="member.php?action=reg">'.$lang['textregister'].'</a>';
     } else {
         $reglink = '';
     }

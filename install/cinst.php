@@ -247,6 +247,7 @@ $db->query( "INSERT INTO ".X_PREFIX."settings
 ('google_captcha_secret', ''),
 ('gzipcompress', 'on'),
 ('hideprivate', 'on'),
+('hide_banned', 'off'),
 ('hottopic', '20'),
 ('indexshowbar', '2'),
 ('index_stats', 'on'),

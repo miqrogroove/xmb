@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define('XMB_SCHEMA_VER', 6);
+define( 'XMB_SCHEMA_VER', 7 );
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.

@@ -554,7 +554,7 @@ if ($action == '') {
             $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
         }
 
-        if ($post['author'] != 'Anonymous' && $post['username']) {
+        if ( $post['author'] != 'Anonymous' && $post['username'] && ( 'off' == $SETTINGS['hide_banned'] || $post['status'] != 'Banned' ) ) {
             if (X_MEMBER && $post['showemail'] == 'yes') {
                 eval('$email = "'.template('viewthread_post_email').'";');
             } else {
@@ -703,7 +703,12 @@ if ($action == '') {
 
         $reportlink = '';
         if (X_MEMBER && $post['author'] != $xmbuser && $SETTINGS['reportpost'] == 'on') {
-            eval('$reportlink = "'.template('viewthread_post_report').'";');
+            // Post reporting is enabled, but is this user legit?
+            if ( 'on' == $SETTINGS['quarantine_new_users'] && ( 0 == $self['postnum'] || 'yes' == $self['waiting_for_mod'] ) && ! X_STAFF ) {
+                // Nope
+            } else {
+                eval('$reportlink = "'.template('viewthread_post_report').'";');
+            }
         }
 
         $edit = '';

@@ -589,7 +589,7 @@ class FormsAndCookies implements Mechanism {
      *
      * @param Data
      */
-    public function saveClientData( Data $data ) {
+    public function saveClientData( Data $data ): bool {
         // Create a new session here.
         $token = bin2hex( random_bytes( self::TOKEN_BYTES ) );
 

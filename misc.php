@@ -392,10 +392,10 @@ switch($action) {
 
         if ($dblikeemail != '') {
             if (!X_SADMIN) {
-                $where[] = " email LIKE '%$dblikeemail%'";
-                $where[] = " showemail='yes'";
+                $where[] = "email LIKE '%$dblikeemail%'";
+                $where[] = "showemail='yes'";
             } else {
-                $where[] = " email LIKE '%$dblikeemail%'";
+                $where[] = "email LIKE '%$dblikeemail%'";
             }
             $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE, FALSE, 'g'));
             $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE, 'g');
@@ -405,7 +405,7 @@ switch($action) {
         }
 
         if ($dblikeip != '') {
-            $where[] = " regip LIKE '%$dblikeip%'";
+            $where[] = "regip LIKE '%$dblikeip%'";
             $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE, FALSE, 'g'));
             $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE, 'g');
             /* Warning: $srchip is used for template output */
@@ -414,7 +414,7 @@ switch($action) {
         }
 
         if ($dblikemem != '') {
-            $where[] = " username LIKE '%$dblikemem%'";
+            $where[] = "username LIKE '%$dblikemem%'";
             $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE, FALSE, 'g'));
             $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE, 'g');
             /* Warning: $srchmem is used for template output */
@@ -447,9 +447,12 @@ switch($action) {
             $ext = '';
         }
 
-        $where[] = " lastvisit!=0 ";
-        $q = implode(' AND', $where);
-        $num = $db->result($db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE $q"), 0);
+        $where[] = "lastvisit != 0";
+        if ( 'yes' == $SETTINGS['hide_banned'] ) {
+            $where[] = "status != 'Banned' ";
+        }
+        $q = implode( ' AND ', $where );
+        $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."members WHERE $q"), 0);
         $canonical = 'misc.php?action=list';
         $baseurl = $canonical.$params;
         $mpage = multipage($num, $memberperpage, $baseurl, $canonical);

@@ -67,7 +67,7 @@ $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch( $action ) {
 case 'viewuser':
     $dbuser = postedVar('u', '', TRUE, TRUE, FALSE, 'g');
-    $result = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$dbuser' AND moderation = 1");
+    $result = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username='$dbuser' AND waiting_for_mod = 'yes'");
     if ($db->num_rows($result) == 0) {
         error($lang['nomember'], FALSE, '', '</td></tr></table></td></tr></table>');
     }
@@ -452,7 +452,7 @@ case 'modays':
     $phrase = str_replace( '$user', $member, $lang[$phrase] );
     ?>
     <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
-    <form action="moderation.php?action=<?php echo $act; ?>" method="post">
+    <form action="quarantine.php?action=<?php echo $act; ?>" method="post">
       <input type="hidden" name="token" value="<?php echo \XMB\Token\create( "Quarantine Panel/$act", $member, X_NONCE_AYS_EXP ); ?>" />
       <input type="hidden" name="u" value="<?php echo $member; ?>" />
       <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
@@ -630,7 +630,7 @@ default:
         "SELECT m.username, COUNT(*) AS postnum " .
         "FROM ".X_PREFIX."members AS m " .
         "INNER JOIN ".X_PREFIX."hold_posts AS p ON m.username = p.author " .
-        "WHERE m.moderation = 1 " .
+        "WHERE m.waiting_for_mod = 'yes' " .
         "GROUP BY m.username " .
         "ORDER BY m.regdate ASC " .
         "LIMIT 10"

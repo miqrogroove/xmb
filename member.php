@@ -73,6 +73,7 @@ switch($action) {
         $testname = 'regtest';
         $testval = 'xmb';
         $cookietest = postedVar( $testname, '', false, false, false, 'c' );
+        $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
         $regvalid = true;
 
         if ( 'off' == $SETTINGS['regstatus'] ) {
@@ -87,6 +88,9 @@ switch($action) {
             if ( $stepin > 0 ) {
                 error( $lang['cookies_disabled'] );
             }
+        } elseif ( 'xmb' == $privacy ) {
+            // User previously attempted registration with age < 13.
+            error( $lang['coppa_fail'] );
         }
 
         if ( $regvalid ) {
@@ -188,7 +192,10 @@ switch($action) {
                     if ( 'on' == $SETTINGS['coppa'] ) {
                         // Check coppa results
                         $age = formInt( 'age' );
-                        if ( $age < 13 ) {
+                        if ( $age <= 0 ) {
+                            // Input was invalid, try again.
+                            $stepout = 2;
+                        } elseif ( $age < 13 ) {
                             put_cookie( 'privacy', 'xmb' );
                             error( $lang['coppa_fail'] );
                         }
@@ -264,7 +271,7 @@ switch($action) {
                         $self['password'] = '';
                         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                         $get = strlen($chars) - 1;
-                        for($i = 0; $i < 8; $i++) {
+                        for( $i = 0; $i < 10; $i++ ) {
                             $self['password'] .= $chars[random_int(0, $get)];
                         }
                         $password2 = $self['password'];
@@ -620,9 +627,9 @@ switch($action) {
             if ( 5 == $stepout ) {
                 // Display success message
                 if ( 'on' == $SETTINGS['emailcheck'] ) {
-                    $memberpage = "<center><span class='mediumtxt'>{$lang['emailpw']}</span></center>"
+                    $memberpage = message( $lang['emailpw'], false, '', '', false, false, true, false );
                 } else {
-                    $memberpage = "<center><span class='mediumtxt'>{$lang['regged']}</span></center>";
+                    $memberpage = message( $lang['regged'], false, '', '', $full_url, false, true, false );
                 }
             }
         }
@@ -640,7 +647,7 @@ switch($action) {
 
         $memberinfo = \XMB\SQL\getMemberByName( $member );
 
-        if ( empty( $memberinfo ) ) {
+        if ( empty( $memberinfo ) || ( 'on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] ) ) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         }

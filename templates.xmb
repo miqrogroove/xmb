@@ -2184,7 +2184,7 @@ $todaymembers&nbsp;
 <td class="category" colspan="2"><font color="$cattext"><strong>{$lang['coppa_title']}</strong></font></td>
 </tr>
 <tr>
- <td bgcolor="$altbg1" class="ctrtablerow">$lang['coppa_directions']
+ <td bgcolor="$altbg1" class="ctrtablerow">{$lang['coppa_directions']}
   <select name="age" id="age">
    $optionlist
   </select>
@@ -2314,6 +2314,7 @@ $emailblock
 |#*XMB TEMPLATE FILE*#|member_reg|#*XMB TEMPLATE*#|
 <form method="post" action="" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="$token" />
+<input type="hidden" name="step" value="$stepout" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2866,48 +2867,7 @@ $favs
 <td bgcolor="$altbg1" width="22%">$lang[textpasswordcf]</td>
 <td bgcolor="$altbg2"><input type="password" name="newpasswordcf" size="25" /></td>
 </tr>
-<tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
-<td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
-<td bgcolor="$altbg2"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[texticq]</td>
-<td bgcolor="$altbg2"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textyahoo]</td>
-<td bgcolor="$altbg2"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textmsn]</td>
-<td bgcolor="$altbg2"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textlocation]</td>
-<td bgcolor="$altbg2"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[memcpmood]</td>
-<td bgcolor="$altbg2"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
-</tr>
-$avatar
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">
-$member[bio]</textarea></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
-<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">
-$member[sig]</textarea></td>
-</tr>
+$optional
 <tr>
 <td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
 </tr>
@@ -3023,6 +2983,50 @@ $timezones
 <input type="text" name="newavatar" size="25" value="$member[avatar]" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
 <p id="avatarCheck" style="display: inline;"></p>
 </td>
+</tr>
+
+|#*XMB TEMPLATE FILE*#|memcp_profile_optional|#*XMB TEMPLATE*#|
+<tr>
+<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsite]</td>
+<td bgcolor="$altbg2"><input type="text" name="newsite" size="25" value="$member[site]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textaim]</td>
+<td bgcolor="$altbg2"><input type="text" name="newaim" size="25" value="$member[aim]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[texticq]</td>
+<td bgcolor="$altbg2"><input type="text" name="newicq" size="25" value="$member[icq]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textyahoo]</td>
+<td bgcolor="$altbg2"><input type="text" name="newyahoo" size="25" value="$member[yahoo]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textmsn]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmsn" size="25" value="$member[msn]"/></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textlocation]</td>
+<td bgcolor="$altbg2"><input type="text" name="newlocation" size="25" value="$member[location]" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[memcpmood]</td>
+<td bgcolor="$altbg2"><input type="text" name="newmood" size="25" value="$member[mood]" /></td>
+</tr>
+$avatar
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textbio]</td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newbio">
+$member[bio]</textarea></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="$altbg1" width="22%">$lang[textsig]<br /><span class="smalltxt">$lang[texthtmlis] $htmlis<br />$lang[textbbcodeis] $bbcodeis</span></td>
+<td bgcolor="$altbg2"><textarea rows="5" cols="45" name="newsig">
+$member[sig]</textarea></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|memcp_subscriptions|#*XMB TEMPLATE*#|
@@ -3141,7 +3145,7 @@ $header
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1" width="22%">$lang[textusername]</td>
-<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" />&nbsp;<span class="smalltxt"><a href="member.php?action=coppa">$lang[regques]</a></span></td>
+<td bgcolor="$altbg2"><input type="text" name="username" size="25" maxlength="25" />&nbsp;<span class="smalltxt"><a href="member.php?action=reg">$lang[regques]</a></span></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="$altbg1">$lang[textpassword]</td>

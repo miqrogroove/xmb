@@ -1,10 +1,10 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2020, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -114,8 +114,8 @@ if (!defined('IN_CODE')) {
      * and ONLY visible to Super Administrators. Comment first line and uncomment second line to use debug mode.
      */
 
-    define('DEBUG', FALSE);
-    // define('DEBUG', TRUE);
+    // define('DEBUG', FALSE);
+    define('DEBUG', TRUE);
 
     /**
      * To enable logging of all MySQL errors (necessary in the case of registration, login, or captcha errors), comment first
@@ -124,10 +124,9 @@ if (!defined('IN_CODE')) {
      * If the chmod settings of this directory prevent file Write then the log will not be created.
      */
 
-    define('LOG_MYSQL_ERRORS', FALSE);
-    // define('LOG_MYSQL_ERRORS', TRUE);
+    // define('LOG_MYSQL_ERRORS', FALSE);
+    define('LOG_MYSQL_ERRORS', TRUE);
 
 // Do not edit below this line.
 // ---------------------------
 return;
-?>

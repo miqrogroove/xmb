@@ -47,6 +47,7 @@ loadtemplates(
 'memcp_profile',
 'memcp_profile_avatarlist',
 'memcp_profile_avatarurl',
+'memcp_profile_optional',
 'memcp_subscriptions',
 'memcp_subscriptions_button',
 'memcp_subscriptions_multipage',
@@ -267,6 +268,10 @@ if ($action == 'profile') {
         $member['location'] = rawHTMLsubject($member['location']);
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
+        $optional = '';
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'off' == $self['waiting_for_mod'] ) || X_STAFF ) {
+            eval('$optional = "'.template('memcp_profile_optional').'";');
+        }
         if (X_STAFF) {
             $template = template_secure( 'memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP );
         } else {
@@ -341,16 +346,7 @@ if ($action == 'profile') {
         // For year of birth, reject all integers from 100 through 1899.
         if ($year >= 100 && $year <= 1899) $year = 0;
         $bday = iso8601_date($year, $month, $day);
-        $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-        $icq = abs( formInt( 'newicq' ) );
-        $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
-        $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
-        $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
         $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
-        $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
-        $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
-        $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
-        $sig = postedVar('newsig', 'javascript', TRUE, TRUE, TRUE);
 
         if ($email != $db->escape($self['email'])) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
@@ -450,6 +446,29 @@ if ($action == 'profile') {
             }
         } else {
             $avatar = '';
+        }
+
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'off' == $self['waiting_for_mod'] ) || X_STAFF ) {
+            $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
+            $icq = abs( formInt( 'newicq' ) );
+            $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
+            $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
+            $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
+            $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
+            $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
+            $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
+            $sig = postedVar('newsig', 'javascript', TRUE, TRUE, TRUE);
+        } else {
+            $avatar = '';
+            $location = '';
+            $icq = '';
+            $yahoo = '';
+            $aim = '';
+            $msn = '';
+            $site = '';
+            $bio = '';
+            $mood = '';
+            $sig = '';
         }
 
         $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail',

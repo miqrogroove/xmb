@@ -153,8 +153,6 @@ function url_to_text($url) {
                     }
                 }
             }
-        } else if (false !== strpos($url, 'action=coppa')) {
-            $location = $lang['onlinecoppa'];
         } else {
             $location = $lang['onlineunknown'];
         }

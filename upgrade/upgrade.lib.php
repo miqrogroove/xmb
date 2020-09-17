@@ -92,7 +92,7 @@ function xmb_upgrade() {
     upgrade_query('TRUNCATE TABLE '.X_PREFIX.'templates');
 
     show_progress('Requesting to lock the templates table');
-    upgrade_query('LOCK TABLES '.X_PREFIX."templates WRITE");
+    upgrade_query('LOCK TABLES '.X_PREFIX.'templates WRITE, '.X_PREFIX.'themes WRITE');
 
     show_progress('Saving the new templates');
     $values = array();
@@ -1822,6 +1822,7 @@ function upgrade_schema_to_v5() {
     $settings['google_captcha'] = 'off';
     $settings['google_captcha_sitekey'] = '';
     $settings['google_captcha_secret'] = '';
+    $settings['hide_banned'] = 'off';
     $settings['quarantine_new_users'] = 'off';
     $settings['show_logs_in_threads'] = 'off';
     $settings['tickercode'] = 'html';
@@ -2240,7 +2241,7 @@ function upgrade_query( $sql ) {
 	$result = $db->query( $sql, false );
 	
 	if ( false === $result ) {
-		$error = '<pre>'.$database.' encountered the following error: '.cdataOut( $db->error() )."\n\n";
+		$error = '<pre>MySQL encountered the following error: '.cdataOut( $db->error() )."\n\n";
 		if ( '' != $sql ) {
 			$error .= 'In the following query: <em>'.cdataOut( $sql ).'</em>';
 		}

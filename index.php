@@ -64,6 +64,19 @@ if ($SETTINGS['tickerstatus'] == 'on') {
     eval('$ticker = "'.template('index_ticker').'";');
 }
 
+if ( X_SMOD ) {
+    $quarantine = true;
+    $result = \XMB\SQL\countPosts( $quarantine );
+    if ( $result > 0 ) {
+        if ( 1 == $result ) {
+            $msg = $lang['moderation_notice_single'];
+        } else {
+            $msg = str_replace( '$result', $result, $lang['moderation_notice_eval'] );
+        }
+        $ticker .= message( $msg, false, '', '', false, false, true, false ) . "<br />\n";
+    }
+}
+
 $forums = getStructuredForums(TRUE);
 
 if (onSubmit('gid')) {
@@ -108,7 +121,11 @@ eval('$header = "'.template('header').'";');
 
 $statsbar = '';
 if ($SETTINGS['index_stats'] == 'on') {
-    $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit!=0 ORDER BY regdate DESC LIMIT 1");
+    $where = '';
+    if ( 'on' == $SETTINGS['hide_banned'] ) {
+        $where = "AND status != 'Banned'";
+    }
+    $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
     if ($db->num_rows($query) == 1) {
         $lastmember = $db->fetch_array($query);
         $db->free_result($query);
@@ -151,7 +168,11 @@ if ($gid == 0) {
         $membercount = 0;
         $guestcount = $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM ".X_PREFIX."whosonline WHERE username = 'xguest123'"), 0);
         $member = array();
-        $query  = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) GROUP BY m.username ORDER BY m.username");
+        $where = '';
+        if ( 'on' == $SETTINGS['hide_banned'] ) {
+            $where = "WHERE m.status != 'Banned'";
+        }
+        $query  = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
             if ($online['invisible'] != 0 && X_ADMIN) {
                 $member[] = $online;
@@ -234,10 +255,14 @@ if ($gid == 0) {
         $whosonlinetoday = '';
         if ($SETTINGS['onlinetoday_status'] == 'on') {
             $datecut = $onlinetime - (3600 * 24);
+            $where = '';
+            if ( 'on' == $SETTINGS['hide_banned'] ) {
+                $where = "AND status != 'Banned'";
+            }
             if (X_ADMIN) {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' $where ORDER BY lastvisit DESC");
             } else {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible!=1 ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != 1 $where ORDER BY lastvisit DESC");
             }
 
             $todaymembersnum = $db->num_rows($query);

@@ -69,7 +69,10 @@ if ($action == "settings") {
      && noSubmit('settingsubmit4')
      && noSubmit('settingsubmit5')
      && noSubmit('settingsubmit6')
-     && noSubmit('settingsubmit7')) {
+     && noSubmit('settingsubmit7')
+     && noSubmit('settingsubmit8')
+     && noSubmit('settingsubmit9')
+     && noSubmit('settingsubmit10')) {
         $langfileselect = createLangFileSelect($SETTINGS['langfile']);
 
         $themelist = array();
@@ -223,6 +226,9 @@ if ($action == "settings") {
 
         $recaptchaon = $recaptchaoff = '';
         settingHTML('google_captcha', $recaptchaon, $recaptchaoff);
+
+        $hidebannedon = $hidebannedoff = '';
+        settingHTML('hide_banned', $hidebannedon, $hidebannedoff);
 
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
@@ -437,15 +443,16 @@ if ($action == "settings") {
         printsetting3($lang['notifyonreg'], 'notifyonregnew', array($lang['textoff'], $lang['viau2u'], $lang['viaemail']), array('off', 'u2u', 'email'), $notifycheck, false);
         printsetting1($lang['textreggedonly'], 'regviewnew', $regonlyon, $regonlyoff);
         printsetting1($lang['texthidepriv'], 'hidepriv', $hideon, $hideoff);
-        printsetting1($lang['emailverify'], 'emailchecknew',$echeckon, $echeckoff);
-        printsetting1($lang['regoptional'], 'regoptionalnew',$regoptionalon, $regoptionaloff);
+        printsetting1($lang['emailverify'], 'emailchecknew', $echeckon, $echeckoff);
+        printsetting1($lang['regoptional'], 'regoptionalnew', $regoptionalon, $regoptionaloff);
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
         printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
         printsetting1($lang['resetSigDesc'], 'resetSigNew', $resetSigOn, $resetSigOff);
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
-        printsetting1($lang['moderation_setting'], 'quarantinenew',$quarantineon, $quarantineoff);
+        printsetting1($lang['moderation_setting'], 'quarantinenew', $quarantineon, $quarantineoff);
+        printsetting1($lang['hide_banned_users'], 'hidebannednew', $hidebannedon, $hidebannedoff);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -545,7 +552,7 @@ if ($action == "settings") {
         </tr>
         <?php
         $recaptcha_link = '<br /><span class="smalltext">[ <a href="https://www.google.com/recaptcha/admin/" onclick="window.open(this.href); return false;">Setup</a> ]';
-        printsetting1($lang['google_captcha'], 'recaptchanew', $recaptchaon, $recaptchaoff);
+        printsetting1($lang['google_captcha_onoff'], 'recaptchanew', $recaptchaon, $recaptchaoff);
         printsetting2($lang['google_captcha_sitekey'].$recaptcha_link, 'recaptchakeynew', $SETTINGS['google_captcha_sitekey'], 50);
         printsetting2($lang['google_captcha_secretkey'], 'recaptchasecretnew', $SETTINGS['google_captcha_secret'], 50);
         ?>
@@ -647,6 +654,7 @@ if ($action == "settings") {
         input_string_setting( 'google_captcha_sitekey', 'recaptchakeynew' );
         input_onoff_setting( 'gzipcompress', 'gzipcompressnew' );
         input_onoff_setting( 'hideprivate', 'hidepriv' );
+        input_onoff_setting( 'hide_banned', 'hidebannednew' );
         input_int_setting( 'hottopic', 'hottopicnew' );
         input_int_setting( 'indexshowbar', 'indexShowBarNew' );
         input_onoff_setting( 'index_stats', 'index_statsnew' );

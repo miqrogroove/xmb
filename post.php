@@ -58,7 +58,12 @@ loadtemplates(
 'viewthread_post_sig'
 );
 
-if (X_GUEST) {
+if ( X_GUEST ) {
+    $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
+    if ( 'xmb' == $privacy ) {
+        // User previously attempted registration with age < 13.
+        error( $lang['coppa_fail'] );
+    }
     $loggedin = '';
 } else {
     eval('$loggedin = "'.template('post_loggedin').'";');
