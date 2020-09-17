@@ -1268,7 +1268,7 @@ function quickpage($things, $thingsperpage) {
 }
 
 function smilieinsert($type='normal') {
-    global $imgdir, $smdir, $db, $SETTINGS, $smiliesnum, $smiliecache;
+    global $db, $SETTINGS, $THEME, $smiliesnum, $smiliecache;
 
     $counter = 0;
     $sms = array();

@@ -6,7 +6,7 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">{$lang['textusername']}</td>
@@ -28,14 +28,14 @@ admintool_editprofile|#*XMB TEMPLATE*#|
 </select></td>
 </tr>
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textnewpassword]</td>
 <td bgcolor="{$THEME['altbg2']}"><input type="password" name="newpassword" size="25" />&nbsp;$lang[pwnote]</td>
 </tr>
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">{$lang['textcusstatus']}:</td>
@@ -81,7 +81,7 @@ $member[bio]</textarea></td>
 $member[sig]</textarea></td>
 </tr>
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[texttheme]</td>
@@ -178,13 +178,13 @@ $css
 <title>$bbname - $lang[textpowered]</title>
 <script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><strong><font color="$cattext">$lang[textbuddylist]</font></strong></td>
+<td class="category"><strong><font color="{$THEME['cattext']}">$lang[textbuddylist]</font></strong></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -244,7 +244,7 @@ $css
 <title>$bbname - $lang[textpowered]</title>
 <script type="text/javascript" language="JavaScript" src="./js/buddylistedit.js"></script>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="{$THEME['bordercolor']}">
@@ -252,7 +252,7 @@ $css
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><strong><font color="$cattext">$lang[editbuddylist]</font></strong></td>
+<td class="category" colspan="2"><strong><font color="{$THEME['cattext']}">$lang[editbuddylist]</font></strong></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg2']}" width="5%" align="center"><strong>$lang[deletecolon]</strong></td>
@@ -275,7 +275,7 @@ $buddys
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><strong><font color="$cattext">$lang[addtoaddresses]</font></strong></td>
+<td class="category" colspan="2"><strong><font color="{$THEME['cattext']}">$lang[addtoaddresses]</font></strong></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg2']}">
@@ -314,7 +314,7 @@ $buddys
 $css
 <title>$bbname - $lang[textpowered]</title>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <table cellspacing="2" cellpadding="0" border="0" width="{$THEME['tablewidth']}" align="center">
 <tr>
 <td bgcolor="{$THEME['bordercolor']}">
@@ -339,7 +339,7 @@ $css
 <script type="text/javascript" language="JavaScript" src="./js/buddy.js"></script>
 <title>$bbname - $lang[textbuddylist] - $lang[textpowered]</title>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="{$THEME['bordercolor']}">
@@ -736,7 +736,7 @@ textarea, select, input, object {
 <title>$bbname &gt; $lang[textu2utoemail]</title>
 $css
 </head>
-<body style="color: $text;">
+<body style="color: {$THEME['text']};">
 
 |#*XMB TEMPLATE FILE*#|error|#*XMB TEMPLATE*#|
 $header
@@ -764,7 +764,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[noadminsession]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[noadminsession]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%"><strong>$lang[error]</strong></td>
@@ -797,7 +797,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=usermaint"><font color="$cattext"><strong>$lang[textuserman]</strong></font></a></td>
+<td class="category"><a href="./faq.php?page=usermaint"><font color="{$THEME['cattext']}"><strong>$lang[textuserman]</strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -821,7 +821,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=using"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></a></td>
+<td class="category"><a href="./faq.php?page=using"><font color="{$THEME['cattext']}"><strong>$lang[textuseboa]</strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -846,7 +846,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=messages"><font color="$cattext"><strong>$lang[textpostread]</strong></font></a></td>
+<td class="category"><a href="./faq.php?page=messages"><font color="{$THEME['cattext']}"><strong>$lang[textpostread]</strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -873,7 +873,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textbbrules]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textbbrules]</strong></font></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}">$SETTINGS[bbrulestxt]</td>
@@ -889,7 +889,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textpostread]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textpostread]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -915,7 +915,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq11]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="1"></a>$lang[textfaq11]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans11]</td>
@@ -930,7 +930,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="2"></a> $lang[textfaq12]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="2"></a> $lang[textfaq12]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans12]</td>
@@ -945,7 +945,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="3"></a> $lang[textfaq13]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="3"></a> $lang[textfaq13]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans13]</td>
@@ -960,7 +960,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="4"></a> $lang[textfaq14]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="4"></a> $lang[textfaq14]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans14]</td>
@@ -975,7 +975,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="5"></a> $lang[textfaq15]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="5"></a> $lang[textfaq15]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans15]</td>
@@ -990,7 +990,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq17]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="6"></a> $lang[textfaq17]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans16]
@@ -1019,7 +1019,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq19]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="7"></a> $lang[textfaq19]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[bbcodeinfo]</td>
@@ -1034,7 +1034,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="8"></a> $lang[textfaq18]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="8"></a> $lang[textfaq18]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans17]</td>
@@ -1048,7 +1048,7 @@ $smilierows
 |#*XMB TEMPLATE FILE*#|faq_messages_smilierow|#*XMB TEMPLATE*#|
 <tr class="tablerow">
 <td width="25%" bgcolor="{$THEME['altbg2']}">$smilie[code]</td>
-<td width="75%" bgcolor="{$THEME['altbg2']}" align="center"><img src="$smdir/$smilie[url]" alt="$smilie[code]" /></td>
+<td width="75%" bgcolor="{$THEME['altbg2']}" align="center"><img src="{$THEME['smdir']}/$smilie[url]" alt="$smilie[code]" /></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|faq_usermaint|#*XMB TEMPLATE*#|
@@ -1057,7 +1057,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textuserman]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textuserman]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -1081,7 +1081,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq1]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="1"></a>$lang[textfaq1]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans1]</td>
@@ -1096,7 +1096,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="2"></a>$lang[textfaq2]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="2"></a>$lang[textfaq2]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans2]</td>
@@ -1111,7 +1111,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="3"></a>$lang[textfaq3]</strong></font></td></tr>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="3"></a>$lang[textfaq3]</strong></font></td></tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans3]</td>
 </tr>
@@ -1125,7 +1125,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="4"></a>$lang[textfaq4]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="4"></a>$lang[textfaq4]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans4]</td>
@@ -1140,7 +1140,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="5"></a>$lang[textfaq5]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="5"></a>$lang[textfaq5]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans5]</td>
@@ -1155,7 +1155,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="6"></a>$lang[textfaq6]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="6"></a>$lang[textfaq6]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans6]</td>
@@ -1171,7 +1171,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textuseboa]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textuseboa]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">
@@ -1196,7 +1196,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="1"></a>$lang[textfaq7]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="1"></a>$lang[textfaq7]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans7]</td>
@@ -1211,7 +1211,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="2"></a>$lang[textfaq16]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="2"></a>$lang[textfaq16]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans21]</td>
@@ -1226,7 +1226,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="3"></a>$lang[textfaq8]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="3"></a>$lang[textfaq8]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans8]</td>
@@ -1241,7 +1241,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="4"></a>$lang[textfaq9]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="4"></a>$lang[textfaq9]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans9]</td>
@@ -1256,7 +1256,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="5"></a>$lang[textfaq10]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="5"></a>$lang[textfaq10]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans10]</td>
@@ -1271,7 +1271,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="6"></a> $lang[textfaq20]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="6"></a> $lang[textfaq20]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[textfaqans19]</td>
@@ -1286,7 +1286,7 @@ $smilierows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong><a name="7"></a> $lang[textfaq21]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong><a name="7"></a> $lang[textfaq21]</strong></font></td>
 </tr>
 <tr>
 <td width="100%" class="tablerow" bgcolor="{$THEME['altbg1']}">$lang[rankinfo]</td>
@@ -1322,7 +1322,7 @@ $rankrows
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textstats]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textstats]</strong></font></td>
 </tr>
 <tr bgcolor="{$THEME['altbg1']}" class="tablerow">
 <td>
@@ -1386,7 +1386,7 @@ $bestmember
 <tr>
 <td class="nav" style="padding-bottom: 1px" bgcolor="{$THEME['altbg2']}">&nbsp;<a href="./">$bbname</a>$navigation</td>
 <td class="tablerow" align="right" bgcolor="{$THEME['altbg2']}">$quickjump&nbsp;</td>
-<td align="right" bgcolor="{$THEME['altbg2']}" width="2%"><a href="#top" title="$lang[gototop]"><img src="$imgdir/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
+<td align="right" bgcolor="{$THEME['altbg2']}" width="2%"><a href="#top" title="$lang[gototop]"><img src="{$THEME['imgdir']}/arrow_up.gif" style="margin-right: 3px" border="0" alt="$lang[gototop]" /></a></td>
 </tr>
 </table>
 </td>
@@ -1469,13 +1469,13 @@ $multipage
 </table>
 <br />
 <table width="{$THEME['tablewidth']}" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" align="center"><tr>
-<td class="tablerow"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
-<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
+<td class="tablerow"><img src="{$THEME['imgdir']}/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
+<img src="{$THEME['imgdir']}/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="$imgdir/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
-<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
+<img src="{$THEME['imgdir']}/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
+<img src="{$THEME['imgdir']}/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="$imgdir/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
+<img src="{$THEME['imgdir']}/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
 </tr>
 </table>
 
@@ -1555,13 +1555,13 @@ $multipage3
 <table width="{$THEME['tablewidth']}" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" align="center">
 <tr>
 <td class="tablerow">
-<img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
-<img src="$imgdir/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
+<img src="{$THEME['imgdir']}/red_folder.gif" alt="$lang[altredfolder]" />&nbsp;$lang[opennew] (&nbsp;
+<img src="{$THEME['imgdir']}/hot_red_folder.gif" alt="$lang[althotredfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="$imgdir/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
-<img src="$imgdir/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
+<img src="{$THEME['imgdir']}/folder.gif" alt="$lang[altfolder]" />&nbsp;$lang[opentopic] (&nbsp;
+<img src="{$THEME['imgdir']}/hot_folder.gif" alt="$lang[althotfolder]" />&nbsp;$hottopic&nbsp;)<br />
 <img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="$imgdir/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
+<img src="{$THEME['imgdir']}/lock_folder.gif" alt="$lang[altclosedtopic]" />&nbsp;$lang[locktopic]</td>
 </tr>
 </table>
 
@@ -1581,10 +1581,10 @@ $multipage3
 </tr>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newpoll|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textnewpoll]"><img src="$imgdir/poll.gif" border="0" alt="$lang[textnewpoll]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textnewpoll]"><img src="{$THEME['imgdir']}/poll.gif" border="0" alt="$lang[textnewpoll]" /></a>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_newtopic|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="{$THEME['imgdir']}/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
 
 |#*XMB TEMPLATE FILE*#|forumdisplay_nothreads|#*XMB TEMPLATE*#|
 <tr class="tablerow">
@@ -1673,7 +1673,7 @@ $forumlist
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="{$THEME['altbg1']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
-<td bgcolor="{$THEME['altbg1']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="{$THEME['altbg1']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="{$THEME['imgdir']}/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1705,7 +1705,7 @@ $forumlist
 <td bgcolor="{$THEME['altbg2']}" class="ctrtablerow"><font class="mediumtxt">$thread[replies]</font></td>
 <td bgcolor="{$THEME['altbg1']}" class="ctrtablerow"><font class="mediumtxt">$thread[views]</font></td>
 <td bgcolor="{$THEME['altbg2']}" class="lastpostcell">$lastpostrow</td>
-<td bgcolor="{$THEME['altbg1']}" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="$admdir/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
+<td bgcolor="{$THEME['altbg1']}" class="ctrtablerow"><a href="topicadmin.php?tid=$thread[realtid]&amp;fid=$forum[fid]&amp;action=delete"><img src="{$THEME['admdir']}/deletetopic.gif" alt="$lang[deletethread]" border="0" /></a></td>
 <td bgcolor="{$THEME['altbg1']}" class="ctrtablerow"><input type="checkbox" name="tid[]" value="$thread[realtid]" /></td>
 </tr>
 
@@ -1713,7 +1713,7 @@ $forumlist
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr align="right">
 <td bgcolor="{$THEME['altbg2']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
-<td bgcolor="{$THEME['altbg2']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="{$THEME['altbg2']}" class="rghttablerow" nowrap="nowrap"><a href="viewthread.php?goto=lastpost&amp;tid=$thread[tid]" title="$lang[altlastpost]"><img src="{$THEME['imgdir']}/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1821,17 +1821,17 @@ var messageElement;
 </select>
 $spelling_lang
 <br />
-<a href="javascript:bold()" accesskey="b" title="$lang[cb_insert_bold]"><img src="$imgdir/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
-<a href="javascript:italicize()" accesskey="i" title="$lang[cb_insert_italics]"><img src="$imgdir/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
-<a href="javascript:underline()" accesskey="u" title="$lang[cb_insert_underlined]"><img src="$imgdir/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
-<a href="javascript:center()" title="$lang[cb_insert_centered]" ><img src="$imgdir/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
-<a href="javascript:hyperlink()" title="$lang[cb_insert_hyperlink]" ><img src="$imgdir/bb_url.gif" border="0" width="23" height="22" alt="$lang[cb_insert_hyperlink]" /></a>
-<a href="javascript:email()" title="$lang[cb_insert_email]" ><img src="$imgdir/bb_email.gif" border="0" width="23" height="22" alt="$lang[cb_insert_email]" /></a>
-<a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="$imgdir/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
-<a href="javascript:code()" title="$lang[cb_insert_code]" ><img src="$imgdir/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
-<a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="$imgdir/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
-<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="$imgdir/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a>
-<a href="javascript:youtube()" title="$lang[cb_insert_youtube]"><img src="$imgdir/bb_youtube.gif" border="0" width="23" height="22" alt="$lang[cb_insert_youtube]" /></a>
+<a href="javascript:bold()" accesskey="b" title="$lang[cb_insert_bold]"><img src="{$THEME['imgdir']}/bb_bold.gif" border="0" width="23" height="22" alt="$lang[cb_insert_bold]" /></a>
+<a href="javascript:italicize()" accesskey="i" title="$lang[cb_insert_italics]"><img src="{$THEME['imgdir']}/bb_italicize.gif" border="0" width="23" height="22" alt="$lang[cb_insert_italics]" /></a>
+<a href="javascript:underline()" accesskey="u" title="$lang[cb_insert_underlined]"><img src="{$THEME['imgdir']}/bb_underline.gif" border="0" width="23" height="22" alt="$lang[cb_insert_underlined]" /></a>
+<a href="javascript:center()" title="$lang[cb_insert_centered]" ><img src="{$THEME['imgdir']}/bb_center.gif" border="0" width="23" height="22" alt="$lang[cb_insert_centered]" /></a>
+<a href="javascript:hyperlink()" title="$lang[cb_insert_hyperlink]" ><img src="{$THEME['imgdir']}/bb_url.gif" border="0" width="23" height="22" alt="$lang[cb_insert_hyperlink]" /></a>
+<a href="javascript:email()" title="$lang[cb_insert_email]" ><img src="{$THEME['imgdir']}/bb_email.gif" border="0" width="23" height="22" alt="$lang[cb_insert_email]" /></a>
+<a href="javascript:image()" title="$lang[cb_insert_image]" ><img src="{$THEME['imgdir']}/bb_image.gif" border="0" width="23" height="22" alt="$lang[cb_insert_image]" /></a>
+<a href="javascript:code()" title="$lang[cb_insert_code]" ><img src="{$THEME['imgdir']}/bb_code.gif" border="0" width="23" height="22" alt="$lang[cb_insert_code]" /></a>
+<a href="javascript:quote()" title="$lang[cb_insert_quote]" ><img src="{$THEME['imgdir']}/bb_quote.gif" border="0" width="23" height="22" alt="$lang[cb_insert_quote]" /></a>
+<a href="javascript:list()" title="$lang[cb_insert_list]" ><img src="{$THEME['imgdir']}/bb_list.gif" border="0" width="23" height="22" alt="$lang[cb_insert_list]" /></a>
+<a href="javascript:youtube()" title="$lang[cb_insert_youtube]"><img src="{$THEME['imgdir']}/bb_youtube.gif" border="0" width="23" height="22" alt="$lang[cb_insert_youtube]" /></a>
 </td>
 </tr>
 
@@ -1850,7 +1850,7 @@ $smilies
 </td>
 
 |#*XMB TEMPLATE FILE*#|functions_smilieinsert_smilie|#*XMB TEMPLATE*#|
-<td valign="top"><a style="cursor:hand" onclick="javascript:icon('$smilie[code]')"><img src="$smdir/$smilie[url]" border="0" alt="$smilie[code]"/></a></td>
+<td valign="top"><a style="cursor:hand" onclick="javascript:icon('$smilie[code]')"><img src="{$THEME['smdir']}/$smilie[url]" border="0" alt="$smilie[code]"/></a></td>
 
 |#*XMB TEMPLATE FILE*#|header|#*XMB TEMPLATE*#|
 <?xml version="1.0" encoding="$charset"?>
@@ -1867,7 +1867,7 @@ $baseelement$canonical_link
 $css
 <script language="JavaScript" type="text/javascript" src="./js/header.js?v=1.9.12"></script>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 $bbcodescript
 <a name="top"></a>
 <table cellspacing="0" cellpadding="0" border="0" width="{$THEME['tablewidth']}" align="center">
@@ -1892,7 +1892,7 @@ $bbcodescript
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td class="navtd"><font class="navtd">$searchlink $links $pluglink</font></td>
-<td align="right"><a href="$siteurl" title="$sitename"><font class="navtd">$lang[backto] <img src="$imgdir/top_home.gif" border="0" alt="$sitename" /></font></a></td>
+<td align="right"><a href="$siteurl" title="$sitename"><font class="navtd">$lang[backto] <img src="{$THEME['imgdir']}/top_home.gif" border="0" alt="$sitename" /></font></a></td>
 </tr>
 </table>
 </td>
@@ -1907,7 +1907,7 @@ $bbcodescript
 <tr>
 <td class="nav"> <a href="./">$bbname</a> $navigation</td>
 <td align="right">$quickjump</td>
-<td align="right" width="1"><a href="#bottom" title="$lang[gotobottom]"><img src="$imgdir/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
+<td align="right" width="1"><a href="#bottom" title="$lang[gotobottom]"><img src="{$THEME['imgdir']}/arrow_dw.gif" border="0" alt="$lang[gotobottom]" /></a></td>
 </tr>
 </table>
 </td>
@@ -1933,7 +1933,7 @@ $statsbar
 
 |#*XMB TEMPLATE FILE*#|index_category|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="$cattext"><strong>$thing[cat_name]</strong></font></a></td>
+<td colspan="5" class="category"><a href="index.php?gid=$thing[cat_fid]"><font color="{$THEME['cattext']}"><strong>$thing[cat_name]</strong></font></a></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|index_category_hr|#*XMB TEMPLATE*#|
@@ -1969,7 +1969,7 @@ $statsbar
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr class="rghttablerow">
 <td bgcolor="{$THEME['altbg1']}" nowrap="nowrap"><a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]" class="smalltxt">$lastpost</a></td>
-<td bgcolor="{$THEME['altbg1']}" nowrap="nowrap"><a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="$imgdir/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
+<td bgcolor="{$THEME['altbg1']}" nowrap="nowrap"><a href="./viewthread.php?goto=lastpost&amp;fid=$forum[fid]" title="$lang[altlastpost]"><img src="{$THEME['imgdir']}/lastpost.gif" border="0" alt="$lang[altlastpost]" /></a></td>
 </tr>
 </table>
 
@@ -1992,12 +1992,12 @@ $statsbar
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td align="left" class="category"><font color="$cattext"><strong>$lang[textstats]:</strong></font></td>
-<td align="left" class="category"><font color="$cattext"><strong>$lang[key]</strong></font></td>
+<td align="left" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textstats]:</strong></font></td>
+<td align="left" class="category"><font color="{$THEME['cattext']}"><strong>$lang[key]</strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="{$THEME['altbg2']}">
 <td width="50%" align="left" valign="top">$indexstats<br />$lang[stats4] $memhtml</td>
-<td width="50%" align="left" valign="top"><img src="$imgdir/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="$imgdir/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
+<td width="50%" align="left" valign="top"><img src="{$THEME['imgdir']}/red_folder.gif" alt="$lang[altredfolder]" /> = $lang[newposts]<br /><img src="{$THEME['imgdir']}/folder.gif" alt="$lang[altnormalfolder]" /> = $lang[nonewposts]</td>
 </tr>
 </table>
 </td>
@@ -2027,7 +2027,7 @@ setTickerEvent();
 <td class="tablerow" colspan="2" width="100%">
 <table cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" border="0" width="100%" align="center">
 <tr>
-<td class="category"><strong><font color="$cattext">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
+<td class="category"><strong><font color="{$THEME['cattext']}">$lang[tickername] [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg2']}" class="mediumtxt" style="height: 30px;"><div align="center" id="tickerdiv"></div></td>
@@ -2047,7 +2047,7 @@ setTickerEvent();
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[welcomeunregnotify]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[welcomeunregnotify]</strong></font></td>
 </tr>
 <tr bgcolor="{$THEME['altbg2']}" class="tablerow">
 <td><font size="1">$lang[welcomeunreg]</font></td>
@@ -2082,8 +2082,8 @@ setTickerEvent();
 <td colspan="3">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="tablerow">
-<td align="left"><font color="$cattext"><strong>$lang[textpersonalfeat]</strong></font></td>
-<td align="right"><font color="$cattext"><strong>$lang[textloggedinas] $self[username]</strong></font> <a href="misc.php?action=logout"><font color="$cattext"><strong>$lang[welcomelogout]</strong></font></a></td>
+<td align="left"><font color="{$THEME['cattext']}"><strong>$lang[textpersonalfeat]</strong></font></td>
+<td align="right"><font color="{$THEME['cattext']}"><strong>$lang[textloggedinas] $self[username]</strong></font> <a href="misc.php?action=logout"><font color="{$THEME['cattext']}"><strong>$lang[welcomelogout]</strong></font></a></td>
 </tr>
 </table>
 </td>
@@ -2110,7 +2110,7 @@ setTickerEvent();
 <table cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" border="0" width="100%" align="center">
 <tr>
 <td colspan="2" class="category">
-<a href="misc.php?action=online"><strong><font color="$cattext">$lang[whosonline]</font></strong></a><font color="$cattext"> - $memonmsg</font>
+<a href="misc.php?action=online"><strong><font color="{$THEME['cattext']}">$lang[whosonline]</font></strong></a><font color="{$THEME['cattext']}"> - $memonmsg</font>
 </td>
 </tr>
 <tr>
@@ -2125,7 +2125,7 @@ $lang[key]
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" align="center" width="4%">
-<img src="$imgdir/online.gif" alt="$lang[whosonline]" border="0" />
+<img src="{$THEME['imgdir']}/online.gif" alt="$lang[whosonline]" border="0" />
 </td>
 <td bgcolor="{$THEME['altbg2']}" class="mediumtxt">
 $memtally&nbsp;
@@ -2143,7 +2143,7 @@ $whosonlinetoday
 |#*XMB TEMPLATE FILE*#|index_whosonline_today|#*XMB TEMPLATE*#|
 <tr>
 <td colspan="2" class="category">
-<a href="misc.php?action=onlinetoday"><strong><font color="$cattext">[+] $last50today</font></strong></a>
+<a href="misc.php?action=onlinetoday"><strong><font color="{$THEME['cattext']}">[+] $last50today</font></strong></a>
 </td>
 </tr>
 <tr>
@@ -2163,7 +2163,7 @@ $todaymembers&nbsp;
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>{$lang['textlostpw']}</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>{$lang['textlostpw']}</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="tablerow" colspan="2">{$lang['textlostpwnote2']}</td>
@@ -2196,7 +2196,7 @@ $todaymembers&nbsp;
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>{$lang['coppa_title']}</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>{$lang['coppa_title']}</strong></font></td>
 </tr>
 <tr>
  <td bgcolor="{$THEME['altbg1']}" class="ctrtablerow">
@@ -2225,7 +2225,7 @@ $todaymembers&nbsp;
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textprofor] $member</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textprofor] $member</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textusername]</td>
@@ -2256,7 +2256,7 @@ $todaymembers&nbsp;
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otherinfo]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[memcp_otherinfo]</strong></font></td>
 </tr>
 $emailblock
 <tr class="tablerow">
@@ -2313,7 +2313,7 @@ $emailblock
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[memcp_otheroptions]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[memcp_otheroptions]</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" colspan="2" class="tablerow"><strong>$lang[searchusermsg]</strong> $admin_edit</td>
@@ -2338,7 +2338,7 @@ $emailblock
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[required]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textregister] - $lang[required]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textusername]</td>
@@ -2351,7 +2351,7 @@ $pwtd
 </tr>
 $regoptional
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[textoptions]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textregister] - $lang[textoptions]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[texttheme]</td>
@@ -2470,7 +2470,7 @@ $timezones
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>{$lang['captchaverification']}</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>{$lang['captchaverification']}</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="tablerow">
@@ -2499,7 +2499,7 @@ $timezones
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>{$lang['captchaverification']}</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>{$lang['captchaverification']}</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="tablerow">
@@ -2521,7 +2521,7 @@ $timezones
 
 |#*XMB TEMPLATE FILE*#|member_reg_optional|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textregister] - $lang[optional]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textregister] - $lang[optional]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textsite]</td>
@@ -2580,7 +2580,7 @@ $avatd
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[registerrulestitle]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[registerrulestitle]</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="tablerow">$lang[rulesoninfo]</td>
@@ -2605,7 +2605,7 @@ $avatd
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">{$lang['devices_category']}</font></strong></td>
+<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">{$lang['devices_category']}</font></strong></td>
 </tr>
 <tr class="header">
 <td width="4%" align="center">{$lang['deletebutton']}</td>
@@ -2651,7 +2651,7 @@ $devicesbtn
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textfavorites]</font></strong></td>
+<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">$lang[textfavorites]</font></strong></td>
 </tr>
 <tr class="header">
 <td align="center" width="4%">$lang[deletebutton]</td>
@@ -2703,7 +2703,7 @@ $favsbtn
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="header">
-<td colspan="6" class="category"><font color="$cattext">$lang[textbriefsummary] $self[username] - [$self[status]]</font></td>
+<td colspan="6" class="category"><font color="{$THEME['cattext']}">$lang[textbriefsummary] $self[username] - [$self[status]]</font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}">$lang[textusername]</td>
@@ -2756,7 +2756,7 @@ $favsbtn
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext"><strong>$lang[textbuddylist]</strong></font></td>
+<td class="category"><font color="{$THEME['cattext']}"><strong>$lang[textbuddylist]</strong></font></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="{$THEME['altbg1']}"><table width="98%">
@@ -2785,7 +2785,7 @@ $buddys[offline]
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr class="category">
-<td colspan="4"><font color="$cattext"><strong>$lang[textlatestu2us]</strong></font></td>
+<td colspan="4"><font color="{$THEME['cattext']}"><strong>$lang[textlatestu2us]</strong></font></td>
 </tr>
 <tr class="header">
 <td>$lang[textsubject]</td>
@@ -2807,7 +2807,7 @@ $messages
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr class="category">
-<td colspan="5"><font color="$cattext"><strong>$lang[textlatestfavs]</strong></font></td>
+<td colspan="5"><font color="{$THEME['cattext']}"><strong>$lang[textlatestfavs]</strong></font></td>
 </tr>
 <tr class="header">
 <td align="center" width="4%">$lang[texticon]</td>
@@ -2860,7 +2860,7 @@ $favs
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[required]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">{$lang['textusername']}</td>
@@ -2871,7 +2871,7 @@ $favs
 <td bgcolor="{$THEME['altbg2']}"><input type="text" name="newemail" size="25" value="$member[email]" /></td>
 </tr>
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[pwchange] - $lang[optional]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">{$lang['textoldpassword']}</td>
@@ -2887,7 +2887,7 @@ $favs
 </tr>
 $optional
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[textoptions]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[texttheme]</td>
@@ -3005,7 +3005,7 @@ $timezones
 
 |#*XMB TEMPLATE FILE*#|memcp_profile_optional|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpro] - $lang[optional]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textsite]</td>
@@ -3055,7 +3055,7 @@ $member[sig]</textarea></td>
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category" align="center" $catbgcode><strong><font color="$cattext">$lang[textsubscriptions]</font></strong></td>
+<td colspan="6" class="category" align="center" $catbgcode><strong><font color="{$THEME['cattext']}">$lang[textsubscriptions]</font></strong></td>
 </tr>
 $multipage
 <tr class="header">
@@ -3123,10 +3123,10 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="{$THEME['admdir']}/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="{$THEME['altbg2']}">$lang[fnasorry3]<br/></td>
 </tr>
 </table>
@@ -3140,10 +3140,10 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[fnasorry]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[fnasorry]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="{$THEME['admdir']}/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="{$THEME['altbg2']}"><span class="smalltxt"><strong>$lang[fnasorry2]</strong></span><br />$lang[plogtuf]<br /></td>
 </tr>
 </table>
@@ -3159,7 +3159,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlogin]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textlogin]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textusername]</td>
@@ -3191,10 +3191,10 @@ $header
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="header" colspan="2"><font color="$cattext"><strong>$lang[textlogin_incorrect]</strong></font></td>
+<td class="header" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textlogin_incorrect]</strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="$admdir/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
+<td bgcolor="{$THEME['altbg1']}" width="8%" align="center"><img src="{$THEME['admdir']}/exclamation.gif" border="0" alt="$lang[featurewarning]" /></td>
 <td bgcolor="{$THEME['altbg2']}"><span class="smalltxt"><strong>$lang[textpw1]</strong></span><br />$lang[textpw2]<br /></td>
 </tr>
 </table>
@@ -3210,7 +3210,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textlostpw]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textlostpw]</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="tablerow" colspan="2">$lang[textlostpwnote]</td>
@@ -3238,7 +3238,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
+<td colspan="6" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="{$THEME['altbg2']}"><a href="misc.php?action=list&amp;order=username$ext"><strong>$lang[textalpha]</strong></a></td>
@@ -3261,7 +3261,7 @@ $header
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
+<td colspan="7" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
 $multipage
 <tr class="header" align="center">
@@ -3290,7 +3290,7 @@ $multipage
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="6" class="category"><font color="$cattext"><strong>$lang[textsortby]</strong></font></td>
+<td colspan="6" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textsortby]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="{$THEME['altbg2']}"><a href="misc.php?action=list&amp;order=username$ext"><strong>$lang[textalpha]</strong></a></td>
@@ -3313,7 +3313,7 @@ $multipage
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="7" class="category"><font color="$cattext"><strong>$lang[textmemberlist]</strong></font></td>
+<td colspan="7" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textmemberlist]</strong></font></td>
 </tr>
 $multipage
 <tr class="header" align="center">
@@ -3358,14 +3358,14 @@ $multipage
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_email|#*XMB TEMPLATE*#|
-<a href="mailto:$member[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
+<a href="mailto:$member[email]" title="$lang[altemailuser]"><img src="{$THEME['imgdir']}/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_row_site|#*XMB TEMPLATE*#|
-<a href="$member[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$member[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="{$THEME['imgdir']}/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|misc_mlist_separator|#*XMB TEMPLATE*#|
 <tr>
-<td colspan="7" class="category"><font color="$cattext"><strong>&raquo;&nbsp;$seperator_text</strong></font></td>
+<td colspan="7" class="category"><font color="{$THEME['cattext']}"><strong>&raquo;&nbsp;$seperator_text</strong></font></td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|misc_online|#*XMB TEMPLATE*#|
@@ -3375,7 +3375,7 @@ $multipage
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
 <td class="category" colspan="3">
-<font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+<font color="{$THEME['cattext']}"><strong>$lang[whosonline]</strong></font> <font color="{$THEME['cattext']}"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="{$THEME['cattext']}">$lang[refreshpage]</font></strong></a>
 </td>
 $multipage
 </tr>
@@ -3398,7 +3398,7 @@ $multipage
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
 <td class="category" colspan="4">
-<font color="$cattext"><strong>$lang[whosonline]</strong></font> <font color="$cattext"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="$cattext">$lang[refreshpage]</font></strong></a>
+<font color="{$THEME['cattext']}"><strong>$lang[whosonline]</strong></font> <font color="{$THEME['cattext']}"><strong>-</strong></font> <a href="javascript:history.go(0)"><strong><font color="{$THEME['cattext']}">$lang[refreshpage]</font></strong></a>
 </td>
 </tr>
 $multipage
@@ -3453,10 +3453,10 @@ $multipage
 <td class="tablerow" colspan="2" width="100%">
 <table cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" border="0" width="100%" align="center">
 <tr>
-<td colspan="6" class="category"><strong><font color="$cattext">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
+<td colspan="6" class="category"><strong><font color="{$THEME['cattext']}">$lang[misconlinetoday] $todaymembersnum $lang[misconlinetoday2]</font></strong></td>
 </tr>
 <tr>
-<td bgcolor="{$THEME['altbg1']}" class="ctrtablerow" width="4%"><img src="$imgdir/online.gif" alt="$lang[whosonline]" /></td>
+<td bgcolor="{$THEME['altbg1']}" class="ctrtablerow" width="4%"><img src="{$THEME['imgdir']}/online.gif" alt="$lang[whosonline]" /></td>
 <td bgcolor="{$THEME['altbg2']}" colspan="5" class="mediumtxt">$todaymembers</td>
 </tr>
 </table>
@@ -3492,7 +3492,7 @@ var messageElement = opener.document.getElementById("message");
 $bbcodescript
 <title>$bbname - $lang[textpowered]</title>
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <div align="center">
 <br />
 
@@ -3587,7 +3587,7 @@ $preview
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texteditpost]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texteditpost]</strong></font></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3674,7 +3674,7 @@ $preview
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3731,7 +3731,7 @@ $preview
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostnew]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textpostnew]</strong></font></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3782,7 +3782,7 @@ $suggestions
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpreview]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textpreview]</strong></font></td>
 </tr>
 <tr bgcolor="{$THEME['altbg1']}" class="tablerow">
 <td rowspan="2" valign="top" width="19%"><font class="mediumtxt"><strong>$username</strong></font><br /><br /></td>
@@ -3805,7 +3805,7 @@ $preview
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textpostreply]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textpostreply]</strong></font></td>
 </tr>
 $loggedin
 <tr class="tablerow">
@@ -3853,7 +3853,7 @@ $suggestions
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[texttopicreview]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[texttopicreview]</strong></font></td>
 </tr>
 $posts
 </table>
@@ -3883,7 +3883,7 @@ $posts
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
+<td colspan="2" class="category"><font color="{$THEME['cattext']}"><strong>$lang[textsearch]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textsearchfor]</td>
@@ -3950,7 +3950,7 @@ $captchasearchcheck
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textsearch]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textsearch]</strong></font></td>
 </tr>
 $nextlink
 $searchresults
@@ -3980,7 +3980,7 @@ $nextlink
 <td bgcolor="{$THEME['bordercolor']}">
 <table cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" border="0" width="100%" align="center">
 <tr>
-<td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
+<td colspan="6" class="category"><font class="mediumtxt" color="{$THEME['cattext']}"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="{$THEME['altbg1']}" width="50%">$lang[found]:</td>
@@ -4012,7 +4012,7 @@ $suggestions
 <td class="tablerow" colspan="2" width="100%">
 <table cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" border="0" width="100%" align="center">
 <tr>
-<td colspan="6" class="category"><font class="mediumtxt" color="$cattext"><strong>$lang[spellingchecker]</strong></font></td>
+<td colspan="6" class="category"><font class="mediumtxt" color="{$THEME['cattext']}"><strong>$lang[spellingchecker]</strong></font></td>
 </tr>
 <tr>
 <td bgcolor="{$THEME['altbg1']}" class="ctrtablerow" colspan="2">$lang[spellingcomplete]<br /><strong>$lang[nothingfound]</strong></td>
@@ -4086,7 +4086,7 @@ $mistake
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%" class="tablelinks">
 <tr>
-<td colspan="8" class="category"><font color="$cattext"><strong>$lang[navtodaysposts]</strong></font></td>
+<td colspan="8" class="category"><font color="{$THEME['cattext']}"><strong>$lang[navtodaysposts]</strong></font></td>
 </tr>
 $multipage
 <tr class="header" align="center">
@@ -4139,7 +4139,7 @@ $multipage
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textbumpthread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textbumpthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4162,7 +4162,7 @@ $multipage
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[copythread]:</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[copythread]:</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4188,7 +4188,7 @@ $multipage
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textdeletethread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textdeletethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4210,7 +4210,7 @@ $multipage
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textemptythread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textemptythread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4233,7 +4233,7 @@ $multipage
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textmergethread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textmergethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4260,7 +4260,7 @@ $multipage
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textmovemethod1]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textmovemethod1]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4295,7 +4295,7 @@ $multipage
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textclosethread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textclosethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4317,7 +4317,7 @@ $multipage
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textsplitthread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textsplitthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4360,7 +4360,7 @@ $post[message]
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textprunethread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textprunethread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4393,7 +4393,7 @@ $posts
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[texttopthread]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[texttopthread]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[loggedinuser]</td>
@@ -4418,7 +4418,7 @@ $u2uheader
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><strong><font color="$cattext">$lang[textfolders]</font></strong></td>
+<td class="category" colspan="2"><strong><font color="{$THEME['cattext']}">$lang[textfolders]</font></strong></td>
 </tr>
 $folderlist
 <tr class="tablerow">
@@ -4441,7 +4441,7 @@ $u2ufooter
 <tr>
 <td bgcolor="{$THEME['bordercolor']}"><table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="category">
-<td colspan="5"><strong><font color="$cattext">$lang[textu2uprevsaved]</font></strong></td>
+<td colspan="5"><strong><font color="{$THEME['cattext']}">$lang[textu2uprevsaved]</font></strong></td>
 </tr>
 <tr class="header">
 <td width="5%">$lang[textselectu2u]</td>
@@ -4470,7 +4470,7 @@ $u2usdraft
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td colspan="2" class="category"><strong><font color="$cattext">$lang[folderlist]</font></strong></td>
+<td colspan="2" class="category"><strong><font color="{$THEME['cattext']}">$lang[folderlist]</font></strong></td>
 </tr>
 
 <tr class="tablerow">
@@ -4509,7 +4509,7 @@ $self[u2ufolders]</textarea></td>
 <script language="JavaScript" type="text/javascript" src="./js/u2uheader.js"></script>
 $css
 </head>
-<body text="$text">
+<body text="{$THEME['text']}">
 <table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
 <tr>
 <td bgcolor="{$THEME['bordercolor']}">
@@ -4518,11 +4518,11 @@ $css
 <td>
 <table border="0" cellspacing="0" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="mediumtxt">
-<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php"><img src="$imgdir/inbox.gif" alt="$lang[textu2uinbox]" border="0" /><br />$lang[textu2uinbox]</a></td>
-<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?folder=Outbox"><img src="$imgdir/outbox.gif" alt="$lang[textu2uoutbox]" border="0" /><br />$lang[textu2uoutbox]</a></td>
-<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?action=send"><img src="$imgdir/newu2u.gif"  alt="$lang[textsendu2u]" border="0" /><br />$lang[textsendu2u]</a></td>
-<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="buddy.php" onclick="javascript:aBook();return false;"><img src="$imgdir/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
-<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?action=ignore"><img src="$imgdir/locku2u.gif"  alt="$lang[ignorelist]" border="0" /><br />$lang[ignorelist]</a></td>
+<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php"><img src="{$THEME['imgdir']}/inbox.gif" alt="$lang[textu2uinbox]" border="0" /><br />$lang[textu2uinbox]</a></td>
+<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?folder=Outbox"><img src="{$THEME['imgdir']}/outbox.gif" alt="$lang[textu2uoutbox]" border="0" /><br />$lang[textu2uoutbox]</a></td>
+<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?action=send"><img src="{$THEME['imgdir']}/newu2u.gif"  alt="$lang[textsendu2u]" border="0" /><br />$lang[textsendu2u]</a></td>
+<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="buddy.php" onclick="javascript:aBook();return false;"><img src="{$THEME['imgdir']}/address.gif"  alt="$lang[textu2uaddressbook]" border="0" /><br />$lang[textu2uaddressbook]</a></td>
+<td align="center" bgcolor="{$THEME['altbg1']}" width="20%"><a href="u2u.php?action=ignore"><img src="{$THEME['imgdir']}/locku2u.gif"  alt="$lang[ignorelist]" border="0" /><br />$lang[ignorelist]</a></td>
 </tr>
 </table>
 </td>
@@ -4541,7 +4541,7 @@ $css
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><strong><font color="$cattext">$lang[ignorelist]</font></strong></td>
+<td class="category" colspan="2"><strong><font color="{$THEME['cattext']}">$lang[ignorelist]</font></strong></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" valign="top">$lang[ignoremsg]</td>
@@ -4563,7 +4563,7 @@ $self[ignoreu2u]</textarea></td>
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="header">
-<td colspan="5" class="category"><font color="$cattext">$lang[textu2uincoming]</font></td>
+<td colspan="5" class="category"><font color="{$THEME['cattext']}">$lang[textu2uincoming]</font></td>
 </tr>
 <tr class="header">
 <td width="5%" align="center">$lang[textselectu2u]</td>
@@ -4655,7 +4655,7 @@ $u2ufooter
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="header">
-<td colspan="5" class="category"><strong><font color="$cattext">$lang[textu2uoutgoing]</font></strong></td>
+<td colspan="5" class="category"><strong><font color="{$THEME['cattext']}">$lang[textu2uoutgoing]</font></strong></td>
 </tr>
 <tr class="header">
 <td width="5%">$lang[textselectu2u]</td>
@@ -4720,7 +4720,7 @@ $lang[textsent] $u2udateline</span>
 <tr>
 <td class="mediumtxt" bgcolor="{$THEME['altbg1']}">
 <div align="center">$uqinfo</div>
-<img src="$imgdir/pollbar.gif" width="$barwidth%" height="10" alt="$lang[altpollpercentage]" />
+<img src="{$THEME['imgdir']}/pollbar.gif" width="$barwidth%" height="10" alt="$lang[altpollpercentage]" />
 </td>
 </tr>
 </table>
@@ -4755,7 +4755,7 @@ $u2upreview
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td width="100%" colspan="2" class="category" align="center"><strong><font color="$cattext">$lang[textu2u]</font></strong></td>
+<td width="100%" colspan="2" class="category" align="center"><strong><font color="{$THEME['cattext']}">$lang[textu2u]</font></strong></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}">$lang[textsendto]</td>
@@ -4845,7 +4845,7 @@ $message</textarea><br /></td>
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category"><font color="$cattext">$lang[textu2uoptions]</font></td>
+<td class="category"><font color="{$THEME['cattext']}">$lang[textu2uoptions]</font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}">
@@ -4941,10 +4941,10 @@ $showtitle
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_newpoll|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textpoll]"><img src="$imgdir/poll.gif" border="0" alt="$lang[textpoll]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid&amp;poll=yes" title="$lang[textpoll]"><img src="{$THEME['imgdir']}/poll.gif" border="0" alt="$lang[textpoll]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_newtopic|#*XMB TEMPLATE*#|
-<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="$imgdir/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
+<a href="post.php?action=newthread&amp;fid=$fid" title="$lang[altpostnewthread]"><img src="{$THEME['imgdir']}/newtopic.gif" border="0" alt="$lang[altpostnewthread]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_poll|#*XMB TEMPLATE*#|
 <form method="post" name="poll" action="vtmisc.php?action=votepoll&amp;fid=$fid&amp;tid=$tid">
@@ -4954,7 +4954,7 @@ $showtitle
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr class="category">
-<td colspan="3"><font color="$cattext"><strong>$lang[textpoll] $thread[subject] $results</strong></font></td>
+<td colspan="3"><font color="{$THEME['cattext']}"><strong>$lang[textpoll] $thread[subject] $results</strong></font></td>
 </tr>
 $pollhtml
 $buttoncode
@@ -4974,7 +4974,7 @@ $buttoncode
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg2']}" width="30%"><font class="smalltxt">$array[name]</font></td>
 <td bgcolor="{$THEME['altbg2']}" width="60%">
-<img src="$imgdir/pollbar-s.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />$pollbar<img src="$imgdir/pollbar-e.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />
+<img src="{$THEME['imgdir']}/pollbar-s.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />$pollbar<img src="{$THEME['imgdir']}/pollbar-e.gif" alt="$lang[altpollpercentage]" title="$lang[altpollpercentage]" />
 </td>
 <td bgcolor="{$THEME['altbg2']}" width="10%"><font class="smalltxt">$array[votes] ($percentage)</font></td>
 </tr>
@@ -5046,7 +5046,7 @@ $profile$email$site$search$u2u$aim$icq$msn$yahoo
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_aim|#*XMB TEMPLATE*#|
-<a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board." title="{$lang['textaim']}"><img src="$imgdir/aim.gif" alt="" border="0" /></a>
+<a href="aim:goim?screenname=$post[aim]&amp;message=Hi+$post[aim].+Are+you+there+I+got+your+aim+name+from+a+message+board." title="{$lang['textaim']}"><img src="{$THEME['imgdir']}/aim.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_attachment|#*XMB TEMPLATE*#|
 $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); return false;">$post[filename]</a> ($attachsize)
@@ -5060,34 +5060,34 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="{$post['fileurl']}" title="$post[filename] - $attachsize" onclick="window.open(this.href); return false;"><img src="{$post['thumburl']}" alt="$post[filename] - $attachsize" border="0px" {$post['filedims']} /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_edit|#*XMB TEMPLATE*#|
-<a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="$imgdir/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
+<a href="post.php?action=edit&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[alteditpost]"><img src="{$THEME['imgdir']}/edit.gif" border="0" alt="$lang[alteditpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_email|#*XMB TEMPLATE*#|
-<a href="mailto:$post[email]" title="$lang[altemailuser]"><img src="$imgdir/email.gif" border="0" alt="$lang[altemailuser]" /></a>
+<a href="mailto:$post[email]" title="$lang[altemailuser]"><img src="{$THEME['imgdir']}/email.gif" border="0" alt="$lang[altemailuser]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_icq|#*XMB TEMPLATE*#|
-<a href="icq:message?uin={$post['icq']}" onclick="window.open(this.href); return false;" title="{$lang['texticq']}"><img src="$imgdir/icq.gif" alt="" border="0" /></a>
+<a href="icq:message?uin={$post['icq']}" onclick="window.open(this.href); return false;" title="{$lang['texticq']}"><img src="{$THEME['imgdir']}/icq.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_ip|#*XMB TEMPLATE*#|
-<a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altgetip]"><img src="$imgdir/ip.gif" border="0" alt="$lang[altgetip]" /></a>
+<a href="topicadmin.php?action=getip&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altgetip]"><img src="{$THEME['imgdir']}/ip.gif" border="0" alt="$lang[altgetip]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_msn|#*XMB TEMPLATE*#|
-<a href="msnim:chat?{$post['msn']}" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="$imgdir/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
+<a href="msnim:chat?{$post['msn']}" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="{$THEME['imgdir']}/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
 </font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_profile|#*XMB TEMPLATE*#|
-<a href="member.php?action=viewpro&amp;member=$encodename" title="$lang[altviewprofile]"><img src="$imgdir/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
+<a href="member.php?action=viewpro&amp;member=$encodename" title="$lang[altviewprofile]"><img src="{$THEME['imgdir']}/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_report|#*XMB TEMPLATE*#|
-<a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altreportpost]"><img src="$imgdir/report.gif" border="0" alt="$lang[altreportpost]" /></a>
+<a href="vtmisc.php?action=report&amp;fid=$fid&amp;tid=$tid&amp;pid=$post[pid]" title="$lang[altreportpost]"><img src="{$THEME['imgdir']}/report.gif" border="0" alt="$lang[altreportpost]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_repquote|#*XMB TEMPLATE*#|
-<a href="post.php?action=reply&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="$imgdir/quote.gif" border="0" alt="$lang[altquote]" /></a>
+<a href="post.php?action=reply&amp;tid=$tid&amp;repquote=$post[pid]" title="$lang[altquote]"><img src="{$THEME['imgdir']}/quote.gif" border="0" alt="$lang[altquote]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_search|#*XMB TEMPLATE*#|
-<a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="$imgdir/find.gif" border="0" alt="$lang[altfindposts]" /></a>
+<a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="{$THEME['imgdir']}/find.gif" border="0" alt="$lang[altfindposts]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_sig|#*XMB TEMPLATE*#|
 </font>
@@ -5098,13 +5098,13 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <div class="sig">$post[sig]</div>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_site|#*XMB TEMPLATE*#|
-<a href="$post[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="$imgdir/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
+<a href="$post[site]" onclick="window.open(this.href); return false;" title="$lang[altvisitsite]"><img src="{$THEME['imgdir']}/site.gif" border="0" alt="$lang[altvisitsite]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_u2u|#*XMB TEMPLATE*#|
-<a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;" title="{$lang['altu2umember']}"><img src="$imgdir/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
+<a href="u2u.php?action=send&amp;username=$encodename" onclick="Popup(this.href, 'Window', 700, 500); return false;" title="{$lang['altu2umember']}"><img src="{$THEME['imgdir']}/u2u.gif" border="0" alt="{$lang['altu2umember']}" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_yahoo|#*XMB TEMPLATE*#|
-<a href="ymsgr:sendim?{$post['yahoo']}" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="$imgdir/yahoo.gif" alt="" border="0" /></a>
+<a href="ymsgr:sendim?{$post['yahoo']}" onclick="window.open(this.href); return false;" title="{$lang['textyahoo']}"><img src="{$THEME['imgdir']}/yahoo.gif" alt="" border="0" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_printable|#*XMB TEMPLATE*#|
 <?xml version="1.0" encoding="$charset"?>
@@ -5170,7 +5170,7 @@ $multipage
 <td><input type="hidden" name="subject" value="" />
 <table width="100%" border="0" cellpadding="{$THEME['tablespace']}" cellspacing="{$THEME['borderwidth']}">
 <tr bgcolor="{$THEME['altbg1']}">
-<td colspan="3" class="category"><div align="left"><font color="$cattext"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
+<td colspan="3" class="category"><div align="left"><font color="{$THEME['cattext']}"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
 </tr>
 $captchapostcheck
 <tr class="quickreply">
@@ -5223,7 +5223,7 @@ $quickbbcode
 </tr>
 
 |#*XMB TEMPLATE FILE*#|viewthread_reply|#*XMB TEMPLATE*#|
-<a href="./post.php?action=reply&amp;tid=$tid" title="$lang[textpostreply]"><img src="$imgdir/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
+<a href="./post.php?action=reply&amp;tid=$tid" title="$lang[textpostreply]"><img src="{$THEME['imgdir']}/reply.gif" border="0" alt="$lang[textpostreply]" /></a>
 
 |#*XMB TEMPLATE FILE*#|vtmisc_report|#*XMB TEMPLATE*#|
 <form method="post" name="input" action="vtmisc.php?action=report">
@@ -5233,7 +5233,7 @@ $quickbbcode
 <td bgcolor="{$THEME['bordercolor']}">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="{$THEME['tablespace']}" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textreportpost]</strong></font></td>
+<td class="category" colspan="2"><font color="{$THEME['cattext']}"><strong>$lang[textreportpost]</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" valign="top" width="19%">$lang[textreason]</td>
