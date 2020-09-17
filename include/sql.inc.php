@@ -177,6 +177,71 @@ function getSessionReplacement( string $token, string $username ): array {
  * SQL command
  *
  * @since 1.9.12
+ * @param array $values Field name & value list.
+ * @return int Member ID number.
+ */
+function addMember( array $values ): int {
+    global $db;
+
+    // Defaults:
+    if ( ! isset( $values['ban'] ) ) $values['ban'] = '0';
+    if ( ! isset( $values['bday'] ) ) $values['bday'] = '0000-00-00';
+    if ( ! isset( $values['invisible'] ) ) $values['invisible'] = '0';
+    if ( ! isset( $values['mood'] ) ) $values['mood'] = 'Not Set';
+    if ( ! isset( $values['sub_each_post'] ) ) $values['sub_each_post'] = 'no';
+    if ( ! isset( $values['waiting_for_mod'] ) ) $values['waiting_for_mod'] = 'no';
+
+    // Required values:
+    $req = [ 'username', 'password', 'email', 'status', 'regip', 'regdate' ];
+
+    // Types:
+    $ints = [ 'regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
+    'bad_login_count', 'bad_session_date', 'bad_session_count' ];
+
+    $numerics = [ 'timeoffset' ];
+
+    $strings = [ 'username', 'password', 'email', 'site', 'aim', 'status', 'location', 'bio', 'sig', 'showemail', 'icq', 'avatar',
+    'yahoo', 'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'msn', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
+    'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod' ];
+
+    $sql = [];
+
+    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addMember()", E_USER_ERROR );
+    foreach( $ints as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
+        } else {
+            $values[$field] = 0;
+        }
+        $sql[] = "$field = {$values[$field]}";
+    }
+    foreach( $numerics as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_numeric( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
+        } else {
+            $values[$field] = 0;
+        }
+        $sql[] = "$field = {$values[$field]}";
+    }
+    foreach( $strings as $field ) {
+        if ( isset( $values[$field] ) ) {
+            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
+            $db->escape_fast( $values[$field] );
+        } else {
+            $values[$field] = '';
+        }
+        $sql[] = "$field = '{$values[$field]}'";
+    }
+    
+    $db->query("INSERT INTO ".X_PREFIX."members SET " . implode( ', ', $sql ));
+
+    return $db->insert_id();
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
  * @param string $username Must be HTML encoded.
  * @return array Member record or empty array.
  */
@@ -193,6 +258,21 @@ function getMemberByName( string $username ): array {
     }
     $db->free_result($query);
     return $member;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function countMembers(): int {
+    global $db;
+
+    $query = $db->query( "SELECT COUNT(*) FROM ".X_PREFIX."members" );
+    $result = (int) $db->result( $query, 0 );
+    $db->free_result( $query );
+
+    return $result;
 }
 
 /**

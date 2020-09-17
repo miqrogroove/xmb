@@ -155,6 +155,19 @@ class Manager {
     }
 
     /**
+     * Forces creation of a session for a guest user who just completed registration.
+     */
+    public function newUser( array $member ) {
+        $data = new Data();
+        $data->member =& $member;
+        foreach( $this->mechanisms as $session ) {
+            if ( $session->saveClientData( $data ) ) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Initialize the Session Manager for a login action.
      */
     private function login() {
@@ -355,11 +368,12 @@ interface Mechanism {
      * Create and send tokens to client for login.
      *
      * Any mechanism that does not send XMB session data to the client
-     * might have an empty implementation.
+     * must return false.
      *
      * @param Data
+     * @return bool The mechanism must indicate whether it is capable of doing this.
      */
-    public function saveClientData( Data $data );
+    public function saveClientData( Data $data ): bool;
     
     /**
      * Delete all records of expired sessions for all users.
@@ -612,6 +626,8 @@ class FormsAndCookies implements Mechanism {
 
         put_cookie( self::USER_COOKIE, $data->member['username'], $expires );
         put_cookie( self::SESSION_COOKIE, $token, $expires );
+        
+        return true;
     }
     
     /**

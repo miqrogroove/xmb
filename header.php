@@ -436,7 +436,7 @@ if ( '' == $serror ) {
     } elseif ( $SETTINGS['bbstatus'] == 'off' ) {
         // Block all non-admins
         $serror = 'bstatus';
-    } elseif ( $SETTINGS['regstatus'] == 'on' && ( $action == 'reg' || $action == 'coppa' || $action == 'captchaimage' ) && ( X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php' ) ) {
+    } elseif ( $SETTINGS['regstatus'] == 'on' && ( $action == 'reg' || $action == 'captchaimage' ) && ( X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php' ) ) {
         // Allow registration
     } elseif ( $SETTINGS['regviewonly'] == 'on' ) {
         // Block all guests

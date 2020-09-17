@@ -221,6 +221,9 @@ if ($action == "settings") {
         $quarantineon = $quarantineoff = '';
         settingHTML('quarantine_new_users', $quarantineon, $quarantineoff);
 
+        $recaptchaon = $recaptchaoff = '';
+        settingHTML('google_captcha', $recaptchaon, $recaptchaoff);
+
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -318,6 +321,7 @@ if ($action == "settings") {
         <a href="#8"><?php echo $lang['admin_main_settings8']; ?></a><br />
         <a href="#6"><?php echo $lang['admin_main_settings6']; ?></a><br />
         <a href="#7"><?php echo $lang['admin_main_settings7']; ?></a><br />
+        <a href="#10"><?php echo $lang['admin_main_settings10']; ?></a><br />
         </span>
         <form method="post" action="cp.php?action=settings">
         <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/settings', 'global', X_NONCE_FORM_EXP ); ?>" />
@@ -404,7 +408,7 @@ if ($action == "settings") {
         printsetting1($lang['show_logs_in_threads'], 'showlogsnew', $showlogson, $showlogsoff);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit4" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="9" />&raquo;&nbsp;<?php echo $lang['admin_main_settings9']?></font></strong></td>
@@ -421,7 +425,7 @@ if ($action == "settings") {
         printsetting3($lang['tickercode'], 'tickercodenew', array( $lang['plaintext'], $lang['textbbcode'], $lang['texthtml'] ), array( 'plain', 'bbcode', 'html' ), $tickercodechecked, false);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit5" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="5" />&raquo;&nbsp;<?php echo $lang['admin_main_settings5']?></font></strong></td>
@@ -444,7 +448,7 @@ if ($action == "settings") {
         printsetting1($lang['moderation_setting'], 'quarantinenew',$quarantineon, $quarantineoff);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit4" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="8" />&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
@@ -480,7 +484,7 @@ if ($action == "settings") {
         printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_virtual_url'], 50);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit5" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit7" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="6" />&raquo;&nbsp;<?php echo $lang['admin_main_settings6']?></font></strong></td>
@@ -501,7 +505,7 @@ if ($action == "settings") {
         }
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit8" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         <tr class="category">
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="7" />&raquo;&nbsp;<?php echo $lang['admin_main_settings7']?></font></strong></td>
@@ -534,7 +538,19 @@ if ($action == "settings") {
         unset($Captcha);
         ?>
         <tr class="ctrtablerow">
-        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit7" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit9" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        </tr>
+        <tr class="category">
+        <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="10" />&raquo;&nbsp;<?php echo $lang['admin_main_settings10']?></font></strong></td>
+        </tr>
+        <?php
+        $recaptcha_link = '<br /><span class="smalltext">[ <a href="https://www.google.com/recaptcha/admin/" onclick="window.open(this.href); return false;">Setup</a> ]';
+        printsetting1($lang['google_captcha'], 'recaptchanew', $recaptchaon, $recaptchaoff);
+        printsetting2($lang['google_captcha_sitekey'].$recaptcha_link, 'recaptchakeynew', $SETTINGS['google_captcha_sitekey'], 50);
+        printsetting2($lang['google_captcha_secretkey'], 'recaptchasecretnew', $SETTINGS['google_captcha_secret'], 50);
+        ?>
+        <tr class="ctrtablerow">
+        <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit10" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
@@ -552,6 +568,10 @@ if ($action == "settings") {
         $avastatusnew = postedVar('avastatusnew');
         if ($avastatusnew != 'on' && $avastatusnew != 'list') {
             $avastatusnew = 'off';
+        }
+        $recaptchanew = postedVar( 'recaptchanew' );
+        if ( $recaptchanew != 'on' || trim( postedVar( 'recaptchasecretnew') ) == '' || trim( postedVar( 'recaptchakeynew') ) == '' ) {
+            $recaptchanew = 'off';
         }
 
         $new_footer_options = postedArray('new_footer_options');
@@ -622,6 +642,9 @@ if ($action == "settings") {
         input_string_setting( 'files_virtual_url', 'filesbasenew' );
         input_int_setting( 'floodctrl', 'floodctrlnew' );
         input_custom_setting( 'footer_options', $footer_options );
+        input_custom_setting( 'google_captcha', $recaptchanew );
+        input_string_setting( 'google_captcha_secret', 'recaptchasecretnew' );
+        input_string_setting( 'google_captcha_sitekey', 'recaptchakeynew' );
         input_onoff_setting( 'gzipcompress', 'gzipcompressnew' );
         input_onoff_setting( 'hideprivate', 'hidepriv' );
         input_int_setting( 'hottopic', 'hottopicnew' );

@@ -176,7 +176,7 @@ function elevateUser($force_inv = false, $serror = '') {
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
     // Save This Session
-    if (X_SCRIPT != 'upgrade.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
+    if ( X_SCRIPT != 'upgrade.php' && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && ( X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER ) ) {
         global $onlineip, $url;
 
         $wollocation = substr($url, 0, $maxurl);

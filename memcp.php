@@ -342,8 +342,7 @@ if ($action == 'profile') {
         if ($year >= 100 && $year <= 1899) $year = 0;
         $bday = iso8601_date($year, $month, $day);
         $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-        $icq = postedVar('newicq', '', FALSE, FALSE);
-        $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
+        $icq = abs( formInt( 'newicq' ) );
         $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
         $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
         $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);

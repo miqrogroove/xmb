@@ -1819,9 +1819,12 @@ function upgrade_schema_to_v5() {
     show_progress('Reading the settings table data');
     $query = upgrade_query('SELECT * FROM '.X_PREFIX.$table);
     $settings = $db->fetch_array( $query );
+    $settings['google_captcha'] = 'off';
+    $settings['google_captcha_sitekey'] = '';
+    $settings['google_captcha_secret'] = '';
+    $settings['quarantine_new_users'] = 'off';
     $settings['show_logs_in_threads'] = 'off';
     $settings['tickercode'] = 'html';
-    $settings['quarantine_new_users'] = 'off';
     unset( $settings['sightml'] );
 
     show_progress('Replacing the settings table');

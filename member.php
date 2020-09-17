@@ -35,6 +35,7 @@ loadtemplates(
 'member_reg',
 'member_reg_optional',
 'member_reg_captcha',
+'member_reg_gcaptcha',
 'member_profile_email',
 'member_profile',
 'misc_feature_not_while_loggedin',
@@ -52,9 +53,6 @@ switch($action) {
     case 'viewpro':
         nav($lang['textviewpro']);
         break;
-    case 'coppa':
-        nav($lang['textcoppa']);
-        break;
     default:
         header('HTTP/1.0 404 Not Found');
         error($lang['textnoaction']);
@@ -62,52 +60,485 @@ switch($action) {
 }
 
 switch($action) {
-    case 'coppa':
-        eval('$header = "'.template('header').'";');
-        if ($SETTINGS['regstatus'] == 'off') {
-            header('HTTP/1.0 403 Forbidden');
-            eval('$memberpage = "'.template('misc_feature_notavailable').'";');
-        } elseif (X_MEMBER) {
-            eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
-        } else {
-            if ($SETTINGS['coppa'] != 'on') {
-                redirect($full_url.'member.php?action=reg', 0);
-            }
-            if (onSubmit('coppasubmit')) {
-                redirect($full_url.'member.php?action=reg', 0);
-            } else {
-                eval('$memberpage = "'.template('member_coppa').'";');
-            }
-        }
-        break;
-
     case 'reg':
-        if ($SETTINGS['pruneusers'] > 0) {
-            $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
-            $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
-        }
+        $steps = [
+            1 => 'captcha',
+            2 => 'coppa',
+            3 => 'rules',
+            4 => 'profile',
+            5 => 'done',
+        ];
+        $stepin = formInt( 'step' );
+        $stepout = $stepin + 1;
+        $testname = 'regtest';
+        $testval = 'xmb';
+        $cookietest = postedVar( $testname, '', false, false, false, 'c' );
+        $regvalid = true;
 
-        if ($SETTINGS['maxdayreg'] > 0) {
-            $time = $onlinetime - 86400; // subtract 24 hours
-            $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
-            if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
-                error($lang['max_regs']);
-            }
-            $db->free_result($query);
-        }
-
-        eval('$header = "'.template('header').'";');
-
-        if ($SETTINGS['regstatus'] == 'off') {
-            header('HTTP/1.0 403 Forbidden');
+        if ( 'off' == $SETTINGS['regstatus'] ) {
+            header( 'HTTP/1.0 403 Forbidden' );
             eval('$memberpage = "'.template('misc_feature_notavailable').'";');
-        } elseif (X_MEMBER) {
+            $regvalid = false;
+        } elseif ( X_MEMBER ) {
             eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
-        } elseif (noSubmit('regsubmit')) {
-            if ($SETTINGS['bbrules'] == 'on' && noSubmit('rulesubmit')) {
-                $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
-                eval('$memberpage = "'.template('member_reg_rules').'";');
-            } else {
+            $regvalid = false;
+        } elseif ( $cookietest != $testval ) {
+            put_cookie( $testname, $testval );
+            if ( $stepin > 0 ) {
+                error( $lang['cookies_disabled'] );
+            }
+        }
+
+        if ( $regvalid ) {
+            // Validate step #
+            switch ( $stepin ) {
+                case 0:
+                case 1:
+                    // First step and captcha step don't require a token.
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    // Other steps will always include a nonce in their forms to guarantee the user didn't skip a step.
+                    request_secure( 'Registration', (string) $stepin, 0, true );
+                    break;
+                default:
+                    // Step value was invalid.
+                    error( $lang['bad_request'] );
+            }
+
+            // Validate inputs
+            switch ( $stepin ) {
+                case 0:
+                    // First hit, nothing to validate yet.
+                    break;
+                case 1:
+                    if ( 'on' == $SETTINGS['google_captcha'] ) {
+                        // Check Google's results
+                        $response = postedVar( 'g-recaptcha-response', null, false, false );
+                        $ssl_lib = ROOT.'trust.pem';
+                        $curl = curl_init( 'https://www.google.com/recaptcha/api/siteverify' );
+
+                        curl_setopt_array( $curl, array(
+                            CURLOPT_CAINFO => $ssl_lib,
+                            CURLOPT_SSL_VERIFYPEER => TRUE,
+                            CURLOPT_BINARYTRANSFER => TRUE,
+                            CURLOPT_RETURNTRANSFER => TRUE,
+                            CURLOPT_TIMEOUT => 5,
+                            CURLOPT_USERAGENT => "XMB/$versionshort; $full_url",
+                            CURLOPT_POST => 1
+                        ) );
+
+                        $siteverify = array(
+                            'secret'   => $SETTINGS['google_captcha_secret'],
+                            'response' => $response,
+                            'remoteip' => $onlineip,
+                        );
+
+                        curl_setopt( $curl, CURLOPT_POSTFIELDS, http_build_query( $siteverify ) );
+
+                        // Fetch the confirmation.
+                        $count = 1;
+                        $limit = 2;
+                        $raw_result = curl_exec( $curl );
+                        while ( false === $raw_result ) {
+                            // Some transient errors tend to occur.
+                            if ( $count >= $limit ) {
+                                // This should be rare.
+                                $errorno = curl_errno( $curl );
+                                $errormsg = curl_error( $curl );
+                                error_log( "Unable to contact reCAPTCHA API after $limit attempts.  cURL error $errorno: $errormsg" );
+                                continue;
+                            }
+
+                            sleep( 2 );
+                            $count++;
+                            $raw_result = curl_exec( $curl );
+                        }
+                        $success = false;
+                        if ( false !== $raw_result ) {
+                            $decoded = json_decode( $raw_result, true );
+                            if ( ! empty( $decoded['success'] ) ) {
+                                if ( true === $decoded['success'] ) {
+                                    $success = true;
+                                }
+                            }
+                        }
+                        if ( ! $success ) {
+                            error( $lang['google_captcha_fail'] );
+                        }
+                    } elseif ( 'on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status'] ) {
+                        // Check XMB's results
+                        require ROOT.'include/captcha.inc.php';
+                        $Captcha = new Captcha();
+                        if ($Captcha->bCompatible !== false) {
+                            $imghash = postedVar('imghash', '', FALSE, TRUE);
+                            $imgcode = postedVar('imgcode', '', FALSE, FALSE);
+                            if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                                error( $lang['captchaimageinvalid'] );
+                            }
+                        } else {
+                            trigger_error( 'XMB captcha is enabled but not working.', E_USER_ERROR );
+                        }
+                    } else {
+                        error( $lang['bad_request'] );
+                    }
+                    break;
+                case 2:
+                    if ( 'on' == $SETTINGS['coppa'] ) {
+                        // Check coppa results
+                        $age = formInt( 'age' );
+                        if ( $age < 13 ) {
+                            put_cookie( 'privacy', 'xmb' );
+                            error( $lang['coppa_fail'] );
+                        }
+                    } else {
+                        error( $lang['bad_request'] );
+                    }
+                    break;
+                case 3:
+                    // Check rules results
+                    if ( noSubmit( 'rulesubmit' ) ) {
+                        error( $lang['bad_request'] );
+                    }
+                    break;
+                case 4:
+                    // Check profile results
+                    $self = [];
+                    $self['username'] = trim( postedVar( 'username', '', TRUE, FALSE ) );
+
+                    if ( strlen( $self['username'] ) < 3 || strlen( $self['username'] ) > 32 ) {
+                        error( $lang['username_length_invalid'] );
+                    }
+
+                    $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
+                    $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
+                    $sequences = '|  ';  //Phrases disallowed, each separated by '|'
+                    $icharset = strtoupper($charset);
+                    if (substr($icharset, 0, 8) == 'ISO-8859') {
+                        if ($icharset == 'ISO-8859-11') {
+                            $nonprinting .= '-\\x9F\\xDB-\\xDE\\xFC-\\xFF';  //More chars invalid for the Thai set.
+                        } else {
+                            $nonprinting .= '-\\x9F\\xAD';  //More chars invalid for all ISO 8859 sets except Part 11 (Thai).
+                        }
+                    } elseif (substr($icharset, 0, 11) == 'WINDOWS-125') {
+                        $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
+                    }
+
+                    if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'])) {
+                        error($lang['restricted']);
+                    }
+
+                    if ($SETTINGS['ipreg'] != 'off') {
+                        $time = $onlinetime-86400;
+                        $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip='$onlineip' AND regdate >= $time");
+                        if ($db->num_rows($query) >= 1) {
+                            error($lang['reg_today']);
+                        }
+                        $db->free_result($query);
+                    }
+
+                    $self['email'] = postedVar( 'email', 'javascript', true, false, true );
+                    $sql_email = $db->escape( $self['email'] );
+                    if ($SETTINGS['doublee'] == 'off' && false !== strpos( $self['email'], "@") ) {
+                        $email1 = ", email";
+                        $email2 = "OR email='$sql_email'";
+                    } else {
+                        $email1 = '';
+                        $email2 = '';
+                    }
+
+                    $sql_user = $db->escape( $self['username'] );
+                    $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$sql_user' $email2");
+                    if ($member = $db->fetch_array($query)) {
+                        $db->free_result($query);
+                        error($lang['alreadyreg']);
+                    }
+
+                    $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE author='$sql_user'"), 0);
+                    if (intval($postcount) > 0) {
+                        error($lang['alreadyreg']);
+                    }
+
+                    if ($SETTINGS['emailcheck'] == 'on') {
+                        $self['password'] = '';
+                        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+                        $get = strlen($chars) - 1;
+                        for($i = 0; $i < 8; $i++) {
+                            $self['password'] .= $chars[random_int(0, $get)];
+                        }
+                        $password2 = $self['password'];
+                    } elseif (!isset($_POST['password']) || !isset($_POST['password2'])) {
+                        error($lang['textpw1']);
+                    } else {
+                        $self['password'] = $_POST['password'];
+                        $password2 = $_POST['password2'];
+                    }
+
+                    if ( $self['password'] != $password2 ) {
+                        error($lang['pwnomatch']);
+                    }
+
+                    $fail = false;
+                    $efail = false;
+                    $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
+                    while($restriction = $db->fetch_array($query)) {
+                        $t_username = $self['username'];
+                        $t_email = $self['email'];
+                        if ($restriction['case_sensitivity'] == 0) {
+                            $t_username = strtolower($t_username);
+                            $t_email = strtolower($t_email);
+                            $restriction['name'] = strtolower($restriction['name']);
+                        }
+
+                        if ($restriction['partial'] == 1) {
+                            if (strpos($t_username, $restriction['name']) !== false) {
+                                $fail = true;
+                            }
+
+                            if (strpos($t_email, $restriction['name']) !== false) {
+                                $efail = true;
+                            }
+                        } else {
+                            if ($t_username == $restriction['name']) {
+                                $fail = true;
+                            }
+
+                            if ($t_email == $restriction['name']) {
+                                $efail = true;
+                            }
+                        }
+                    }
+                    $db->free_result($query);
+
+                    if ($fail) {
+                        error($lang['restricted']);
+                    }
+
+                    if ($efail) {
+                        error($lang['emailrestricted']);
+                    }
+
+                    require ROOT.'include/validate-email.inc.php';
+                    $test = new EmailAddressValidator();
+                    $rawemail = postedVar('email', '', FALSE, FALSE);
+                    if (false === $test->check_email_address($rawemail)) {
+                        error($lang['bademail']);
+                    }
+
+                    if ( $self['password'] == '' ) {
+                        error($lang['textpw1']);
+                    }
+
+                    $self['langfile'] = postedVar( 'langfilenew', '', false, false );
+                    $langfilenew = $db->escape( $self['langfile'] );
+                    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
+                    if ($db->num_rows($result) == 0) {
+                        $self['langfile'] = $SETTINGS['langfile'];
+                    }
+
+                    $count1 = \XMB\SQL\countMembers();
+                    $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
+
+                    $self['timeoffset'] = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
+                    $self['theme'] = formInt('thememem');
+                    $self['tpp'] = formInt('tpp');
+                    $self['ppp'] = formInt('ppp');
+                    $self['showemail'] = formYesNo('showemail');
+                    $self['newsletter'] = formYesNo('newsletter');
+                    $self['saveogu2u'] = formYesNo('saveogu2u');
+                    $self['emailonu2u'] = formYesNo('emailonu2u');
+                    $self['useoldu2u'] = formYesNo('useoldu2u');
+                    $self['u2ualert'] = formInt('u2ualert');
+
+                    // For year of birth, reject all integers from 100 through 1899.
+                    $year = formInt('year');
+                    $month = formInt('month');
+                    $day = formInt('day');
+                    if ( $year >= 100 && $year <= 1899 ) $year = 0;
+                    $self['bday'] = iso8601_date($year, $month, $day);
+
+                    $self['dateformat'] = postedVar('dateformatnew', '', false, false);
+                    $dateformattest = attrOut( $self['dateformat'], 'javascript' );  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
+                    if ( strlen( $self['dateformat'] ) == 0 || $self['dateformat'] != $dateformattest ) {
+                        $self['dateformat'] = $SETTINGS['dateformat'];
+                    }
+                    unset($dateformattest);
+
+                    $self['timeformat'] = formInt('timeformatnew');
+                    if ( $self['timeformat'] != 12 && $self['timeformat'] != 24 ) {
+                        $self['timeformat'] = $SETTINGS['timeformat'];
+                    }
+
+                    $self['password'] = md5( $self['password'] );
+                    $self['regdate'] = $onlinetime;
+                    $self['regip'] = $onlineip;
+
+                    if ( 'on' == $SETTINGS['regoptional'] ) {
+                        $self['location'] = postedVar( 'location', 'javascript', true, false, true );
+                        $self['icq'] = abs( formInt( 'icq' ) );
+                        $self['yahoo'] = postedVar( 'yahoo', 'javascript', true, false, true );
+                        $self['aim'] = postedVar( 'aim', 'javascript', true, false, true );
+                        $self['msn'] = postedVar( 'msn', 'javascript', true, false, true );
+                        $self['site'] = postedVar( 'site', 'javascript', true, false, true );
+                        $self['bio'] = postedVar( 'bio', 'javascript', true, false, true );
+                        $self['mood'] = postedVar( 'mood', 'javascript', true, false, true );
+                        $self['sig'] = postedVar( 'sig', 'javascript', true, false, true );
+
+                        if ($SETTINGS['avastatus'] == 'on') {
+                            $self['avatar'] = postedVar( 'newavatar', 'javascript', true, false, true );
+                            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+
+                            $newavatarcheck = postedVar('newavatarcheck');
+
+                            $max_size = explode('x', $SETTINGS['max_avatar_size']);
+
+                            if (preg_match('/^' . get_img_regexp() . '$/i', $rawavatar) == 0) {
+                                $self['avatar'] = '';
+                            } elseif (ini_get('allow_url_fopen')) {
+                                if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
+                                    $size = @getimagesize($rawavatar);
+                                    if ($size === FALSE) {
+                                        $self['avatar'] = '';
+                                    } elseif (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                                        error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
+                                    }
+                                }
+                            } elseif ($newavatarcheck == "no") {
+                                $self['avatar'] = '';
+                            }
+                            unset($rawavatar);
+                        } elseif ($SETTINGS['avastatus'] == 'list') {
+                            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
+                            $dirHandle = opendir(ROOT.'images/avatars');
+                            $filefound = FALSE;
+                            while($avFile = readdir($dirHandle)) {
+                                if ($rawavatar == './images/avatars/'.$avFile) {
+                                    if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                                        $filefound = TRUE;
+                                    }
+                                }
+                            }
+                            closedir($dirHandle);
+                            unset($rawavatar);
+                            if ($filefound) {
+                                $self['avatar'] = postedVar( 'newavatar', 'javascript', true, false, true );
+                            } else {
+                                $self['avatar'] = '';
+                            }
+                        } else {
+                            $self['avatar'] = '';
+                        }
+                    }
+
+                    \XMB\SQL\addMember( $self );
+
+                    $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
+
+                    if ($SETTINGS['notifyonreg'] != 'off') {
+                        $mailquery = \XMB\SQL\getSuperEmails();
+                        while($admin = $db->fetch_array($mailquery)) {
+                            $translate = $lang2[$admin['langfile']];
+                            if ($SETTINGS['notifyonreg'] == 'u2u') {
+                                $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
+                            } else {
+                                $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
+                                $body = "{$translate['textnewmember2']}\n\n$full_url";
+                                xmb_mail( $adminemail, $translate['textnewmember'], $body, $translate['charset'] );
+                            }
+                        }
+                        $db->free_result($mailquery);
+                    }
+
+                    if ($SETTINGS['emailcheck'] == 'on') {
+                        $translate = $lang2[$langfilenew];
+                        $username = trim(postedVar('username', '', FALSE, FALSE));
+                        $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+                        $subject = "[$rawbbname] {$translate['textyourpw']}";
+                        $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
+                        xmb_mail( $rawemail, $subject, $body, $translate['charset'] );
+                    } else {
+                        $session->newUser( $self );
+                    }
+
+                    $self['password'] = '';
+                    $password2 = '';
+                    break;
+            }
+
+            // Generate form outputs
+            if ( 1 == $stepout ) {
+                if ( 'on' == $SETTINGS['google_captcha'] ) {
+                    // Display reCAPTCHA
+                    $css .= "\n<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
+                    eval('$memberpage = "'.template('member_reg_gcaptcha').'";');
+                } elseif ( 'on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status'] ) {
+                    // Display XMB captcha.
+                    $casesense = '';
+                    $imghash = '';
+                    if ( 'on' == $SETTINGS['captcha_code_casesensitive'] ) {
+                        $casesense = "<p>{$lang['captchacaseon']}</p>";
+                    }
+                    require_once ROOT.'include/captcha.inc.php';
+                    $Captcha = new Captcha();
+                    if ($Captcha->bCompatible !== false) {
+                        $imghash = $Captcha->GenerateCode();
+                        eval('$memberpage = "'.template('member_reg_captcha').'";');
+                    } else {
+                        trigger_error( 'XMB captcha is enabled but not working.', E_USER_ERROR );
+                    }
+                } else {
+                    // Skip the captcha step
+                    $stepout = 2;
+                }
+            }
+
+            if ( 2 == $stepout ) {
+                if ($SETTINGS['pruneusers'] > 0) {
+                    $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
+                    $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
+                }
+
+                if ($SETTINGS['maxdayreg'] > 0) {
+                    $time = $onlinetime - 86400; // subtract 24 hours
+                    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
+                    if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
+                        error($lang['max_regs']);
+                    }
+                    $db->free_result($query);
+                }
+
+                if ( 'on' == $SETTINGS['coppa'] ) {
+                    // Display COPPA
+                    $optionlist = "<option value='0'></option>\n";
+                    for ( $i = 1; $i <= 120; $i++ ) {
+                        $optionlist .= "<option value='$i'>$i</option>\n";
+                    }
+                    $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_AYS_EXP, true );
+                    eval('$memberpage = "'.template('member_coppa').'";');
+                } else {
+                    // Skip COPPA
+                    $stepout = 3;
+                }
+            }
+
+            if ( 3 == $stepout ) {
+                if ( 'on' == $SETTINGS['bbrules'] ) {
+                    // Display the rules form
+                    $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
+                    $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
+                    eval('$memberpage = "'.template('member_reg_rules').'";');
+                } else {
+                    // Skip rules
+                    $stepout = 4;
+                }
+            }
+
+            if ( 4 == $stepout ) {
+                // Display new user form
+                $captcharegcheck = '';
+                $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
+
                 $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
                 $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
@@ -183,300 +614,21 @@ switch($action) {
                 }
 
                 $captcharegcheck = '';
-                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on') {
-                    require ROOT.'include/captcha.inc.php';
-                    $Captcha = new Captcha();
-                    if ($Captcha->bCompatible !== false) {
-                        $imghash = $Captcha->GenerateCode();
-                        if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
-                            $lang['captchacaseon'] = '';
-                        }
-                        eval('$captcharegcheck = "'.template('member_reg_captcha').'";');
-                    }
-                }
                 eval('$memberpage = "'.template('member_reg').'";');
             }
-        } else {
-            $username = trim(postedVar('username', '', TRUE, FALSE));
 
-            if (strlen($username) < 3 || strlen($username) > 32) {
-                error($lang['username_length_invalid']);
-            }
-
-            $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
-            $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
-            $sequences = '|  ';  //Phrases disallowed, each separated by '|'
-            $icharset = strtoupper($charset);
-            if (substr($icharset, 0, 8) == 'ISO-8859') {
-                if ($icharset == 'ISO-8859-11') {
-                    $nonprinting .= '-\\x9F\\xDB-\\xDE\\xFC-\\xFF';  //More chars invalid for the Thai set.
+            if ( 5 == $stepout ) {
+                // Display success message
+                if ( 'on' == $SETTINGS['emailcheck'] ) {
+                    $memberpage = "<center><span class='mediumtxt'>{$lang['emailpw']}</span></center>"
                 } else {
-                    $nonprinting .= '-\\x9F\\xAD';  //More chars invalid for all ISO 8859 sets except Part 11 (Thai).
-                }
-            } elseif (substr($icharset, 0, 11) == 'WINDOWS-125') {
-                $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
-            }
-
-            if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'])) {
-                error($lang['restricted']);
-            }
-
-            $username = trim(postedVar('username'));
-
-            if ($SETTINGS['ipreg'] != 'off') {
-                $time = $onlinetime-86400;
-                $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip='$onlineip' AND regdate >= $time");
-                if ($db->num_rows($query) >= 1) {
-                    error($lang['reg_today']);
-                }
-                $db->free_result($query);
-            }
-
-            $email = postedVar('email', 'javascript', TRUE, TRUE, TRUE);
-            if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
-                $email1 = ", email";
-                $email2 = "OR email='$email'";
-            } else {
-                $email1 = '';
-                $email2 = '';
-            }
-
-            $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$username' $email2");
-            if ($member = $db->fetch_array($query)) {
-                $db->free_result($query);
-                error($lang['alreadyreg']);
-            }
-
-            $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE author='$username'"), 0);
-            if (intval($postcount) > 0) {
-                error($lang['alreadyreg']);
-            }
-
-            if ($SETTINGS['emailcheck'] == 'on') {
-                $password = '';
-                $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-                $get = strlen($chars) - 1;
-                for($i = 0; $i < 8; $i++) {
-                    $password .= $chars[random_int(0, $get)];
-                }
-                $password2 = $password;
-            } elseif (!isset($_POST['password']) || !isset($_POST['password2'])) {
-                error($lang['textpw1']);
-            } else {
-                $password = $_POST['password'];
-                $password2 = $_POST['password2'];
-            }
-
-            if ($password != $password2) {
-                error($lang['pwnomatch']);
-            }
-
-            $fail = false;
-            $efail = false;
-            $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
-            while($restriction = $db->fetch_array($query)) {
-                $t_username = $username;
-                $t_email = $email;
-                if ($restriction['case_sensitivity'] == 0) {
-                    $t_username = strtolower($t_username);
-                    $t_email = strtolower($t_email);
-                    $restriction['name'] = strtolower($restriction['name']);
-                }
-
-                if ($restriction['partial'] == 1) {
-                    if (strpos($t_username, $restriction['name']) !== false) {
-                        $fail = true;
-                    }
-
-                    if (strpos($t_email, $restriction['name']) !== false) {
-                        $efail = true;
-                    }
-                } else {
-                    if ($t_username == $restriction['name']) {
-                        $fail = true;
-                    }
-
-                    if ($t_email == $restriction['name']) {
-                        $efail = true;
-                    }
+                    $memberpage = "<center><span class='mediumtxt'>{$lang['regged']}</span></center>";
                 }
             }
-            $db->free_result($query);
-
-            if ($fail) {
-                error($lang['restricted']);
-            }
-
-            if ($efail) {
-                error($lang['emailrestricted']);
-            }
-
-            require ROOT.'include/validate-email.inc.php';
-            $test = new EmailAddressValidator();
-            $rawemail = postedVar('email', '', FALSE, FALSE);
-            if (false === $test->check_email_address($rawemail)) {
-                error($lang['bademail']);
-            }
-
-            if ($password == '' || strpos($password, '"') != false || strpos($password, "'") != false) {
-                error($lang['textpw1']);
-            }
-
-            if ($username == '') {
-                error($lang['textnousername']);
-            }
-
-            if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_reg_status'] == 'on') {
-                require ROOT.'include/captcha.inc.php';
-                $Captcha = new Captcha();
-                if ($Captcha->bCompatible !== false) {
-                    $imghash = postedVar('imghash', '', FALSE, TRUE);
-                    $imgcode = postedVar('imgcode', '', FALSE, FALSE);
-                    if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                        error($lang['captchaimageinvalid']);
-                    }
-                }
-            }
-
-            $langfilenew = postedVar('langfilenew');
-            $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
-            if ($db->num_rows($result) == 0) {
-                $langfilenew = $SETTINGS['langfile'];
-            }
-
-            $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members");
-            $count1 = $db->result($query,0);
-            $db->free_result($query);
-
-            $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
-
-            $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-            $thememem = formInt('thememem');
-            $tpp = formInt('tpp');
-            $ppp = formInt('ppp');
-            $showemail = formYesNo('showemail');
-            $newsletter = formYesNo('newsletter');
-            $saveogu2u = formYesNo('saveogu2u');
-            $emailonu2u = formYesNo('emailonu2u');
-            $useoldu2u = formYesNo('useoldu2u');
-            $u2ualert = formInt('u2ualert');
-            $year = formInt('year');
-            $month = formInt('month');
-            $day = formInt('day');
-            // For year of birth, reject all integers from 100 through 1899.
-            if ($year >= 100 && $year <= 1899) $year = 0;
-            $bday = iso8601_date($year, $month, $day);
-
-            $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
-            $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-            if (strlen($dateformatnew) == 0 || $dateformatnew != $dateformattest) {
-                $dateformatnew = $SETTINGS['dateformat'];
-            }
-            unset($dateformattest);
-
-            $timeformatnew = formInt('timeformatnew');
-            if ($timeformatnew != 12 && $timeformatnew != 24) {
-                $timeformatnew = $SETTINGS['timeformat'];
-            }
-
-            $password = md5($password);
-
-            if ($SETTINGS['regoptional'] == 'off') {
-                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', $onlinetime, 0, '$email', '', '', '$self[status]', '', '', '', '$showemail', '$timeoffset1', '', '', '', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '', '', '$dateformatnew', '', 0, '', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
-            } else {
-                $location = postedVar('location', 'javascript', TRUE, TRUE, TRUE);
-                $icq = postedVar('icq', '', FALSE, FALSE);
-                $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
-                $yahoo = postedVar('yahoo', 'javascript', TRUE, TRUE, TRUE);
-                $aim = postedVar('aim', 'javascript', TRUE, TRUE, TRUE);
-                $msn = postedVar('msn', 'javascript', TRUE, TRUE, TRUE);
-                $site = postedVar('site', 'javascript', TRUE, TRUE, TRUE);
-                $bio = postedVar('bio', 'javascript', TRUE, TRUE, TRUE);
-                $mood = postedVar('mood', 'javascript', TRUE, TRUE, TRUE);
-                $sig = postedVar('sig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
-
-                if ($SETTINGS['avastatus'] == 'on') {
-                    $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-                    $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-
-                    $newavatarcheck = postedVar('newavatarcheck');
-
-                    $max_size = explode('x', $SETTINGS['max_avatar_size']);
-
-                    if (preg_match('/^' . get_img_regexp() . '$/i', $rawavatar) == 0) {
-                        $avatar = '';
-                    } elseif (ini_get('allow_url_fopen')) {
-                        if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
-                            $size = @getimagesize($rawavatar);
-                            if ($size === FALSE) {
-                                $avatar = '';
-                            } elseif (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
-                                error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
-                            }
-                        }
-                    } elseif ($newavatarcheck == "no") {
-                        $avatar = '';
-                    }
-                    unset($rawavatar);
-                } elseif ($SETTINGS['avastatus'] == 'list') {
-                    $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-                    $dirHandle = opendir(ROOT.'images/avatars');
-                    $filefound = FALSE;
-                    while($avFile = readdir($dirHandle)) {
-                        if ($rawavatar == './images/avatars/'.$avFile) {
-                            if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                                $filefound = TRUE;
-                            }
-                        }
-                    }
-                    closedir($dirHandle);
-                    unset($rawavatar);
-                    if ($filefound) {
-                        $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-                    } else {
-                        $avatar = '';
-                    }
-                } else {
-                    $avatar = '';
-                }
-
-                $db->query("INSERT INTO ".X_PREFIX."members (username, password, regdate, postnum, email, site, aim, status, location, bio, sig, showemail, timeoffset, icq, avatar, yahoo, customstatus, theme, bday, langfile, tpp, ppp, newsletter, regip, timeformat, msn, ban, dateformat, ignoreu2u, lastvisit, mood, pwdate, invisible, u2ufolders, saveogu2u, emailonu2u, useoldu2u, u2ualert) VALUES ('$username', '$password', $onlinetime, 0, '$email', '$site', '$aim', '$self[status]', '$location', '$bio', '$sig', '$showemail', '$timeoffset1', '$icq', '$avatar', '$yahoo', '', $thememem, '$bday', '$langfilenew', $tpp, $ppp, '$newsletter', '$onlineip', $timeformatnew, '$msn', '', '$dateformatnew', '', 0, '$mood', 0, '0', '', '$saveogu2u', '$emailonu2u', '$useoldu2u', $u2ualert)");
-            }
-
-            $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
-
-            if ($SETTINGS['notifyonreg'] != 'off') {
-                $mailquery = \XMB\SQL\getSuperEmails();
-                while($admin = $db->fetch_array($mailquery)) {
-                    $translate = $lang2[$admin['langfile']];
-                    if ($SETTINGS['notifyonreg'] == 'u2u') {
-                        $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
-                    } else {
-                        $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
-                        $body = "{$translate['textnewmember2']}\n\n$full_url";
-                        xmb_mail( $adminemail, $translate['textnewmember'], $body, $translate['charset'] );
-                    }
-                }
-                $db->free_result($mailquery);
-            }
-
-            if ($SETTINGS['emailcheck'] == 'on') {
-                $translate = $lang2[$langfilenew];
-                $username = trim(postedVar('username', '', FALSE, FALSE));
-                $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-                $subject = "[$rawbbname] {$translate['textyourpw']}";
-                $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
-                xmb_mail( $rawemail, $subject, $body, $translate['charset'] );
-            } else {
-                $username = trim(postedVar('username', '', TRUE, FALSE));
-                $currtime = $onlinetime + (86400*30);
-                put_cookie("xmbuser", $username, $currtime);
-                put_cookie("xmbpw", $password, $currtime);
-            }
-            $memberpage = ($SETTINGS['emailcheck'] == 'on') ? "<center><span class=\"mediumtxt \">$lang[emailpw]</span></center>" : "<center><span class=\"mediumtxt \">$lang[regged]</span></center>";
-
-            redirect($full_url);
         }
+
+        eval('$header = "'.template('header').'";');
+
         break;
 
     case 'viewpro':

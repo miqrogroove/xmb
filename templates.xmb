@@ -2175,20 +2175,25 @@ $todaymembers&nbsp;
 </form>
 
 |#*XMB TEMPLATE FILE*#|member_coppa|#*XMB TEMPLATE*#|
-<form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="" />
+<form method="post" action="" onsubmit="return disableButton(this);">
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
 <table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="$cattext"><strong>$lang[textcoppa]</strong></font></td>
+<td class="category" colspan="2"><font color="$cattext"><strong>{$lang['coppa_title']}</strong></font></td>
 </tr>
 <tr>
-<td bgcolor="$altbg1" class="tablerow">$lang[textcoppawording]</td>
-</tr>
-<tr>
-<td bgcolor="$altbg2" class="ctrtablerow"><input type="submit" class="submit" name="coppasubmit" value="$lang[coppaagree]" /></td>
+ <td bgcolor="$altbg1" class="ctrtablerow">$lang['coppa_directions']
+  <select name="age" id="age">
+   $optionlist
+  </select>
+  <input type="submit" class="submit" name="regsubmit" value="{$lang['continue_button']}" />
+  <input type="hidden" name="step" value="$stepout" />
+  <input type="hidden" name="token" value="$token" />
+  <br />
+  {$lang['coppa_explained']}
+ </td>
 </tr>
 </table>
 </td>
@@ -2307,8 +2312,8 @@ $emailblock
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg|#*XMB TEMPLATE*#|
-<form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="" />
+<form method="post" action="" onsubmit="return disableButton(this);">
+<input type="hidden" name="token" value="$token" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
@@ -2413,7 +2418,6 @@ $dayselect
 $timezones
 </td>
 </tr>
-$captcharegcheck
 <tr class="ctrtablerow">
 <td colspan="2" bgcolor="$altbg2"><input type="submit" class="submit" name="regsubmit" value="$lang[textregister]" /></td>
 </tr>
@@ -2441,17 +2445,60 @@ $captcharegcheck
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_captcha|#*XMB TEMPLATE*#|
+<form method="post" action="" onsubmit="return disableButton(this);">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
-<td colspan="2" class="category"><font color="$THEME[cattext]"><strong>$lang[captchaverification] - $lang[required]</strong></font></td>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong>{$lang['captchaverification']}</strong></font></td>
 </tr>
-<tr class="tablerow">
-<td bgcolor="$altbg1">$lang[verificationnote]</td>
-<td bgcolor="$altbg2">
- <img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="$lang[captchaverification]" title="$lang[captchaverification]" /><br /><br />
- <input type="text" name="imgcode" value="" /><input type="hidden" name="imghash" value="$imghash" /><br />
- {$lang['captchacaseon']}
+<tr>
+<td bgcolor="$altbg1" class="tablerow">
+ <p>{$lang['verificationnote']}</p>$casesense
+ <p><img src="misc.php?action=captchaimage&amp;imagehash=$imghash" alt="{$lang['captchaverification']}" title="{$lang['captchaverification']}" /></p>
+ <p><input type="text" name="imgcode" value="" /></p>
 </td>
 </tr>
+<tr>
+<td bgcolor="$altbg2" class="ctrtablerow">
+ <input type="submit" class="submit" name="gcaptcha" value="{$lang['continue_button']}" />
+ <input type="hidden" name="imghash" value="$imghash" />
+ <input type="hidden" name="step" value="$stepout" />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+
+|#*XMB TEMPLATE FILE*#|member_reg_gcaptcha|#*XMB TEMPLATE*#|
+<form method="post" action="">
+<table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
+<tr>
+<td bgcolor="$bordercolor">
+<table border="0" cellspacing="{$THEME['borderwidth']}" cellpadding="$tablespace" width="100%">
+<tr>
+<td class="category"><font color="$cattext"><strong>{$lang['captchaverification']}</strong></font></td>
+</tr>
+<tr>
+<td bgcolor="$altbg1" class="tablerow">
+ <p>{$lang['google_captcha_directions']}</p>
+ <div class="g-recaptcha" data-sitekey="{$SETTINGS['google_captcha_sitekey']}"></div>
+</td>
+</tr>
+<tr>
+<td bgcolor="$altbg2" class="ctrtablerow">
+ <input type="submit" class="submit" name="gcaptcha" value="{$lang['continue_button']}" />
+ <input type="hidden" name="step" value="$stepout" />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
 
 |#*XMB TEMPLATE FILE*#|member_reg_optional|#*XMB TEMPLATE*#|
 <tr>
@@ -2506,8 +2553,9 @@ $avatd
 </tr>
 
 |#*XMB TEMPLATE FILE*#|member_reg_rules|#*XMB TEMPLATE*#|
-<form method="post" action="member.php?action=reg">
-<input type="hidden" name="token" value="" />
+<form method="post" action="member.php?action=reg" onsubmit="return disableButton(this);">
+<input type="hidden" name="token" value="$token" />
+<input type="hidden" name="step" value="$stepout" />
 <table cellspacing="0" cellpadding="0" border="0" width="$tablewidth" align="center">
 <tr>
 <td bgcolor="$bordercolor">
