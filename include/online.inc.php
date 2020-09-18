@@ -134,6 +134,11 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineindex'];
         }
+    } else if (false !== strpos($url, '/lost.php')) {
+        $location = $lang['onlinelostpw'];
+        if (!X_SADMIN) {
+            $url = 'lost.php';
+        }
     } else if (false !== strpos($url, '/member.php')) {
         if (false !== strpos($url, 'action=reg')) {
             $location = $lang['onlinereg'];
@@ -184,6 +189,8 @@ function url_to_text($url) {
         } else {
             $location = $lang['onlineunknown'];
         }
+    } else if (false !== strpos($url, '/quarantine.php')) {
+        $location = $lang['onlinetopicadmin'];
     } else if (false !== strpos($url, '/search.php')) {
         $location = $lang['onlinesearch'];
     } else if (false !== strpos($url, '/stats.php')) {
@@ -211,6 +218,14 @@ function url_to_text($url) {
 
         if (!X_SADMIN) {
             $url = './u2u.php';
+        }
+    } else if (false !== strpos($url, '/vtmisc.php')) {
+        if (false !== strpos($url, 'action=report')) {
+            $location = $lang['onlinereport'];
+        } elseif (false !== strpos($url, 'action=votepoll')) {
+            $location = $lang['onlinevote'];
+        } else {
+            $location = $lang['onlineunknown'];
         }
     } else if (false !== strpos($url, '/buddy.php')) {
         if (false !== strpos($url, 'action=add2u2u')) {

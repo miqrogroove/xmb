@@ -237,8 +237,10 @@ switch($action) {
             } else if ($closed == '') {
                 $lang['textclosethread'] = $lang['textclosethread'];
             }
-            eval('echo "'.template('topicadmin_openclose').'";');
+            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/OpenOrClose', (string) $tid, X_NONCE_AYS_EXP );
+            eval('echo "'.$template.'";');
         } else {
+            request_secure( 'Thread Admin Options/OpenOrClose', (string) $tid );
             if ($closed == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid=$tid");
             } else {
