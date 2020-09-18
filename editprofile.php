@@ -91,6 +91,11 @@ if (noSubmit('editsubmit')) {
         $checked = $cheHTML;
     }
 
+    $subschecked = '';
+    if ($member['sub_each_post'] == 'yes') {
+        $subschecked = $cheHTML;
+    }
+
     $newschecked = '';
     if ($member['newsletter'] == 'yes') {
         $newschecked = $cheHTML;
@@ -262,6 +267,7 @@ if (noSubmit('editsubmit')) {
         $timeformatnew = $SETTINGS['timeformat'];
     }
 
+    $newsubs = formYesNo('newsubs');
     $saveogu2u = formYesNo('saveogu2u');
     $emailonu2u = formYesNo('emailonu2u');
     $useoldu2u = formYesNo('useoldu2u');
@@ -285,7 +291,7 @@ if (noSubmit('editsubmit')) {
     $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
     $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
     $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
-    $sig = postedVar('newsig', 'javascript', ($SETTINGS['sightml']=='off'), TRUE, TRUE);
+    $sig = postedVar('newsig', 'javascript', true, true, true);
 
     if ($SETTINGS['avastatus'] == 'on') {
         $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
@@ -332,7 +338,12 @@ if (noSubmit('editsubmit')) {
         $avatar = '';
     }
 
-    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert WHERE username='$user'");
+    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site', aim='$aim',
+    location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo',
+    theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew',
+    msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
+    useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
+
     $newpassword = $_POST['newpassword'];
     if ($newpassword) {
         $newpassword = md5($newpassword);

@@ -125,6 +125,7 @@ $dayselect
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textoptions]</td>
 <td bgcolor="{$THEME['altbg2']}">
 <input type="checkbox" name="newshowemail" value="yes" $checked /> $lang[textshowemail]<br />
+<input type="checkbox" name="newsubs" value="yes" $subschecked /> {$lang['subdefault']}<br />
 <input type="checkbox" name="newnewsletter" value="yes" $newschecked /> $lang[textgetnews]<br />
 <input type="checkbox" name="newinv" value="1" $invchecked /> $lang[textinvisible]<br />
 <input type="checkbox" name="useoldu2u" value="yes" $uou2uchecked /> $lang[textuseoldu2u]<br />
