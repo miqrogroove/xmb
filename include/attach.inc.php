@@ -1129,9 +1129,9 @@ function load_and_resize_image( string $path, CartesianSize &$thumbMaxSize, bool
 
     // Create a thumbnail for this attachment.
     if ($imgSize->aspect() > $thumbMaxSize->aspect()) {
-        $thumbSize = new CartesianSize($thumbMaxSize->getWidth(), round($thumbMaxSize->getWidth() / $imgSize->aspect()));
+        $thumbSize = new CartesianSize( $thumbMaxSize->getWidth(), (int) round( $thumbMaxSize->getWidth() / $imgSize->aspect() ) );
     } else {
-        $thumbSize = new CartesianSize(round($imgSize->aspect() * $thumbMaxSize->getHeight() ), $thumbMaxSize->getHeight() );
+        $thumbSize = new CartesianSize( (int) round( $imgSize->aspect() * $thumbMaxSize->getHeight() ), $thumbMaxSize->getHeight() );
     }
 
     $thumb = imagecreatetruecolor($thumbSize->getWidth(), $thumbSize->getHeight());
@@ -1151,7 +1151,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
     global $SETTINGS;
 
     // Write attachment to disk
-    $attach = getAttachment( $aid );
+    $attach = \XMB\SQL\getAttachment( $aid, $quarantine );
     if ( empty( $attach ) ) {
         return false;
     }
@@ -1217,7 +1217,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
     }
 
     deleteThumbnail( $aid, $quarantine );
-    createThumbnail($attach['filename'], $path, $attach['filesize'], $imgSize, $quarantine, $aid, $pid, $attach['subdir']);
+    createThumbnail( $attach['filename'], $path, (int) $attach['filesize'], $imgSize, $quarantine, $aid, $pid, $attach['subdir'] );
 
     // Clean up temp files
     if ($attach['subdir'] == '') {
