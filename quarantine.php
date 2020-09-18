@@ -219,8 +219,13 @@ case 'viewuser':
                 }
             }
             $allowavatars = $rank['allowavatars'];
-            $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
-            $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+            if ( 'viewuser' == $action ) {
+                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
+                $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+            } else {
+                $stars = '';
+                $showtitle = $lang['textunregistered'].'<br />';
+            }
             if ($allowavatars == 'no') {
                 $post['avatar'] = '';
             }
@@ -229,7 +234,11 @@ case 'viewuser':
             } else {
                 $rank['avatar'] = '';
             }
-            $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+            if ( 'viewuser' == $action ) {
+                $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+            } else {
+                $tharegdate = 'N/A';
+            }
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
@@ -251,6 +260,9 @@ case 'viewuser':
                 $email = '';
             } else {
                 $email = $approve.$delete;
+                $post['author'] = $lang['textanonymous'];
+                $post['postnum'] = 'N/A';
+                $profilelink = $lang['textanonymous'];
             }
             $site = '';
             $icq = '';
@@ -393,8 +405,13 @@ case 'viewuser':
                 }
             }
             $allowavatars = $rank['allowavatars'];
-            $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
-            $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+            if ( 'viewuser' == $action ) {
+                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
+                $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+            } else {
+                $stars = '';
+                $showtitle = $lang['textunregistered'].'<br />';
+            }
             if ($allowavatars == 'no') {
                 $post['avatar'] = '';
             }
@@ -403,7 +420,11 @@ case 'viewuser':
             } else {
                 $rank['avatar'] = '';
             }
-            $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+            if ( 'viewuser' == $action ) {
+                $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+            } else {
+                $tharegdate = 'N/A';
+            }
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] != '' && $allowavatars != "no") {
@@ -425,6 +446,9 @@ case 'viewuser':
                 $email = '';
             } else {
                 $email = $approve.$delete;
+                $post['author'] = $lang['textanonymous'];
+                $post['postnum'] = 'N/A';
+                $profilelink = $lang['textanonymous'];
             }
             $site = '';
             $icq = '';
