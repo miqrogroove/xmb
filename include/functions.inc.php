@@ -66,12 +66,16 @@ function elevateUser($force_inv = false, $serror = '') {
 
     $maxurl = 150; //Schema constant.
 
+    $state = $session->getStatus();
+
     //Usernames are historically html encoded in the XMB database, as well as in cookies.
     //$xmbuser is often used as a raw value in queries and should be sql escaped.
     //$self['username'] is a good alternative for future template use.
     //$xmbpw was historically abused and will no longer contain a value.
 
-    if ( $session->getStatus() == 'good' ) {
+    if ( 'good' == $state || 'already-logged-in' == $state ) {
+        // 'good' means normal login or resumed session.
+        // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
         $self = $session->getMember();
         $xmbuser = $db->escape( $self['username'] );
     } else {
@@ -96,7 +100,7 @@ function elevateUser($force_inv = false, $serror = '') {
             langPanic();
         }
     }
-    
+
     // Set the user status constants.
     if ($xmbuser != '') {
         if (!defined('X_GUEST')) {

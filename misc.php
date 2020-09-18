@@ -97,7 +97,11 @@ switch($action) {
         if ( ! coppa_check() ) {
             message( $lang['coppa_fail'] );
         } elseif ( noSubmit( 'loginsubmit' ) ) {
-            eval('$misc = "'.template('misc_login').'";');
+            if ( X_MEMBER ) {
+                eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
+            } else {
+                eval('$misc = "'.template('misc_login').'";');
+            }
         } else {
             switch( $session->getStatus() ) {
                 case 'good':
@@ -136,23 +140,13 @@ switch($action) {
         break;
 
     case 'logout':
-        if (X_GUEST) {
+        if ( 'logged-out' == $session->getStatus() ) {
+            $gone = $session->getMember();
+            $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='{$gone['username']}'");
             redirect($full_url, 0);
-            break;
+        } else {
+            message( $lang['notloggedin'] );
         }
-
-        $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
-
-        put_cookie('xmbuser');
-        put_cookie('xmbpw');
-
-        foreach($_COOKIE as $key=>$val) {
-            if (preg_match('#^fidpw([0-9]+)$#', $key)) {
-                put_cookie($key);
-            }
-        }
-
-        redirect($full_url, 0);
         break;
 
     case 'search':

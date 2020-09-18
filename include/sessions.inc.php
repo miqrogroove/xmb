@@ -175,9 +175,10 @@ class Manager {
 
         // First, check that all mechanisms are working and not already in a session.
         foreach($this->mechanisms as $session) {
-            if ( $session->checkSavedSession()->status == 'good' ) {
+            $data = $session->checkSavedSession();
+            if ( $data->status == 'good' ) {
                 $this->status = 'already-logged-in';
-                $this->saved = new Data;
+                $this->saved = $data;
                 return;
             }
             if ( ! $session->checkClientEnabled() ) {
@@ -225,11 +226,14 @@ class Manager {
      */
     private function logout() {
 		$this->saved = new Data;
-		$this->status = 'logged-out';
         foreach($this->mechanisms as $session) {
             $data = $session->logout();
             if ( $data->status == 'none' ) {
                 continue;
+            } elseif ( $data->status == 'logged-out' ) {
+                $this->status = 'logged-out';
+                $this->saved = $data;
+                break;
             } else {
                 // Still logged in.
                 $this->status = 'good';
@@ -540,10 +544,6 @@ class FormsAndCookies implements Mechanism {
     public function logout(): Data {
         $data = $this->checkSavedSession();
         
-        if ( 'none' == $data->status ) {
-            return $data;
-        }
-        
         if ( 'good' == $data->status ) {
             $token = $this->get_cookie( self::SESSION_COOKIE );
             $child = \XMB\SQL\getSessionReplacement( $token, $data->member['username'] );
@@ -552,11 +552,17 @@ class FormsAndCookies implements Mechanism {
             if ( ! empty( $child ) ) {
                 \XMB\SQL\deleteSession( $child['token'] );
             }
+            $this->deleteClientData();
+            $data->status = 'logged-out';
+            // $data->member passes through so the manager knows who is logging out.
+        } elseif ( 'bad' == $data->status ) {
+            $this->deleteClientData();
+            $data = new Data;
+        } else {
+            // There was no session.
         }
-        
-        $this->deleteClientData();
-        
-        return new Data;
+
+        return $data;
     }
     
     public function logoutAll( string $username, bool $current_client ) {
