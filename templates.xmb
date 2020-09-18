@@ -5170,7 +5170,7 @@ $multipage
 <td><input type="hidden" name="subject" value="" />
 <table width="100%" border="0" cellpadding="{$THEME['tablespace']}" cellspacing="{$THEME['borderwidth']}">
 <tr bgcolor="{$THEME['altbg1']}">
-<td colspan="3" class="category"><div align="left"><font color="{$THEME['cattext']}"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>&nbsp;- [$lang[loggedin] <strong>$self[username]</strong>]</font></div></td>
+<td colspan="3" class="category"><div align="left"><font color="{$THEME['cattext']}"><strong>&nbsp;&raquo;&nbsp;$lang[quickreply]</strong>$quick_name_display</font></div></td>
 </tr>
 $captchapostcheck
 <tr class="quickreply">

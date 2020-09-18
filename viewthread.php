@@ -323,6 +323,11 @@ if ($action == '') {
             }
 
             $disableguest = X_GUEST ? 'style="display:none;"' : '';
+            if ( X_MEMBER ) {
+                $quick_name_display = "&nbsp;- [{$lang['loggedin']} <strong>{$self['username']}</strong>]";
+            } else {
+                $quick_name_display = "&nbsp;- [<strong>{$lang['textanonymous']}</strong>]";
+            }
 
             eval('$quickreply = "'.template('viewthread_quickreply').'";');
         }
