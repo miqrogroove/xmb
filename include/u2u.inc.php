@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12-alpha  Do not use this experimental software after 1 October 2020.
+ * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -30,7 +30,7 @@ if (!defined('IN_CODE')) {
 define('U2U_FOLDER_COL_SIZE', 32);
 
 function u2u_msg($msg, $redirect) {
-    global $u2uheader, $u2ufooter, $tablewidth, $bordercolor, $tablespace, $THEME, $altbg1;
+    global $u2uheader, $u2ufooter, $THEME;
 
     if (!empty($redirect)) {
         redirect($redirect);
@@ -111,7 +111,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
 function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     global $db, $self, $lang, $xmbuser, $SETTINGS, $del, $full_url;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
-    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth;
+    global $THEME, $thewidth;
     global $forward, $reply, $previewsubmit;
 
     $dbsubject = addslashes($subject); //message and subject were historically double-slashed
@@ -208,7 +208,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
 function u2u_view($u2uid, $folders) {
     global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken, $xmbuser;
-    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $cattext, $thewidth, $full_url;
+    global $THEME, $thewidth, $full_url;
     global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
 
     $delchecked = '';
@@ -282,7 +282,7 @@ function u2u_view($u2uid, $folders) {
 
 function u2u_print($u2uid, $eMail = false) {
     global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $full_url, $cookiedomain, $adminemail,
-           $u2ufooter, $dateformat, $timecode, $addtime, $charset, $bbname, $logo, $oToken, $xmbuser, $text;
+           $u2ufooter, $dateformat, $timecode, $addtime, $bbname, $logo, $oToken, $xmbuser, $text;
 
     $mailHeader = '';
     $mailFooter = '';
@@ -506,7 +506,7 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 
 function u2u_ignore() {
     global $self, $lang, $db, $oToken, $xmbuser, $full_url;
-    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
+    global $THEME, $thewidth;
 
     $leftpane = '';
     if (onSubmit('ignoresubmit')) {
@@ -523,7 +523,7 @@ function u2u_ignore() {
 
 function u2u_display($folder, $folders) {
     global $db, $self, $lang, $xmbuser, $onlinetime;
-    global $altbg1, $altbg2, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $thewidth;
+    global $THEME, $thewidth;
     global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
 
     $u2usin = '';
@@ -658,7 +658,7 @@ function u2u_display($folder, $folders) {
 }
 
 function u2u_folderList() {
-    global $db, $self, $lang, $altbg1, $oToken, $xmbuser;
+    global $db, $self, $lang, $THEME, $oToken, $xmbuser;
     global $folder, $folderlist, $folders, $farray; // <--- these are modified in here
 
     $u2ucount = 0;

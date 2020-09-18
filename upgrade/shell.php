@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.11
+ * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2017, The XMB Group
