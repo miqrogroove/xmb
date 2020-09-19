@@ -83,6 +83,8 @@ class admin {
         if (!$this->check_restricted($dbuserto)) {
             return $lang['restricted'];
         }
+        
+        $session->logoutAll( $userfrom );
 
         @set_time_limit(180);
         $db->query("UPDATE ".X_PREFIX."members SET username='$dbuserto' WHERE username='$dbuserfrom'");
