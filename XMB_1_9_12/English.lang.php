@@ -433,7 +433,7 @@ $lang['max_addresses_per_entry'] = "Due to server-protection, it is not allowed 
 $lang['max_attachment_size'] = "Maximum File Size (in bytes):";
 $lang['max_avatar_size_h'] = "The maximum avatar Height (in pixels):";
 $lang['max_avatar_size_w'] = "The maximum avatar Width (in pixels):";
-$lang['max_daily_regs'] = "Maximum number of new registrations per day.<br /><span class='smalltxt'>Set to 0 for unlimited registrations per day.</small>";
+$lang['max_daily_regs'] = "Maximum number of new registrations per day.<br /><span class='smalltxt'>Set to 0 for unlimited registrations per day.</span>";
 $lang['max_onlinetodaycount'] = "Maximum number of members to show in who's online today on index.";
 $lang['max_regs'] = 'Maximum registrations per day reached, please wait 24 hours.';
 $lang['mcpread'] = "Read?";
