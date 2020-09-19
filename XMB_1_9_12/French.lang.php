@@ -433,7 +433,7 @@ $lang['max_addresses_per_entry'] = "Pour des raisons de sécurité, il n'est pas p
 $lang['max_attachment_size'] = "Taille maximum du fichier (en octets):";
 $lang['max_avatar_size_h'] = "Hauteur maximale de l'avatar (en pixel)";
 $lang['max_avatar_size_w'] = "Largeur maximale de l'avatar (en pixel)";
-$lang['max_daily_regs'] = "Nombre maximum de nouvelles inscriptions par jour.<br /><span class='smalltxt'>Mettre a 0 pour rendre illimité.</small>";
+$lang['max_daily_regs'] = "Nombre maximum de nouvelles inscriptions par jour.<br /><span class='smalltxt'>Mettre a 0 pour rendre illimité.</span>";
 $lang['max_onlinetodaycount'] = "Nombre maximum d'utilisateurs à montrer dans qui est en ligne dans l'index.";
 $lang['max_regs'] = "Le maximum d'inscription par jour a été atteind. Merci d'attendre 24h";
 $lang['mcpread'] = "Lu?";

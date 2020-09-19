@@ -433,7 +433,7 @@ $lang['max_addresses_per_entry'] = "Por la protección del servidor, no se permit
 $lang['max_attachment_size'] = "Máximo tamaño del adjunto (en bytes)";
 $lang['max_avatar_size_h'] = "La máxima altura del avatar remoto (en px)";
 $lang['max_avatar_size_w'] = "El máximo ancho del avatar remoto (en px)";
-$lang['max_daily_regs'] = "Máxima cantidad de usuarios que pueden registrarse diariamente.<br /><span class='smalltxt'>Rellénala con 0 por registraciónes ilimitado.</small>";
+$lang['max_daily_regs'] = "Máxima cantidad de usuarios que pueden registrarse diariamente.<br /><span class='smalltxt'>Rellénala con 0 por registraciónes ilimitado.</span>";
 $lang['max_onlinetodaycount'] = "El número máximo de miembros a mostrar en la línea que hoy en Índice.";
 $lang['max_regs'] = 'Registros máxima alcanzada por día, por favor, espere 24 horas.';
 $lang['mcpread'] = "Leído?";
