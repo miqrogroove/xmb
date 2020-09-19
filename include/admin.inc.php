@@ -57,7 +57,7 @@ if (X_SADMIN) {
 
 class admin {
     function rename_user($userfrom, $userto) {
-        global $db, $lang, $self;
+        global $db, $lang, $self, $session;
 
         if (strlen($userto) < 3 || strlen($userto) > 32) {
             return $lang['username_length_invalid'];
