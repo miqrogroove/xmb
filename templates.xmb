@@ -711,15 +711,36 @@ textarea, select, input, object {
     height: 344px;
     width: 600px;
 }
+@media screen and (min-width: 1200px) {
+    code {
+        width: 800px;
+    }
+}
+@media screen and (min-width: 1500px) {
+    code {
+        width: 1100px;
+    }
+}
+@media screen and (min-width: 1850px) {
+    code {
+        width: 1400px;
+    }
+}
 @media screen and (max-width: 850px) {
     .video {
         height: 300px;
+        width: 425px;
+    }
+    code {
         width: 425px;
     }
 }
 @media screen and (max-width: 600px) {
     .video {
         height: 300px;
+        width: 350px;
+    }
+    code {
         width: 350px;
     }
 }
