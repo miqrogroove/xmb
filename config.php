@@ -97,7 +97,7 @@ if (!defined('IN_CODE')) {
      * By default, they are not, meaning $allow_spec_q = FALSE;
      * To allow them, change $allow_spec_q to true ($allow_spec_q = true;)
      ****************
-     * The show_full_info variable lets you decide wether to show the Build and Alpha/Beta/SP markings in the HTML or not.
+     * The show_full_info variable lets you decide whether to show the Build and Alpha/Beta/SP markings in the HTML or not.
      * Change the value to true to show them, or false to turn them off.
      * Default = TRUE;
      ****************/
