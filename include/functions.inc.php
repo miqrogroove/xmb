@@ -209,7 +209,7 @@ function loginAuthorization( array $member ): string {
     } else if ($member['status'] == 'Banned') {
         return 'member-banned';
     } else if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
-        auditBadLogin( $member['username'] );
+        auditBadLogin( $member );
         return 'password-locked';
     } else {
         return 'good';

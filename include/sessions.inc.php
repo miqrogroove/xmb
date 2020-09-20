@@ -440,7 +440,7 @@ class FormsAndCookies implements Mechanism {
             return $data;
         }
         if ( $member['password'] != $pinput ) {
-            auditBadLogin( $uinput );
+            auditBadLogin( $member );
             $data->status = 'bad';
             return $data;
         }
