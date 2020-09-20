@@ -647,7 +647,7 @@ switch($action) {
 
         $memberinfo = \XMB\SQL\getMemberByName( $member );
 
-        if ( empty( $memberinfo ) || ( 'on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] ) ) {
+        if ( empty( $memberinfo ) || ( 'on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN ) ) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         }
