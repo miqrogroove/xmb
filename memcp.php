@@ -269,7 +269,7 @@ if ($action == 'profile') {
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
         $optional = '';
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'off' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
             eval('$optional = "'.template('memcp_profile_optional').'";');
         }
         if (X_STAFF) {
@@ -448,7 +448,7 @@ if ($action == 'profile') {
             $avatar = '';
         }
 
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'off' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
             $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
             $icq = abs( formInt( 'newicq' ) );
             $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
