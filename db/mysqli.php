@@ -32,16 +32,16 @@ define('SQL_BOTH', MYSQLI_BOTH);
 define('SQL_ASSOC', MYSQLI_ASSOC);
 
 class dbstuff {
-    var $querynum   = 0;
-    var $querylist  = array();
-    var $querytimes = array();
-    var $link       = '';
-    var $db         = '';
-    var $duration   = 0;
-    var $timer      = 0;
-    var $errcallb   = 'xmb_mysql_error';
-    var $last_id    = 0;
-    var $last_rows  = 0;
+    private $db         = ''; // Does nothing?
+    private $duration   = 0.0;
+    private $errcallb   = 'xmb_mysql_error';
+    private $last_id    = 0;
+    private $last_rows  = 0;
+    private $link       = '';
+    private $querynum   = 0;
+    private $querylist  = [];
+    private $querytimes = [];
+    private $timer      = 0.0;
 
     /**
      * Establishes a connection to the MySQL server.
@@ -54,7 +54,7 @@ class dbstuff {
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
      * @param bool   $new_link Ignored in mysqli and always TRUE.
      */
-    function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=TRUE) {
+    public function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=TRUE) {
 
         if ( $pconnect ) {
             $dbhost = "p:$dbhost";
@@ -69,29 +69,29 @@ class dbstuff {
         $this->link = @new mysqli( $dbhost, $dbuser, $dbpw, $database );
 
         if ( mysqli_connect_error() ) {
-            echo '<h3>Database connection error!</h3>';
-            echo 'A connection to the Database could not be established.<br />';
-            echo 'Please check your username, password, database name and host.<br />';
-            echo 'Also make sure <i>config.php</i> is rightly configured!<br /><br />';
+            header( 'HTTP/1.0 500 Internal Server Error' );
+            echo "<h3>Database connection error!</h3>\n";
+            echo "A connection to the Database could not be established.<br />\n";
+            echo "Please check the MySQL username, password, database name and host.<br />\n";
+            echo "Make sure <i>config.php</i> is correctly configured.<br />\n";
+            echo "Details may be logged if LOG_MYSQL_ERRORS was set.<br /><br />\n";
             $sql = '';
-            $this->panic($sql);
+            $this->panic( $sql );
         }
-        
+
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
 
         // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
-        // Available in PHP 5.0.5.
-        if ( method_exists( $this->link, 'set_charset' ) ) {
-            $result = $this->link->set_charset( 'latin1' );
-            if (FALSE === $result) {
-                echo '<h3>Database connection error!</h3>';
-                echo 'The database connection could not be configured for XMB.<br />';
-                echo 'Please ensure the mysqli_set_charset function is working.<br /><br />';
-                $sql = '';
-                $this->panic($sql);
-            }
+        $result = $this->link->set_charset( 'latin1' );
+        if ( false === $result ) {
+            header( 'HTTP/1.0 500 Internal Server Error' );
+            echo "<h3>Database connection error!</h3>\n";
+            echo 'The database connection could not be configured for XMB.<br />';
+            echo 'Please ensure the mysqli_set_charset function is working.<br /><br />';
+            $sql = '';
+            $this->panic( $sql );
         }
-        
+
         if ( $force_db ) {
             $this->db = $dbname;
             return true;
@@ -107,7 +107,7 @@ class dbstuff {
      * @param bool $force Optional. Specifies error mode. Dies if true.
      * @return bool TRUE on success, FALSE on failure with !$force.
      */
-    function select_db($database, $force = TRUE) {
+    public function select_db($database, $force = TRUE) {
         if ( $this->link->select_db( $database ) ) {
             $this->db = $database;
             return TRUE;
@@ -126,7 +126,7 @@ class dbstuff {
      * @param string $tablepre The settings table name prefix.
      * @return bool
      */
-    function find_database($tablepre) {
+    public function find_database($tablepre) {
         $dbs = $this->query('SHOW DATABASES');
         while($db = $this->fetch_array($dbs)) {
             if ('information_schema' == $db['Database']) {
@@ -149,25 +149,25 @@ class dbstuff {
         return FALSE;
     }
 
-    function error() {
+    public function error() {
         return $this->link->error;
     }
 
-    function free_result($query) {
+    public function free_result($query) {
         set_error_handler($this->errcallb);
         $query->free();
         restore_error_handler();
         return true;
     }
 	
-    function fetch_array($query, $type=SQL_ASSOC) {
+    public function fetch_array($query, $type=SQL_ASSOC) {
         set_error_handler($this->errcallb);
         $array = $query->fetch_array($type);
         restore_error_handler();
         return $array;
     }
 
-    function field_name($query, $field) {
+    public function field_name($query, $field) {
         set_error_handler($this->errcallb);
         $return = $query->fetch_field_direct( $field )->name;
         restore_error_handler();
@@ -182,15 +182,15 @@ class dbstuff {
      * @param int $field The field_offset starts at 0.
      * @return int
      */
-    function field_len($query, $field) {
+    public function field_len($query, $field) {
         set_error_handler($this->errcallb);
         $return = $query->fetch_field_direct( $field )->length;
         restore_error_handler();
         return $return;
     }
 
-    function panic($sql) {
-        if (!headers_sent()) {
+    private function panic( string $sql ) {
+        if ( ! headers_sent() ) {
             header('HTTP/1.0 500 Internal Server Error');
         }
 
@@ -211,7 +211,9 @@ class dbstuff {
             }
             echo '</em></pre>';
         } else {
-            echo "<pre>The system has failed to process your request. If you're an administrator, please set the DEBUG flag to true in config.php.</pre>";
+            echo "The system has failed to process your request.<br />\n";
+            echo "Details may be logged if LOG_MYSQL_ERRORS was set.<br />\n";
+            echo "To display details, please set the DEBUG flag to true in config.php.<br />\n";
     	}
         if (LOG_MYSQL_ERRORS) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
@@ -340,7 +342,7 @@ class dbstuff {
      * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
      * @return mixed Returns a MySQL resource or a bool, depending on the query type and error status.
      */
-    function unbuffered_query($sql, $panic = TRUE) {
+    public function unbuffered_query($sql, $panic = TRUE) {
         $this->start_timer();
         $query = $this->link->query( $sql, MYSQLI_USE_RESULT );
         if (FALSE === $query && $panic) {
@@ -354,7 +356,7 @@ class dbstuff {
         return $query;
     }
 
-    function fetch_tables($dbname = NULL) {
+    public function fetch_tables($dbname = NULL) {
         if ($dbname == NULL) {
             $dbname = $this->db;
         }
@@ -376,7 +378,7 @@ class dbstuff {
      * @param mixed    $field The name or offset of the field being retrieved.
      * @return string
      */
-    function result( $query, $row, $field = 0 ) {
+    public function result( $query, $row, $field = 0 ) {
         set_error_handler($this->errcallb);
 		$query->data_seek( $row );
         $return = $query->fetch_array()[$field];
@@ -384,21 +386,21 @@ class dbstuff {
         return $return;
     }
 
-    function num_rows($query) {
+    public function num_rows($query) {
         set_error_handler($this->errcallb);
         $query = $query->num_rows;
         restore_error_handler();
         return $query;
     }
 
-    function num_fields($query) {
+    public function num_fields($query) {
         set_error_handler($this->errcallb);
         $return = $query->field_count;
         restore_error_handler();
         return $return;
     }
 
-    function insert_id() {
+    public function insert_id() {
     	if (DEBUG && LOG_MYSQL_ERRORS) {
             $id = $this->last_id;
         } else {
@@ -409,21 +411,21 @@ class dbstuff {
         return $id;
     }
 
-    function fetch_row($query) {
+    public function fetch_row($query) {
         set_error_handler($this->errcallb);
         $query = $query->fetch_row();
         restore_error_handler();
         return $query;
     }
 
-    function data_seek($query, $row) {
+    public function data_seek($query, $row) {
         set_error_handler($this->errcallb);
         $return = $query->data_seek( $row );
         restore_error_handler();
         return $return;
     }
 
-    function affected_rows() {
+    public function affected_rows() {
     	if (DEBUG && LOG_MYSQL_ERRORS) {
             $return = $this->last_rows;
         } else {
@@ -448,15 +450,15 @@ class dbstuff {
         return "LPAD('".$time."', '15', '0')";
     }
 
-    function start_timer() {
+    private function start_timer() {
         $mtime = explode(" ", microtime());
-        $this->timer = $mtime[1] + $mtime[0];
+        $this->timer = (float) $mtime[1] + (float) $mtime[0];
         return true;
     }
 
-    function stop_timer() {
+    private function stop_timer() {
         $mtime = explode(" ", microtime());
-        $endtime = $mtime[1] + $mtime[0];
+        $endtime = (float) $mtime[1] + (float) $mtime[0];
         $taken = ($endtime - $this->timer);
         $this->duration += $taken;
         $this->timer = 0;
@@ -468,8 +470,24 @@ class dbstuff {
      *
      * @return string
      */
-    function server_version(){
+    public function server_version(){
         return $this->link->server_info;
+    }
+
+    public function getDuration(): float {
+        return $this->duration;
+    }
+
+    public function getQueryCount(): int {
+        return $this->querynum;
+    }
+
+    public function getQueryList(): array {
+        return $this->querylist;
+    }
+
+    public function getQueryTimes(): array {
+        return $this->querytimes;
     }
 }
 

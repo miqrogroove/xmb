@@ -168,21 +168,17 @@ $timesearch = $onlinetime - 86400;
 $query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 
 if ( $db->num_rows( $query ) == 0 ) {
-    $bestmember = '';
-    $bestmemberpost = '';
-    $eval = $lang['evalnobestmember'];
+    $bestmember = $lang['evalnobestmember'];
 } else {
     $info = $db->fetch_array($query);
     $bestmember = $info['author'];
     $membesthtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($bestmember).'"><strong>'.$bestmember.'</strong></a>';
     $bestmemberpost = $info['Total'];
-    $eval = $lang['evalbestmember'];
+    $search  = [ '$membesthtml', '$bestmemberpost' ];
+    $replace = [  $membesthtml,   $bestmemberpost  ];
+    $bestmember = str_replace( $search, $replace, $lang['evalbestmember'] );
 }
 $db->free_result($query);
-
-$search  = [ '$membesthtml', '$bestmemberpost' ];
-$replace = [  $membesthtml,   $bestmemberpost  ];
-$bestmember = str_replace( $search, $replace, $eval );
 
 $stats1 = str_replace( '$bbname', $bbname, $lang['evalstats1'] );
 $stats2 = str_replace( '$posts', $posts, $lang['evalstats2'] );

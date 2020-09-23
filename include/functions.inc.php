@@ -1430,15 +1430,15 @@ function end_time() {
     }
 
     if (in_array('queries', $footer_options)) {
-        $querynum = $db->querynum;
+        $querynum = $db->getQueryCount();
         eval('$footerstuff["querynum"] = "'.template('footer_querynum').'";');
     } else {
         $footerstuff['querynum'] = '';
     }
 
     if (in_array('phpsql', $footer_options)) {
-        $db_duration = number_format(($db->duration/$totaltime)*100, 1);
-        $php_duration = number_format((1-($db->duration/$totaltime))*100, 1);
+        $db_duration = number_format( ( $db->getDuration() / $totaltime ) * 100, 1 );
+        $php_duration = number_format( ( 1 - ( $db->getDuration() / $totaltime ) ) * 100, 1);
         eval('$footerstuff["phpsql"] = "'.template('footer_phpsql').'";');
     } else {
         $footerstuff['phpsql'] = '';
