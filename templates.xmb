@@ -1887,7 +1887,7 @@ $baseelement$canonical_link
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title>{$SETTINGS['bbname']} $threadSubject - $versionlong</title>
 $css
-<script language="JavaScript" type="text/javascript" src="./js/header.js?v=1.9.12"></script>
+<script language="JavaScript" type="text/javascript" src="./js/header.js?v=2"></script>
 </head>
 <body text="{$THEME['text']}">
 $bbcodescript
@@ -2480,7 +2480,7 @@ $timezones
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textavatarurl]</td>
 <td bgcolor="{$THEME['altbg2']}">
 <input type="hidden" name="newavatarcheck" id="newavatarcheck" value="no" />
-<input type="text" name="newavatar" size="25" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<input type="text" name="newavatar" size="25" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]', $js_https_only)" />
 <p id="avatarCheck" style="display: inline;"></p>
 </td>
 </tr>
@@ -3017,10 +3017,10 @@ $timezones
 
 |#*XMB TEMPLATE FILE*#|memcp_profile_avatarurl|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td bgcolor="{$THEME['altbg1']}" width="22%">$lang[textavatarurl]</td>
+<td bgcolor="{$THEME['altbg1']}" width="22%">{$lang['textavatarurl']}</td>
 <td bgcolor="{$THEME['altbg2']}">
 <input type="hidden" name="newavatarcheck" id="newavatarcheck" value="yes" />
-<input type="text" name="newavatar" size="25" value="$member[avatar]" onblur="avatarCheck(this, '$SETTINGS[max_avatar_size]')" />
+<input type="text" name="newavatar" size="25" value="{$member['avatar']}" onblur="avatarCheck(this, '{$SETTINGS['max_avatar_size']}', $js_https_only)" />
 <p id="avatarCheck" style="display: inline;"></p>
 </td>
 </tr>

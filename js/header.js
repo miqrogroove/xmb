@@ -50,11 +50,14 @@ function icon(theicon) {
     AddText('', '', theicon, messageElement)
 }
 
-function avatarCheck(input, max_size) {
+function avatarCheck(input, max_size, https_only) {
     var image = new Image();
     var avatarCheck = document.getElementById('avatarCheck');
     var isValid = document.getElementById('newavatarcheck');
     var imgRegex = /^(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?$/i;
+    if ( https_only ) {
+        imgRegex = /^https:\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?$/i;
+    }
     image.onload = function() {
         max_size = max_size.split("x");
 

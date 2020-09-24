@@ -1961,6 +1961,26 @@ function upgrade_schema_to_v7() {
 }
 
 /**
+ * Performs all tasks needed to raise the database schema_version number to 8.
+ *
+ * @since 1.9.12
+ */
+function upgrade_schema_to_v8() {
+    global $db;
+
+    show_progress('Gathering schema information from the settings table');
+    $table = 'settings';
+    $query = upgrade_query('SELECT value FROM '.X_PREFIX.$table.' WHERE name = "images_https_only"');
+    if ( $db->num_rows( $query ) != 1 ) {
+        show_progress('Adding data to the settings table');
+        upgrade_query('INSERT INTO '.X_PREFIX.$table.' SET value = "off", name = "images_https_only"');
+    }
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '8' WHERE name = 'schema_version'");
+}
+
+/**
  * Recalculates the value of every field in the forums.postperm column.
  *
  * Function has been modified to run without parameters.

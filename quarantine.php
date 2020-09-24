@@ -33,6 +33,7 @@ if ( ! X_SMOD ) {
 }
 
 $quarantine = true;
+$https_only = 'on' == $SETTINGS['images_https_only'];
 
 loadtemplates(
 'viewthread_poll',
@@ -229,6 +230,9 @@ case 'viewuser':
             if ($allowavatars == 'no') {
                 $post['avatar'] = '';
             }
+            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
+                $post['avatar'] = '';
+            }
             if ($rank['avatarrank'] != '') {
                 $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
             } else {
@@ -413,6 +417,9 @@ case 'viewuser':
                 $showtitle = $lang['textunregistered'].'<br />';
             }
             if ($allowavatars == 'no') {
+                $post['avatar'] = '';
+            }
+            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
                 $post['avatar'] = '';
             }
             if ($rank['avatarrank'] != '') {

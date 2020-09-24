@@ -648,6 +648,10 @@ if ($action == '') {
                 $post['avatar'] = '';
             }
 
+            if ( 'on' == $SETTINGS['images_https_only'] && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
+                $post['avatar'] = '';
+            }
+
             if ($rank['avatarrank'] != '') {
                 $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
             }

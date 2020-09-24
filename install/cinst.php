@@ -249,6 +249,7 @@ $db->query( "INSERT INTO ".X_PREFIX."settings
 ('hideprivate', 'on'),
 ('hide_banned', 'off'),
 ('hottopic', '20'),
+('images_https_only', 'off'),
 ('indexshowbar', '2'),
 ('index_stats', 'on'),
 ('ipreg', 'on'),

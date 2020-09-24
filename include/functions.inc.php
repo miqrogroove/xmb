@@ -565,7 +565,7 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 }
 
 function bbcode(&$message, $allowimgcode, $allowurlcode) {
-    global $lang, $THEME;
+    global $lang, $THEME, $SETTINGS;
 
     //Balance simple tags.
     $begin = array(
@@ -709,7 +709,8 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
-            $base_pattern = get_img_regexp();
+            $https_only = 'on' == $SETTINGS['images_https_only'];
+            $base_pattern = get_img_regexp( $https_only );
             $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
             $replacements[] = '<img <!-- nobr -->src="\1://\2\3"<!-- /nobr --> border="0" alt="" />';
             $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
@@ -2475,8 +2476,12 @@ function nonce_use($key, $nonce, $expire = 0) {
  * @since 1.9.11.15
  * @return string Regular expression for a user-provided URL to an image.
  */
-function get_img_regexp() {
-    return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
+function get_img_regexp( bool $https_only = false ): string {
+    if ( $https_only ) {
+        return 'https:\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
+    } else {
+        return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
+    }
 }
 
 /**

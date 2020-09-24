@@ -75,6 +75,9 @@ switch($action) {
         $cookietest = postedVar( $testname, '', false, false, false, 'c' );
         $regvalid = true;
 
+        $https_only = 'on' == $SETTINGS['images_https_only'];
+        $js_https_only = $https_only ? 'true' : 'false';
+
         if ( 'off' == $SETTINGS['regstatus'] ) {
             header( 'HTTP/1.0 403 Forbidden' );
             eval('$memberpage = "'.template('misc_feature_notavailable').'";');
@@ -400,7 +403,7 @@ switch($action) {
 
                             $max_size = explode('x', $SETTINGS['max_avatar_size']);
 
-                            if (preg_match('/^' . get_img_regexp() . '$/i', $rawavatar) == 0) {
+                            if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
                                 $self['avatar'] = '';
                             } elseif (ini_get('allow_url_fopen')) {
                                 if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
@@ -709,6 +712,10 @@ switch($action) {
 
         if ($rank['avatarrank'] != '') {
             $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
+        }
+
+        if ( 'on' == $SETTINGS['images_https_only'] && strpos( $memberinfo['avatar'], ':' ) !== false && substr( $memberinfo['avatar'], 0, 6 ) != 'https:' ) {
+            $memberinfo['avatar'] = '';
         }
 
         if ($memberinfo['avatar'] != '') {

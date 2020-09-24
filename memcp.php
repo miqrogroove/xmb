@@ -63,6 +63,8 @@ $favs = '';
 $footer = '';
 $header = '';
 $mempage = '';
+$https_only = 'on' == $SETTINGS['images_https_only'];
+$js_https_only = $https_only ? 'true' : 'false';
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
@@ -246,6 +248,9 @@ if ($action == 'profile') {
 
         $avatar = '';
         if ($SETTINGS['avastatus'] == 'on') {
+            if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) != 'https:' ) {
+                $member['avatar'] = '';
+            }
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
         }
 
@@ -411,7 +416,7 @@ if ($action == 'profile') {
 
             $max_size = explode('x', $SETTINGS['max_avatar_size']);
 
-            if (preg_match('/^' . get_img_regexp() . '$/i', $rawavatar) == 0) {
+            if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
                 $avatar = '';
             } elseif (ini_get('allow_url_fopen')) {
                 if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
@@ -750,9 +755,11 @@ if ($action == 'profile') {
 
     $member = $self;
 
-    if ($member['avatar'] == '') {
+    if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) != 'https:' ) {
         $member['avatar'] = '';
-    } else {
+    }
+
+    if ($member['avatar'] != '') {
         $member['avatar'] = '<img src="'.$member['avatar'].'" border="0" alt="'.$lang['altavatar'].'" />';
     }
 

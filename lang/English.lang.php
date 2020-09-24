@@ -383,6 +383,7 @@ $lang['hottopiceval'] = "more than \$hottopic replies";
 $lang['ignorelist'] = "Ignore List";
 $lang['ignoremsg'] = "Ignore List:<br /><span class=\"smalltxt\">Separate names with commas (i.e. \"Person 1, Person 2,\"). Make sure you leave a comma after the last name.</span>";
 $lang['ignoreupdate'] = "Ignore list updated successfully!";
+$lang['images_https_only'] = "Avatars and [img] Tags HTTPS Only:<br /><span class=\"smalltxt\">Helps prevent browser security warnings.</span>";
 $lang['imdeletedmsg'] = "U2U(s) successfully deleted. You will now be taken to your IM list.";
 $lang['imgdir'] = "Image Directory:";
 $lang['imgdiradm'] = "Admin Image Directory:";

@@ -232,6 +232,9 @@ if ($action == "settings") {
         $hidebannedon = $hidebannedoff = '';
         settingHTML('hide_banned', $hidebannedon, $hidebannedoff);
 
+        $imageshttpson = $imageshttpsoff = '';
+        settingHTML('images_https_only', $imageshttpson, $imageshttpsoff);
+
         $check12 = $check24 = '';
         if ($SETTINGS['timeformat'] == 24) {
             $check24 = $cheHTML;
@@ -450,6 +453,7 @@ if ($action == "settings") {
         printsetting2($lang['textflood'], 'floodctrlnew', ((int)$SETTINGS['floodctrl']), 3);
         printsetting2($lang['u2uquota'], 'u2uquotanew', ((int)$SETTINGS['u2uquota']), 3);
         printsetting3($lang['textavastatus'], 'avastatusnew', array($lang['texton'], $lang['textlist'], $lang['textoff']), array('on', 'list', 'off'), $avchecked, false);
+        printsetting1($lang['images_https_only'], 'imageshttpsnew', $imageshttpson, $imageshttpsoff);
         printsetting1($lang['resetSigDesc'], 'resetSigNew', $resetSigOn, $resetSigOff);
         printsetting1($lang['doublee'], 'doubleenew', $doubleeon, $doubleeoff);
         printsetting2($lang['pruneusers'], 'pruneusersnew', ((int)$SETTINGS['pruneusers']), 3);
@@ -658,6 +662,7 @@ if ($action == "settings") {
         input_onoff_setting( 'hideprivate', 'hidepriv' );
         input_onoff_setting( 'hide_banned', 'hidebannednew' );
         input_int_setting( 'hottopic', 'hottopicnew' );
+        input_onoff_setting( 'images_https_only', 'imageshttpsnew' );
         input_int_setting( 'indexshowbar', 'indexShowBarNew' );
         input_onoff_setting( 'index_stats', 'index_statsnew' );
         input_onoff_setting( 'ipreg', 'ipReg' );
