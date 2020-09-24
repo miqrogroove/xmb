@@ -190,17 +190,28 @@ class Manager {
         
         // Next, authenticate the login.
         foreach($this->mechanisms as $session) {
-            $data = $session->checkCredentials();
-            
+            // Fetch the user record
+            $data = $session->checkUsername();
+
             // Check for errors
             if ( 'good' == $data->status ) {
-                // We have authentication, now check authorization.
+                // Before we even authenticate the user, check if the account is authorized for login.
                 $this->status = loginAuthorization( $data->member );
                 if ( 'good' != $this->status ) {
                     $data->status = 'bad';
                 }
             } elseif ( 'bad' == $data->status ) {
-                $this->status = 'bad-password';
+                $this->status = 'bad-username';
+            } else {
+                // Nothing happened.
+            }
+
+            // Authenticate
+            if ( 'good' == $data->status ) {
+                $data = $session->checkPassword( $data );
+                if ( 'good' != $data->status ) {
+                    $this->status = 'bad-password';
+                }
             }
 
             // Update the Mechanism
@@ -300,14 +311,24 @@ class Manager {
  */
 interface Mechanism {
     /**
-     * Did the client provide a valid ID and secret that matches an XMB member?
+     * Did the client provide a valid ID that matches an XMB member?
      *
      * Called only when a guest client tries to login from an XMB native authentication system.
      * Foreign account systems should always treat this as a user navigation error.
      *
      * @return Data
      */
-    public function checkCredentials(): Data;
+    public function checkUsername(): Data;
+
+    /**
+     * Did the client provide a valid secret that matches the ID?
+     *
+     * Called only when a guest client tries to login from an XMB native authentication system.
+     * Foreign account systems should always treat this as a user navigation error.
+     *
+     * @return Data
+     */
+    public function checkPassword( Data $data ): Data;
 
     /**
      * Did the client respond to this mechanism in any previous visit?
@@ -421,34 +442,44 @@ class FormsAndCookies implements Mechanism {
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
     
-    public function checkCredentials(): Data {
+    public function checkUsername(): Data {
         $data = new Data;
         $uinput = postedVar('username', '', true, false);
-        $pinput = $_POST['password'];
 
-        if ( strlen($uinput) < self::USER_MIN_LEN || empty($pinput) ) {
-            $data->status = 'none';
+        if ( strlen( $uinput ) < self::USER_MIN_LEN ) {
             return $data;
         }
         
-        $pinput = md5( $pinput );
-
         $member = \XMB\SQL\getMemberByName( $uinput );
         
         if ( empty( $member ) ) {
             $data->status = 'bad';
             return $data;
         }
-        if ( $member['password'] != $pinput ) {
-            auditBadLogin( $member );
+        
+        $data->member = &$member;
+        $data->status = 'good';
+        $data->permanent = formYesNo('trust') == 'yes';
+        return $data;
+    }
+
+    public function checkPassword( Data $data ): Data {
+        $pinput = $_POST['password'];
+
+        if ( empty( $pinput ) ) {
+            return new Data;
+        }
+        
+        $pinput = md5( $pinput );
+
+        if ( $data->member['password'] != $pinput ) {
+            auditBadLogin( $data->member );
+            $data = new Data;
             $data->status = 'bad';
             return $data;
         }
         
-        $member['password'] = '';
-        $data->member = &$member;
-        $data->status = 'good';
-        $data->permanent = formYesNo('trust') == 'yes';
+        $data->member['password'] = '';
         return $data;
     }
 

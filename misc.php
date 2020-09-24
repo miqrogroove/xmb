@@ -131,6 +131,7 @@ switch($action) {
                     break;
                 case 'login-no-input':
                 case 'bad-password':
+                case 'bad-username':
                 default:
                     eval('$misc = "'.template('misc_login_incorrectdetails').'";');
                     eval('$misc .= "'.template('misc_login').'";');

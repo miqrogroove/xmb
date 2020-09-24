@@ -203,6 +203,7 @@ function loginAuthorization( array $member ): string {
     global $serror;
     
     $guess_limit = 10;
+    $admin_limit = 1000;
     $lockout_timer = 3600 * 2;
     
     if ($serror == 'ip' && $member['status'] != 'Super Administrator' && $member['status'] != 'Administrator') {
@@ -213,8 +214,10 @@ function loginAuthorization( array $member ): string {
         auditBadLogin( $member );
         if ( $member['status'] != 'Super Administrator' ) {
             return 'password-locked';
+        } else if ( $member['bad_login_count'] >= $admin_limit ) {
+            return 'password-locked';
         } else {
-            // Super Admin has immunity to prevent denial of service.
+            // Super Admin has partial immunity to mitigate denial of service.
             return 'good';
         }
     } else {
@@ -234,10 +237,10 @@ function auditBadLogin( array $member ) {
     $reset_timer = 86400;
 
     if ( time() >= $member['bad_login_date'] + $reset_timer ) {
-        // Less than 10 failures in 24 hours, reset.
+        // Allowed less than 10 failures.  After 24 hours, reset.
         \XMB\SQL\resetLoginCounter( $member['username'], time() );
     } elseif ( $member['bad_login_count'] >= $guess_limit && time() >= $member['bad_login_date'] + $lockout_timer ) {
-        // More than 10 failures in 2 hours, reset (and unlock user).
+        // User had more than 10 failures and should be locked out.  After 2 hours, reset.
         \XMB\SQL\resetLoginCounter( $member['username'], time() );
     } else {
         $count = \XMB\SQL\raiseLoginCounter( $member['username'] );
