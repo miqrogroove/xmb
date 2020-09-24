@@ -415,6 +415,34 @@ function setNewPassword( string $username, string $password ) {
  *
  * @since 1.9.12
  */
+function setLastvisit( string $username, int $timestamp ) {
+    global $db;
+    
+    $sqluser = $db->escape( $username );
+
+    $db->query("UPDATE ".X_PREFIX."members SET lastvisit = $timestamp WHERE username = '$sqluser'");
+}
+
+/**
+ * Increments the user's post total.
+ *
+ * Also resets the user's lastvisit timestamp because otherwise elevateUser() allows it to be 60 seconds old.
+ *
+ * @since 1.9.12
+ */
+function raisePostCount( string $username, int $timestamp ) {
+    global $db;
+    
+    $sqluser = $db->escape( $username );
+
+    $db->query("UPDATE ".X_PREFIX."members SET postnum = postnum + 1, lastvisit = $timestamp WHERE username = '$sqluser'");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
 function addSetting( string $name, string $value ) {
     global $db;
 

@@ -109,7 +109,8 @@ function elevateUser($force_inv = false, $serror = '') {
         }
         // Save some write locks by updating in 60-second intervals.
         if (abs(time() - (int)$self['lastvisit']) > 60) {
-            $db->query("UPDATE ".X_PREFIX."members SET lastvisit = $onlinetime WHERE username = '$xmbuser'");
+            \XMB\SQL\setLastvisit( $self['username'], $onlinetime );
+            $self['lastvisit'] = $onlinetime;
         }
     } else {
         if (!defined('X_GUEST')) {

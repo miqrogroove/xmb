@@ -201,7 +201,7 @@ $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 $expire = $onlinetime + X_ONLINE_TIMER;
 if ( false === strpos( $oldtopics, "|$lastPid|" ) ) {
-    if ( empty( $oldtopics) ) {
+    if ( empty( $oldtopics ) ) {
         $oldtopics = "|$lastPid|";
     } else {
         $oldtopics .= "$lastPid|";

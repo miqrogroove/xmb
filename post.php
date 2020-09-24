@@ -582,7 +582,14 @@ switch($action) {
                 unset($where);
 
                 if ( X_MEMBER ) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
+                    \XMB\SQL\raisePostCount( $username, $onlinetime );
+                    $expire = $onlinetime + X_ONLINE_TIMER;
+                    if ( empty( $oldtopics ) ) {
+                        $oldtopics = "|$pid|";
+                    } else {
+                        $oldtopics .= "$pid|";
+                    }
+                    put_cookie( 'oldtopics', $oldtopics, $expire );
                 }
 
                 // Send subscription notifications
@@ -1044,7 +1051,14 @@ switch($action) {
                 }
 
                 if ( ! $quarantine ) {
-                    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$sql_username'");
+                    \XMB\SQL\raisePostCount( $username, $onlinetime );
+                    $expire = $onlinetime + X_ONLINE_TIMER;
+                    if ( empty( $oldtopics ) ) {
+                        $oldtopics = "|$pid|";
+                    } else {
+                        $oldtopics .= "$pid|";
+                    }
+                    put_cookie( 'oldtopics', $oldtopics, $expire );
                 }
             }
 
