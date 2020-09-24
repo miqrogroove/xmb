@@ -445,7 +445,7 @@ switch($action) {
         }
 
         $where[] = "lastvisit != 0";
-        if ( 'yes' == $SETTINGS['hide_banned'] ) {
+        if ( 'on' == $SETTINGS['hide_banned'] ) {
             $where[] = "status != 'Banned' ";
         }
         $q = implode( ' AND ', $where );
