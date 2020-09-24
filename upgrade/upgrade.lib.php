@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
+ * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -68,6 +68,8 @@ function xmb_upgrade() {
         case 6:
             upgrade_schema_to_v7();
         case 7:
+            upgrade_schema_to_v8();
+        case 8:
             //Future use. Break only before case default.
             break;
         default:

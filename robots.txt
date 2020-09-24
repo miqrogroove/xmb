@@ -1,4 +1,4 @@
-# XMB 1.9.11 Search Engine Optimization File
+# XMB 1.9.12 Search Engine Optimization File
 #
 # To help search engines avoid members-only areas of your board, you should
 # move this file to the root path of your website.  If your board is

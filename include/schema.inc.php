@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
+ * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define( 'XMB_SCHEMA_VER', 7 );
+define( 'XMB_SCHEMA_VER', 8 );
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
