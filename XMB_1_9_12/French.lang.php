@@ -1,7 +1,7 @@
 <?php
 /** Made by:    SmOkInQC - webmaster@smokinteam.info
  * eXtreme Message Board
- * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
+ * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -287,10 +287,15 @@ $lang['editedby'] = "Édité par :<br /><span class=\"smalltxt\">Séléctionnez \"Ou
 $lang['editpostmsg'] = "Merci beaucoup, votre message a bien été édité. Maintenant, vous allez être redirigé vers le sujet.";
 $lang['editprofile_backtocp'] = "Retour au Panneau d'Administration";
 $lang['editprofile_lastlogin'] = "Votre dernière connexion:";
+$lang['editprofile_lockout'] = "User is locked out. Check here to reset:";
+$lang['editprofile_loginfaildate'] = "Failed Login Date:";
+$lang['editprofile_loginfails'] = "Failed Login Count:";
 $lang['editprofile_minfo'] = "Plus d'info";
 $lang['editprofile_postsdeleted'] = "Tous les messages et tous les sujets ont été correctement supprimés du forum.";
 $lang['editprofile_regdate'] = "Date d'enregistrement:";
 $lang['editprofile_regip'] = "IP à l'enregistrement:";
+$lang['editprofile_sessfaildate'] = "Failed Session Date:";
+$lang['editprofile_sessfails'] = "Failed Session Count:";
 $lang['editprofile_userid'] = "ID de l'utilisateur:";
 $lang['editprosearch'] = "Chercher";
 $lang['emailpw'] = "Votre mot de passe vient de vous être envoyé par E-mail.";
@@ -383,6 +388,7 @@ $lang['hottopiceval'] = "plus de \$hottopic réponses";
 $lang['ignorelist'] = "Liste à ignorer";
 $lang['ignoremsg'] = "Liste à ignorer :<br /><span class=\"smalltxt\">Séparer les noms par des virgules (i.e. \"Nessie, TSUNAMI, coco,\"). Ne pas oublier la virgule après le dernier nom.</span>";
 $lang['ignoreupdate'] = "Liste à Ignorer mise à jour avec succès !";
+$lang['images_https_only'] = "Avatars and [img] Tags HTTPS Only:<br /><span class=\"smalltxt\">Helps prevent browser security warnings.</span>";
 $lang['imdeletedmsg'] = "Le message privé U2U a été effacé.";
 $lang['imgdir'] = "Répertoire des fichiers Images:";
 $lang['imgdiradm'] = "Répertoire des fichiers Images des Administrateurs:";

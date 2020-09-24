@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
+ * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -287,10 +287,15 @@ $lang['editedby'] = "Edited by...:<br /><span class=\"smalltxt\">Select \"on\" i
 $lang['editpostmsg'] = "Thank you, your message has been edited. You are now being forwarded to the thread";
 $lang['editprofile_backtocp'] = "Return to Administration Panel";
 $lang['editprofile_lastlogin'] = "Last Login:";
+$lang['editprofile_lockout'] = "User is locked out. Check here to reset:";
+$lang['editprofile_loginfaildate'] = "Failed Login Date:";
+$lang['editprofile_loginfails'] = "Failed Login Count:";
 $lang['editprofile_minfo'] = "More Info";
 $lang['editprofile_postsdeleted'] = "All posts and threads for this user have been successfully deleted from the board.";
 $lang['editprofile_regdate'] = "Registration Date:";
 $lang['editprofile_regip'] = "Sign up IP:";
+$lang['editprofile_sessfaildate'] = "Failed Session Date:";
+$lang['editprofile_sessfails'] = "Failed Session Count:";
 $lang['editprofile_userid'] = "Username ID:";
 $lang['editprosearch'] = "Search";
 $lang['emailpw'] = "Your password request has been received, and details sent to your e-mail address on record.";
@@ -383,6 +388,7 @@ $lang['hottopiceval'] = "more than \$hottopic replies";
 $lang['ignorelist'] = "Ignore List";
 $lang['ignoremsg'] = "Ignore List:<br /><span class=\"smalltxt\">Separate names with commas (i.e. \"Person 1, Person 2,\"). Make sure you leave a comma after the last name.</span>";
 $lang['ignoreupdate'] = "Ignore list updated successfully!";
+$lang['images_https_only'] = "Avatars and [img] Tags HTTPS Only:<br /><span class=\"smalltxt\">Helps prevent browser security warnings.</span>";
 $lang['imdeletedmsg'] = "U2U(s) successfully deleted. You will now be taken to your IM list.";
 $lang['imgdir'] = "Image Directory:";
 $lang['imgdiradm'] = "Admin Image Directory:";

@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 1  Do not use this unstable software after 15 October 2020.
+ * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -287,10 +287,15 @@ $lang['editedby'] = "Bewerkt door...:<br /><span class=\"smalltxt\">Select \"on\
 $lang['editpostmsg'] = "uw bericht is bewerkt. u gaat nu terug naar het onderwerp";
 $lang['editprofile_backtocp'] = "Ga terug naar het  Admin Panel";
 $lang['editprofile_lastlogin'] = "Laatst ingelogd:";
+$lang['editprofile_lockout'] = "User is locked out. Check here to reset:";
+$lang['editprofile_loginfaildate'] = "Failed Login Date:";
+$lang['editprofile_loginfails'] = "Failed Login Count:";
 $lang['editprofile_minfo'] = "Meer Info";
 $lang['editprofile_postsdeleted'] = "alle posts en topics van deze gruiker zijn verwijderd.";
 $lang['editprofile_regdate'] = "Registratie Datum:";
 $lang['editprofile_regip'] = "IP adres op moment van inschrijven:";
+$lang['editprofile_sessfaildate'] = "Failed Session Date:";
+$lang['editprofile_sessfails'] = "Failed Session Count:";
 $lang['editprofile_userid'] = "Gebruikers ID:";
 $lang['editprosearch'] = "Zoek";
 $lang['emailpw'] = "uw wachtwoord is gereset, alle detail zijn naar uw e-mail address verstuurd.";
@@ -383,6 +388,7 @@ $lang['hottopiceval'] = "meer dan  \$hottopic replies";
 $lang['ignorelist'] = "Ignore Lijst";
 $lang['ignoremsg'] = "Ignore Lijst:<br /><span class=\"smalltxt\">scheid de namen met een komma (i.e. \"Person 1, Person 2,\"). vergeet de komma  niet achter elke naam.</span>";
 $lang['ignoreupdate'] = "Ignore lijst bijgewerkt!";
+$lang['images_https_only'] = "Avatars and [img] Tags HTTPS Only:<br /><span class=\"smalltxt\">Helps prevent browser security warnings.</span>";
 $lang['imdeletedmsg'] = "U2U(s) verwijderd. u gaat nu terug naar de inbox.";
 $lang['imgdir'] = "bijlage  Directory:";
 $lang['imgdiradm'] = "Administrator plaatjes map:";
