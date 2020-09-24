@@ -154,7 +154,16 @@ $dayselect
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[editprofile_minfo]</td>
-<td bgcolor="{$THEME['altbg2']}"><strong>$lang[editprofile_userid]</strong> $member[uid]<br />$lang[editprofile_lastlogin] $lastlogdate<br />$lang[editprofile_regdate] $registerdate<br />$lang[editprofile_regip] <a href="https://whois.domaintools.com/$member[regip]" onclick="window.open(this.href); return false;">$member[regip]</a></td>
+<td bgcolor="{$THEME['altbg2']}">
+ <strong>{$lang['editprofile_userid']}</strong> $member[uid]<br />
+ {$lang['editprofile_lastlogin']} $lastlogdate<br />
+ {$lang['editprofile_regdate']} $registerdate<br />
+ {$lang['editprofile_regip']} <a href="https://whois.domaintools.com/$member[regip]" onclick="window.open(this.href); return false;">$member[regip]</a><br />
+ {$lang['editprofile_loginfails']} $loginfails<br />
+ {$lang['editprofile_loginfaildate']} $loginfaildate<br />
+ {$lang['editprofile_sessfails']} $sessfails<br />
+ {$lang['editprofile_sessfaildate']} $sessfaildate
+</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="{$THEME['altbg1']}" width="22%">$lang[editprosearch]</td>

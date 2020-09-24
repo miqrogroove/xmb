@@ -337,12 +337,20 @@ function resetSessionCounter( string $username, int $date ) {
  * SQL command
  *
  * @since 1.9.12
- * @return mixed Query result.
+ * @return array List of row arrays.
  */
-function getSuperEmails() {
+function getSuperEmails(): array {
     global $db;
     
-    return $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
+    $query = $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
+    
+    $result = [];
+    while ( $admin = $db->fetch_array( $query ) ) {
+        $result[] = $admin;
+    }
+    $db->free_result( $query );
+    
+    return $result;
 }
 
 /**
@@ -436,6 +444,19 @@ function raisePostCount( string $username, int $timestamp ) {
     $sqluser = $db->escape( $username );
 
     $db->query("UPDATE ".X_PREFIX."members SET postnum = postnum + 1, lastvisit = $timestamp WHERE username = '$sqluser'");
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12
+ */
+function unlockMember( string $username ) {
+    global $db;
+    
+    $sqluser = $db->escape( $username );
+
+    $db->query("UPDATE ".X_PREFIX."members SET bad_login_count = 0 WHERE username = '$sqluser'");
 }
 
 /**

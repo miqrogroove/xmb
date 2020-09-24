@@ -134,6 +134,33 @@ if (noSubmit('editsubmit')) {
         $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
+    $loginfails = $member['bad_login_count'];
+    if ( 0 == (int) $loginfails ) {
+        $loginfails = $lang['textnone'];
+        $loginfaildate = $lang['textnone'];
+    } else {
+        $loginfaildate = gmdate( $dateformat, $member['bad_login_date'] + ($addtime * 3600) + ($timeoffset * 3600) );
+        $loginfailtime = gmdate( $timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($addtime * 3600) );
+        $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
+    }
+
+    $sessfails = $member['bad_session_count'];
+    if ( 0 == (int) $sessfails ) {
+        $sessfails = $lang['textnone'];
+        $sessfaildate = $lang['textnone'];
+    } else {
+        $sessfaildate = gmdate( $dateformat, $member['bad_session_date'] + ($addtime * 3600) + ($timeoffset * 3600) );
+        $sessfailtime = gmdate( $timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($addtime * 3600) );
+        $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
+    }
+
+    $guess_limit = 10;
+    $lockout_timer = 3600 * 2;
+    
+    if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
+        $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
+    }
+
     $currdate = gmdate($timecode, $onlinetime + ($addtime * 3600));
     $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
@@ -358,6 +385,11 @@ if (noSubmit('editsubmit')) {
         // Force logout and delete cookies.
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
         $session->logoutAll( $rawuser );
+    }
+
+    $unlock = formYesNo('unlock');
+    if ( 'yes' == $unlock ) {
+        \XMB\SQL\unlockMember( $rawuser );
     }
 
     message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);

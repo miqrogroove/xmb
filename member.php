@@ -447,7 +447,7 @@ switch($action) {
 
                     if ($SETTINGS['notifyonreg'] != 'off') {
                         $mailquery = \XMB\SQL\getSuperEmails();
-                        while($admin = $db->fetch_array($mailquery)) {
+                        foreach ( $mailquery as $admin ) {
                             $translate = $lang2[$admin['langfile']];
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
                                 $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
@@ -457,7 +457,6 @@ switch($action) {
                                 xmb_mail( $adminemail, $translate['textnewmember'], $body, $translate['charset'] );
                             }
                         }
-                        $db->free_result($mailquery);
                     }
 
                     if ($SETTINGS['emailcheck'] == 'on') {

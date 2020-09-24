@@ -287,10 +287,15 @@ $lang['editedby'] = "Edited by...:<br /><span class=\"smalltxt\">Select \"on\" i
 $lang['editpostmsg'] = "Thank you, your message has been edited. You are now being forwarded to the thread";
 $lang['editprofile_backtocp'] = "Return to Administration Panel";
 $lang['editprofile_lastlogin'] = "Last Login:";
+$lang['editprofile_lockout'] = "User is locked out. Check here to reset:";
+$lang['editprofile_loginfaildate'] = "Failed Login Date:";
+$lang['editprofile_loginfails'] = "Failed Login Count:";
 $lang['editprofile_minfo'] = "More Info";
 $lang['editprofile_postsdeleted'] = "All posts and threads for this user have been successfully deleted from the board.";
 $lang['editprofile_regdate'] = "Registration Date:";
 $lang['editprofile_regip'] = "Sign up IP:";
+$lang['editprofile_sessfaildate'] = "Failed Session Date:";
+$lang['editprofile_sessfails'] = "Failed Session Count:";
 $lang['editprofile_userid'] = "Username ID:";
 $lang['editprosearch'] = "Search";
 $lang['emailpw'] = "Your password request has been received, and details sent to your e-mail address on record.";

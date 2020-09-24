@@ -211,7 +211,12 @@ function loginAuthorization( array $member ): string {
         return 'member-banned';
     } else if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
         auditBadLogin( $member );
-        return 'password-locked';
+        if ( $member['status'] != 'Super Administrator' ) {
+            return 'password-locked';
+        } else {
+            // Super Admin has immunity to prevent denial of service.
+            return 'good';
+        }
     } else {
         return 'good';
     }
@@ -225,9 +230,14 @@ function loginAuthorization( array $member ): string {
  */
 function auditBadLogin( array $member ) {
     $guess_limit = 10;
+    $lockout_timer = 3600 * 2;
     $reset_timer = 86400;
-    
-    if ( time() > $member['bad_login_date'] + $reset_timer ) {
+
+    if ( time() >= $member['bad_login_date'] + $reset_timer ) {
+        // Less than 10 failures in 24 hours, reset.
+        \XMB\SQL\resetLoginCounter( $member['username'], time() );
+    } elseif ( $member['bad_login_count'] >= $guess_limit && time() >= $member['bad_login_date'] + $lockout_timer ) {
+        // More than 10 failures in 2 hours, reset (and unlock user).
         \XMB\SQL\resetLoginCounter( $member['username'], time() );
     } else {
         $count = \XMB\SQL\raiseLoginCounter( $member['username'] );
@@ -236,14 +246,13 @@ function auditBadLogin( array $member ) {
             $lang2 = loadPhrases(array('charset','security_subject','login_audit_mail'));
 
             $mailquery = \XMB\SQL\getSuperEmails();
-            while($admin = $db->fetch_array($mailquery)) {
+            foreach ( $mailquery as $admin ) {
                 $translate = $lang2[$admin['langfile']];
                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                 $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
                 $body = "{$translate['login_audit_mail']}\n\n$name";
                 xmb_mail( $adminemail, $translate['security_subject'], $body, $translate['charset'] );
             }
-            $db->free_result($mailquery);
         }
     }
 }
