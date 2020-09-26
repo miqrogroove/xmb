@@ -5210,8 +5210,10 @@ $lang[textsmiliesare] $allowsmilies<br />
 $lang[textbbcodeis] $allowbbcode<br />
 $lang[textimgcodeis] $allowimgcode</span></div>
 $smilies
-<td bgcolor="{$THEME['altbg2']}" width="56%" class="tablerow"> <div align="center"><textarea rows="10" cols="80" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div></td>
-$quickbbcode
+<td bgcolor="{$THEME['altbg2']}" width="56%" class="tablerow">
+ <div align="center"><textarea rows="10" cols="80" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div>
+ $quickbbcode
+</td>
 <td width="20%" height="101" bgcolor="{$THEME['altbg2']}" class="tablerow"> <div align="center">
 <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
 <tr>
