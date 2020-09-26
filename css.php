@@ -36,6 +36,7 @@ if ( empty( $THEME ) ) {
 more_theme_vars();
 extract( $THEME );
 
+$comment_output = false; // If true, CSS will be invalid.
 eval('$css = "'.template('css').'";');
 
 header("Content-type: text/css");

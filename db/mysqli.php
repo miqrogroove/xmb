@@ -241,7 +241,7 @@ class dbstuff {
      * @param string $rawstring
      * @return string
      */
-    function escape($rawstring) {
+    public function escape($rawstring) {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( $rawstring );
         restore_error_handler();
@@ -260,20 +260,20 @@ class dbstuff {
      * @since 1.9.11.12
      * @param string $sql Read/Write Variable
      */
-    function escape_fast(&$sql) {
+    public function escape_fast(&$sql) {
         set_error_handler($this->errcallb);
         $sql = $this->link->real_escape_string( $sql );
         restore_error_handler();
     }
 
-    function like_escape($rawstring) {
+    public function like_escape($rawstring) {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring) );
         restore_error_handler();
         return $return;
     }
 
-    function regexp_escape($rawstring) {
+    public function regexp_escape($rawstring) {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( preg_quote( $rawstring ) );
         restore_error_handler();
@@ -287,7 +287,7 @@ class dbstuff {
      * @param bool $panic XMB will die and use dbstuff::panic() in case of any MySQL error unless this param is set to FALSE.
      * @return mixed Returns a MySQL resource or a bool, depending on the query type and error status.
      */
-    function query($sql, $panic = true) {
+    public function query($sql, $panic = true) {
         $this->start_timer();
         $query = $this->link->query( $sql );
         if ( false === $query ) {
@@ -443,7 +443,7 @@ class dbstuff {
      * Its purpose was ambiguous and usage seemed fully unnecessary.
      */
     function time($time=NULL) {
-        trigger_error( 'dbstuff:time() is deprecated in this version of XMB', E_USER_DEPRECATED );
+        trigger_error( 'dbstuff::time() is deprecated in this version of XMB', E_USER_DEPRECATED );
         if ($time === NULL) {
             $time = time();
         }
