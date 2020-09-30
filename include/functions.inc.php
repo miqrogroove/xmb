@@ -2491,7 +2491,7 @@ function nonce_use($key, $nonce, $expire = 0) {
  */
 function get_img_regexp( bool $https_only = false ): string {
     if ( $https_only ) {
-        return 'https:\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
+        return '(https):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
     } else {
         return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
     }
