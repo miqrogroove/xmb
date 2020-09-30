@@ -75,7 +75,7 @@ function uploadedFile( string $varname, int $pid = 0, bool $quarantine = false )
     if ( ! $quarantine ) {
         $path = getFullPathFromSubdir( '' );
 
-        if ( $path !== false ) {
+        if ( $path != '' ) {
             if ( is_dir( $path ) ) {
                 $usedb = false;
             } else {
@@ -133,11 +133,11 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
     global $attachmentErrors, $self, $SETTINGS;
 
     $usedb = true;
-    $path = false;
+    $path = '';
     if ( ! $quarantine ) {
         $path = getFullPathFromSubdir( '' );
 
-        if ( $path !== false ) {
+        if ( $path != '' ) {
             if ( is_dir( $path ) ) {
                 $usedb = false;
             } else {
@@ -497,7 +497,7 @@ function copyByPost( int $frompid, int $topid ) {
 
 function private_copyDiskFile($fromaid, $toaid, $subdir) {
     $path = getFullPathFromSubdir($subdir);
-    if ($path !== FALSE) {
+    if ( $path != '' ) {
         if (is_file($path.$fromaid)) {
             copy($path.$fromaid, $path.$toaid);
         }
@@ -579,7 +579,7 @@ function approve( int $oldpid, int $newpid ) {
 
     $path = getFullPathFromSubdir( '' );
     $usedb = true;
-    if ( $path !== false ) {
+    if ( $path != '' ) {
         if ( is_dir( $path ) ) {
             $usedb = false;
         }
@@ -704,7 +704,7 @@ function private_deleteByIDs( array $aid_list, bool $quarantine = false ) {
         $query = \XMB\SQL\getAttachmentPaths( $aid_list );
         while($attachment = $db->fetch_array($query)) {
             $path = getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
-            if ($path !== FALSE) {
+            if ( $path != '' ) {
                 $path .= $attachment['aid'];
                 if (is_file($path)) {
                     unlink($path);
@@ -911,14 +911,14 @@ function getNewSubdir($date='') {
  * @since 1.9.11
  * @param string $subdir The name typically has no leading or trailing slashes, e.g. 'dir1' or 'dir2/sub3'
  * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created.
- * @return string|bool FALSE if the file storage path is empty.
+ * @return string May be empty if file storage not enabled.
  */
-function getFullPathFromSubdir( string $subdir, bool $mkdir = false ) {
+function getFullPathFromSubdir( string $subdir, bool $mkdir = false ): string {
     global $SETTINGS;
 
     $path = $SETTINGS['files_storage_path'];
     if ( '' == $path ) {
-        return false;
+        return $path;
     }
     if (substr($path, -1) != '/') {
         $path .= '/';
@@ -939,19 +939,31 @@ function getFullPathFromSubdir( string $subdir, bool $mkdir = false ) {
     return $path;
 }
 
-function getTempFile($path=FALSE) {
+/**
+ * Creates a file appropriate for writing temporary data to disk.
+ *
+ * @since 1.9.11
+ * @param string $path Optional. Directory of preferred temporary file location.
+ * @return string Full path to the temporary file.
+ */
+function getTempFile( string $path = '' ): string {
     global $attachmentErrors;
 
-    $filepath = FALSE;
-    if ($path !== FALSE) {
-        $filepath = @tempnam($path, 'xmb-');
+    $filepath = false;
+    if ( $path != '' ) {
+        $filepath = @tempnam( $path, 'xmb-' );
     }
-    if (!is_writable($filepath)) {
-        $filepath = @tempnam('', 'xmb-');
+    if ( false === $filepath || ! is_writable( $filepath ) ) {
+        if ( DEBUG ) {
+            $filepath = tempnam( '', 'xmb-' );
+        } else {
+            $filepath = @tempnam( '', 'xmb-' );
+        }
     }
-    if (!is_writable($filepath)) {
+    if ( false === $filepath || ! is_writable( $filepath ) ) {
         header('HTTP/1.0 500 Internal Server Error');
-        exit($attachmentErrors[X_NO_TEMP_FILE]);
+        echo $attachmentErrors[X_NO_TEMP_FILE];
+        trigger_error( 'XMB was unable to create a temporary file.  Enable DEBUG for more info.', E_USER_ERROR );
     }
     return $filepath;
 }
@@ -1159,13 +1171,13 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         if (strlen($attach['attachment']) != $attach['filesize']) {
             return FALSE;
         }
-        $path = false;
+        $path = '';
         // IDs in the two tables may collide, so keep quarantined files strictly outside of the normal path.
         if ( ! $quarantine ) {
             $subdir = getNewSubdir( $attach['updatestamp'] );
             $path = getFullPathFromSubdir( $subdir, true );
         }
-        if ($path === FALSE) {
+        if ( '' == $path ) {
             $path = getTempFile();
         } else {
             $newfilename = $aid;
@@ -1180,6 +1192,9 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         unset($attach['attachment']);
     } else {
         $path = getFullPathFromSubdir($attach['subdir']);
+        if ( '' == $path ) {
+            return false;
+        }
         $path .= $aid;
         if (!is_file($path)) {
             return FALSE;
