@@ -99,12 +99,16 @@ if (!is_file('./upgrade.lib.php')) {
 	trigger_error('Admin attempted upgrade with upgrade.lib.php missing.', E_USER_ERROR);
 }
 
+$trigger_old_schema = $SETTINGS['schema_version'];
+
 require('./upgrade.lib.php');
 xmb_upgrade();
 
-
-show_finished( '<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />' );
-
+if ( $trigger_old_schema < 5 ) {
+    show_finished( '<b>Done! :D</b><br />Now <a href="../misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />' );
+} else {
+    show_finished( '<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />' );
+}
 echo "\nDone.</body></html>";
 
 /**

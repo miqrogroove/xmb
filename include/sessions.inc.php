@@ -61,14 +61,14 @@ class Manager {
     private $mechanisms;
     private $status;    // Login failure code, or 'good'.
     private $saved;     // Data object.
-    
+
     /**
-     * @param string $mode Must be one of 'login', 'logout', or 'resume'
+     * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      */
-    public function __construct(string $mode) {
+    public function __construct( string $mode ) {
         $this->mechanisms = [new FormsAndCookies];
         $this->status = '';
-        
+
         switch ($mode) {
         case 'login':
             $this->login();
@@ -76,13 +76,17 @@ class Manager {
         case 'logout':
             $this->logout();
             break;
+        case 'disabled':
+            $this->status = 'session-no-input';
+            $this->saved = new Data;
+            break;
         case 'resume':
         default:
             $this->resume();
             break;
         }
     }
-    
+
     /**
      * Session Status
      *
@@ -101,7 +105,7 @@ class Manager {
     public function getMember(): array {
         return $this->saved->member;
     }
-    
+
     /**
      * Session Lists
      *
@@ -265,7 +269,7 @@ class Manager {
         // Authenticate any session token.
         foreach($this->mechanisms as $session) {
             $data = $session->checkSavedSession();
-            
+
             // Check for errors
             if ( 'good' == $data->status ) {
                 // We have authentication, now check authorization.
@@ -276,7 +280,7 @@ class Manager {
             } elseif ( 'bad' == $data->status ) {
                 $this->status = 'invalid-session';
             }
-            
+
             // Update the Mechanism
             if ( 'good' == $data->status ) {
                 // Current session found.  Done looping.

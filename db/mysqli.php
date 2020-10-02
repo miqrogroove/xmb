@@ -212,18 +212,31 @@ class dbstuff {
             echo '</em></pre>';
         } else {
             echo "The system has failed to process your request.<br />\n";
-            echo "Details may be logged if LOG_MYSQL_ERRORS was set.<br />\n";
-            echo "To display details, please set the DEBUG flag to true in config.php.<br />\n";
+            if ( LOG_MYSQL_ERRORS ) {
+                echo "Please check the error log for details.<br />\n";
+            } else {
+                echo "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
+            }
+            if ( defined( 'X_SADMIN' ) && X_SADMIN && ! DEBUG ) {
+                echo "To display details, please set DEBUG to true in config.php.<br />\n";
+            }
     	}
         if (LOG_MYSQL_ERRORS) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
             if (strlen($sql) > 0) {
                 if ( ( 1153 == $errno || 2006 == $errno ) && strlen( $sql ) > 16000) {
-                    $log .= "In the following query (log truncated):\n" . substr($sql, 0, 16000);
+                    $log .= "In the following query (log truncated):\n" . substr($sql, 0, 16000) . "\n";
                 } else {
-                    $log .= "In the following query:\n$sql";
+                    $log .= "In the following query:\n$sql\n";
                 }
             }
+
+            $trace = debug_backtrace();
+            $depth = 2; // Go back before dbstuff::panic() and before dbstuff::query() for simplicity.
+            $filename = $trace[$depth]['file'];
+            $linenum = $trace[$depth]['line'];
+            $log .= "Executed by {$filename} on line {$linenum}";
+
             if (!ini_get('log_errors')) {
                 ini_set('log_errors', TRUE);
                 ini_set('error_log', 'error_log');

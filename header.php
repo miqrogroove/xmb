@@ -328,7 +328,7 @@ if ($db->num_rows($squery) == 0) {
 }
 // Check schema for upgrade compatibility back to 1.8 SP2.
 $row = $db->fetch_array( $squery );
-if ( X_SCRIPT == 'upgrade.php' && isset( $row['langfile'] ) ) {
+if ( isset( $row['langfile'] ) ) {
     // Schema version <= 4 has only one row.
     foreach ( $row as $key => $val ) {
         $SETTINGS[$key] = $val;
@@ -429,7 +429,10 @@ if ($SETTINGS['ip_banning'] == 'on') {
 
 // Check other access restrictions
 if ( '' == $serror ) {
-    if ( ( $action == 'login' || $action == 'lostpw' ) && X_SCRIPT == 'misc.php' ) {
+    if ( $SETTINGS['schema_version'] < 5 ) {
+        // During upgrade of session system, no features are available.
+        $serror = 'bstatus';
+    } elseif ( ( $action == 'login' || $action == 'lostpw' ) && X_SCRIPT == 'misc.php' ) {
         // Allow login
     } elseif ( X_SCRIPT == 'css.php' || X_SCRIPT == 'lost.php' ) {
         // Allow stylesheets and password resets
@@ -448,7 +451,9 @@ if ( '' == $serror ) {
 
 // Authenticate session or login credentials.
 $force_inv = false;
-if ( X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'] ) ) {
+if ( $SETTINGS['schema_version'] < 5 ) {
+    $mode = 'disabled';
+} else if ( X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'] ) ) {
     $mode = 'login';
 } else if ( $action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php' ) {
     $mode = 'login';
@@ -622,7 +627,10 @@ unset( $row );
 more_theme_vars();
 extract( $THEME );
 
-$css = "<link rel='stylesheet' type='text/css' href='{$full_url}css.php?id={$THEME['themeid']}&amp;v={$THEME['version']}' />";
+$css = '';
+if ( $SETTINGS['schema_version'] >= 6 ) {
+    $css = "<link rel='stylesheet' type='text/css' href='{$full_url}css.php?id={$THEME['themeid']}&amp;v={$THEME['version']}' />";
+}
 
 // additional CSS to load?
 if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
