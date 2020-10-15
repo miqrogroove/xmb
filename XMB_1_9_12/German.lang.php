@@ -611,7 +611,7 @@ $lang['piconexists'] = 'Beitragsicon existiert bereits';
 $lang['picons'] = "Beitragsicons:<br /><span class=\"smalltxt\">Nur Moderatoren können Icons reservieren und deren Namen \"rsvd\" hinzufügen.</span>";
 $lang['piconshlp'] = "<span class=\"smalltxt\">Um eine reservierte Beitragsicon zu erzeugen, fügen Sie dem Iconnamen \"rsvd\" hinzu.</span>";
 $lang['plaintext'] = "Plain Text";
-$lang['plogtuf'] = "Dieses Feature ist nicht verfügbar wenn Sie angemeldet sind. Melden Sie sich ab, bevor Sie sich unter einem anderen Namen registrieren. Beachten Sie bitte, dass aus Sicherheitsgründen eine erneute Registrierung nicht innerhalb von 24 Stunden vorgenommen werden kann.";
+$lang['plogtuf'] = "Dieses Feature ist nicht verfügbar wenn Sie angemeldet sind. Melden Sie sich ab, bevor Sie sich unter einem anderen Namen registrieren.";
 $lang['poll'] = "Neue Umfrage erstellen";
 $lang['pollanswers'] = "Umfrage-Antworten (eine pro Zeile, max. 10):";
 $lang['pollprefix'] = "pollsmall.gif";

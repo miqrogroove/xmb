@@ -611,7 +611,7 @@ $lang['piconexists'] = 'El PostIcon ya existe.';
 $lang['picons'] = "Iconos del mensaje<br /><span class=\"smalltxt\">Para iconos sólo moderadores pueden usar añadir 'rsvd' al nombre del icono.</span>:";
 $lang['piconshlp'] = "<span class=\"smalltxt\">Para agregar in PostIcon reservado, agregue 'rsvd' al nombre del icono.</span>";
 $lang['plaintext'] = "Plain Text";
-$lang['plogtuf'] = "Esta operación no está disponible mientras estás conectado, por favor, desconéctate antes de intentar registrarte otra vez. Ten en cuenta que sólo puedes registrarte una vez cada 24 horas desde la misma computadora.";
+$lang['plogtuf'] = "Esta operación no está disponible mientras estás conectado, por favor, <a href='misc.php?action=logout'>desconéctate</a> antes de intentarlo de nuevo.";
 $lang['poll'] = "Encuesta:";
 $lang['pollanswers'] = "Respuestas posibles (Escribe 1 por linea, máximo 10):";
 $lang['pollprefix'] = "pollsmall.gif";

@@ -611,7 +611,7 @@ $lang['piconexists'] = "Cette icône existe déjà";
 $lang['picons'] = "Icônes du message<br /><span class=\"smalltxt\">Pour les icônes, seulement les mods peuvent ajouter 'rsvd' au nom de l'icône'.</span>:";
 $lang['piconshlp'] = "<span class=\"smalltxt\">Pour ajouter une icône réservée, ajoutez 'rsvd' au nom de l'icône.</span>";
 $lang['plaintext'] = "Plain Text";
-$lang['plogtuf'] = "Cette opération ne sera pas disponible tant que vous serez connecté, veuillez vous déconnecter avant de vous enregistrer à nouveau. Remarque : il faut attendre 24 heures avant de pouvoir s'enregistrer à nouveau sur le même ordinateur.";
+$lang['plogtuf'] = "Cette opération ne sera pas disponible tant que vous serez connecté, veuillez vous <a href='misc.php?action=logout'>déconnecter</a> avant de réessayer.";
 $lang['poll'] = "Sondage :";
 $lang['pollanswers'] = "Réponses (1 réponse par ligne, max 10) :";
 $lang['pollprefix'] = "pollsmall.gif";
