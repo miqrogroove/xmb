@@ -756,7 +756,7 @@ function getPostBody( int $pid, bool $quarantine = false ): string {
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
     $query = $db->query("SELECT message FROM $table WHERE pid = $pid");
-    if ( $db->num_rows() == 1 ) {
+    if ( $db->num_rows( $query ) == 1 ) {
         $result = $db->result( $query, 0 );
     } else {
         $result = '';

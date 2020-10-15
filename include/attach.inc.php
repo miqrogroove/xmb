@@ -600,7 +600,7 @@ function approve( int $oldpid, int $newpid ) {
             $newparentid = 0;
         }
         $oldaid = (int) $attach['aid'];
-        $newaid = \XMB\SQL\approveAttachment( $oldaid, $newpid, $newparent );
+        $newaid = \XMB\SQL\approveAttachment( $oldaid, $newpid, $newparentid );
         $aidmap[$oldaid] = $newaid;
         if ( $attach['filesize'] >= $SETTINGS['files_min_disk_size'] && ! $usedb ) {
             moveToDisk( $newaid, $newpid );
