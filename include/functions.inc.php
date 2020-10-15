@@ -504,17 +504,40 @@ function censor($txt) {
     return $txt;
 }
 
+/**
+ * @since 1.9.1
+ */
 function smile(&$txt) {
     global $smiliesnum, $smiliecache, $THEME;
 
-    if ($smiliesnum > 0) {
-        reset($smiliecache);
-        foreach($smiliecache as $code=>$url) {
-            $txt = str_replace($code, '<img src="./'.$THEME['smdir'].'/'.$url.'" style="border:none" alt="'.$code.'" />', $txt);
-        }
+    if ( 0 == $smiliesnum ) {
+        return true;
     }
 
-    return TRUE;
+    // Parse the input for HTML tags
+    $pattern = "/(<[^>]*+>)/";
+    $parts = preg_split( $pattern, $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+
+    // Loop through the parts and avoid the HTML tags
+    foreach ( $parts as &$part ) {
+        if ( substr( $part, 0, 1 ) == '<' ) {
+            continue;
+        }
+        
+        foreach ( $smiliecache as $code => $url ) {
+            // Most $part values won't contain any smilies, so optimize by writing new strings only when necessary.
+            if ( false === strpos( $part, $code ) ) {
+                continue;
+            }
+            $altcode = attrOut( $code );
+            $part = str_replace( $code, "<img src='./{$THEME['smdir']}/$url' style='border:none' alt='$altcode' />", $part );
+        }
+    }
+    
+    // Put the parts back together
+    $txt = implode( "", $parts );
+    
+    return true;
 }
 
 function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
@@ -541,10 +564,10 @@ function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes'
 
         // Do BBCode
         $message = rawHTMLmessage($message, $allowhtml);
+        bbcode($message, $allowimgcode, $allowurlcode);
         if ($smiliesallow) {
             smile($message);
         }
-        bbcode($message, $allowimgcode, $allowurlcode);
         $message = nl2br($message);
 
         // Replace the code block contents in $message.
@@ -718,19 +741,19 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements[] = '<div style="text-align: $1;">';
 
     $patterns[] = "@\\[pid=(\\d+)&amp;tid=(\\d+)](.*?)\\[/pid]@si";
-    $replacements[] = '<a <!-- nobr -->href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
+    $replacements[] = '<!-- nobr --><a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         if (false == stripos($message, 'javascript:')) {
             $https_only = 'on' == $SETTINGS['images_https_only'];
             $base_pattern = get_img_regexp( $https_only );
             $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
-            $replacements[] = '<img <!-- nobr -->src="\1://\2\3"<!-- /nobr --> border="0" alt="" />';
+            $replacements[] = '<!-- nobr --><img src="\1://\2\3" border="0" alt="" /><!-- /nobr -->';
             $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
-            $replacements[] = '<img width="\1" height="\2" <!-- nobr -->src="\3://\4\5"<!-- /nobr --> alt="" border="0" />';
+            $replacements[] = '<!-- nobr --><img width="\1" height="\2" src="\3://\4\5" alt="" border="0" /><!-- /nobr -->';
         }
         $patterns[] = '/\[youtube\]([a-z0-9_-]+)\[\/youtube\]/i';
-        $replacements[] = '<iframe class="video" <!-- nobr -->src="https://www.youtube.com/embed/\1"<!-- /nobr --> allowfullscreen></iframe>';
+        $replacements[] = '<!-- nobr --><iframe class="video" src="https://www.youtube.com/embed/\1" allowfullscreen></iframe><!-- /nobr -->';
     }
 
     $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
@@ -897,7 +920,7 @@ function bbcodeLongURLs($url) {
     } else {
         $text = substr($url[1], 0, $url_max_display_len).'...';
     }
-    return '<a <!-- nobr -->href="'.$href.'" onclick="window.open(this.href); return false;"><!-- /nobr -->'.$text.'</a>';
+    return "<!-- nobr --><a href='$href' onclick='window.open(this.href); return false;'><!-- /nobr -->$text</a>";
 }
 
 /**
