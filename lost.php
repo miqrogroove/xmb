@@ -26,7 +26,10 @@ define('X_SCRIPT', 'lost.php');
 
 require 'header.php';
 
-loadtemplates( 'lost_pw_reset' );
+loadtemplates(
+'lost_pw_reset',
+'misc_feature_not_while_loggedin'
+);
 
 $token1 = postedVar( 'a', '', false, false, false, 'g' );
 $token2 = postedVar( 'token', '', false, false, false, 'p' );
@@ -34,16 +37,19 @@ $token2 = postedVar( 'token', '', false, false, false, 'p' );
 $valid_get = preg_match( '%^[a-f0-9]{32}$%', $token1 ) === 1;
 $valid_post = preg_match( '%^[a-f0-9]{32}$%', $token2 ) === 1;
 
-if ( $valid_get ) {
+if ( X_MEMBER ) {
+    eval('$page = "'.template('misc_feature_not_while_loggedin').'";');
+
+} elseif ( $valid_get ) {
     // Link from email received.
     $token = $token1;
     eval('$page = "'.template('lost_pw_reset').'";');
-    
+
 } elseif ( $valid_post ) {
     // New password from posted form received.
     $username = postedVar( 'username', '', true, false );
     $password1 = postedVar( 'password1', '', false, false );
-    $password2 = postedVar( 'password1', '', false, false );
+    $password2 = postedVar( 'password2', '', false, false );
     if ( '' == $username ) {
         error( $lang['textnousername'] );
     }
@@ -56,15 +62,16 @@ if ( $valid_get ) {
     if ( $password1 != $password2 ) {
         error( $lang['pwnomatch'] );
     }
-    
+
     // Inputs look reasonable.  Check the token.
     if ( ! \XMB\Token\consume( $token2, 'Lost Password', $username ) ) {
         error( $lang['lostpw_bad_token'] );
     }
-    
+
     $newpassword = md5( $password1 );
     \XMB\SQL\setNewPassword( $username, $newpassword );
     message( $lang['lostpw_success'] );
+
 } else {
     error( $lang['lostpw_bad_token'] );
 }

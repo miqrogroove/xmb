@@ -611,7 +611,7 @@ $lang['piconexists'] = 'PostIcon already exists';
 $lang['picons'] = "Post Icons";
 $lang['piconshlp'] = "<span class=\"smalltxt\">To add a reserved post icon, add 'rsvd' to the icon's name.</span>";
 $lang['plaintext'] = "Plain Text";
-$lang['plogtuf'] = "This feature is not available while you are logged in.  Please logout before attempting to register another name.  Please note registration is limited to once every 24hrs for security.";
+$lang['plogtuf'] = "This feature is not available while you are logged in.  Please <a href='misc.php?action=logout'>logout</a> before trying again.";
 $lang['poll'] = "Poll:";
 $lang['pollanswers'] = "Poll Answers (Type 1 per line):";
 $lang['pollprefix'] = "pollsmall.gif";
