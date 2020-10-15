@@ -5061,7 +5061,8 @@ $mood
 </font>
 <br />
 <br />
-<font class="mediumtxt">$post[message]</td>
+<div class="mediumtxt">{$post['message']}</div>
+</td>
 </tr>
 <tr bgcolor="$thisbg">
 <td class="tablerow" valign="bottom" style="height: 20px; width: 82%;">
@@ -5106,7 +5107,6 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="msnim:chat?{$post['msn']}" onclick="window.open(this.href); return false;" title="$lang[altmsnyes]"><img src="{$THEME['imgdir']}/msn.gif" border="0" alt="$lang[altmsnyes]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_nosig|#*XMB TEMPLATE*#|
-</font>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_profile|#*XMB TEMPLATE*#|
 <a href="member.php?action=viewpro&amp;member=$encodename" title="$lang[altviewprofile]"><img src="{$THEME['imgdir']}/profile.gif" border="0" alt="$lang[altviewprofile]" /></a>
@@ -5121,7 +5121,6 @@ $lang[attachment] <a href="{$post['fileurl']}" onclick="window.open(this.href); 
 <a href="search.php?srchuname=$encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0" title="$lang[altfindposts]"><img src="{$THEME['imgdir']}/find.gif" border="0" alt="$lang[altfindposts]" /></a>
 
 |#*XMB TEMPLATE FILE*#|viewthread_post_sig|#*XMB TEMPLATE*#|
-</font>
 <br />
 <br />
 <br />

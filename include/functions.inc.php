@@ -701,10 +701,10 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         9 => '</blink>',
         10 => '<strike>',
         11 => '</strike>',
-        12 => '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage"><!-- /nobr -->',
-        13 => ' </td></tr></table><font class="mediumtxt">',
-        14 => '</font> <!-- nobr --><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage"><code>',
-        15 => '</code></td></tr></table><font class="mediumtxt"><!-- /nobr -->',
+        12 => ' <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].'</td></tr><tr><td class="quotemessage"><!-- /nobr -->',
+        13 => ' </td></tr></table>',
+        14 => ' <!-- nobr --><table align="center" class="code" cellspacing="0" cellpadding="0"><tr><td class="code">'.$lang['textcode'].'</td></tr><tr><td class="codemessage"><code>',
+        15 => '</code></td></tr></table><!-- /nobr -->',
         16 => '<ul type="square">',
         17 => '</ul>',
         18 => '<ol type="1">',
@@ -718,7 +718,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         26 => '</span>',
         27 => '</span>',
         28 => '</div>',
-        29 => ' </td></tr></table><font class="mediumtxt">'
+        29 => ' </td></tr></table>'
     );
 
     $message = str_replace($find, $replace, $message);
@@ -728,7 +728,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements = array();
 
     $patterns[] = $regex['rquote'];
-    $replacements[] = '</font> <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
+    $replacements[] = ' <!-- nobr --><table align="center" class="quote" cellspacing="0" cellpadding="0"><tr><td class="quote">'.$lang['textquote'].' <a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1" rel="nofollow">'.$lang['origpostedby'].' $3 &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a></td></tr><tr><td class="quotemessage"><!-- /nobr -->';
     $patterns[] = $regex['color']['named'];
     $replacements[] = '<span style="color: $1;">';
     $patterns[] = $regex['color']['hex'];
