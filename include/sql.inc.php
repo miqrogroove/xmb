@@ -398,10 +398,12 @@ function startMemberQuarantine( int $uid ) {
  *
  * @since 1.9.12
  */
-function endMemberQuarantine( int $uid ) {
+function endMemberQuarantine( string $username ) {
     global $db;
     
-    $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE uid = $uid");
+    $sqluser = $db->escape( $username );
+
+    $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE username = '$sqluser'");
 }
 
 /**

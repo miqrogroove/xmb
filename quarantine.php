@@ -72,7 +72,7 @@ case 'viewuser':
         $user = postedVar( 'u', '', true, false, false, 'g' );
         $dbuser = $db->escape( $user );
         $member = \XMB\SQL\getMemberByName( $user );
-        if ( empty( $member ) || $member['waiting_for_mod'] != 'yes' ) {
+        if ( empty( $member ) ) {
             error( $lang['nomember'], false, '', '</td></tr></table></td></tr></table>' );
         }
 
@@ -113,7 +113,9 @@ case 'viewuser':
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");        
     }
 
-    if ($db->num_rows($result) > 0) {
+    $threadcount = $db->num_rows( $result );
+
+    if ( $threadcount > 0 ) {
         echo "<h3>{$lang['moderation_new_threads']}</h3>\n";
         while($thread = $db->fetch_array($result)){
             $tid = $thread['tid'];
@@ -325,7 +327,9 @@ case 'viewuser':
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts AS p LEFT JOIN ".X_PREFIX."members AS m ON m.username=p.author WHERE p.fid = $fid AND p.author = 'Anonymous' AND p.tid != 0 ORDER BY p.tid, p.dateline");        
     }
 
-    if ($db->num_rows($result) > 0) {
+    $replycount = $db->num_rows( $result );
+
+    if ( $replycount > 0 ) {
         echo "<h3>{$lang['moderation_new_replies']}</h3>\n";
         $lasttid = 0;
         while($post = $db->fetch_array($result)){
@@ -518,10 +522,20 @@ case 'viewuser':
     }
     $db->free_result($result);
 
-    if ( 'viewuser' == $action ) {
+    if ( 0 == $threadcount && 0 == $replycount ) {
+        echo "<p>{$lang['noresults']}</p>\n";
+        if ( 'viewuser' == $action && 'yes' == $member['waiting_for_mod'] && $member['postnum'] > 0 ) {
+            // Unexpected desync of member from quarantine content.
+            echo "<h3>{$lang['moderation_actions']}</h3>\n";
+            echo "<form action='quarantine.php?action=modays' method='post'>\n";
+            echo "<input type='hidden' name='u' value='{$member['username']}' />\n";
+            echo "<input type='submit' name='approveall' value='{$lang['moderation_approve_all']}' />\n";
+            echo "</form>\n";
+        }
+    } elseif ( 'viewuser' == $action ) {
         echo "<h3>{$lang['moderation_actions']}</h3>\n";
         echo "<form action='quarantine.php?action=modays' method='post'>\n";
-        echo "<input type='hidden' name='u' value=\"{$member['username']}\" />\n";
+        echo "<input type='hidden' name='u' value='{$member['username']}' />\n";
         echo "<input type='submit' name='approveall' value='{$lang['moderation_approve_all']}' />\n";
         echo "<input type='submit' name='deleteall' value='{$lang['moderation_delete_all']}' />\n";
         if (X_ADMIN) {
@@ -564,7 +578,6 @@ case 'approveall':
 
     if ( onSubmit( 'yessubmit' ) ) {
         require_once ROOT.'include/attach.inc.php';
-        $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE username='$member'");
         $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts WHERE author='$member'"), 0);
         $thatime = $onlinetime - $count;
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
@@ -678,6 +691,7 @@ case 'approveall':
             $db->free_result($subquery);
         }
         $db->free_result($result);
+        \XMB\SQL\endMemberQuarantine( $rawmember );
         moderate_cleanup($member);
         echo $lang['moderation_approved'];
     } else {
@@ -912,13 +926,24 @@ default:
         "SELECT m.username, COUNT(*) AS postnum " .
         "FROM ".X_PREFIX."members AS m " .
         "INNER JOIN ".X_PREFIX."hold_posts AS p ON m.username = p.author " .
-        "WHERE m.waiting_for_mod = 'yes' " .
         "GROUP BY m.username " .
         "ORDER BY m.regdate ASC " .
         "LIMIT 10"
     );
     if ($db->num_rows($result) == 0) {
-        echo "<p>{$lang['moderation_empty']}</p>\n";
+        // Double check to make sure there aren't any desync user records.
+        $result2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE waiting_for_mod = 'yes' AND postnum > 0");
+        if ($db->num_rows($result2) == 0) {
+            echo "<p>{$lang['moderation_empty']}</p>\n";
+        } else {
+            echo "<table>\n<tr><th>{$lang['textusername']}</th><th>{$lang['memposts']}</th></tr>\n";
+            while($row = $db->fetch_array($result2)) {
+                $user = $row['username'];
+                $userurl = recodeOut($user);
+                echo "<tr><td><a href='?action=viewuser&amp;u=$userurl'>$user</a></td><td>0</td></tr>\n";
+            }
+            echo "</table>\n";
+        }
     } else {
         echo "<table>\n<tr><th>{$lang['textusername']}</th><th>{$lang['memposts']}</th></tr>\n";
         while($row = $db->fetch_array($result)) {
