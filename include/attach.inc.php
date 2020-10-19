@@ -889,16 +889,19 @@ function getSizeFormatted($attachsize) {
  * @param string $date Optional. Unix timestamp of the attachment, if not now.
  * @return string
  */
-function getNewSubdir($date='') {
+function getNewSubdir( string $date = '' ) {
     global $SETTINGS;
-    if ($date == '') {
-        $date = time();
-    }
-    if ($SETTINGS['files_subdir_format'] == 1) {
-        return gmdate('Y/m', $date);
+    if ( '' == $date ) {
+        $timestamp = time();
     } else {
-        return gmdate('Y/m/d', $date);
+        $timestamp = (int) $date;
     }
+    if ( 1 == (int) $SETTINGS['files_subdir_format'] ) {
+        $format = 'Y/m';
+    } else {
+        $format = 'Y/m/d';
+    }
+    return gmdate( $format, $timestamp );
 }
 
 /**
