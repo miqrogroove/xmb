@@ -2592,7 +2592,7 @@ if ($action == "delete_attachment") {
     $aid = getInt('aid');
     if (noSubmit('yessubmit')) {
         ?>
-        <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td>Are you sure you want to delete this attachment?<br />
+        <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['attach_delete_ays']; ?><br />
         <form action="cp2.php?action=delete_attachment&amp;aid=<?php echo $aid; ?>" method="post">
           <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Attachments/Delete', (string) $aid, X_NONCE_AYS_EXP ); ?>" />
           <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
@@ -2603,7 +2603,7 @@ if ($action == "delete_attachment") {
         request_secure( 'Control Panel/Attachments/Delete', (string) $aid );
         require('include/attach.inc.php');
         \XMB\Attach\deleteByID( $aid );
-        echo "<p align=\"center\">Deleted ...</br>";
+        echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['attach_delete_done']}</td></tr>";
     }
 }
 
@@ -2612,7 +2612,7 @@ if ($action == "movetodb_attachment") {
     $aid = getInt('aid');
     $pid = getInt('pid');
     \XMB\Attach\moveToDB($aid, $pid);
-    echo "<p align=\"center\">Moved ...</br>";
+    echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['movetodb_done']}</td></tr>";
 }
 
 if ($action == "movetodisk_attachment") {
@@ -2620,7 +2620,7 @@ if ($action == "movetodisk_attachment") {
     $aid = getInt('aid');
     $pid = getInt('pid');
     \XMB\Attach\moveToDisk($aid, $pid);
-    echo "<p align=\"center\">Moved ...</br>";
+    echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['movetodisk_done']}</td></tr>";
 }
 
 if ($action == "regeneratethumbnail") {
@@ -2636,7 +2636,7 @@ if ($action == "regeneratethumbnail") {
         $msg = $lang['tool_completed'];
     }
 
-    echo "<p align=\"center\">$msg</br>";
+    echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>$msg</td></tr>";
 }
 
 echo '</table></td></tr></table>';

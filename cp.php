@@ -1927,7 +1927,7 @@ if ($action == "deleteposts") {
             updateforumcount($fid);
         }
 
-        echo "<p align=\"center\">Deleted ...</br>";
+        echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['editprofile_postsdeleted']}</td></tr>";
     }
 }
 
