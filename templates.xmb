@@ -4727,6 +4727,9 @@ font-weight: bold;
 font-size: 14px;
 font-family: arial, verdana;
 }
+code {
+white-space: pre;
+}
 </style>
 <title>$bbname - $lang[textpowered]</title>
 </head>
