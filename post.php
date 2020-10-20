@@ -735,7 +735,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime + ($timeoffset * 3600) + ($addtime * 3600);
+                $currtime = $onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -790,7 +790,7 @@ switch($action) {
                 $thisbg = $altbg1;
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC");
                 while($post = $db->fetch_array($query)) {
-                    $currtime = $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600);
+                    $currtime = $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                     $date = gmdate($dateformat, $currtime);
                     $time = gmdate($timecode, $currtime);
                     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -1143,7 +1143,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime + ($timeoffset * 3600) + ($addtime * 3600);
+                $currtime = $onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -1434,7 +1434,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $postinfo['dateline'] + ($timeoffset * 3600) + ($addtime * 3600);
+                $currtime = $postinfo['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;

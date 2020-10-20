@@ -105,7 +105,7 @@ case 'viewuser':
     }
     $db->free_result($queryranks);
     $thisbg = $altbg2;
-    $tmoffset = ($timeoffset * 3600) + ($addtime * 3600);
+    $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 
     if ( 'viewuser' == $action ) {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$dbuser'");

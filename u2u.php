@@ -50,7 +50,8 @@ loadtemplates(
 'u2u_old',
 'u2u_printable',
 'email_html_header',
-'email_html_footer'
+'email_html_footer',
+'css'
 );
 
 smcwcache();

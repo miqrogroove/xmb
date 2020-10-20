@@ -173,7 +173,7 @@ if ($action == 'profile') {
             $invchecked = $cheHTML;
         }
 
-        $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
+        $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
         $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
         $timezones = timezone_control( $member['timeoffset'] );
@@ -535,7 +535,7 @@ if ($action == 'profile') {
                  WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids)
                  ORDER BY t.lastpost DESC"
             );
-            $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+            $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
             while($fav = $db->fetch_array($query)) {
                 $forum = getForum($fav['fid']);
                 $forum['name'] = fnameOut($forum['name']);
@@ -616,7 +616,7 @@ if ($action == 'profile') {
         );
         $subnum = 0;
         $subscriptions = '';
-        $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+        $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         while($fav = $db->fetch_array($query)) {
             $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
@@ -706,7 +706,7 @@ if ($action == 'profile') {
         }
         foreach ( $list as $device ) {
             $did = $device['token'];
-            $time = ($timeoffset * 3600) + ($addtime * 3600) + (int) $device['login_date'];
+            $time = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) + (int) $device['login_date'];
             $dlogin = gmdate( $dateformat, $time ).' '.$lang['textat'].' '.gmdate( $timecode, $time );
             $dagent = parse_user_agent( $device['agent'] );
             if ( $device['current'] ) {
@@ -772,7 +772,7 @@ if ($action == 'profile') {
     $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' ORDER BY dateline DESC LIMIT 0, 5");
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
-    $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+    $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($message = $db->fetch_array($u2uquery)) {
         $postdate = gmdate($dateformat, $message['dateline'] + $tmOffset);
         $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
@@ -810,7 +810,7 @@ if ($action == 'profile') {
              LIMIT 5"
         );
         $favnum = $db->num_rows($query2);
-        $tmOffset = ($timeoffset * 3600) + ($addtime * 3600);
+        $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         while($fav = $db->fetch_array($query2)) {
             $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);

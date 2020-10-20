@@ -1726,7 +1726,7 @@ if ($action == "ipban") {
                         $ipaddress[$j] = "*";
                     }
                 }
-                $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+                $ipdate = gmdate($dateformat, $ipaddress['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600)) . " $lang[textat] " . gmdate("$timecode", $ipaddress['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
                 $theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
                 ?>
                 <tr class="tablerow" bgcolor="<?php echo $altbg1?>">

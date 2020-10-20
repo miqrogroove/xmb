@@ -257,8 +257,8 @@ if (!isset($searchsubmit) && !isset($page)) {
             $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
             $post['subject'] = rawHTMLsubject($post['subject']);
 
-            $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
-            $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($addtime * 3600));
+            $date = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            $time = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
 
             $poston = $date.' '.$lang['textat'].' '.$time;
             $postby = $post['author'];

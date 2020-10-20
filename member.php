@@ -548,7 +548,7 @@ switch($action) {
                 $captcharegcheck = '';
                 $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
 
-                $currdate = gmdate($timecode, $onlinetime+ ($addtime * 3600));
+                $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
                 $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
                 $themelist = array();
@@ -695,7 +695,7 @@ switch($action) {
             $ppd = $memberinfo['postnum'];
         }
 
-        $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
+        $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
 
         $memberinfo['site'] = format_member_site( $memberinfo['site'] );
         $site = $memberinfo['site'];
@@ -747,8 +747,8 @@ switch($action) {
         if (!($memberinfo['lastvisit'] > 0)) {
             $lastmembervisittext = $lang['textpendinglogin'];
         } else {
-            $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-            $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+            $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
             $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
         }
 

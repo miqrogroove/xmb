@@ -137,7 +137,7 @@ $db->free_result($query);
 // Get last 5 posts
 $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
-$adjTime = ($timeoffset * 3600) + ($addtime * 3600);
+$adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 while($last = $db->fetch_array($query)) {
     $last['lastpost'] = (int) $last['lastpost'];
     $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);

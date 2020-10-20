@@ -260,7 +260,7 @@ switch($action) {
         $onlineusers = '';
         while($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
-            $onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($addtime * 3600));
+            $onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
@@ -464,7 +464,7 @@ switch($action) {
 
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
 
-        $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
+        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 
         $members = $oldst = '';
         if ($db->num_rows($querymem) == 0) {

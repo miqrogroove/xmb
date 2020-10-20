@@ -124,13 +124,13 @@ if (noSubmit('editsubmit')) {
         $invchecked = $cheHTML;
     }
 
-    $registerdate = gmdate($dateformat, $member['regdate'] + ($addtime * 3600) + ($timeoffset * 3600));
+    $registerdate = gmdate($dateformat, $member['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
 
     if (!($member['lastvisit'] > 0)) {
         $lastlogdate = $lang['textpendinglogin'];
     } else {
-        $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
-        $lastvisittime = gmdate($timecode, $member['lastvisit'] + ($timeoffset * 3600) + ($addtime * 3600));
+        $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+        $lastvisittime = gmdate($timecode, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
         $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
@@ -139,8 +139,8 @@ if (noSubmit('editsubmit')) {
         $loginfails = $lang['textnone'];
         $loginfaildate = $lang['textnone'];
     } else {
-        $loginfaildate = gmdate( $dateformat, $member['bad_login_date'] + ($addtime * 3600) + ($timeoffset * 3600) );
-        $loginfailtime = gmdate( $timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($addtime * 3600) );
+        $loginfaildate = gmdate( $dateformat, $member['bad_login_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600) );
+        $loginfailtime = gmdate( $timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) );
         $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
@@ -149,8 +149,8 @@ if (noSubmit('editsubmit')) {
         $sessfails = $lang['textnone'];
         $sessfaildate = $lang['textnone'];
     } else {
-        $sessfaildate = gmdate( $dateformat, $member['bad_session_date'] + ($addtime * 3600) + ($timeoffset * 3600) );
-        $sessfailtime = gmdate( $timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($addtime * 3600) );
+        $sessfaildate = gmdate( $dateformat, $member['bad_session_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600) );
+        $sessfailtime = gmdate( $timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) );
         $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 
@@ -161,7 +161,7 @@ if (noSubmit('editsubmit')) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
-    $currdate = gmdate($timecode, $onlinetime + ($addtime * 3600));
+    $currdate = gmdate($timecode, $onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
 
     $themelist = array();

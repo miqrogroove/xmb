@@ -207,7 +207,7 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 }
 
 function u2u_view($u2uid, $folders) {
-    global $db, $dateformat, $timecode, $timeoffset, $addtime, $lang, $self, $oToken, $xmbuser;
+    global $db, $dateformat, $timecode, $timeoffset, $lang, $self, $oToken, $xmbuser;
     global $THEME, $thewidth, $full_url;
     global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
 
@@ -250,7 +250,7 @@ function u2u_view($u2uid, $folders) {
             }
         }
 
-        $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
+        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
@@ -290,8 +290,8 @@ function u2u_view($u2uid, $folders) {
 }
 
 function u2u_print($u2uid, $eMail = false) {
-    global $SETTINGS, $css, $db, $self, $timeoffset, $lang, $u2uheader, $full_url, $cookiedomain, $adminemail,
-           $u2ufooter, $dateformat, $timecode, $addtime, $bbname, $logo, $oToken, $xmbuser, $text;
+    global $SETTINGS, $db, $self, $timeoffset, $lang, $u2uheader, $full_url,
+           $u2ufooter, $dateformat, $timecode, $bbname, $xmbuser, $THEME;
 
     $mailHeader = '';
     $mailFooter = '';
@@ -308,7 +308,7 @@ function u2u_print($u2uid, $eMail = false) {
     $db->free_result($query);
 
     if ($u2u) {
-        $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
+        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
@@ -319,14 +319,25 @@ function u2u_print($u2uid, $eMail = false) {
         $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : $u2u['msgto'];
 
         if ($eMail) {
+            // Make an HTML-formatted email containing the U2U body.
+            eval('$css = "'.template('css').'";');
+            if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
+                $extra = file_get_contents(ROOT.$THEME['imgdir'].'/theme.css');
+                if ( false !== $extra ) {
+                    $css .= $extra;
+                }
+            }
+            $css = "<style type='text/css'>\n$css\n</style>";
             eval('$mailHeader = "'.template('email_html_header').'";');
             eval('$mailFooter = "'.template('email_html_footer').'";');
+            $html = true;
             $title = "{$lang['textu2utoemail']} $u2usubject";
             $body = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
             $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
-            $result = xmb_mail( $rawemail, $title, $body, $charset );
+            $result = xmb_mail( $rawemail, $title, $body, $lang['charset'], $html );
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
+            global $css;
             eval('echo "'.template('u2u_printable').'";');
             exit;
         }
@@ -533,7 +544,7 @@ function u2u_ignore() {
 function u2u_display($folder, $folders) {
     global $db, $self, $lang, $xmbuser, $onlinetime;
     global $THEME, $thewidth;
-    global $addtime, $timeoffset, $dateformat, $timecode, $oToken;
+    global $SETTINGS, $timeoffset, $dateformat, $timecode, $oToken;
 
     $u2usin = '';
     $u2usout = '';
@@ -604,7 +615,7 @@ function u2u_display($folder, $folders) {
             $u2usent = $lang['textu2unotsent'];
         }
 
-        $adjTime = ($timeoffset * 3600) + ($addtime * 3600);
+        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
         $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";

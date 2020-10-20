@@ -1828,7 +1828,7 @@ function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...') 
 }
 
 function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
-    global $dateformat, $SETTINGS, $timeoffset, $addtime;
+    global $dateformat, $SETTINGS, $timeoffset;
 
     if ($timestamp === null) {
         $timestamp = time();
@@ -1842,25 +1842,25 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
     if ((($pos = strpos($altFormat, 'F')) !== false && $f = true) || ($pos2 = strpos($altFormat, 'M')) !== false) {
         $startStr = substr($altFormat, 0, $pos);
         $endStr = substr($altFormat, $pos+1);
-        $month = gmdate('m', $timestamp + ($timeoffset*3600)+(($altOffset+$addtime)*3600));
+        $month = gmdate('m', $timestamp + ($timeoffset*3600)+(($altOffset+$SETTINGS['addtime'])*3600));
         $textM = month2text($month);
         return printGmDate($timestamp, $startStr, $altOffset).substr($textM,0, ($f ? strlen($textM) : 3)).printGmDate($timestamp, $endStr, $altOffset);
     } else {
-        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
     }
 }
 
 function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
-    global $self, $SETTINGS, $timeoffset, $addtime, $timecode;
+    global $self, $SETTINGS, $timeoffset, $timecode;
 
     if ($timestamp === null) {
         $timestamp = time();
     }
 
     if ($altFormat !== null) {
-        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+        return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
     } else {
-        return gmdate($timecode, $timestamp + ($timeoffset * 3600) + (($altOffset+$addtime) * 3600));
+        return gmdate($timecode, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
     }
 }
 
@@ -2554,15 +2554,16 @@ function format_member_site($site) {
  * Send email with default headers.
  *
  * @since 1.9.11.15
- * @param string $to
- * @param string $subject
- * @param string $message
- * @param string $charset
+ * @param string $to      Pass through to altMail()
+ * @param string $subject Pass through to altMail()
+ * @param string $message Pass through to altMail()
+ * @param string $charset The character set used in $message param.
+ * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
  * @return bool
  */
-function xmb_mail( $to, $subject, $message, $charset ) {
+function xmb_mail( string $to, string $subject, string $message, string $charset, bool $html = false ) {
     global $self, $bbname, $adminemail, $cookiedomain;
-    
+
     if ( PHP_OS == 'WINNT' || PHP_OS == 'WIN32' ) {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
         ini_set( 'sendmail_from', $adminemail );
     }
@@ -2572,6 +2573,12 @@ function xmb_mail( $to, $subject, $message, $charset ) {
         $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
     }
 
+    if ( $html ) {
+        $content_type = 'text/html';
+    } else {
+        $content_type = 'text/plain';
+    }
+
     $headers = array();
     $headers[] = smtpHeaderFrom( $rawbbname, $adminemail );
     $headers[] = "X-Mailer: PHP";
@@ -2579,7 +2586,7 @@ function xmb_mail( $to, $subject, $message, $charset ) {
     if ( ! empty( $self ) ) {
         $headers[] = "X-AntiAbuse: Username - $rawusername";
     }
-    $headers[] = "Content-Type: text/plain; charset=$charset";
+    $headers[] = "Content-Type: $content_type; charset=$charset";
     $headers = implode( "\r\n", $headers );
 
     $params = "-f $adminemail";
@@ -2757,7 +2764,7 @@ function more_theme_vars() {
     if (false === strpos($THEME['bgcolor'], '.')) {
         $THEME['bgcode'] = "background-color: {$THEME['bgcolor']};";
     } else {
-        $THEME['bgcode'] = "background-image: url('{$THEME['imgdir']}/{$THEME['bgcolor']}');";
+        $THEME['bgcode'] = "background-image: url({$THEME['imgdir']}/{$THEME['bgcolor']});";
     }
 
     if (false === strpos($THEME['catcolor'], '.')) {
