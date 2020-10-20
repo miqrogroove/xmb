@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
+ * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -38,14 +38,14 @@ require ROOT.'include/global.inc.php';
 /* Global Constants and Initialized Values */
 
 $versioncompany = 'The XMB Group';
-$versionshort = '1.9.12-b';
+$versionshort = '1.9.12';
 $versiongeneral = 'XMB 1.9.12';
 $copyright = '2001-2020';
 $alpha = '';
-$beta = 'Beta 2';
+$beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20200924;
+$versionbuild = 20201020;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();

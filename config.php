@@ -1,7 +1,7 @@
 <?php
 /**
  * eXtreme Message Board
- * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
+ * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -114,8 +114,8 @@ if (!defined('IN_CODE')) {
      * and ONLY visible to Super Administrators. Comment first line and uncomment second line to use debug mode.
      */
 
-    // define('DEBUG', FALSE);
-    define('DEBUG', TRUE);
+    define('DEBUG', FALSE);
+    // define('DEBUG', TRUE);
 
     /**
      * To enable logging of all MySQL errors (necessary in the case of registration, login, or captcha errors), comment first
@@ -124,8 +124,8 @@ if (!defined('IN_CODE')) {
      * If the chmod settings of this directory prevent file Write then the log will not be created.
      */
 
-    // define('LOG_MYSQL_ERRORS', FALSE);
-    define('LOG_MYSQL_ERRORS', TRUE);
+    define('LOG_MYSQL_ERRORS', FALSE);
+    // define('LOG_MYSQL_ERRORS', TRUE);
 
 // Do not edit below this line.
 // ---------------------------
