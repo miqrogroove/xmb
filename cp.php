@@ -2017,22 +2017,22 @@ if ($action == "upgrade") {
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
         <tr>
-        <td class="tablerow" bgcolor="<?php echo $altbg1?>" colspan="2"><strong><?php echo $lang['textupgrade']?></strong></td>
+        <td class="tablerow" bgcolor="<?php echo $altbg1?>"><strong><?php echo $lang['textupgrade']?></strong></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" colspan="2"><?php echo $lang['upgrade']?></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow"><?php echo $lang['upgrade']?></td>
         </tr>
         <tr>
         <td bgcolor="<?php echo $altbg1?>" class="tablerow" valign="top"><textarea cols="85" rows="10" name="upgrade"></textarea></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg2?>" class="tablerow" colspan="2"><input type="file" name="sql_file" /></td>
+        <td bgcolor="<?php echo $altbg2?>" class="tablerow"><input type="file" name="sql_file" /></td>
         </tr>
         <tr>
-        <td bgcolor="<?php echo $altbg1?>" class="tablerow" colspan="2"><?php echo $lang['upgradenote']?></td>
+        <td bgcolor="<?php echo $altbg1?>" class="tablerow"><?php echo $lang['upgradenote']?></td>
         </tr>
         <tr>
-        <td class="ctrtablerow" bgcolor=<?php echo $altbg2?> colspan="2"><input type="submit" class="submit" name="upgradesubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
+        <td class="ctrtablerow" bgcolor="<?php echo $altbg2?>"><input type="submit" class="submit" name="upgradesubmit" value="<?php echo $lang['textsubmitchanges']?>" /></td>
         </tr>
         </table>
         </td>
