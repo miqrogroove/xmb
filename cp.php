@@ -1937,6 +1937,9 @@ if ($action == "upgrade") {
     }
 
     if (onSubmit('upgradesubmit')) {
+        // Close table before checking token, to improve any error output.
+        echo '</table></td></tr></table><br />';
+
         request_secure( 'Control Panel/Insert Raw SQL', '' );
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
@@ -1959,8 +1962,6 @@ if ($action == "upgrade") {
             unset($explode[$count-1]);
             $count--;
         }
-
-        echo '</table></td></tr></table>';
 
         for($num=0;$num<$count;$num++) {
             if ($allow_spec_q !== true) {
@@ -1990,7 +1991,6 @@ if ($action == "upgrade") {
             }
         }
         ?>
-        <br />
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -2099,6 +2099,13 @@ if ($action == "search") {
             }
         }
         ?>
+        </table></td></tr></table><br />
+
+        <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']; ?>" align="center">
+         <tr>
+          <td bgcolor="<?php echo $THEME['bordercolor']; ?>">
+           <table border="0" cellspacing="<?php echo $THEME['borderwidth']; ?>" cellpadding="<?php echo $THEME['tablespace']; ?>" width="100%">
+        
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td align="left" colspan="2">
         <strong><?php echo $found?></strong> <?php echo $lang['beenfound']?>
@@ -2117,7 +2124,14 @@ if ($action == "search") {
             </td>
             </tr>
             <?php
-         }
+        }
+        ?>
+           </table>
+          </td>
+         </tr>
+        </table>
+        <?php
+         
     } else {
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
