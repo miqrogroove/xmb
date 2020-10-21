@@ -329,7 +329,7 @@ $lang['evalstats5'] = "\$members Kullanýcý";
 $lang['evalstats6'] = "<strong>En Çok Okunan 5 Mesaj:</strong><br /> \$viewmost";
 $lang['evalstats7'] = "<strong>En Çok Cevaplanan 5 Konu:</strong><br /> \$replymost";
 $lang['evalstats8'] = "Forumda En Popüler \$pop[posts] Mesaj ve \$pop[threads] ile \$popforum  Baþlýklý Forumdur.";
-$lang['evalstats9'] = "Her Üyeye $mempost Mesaj";
+$lang['evalstats9'] = "Her Üyeye \$mempost Mesaj";
 $lang['evaltrevlt'] = "Bu bir Geniþ Mesajdýr, Ýzlemek için <a href='\$threadlink'>BURAYA</a> týklayýn.";
 $lang['evalu2ustaffquota'] = "Toplam \$u2ucount PMniz Var.";
 $lang['evaluqinfo'] = "\$u2ucount Kadar PMniz Var. Bu  \$percent% of the maximum, the maximum is set to \$u2uquota.";
