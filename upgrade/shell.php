@@ -100,6 +100,10 @@ require('./upgrade.lib.php');
 xmb_upgrade();
 show_progress('Done');
 
+//Cleanup Notes
+//1. The website is still in maintenance mode.  The script sets xmb.settings (name='bbstatus', value='off')
+//2. This script did not self-destruct and should not be available for public use on a live site.
+
 /**
  * Output the upgrade progress at each step.
  *
