@@ -45,7 +45,7 @@ $alpha = '';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20201020;
+$versionbuild = 20201021;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -283,8 +283,11 @@ if ($ipcheck == 'on') {
 }
 
 // Force upgrade to mysqli when available.
-if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
-
+if ( 'mysql' === $database ) $database = 'mysqli';
+if ( ! extension_loaded( 'mysqli' ) ) {
+    header('HTTP/1.0 500 Internal Server Error');
+    exit("Error: The PHP mysqli extension is missing.");
+}
 
 /* Load Common Files and Establish Database Connection */
 
