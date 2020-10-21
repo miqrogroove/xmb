@@ -155,8 +155,8 @@ function show_result($type) {
 function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre ) {
     if ( 'mysql' != $database && 'mysqli' != $database ) return;
 
-    // Force upgrade to mysqli when available.
-    if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
+    // Force upgrade to mysqli
+    if ( 'mysql' === $database ) $database = 'mysqli';
 
     if ( ! is_readable( ROOT."db/$database.php" ) ) return;
 
@@ -1463,6 +1463,10 @@ Public License instead of this License.  But first, please read
 
         // double check all stuff here
         show_act('Checking Database Files');
+
+        // Force upgrade to mysqli
+        if ( 'mysql' === $database ) $database = 'mysqli';
+
         if (!file_exists(ROOT.'db/'.$database.'.php')) {
             show_result(X_INST_ERR);
             error('Database connection', 'XMB could not locate the <i>/db/'.$database.'.php</i> file, you have configured xmb to use this database-type. For it to work you will need to upload the file, or change the config.php file to reflect a different choice.', true);
@@ -1473,10 +1477,8 @@ Public License instead of this License.  But first, please read
         // let's check if the actual functionality exists...
         $err = false;
         switch($database) {
-            case 'mysql':
-                if ( extension_loaded( 'mysqli' ) ) {
-                    $database = 'mysqli';
-                } else if (!defined('MYSQL_NUM')) {
+            case 'mysqli':
+                if ( ! extension_loaded( 'mysqli' ) ) {
                     show_result(X_INST_ERR);
                     $err = true;
                 }
@@ -1503,8 +1505,6 @@ Public License instead of this License.  But first, please read
         }
 
         show_act('Checking Database Connection');
-        // Force upgrade to mysqli when available.
-        if ( 'mysql' === $database && extension_loaded( 'mysqli' ) ) $database = 'mysqli';
         switch($database) {
             case 'mysql':
                 $link = mysql_connect($dbhost, $dbuser, $dbpw);
