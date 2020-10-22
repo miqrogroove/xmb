@@ -148,11 +148,11 @@ $lang['bbcode_help_bold'] = "Bold Tag\\nČini ograđeni tekst podebljanim.\\nKor
 $lang['bbcode_help_center'] = "Centered tag\\nCentrira ograđeni tekst.\\nKorištenje: [align=center]Ovaj tekst je centriran[/align]";
 $lang['bbcode_help_code'] = "Code Tag\\nCitira označeni tekst i očuva formatiranje.\\nkorisno za postanje koda.\\nKorištenje: [code]Ovo je formatiran tekst[/code]";
 $lang['bbcode_help_color'] = "Color Tag\\nPostavlja boju teksta. Sve imenovane boje se mogu koristiti.\\nKorištenje: [color=red]Ovo je \\\"red\\\" tekst[/color]";
-$lang['bbcode_help_email'] = "E-mail Tag\\nPretvara e-mail adresu u hipervezu.\\nKorištenje: [email]netko@negdje.com[/email]\\nKorištenje: [email=netko@negdje.com]tekst veze[/email]";
+$lang['bbcode_help_email'] = "E-mail Tag\\nPretvara e-mail adresu u hipervezu.\\nKorištenje: [email]someone@anywhere.com[/email]\\nKorištenje: [email=someone@anywhere.com]tekst veze[/email]";
 $lang['bbcode_help_font'] = "Font Tag\\nPostavlja font za ograđeni tekst.\\nKorištenje: [font=Arial]Font ovog teksta je Arial[/font]";
-$lang['bbcode_help_image'] = "Image Tag\\nUbacuje sliku u post.\\nKorištenje: [img]http:\www.bilogdje.slika.gif[/img]";
+$lang['bbcode_help_image'] = "Image Tag\\nUbacuje sliku u post.\\nKorištenje: [img]http://www.anywhere.com/image.gif[/img]";
 $lang['bbcode_help_italic'] = "Italicise Tag\\nČini ograđeni tekst ukošen.\\nKorištenje: [i]Ovo je ukošen tekst[/i]";
-$lang['bbcode_help_link'] = "Hyperlink Tag\\nMijenja URL u hipervezu.\\nKorištenje: [url]http://www.bilogdje.com[/url]\\nKorištenje: [url=http://www.bilogjde.com]tekst veze[/url]";
+$lang['bbcode_help_link'] = "Hyperlink Tag\\nMijenja URL u hipervezu.\\nKorištenje: [url]http://www.anywhere.com[/url]\\nKorištenje: [url=http://www.anywhere.com]tekst veze[/url]";
 $lang['bbcode_help_list'] = "List Tag\\nKreira grafički označenu, numeriranu ili abecednu listu.\\nKorištenje: [list]\\n[*]stavka1\\n[*]stavka2\\n[*]stavka3\\n[/list]";
 $lang['bbcode_help_quote'] = "Quote tag\\nCitira ograđeni tekst da naglasi nešto posebno što je netko napisao.\\nKorištenje: [quote]Ovo je citat[/quote]";
 $lang['bbcode_help_size'] = "Size Tag\\nPostavlja veličinu teksta.\\n\\nKorištenje: Navedena veličina će biti relativna veličina, relativna u odnosu na pretpostavljenu veličinu ploče.\\n Npr. pretpostavljena veličina teksta je 12pt, podešavanje[size=-3]Ovo je veličina teksta -3pt [/size]\\n koja će rezultirati tekstom veličine 9pt (jer 12pt-3pt = 9pt)";
