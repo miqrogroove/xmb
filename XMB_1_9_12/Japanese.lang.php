@@ -1328,4 +1328,4 @@ $lang['whosonline_on'] = "インデックスのステータスに誰がオンラ
 $lang['whoview'] = "誰がこのフォーラムを見ることを許します？";
 $lang['xmb'] = "XMB";
 $lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr>フォーラム・ソフトウェア';
-$lang['xmbgroup'] = "XMB国(The XMB Group)";
+$lang['xmbgroup'] = "XMB国(The XMB Group)";

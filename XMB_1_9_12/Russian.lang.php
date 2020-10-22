@@ -1328,4 +1328,4 @@ $lang['whosonline_on'] = "\"Кто на форуме\" на главной странице:";
 $lang['whoview'] = "Кто может просматривать этот форум?";
 $lang['xmb'] = "XMB";
 $lang['xmbforum'] = "<abbr title=\"eXtreme Message Board\">XMB</abbr> Forum Software";
-$lang['xmbgroup'] = "Группа XMB";
+$lang['xmbgroup'] = "Группа XMB";
