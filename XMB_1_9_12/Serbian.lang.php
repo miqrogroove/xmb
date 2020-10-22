@@ -1328,4 +1328,4 @@ $lang['whosonline_on'] = "Na vezi  na index strani:";
 $lang['whoview'] = "Ko može da gleda ovaj forum?";
 $lang['xmb'] = "XMB";
 $lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
-$lang['xmbgroup'] = " XMB Grupa";
+$lang['xmbgroup'] = " XMB Grupa";
