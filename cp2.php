@@ -555,9 +555,8 @@ if ($action == 'themes') {
     $single_int = getInt('single');
     $newtheme = postedVar('newtheme');
 
-    $themenonce = \XMB\Token\create( 'Control Panel/Themes', 'mass-edit', X_NONCE_FORM_EXP );
-
     if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
+        $themenonce = \XMB\Token\create( 'Control Panel/Themes', 'mass-edit', X_NONCE_FORM_EXP );
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -968,7 +967,7 @@ if ($action == 'themes') {
         <?php
     } else if ($single_str == "submit" && !$newtheme) {
         $orig = formInt('orig');
-        request_secure( 'Control Panel/Themes', (string) $single_int );
+        request_secure( 'Control Panel/Themes', (string) $orig );
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
