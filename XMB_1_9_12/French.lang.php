@@ -401,7 +401,7 @@ $lang['indexShowBarCats'] = "Dans toutes les catégories";
 $lang['indexShowBarDesc'] = "Où l'en-tête du tableau doît-elle apparaître dans la liste du forum?";
 $lang['indexShowBarNone'] = "Nulle part";
 $lang['indexShowBarTop'] = "Seulement en tête de page";
-$lang['index_stats'] = "Statut de la barre de statistiques:<br /><span class=\"smalltxt\">Cette option active ou désactive la barre de statistiques sur l\'index.</span>";
+$lang['index_stats'] = "Statut de la barre de statistiques:<br /><span class=\"smalltxt\">Cette option active ou désactive la barre de statistiques sur l'index.</span>";
 $lang['insertdata'] = "Saisissez vos informations";
 $lang['invalidFilename'] = "Nom de fichier invalide";
 $lang['invalidforumpw'] = "Vous venez de saisir un mot de passe incorrect.";
