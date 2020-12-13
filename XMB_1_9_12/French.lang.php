@@ -1,7 +1,7 @@
 <?php
-/** Made by:    SmOkInQC - webmaster@smokinteam.info
+/** Made by:    SmOkInQC, and Lexa
  * eXtreme Message Board
- * XMB 1.9.12 Beta 2  Do not use this unstable software after 31 October 2020.
+ * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2020, The XMB Group
@@ -241,9 +241,6 @@ $lang['confirmDeletePosts'] = "Vous êtes sur le point de supprimer tous les mess
 $lang['confirmDeleteUser'] = "En sélectionnant cette case, vous notez que cet utilisateur doit être effacé. Si vous êtes sûr de vouloir effacer cet utilisateur, cliquez sur OK, sinon, cliquez sur Cancel";
 $lang['continue_button'] = "Continue";
 $lang['cookies_disabled'] = "Les cookies sont bloqués par votre navigateur. Pour vous connecter ou vous enregistrer, activez les cookies, rafraîchissez la page et recomplétez le formulaire.";
-
-
-
 $lang['coppastatus'] = "Activer le statut des mineurs moins de 13 ans ?";
 $lang['coppa_directions'] = "What is your age?";
 $lang['coppa_explained'] = "Cette information est requise de votre part. Nous ne pouvons pas partager votre réponse.";
@@ -335,7 +332,7 @@ $lang['evalstats8'] = "Forum le plus populaire : \$popforum avec \$pop[posts] me
 $lang['evalstats9'] = "\$mempost messages par membre";
 $lang['evaltrevlt'] = "Ce sujet est long, cliquer <a href='\$threadlink'>ici</a> pour le revoir.";
 $lang['evalu2ustaffquota'] = "Vous avez \$u2ucount U2Us avec aucunne limite.";
-$lang['evaluqinfo'] = "Vous avez \$u2ucount U2Us. C'est \$barwidth% du maximum, le maximum a été configuré à  \$u2uquota.";
+$lang['evaluqinfo'] = "Vous avez \$u2ucount U2Us. C'est \$percent% du maximum, le maximum a été configuré à  \$u2uquota.";
 $lang['evaluqinfo_over'] = "<strong>Attention! Vous ne pourrez pas envoyer de messages U2U avant d'avoir diminué le nombre existant de vos U2U.</strong><br />Vous avez \$u2ucount messages U2U. Le maximum se limite à \$u2uquota.";
 $lang['evalusercpwelcome'] = "Bonjour \$xmbuser, Bienvenue dans votre Panneau de Contrôle Personnel. Ici, vous pouvez modifier vos préférences, envoyer / lire des messages U2U, voir vos sujets favoris et bien plus encore !";
 $lang['existingip'] = "Cette adresse IP est déjà bannie";
@@ -400,10 +397,8 @@ $lang['imgdiradm'] = "Répertoire des fichiers Images des Administrateurs:";
 $lang['impossiblebanall'] = 'Vous ne pouvez pas bannir <b>toutes</b> les IPs du forum!!';
 $lang['imsavedmsg'] = "Votre U2U a été enregistré. Vous allez être redirigé vers votre dossier U2U.";
 $lang['imsentmsg'] = "Votre message privé U2U a été envoyé.";
-
-
 $lang['indexShowBarCats'] = "Dans toutes les catégories";
-$lang['indexShowBarDesc'] = "Où l\'en-tête du tableau doît-elle apparaître dans la liste du forum?";
+$lang['indexShowBarDesc'] = "Où l'en-tête du tableau doît-elle apparaître dans la liste du forum?";
 $lang['indexShowBarNone'] = "Nulle part";
 $lang['indexShowBarTop'] = "Seulement en tête de page";
 $lang['index_stats'] = "Statut de la barre de statistiques:<br /><span class=\"smalltxt\">Cette option active ou désactive la barre de statistiques sur l\'index.</span>";
@@ -418,14 +413,14 @@ $lang['ipbanenable'] = "Activer le Bannissement d'IP";
 $lang['ipreg'] = "Autoriser par jour au maximum 1 utilisateur par IP à s'enregistrer ?";
 $lang['ipwarning'] = "<br /><b>Attention!</b> Votre adresse IP a été interdite sur ce forum. Il vous est dorénavant définitivement interdit de vous connecter ici.";
 $lang['key'] = 'Clé: ';
-$lang['langimportfail'] = "La langue n\'a pu être importée.";
+$lang['langimportfail'] = "La langue n'a pu être importée.";
 $lang['langimportsuccess'] = "Langue importée avec succès.";
 $lang['last50todayeval'] = "Les \$onlinetodaycount derniers membres qui nous ont rendu visite aujourd'hui </b>(si possible)";
 $lang['lastactive'] = "Dernière connexion:";
 $lang['lastreply1'] = "le";
-$lang['lastsadmin'] = "Vous venez d\'essayer d\'enlever le dernier Super Administrateur de l'administration. Ceci est dangereux. Une fois exclu de l\'administration, il n'est plus possible de remettre le statut de Super Administrateur à quiconque.";
+$lang['lastsadmin'] = "Vous venez d'essayer d'enlever le dernier Super Administrateur de l'administration. Ceci est dangereux. Une fois exclu de l'administration, il n'est plus possible de remettre le statut de Super Administrateur à quiconque.";
 $lang['lastyear'] = "1 an";
-$lang['launchbuddylist'] = "Lancez la liste d\'amis";
+$lang['launchbuddylist'] = "Lancez la liste d'amis";
 $lang['leaveuntouched'] = "&nbsp;Laisser le fichier courant sans modification";
 $lang['location'] = "Emplacement";
 $lang['locktopic'] = "Un sujet fermé";
@@ -444,10 +439,10 @@ $lang['lostpw_success'] = "Votre nouveau mot de passe est actif.  Vous pouvez vo
 $lang['lpoststats'] = "Dernier message";
 $lang['max_addresses_per_entry'] = "Pour des raisons de sécurité, il n'est pas possible de sauvegarder plus de 10 adresses en une seule fois.";
 $lang['max_attachment_size'] = "Taille maximum du fichier (en octets):";
-$lang['max_avatar_size_h'] = "Hauteur maximale de l\'avatar (en pixel)";
-$lang['max_avatar_size_w'] = "Largeur maximale de l\'avatar (en pixel)";
+$lang['max_avatar_size_h'] = "Hauteur maximale de l'avatar (en pixel)";
+$lang['max_avatar_size_w'] = "Largeur maximale de l'avatar (en pixel)";
 $lang['max_daily_regs'] = "Nombre maximum de nouvelles inscriptions par jour.<br /><span class='smalltxt'>Mettre a 0 pour rendre illimité.</span>";
-$lang['max_onlinetodaycount'] = "Nombre maximum d\'utilisateurs à montrer dans qui est en ligne dans l'index.";
+$lang['max_onlinetodaycount'] = "Nombre maximum d'utilisateurs à montrer dans qui est en ligne dans l'index.";
 $lang['max_regs'] = "Le maximum d'inscription par jour a été atteint. Merci d'attendre 24h";
 $lang['mcpread'] = "Lu?";
 $lang['mcpuid'] = "UID";
@@ -461,9 +456,9 @@ $lang['mergethreadmsg'] = "Les sujets ont été fusionnés. Maintenant, vous allez 
 $lang['mergewithmsg'] = "Numéro TID du Sujet que vous voulez fusionner avec :<br /><span class=\"smalltxt\">viewthread.php?tid=48, Le Numéro TID sera 48</span>";
 $lang['message'] = "Message";
 $lang['misconlinetoday'] = "Le(s) ";
-$lang['misconlinetoday2'] = " membres ont visité le forum aujourd\'hui...";
+$lang['misconlinetoday2'] = " membres ont visité le forum aujourd'hui...";
 $lang['moderation_actions'] = "Actions";
-$lang['moderation_anonq'] = "File d\'attente de publication anonyme";
+$lang['moderation_anonq'] = "File d'attente de publication anonyme";
 $lang['moderation_approve'] = "Approuver";
 $lang['moderation_approved'] = "Approuvé";
 $lang['moderation_approve_all'] = "Approuver tout";
@@ -473,7 +468,7 @@ $lang['moderation_canceled'] = "Abandonné";
 $lang['moderation_delete'] = "Suppression";
 $lang['moderation_deleted'] = "Supprimé";
 $lang['moderation_delete_all'] = "Tout supprimer";
-$lang['moderation_delete_ban'] = "Supprimer et bannir l\'utilisateur";
+$lang['moderation_delete_ban'] = "Supprimer et bannir l'utilisateur";
 $lang['moderation_empty'] = "Vidé";
 $lang['moderation_hold'] = "Merci de publier. Votre message sera examiné par un membre de l'équipe avant d'être affiché dans le forum.";
 $lang['moderation_meta_name'] = "Panneau de quarantaine";
@@ -481,7 +476,6 @@ $lang['moderation_new_member'] = "Nouveau membre";
 $lang['moderation_new_memq'] = "Nouveaus membres en attente";
 $lang['moderation_new_replies'] = "Nouvelles réponses";
 $lang['moderation_new_threads'] = "Nouveaux sujets";
-
 $lang['moderation_notice_eval'] = "Il y a \$result de nouveaux sujets en <a href='quarantine.php'>Quarantaine</a>.";
 $lang['moderation_notice_single'] = "Il y a un nouveau message en <a href='quarantine.php'>Quarantaine</a>.";
 $lang['moderation_replies_eval'] = "Vos \$result nouvelles réponses sont en attente. Ils seront répertoriés dans ce fil après avoir été examinés par un membre du personnel.";
