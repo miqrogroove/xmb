@@ -299,7 +299,9 @@ class dbstuff {
                 $this->last_rows = $this->link->affected_rows;
 
                 $query2 = $this->link->query( 'SHOW COUNT(*) WARNINGS' );
-                if ( ( $warnings = $query2->fetch_row()[0] ) > 0 ) {
+                $warnings = $query2->fetch_row();
+                $warnings = $warnings[0];
+                if ( $warnings > 0 ) {
                     if (!ini_get('log_errors')) {
                         ini_set('log_errors', TRUE);
                         ini_set('error_log', 'error_log');
@@ -375,7 +377,8 @@ class dbstuff {
     function result( $query, $row, $field = 0 ) {
         set_error_handler($this->errcallb);
 		$query->data_seek( $row );
-        $return = $query->fetch_array()[$field];
+        $fields = $query->fetch_array();
+        $return = $fields[$field];
         restore_error_handler();
         return $return;
     }
