@@ -79,8 +79,10 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
         if (is_string($sourcearray[$varname])) {
             $retval = $sourcearray[$varname];
 
-            if (get_magic_quotes_gpc()) {
-                $retval = stripslashes($retval);
+            if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
+                if (get_magic_quotes_gpc()) {
+                    $retval = stripslashes($retval);
+                }
             }
 
             $retval = str_replace("\x00", '', $retval);
@@ -165,8 +167,10 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
             case 'string':
             default:
                 if (is_string($theObject)) {
-                    if (get_magic_quotes_gpc()) {
-                        $theObject = stripslashes($theObject);
+                    if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
+                        if (get_magic_quotes_gpc()) {
+                            $theObject = stripslashes($theObject);
+                        }
                     }
 
                     $theObject = str_replace("\x00", '', $theObject);
