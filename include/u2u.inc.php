@@ -494,18 +494,24 @@ function u2u_folderSubmit($u2ufolders, $folders) {
 
     $error = '';
 
-    //Trim all folder names, remove all duplicates, CI due to absence of explicit column collation.
-    $newfolders = explode(',', $u2ufolders);
-    $testarray = array();
-    foreach($newfolders as $key => $value) {
-        $newfolders[$key] = trim($value);
-        if (empty($newfolders[$key]) || in_array(strtolower($newfolders[$key]), $testarray) || in_array(strtolower($newfolders[$key]), array('inbox', 'outbox', 'drafts', 'trash'))) {
-            unset($newfolders[$key]);
-        } else if (strlen($newfolders[$key]) > U2U_FOLDER_COL_SIZE) {
-            $newfolders[$key] = substr($newfolders[$key], 0, U2U_FOLDER_COL_SIZE);
-            $testarray[] = strtolower($newfolders[$key]);
+    //Trim all folder names, remove all duplicates, use case-insensitivity due to absence of explicit column collation.
+    $newfolders = explode( ',', $u2ufolders );
+    $testarray = ['inbox', 'outbox', 'drafts', 'trash'];
+    foreach( $newfolders as $key => $value ) {
+        $value = trim( $value );
+        if ( strlen( $value ) > U2U_FOLDER_COL_SIZE ) {
+            $value = substr( $value, 0, U2U_FOLDER_COL_SIZE );
+        }
+        $ci_value = strtolower( $value );
+        if ( strpos( $ci_value, '&lt;' ) !== false || strpos( $ci_value, '&gt;' ) !== false ) {
+            // Angle braces are problematic because we use these folder names in URL query strings.
+            $value = '';
+        }
+        if ( empty( $value ) || in_array( $ci_value, $testarray ) ) {
+            unset( $newfolders[$key] );
         } else {
-            $testarray[] = strtolower($newfolders[$key]);
+            $newfolders[$key] = $value;
+            $testarray[] = $ci_value;
         }
     }
 
