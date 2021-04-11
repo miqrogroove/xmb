@@ -88,10 +88,12 @@ function url_to_text($url) {
                 $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
             } else {
                 $locate = getForum($fid);
-                $perms = checkForumPermissions($locate);
-                if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
-                    $fname[$fid] = fnameOut( $locate['name'] );
-                    $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
+                if ( false !== $locate ) {
+                    $perms = checkForumPermissions($locate);
+                    if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
+                        $fname[$fid] = fnameOut( $locate['name'] );
+                        $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
+                    }
                 }
             }
         } else {

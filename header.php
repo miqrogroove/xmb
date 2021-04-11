@@ -580,7 +580,7 @@ if ($tid > 0 && $action != 'templates') {
     $db->free_result($query);
 } else if ($fid > 0) {
     $forum = getForum($fid);
-    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+    if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' ) {
         $forumtheme = 0;
     } else {
         $forumtheme = $forum['theme'];

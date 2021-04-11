@@ -212,7 +212,7 @@ if ( false === strpos( $oldtopics, "|$lastPid|" ) ) {
 $fid = $thread['fid'];
 $forum = getForum($fid);
 
-if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }

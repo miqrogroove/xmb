@@ -118,7 +118,7 @@ if ( empty( $file ) ) {
 if ($pid > 0 || $file['fid'] != '') {
     $forum = getForum($file['fid']);
 
-    if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
+    if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' || ( $forum['attachstatus'] != 'on' && !X_ADMIN ) ) {
         fileError();
     }
 

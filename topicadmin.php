@@ -69,7 +69,7 @@ if (count($tids) == 1) {
 
 $forums = getForum($fid);
 
-if (($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
+if ( false === $forums || ( $forums['type'] != 'forum' && $forums['type'] != 'sub' ) || $forums['status'] != 'on' ) {
     header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
