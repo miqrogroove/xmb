@@ -154,8 +154,8 @@ switch($action) {
                                 // This should be rare.
                                 $errorno = curl_errno( $curl );
                                 $errormsg = curl_error( $curl );
-                                error_log( "Unable to contact reCAPTCHA API after $limit attempts.  cURL error $errorno: $errormsg" );
-                                continue;
+                                trigger_error( "Unable to contact reCAPTCHA API after $limit attempts.  cURL error $errorno: $errormsg", E_USER_WARNING );
+                                break;
                             }
 
                             sleep( 2 );
