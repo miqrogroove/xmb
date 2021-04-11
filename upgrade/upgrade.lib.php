@@ -42,8 +42,8 @@ function xmb_upgrade() {
         } else {
             upgrade_query("UPDATE ".X_PREFIX."settings SET value = 'off' WHERE name = 'bbstatus'");
         }
-        show_warning('Your forums were turned off by the upgrader to prevent damage.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
-        trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_WARNING);
+        show_warning('Your forums were turned off by the upgrader.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
+        trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_NOTICE);
     }
 
     show_progress('Selecting the appropriate change set');
