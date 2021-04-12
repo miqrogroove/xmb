@@ -384,7 +384,7 @@ function template($name) {
     }
 }
 
-function templatecache($type=X_CACHE_GET, $name, $data='') {
+function templatecache( int $type, string $name, string $data = '' ) {
     static $cache;
 
     switch($type) {
@@ -1699,18 +1699,11 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
     }
 }
 
-function audit($user='', $action, $fid, $tid, $reason='') {
-    global $xmbuser, $db, $onlinetime;
+function audit( string $user, string $action, int $fid, int $tid ) {
+    global $db, $onlinetime;
 
-    if ($user == '') {
-        $user = $xmbuser;
-    }
-
-    $fid = (int) $fid;
-    $tid = (int) $tid;
     $action = cdataOut($action);
     $user = cdataOut($user);
-    $reason = cdataOut($reason);
 
     $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', $onlinetime)");
     return true;

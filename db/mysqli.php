@@ -52,9 +52,8 @@ class dbstuff {
      * @param string $dbname
      * @param bool   $pconnect Keep the connection open after the script ends.
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
-     * @param bool   $new_link Ignored in mysqli and always TRUE.
      */
-    public function connect($dbhost='localhost', $dbuser, $dbpw, $dbname, $pconnect=FALSE, $force_db=FALSE, $new_link=TRUE) {
+    public function connect( string $dbhost, string $dbuser, string $dbpw, string $dbname, bool $pconnect = false, bool $force_db = false ) {
 
         if ( $pconnect ) {
             $dbhost = "p:$dbhost";
