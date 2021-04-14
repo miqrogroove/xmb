@@ -71,15 +71,15 @@ if ( isset( $row['langfile'] ) ) {
 $db->free_result( $squery );
 unset( $row );
 
-if ( $SETTINGS['postperpage'] < 5 ) $SETTINGS['postperpage'] = 30;
-if ( $SETTINGS['topicperpage'] < 5 ) $SETTINGS['topicperpage'] = 30;
-if ( $SETTINGS['memberperpage'] < 5 ) $SETTINGS['memberperpage'] = 30;
-if ( $SETTINGS['smcols'] < 1 ) $SETTINGS['smcols'] = 4;
-if ( empty( $SETTINGS['onlinetodaycount'] ) || $SETTINGS['onlinetodaycount'] < 5 ) {
-    $SETTINGS['onlinetodaycount'] = 30;
+if ( (int) $SETTINGS['postperpage'] < 5 ) $SETTINGS['postperpage'] = '30';
+if ( (int) $SETTINGS['topicperpage'] < 5 ) $SETTINGS['topicperpage'] = '30';
+if ( (int) $SETTINGS['memberperpage'] < 5 ) $SETTINGS['memberperpage'] = '30';
+if ( (int) $SETTINGS['smcols'] < 1 ) $SETTINGS['smcols'] = '4';
+if ( empty( $SETTINGS['onlinetodaycount'] ) || (int) $SETTINGS['onlinetodaycount'] < 5 ) {
+    $SETTINGS['onlinetodaycount'] = '30';
 }
-if ( empty( $SETTINGS['captcha_code_length'] ) || $SETTINGS['captcha_code_length'] < 3 || $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
-    $SETTINGS['captcha_code_length'] = 8;
+if ( empty( $SETTINGS['captcha_code_length'] ) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
+    $SETTINGS['captcha_code_length'] = '8';
 }
 if ( empty( $SETTINGS['ip_banning'] ) ) {
     $SETTINGS['ip_banning'] == 'off';
@@ -88,7 +88,7 @@ if ( empty( $SETTINGS['schema_version'] ) ) {
     $SETTINGS['schema_version'] == 0;
 }
 $inimax = phpShorthandValue('upload_max_filesize');
-if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < $SETTINGS['maxattachsize'] ) {
+if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattachsize'] ) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);

@@ -348,29 +348,29 @@ if ( isset( $row['langfile'] ) ) {
 $db->free_result( $squery );
 unset( $row );
 
-if ( $SETTINGS['postperpage'] < 5 ) {
-    $SETTINGS['postperpage'] = 30;
+if ( (int) $SETTINGS['postperpage'] < 5 ) {
+    $SETTINGS['postperpage'] = '30';
 }
 
-if ( $SETTINGS['topicperpage'] < 5 ) {
-    $SETTINGS['topicperpage'] = 30;
+if ( (int) $SETTINGS['topicperpage'] < 5 ) {
+    $SETTINGS['topicperpage'] = '30';
 }
 
-if ( $SETTINGS['memberperpage'] < 5 ) {
-    $SETTINGS['memberperpage'] = 30;
+if ( (int) $SETTINGS['memberperpage'] < 5 ) {
+    $SETTINGS['memberperpage'] = '30';
 }
 
-if ( $SETTINGS['smcols'] < 1 ) {
-    $SETTINGS['smcols'] = 4;
+if ( (int) $SETTINGS['smcols'] < 1 ) {
+    $SETTINGS['smcols'] = '4';
 }
 
 // The latest upgrade script advertises compatibility with v1.8 SP2.  These defaults might not exist yet.
-if ( empty( $SETTINGS['onlinetodaycount'] ) || $SETTINGS['onlinetodaycount'] < 5 ) {
-    $SETTINGS['onlinetodaycount'] = 30;
+if ( empty( $SETTINGS['onlinetodaycount'] ) || (int) $SETTINGS['onlinetodaycount'] < 5 ) {
+    $SETTINGS['onlinetodaycount'] = '30';
 }
 
-if ( empty( $SETTINGS['captcha_code_length'] ) || $SETTINGS['captcha_code_length'] < 3 || $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
-    $SETTINGS['captcha_code_length'] = 8;
+if ( empty( $SETTINGS['captcha_code_length'] ) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
+    $SETTINGS['captcha_code_length'] = '8';
 }
 
 if ( empty( $SETTINGS['ip_banning'] ) ) {
@@ -378,12 +378,12 @@ if ( empty( $SETTINGS['ip_banning'] ) ) {
 }
 
 if ( empty( $SETTINGS['schema_version'] ) ) {
-    $SETTINGS['schema_version'] == 0;
+    $SETTINGS['schema_version'] == '0';
 }
 
 // Validate maxattachsize with PHP configuration.
 $inimax = phpShorthandValue('upload_max_filesize');
-if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < $SETTINGS['maxattachsize'] ) {
+if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattachsize'] ) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);
@@ -407,7 +407,7 @@ if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
 }
 
-if ( X_SCRIPT == 'upgrade.php' && $SETTINGS['schema_version'] < 5 ) {
+if ( X_SCRIPT == 'upgrade.php' && (int) $SETTINGS['schema_version'] < 5 ) {
     define( 'X_SADMIN', \XMB\SQL\checkUpgradeOldLogin( postedVar( 'xmbuser', '', true, false, false, 'c' ), postedVar( 'xmbpw', '', false, false, false, 'c' ) ) );
     return;
 }
@@ -432,7 +432,7 @@ if ($SETTINGS['ip_banning'] == 'on') {
 
 // Check other access restrictions
 if ( '' == $serror ) {
-    if ( $SETTINGS['schema_version'] < 5 ) {
+    if ( (int) $SETTINGS['schema_version'] < 5 ) {
         // During upgrade of session system, no features are available.
         $serror = 'bstatus';
     } elseif ( ( $action == 'login' || $action == 'lostpw' ) && X_SCRIPT == 'misc.php' ) {
@@ -454,7 +454,7 @@ if ( '' == $serror ) {
 
 // Authenticate session or login credentials.
 $force_inv = false;
-if ( $SETTINGS['schema_version'] < 5 ) {
+if ( (int) $SETTINGS['schema_version'] < 5 ) {
     $mode = 'disabled';
 } else if ( X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'] ) ) {
     $mode = 'login';
@@ -539,7 +539,7 @@ if (X_MEMBER) {
     $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.recodeOut($xmbuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 
     // Update lastvisit in the header shown
-    if ($self['lastvisit'] < $thetime || ($self['lastvisit'] > $thetime + X_ONLINE_TIMER && $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
+    if ( (int) $self['lastvisit'] < $thetime || ( (int) $self['lastvisit'] > $thetime + X_ONLINE_TIMER && (int) $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
         $thetime = $self['lastvisit'];
     }
     $lastlocal = $thetime + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
@@ -564,7 +564,7 @@ put_cookie('xmblvb', $thetime, ($onlinetime + X_ONLINE_TIMER)); // lvb == last v
 $lastvisit = $thetime; // Used by forumdisplay
 
 // Get themes, [fid, [tid]]
-$forumtheme = 0;
+$forumtheme = '0';
 $fid = getInt('fid', 'r');
 $tid = getInt('tid', 'r');
 if ($tid > 0 && $action != 'templates') {
@@ -581,7 +581,7 @@ if ($tid > 0 && $action != 'templates') {
 } else if ($fid > 0) {
     $forum = getForum($fid);
     if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' ) {
-        $forumtheme = 0;
+        $forumtheme = '0';
     } else {
         $forumtheme = $forum['theme'];
     }
@@ -593,7 +593,7 @@ if (!$validtheme && (int) $themeuser > 0) {
     $theme = (int) $themeuser;
     $row = \XMB\SQL\getThemeByID( $theme );
     if ( ! $validtheme = ( ! empty( $row ) ) ) {
-        $themeuser = 0;
+        $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
     }
 }
@@ -601,7 +601,7 @@ if (!$validtheme && (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
     $row = \XMB\SQL\getThemeByID( $theme );
     if ( ! $validtheme = ( ! empty( $row ) ) ) {
-        $themeuser = 0;
+        $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE fid=$fid");
     }
 }
@@ -631,7 +631,7 @@ more_theme_vars();
 extract( $THEME );
 
 $css = '';
-if ( $SETTINGS['schema_version'] >= 6 ) {
+if ( (int) $SETTINGS['schema_version'] >= 6 ) {
     $css = "<link rel='stylesheet' type='text/css' href='{$full_url}css.php?id={$THEME['themeid']}&amp;v={$THEME['version']}' />";
 }
 
@@ -740,12 +740,12 @@ if ((X_ADMIN || $SETTINGS['bbstatus'] == 'on') && (X_MEMBER || $SETTINGS['regvie
     // check for new u2u's
     if (X_MEMBER) {
         $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
-        $newu2unum = $db->result($query, 0);
+        $newu2unum = (int) $db->result($query, 0);
         $db->free_result($query);
         if ($newu2unum > 0) {
             $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
             // Popup Alert
-            if ($self['u2ualert'] == 2 || ($self['u2ualert'] == 1 && X_SCRIPT == 'index.php')) {
+            if ( '2' === $self['u2ualert'] || ( '1' === $self['u2ualert'] && X_SCRIPT == 'index.php' ) ) {
                 $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
                 if ($newu2unum == 1) {
                     $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';

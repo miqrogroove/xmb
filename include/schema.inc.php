@@ -667,11 +667,11 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
     $result = $db->query("SHOW INDEX FROM ".X_PREFIX.$table);
 
     while ($row = $db->fetch_array($result)) {
-        if (!empty($column) && $row['Column_name'] != $column) {
+        if (!empty($column) && $row['Column_name'] !== $column) {
             continue;
-        } elseif (!empty($index) && $row['Key_name'] != $index) {
+        } elseif (!empty($index) && $row['Key_name'] !== $index) {
             continue;
-        } elseif (!empty($subpart) && $row['Sub_part'] != $subpart) {
+        } elseif (!empty($subpart) && $row['Sub_part'] !== $subpart) {
             continue;
         } else {
             $db->free_result($result);

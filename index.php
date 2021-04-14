@@ -125,26 +125,14 @@ if ($SETTINGS['index_stats'] == 'on') {
     if ( 'on' == $SETTINGS['hide_banned'] ) {
         $where = "AND status != 'Banned'";
     }
-    $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
-    if ($db->num_rows($query) == 1) {
-        $lastmember = $db->fetch_array($query);
-        $db->free_result($query);
+    $query1 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
+    if ($db->num_rows($query1) == 1) {
+        $lastmember = $db->fetch_array($query1);
 
         $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
-        $members = $db->result($query, 0);
-        if ($members == false) {
-            $members = 0;
-        }
-
-        $threads = $db->result($query, 1);
-        if ($threads == false) {
-            $threads = 0;
-        }
-
-        $posts = $db->result($query, 2);
-        if ($posts == false) {
-            $posts = 0;
-        }
+        $members = (int) $db->result($query, 0);
+        $threads = (int) $db->result($query, 1);
+        $posts = (int) $db->result($query, 2);
         $db->free_result($query);
 
         $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
@@ -153,6 +141,7 @@ if ($SETTINGS['index_stats'] == 'on') {
         $indexstats = str_replace( $search, $replace, $lang['evalindexstats'] );
         eval('$statsbar = "'.template('index_stats').'";');
     }
+    $db->free_result($query1);
 }
 
 if ($gid == 0) {
@@ -168,18 +157,18 @@ if ($gid == 0) {
     if ($SETTINGS['whosonlinestatus'] == 'on') {
         $hiddencount = 0;
         $membercount = 0;
-        $guestcount = $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM ".X_PREFIX."whosonline WHERE username = 'xguest123'"), 0);
+        $guestcount = (int) $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM ".X_PREFIX."whosonline WHERE username = 'xguest123'"), 0);
         $member = array();
         $where = '';
         if ( 'on' == $SETTINGS['hide_banned'] ) {
             $where = "WHERE m.status != 'Banned'";
         }
-        $query  = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
+        $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
-            if ($online['invisible'] != 0 && X_ADMIN) {
+            if ( '0' !== $online['invisible'] && X_ADMIN ) {
                 $member[] = $online;
                 $hiddencount++;
-            } else if ($online['invisible'] != 0) {
+            } else if ( '0' !== $online['invisible'] ) {
                 $hiddencount++;
             } else {
                 $member[] = $online;
@@ -226,16 +215,16 @@ if ($gid == 0) {
             $pre = '<span class="status_'.str_replace(' ', '_', $online['status']).'">';
             $suff = '</span>';
 
-            if ($online['invisible'] != 0) {
+            if ( '0' !== $online['invisible'] ) {
                 $pre .= '<strike>';
                 $suff = '</strike>'.$suff;
-                if (!X_ADMIN && $online['username'] != $xmbuser) {
+                if (!X_ADMIN && $online['username'] !== $xmbuser) {
                     $num++;
                     continue;
                 }
             }
 
-            if ($online['username'] == $xmbuser && $online['invisible'] != 0) {
+            if ( $online['username'] === $xmbuser && '0' !== $online['invisible'] ) {
                 $show_inv_key = true;
             }
 
@@ -272,7 +261,7 @@ if ($gid == 0) {
             $pre = $suff = '';
             $x = 0;
             while($memberstoday = $db->fetch_array($query)) {
-                if ($x <= $onlinetodaycount) {
+                if ( $x <= $SETTINGS['onlinetodaycount'] ) {
                     $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
                     $suff = '</span>';
                     $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
@@ -289,7 +278,7 @@ if ($gid == 0) {
             } else {
                 $memontoday = $todaymembersnum.$lang['textmemberstoday'];
             }
-            $last50today = str_replace( '$onlinetodaycount', $onlinetodaycount, $lang['last50todayeval'] );
+            $last50today = str_replace( '$onlinetodaycount', $SETTINGS['onlinetodaycount'], $lang['last50todayeval'] );
             eval('$whosonlinetoday = "'.template('index_whosonline_today').'";');
         }
 
@@ -303,7 +292,7 @@ $fquery = getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
 $indexBarTop = $indexBar = $forumlist = $spacer = '';
 $forumarray = array();
-$catLessForums = $lastcat = 0;
+$catLessForums = 0;
 
 if ($SETTINGS['space_cats'] == 'on') {
     eval('$spacer = "'.template('index_category_spacer').'";');
@@ -334,6 +323,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
     }
 }
 
+$lastcat = '0';
 foreach($fquery as $thing) {
 
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
@@ -342,11 +332,11 @@ foreach($fquery as $thing) {
         $cforum = '';
     }
 
-    if ((int)$thing['cat_fid'] === 0) {
+    if ( '0' === $thing['cat_fid'] ) {
         $catLessForums++;
     }
 
-    if ($lastcat != $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || (!empty($cforum) && $SETTINGS['catsonly'] != 'on'))) {
+    if ( $lastcat !== $thing['cat_fid'] && ( $SETTINGS['catsonly'] == 'on' || !empty( $cforum ) ) ) {
         if ($forumlist != '') {
             $forumarray[] = $forumlist;
             $forumlist = '';
@@ -389,9 +379,9 @@ echo $header, $index, $footer;
  * @param array $forums Read-Only Variable. Must be a return value from the function getStructuredForums()
  * @param array $cat
  * @param bool  $catsonly
- * @return array Two-dimensional array of forums sorted by the group's displayorder, then the forum's displayorder.
+ * @return array Two-dimensional array of forums (arrays of strings) sorted by the group's displayorder, then the forum's displayorder.
  */
-function getIndexForums(&$forums, $cat, $catsonly) {
+function getIndexForums( array $forums, array $cat, bool $catsonly ): array {
     $sorted = array();
 
     if (isset($cat['fid'])) {
@@ -413,7 +403,7 @@ function getIndexForums(&$forums, $cat, $catsonly) {
     } else {
         // Ungrouped forums.
         foreach($forums['forum']['0'] as $forum) {
-            $forum['cat_fid'] = '';
+            $forum['cat_fid'] = '0';
             $forum['cat_name'] = '';
             $sorted[] = $forum;
         }

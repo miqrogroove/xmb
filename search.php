@@ -98,7 +98,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
     if (!X_STAFF) {
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        if ($srchtxt != censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
+        if ($srchtxt !== censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
             error($lang['searchinvalid']);
         }
         $url_check = Array('%3c', '<', ':/');
@@ -184,7 +184,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
 
     if (count($srchfid) > 0) {
-        if ($srchfid[0] != 'all') {
+        if ( 0 != $srchfid[0] ) {
             $srchfidcsv = implode(',', $srchfid);
             $sql .= " AND f.fid IN ($srchfidcsv)";
             $ext[] = "f=$srchfidcsv";

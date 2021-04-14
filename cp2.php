@@ -130,13 +130,13 @@ if ($action == 'restrictions') {
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted ORDER BY id");
         while($restricted = $db->fetch_array($query)) {
-            if ($restricted['case_sensitivity'] == 1) {
+            if ( '1' === $restricted['case_sensitivity'] ) {
                 $case_check = 'checked="checked"';
             } else {
                 $case_check = '';
             }
 
-            if ($restricted['partial'] == 1) {
+            if ( '1' === $restricted['partial'] ) {
                 $partial_check = 'checked="checked"';
             } else {
                 $partial_check = '';
@@ -373,7 +373,7 @@ if ($action == 'lang') {
         $upload = \XMB\Attach\getUpload('themefile', $filename, $filetype, $filesize, FALSE);
         if ($upload === FALSE) {
             $message = $lang['langimportfail'];
-            if ($filetype != X_EMPTY_UPLOAD) {
+            if ( $filetype !== X_EMPTY_UPLOAD ) {
                 $message .= ' '.$attachmentErrors[$filetype];
             }
             error($message, FALSE, '</td></tr></table></td></tr></table><br />');
@@ -507,7 +507,7 @@ if ($action == 'lang') {
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td><?php echo $langkey; ?></td>
-            <?php if ($row['phrasecount'] == 0) { ?>
+            <?php if ( '0' === $row['phrasecount'] ) { ?>
             <td></td>
             <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $lang['textnewcode']; ?></a></td>
             </tr>
@@ -691,7 +691,7 @@ if ($action == 'themes') {
         $valsql = implode(', ', $valsql);
 
         $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='$dbname'");
-        if ($db->result($query, 0) > 0) {
+        if ( (int) $db->result($query, 0) > 0 ) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table><br />');
         }
 
@@ -710,7 +710,7 @@ if ($action == 'themes') {
         $theme_delete = postedArray('theme_delete', 'int');
         $theme_name = postedArray('theme_name', 'string', 'javascript', TRUE, TRUE, TRUE);
 
-        $number_of_themes = $db->result($db->query("SELECT count(themeid) FROM ".X_PREFIX."themes"), 0);
+        $number_of_themes = (int) $db->result($db->query("SELECT count(themeid) FROM ".X_PREFIX."themes"), 0);
 
         if ($theme_delete && count($theme_delete) >= $number_of_themes) {
             error($lang['delete_all_themes'], false, '</td></tr></table></td></tr></table><br />');
@@ -1165,7 +1165,7 @@ if ($action == "smilies") {
         }
 
         if ($newcode) {
-            if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0) {
+            if ( (int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0 ) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
             }
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
@@ -1201,7 +1201,7 @@ if ($action == "smilies") {
         }
 
         if ($newurl2) {
-            if ($db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
+            if ( (int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0 ) {
                 error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
             }
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('picon', '', '$newurl2')");
@@ -1698,6 +1698,7 @@ if ($action == "prune") {
                 $fs = array();
                 $fids = explode(',', $pruneFromFid);
                 foreach($fids as $fid) {
+                    $fid = (int) $fid;
                     if ($fid > 0) {
                         $fs[] = $fid;
                     }
@@ -1713,7 +1714,7 @@ if ($action == "prune") {
         }
 
         $sign = '';
-        if (isset($pruneByPosts['check']) && $pruneByPosts['check'] == "1") {
+        if ( isset($pruneByPosts['check']) && '1' === $pruneByPosts['check'] ) {
             switch($pruneByPosts['type']) {
                 case 'less':
                     $sign = '<';
@@ -1729,7 +1730,7 @@ if ($action == "prune") {
             $queryWhere[] = 'replies '.$sign.' '.(int) ($pruneByPosts['posts']-1);
         }
 
-        if (isset($pruneByDate['check']) && $pruneByDate['check'] == 1) {
+        if ( isset($pruneByDate['check']) && '1' === $pruneByDate['check'] ) {
             switch($pruneByDate['type']) {
                 case 'less':
                     $queryWhere[] = 'lastpost > "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
@@ -2245,7 +2246,7 @@ if ($action == "attachments") {
                     $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['movetodb'].'</a>';
                 }
             }
-            if ($attachment['pid'] == 0) {
+            if ( '0' === $attachment['pid'] ) {
                 $attachment['author'] = $attachment['username'];
                 $downloadlink = '';
             } else {
@@ -2260,7 +2261,7 @@ if ($action == "attachments") {
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>">
                 <br /><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?> - <?php echo $newthumblink; ?> - <?php echo $deletelink; ?></span></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment['author']?></td>
-            <?php if ($attachment['pid'] == 0) { ?>
+            <?php if ( '0' === $attachment['pid'] ) { ?>
                 <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
             <?php } else { ?>
                 <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment['tid']?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
@@ -2288,7 +2289,7 @@ if ($action == "attachments") {
                             $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$child['aid'].'&amp;pid='.$child['pid'].'">'.$lang['movetodb'].'</a>';
                         }
                     }
-                    if ($child['pid'] == 0) {
+                    if ( '0' === $child['pid'] ) {
                         $downloadlink = $lang['thumbnail'];
                     } else {
                         $downloadlink = '<a href="'.\XMB\Attach\getURL( (int) $child['aid'], (int) $child['pid'], $child['filename'] ).'" target="_blank">'.$lang['thumbnail'].'</a>';
@@ -2335,7 +2336,7 @@ if ($action == "attachments") {
         while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
-            if ($attachment['filename'] != $postedvalue) {
+            if ( $attachment['filename'] !== $postedvalue ) {
                 \XMB\Attach\changeName( (int) $attachment['aid'], (int) $attachment['pid'], $postedvalue );
             }
         }
@@ -2360,7 +2361,7 @@ if ($action == "modlog") {
     <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_action']; ?></font></strong></td>
     </tr>
     <?php
-    $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE NOT (fid='0' AND tid='0')"), 0);
+    $count = (int) $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE NOT (fid='0' AND tid='0')"), 0);
 
     if (!$page) {
         $page = 1;
@@ -2380,7 +2381,7 @@ if ($action == "modlog") {
     while($recordinfo = $db->fetch_array($query)) {
         $date = gmdate($dateformat, $recordinfo['date']);
         $time = gmdate($timecode, $recordinfo['date']);
-        if ($recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '') {
+        if ( (int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '' ) {
             $url = "<a href=\"./viewthread.php?tid=$recordinfo[tid]\" target=\"_blank\">$recordinfo[subject]</a>";
         } else if ($recordinfo['action'] == 'delete') {
             $recordinfo['action'] = '<strong>'.$recordinfo['action'].'</strong>';
@@ -2485,7 +2486,7 @@ if ($action == "cplog") {
     <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['th_ip']; ?></font></strong></td>
     </tr>
     <?php
-    $count = $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
+    $count = (int) $db->result($db->query("SELECT count(fid) FROM ".X_PREFIX."logs WHERE (fid='0' AND tid='0')"), 0);
 
     if (!$page) {
         $page = 1;
@@ -2598,7 +2599,7 @@ if ($action == "delete_attachment") {
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
         </form></td></tr>
         <?php
-    } elseif ($lang['textyes'] == $yessubmit) {
+    } elseif ( $lang['textyes'] === $yessubmit ) {
         request_secure( 'Control Panel/Attachments/Delete', (string) $aid );
         require('include/attach.inc.php');
         \XMB\Attach\deleteByID( $aid );

@@ -476,7 +476,7 @@ class FormsAndCookies implements Mechanism {
         
         $pinput = md5( $pinput );
 
-        if ( $data->member['password'] != $pinput ) {
+        if ( $data->member['password'] !== $pinput ) {
             auditBadLogin( $data->member );
             $data = new Data;
             $data->status = 'bad';
@@ -527,7 +527,7 @@ class FormsAndCookies implements Mechanism {
             return $data;
         }
         
-        if ( time() > $details['expire'] ) {
+        if ( time() > (int) $details['expire'] ) {
             auditBadSession( $member );
             $data->status = 'bad';
             return $data;
@@ -537,7 +537,7 @@ class FormsAndCookies implements Mechanism {
         if ( self::REGEN_ENABLED ) {
             // Figure out where we are in the regeneration cycle.
             $cookie2 = $this->get_cookie( self::REGEN_COOKIE );
-            if ( $cookie2 != '' && $cookie2 == $details['replaces'] ) {
+            if ( $cookie2 != '' && $cookie2 === $details['replaces'] ) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
                 \XMB\SQL\deleteSession( $details['replaces'] );
                 \XMB\SQL\clearSessionParent( $details['token'] );
@@ -551,7 +551,7 @@ class FormsAndCookies implements Mechanism {
                 auditBadSession( $member );
                 $data->status = 'bad';
                 return $data;
-            } elseif ( time() > $details['regenerate'] ) {
+            } elseif ( time() > (int) $details['regenerate'] ) {
                 // Current session needs to be regenerated.
                 $newdetails = \XMB\SQL\getSessionReplacement( $pinput, $uinput );
                 if ( empty( $newdetails ) ) {
@@ -700,7 +700,7 @@ class FormsAndCookies implements Mechanism {
             trigger_error( 'XMB was unable to save a new session token.', E_USER_ERROR );
         }
 
-        if ( $oldsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
+        if ( (int) $oldsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
             $expires = $oldsession['expire'];
         } else {
             $expires = 0;
@@ -717,7 +717,7 @@ class FormsAndCookies implements Mechanism {
      * @param array $newsession
      */
     private function recover( array $newsession ) {
-        if ( $newsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
+        if ( (int) $newsession['expire'] > time() + self::SESSION_LIFE_SHORT ) {
             $expires = $newsession['expire'];
         } else {
             $expires = 0;
@@ -749,7 +749,7 @@ class FormsAndCookies implements Mechanism {
 
         $result = \XMB\SQL\getSessionsByName( $username );
         while ( $session = $db->fetch_array( $result ) ) {
-            if ( $session['expire'] < time() ) {
+            if ( (int) $session['expire'] < time() ) {
                 continue;
             }
             $session['current'] = ( $pinput == $session['token'] || $pinput == $session['replaces'] );

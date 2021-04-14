@@ -59,7 +59,7 @@ if ( X_MEMBER ) {
     if ( '' == $password1 ) {
         error( $lang['textnopassword'] );
     }
-    if ( $password1 != $password2 ) {
+    if ( $password1 !== $password2 ) {
         error( $lang['pwnomatch'] );
     }
 

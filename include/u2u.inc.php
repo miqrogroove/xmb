@@ -133,7 +133,6 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
     }
 
     if (onSubmit('savesubmit')) {
-        // fixed by John Briggs
         $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
 
         if (empty($message)) {
@@ -145,15 +144,13 @@ function u2u_send($u2uid, $msgto, $subject, $message, $u2upreview) {
 
     if (onSubmit('sendsubmit')) {
         $errors = '';
-        // fixed by John Briggs
         $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
 
-        // fixed lang variable use by John Briggs
         if (empty($message)) {
             error($lang['u2umsgempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
-        if ($db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
+        if ( (int) $db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0 ) {
             error($lang['floodprotect_u2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
@@ -263,7 +260,7 @@ function u2u_view($u2uid, $folders) {
         if ($u2u['type'] == 'draft') {
             $sendoptions = '<input type="radio" name="mod" value="send" /> '.$lang['textu2u'].'<br />';
             $delchecked = ' checked="checked"';
-        } else if ($u2u['msgfrom'] != $self['username']) {
+        } else if ( $u2u['msgfrom'] !== $self['username'] ) {
             $sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> '.$lang['textreply'].'<br /><input type="radio" name="mod" value="replydel" /> '.$lang['textreplytrash'].'<br /><input type="radio" name="mod" value="forward" /> '.$lang['textforward'].'<br />';
         } else {
             $delchecked = ' checked="checked"';
@@ -597,7 +594,7 @@ function u2u_display($folder, $folders) {
         if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
             if ($onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
-                if ($u2u['invisible'] == 1) {
+                if ( '1' === $u2u['invisible'] ) {
                     if (!X_ADMIN) {
                         $online = $lang['textoffline'];
                     } else {
@@ -709,7 +706,7 @@ function u2u_folderList() {
             $link = $value;
         }
 
-        if ($link == $folder) {
+        if ( $link === $folder ) {
             $value = '<strong>'.$value.'</strong>';
         }
 

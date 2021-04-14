@@ -91,13 +91,13 @@ if ($forums['type'] == 'sub') {
         error($lang['privforummsg']);
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ($fup['fup'] > 0) {
+    } else if ( (int) $fup['fup'] > 0 ) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-} else if ($forums['fup'] > 0) { // 'forum' in a 'group'
+} else if ( (int) $forums['fup'] > 0 ) { // 'forum' in a 'group'
     $fup = getForum($forums['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
@@ -373,7 +373,7 @@ switch($action) {
                 }
                 $topped = $db->result($query, 0);
                 $db->free_result($query);
-                if ($topped == 1) {
+                if ( '1' === $topped ) {
                     $lang['texttopthread'] = $lang['textuntopthread'];
                 }
             } else {
@@ -393,9 +393,9 @@ switch($action) {
                 $topped = $db->result($query, 0);
                 $db->free_result($query);
 
-                if ($topped == 1) {
+                if ( '1' === $topped ) {
                     $db->query("UPDATE ".X_PREFIX."threads SET topped='0' WHERE tid=$tid");
-                } else if ($topped == 0)    {
+                } else if ( '0' === $topped )    {
                     $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid");
                 }
 
@@ -434,11 +434,12 @@ switch($action) {
         $db->free_result($query);
         if ($result) {
             $buttontext = $lang['textunbanip'];
+            $foundmask = false;
             for($i=1; $i<=4; ++$i) {
                 $j = "ip$i";
-                if ($result[$j] == -1) {
+                if ( '-1' === $result[$j] ) {
                     $result[$j] = "*";
-                    $foundmask = 1;
+                    $foundmask = true;
                 }
             }
 
@@ -537,7 +538,7 @@ switch($action) {
             if ($db->num_rows($query) == 0) {
                 error($lang['textnothread'], FALSE);
             }
-            $replies = $db->result($query, 0);
+            $replies = (int) $db->result($query, 0);
             $db->free_result($query);
             if ($replies == 0) {
                 error($lang['cantsplit'], false);
@@ -569,7 +570,7 @@ switch($action) {
             while($post = $db->fetch_array($query)) {
                 $db->escape_fast($post['author']);
                 $move = getInt('move'.$post['pid'], 'p');
-                if ($move == $post['pid']) {
+                if ( $move == (int) $post['pid'] ) {
                     if (!$threadcreated) {
                         $thatime = $onlinetime;
                         $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '{$post['author']}', '', 0)");
@@ -691,7 +692,7 @@ switch($action) {
             if ($db->num_rows($query) == 0) {
                 error($lang['textnothread'], FALSE);
             }
-            $replies = $db->result($query, 0);
+            $replies = (int) $db->result($query, 0);
             $db->free_result($query);
 
             if ($replies == 0) {
@@ -732,7 +733,7 @@ switch($action) {
             eval('echo "'.$template.'";');
         } else {
             request_secure( 'Thread Admin Options/Prune', (string) min( $tids ) );
-            $postcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
+            $postcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
             $delcount = 0;
             foreach($_POST as $key=>$val) {
                 if (substr($key, 0, 4) == 'move') {

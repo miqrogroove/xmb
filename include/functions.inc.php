@@ -39,10 +39,10 @@ function loginUser($invisible = null) {
         $dbname = $db->escape($self['username']);
 
         if (!is_null($invisible)) {
-            if ($invisible && $self['invisible'] == 0) {
+            if ( $invisible && '0' === $self['invisible'] ) {
                 $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
                 $self['invisible'] = 1;
-            } elseif (!$invisible && $self['invisible'] == 1) {
+            } elseif ( !$invisible && '1' === $self['invisible'] ) {
                 $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
                 $self['invisible'] = 0;
             }
@@ -142,9 +142,9 @@ function elevateUser($force_inv = false, $serror = '') {
         $timeoffset = $self['timeoffset'];
         $themeuser = $self['theme'];
         $status = $self['status'];
-        $tpp = $self['tpp'];
-        $ppp = $self['ppp'];
-        $memtime = $self['timeformat'];
+        $tpp = (int) $self['tpp'];
+        $ppp = (int) $self['ppp'];
+        $memtime = (int) $self['timeformat'];
         if ($self['dateformat'] != '') {
             $dateformat = $self['dateformat'];
         }
@@ -155,15 +155,15 @@ function elevateUser($force_inv = false, $serror = '') {
         $timeoffset = $SETTINGS['def_tz'];
         $themeuser = '';
         $status = 'member';
-        $tpp = $SETTINGS['topicperpage'];
-        $ppp = $SETTINGS['postperpage'];
-        $memtime = $SETTINGS['timeformat'];
+        $tpp = (int) $SETTINGS['topicperpage'];
+        $ppp = (int) $SETTINGS['postperpage'];
+        $memtime = (int) $SETTINGS['timeformat'];
         $sig = '';
         $invisible = 0;
         $onlineuser = 'xguest123';
         $self['ban'] = '';
         $self['sig'] = '';
-        $self['uid'] = 0;
+        $self['uid'] = '0';
         $self['username'] = '';
     }
 
@@ -210,11 +210,11 @@ function loginAuthorization( array $member ): string {
         return 'ip-banned';
     } else if ($member['status'] == 'Banned') {
         return 'member-banned';
-    } else if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
+    } else if ( (int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer ) {
         auditBadLogin( $member );
         if ( $member['status'] != 'Super Administrator' ) {
             return 'password-locked';
-        } else if ( $member['bad_login_count'] >= $admin_limit ) {
+        } else if ( (int) $member['bad_login_count'] >= $admin_limit ) {
             return 'password-locked';
         } else {
             // Super Admin has partial immunity to mitigate denial of service.
@@ -236,10 +236,10 @@ function auditBadLogin( array $member ) {
     $lockout_timer = 3600 * 2;
     $reset_timer = 86400;
 
-    if ( time() >= $member['bad_login_date'] + $reset_timer ) {
+    if ( time() >= (int) $member['bad_login_date'] + $reset_timer ) {
         // Allowed less than 10 failures.  After 24 hours, reset.
         \XMB\SQL\resetLoginCounter( $member['username'], time() );
-    } elseif ( $member['bad_login_count'] >= $guess_limit && time() >= $member['bad_login_date'] + $lockout_timer ) {
+    } elseif ( (int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer ) {
         // User had more than 10 failures and should be locked out.  After 2 hours, reset.
         \XMB\SQL\resetLoginCounter( $member['username'], time() );
     } else {
@@ -269,7 +269,7 @@ function auditBadLogin( array $member ) {
 function auditBadSession( array $member ) {
     $reset_timer = 86400;
     
-    if ( time() > $member['bad_login_date'] + $reset_timer ) {
+    if ( time() > (int) $member['bad_login_date'] + $reset_timer ) {
         \XMB\SQL\resetSessionCounter( $member['username'], time() );
     } else {
         $count = \XMB\SQL\raiseSessionCounter( $member['username'] );
@@ -405,10 +405,8 @@ function templatecache( int $type, string $name, string $data = '' ) {
 function loadtemplates() {
     global $db;
 
-    $num = func_num_args();
-    if ($num < 1) {
-        echo 'Not enough arguments given to loadtemplates() on line: '.__LINE__;
-        return false;
+    if ( func_num_args() < 1 ) {
+        trigger_error( 'Not enough arguments given to loadtemplates()', E_USER_WARNING );
     } else {
         $namesarray = array_unique(array_merge(func_get_args(), array('header','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
@@ -981,7 +979,7 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
         $extension = strtolower(get_extension($post['filename']));
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
-            if (intval($attach['thumbid'] > 0)) {
+            if ( (int) $attach['thumbid'] > 0 ) {
                 $post['thumburl'] = \XMB\Attach\getURL( (int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine );
                 $result = explode('x', $attach['thumbsize']);
                 $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
@@ -1034,7 +1032,7 @@ function modcheck($username, $mods, $override=X_SMOD) {
         $username = strtoupper($username);
         $mods = explode(',', $mods);
         foreach($mods as $key=>$moderator) {
-            if (strtoupper(trim($moderator)) == $username) {
+            if ( strtoupper(trim($moderator)) === $username ) {
                 $retval = 'Moderator';
                 break;
             }
@@ -1133,7 +1131,7 @@ function forum($forum, $template, $index_subforums) {
     if (count($index_subforums) > 0) {
         for($i=0; $i < count($index_subforums); $i++) {
             $sub = $index_subforums[$i];
-            if ($sub['fup'] == $forum['fid']) {
+            if ( $sub['fup'] === $forum['fid'] ) {
                 $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
             }
         }
@@ -1712,10 +1710,10 @@ function audit( string $user, string $action, int $fid, int $tid ) {
 function validatePpp() {
     global $ppp, $postperpage;
 
-    if (!isset($ppp) || $ppp == '') {
-        $ppp = $postperpage;
+    if ( empty( $ppp ) || ! is_numeric( $ppp ) ) {
+        $ppp = (int) $postperpage;
     } else {
-        $ppp = is_numeric($ppp) ? (int) $ppp : $postperpage;
+        $ppp = (int) $ppp;
     }
 
     if ($ppp < 5) {
@@ -1726,10 +1724,10 @@ function validatePpp() {
 function validateTpp() {
     global $tpp, $topicperpage;
 
-    if (!isset($tpp) || $tpp == '') {
-        $tpp = $topicperpage;
+    if ( empty( $tpp ) || ! is_numeric( $tpp ) ) {
+        $tpp = (int) $topicperpage;
     } else {
-        $tpp = is_numeric($tpp) ? (int) $tpp : $topicperpage;
+        $tpp = (int) $tpp;
     }
 
     if ($tpp < 5) {
@@ -2255,7 +2253,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
         } elseif (!X_GUEST) {
             $users = explode(',', $userlist);
             foreach($users as $user) {
-                if (strtolower(trim($user)) == strtolower($self['username'])) {
+                if ( strtolower(trim($user)) === strtolower($self['username']) ) {
                     $ret[X_PERMS_USERLIST] = TRUE;
                     $ret[X_PERMS_VIEW] = TRUE;
                     break;
@@ -2275,7 +2273,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
 
     // 6. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-    if ($forum['password'] == '' || $pwinput == $forum['password']) {
+    if ( $forum['password'] == '' || $pwinput === $forum['password'] ) {
         $ret[X_PERMS_PASSWORD] = TRUE;
     }
 
@@ -2310,7 +2308,7 @@ function handlePasswordDialog($fid) {
 
     $forum = getForum($fid);
     if (strlen($pwinput) != 0 && $forum !== FALSE) {
-        if ($pwinput == $forum['password']) {
+        if ( $pwinput === $forum['password'] ) {
             put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
             $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
             redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
@@ -2336,7 +2334,7 @@ function createLangFileSelect($currentLangFile) {
                       . "WHERE k.langkey='language' "
                       . "ORDER BY t.cdata ASC");
     while ($row = $db->fetch_array($query)) {
-        if ($row['devname'] == $currentLangFile) {
+        if ( $row['devname'] === $currentLangFile ) {
             $lfs[] = '<option value="'.$row['devname'].'" selected="selected">'.$row['cdata'].'</option>';
         } else {
             $lfs[] = '<option value="'.$row['devname'].'">'.$row['cdata'].'</option>';
@@ -2381,7 +2379,7 @@ function setCanonicalLink($relURI) {
     if ($relURI != './') {
         $testurl .= str_replace('&amp;', '&', $relURI);
     }
-    if ($url != $testurl) {
+    if ( $url !== $testurl ) {
         $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
     }
 }

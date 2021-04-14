@@ -120,13 +120,13 @@ if (noSubmit('editsubmit')) {
     }
 
     $invchecked = '';
-    if ($member['invisible'] == 1) {
+    if ( '1' === $member['invisible'] ) {
         $invchecked = $cheHTML;
     }
 
     $registerdate = gmdate($dateformat, $member['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
 
-    if (!($member['lastvisit'] > 0)) {
+    if ( 0 == (int) $member['lastvisit'] ) {
         $lastlogdate = $lang['textpendinglogin'];
     } else {
         $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
@@ -157,7 +157,7 @@ if (noSubmit('editsubmit')) {
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
     
-    if ( $member['bad_login_count'] >= $guess_limit && time() < $member['bad_login_date'] + $lockout_timer ) {
+    if ( (int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer ) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
@@ -169,7 +169,7 @@ if (noSubmit('editsubmit')) {
     $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
     $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
     while($themeinfo = $db->fetch_array($query)) {
-        if ($themeinfo['themeid'] == $member['theme']) {
+        if ( $themeinfo['themeid'] === $member['theme'] ) {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
         } else {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
@@ -218,7 +218,7 @@ if (noSubmit('editsubmit')) {
     }
 
     $check12 = $check24 = '';
-    if ($member['timeformat'] == 24) {
+    if ( '24' === $member['timeformat'] ) {
         $check24 = $cheHTML;
     } else {
         $check12 = $cheHTML;
@@ -271,7 +271,7 @@ if (noSubmit('editsubmit')) {
     $status = postedVar('status');
     $origstatus = $member['status'];
     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-    $sa_count = $db->result($query, 0);
+    $sa_count = (int) $db->result($query, 0);
     $db->free_result($query);
     if ($origstatus == 'Super Administrator' && $status != 'Super Administrator' && $sa_count == 1) {
         error($lang['lastsadmin']);
@@ -290,7 +290,7 @@ if (noSubmit('editsubmit')) {
 
     $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
     $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-    if (strlen($dateformatnew) == 0 || $dateformatnew != $dateformattest) {
+    if (strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest) {
         $dateformatnew = $SETTINGS['dateformat'];
     }
     unset($dateformattest);
@@ -337,11 +337,11 @@ if (noSubmit('editsubmit')) {
         if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
             $avatar = '';
         } elseif (ini_get('allow_url_fopen')) {
-            if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
+            if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
                 $size = @getimagesize($rawavatar);
                 if ($size === FALSE) {
                     $avatar = '';
-                } elseif ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
+                } elseif ( ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) && !X_SADMIN ) {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                 }
             }

@@ -51,7 +51,7 @@ if ($goto == 'lastpost') {
         }
     } else if ($tid > 0) {
         $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $posts = $db->result($query, 0);
+        $posts = (int) $db->result($query, 0);
         $db->free_result($query);
 
         if ($posts == 0) {
@@ -82,7 +82,7 @@ if ($goto == 'lastpost') {
             if ($pid == 0) {
                 $pid = $fupPosts['pid'];
                 $tid = $fupPosts['tid'];
-            } elseif ($fupPosts['dateline'] > $posts['dateline']) {
+            } elseif ( (int) $fupPosts['dateline'] > (int) $posts['dateline'] ) {
                 $pid = $fupPosts['pid'];
                 $tid = $fupPosts['tid'];
             }
@@ -183,7 +183,7 @@ $db->free_result($query);
 $thislast = explode('|', $thread['lastpost']);
 
 // Perform automatic maintenance
-if ($thread['replies'] != $thread['postcount'] - 1) {
+if ( (int) $thread['replies'] != (int) $thread['postcount'] - 1) {
     updatethreadcount($tid);
 }
 
@@ -243,14 +243,14 @@ if ($forum['type'] == 'sub') {
         }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ($fup['fup'] > 0) {
+    } else if ( (int) $fup['fup'] > 0 ) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} else if ($forum['fup'] > 0) { // 'forum' in a 'group'
+} else if ( (int) $forum['fup'] > 0 ) { // 'forum' in a 'group'
     $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
@@ -378,7 +378,7 @@ if ($action == '') {
     $pollhtml = $poll = '';
     $vote_id = $voted = 0;
 
-    if ($thread['pollopts'] == 1) {
+    if ( '1' === $thread['pollopts'] ) {
         $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
         if ($query) {
             $vote_id = $db->fetch_array($query);
@@ -421,7 +421,7 @@ if ($action == '') {
             foreach($poll as $array) {
                 $pollimgnum = 0;
                 $pollbar = '';
-                if ($array['votes'] > 0) {
+                if ( (int) $array['votes'] > 0 ) {
                     $orig = round($array['votes']/$num_votes*100, 2);
                     $percentage = round($orig, 2);
                     $percentage .= '%';
@@ -528,14 +528,14 @@ if ($action == '') {
     $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($post = $db->fetch_array($querypost)) {
         // Perform automatic maintenance
-        if ($post['type'] == 'post' && $post['fid'] != $thread['fid']) {
+        if ( $post['type'] == 'post' && $post['fid'] !== $thread['fid'] ) {
             $db->query('UPDATE '.X_PREFIX.'posts SET fid='.$thread['fid'].' WHERE pid='.$post['pid']);
         }
 
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
         if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
-            if ($post['invisible'] == 1) {
+            if ( '1' === $post['invisible'] ) {
                 if (!X_ADMIN) {
                     $onlinenow = $lang['memberisoff'];
                 } else {
@@ -577,7 +577,7 @@ if ($action == '') {
             $profilelink = "<a href=\"./member.php?action=viewpro&amp;member=$encodename\">{$post['author']}</a>";
 
             $icq = '';
-            if ($post['icq'] != '' && $post['icq'] > 0) {
+            if ( $post['icq'] != '' && (int) $post['icq'] > 0 ) {
                 eval('$icq = "'.template('viewthread_post_icq').'";');
             }
 
@@ -629,7 +629,7 @@ if ($action == '') {
             } else {
                 $last_max = -1;
                 foreach($rankposts as $key => $rankstuff) {
-                    if ($post['postnum'] >= $key && $key > $last_max) {
+                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $last_max ) {
                         $last_max = $key;
                         $rankinfo = explode(",", $rankstuff);
                         $rank['allowavatars'] = $rankinfo[4];
@@ -713,7 +713,7 @@ if ($action == '') {
         $reportlink = '';
         if (X_MEMBER && $post['author'] != $xmbuser && $SETTINGS['reportpost'] == 'on') {
             // Post reporting is enabled, but is this user legit?
-            if ( 'on' == $SETTINGS['quarantine_new_users'] && ( 0 == $self['postnum'] || 'yes' == $self['waiting_for_mod'] ) && ! X_STAFF ) {
+            if ( 'on' == $SETTINGS['quarantine_new_users'] && ( 0 == (int) $self['postnum'] || 'yes' == $self['waiting_for_mod'] ) && ! X_STAFF ) {
                 // Nope
             } else {
                 eval('$reportlink = "'.template('viewthread_post_report').'";');
@@ -732,7 +732,7 @@ if ($action == '') {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
-                if ($attach['pid'] == $post['pid']) {
+                if ( $attach['pid'] === $post['pid'] ) {
                     $files[] = $attach;
                 }
             }
@@ -873,7 +873,7 @@ if ($action == '') {
             $files = array();
             $db->data_seek($queryattach, 0);
             while($attach = $db->fetch_array($queryattach)) {
-                if ($attach['pid'] == $post['pid']) {
+                if ( $attach['pid'] === $post['pid'] ) {
                     $files[] = $attach;
                 }
             }

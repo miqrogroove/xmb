@@ -66,13 +66,13 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ($hostsetting != $host && $host != 'www.'.$hostsetting) {
+    if ( $hostsetting !== $host && $host !== 'www.'.$hostsetting ) {
         if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
         if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-    } elseif ($pathsetting != $path && $pathsetting != '') {
+    } elseif ( $pathsetting !== $path && $pathsetting != '' ) {
         $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.$path;
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';

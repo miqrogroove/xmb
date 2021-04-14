@@ -48,30 +48,26 @@ if (strlen($fids) == 0) {
 }
 
 $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
-$members = $db->result($query, 0);
-if ($members == false) {
-    $members = 0;
-}
-
-$threads = $db->result($query, 1);
-if ($threads == false) {
-    $threads = 0;
-}
-
-$posts = $db->result($query, 2);
-if ($posts == false) {
-    $posts = 0;
-}
+$members = (int) $db->result($query, 0);
+$threads = (int) $db->result($query, 1);
+$posts = (int) $db->result($query, 2);
 $db->free_result($query);
 
-$query = $db->query("SELECT regdate FROM ".X_PREFIX."members ORDER BY regdate LIMIT 0, 1");
-$days = ($onlinetime - @$db->result($query, 0)) / 86400;
+$query = $db->query("SELECT MIN(regdate) FROM ".X_PREFIX."members");
+$first_date = (int) $db->result( $query, 0 );  // If no aggregate rows, result of MIN() will be null and cast to zero.  Resolves ugly old error checking methods.
+$db->free_result($query);
+
+if ( $first_date <= 0 ) {
+    $days = 0;
+} else {
+    $days = ( $onlinetime - $first_date ) / 86400;
+}
+
 if ($days > 0) {
     $membersday = number_format(($members / $days), 2);
 } else {
     $membersday = number_format(0, 2);
 }
-$db->free_result($query);
 
 // Get total amount of forums
 $query = $db->query("SELECT COUNT(fid) FROM ".X_PREFIX."forums WHERE type='forum'");

@@ -235,7 +235,7 @@ switch($action) {
                         $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
                     }
 
-                    if ($_POST['username'] != preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'])) {
+                    if ( $_POST['username'] !== preg_replace( "#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'] ) ) {
                         error($lang['restricted']);
                     }
 
@@ -285,7 +285,7 @@ switch($action) {
                         $password2 = $_POST['password2'];
                     }
 
-                    if ( $self['password'] != $password2 ) {
+                    if ( $self['password'] !== $password2 ) {
                         error($lang['pwnomatch']);
                     }
 
@@ -295,13 +295,13 @@ switch($action) {
                     while($restriction = $db->fetch_array($query)) {
                         $t_username = $self['username'];
                         $t_email = $self['email'];
-                        if ($restriction['case_sensitivity'] == 0) {
+                        if ( '0' === $restriction['case_sensitivity'] ) {
                             $t_username = strtolower($t_username);
                             $t_email = strtolower($t_email);
                             $restriction['name'] = strtolower($restriction['name']);
                         }
 
-                        if ($restriction['partial'] == 1) {
+                        if ( '1' === $restriction['partial'] ) {
                             if (strpos($t_username, $restriction['name']) !== false) {
                                 $fail = true;
                             }
@@ -310,11 +310,11 @@ switch($action) {
                                 $efail = true;
                             }
                         } else {
-                            if ($t_username == $restriction['name']) {
+                            if ( $t_username === $restriction['name'] ) {
                                 $fail = true;
                             }
 
-                            if ($t_email == $restriction['name']) {
+                            if ( $t_email === $restriction['name'] ) {
                                 $efail = true;
                             }
                         }
@@ -370,7 +370,7 @@ switch($action) {
 
                     $self['dateformat'] = postedVar('dateformatnew', '', false, false);
                     $dateformattest = attrOut( $self['dateformat'], 'javascript' );  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-                    if ( strlen( $self['dateformat'] ) == 0 || $self['dateformat'] != $dateformattest ) {
+                    if ( strlen( $self['dateformat'] ) == 0 || $self['dateformat'] !== $dateformattest ) {
                         $self['dateformat'] = $SETTINGS['dateformat'];
                     }
                     unset($dateformattest);
@@ -406,11 +406,11 @@ switch($action) {
                             if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
                                 $self['avatar'] = '';
                             } elseif (ini_get('allow_url_fopen')) {
-                                if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
+                                if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0 ) {
                                     $size = @getimagesize($rawavatar);
                                     if ($size === FALSE) {
                                         $self['avatar'] = '';
-                                    } elseif (($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) {
+                                    } elseif ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) {
                                         error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                                     }
                                 }
@@ -503,15 +503,15 @@ switch($action) {
             }
 
             if ( 2 == $stepout ) {
-                if ($SETTINGS['pruneusers'] > 0) {
+                if ( (int) $SETTINGS['pruneusers'] > 0 ) {
                     $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
                     $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
                 }
 
-                if ($SETTINGS['maxdayreg'] > 0) {
+                if ( (int) $SETTINGS['maxdayreg'] > 0 ) {
                     $time = $onlinetime - 86400; // subtract 24 hours
                     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
-                    if ($db->result($query, 0) > $SETTINGS['maxdayreg']) {
+                    if ( (int) $db->result($query, 0) > (int) $SETTINGS['maxdayreg'] ) {
                         error($lang['max_regs']);
                     }
                     $db->free_result($query);
@@ -586,7 +586,7 @@ switch($action) {
                     eval('$pwtd = "'.template('member_reg_password').'";');
                 }
 
-                if ($SETTINGS['timeformat'] == 24) {
+                if ( '24' === $SETTINGS['timeformat'] ) {
                     $timeFormat12Checked = '';
                     $timeFormat24Checked = $cheHTML;
                 } else {
@@ -687,7 +687,7 @@ switch($action) {
             $memberlinks = " <small>(<a href=\"u2u.php?action=send&amp;username=$encodeuser\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href=\"buddy.php?action=add&amp;buddys=$encodeuser\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['addtobuddies']}</a>)</small>";
         }
 
-        $daysreg = ($onlinetime - $memberinfo['regdate']) / (24*3600);
+        $daysreg = ($onlinetime - (int) $memberinfo['regdate']) / (24*3600);
         if ($daysreg > 1) {
             $ppd = $memberinfo['postnum'] / $daysreg;
             $ppd = round($ppd, 2);
@@ -744,7 +744,7 @@ switch($action) {
             $customstatus = '';
         }
 
-        if (!($memberinfo['lastvisit'] > 0)) {
+        if ( ! ( (int) $memberinfo['lastvisit'] > 0 ) ) {
             $lastmembervisittext = $lang['textpendinglogin'];
         } else {
             $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
@@ -753,7 +753,7 @@ switch($action) {
         }
 
         $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts");
-        $posts = $db->result($query, 0);
+        $posts = (int) $db->result($query, 0);
         $db->free_result($query);
 
         $posttot = $posts;

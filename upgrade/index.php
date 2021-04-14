@@ -83,7 +83,7 @@ if ( false === $result ) {
 }
 
 // Ready to Upgrade
-if (!isset($_GET['step']) || $_GET['step'] == 1) {
+if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
 ?>
 <h1>XMB 1.9.12 Upgrade Script</h1>
 
@@ -110,7 +110,7 @@ if (!isset($_GET['step']) || $_GET['step'] == 1) {
 </form>
 <?php
 
-} else if ($_GET['step'] == 2) {
+} else if ( '2' === $_GET['step'] ) {
 
     ?>
     <h1>XMB 1.9.12 Upgrade Script</h1>

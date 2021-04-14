@@ -163,17 +163,17 @@ class admin {
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
         while($restriction = $db->fetch_array($query)) {
-            if ($restriction['case_sensitivity'] == 0) {
+            if ( '0' === $restriction['case_sensitivity'] ) {
                 $t_username = strtolower($userto);
                 $restriction['name'] = strtolower($restriction['name']);
             }
 
-            if ($restriction['partial'] == 1) {
+            if ( '1' === $restriction['partial'] ) {
                 if (strpos($t_username, $restriction['name']) !== false) {
                     $nameokay = false;
                 }
             } else {
-                if ($t_username == $restriction['name']) {
+                if ( $t_username === $restriction['name'] ) {
                     $nameokay = false;
                 }
             }
@@ -441,7 +441,7 @@ function input_custom_setting( string $dbname, string $value ) {
 
     if ( ! isset( $SETTINGS[$dbname] ) ) {
         \XMB\SQL\addSetting( $dbname, $value );
-    } else if ( $SETTINGS[$dbname] != $value ) {
+    } else if ( $SETTINGS[$dbname] !== $value ) {
         \XMB\SQL\updateSetting( $dbname, $value );
     }
 }

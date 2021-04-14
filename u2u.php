@@ -210,7 +210,7 @@ switch($action) {
 }
 
 if (!X_STAFF) {
-    $percentage = (0 == $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / $SETTINGS['u2uquota']) * 100);
+    $percentage = (0 == (int) $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / (int) $SETTINGS['u2uquota']) * 100);
     if ($percentage > 100) {
         $barwidth = 100;
         $search  = [ '$u2ucount', '$u2uquota'            ];

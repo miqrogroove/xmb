@@ -236,7 +236,7 @@ if ($action == "settings") {
         settingHTML('images_https_only', $imageshttpson, $imageshttpsoff);
 
         $check12 = $check24 = '';
-        if ($SETTINGS['timeformat'] == 24) {
+        if ( '24' === $SETTINGS['timeformat'] ) {
             $check24 = $cheHTML;
         } else {
             $check12 = $cheHTML;
@@ -1195,7 +1195,7 @@ if ($action == 'forum') {
             $moveto = formInt('moveto'.$forum['fid']);
 
             $dsuccess = FALSE;
-            if ($delete == $forum['fid']) {
+            if ( $delete == (int) $forum['fid'] ) {
                 if ($db->num_rows($db->query('SELECT tid FROM '.X_PREFIX.'threads WHERE fid='.$forum['fid'])) > 0) {
                     $dsuccess = FALSE;
                 } elseif ($db->num_rows($db->query('SELECT fid FROM '.X_PREFIX.'forums WHERE fup='.$forum['fid'])) > 0) {
@@ -1213,7 +1213,7 @@ if ($action == 'forum') {
 
             if (!$dsuccess) {
                 $settype = '';
-                if ($forum['fup'] != $moveto && $moveto != $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
+                if ( $moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
                     if ($moveto == 0) {
                         $settype = ", type='forum', fup=0";
                     } else {
@@ -1228,7 +1228,7 @@ if ($action == 'forum') {
                                     $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
                                     $frow = $db->fetch_array($query2);
                                     $db->free_result($query2);
-                                    if ($frow['subcount'] == 0) {
+                                    if ( '0' === $frow['subcount'] ) {
                                         $settype = ", type='sub', fup=$moveto";
                                     }
                                 }
@@ -1248,7 +1248,7 @@ if ($action == 'forum') {
             $group['status'] = formOnOff('status'.$group['fid']);
             $delete = formInt('delete'.$group['fid']);
 
-            if ($delete == $group['fid']) {
+            if ( $delete == (int) $group['fid'] ) {
                 $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup=$delete");
                 if ($db->num_rows($query) > 0) {
                     message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
@@ -1272,15 +1272,15 @@ if ($action == 'forum') {
         $newffup = formInt('newffup');
         $newsubfup = formInt('newsubfup');
 
-        if ($newfname != $lang['textnewforum'] && $newfname != '') {
+        if ( $newfname !== $lang['textnewforum'] && $newfname != '' ) {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
-        if ($newgname != $lang['textnewgroup'] && $newgname != '') {
+        if ( $newgname !== $lang['textnewgroup'] && $newgname != '' ) {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
-        if ($newsubname != $lang['textnewsubf'] && $newsubname != '') {
+        if ( $newsubname !== $lang['textnewsubf'] && $newsubname != '' ) {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
@@ -1369,10 +1369,10 @@ if ($action == "mods") {
         <td><strong><font color="<?php echo $cattext?>"><?php echo $lang['textmoderator']?></font></strong></td>
         </tr>
         <?php
-        $oldfid = 0;
+        $oldfid = '0';
         $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
         while($forum = $db->fetch_array($query)) {
-            if ($oldfid != $forum['cat_fid']) {
+            if ( $oldfid !== $forum['cat_fid'] ) {
                 $oldfid = $forum['cat_fid']
                 ?>
                 <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
@@ -1578,7 +1578,7 @@ if ($action == "members") {
                     break;
                 }
 
-                if ($member['lastvisit'] == 0) {
+                if ( '0' === $member['lastvisit'] ) {
                     $pending = '<br />'.$lang['textpendinglogin'];
                 } else {
                     $pending = '';
@@ -1644,7 +1644,7 @@ if ($action == "members") {
         // Guarantee this request will not remove all Super Administrators.
         if (X_SADMIN && $db->num_rows($query) > 0) {
             $saquery = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-            $sa_count = $db->result($saquery, 0);
+            $sa_count = (int) $db->result($saquery, 0);
             $db->free_result($saquery);
 
             while($mem = $db->fetch_array($query)) {
@@ -1683,7 +1683,7 @@ if ($action == "members") {
                 }
             }
 
-            if ($delete == $mem['uid'] && $delete != $self['uid'] && $origstatus != "Super Administrator") {
+            if ( $delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator" ) {
                 $db->escape_fast($mem['username']);
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
                 $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='{$mem['username']}'");
@@ -1722,7 +1722,7 @@ if ($action == "ipban") {
             while($ipaddress = $db->fetch_array($query)) {
                 for($i=1; $i<=4; ++$i) {
                     $j = "ip" . $i;
-                    if ($ipaddress[$j] == -1) {
+                    if ( '-1' === $ipaddress[$j] ) {
                         $ipaddress[$j] = "*";
                     }
                 }
@@ -1792,7 +1792,7 @@ if ($action == "ipban") {
             }
             $self['status'] = $lang['textipupdate'];
 
-            if ($newip[0] != '0' || $newip[1] != '0' || $newip[2] != '0' || $newip[3] != '0') {
+            if ( '0' !== $newip[0] || '0' !== $newip[1] || '0' !== $newip[2] || '0' !== $newip[3] ) {
                 $invalid = 0;
                 for($i=0; $i<=3 && !$invalid; ++$i) {
                     if ($newip[$i] == "*") {
@@ -1807,7 +1807,7 @@ if ($action == "ipban") {
                 if ($invalid) {
                     $self['status'] = $lang['invalidip'];
                 } else {
-                    if ($ip[1] == '-1' && $ip[2] == '-1' && $ip[3] == '-1' && $ip[4] == '-1') {
+                    if ( '-1' === $ip[1] && '-1' === $ip[2] && '-1' === $ip[3] && '-1' === $ip[4] ) {
                         $self['status'] = $lang['impossiblebanall'];
                     } else {
                         $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
@@ -1855,7 +1855,7 @@ if ($action == "deleteposts") {
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
         </form></td></tr>
         <?php
-    } elseif ($lang['textyes'] == $yessubmit) {
+    } elseif ( $lang['textyes'] === $yessubmit ) {
         request_secure( 'Control Panel/Members/Del Posts', $member );
         require('include/attach.inc.php');
 

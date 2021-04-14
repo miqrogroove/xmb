@@ -86,14 +86,14 @@ if ($forum['type'] == 'sub') {
         }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ($fup['fup'] > 0) {
+    } else if ( (int) $fup['fup'] > 0 ) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} else if ($forum['fup'] > 0) { // 'forum' in a 'group'
+} else if ( (int) $forum['fup'] > 0 ) { // 'forum' in a 'group'
     $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
@@ -110,10 +110,10 @@ $searchlink = makeSearchLink($forum['fid']);
 validateTpp();
 validatePpp();
 
-$threadcount = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
+$threadcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
 
 // Perform automatic maintenance
-if ($forum['type'] == 'sub' && $forum['threads'] != $threadcount) {
+if ( $forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount ) {
     updateforumcount($fid);
 }
 
@@ -139,7 +139,7 @@ if ($forum['type'] == 'forum') {
     $forumlist = '';
     $permitted = permittedForums(forumCache(), 'forum');
     foreach($permitted as $sub) {
-        if ($sub['type'] == 'sub' && $sub['fup'] == $fid) {
+        if ( $sub['type'] == 'sub' && (int) $sub['fup'] == $fid ) {
             $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
         }
     }
@@ -255,7 +255,7 @@ if ($db->num_rows($querytop) == 0) {
     } else {
         eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
     }
-} elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && $self['postnum'] > 0) {
+} elseif ( $SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0 ) {
     while($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];
     }
@@ -278,7 +278,7 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['icon'] = '';
     }
 
-    if ($thread['topped'] == 1) {
+    if ( '1' === $thread['topped'] ) {
         $topimage = '<img src="'.$admdir.'/untop.gif" alt="'.$lang['textuntopthread'].'" border="0" />';
     } else {
         $topimage = '<img src="'.$admdir.'/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
@@ -297,7 +297,7 @@ while($thread = $db->fetch_array($querytop)) {
     $prefix = '';
 
     $lastpost = explode('|', $thread['lastpost']);
-    $dalast = trim($lastpost[0]);
+    $dalast = (int) trim($lastpost[0]);
 
     // Translate "Anonymous" author.
     $lastpostname = trim( $lastpost[1] );
@@ -310,7 +310,7 @@ while($thread = $db->fetch_array($querytop)) {
     if ($thread['closed'] == 'yes') {
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
     } else {
-        if ($thread['replies'] >= $SETTINGS['hottopic']) {
+        if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
             $folder = 'hot_folder.gif';
         } else {
             $folder = 'folder.gif';
@@ -318,7 +318,7 @@ while($thread = $db->fetch_array($querytop)) {
 
         $oT = strpos( $oldtopics, "|$lastPid|" );
         if ( $lastvisit < $dalast && $oT === false ) {
-            if ( $thread['replies'] >= $SETTINGS['hottopic'] ) {
+            if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
                 $folder = "hot_red_folder.gif";
             } else {
                 $folder = "red_folder.gif";
@@ -356,11 +356,11 @@ while($thread = $db->fetch_array($querytop)) {
 
     eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
-    if ($thread['pollopts'] == 1) {
+    if ( '1' === $thread['pollopts'] ) {
         $prefix = $lang['pollprefix'].' ';
     }
 
-    if ($thread['topped'] == 1) {
+    if ( '1' === $thread['topped'] ) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 

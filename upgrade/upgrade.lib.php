@@ -37,7 +37,7 @@ function xmb_upgrade() {
 
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
-        if ( $SETTINGS['schema_version'] < 5 ) {
+        if ( (int) $SETTINGS['schema_version'] < 5 ) {
             upgrade_query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
         } else {
             upgrade_query("UPDATE ".X_PREFIX."settings SET value = 'off' WHERE name = 'bbstatus'");

@@ -169,7 +169,7 @@ if ($action == 'profile') {
         }
 
         $invchecked = '';
-        if ($member['invisible'] == 1) {
+        if ( '1' === $member['invisible'] ) {
             $invchecked = $cheHTML;
         }
 
@@ -197,7 +197,7 @@ if ($action == 'profile') {
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while($themeinfo = $db->fetch_array($query)) {
-            if ($themeinfo['themeid'] == $member['theme']) {
+            if ( $themeinfo['themeid'] === $member['theme'] ) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
             } else {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
@@ -232,7 +232,7 @@ if ($action == 'profile') {
         $dayselect = implode("\n", $dayselect);
 
         $check12 = $check24 = '';
-        if ($member['timeformat'] == 24) {
+        if ( '24' === $member['timeformat'] ) {
             $check24 = $cheHTML;
         } else {
             $check12 = $cheHTML;
@@ -274,7 +274,7 @@ if ($action == 'profile') {
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
         $optional = '';
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( (int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
             eval('$optional = "'.template('memcp_profile_optional').'";');
         }
         if (X_STAFF) {
@@ -292,14 +292,14 @@ if ($action == 'profile') {
                 error($lang['textpwincorrect']);
             }
             $member = \XMB\SQL\getMemberByName( $self['username'] );
-            if ( $member['password'] != md5($_POST['oldpassword'])) {
+            if ( $member['password'] !== md5($_POST['oldpassword']) ) {
                 error($lang['textpwincorrect']);
             }
             unset( $member );
             if (empty($_POST['newpasswordcf'])) {
                 error($lang['pwnomatch']);
             }
-            if ($_POST['newpassword'] != $_POST['newpasswordcf']) {
+            if ( $_POST['newpassword'] !== $_POST['newpasswordcf'] ) {
                 error($lang['pwnomatch']);
             }
 
@@ -327,7 +327,7 @@ if ($action == 'profile') {
 
         $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
         $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-        if (strlen($dateformatnew) == 0 || $dateformatnew != $dateformattest) {
+        if ( strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest ) {
             $dateformatnew = $SETTINGS['dateformat'];
         }
         unset($dateformattest);
@@ -353,10 +353,10 @@ if ($action == 'profile') {
         $bday = iso8601_date($year, $month, $day);
         $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
 
-        if ($email != $db->escape($self['email'])) {
+        if ( $email !== $db->escape( $self['email'] ) ) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
                 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE email = '$email' AND username != '$xmbuser'");
-                $count1 = $db->result($query,0);
+                $count1 = (int) $db->result($query,0);
                 $db->free_result($query);
                 if ($count1 != 0) {
                     error($lang['alreadyreg']);
@@ -367,17 +367,17 @@ if ($action == 'profile') {
             $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while($restriction = $db->fetch_array($query)) {
                 $t_email = $email;
-                if ($restriction['case_sensitivity'] == 0) {
+                if ( '0' === $restriction['case_sensitivity'] ) {
                     $t_email = strtolower($t_email);
                     $restriction['name'] = strtolower($restriction['name']);
                 }
 
-                if ($restriction['partial'] == 1) {
+                if ( '1' === $restriction['partial'] ) {
                     if (strpos($t_email, $restriction['name']) !== false) {
                         $efail = true;
                     }
                 } else {
-                    if ($t_email == $restriction['name']) {
+                    if ( $t_email === $restriction['name'] ) {
                         $efail = true;
                     }
                 }
@@ -419,11 +419,11 @@ if ($action == 'profile') {
             if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
                 $avatar = '';
             } elseif (ini_get('allow_url_fopen')) {
-                if ($max_size[0] > 0 && $max_size[1] > 0 && strlen($rawavatar) > 0) {
+                if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
                     $size = @getimagesize($rawavatar);
                     if ($size === FALSE) {
                         $avatar = '';
-                    } elseif ((($size[0] > $max_size[0] && $max_size[0] > 0) || ($size[1] > $max_size[1] && $max_size[1] > 0)) && !X_SADMIN) {
+                    } elseif ( ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) && !X_SADMIN ) {
                         error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                     }
                 }
@@ -453,7 +453,7 @@ if ($action == 'profile') {
             $avatar = '';
         }
 
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( (int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
             $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
             $icq = abs( formInt( 'newicq' ) );
             $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
@@ -655,7 +655,7 @@ if ($action == 'profile') {
         eval('$mempage = "'.template('memcp_subscriptions').'";');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
-        if ($db->result($query,0) == 1) {
+        if ( (int) $db->result( $query, 0 ) == 1 ) {
             $db->free_result($query);
             error($lang['subonlistmsg'], TRUE);
         } else {
@@ -736,7 +736,7 @@ if ($action == 'profile') {
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
         if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
-            if ($buddy['invisible'] == 1) {
+            if ( '1' === $buddy['invisible'] ) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
                     continue;

@@ -96,7 +96,7 @@ default:
 }
 
 // Sanity Checks
-if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && $self['uid'] == 0)) {
+if ( $aid <= 0 || $pid < 0 || ( $pid == 0 && $filename == '' && '0' === $self['uid'] ) ) {
     fileError();
 }
 
@@ -171,7 +171,7 @@ if ($file['subdir'] == '') {
     }
     $size = intval(filesize($path));
 }
-if ($size != $file['filesize']) {
+if ( $size != (int) $file['filesize'] ) {
     header('HTTP/1.0 500 Internal Server Error');
     error($lang['filecorrupt']);
 }
@@ -187,7 +187,7 @@ assertEmptyOutputStream('files.php');
 // will be returned without any message-body."
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     date_default_timezone_set('UTC'); // Workaround for stupid PHP 5 problems.
-    if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $file['updatestamp']) {
+    if ( strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= (int) $file['updatestamp'] ) {
         header('HTTP/1.0 304 Not Modified');
         exit;
     }

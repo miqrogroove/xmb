@@ -253,7 +253,7 @@ class dbstuff {
      * @param string $rawstring
      * @return string
      */
-    public function escape($rawstring) {
+    public function escape( string $rawstring ): string {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( $rawstring );
         restore_error_handler();
@@ -272,20 +272,20 @@ class dbstuff {
      * @since 1.9.11.12
      * @param string $sql Read/Write Variable
      */
-    public function escape_fast(&$sql) {
+    public function escape_fast( string &$sql ) {
         set_error_handler($this->errcallb);
         $sql = $this->link->real_escape_string( $sql );
         restore_error_handler();
     }
 
-    public function like_escape($rawstring) {
+    public function like_escape( string $rawstring ): string {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring) );
         restore_error_handler();
         return $return;
     }
 
-    public function regexp_escape($rawstring) {
+    public function regexp_escape( string $rawstring ): string {
         set_error_handler($this->errcallb);
         $return = $this->link->real_escape_string( preg_quote( $rawstring ) );
         restore_error_handler();
@@ -317,7 +317,7 @@ class dbstuff {
                 $this->last_rows = $this->link->affected_rows;
 
                 $query2 = $this->link->query( 'SHOW COUNT(*) WARNINGS' );
-                if ( ( $warnings = $query2->fetch_row()[0] ) > 0 ) {
+                if ( ( $warnings = (int) $query2->fetch_row()[0] ) > 0 ) {
                     if (!ini_get('log_errors')) {
                         ini_set('log_errors', TRUE);
                         ini_set('error_log', 'error_log');
@@ -398,14 +398,25 @@ class dbstuff {
         return $return;
     }
 
-    public function num_rows($query) {
+    /**
+     * Retrieves the row count from a query result.
+     */
+    public function num_rows( mysqli_result $query ): int {
         set_error_handler($this->errcallb);
-        $query = $query->num_rows;
+        $count = $query->num_rows;
         restore_error_handler();
-        return $query;
+        
+        if ( ! is_int( $count ) ) {
+            trigger_error( 'XMB encountered an unexpected value in mysqli_num_rows and stopped for safety.', E_USER_ERROR );
+        }
+        
+        return $count;
     }
 
-    public function num_fields($query) {
+    /**
+     * Retrieves the column count from a query result.
+     */
+    public function num_fields( mysqli_result $query ): int {
         set_error_handler($this->errcallb);
         $return = $query->field_count;
         restore_error_handler();

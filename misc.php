@@ -157,7 +157,7 @@ switch($action) {
         } else {
             $newurl = str_replace('misc.php?action=search&', 'search.php?', $newurl);
         }
-        if ($newurl == $url) { // Unexpected query string.
+        if ( $newurl === $url ) { // Unexpected query string.
             $newurl = str_replace('&action=search', '', $newurl);
             $newurl = str_replace('/misc', '/search', $newurl);
         }
@@ -196,7 +196,7 @@ switch($action) {
             }
 
             $time = $onlinetime - 86400;
-            if ($member['pwdate'] > $time) {
+            if ( (int) $member['pwdate'] > $time ) {
                 error($lang['lostpw_in24hrs']);
             }
             
@@ -268,13 +268,13 @@ switch($action) {
                 $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
             }
 
-            if ($online['invisible'] == 1 && (X_ADMIN || $online['username'] == $xmbuser)) {
+            if ( '1' === $online['invisible'] && ( X_ADMIN || $online['username'] === $xmbuser ) ) {
                 $hidden = ' ('.$lang['hidden'].')';
             } else {
                 $hidden = '';
             }
 
-            if (X_SADMIN && $online['username'] != 'xguest123' && $online['username'] != $lang['textguest1']) {
+            if ( X_SADMIN && $online['username'] != 'xguest123' && $online['username'] !== $lang['textguest1'] ) {
                 $online['username'] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$username.'</a>'.$hidden;
             } else {
                 $online['username'] = $username;

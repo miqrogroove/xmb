@@ -86,8 +86,8 @@ if ($action == 'edit') {
     }
     $forum = $db->fetch_array($query);
     $db->free_result($query);
-    $fid = $forum['fid'];
-    $tid = $forum['tid'];
+    $fid = (int) $forum['fid'];
+    $tid = (int) $forum['tid'];
 } else if ($action == 'reply') {
     $tid = getRequestInt('tid');
     $repquote = getInt('repquote');
@@ -98,7 +98,7 @@ if ($action == 'edit') {
     }
     $forum = $db->fetch_array($query);
     $db->free_result($query);
-    $fid = $forum['fid'];
+    $fid = (int) $forum['fid'];
 } else if ($action == 'newthread') {
     $fid = getRequestInt('fid');
     $forum = getForum($fid);
@@ -215,13 +215,13 @@ if ($forum['type'] == 'sub') {
         }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
-    } else if ($fup['fup'] > 0) {
+    } else if ( (int) $fup['fup'] > 0 ) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-} else if ($forum['fup'] > 0) { // 'forum' in a 'group'
+} else if ( (int) $forum['fup'] > 0 ) { // 'forum' in a 'group'
     $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
@@ -239,7 +239,7 @@ if ( X_STAFF || 'off' == $SETTINGS['quarantine_new_users'] ) {
     if ( X_MEMBER ) {
         if ( 'yes' == $self['waiting_for_mod'] ) {
             // Member is already flagged for quarantine.
-        } elseif ( $self['postnum'] > 0 ) {
+        } elseif ( (int) $self['postnum'] > 0 ) {
             // Member has posted before and is immune.
             $quarantine = false;
         } else {
@@ -517,7 +517,7 @@ switch($action) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
-                if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
+                if ( $rightnow <= (int) $lastpost[0] && $username === $lastpost[1] ) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
                     $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
                     $errors .= softerror($errmsg);
@@ -650,7 +650,7 @@ switch($action) {
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         \XMB\Attach\remoteImages( $pid, $messageinput, $quarantine );
                         $newdbmessage = addslashes($messageinput);
-                        if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                        if ( $newdbmessage !== $dbmessage ) { // Anonymous message was modified after save, in order to use the pid.
                             \XMB\SQL\savePostBody( $pid, $newdbmessage, $quarantine );
                         }
                     }
@@ -669,7 +669,7 @@ switch($action) {
         }
 
         if (!$replyvalid) {
-            if (isset($repquote) && ($repquote = (int) $repquote)) {
+            if ( $repquote > 0 ) {
                 $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM ".X_PREFIX."posts p WHERE p.pid=$repquote");
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
@@ -716,7 +716,7 @@ switch($action) {
                 } else {
                     $lang['attachmaxtotal'] = '';
                 }
-                $maxuploads = $SETTINGS['filesperpost'] - count( $orphans );
+                $maxuploads = (int) $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
@@ -781,7 +781,7 @@ switch($action) {
             }
 
             $querytop = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-            $replynum = $db->result($querytop, 0);
+            $replynum = (int) $db->result($querytop, 0);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
                 $trevltmsg = str_replace( '$threadlink', $threadlink, $lang['evaltrevlt'] );
@@ -911,7 +911,7 @@ switch($action) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $onlinetime - $floodctrl;
-                if ($rightnow <= $lastpost[0] && $username == $lastpost[1]) {
+                if ( $rightnow <= (int) $lastpost[0] && $username === $lastpost[1] ) {
                     $errors .= softerror($lang['floodprotect']);
                     $topicvalid = FALSE;
                 }
@@ -1072,7 +1072,7 @@ switch($action) {
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         \XMB\Attach\remoteImages( $pid, $messageinput, $quarantine );
                         $newdbmessage = addslashes($messageinput);
-                        if ($newdbmessage != $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                        if ( $newdbmessage !== $dbmessage ) { // Anonymous message was modified after save, in order to use the pid.
                             \XMB\SQL\savePostBody( $pid, $newdbmessage, $quarantine );
                         }
                     }
@@ -1124,7 +1124,7 @@ switch($action) {
                 } else {
                     $lang['attachmaxtotal'] = '';
                 }
-                $maxuploads = $SETTINGS['filesperpost'] - count( $orphans );
+                $maxuploads = (int) $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
@@ -1223,7 +1223,7 @@ switch($action) {
 
         $status1 = modcheckPost($self['username'], $forum['moderator'], $orig['status']);
 
-        if ($status1 != 'Moderator' && ($self['username'] != $orig['author'] || $thread['closed'] != '')) {
+        if ( $status1 != 'Moderator' && ( $self['username'] !== $orig['author'] || $thread['closed'] != '' ) ) {
             $errors .= softerror($lang['noedit']);
             $editvalid = FALSE;
         }
@@ -1280,7 +1280,7 @@ switch($action) {
             $isfirstpost = $db->fetch_array($query);
             $db->free_result($query);
 
-            if ((strlen($subjectinput) == 0 && $pid == $isfirstpost['pid']) && !(isset($delete) && $delete == 'yes')) {
+            if ( ( strlen($subjectinput) == 0 && $pid == (int) $isfirstpost['pid'] ) && ! ( isset($delete) && $delete == 'yes' ) ) {
                 $errors .= softerror($lang['textnosubject']);
                 $editvalid = FALSE;
             }
@@ -1317,7 +1317,7 @@ switch($action) {
                 $db->escape_fast($dbmessage);
                 $db->escape_fast($dbsubject);
 
-                if ($isfirstpost['pid'] == $pid) {
+                if ( (int) $isfirstpost['pid'] == $pid ) {
                     $db->query("UPDATE ".X_PREFIX."threads SET icon='$sql_posticon', subject='$dbsubject' WHERE tid=$tid");
                 }
 
@@ -1330,10 +1330,10 @@ switch($action) {
                 }
                 \XMB\Attach\deleteByPost($pid);
 
-                if ($isfirstpost['pid'] == $pid) {
+                if ( (int) $isfirstpost['pid'] == $pid ) {
                     $query = $db->query("SELECT COUNT(*) AS pcount FROM ".X_PREFIX."posts WHERE tid=$tid");
                     $numrows = $db->fetch_array($query);
-                    $numrows = $numrows['pcount'];
+                    $numrows = (int) $numrows['pcount'];
                     $db->free_result($query);
 
                     if ($numrows == 0) {
@@ -1415,7 +1415,7 @@ switch($action) {
                 } else {
                     $lang['attachmaxtotal'] = '';
                 }
-                $maxuploads = $SETTINGS['filesperpost'] - $db->num_rows($query);
+                $maxuploads = (int) $SETTINGS['filesperpost'] - $db->num_rows($query);
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);

@@ -130,7 +130,7 @@ case 'viewuser':
             $pollhtml = $poll = '';
             $vote_id = $voted = 0;
 
-            if ($thread['pollopts'] == 1) {
+            if ( '1' === $thread['pollopts'] ) {
                 $query = $db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id='$tid'");
                 if ($query) {
                     $vote_id = $db->fetch_array($query);
@@ -172,7 +172,7 @@ case 'viewuser':
             $db->free_result($result2);
             $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
             if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
-                if ($post['invisible'] == 1) {
+                if ( '1' === $post['invisible'] ) {
                     if (!X_ADMIN) {
                         $onlinenow = $lang['memberisoff'];
                     } else {
@@ -211,7 +211,7 @@ case 'viewuser':
             } else {
                 $last_max = -1;
                 foreach($rankposts as $key => $rankstuff) {
-                    if ($post['postnum'] >= $key && $key > $last_max) {
+                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $last_max ) {
                         $last_max = $key;
                         $rankinfo = explode(",", $rankstuff);
                         $rank['allowavatars'] = $rankinfo[4];
@@ -293,7 +293,7 @@ case 'viewuser':
                 $files = array();
                 $db->data_seek($queryattach, 0);
                 while($attach = $db->fetch_array($queryattach)) {
-                    if ($attach['pid'] == $post['pid']) {
+                    if ( $attach['pid'] === $post['pid'] ) {
                         $files[] = $attach;
                     }
                 }
@@ -331,7 +331,7 @@ case 'viewuser':
 
     if ( $replycount > 0 ) {
         echo "<h3>{$lang['moderation_new_replies']}</h3>\n";
-        $lasttid = 0;
+        $lasttid = '0';
         while($post = $db->fetch_array($result)){
             $tid = $post['tid'];
             $fid = $post['fid'];
@@ -340,13 +340,13 @@ case 'viewuser':
                 $approve = "<form action='?action=approvereply&amp;pid={$post['pid']}' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletereply&amp;pid={$post['pid']}' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
 
-                if ( $tid != $lasttid ) {
-                    if ( 0 != $lasttid ) echo "</table></td></tr></table><br />\n";
+                if ( $tid !== $lasttid ) {
+                    if ( '0' !== $lasttid ) echo "</table></td></tr></table><br />\n";
                     $thisbg = $altbg2;
                 }
             }
 
-            if ( 'viewuser' == $action || $tid != $lasttid ) {
+            if ( 'viewuser' == $action || $tid !== $lasttid ) {
                 $lasttid = $tid;
                 $result2 = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
                 $thread = $db->fetch_array($result2);
@@ -363,7 +363,7 @@ case 'viewuser':
             }
             $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
             if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
-                if ($post['invisible'] == 1) {
+                if ( '1' === $post['invisible'] ) {
                     if (!X_ADMIN) {
                         $onlinenow = $lang['memberisoff'];
                     } else {
@@ -402,7 +402,7 @@ case 'viewuser':
             } else {
                 $last_max = -1;
                 foreach($rankposts as $key => $rankstuff) {
-                    if ($post['postnum'] >= $key && $key > $last_max) {
+                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $last_max ) {
                         $last_max = $key;
                         $rankinfo = explode(",", $rankstuff);
                         $rank['allowavatars'] = $rankinfo[4];
@@ -484,7 +484,7 @@ case 'viewuser':
                 $files = array();
                 $db->data_seek($queryattach, 0);
                 while($attach = $db->fetch_array($queryattach)) {
-                    if ($attach['pid'] == $post['pid']) {
+                    if ( $attach['pid'] === $post['pid'] ) {
                         $files[] = $attach;
                     }
                 }
@@ -524,7 +524,7 @@ case 'viewuser':
 
     if ( 0 == $threadcount && 0 == $replycount ) {
         echo "<p>{$lang['noresults']}</p>\n";
-        if ( 'viewuser' == $action && 'yes' == $member['waiting_for_mod'] && $member['postnum'] > 0 ) {
+        if ( 'viewuser' == $action && 'yes' == $member['waiting_for_mod'] && (int) $member['postnum'] > 0 ) {
             // Unexpected desync of member from quarantine content.
             echo "<h3>{$lang['moderation_actions']}</h3>\n";
             echo "<form action='quarantine.php?action=modays' method='post'>\n";
@@ -621,7 +621,7 @@ case 'approveall':
                 $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
                 $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
             }
-            $count2 = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+            $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
             if ($count2 != 0) {
                 $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
                 $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
@@ -673,7 +673,7 @@ case 'approveall':
                     continue;
                 }
 
-                if ($subs['ppp'] < 1) {
+                if ( (int) $subs['ppp'] < 1 ) {
                     $subs['ppp'] = $posts;
                 }
 
@@ -793,7 +793,7 @@ case 'approvethread':
         $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
         $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
     }
-    $count2 = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+    $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
     if ($count2 != 0) {
         $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
         $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
@@ -856,7 +856,7 @@ case 'approvereply':
             continue;
         }
 
-        if ($subs['ppp'] < 1) {
+        if ( (int) $subs['ppp'] < 1 ) {
             $subs['ppp'] = $posts;
         }
 

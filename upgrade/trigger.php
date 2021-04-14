@@ -99,7 +99,7 @@ if (!is_file('./upgrade.lib.php')) {
 	trigger_error('Admin attempted upgrade with upgrade.lib.php missing.', E_USER_ERROR);
 }
 
-$trigger_old_schema = $SETTINGS['schema_version'];
+$trigger_old_schema = (int) $SETTINGS['schema_version'];
 
 require('./upgrade.lib.php');
 xmb_upgrade();

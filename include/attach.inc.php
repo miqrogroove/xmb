@@ -101,12 +101,12 @@ function uploadedFile( string $varname, int $pid = 0, bool $quarantine = false )
     } else {
         $count = \XMB\SQL\countAttachmentsByPost( $pid, $quarantine );
     }
-    if ( $count >= $SETTINGS['filesperpost'] ) {
+    if ( $count >= (int) $SETTINGS['filesperpost'] ) {
         return X_ATTACH_COUNT_EXCEEDED;
     }
 
     // Check minimum file size for disk storage
-    if ($filesize < $SETTINGS['files_min_disk_size'] && !$usedb) {
+    if ( $filesize < (int) $SETTINGS['files_min_disk_size'] && !$usedb ) {
         $usedb = TRUE;
         $file = getUpload($varname, $filename, $filetype, $filesize, false, $usedb);
     }
@@ -188,7 +188,7 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
     } else {
         $count = \XMB\SQL\countAttachmentsByPost( $pid, $quarantine );
     }
-    if ( $count >= $SETTINGS['filesperpost'] ) {
+    if ( $count >= (int) $SETTINGS['filesperpost'] ) {
         return X_ATTACH_COUNT_EXCEEDED;
     }
 
@@ -203,7 +203,7 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
     }
 
     $filesize = strlen($file);
-    if ($filesize > $SETTINGS['maxattachsize']) {
+    if ( $filesize > (int) $SETTINGS['maxattachsize'] ) {
         return X_ATTACH_SIZE_EXCEEDED;
     }
 
@@ -247,7 +247,7 @@ function remoteFile( string $url, int $pid = 0, bool $quarantine = false ): int 
 
     // Check minimum file size for disk storage
     if (!$usedb) {
-        if ($filesize < $SETTINGS['files_min_disk_size']) {
+        if ( $filesize < (int) $SETTINGS['files_min_disk_size'] ) {
             $usedb = TRUE;
         } else {
             $file = '';
@@ -474,7 +474,7 @@ function copyByPost( int $frompid, int $topid ) {
         $message = $db->query("SELECT message FROM ".X_PREFIX."posts WHERE pid=$topid");
         if ($message = $db->fetch_array($message)) {
             $newmessage = str_replace("[file]{$attach['aid']}[/file]", "[file]{$aid}[/file]", $message['message']);
-            if ($newmessage != $message['message']) {
+            if ( $newmessage !== $message['message'] ) {
                 $db->escape_fast($newmessage);
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$newmessage' WHERE pid=$topid");
             }
@@ -542,7 +542,7 @@ function moveToDisk( int $aid, int $pid ) {
         return FALSE;
     }
     $attach = $db->fetch_array($query);
-    if ($attach['subdir'] != '' || strlen($attach['attachment']) != $attach['filesize']) {
+    if ( $attach['subdir'] != '' || strlen($attach['attachment']) != (int) $attach['filesize'] ) {
         return FALSE;
     }
     if (intval($attach['updatestamp']) == 0 && intval($attach['dateline']) > 0) {
@@ -556,7 +556,7 @@ function moveToDisk( int $aid, int $pid ) {
     if ($file === FALSE) {
         return FALSE;
     }
-    if (fwrite($file, $attach['attachment']) != $attach['filesize']) {
+    if ( fwrite($file, $attach['attachment']) != (int) $attach['filesize'] ) {
         return FALSE;
     }
     fclose($file);
@@ -602,7 +602,7 @@ function approve( int $oldpid, int $newpid ) {
         $oldaid = (int) $attach['aid'];
         $newaid = \XMB\SQL\approveAttachment( $oldaid, $newpid, $newparentid );
         $aidmap[$oldaid] = $newaid;
-        if ( $attach['filesize'] >= $SETTINGS['files_min_disk_size'] && ! $usedb ) {
+        if ( (int) $attach['filesize'] >= (int) $SETTINGS['files_min_disk_size'] && ! $usedb ) {
             moveToDisk( $newaid, $newpid );
         }
     }
@@ -625,7 +625,7 @@ function approve( int $oldpid, int $newpid ) {
     $search[] = "[/oldfile]";
     $replace[] = "[/file]";
     $newpostbody = str_replace( $search, $replace, $postbody );
-    if ( $newpostbody != $postbody ) {
+    if ( $newpostbody !== $postbody ) {
         \XMB\SQL\savePostBody( $newpid, $newpostbody );
     }
 }
@@ -801,7 +801,7 @@ function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape 
     }
 
     $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes (PHP Bug #45124, etc)
-    if ($filesize > $SETTINGS['maxattachsize']) {
+    if ( $filesize > (int) $SETTINGS['maxattachsize'] ) {
         unlink($file['tmp_name']);
         $filetype = X_ATTACH_SIZE_EXCEEDED;
         return FALSE;
@@ -1028,7 +1028,7 @@ function createThumbnail( string $filename, string $filepath, int $filesize, Car
     if ($aid != 0) {
 
         // Check minimum file size for disk storage
-        if ($filesize < $SETTINGS['files_min_disk_size']) {
+        if ( $filesize < (int) $SETTINGS['files_min_disk_size'] ) {
             $subdir = '';
         }
 
@@ -1171,7 +1171,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         return false;
     }
     if ($attach['subdir'] == '') {
-        if (strlen($attach['attachment']) != $attach['filesize']) {
+        if ( strlen($attach['attachment']) != (int) $attach['filesize'] ) {
             return FALSE;
         }
         $path = '';
@@ -1202,7 +1202,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         if (!is_file($path)) {
             return FALSE;
         }
-        if (filesize($path) != $attach['filesize']) {
+        if ( filesize($path) != (int) $attach['filesize'] ) {
             return FALSE;
         }
     }
@@ -1230,7 +1230,7 @@ function regenerateThumbnail( int $aid, int $pid, bool $quarantine = false ) {
         }
     }
 
-    if ( $attach['img_size'] != $sqlsize ) {
+    if ( $attach['img_size'] !== $sqlsize ) {
         \XMB\SQL\setImageDims( $aid, $sqlsize );
     }
 

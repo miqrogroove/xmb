@@ -39,7 +39,7 @@ if ( strlen( $username ) == 0 ) {
     </form>
     <?php
 } else {
-    if ( $SETTINGS['schema_version'] >= 5 ) {
+    if ( (int) $SETTINGS['schema_version'] >= 5 ) {
         // Already logged in by \XMB\Session\Manager
         if ( ! X_SADMIN ) {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";

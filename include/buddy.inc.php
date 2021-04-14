@@ -57,16 +57,16 @@ function buddy_add($buddys) {
         if (empty($buddy) || (strlen(trim($buddy)) == 0)) {
             blistmsg($lang['nobuddyselected'], '', true);
         } else {
-            if ($buddy == $xmbuser) {
+            if ( $buddy === $xmbuser ) {
                 blistmsg($lang['buddywarnaddself']);
             }
 
             $q = $db->query("SELECT count(username) FROM ".X_PREFIX."buddys WHERE username='$xmbuser' AND buddyname='$buddy'");
-            if ($db->result($q, 0) > 0) {
+            if ( (int) $db->result($q, 0) > 0 ) {
                 blistmsg($buddy.' '.$lang['buddyalreadyonlist']);
             } else {
                 $q = $db->query("SELECT count(username) FROM ".X_PREFIX."members WHERE username='$buddy'");
-                if ($db->result($q, 0) < 1) {
+                if ( (int) $db->result($q, 0) < 1 ) {
                     blistmsg($lang['nomember']);
                 } else {
                     $db->query("INSERT INTO ".X_PREFIX."buddys (buddyname, username) VALUES ('$buddy', '$xmbuser')");
@@ -129,7 +129,7 @@ function buddy_addu2u() {
             $buddyout = $buddy['buddyname'];
             $recodename = recodeOut($buddy['buddyname']);
             if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
-                if ($buddy['invisible'] == 1) {
+                if ( '1' === $buddy['invisible'] ) {
                     if (!X_ADMIN) {
                         eval('$buddys["offline"] .= "'.template('buddy_u2u_off').'";');
                     } else {
@@ -157,7 +157,7 @@ function buddy_display() {
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
         if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
-            if ($buddy['invisible'] == 1) {
+            if ( '1' === $buddy['invisible'] ) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
                     continue;
