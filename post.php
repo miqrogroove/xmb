@@ -710,16 +710,14 @@ switch($action) {
                         }
                     }
                 }
-                $maxtotal = phpShorthandValue('post_max_size');
-                if ($maxtotal > 0) {
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
-                } else {
-                    $lang['attachmaxtotal'] = '';
-                }
                 $maxuploads = (int) $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
+                    $max_dos_size = phpShorthandValue('post_max_size');
+                    $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
+                    $maxtotal = ( 0 == $max_dos_size ) ? $max_xmb_size : min( $max_dos_size, $max_xmb_size );
+                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset( $orphans );
@@ -1118,16 +1116,14 @@ switch($action) {
                         }
                     }
                 }
-                $maxtotal = phpShorthandValue('post_max_size');
-                if ($maxtotal > 0) {
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
-                } else {
-                    $lang['attachmaxtotal'] = '';
-                }
                 $maxuploads = (int) $SETTINGS['filesperpost'] - count( $orphans );
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
+                    $max_dos_size = phpShorthandValue('post_max_size');
+                    $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
+                    $maxtotal = ( 0 == $max_dos_size ) ? $max_xmb_size : min( $max_dos_size, $max_xmb_size );
+                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset( $orphans );
@@ -1409,16 +1405,14 @@ switch($action) {
                         }
                     }
                 }
-                $maxtotal = phpShorthandValue('post_max_size');
-                if ($maxtotal > 0) {
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
-                } else {
-                    $lang['attachmaxtotal'] = '';
-                }
                 $maxuploads = (int) $SETTINGS['filesperpost'] - $db->num_rows($query);
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
+                    $max_dos_size = phpShorthandValue('post_max_size');
+                    $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
+                    $maxtotal = ( 0 == $max_dos_size ) ? $max_xmb_size : min( $max_dos_size, $max_xmb_size );
+                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
                     eval('$attachment .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
