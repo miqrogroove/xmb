@@ -231,7 +231,7 @@ class dbstuff {
             }
 
             $trace = debug_backtrace();
-            $depth = 2; // Go back before dbstuff::panic() and before dbstuff::query() for simplicity.
+            $depth = 1; // Go back before dbstuff::panic() and see who called dbstuff::query().
             $filename = $trace[$depth]['file'];
             $linenum = $trace[$depth]['line'];
             $log .= "Executed by {$filename} on line {$linenum}";
