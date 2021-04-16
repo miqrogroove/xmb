@@ -4,7 +4,7 @@
  * XMB 1.9.11
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2017, The XMB Group
+ * Copyright (c) 2001-2021, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ require ROOT.'include/global.inc.php';
 $versioncompany = 'The XMB Group';
 $versionshort = '1.9.11';
 $versiongeneral = 'XMB 1.9.11';
-$copyright = '2001-2017';
+$copyright = '2001-2021';
 $alpha = '';
 $beta = '';
 $gamma = '';
