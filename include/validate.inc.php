@@ -445,4 +445,16 @@ function isValidFilename($filename) {
     return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
 
+/**
+ * Output filter for BBCodes
+ *
+ * @since 1.9.12.03
+ */
+function bbcode_out( string $message ): string {
+    $retval = $message;
+    $retval = htmlspecialchars( $retval, ENT_QUOTES, null, false );
+    $retval = str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $retval );
+    return $retval;
+}
+
 return;

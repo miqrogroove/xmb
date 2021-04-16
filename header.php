@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2020, The XMB Group
+ * Copyright (c) 2001-2021, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -40,12 +40,12 @@ require ROOT.'include/global.inc.php';
 $versioncompany = 'The XMB Group';
 $versionshort = '1.9.12';
 $versiongeneral = 'XMB 1.9.12';
-$copyright = '2001-2020';
+$copyright = '2001-2021';
 $alpha = '';
 $beta = '';
 $gamma = '';
 $service_pack = '';
-$versionbuild = 20201022;
+$versionbuild = 20210416;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -337,7 +337,7 @@ if ( isset( $row['langfile'] ) ) {
         $SETTINGS[$key] = $val;
     }
     if ( ! isset( $SETTINGS['schema_version'] ) ) {
-        $SETTINGS['schema_version'] = 0;
+        $SETTINGS['schema_version'] = '0';
     }
 } else {
     // Current schema uses a separate row for each setting.

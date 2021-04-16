@@ -742,26 +742,23 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements[] = '<!-- nobr --><a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
-        if (false == stripos($message, 'javascript:')) {
-            $https_only = 'on' == $SETTINGS['images_https_only'];
-            $base_pattern = get_img_regexp( $https_only );
-            $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
-            $replacements[] = '<!-- nobr --><img src="\1://\2\3" border="0" alt="" /><!-- /nobr -->';
-            $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
-            $replacements[] = '<!-- nobr --><img width="\1" height="\2" src="\3://\4\5" alt="" border="0" /><!-- /nobr -->';
-        }
         $patterns[] = '/\[youtube\]([a-z0-9_-]+)\[\/youtube\]/i';
         $replacements[] = '<!-- nobr --><iframe class="video" src="https://www.youtube.com/embed/\1" allowfullscreen></iframe><!-- /nobr -->';
     }
 
-    $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
-    $replacements[] = '<a href="mailto:\1">\1</a>';
-    $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#i";
-    $replacements[] = '<a href="mailto:\1">\2</a>';
-
     $message = preg_replace($patterns, $replacements, $message);
 
     $message = preg_replace_callback($regex['size'], 'bbcodeSizeTags', $message);
+
+    if ($allowimgcode != 'no' && $allowimgcode != 'off') {
+        $https_only = 'on' == $SETTINGS['images_https_only'];
+        $base_pattern = get_img_regexp( $https_only );
+
+        $patterns = array();
+        $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
+        $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
+        $message = preg_replace_callback( $patterns, 'bbcode_imgs', $message );
+    }
 
     if ($allowurlcode) {
         /*
@@ -786,6 +783,11 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
         //[url=www.example.com]Lorem Ipsum[/url]
         $message = preg_replace_callback("#\[url=([^\"'<>\[\]]+)\](.*?)\[/url\]#i", 'bbcodeLongURLs', $message);
     }
+
+    $patterns = array();
+    $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
+    $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#i";
+    $message = preg_replace_callback( $patterns, 'bbcode_emails', $message );
 
     return TRUE;
 }
@@ -896,14 +898,14 @@ function bbcodeBalanceTags(&$message, $regex){
  * @param array $url Expects $url[0] to be the raw BBCode, $url[1] to be the URL only, and optionally $url[2] to be the display text.
  * @return string The HTML replacement for $url[0] if the code was valid, else the code is unchaged.
  */
-function bbcodeLongURLs($url) {
+function bbcodeLongURLs( array $url ): string {
     $url_max_display_len = 60;
     $scheme_whitelist = array('http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'svn');
 
     $colon = strpos($url[1], ':');
     if (FALSE !== $colon) {
         $scheme = substr($url[1], 0, $colon);
-	if (in_array($scheme, $scheme_whitelist)) {
+        if (in_array($scheme, $scheme_whitelist)) {
             $href = $url[1];
         } else {
             return $url[0];
@@ -918,18 +920,22 @@ function bbcodeLongURLs($url) {
     } else {
         $text = substr($url[1], 0, $url_max_display_len).'...';
     }
+
+    $href = bbcode_out( $href );
+
     return "<!-- nobr --><a href='$href' onclick='window.open(this.href); return false;'><!-- /nobr -->$text</a>";
 }
 
 /**
- * Replaces createAbsFSizeFromRel() to eliminate the /e in size bbcode regex.
+ * Adds relative font size values to the theme's font size.
  *
- * @since 1.9.11 Alpha Three
+ * @since 1.9.11
  */
-function bbcodeSizeTags($matches) {
+function bbcodeSizeTags( array $matches ): string {
     global $THEME;
     static $cachedFs;
 
+    // Cache the theme font size in an array.
     if (!is_array($cachedFs) || count($cachedFs) != 2) {
         preg_match('#([0-9]+)([a-z]+)?#i', $THEME['fontsize'], $res);
         $cachedFs[0] = $res[1];
@@ -940,9 +946,10 @@ function bbcodeSizeTags($matches) {
         }
     }
 
-    $o = ($matches[1]+$cachedFs[0]).$cachedFs[1];
+    $relative = (int) $matches[1];
+    $o = ( $relative + $cachedFs[0] ) . $cachedFs[1];
 
-    $html = "<span style=\"font-size: $o;\">";
+    $html = "<span style='font-size: $o;'>";
 
     return $html;
 }
@@ -2794,6 +2801,53 @@ function more_theme_vars() {
 function coppa_check(): bool {
     $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
     return 'xmb' != $privacy;
+}
+
+/**
+ * Handles the [email] BBCode.
+ *
+ * @since 1.9.12.03
+ * @param array $matches Expects $matches[0] to be the raw BBCode, $matches[1] to be the URL only, and optionally $matches[2] to be the display text.
+ * @return string The HTML replacement for $matches[0].
+ */
+function bbcode_emails( array $matches ): string {
+    $text = $matches[2] ?? $matches[1];
+    $address = bbcode_out( $matches[1] );
+
+    return "<a href='mailto:$address'>$text</a>";
+}
+
+/**
+ * Handles the [img] BBCode.
+ *
+ * @since 1.9.12.03
+ * @param array $matches Expects different elements depending on the pattern.
+ * @return string The HTML replacement for $matches[0].
+ */
+function bbcode_imgs( array $matches ): string {
+    if ( count( $matches ) < 5 ) {
+        $width = 0;
+        $height = 0;
+        $scheme = $matches[1];
+        $path = $matches[2];
+        $query = $matches[3] ?? '';
+    } else {
+        $width = (int) $matches[1];
+        $height = (int) $matches[2];
+        $scheme = $matches[3];
+        $path = $matches[4];
+        $query = $matches[5] ?? '';
+    }
+
+    if ( $width < 1 || $height < 1 ) {
+        $size = '';
+    } else {
+        $size = "width='$width' height='$height'";
+    }
+
+    $address = bbcode_out( "$scheme://$path$query" );
+
+    return "<!-- nobr --><img $size src='$address' alt='' border='0' /><!-- /nobr -->";
 }
 
 return;

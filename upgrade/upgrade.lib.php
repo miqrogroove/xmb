@@ -47,7 +47,7 @@ function xmb_upgrade() {
     }
 
     show_progress('Selecting the appropriate change set');
-    switch ($SETTINGS['schema_version']) {
+    switch ( (int) $SETTINGS['schema_version'] ) {
         case XMB_SCHEMA_VER:
             show_progress('Database schema is current, skipping ALTER commands');
             break;

@@ -60,7 +60,7 @@ if ( isset( $row['langfile'] ) ) {
         $SETTINGS[$key] = $val;
     }
     if ( ! isset( $SETTINGS['schema_version'] ) ) {
-        $SETTINGS['schema_version'] = 0;
+        $SETTINGS['schema_version'] = '0';
     }
 } else {
     // Current schema uses a separate row for each setting.
@@ -85,7 +85,7 @@ if ( empty( $SETTINGS['ip_banning'] ) ) {
     $SETTINGS['ip_banning'] == 'off';
 }
 if ( empty( $SETTINGS['schema_version'] ) ) {
-    $SETTINGS['schema_version'] == 0;
+    $SETTINGS['schema_version'] == '0';
 }
 $inimax = phpShorthandValue('upload_max_filesize');
 if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattachsize'] ) {

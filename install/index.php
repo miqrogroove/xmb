@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2020, The XMB Group
+ * Copyright (c) 2001-2021, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -24,10 +24,10 @@
 
 // Script Parameters
 define('X_VERSION', '1.9.12');
-define('X_VERSION_EXT', '1.9.12.02');
+define('X_VERSION_EXT', '1.9.12.03');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '7.0.0');
-define('COPY_YEAR', '2001-2020');
+define('COPY_YEAR', '2001-2021');
 $req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
 $req['files'] = array(
     'buddy.php',
