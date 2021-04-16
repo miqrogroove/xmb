@@ -24,7 +24,7 @@
 
 // Script Parameters
 define('X_VERSION', '1.9.11');
-define('X_VERSION_EXT', '1.9.11.15');
+define('X_VERSION_EXT', '1.9.11.16');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '4.3.0');
 define('COPY_YEAR', '2001-2021');

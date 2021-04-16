@@ -475,4 +475,17 @@ function encode_ip($dotquad_ip) {
 function isValidFilename($filename) {
     return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
+
+/**
+ * Output filter for BBCodes
+ *
+ * @since 1.9.12.03, ported to 1.9.11.16
+ */
+function bbcode_out( $message ) {
+    $retval = $message;
+    $retval = htmlspecialchars_decode( $retval, ENT_QUOTES ); // Double encoding avoidance compatible with PHP 4.
+    $retval = htmlspecialchars( $retval, ENT_QUOTES );
+    $retval = str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $retval );
+    return $retval;
+}
 ?>
