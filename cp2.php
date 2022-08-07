@@ -2050,7 +2050,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=new">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates/New', $newtemplatename, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates/Add', $newtemplatename, X_NONCE_FORM_EXP ); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
