@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -163,14 +163,10 @@ if ($action == 'report') {
 
     // Does a poll exist for this thread?
     $tid = intval($tid);
-    $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id=$tid");
-    if ($query === false) {
+    $vote_id = \XMB\SQL\getPollId( $tid );
+    if ( $vote_id === 0 ) {
         error($lang['pollvotenotselected'], false);
     }
-
-    $vote_id = $db->fetch_array($query);
-    $vote_id = $vote_id['vote_id'];
-    $db->free_result($query);
 
     // does the poll option exist?
     $query = $db->query("SELECT COUNT(vote_option_id) FROM ".X_PREFIX."vote_results WHERE vote_id=$vote_id AND vote_option_id=$postopnum");

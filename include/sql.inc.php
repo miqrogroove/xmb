@@ -1279,11 +1279,12 @@ function raiseDownloadCounter( int $aid, bool $quarantine = false ) {
  * SQL command
  *
  * @since 1.9.12
+ * @param int $tid Thread ID number.
+ * @param bool $quarantine Save this record in a private table for later review?
+ * @return int Poll ID number.
  */
 function addVoteDesc( int $tid, bool $quarantine = false ): int {
     global $db;
-
-    $sqltext = $db->escape( $text );
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
 
@@ -1377,6 +1378,31 @@ function addWhosonline( string $address, string $username, int $time, string $ur
     $db->escape_fast( $url );
 
     $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$username', '$address', $time, '$url', $invisible)");
+}
+
+/**
+ * Retrieve the vote_id value based on a tid.
+ *
+ * @since 1.9.12.04
+ * @param int $time The session start timestamp.
+ * @param bool $quarantine Was this record in a private table for later review?
+ * @return int Poll ID number or zero if not found.
+*/
+function getPollId( int $tid, bool $quarantine = false  ) {
+    global $db;
+
+    $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
+
+    $query = $db->query("SELECT vote_id FROM $table WHERE topic_id = $tid");
+    
+    if ( $db->num_rows( $query ) === 0 ) {
+        $id = 0;
+    } else {
+        $id = (int) $db->result($query, 0);
+    }
+    $db->free_result($query);
+    
+    return $id;
 }
 
 return;

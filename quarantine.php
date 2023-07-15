@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -131,12 +131,7 @@ case 'viewuser':
             $vote_id = $voted = 0;
 
             if ( '1' === $thread['pollopts'] ) {
-                $query = $db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id='$tid'");
-                if ($query) {
-                    $vote_id = $db->fetch_array($query);
-                    $vote_id = (int) $vote_id['vote_id'];
-                }
-                $db->free_result($query);
+                $vote_id = \XMB\SQL\getPollId( $tid, true );
             }
 
             if ($vote_id > 0) {
@@ -609,17 +604,19 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
             \XMB\Attach\approve( $oldpid, $newpid );
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
-                $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
-                $newpoll = $db->insert_id();
-                $db->query(
-                    "INSERT INTO ".X_PREFIX."vote_results " .
-                    "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
-                    "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
-                    "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
-                );
-                $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-                $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                $oldpoll = \XMB\SQL\getPollId( $thread['tid'], true );
+                if ( $oldpoll !== 0 ) {
+                    $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
+                    $newpoll = $db->insert_id();
+                    $db->query(
+                        "INSERT INTO ".X_PREFIX."vote_results " .
+                        "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
+                        "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
+                        "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
+                    );
+                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
+                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                }
             }
             $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
             if ($count2 != 0) {
@@ -711,9 +708,11 @@ case 'deleteban':
             $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
             $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
-                $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-                $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                $oldpoll = \XMB\SQL\getPollId( $thread['tid'], true );
+                if ( $oldpoll !== 0 ) {
+                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
+                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                }
             }
             $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
             $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");
@@ -776,22 +775,24 @@ case 'approvethread':
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
     \XMB\Attach\approve( $oldpid, $newpid );
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
-        $db->query(
-            "INSERT INTO ".X_PREFIX."vote_desc " .
-            "      (topic_id) " .
-            "SELECT  $newtid " .
-            "FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"
-        );
-        $newpoll = $db->insert_id();
-        $db->query(
-            "INSERT INTO ".X_PREFIX."vote_results " .
-            "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
-            "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
-            "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
-        );
-        $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-        $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+        $oldpoll = \XMB\SQL\getPollId( $thread['tid'], true );
+        if ( $oldpoll !== 0 ) {
+            $db->query(
+                "INSERT INTO ".X_PREFIX."vote_desc " .
+                "      (topic_id) " .
+                "SELECT  $newtid " .
+                "FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"
+            );
+            $newpoll = $db->insert_id();
+            $db->query(
+                "INSERT INTO ".X_PREFIX."vote_results " .
+                "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
+                "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
+                "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
+            );
+            $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
+            $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+        }
     }
     $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
     if ($count2 != 0) {
@@ -891,9 +892,11 @@ case 'deletethread':
     $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
     $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = $db->result($db->query("SELECT vote_id FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"), 0);
-        $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-        $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+        $oldpoll = \XMB\SQL\getPollId( $thread['tid'], true );
+        if ( $oldpoll !== 0 ) {
+            $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
+            $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+        }
     }
     $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
     $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");

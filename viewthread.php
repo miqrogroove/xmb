@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -379,12 +379,7 @@ if ($action == '') {
     $vote_id = $voted = 0;
 
     if ( '1' === $thread['pollopts'] ) {
-        $query = $db->query("SELECT vote_id FROM ".X_PREFIX."vote_desc WHERE topic_id='$tid'");
-        if ($query) {
-            $vote_id = $db->fetch_array($query);
-            $vote_id = (int) $vote_id['vote_id'];
-        }
-        $db->free_result($query);
+        $vote_id = \XMB\SQL\getPollId( $tid );
     }
 
     if ($vote_id > 0) {
