@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -185,10 +185,9 @@ function elevateUser($force_inv = false, $serror = '') {
         global $onlineip, $url;
 
         $wollocation = substr($url, 0, $maxurl);
-        $db->escape_fast($wollocation);
         $newtime = $onlinetime - X_ONLINE_TIMER;
-        $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$onlineip' && username='xguest123') OR (username='$xmbuser') OR (time < '$newtime'))");
-        $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$onlineuser', '$onlineip', $onlinetime, '$wollocation', '$invisible')");
+        \XMB\SQL\deleteOldWhosonline( $onlineip, $self['username'], $newtime );
+        \XMB\SQL\addWhosonline( $onlineip, $self['username'], $onlinetime, $wollocation, $invisible );
     }
 }
 

@@ -1453,7 +1453,7 @@ $footerstuff[querydump]
 [$lang[textserverload] <strong>$load[0]</strong>]
 
 |#*XMB TEMPLATE FILE*#|footer_phpsql|#*XMB TEMPLATE*#|
-[$lang[textphp] <strong>${php_duration}%</strong> - $lang[textsql] <strong>${db_duration}%</strong>]
+[$lang[textphp] <strong>$php_duration%</strong> - $lang[textsql] <strong>$db_duration%</strong>]
 
 |#*XMB TEMPLATE FILE*#|footer_querynum|#*XMB TEMPLATE*#|
 [$lang[queries]: <strong>$querynum</strong>]

@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -1340,6 +1340,43 @@ function addVoteOptions( array $rows, bool $quarantine = false ) {
     $table = $quarantine ? X_PREFIX.'hold_vote_results' : X_PREFIX.'vote_results';
 
     $db->query("INSERT INTO $table (vote_id, vote_option_id, vote_option_text, vote_result) VALUES $sqlrows");
+}
+
+/**
+ * Remove a user's guest record and any other stale records.
+ *
+ * @since 1.9.12.04
+ * @param string $address Current remote IP address.
+ * @param string $username Current user.
+ * @param int $timelimit The timestamp before which all records may be purged.
+ */
+function deleteOldWhosonline( string $address, string $username, int $timelimit ) {
+    global $db;
+
+    $db->escape_fast( $address );
+    $db->escape_fast( $username );
+    
+    $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$address' AND username='xguest123') OR (username='$username') OR (time < $timelimit))");
+}
+
+/**
+ * Add a Who's Online Record
+ *
+ * @since 1.9.12.04
+ * @param string $username Current user.
+ * @param string $address Current remote IP address.
+ * @param int $time The session start timestamp.
+ * @param string $url The relative URL.
+ * @param int $invisible Should be 0 for no or 1 for yes.
+ */
+function addWhosonline( string $address, string $username, int $time, string $url, int $invisible ) {
+    global $db;
+
+    $db->escape_fast( $address );
+    $db->escape_fast( $username );
+    $db->escape_fast( $url );
+
+    $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$username', '$address', $time, '$url', $invisible)");
 }
 
 return;
