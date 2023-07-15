@@ -123,7 +123,7 @@ switch($action) {
                         // Check Google's results
                         $response = postedVar( 'g-recaptcha-response', null, false, false );
                         $ssl_lib = ROOT.'trust.pem';
-                        $installed = time() < 1639526400; // Expires 2021-12-15 and won't be used until updated.
+                        $installed = time() < 2097705600; // Expires 2036-06-21 and won't be used until updated.
                         $curl = curl_init( 'https://www.google.com/recaptcha/api/siteverify' );
 
                         curl_setopt_array( $curl, array(
