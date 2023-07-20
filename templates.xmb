@@ -4143,7 +4143,7 @@ $multipage
 
 |#*XMB TEMPLATE FILE*#|today_multipage|#*XMB TEMPLATE*#|
 <tr class="tablerow">
-<td colspan="8" bgcolor="{$THEME['altbg2']}">&nbsp;$multipage</td>
+<td class="multi" colspan="8" bgcolor="{$THEME['altbg2']}">&nbsp;$multipage</td>
 </tr>
 
 |#*XMB TEMPLATE FILE*#|today_noposts|#*XMB TEMPLATE*#|
