@@ -527,6 +527,7 @@ if ($action == '') {
             $db->query('UPDATE '.X_PREFIX.'posts SET fid='.$thread['fid'].' WHERE pid='.$post['pid']);
         }
 
+		null_string( $post['avatar'] );
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
         if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
@@ -643,7 +644,7 @@ if ($action == '') {
                 $post['avatar'] = '';
             }
 
-            if ( 'on' == $SETTINGS['images_https_only'] && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
+            if ( 'on' == $SETTINGS['images_https_only'] && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) !== 'https:' ) {
                 $post['avatar'] = '';
             }
 
@@ -655,7 +656,7 @@ if ($action == '') {
 
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] != '' && $allowavatars != "no") {
+                if ($post['avatar'] !== '' && $allowavatars != "no") {
                     $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
             }

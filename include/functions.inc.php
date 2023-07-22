@@ -2849,4 +2849,16 @@ function bbcode_imgs( array $matches ): string {
     return "<!-- nobr --><img $size src='$address' alt='' border='0' /><!-- /nobr -->";
 }
 
+/**
+ * Coerces any null value to an empty string.
+ *
+ * Due to supporting PHP 7.0, nullable types and null coallescing assignment can't be used in XMB.
+ *
+ * @since 1.9.12.05
+ * @param string|null $var Passed by reference for easier coding.
+ */
+function null_string( &$var ) {
+	$var = $var ?? '';
+}
+
 return;

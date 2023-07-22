@@ -655,6 +655,8 @@ switch($action) {
         }
 
         $memberinfo['password'] = '';
+		
+		null_string( $memberinfo['avatar'] );
 
         $member = $db->escape( $member );
 
@@ -713,17 +715,17 @@ switch($action) {
             $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if ( 'on' == $SETTINGS['images_https_only'] && strpos( $memberinfo['avatar'], ':' ) !== false && substr( $memberinfo['avatar'], 0, 6 ) != 'https:' ) {
+        if ( 'on' == $SETTINGS['images_https_only'] && strpos( $memberinfo['avatar'], ':' ) !== false && substr( $memberinfo['avatar'], 0, 6 ) !== 'https:' ) {
             $memberinfo['avatar'] = '';
         }
 
-        if ($memberinfo['avatar'] != '') {
+        if ($memberinfo['avatar'] !== '') {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
         if ( ($rank['avatarrank'] || $memberinfo['avatar']) && $site != '' ) {
             $sitelink = $site;
-            if ($memberinfo['avatar'] != '') {
+            if ($memberinfo['avatar'] !== '') {
                 $newsitelink = "<a href=\"$sitelink\" onclick=\"window.open(this.href); return false;\">{$memberinfo['avatar']}</a></td>";
             } else {
                 $newsitelink = '';

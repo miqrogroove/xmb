@@ -165,6 +165,7 @@ case 'viewuser':
                 $post = $db->fetch_array($result2);
             }
             $db->free_result($result2);
+			null_string( $post['avatar'] );
             $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
             if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
                 if ( '1' === $post['invisible'] ) {
@@ -227,7 +228,7 @@ case 'viewuser':
             if ($allowavatars == 'no') {
                 $post['avatar'] = '';
             }
-            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
+            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) !== 'https:' ) {
                 $post['avatar'] = '';
             }
             if ($rank['avatarrank'] != '') {
@@ -242,7 +243,7 @@ case 'viewuser':
             }
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] != '' && $allowavatars != "no") {
+                if ($post['avatar'] !== '' && $allowavatars != "no") {
                     $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
             }
@@ -356,6 +357,7 @@ case 'viewuser':
             if ( 'viewuser' == $action ) {
                 $post = array_merge($post, $member);
             }
+			null_string( $post['avatar'] );
             $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
             if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
                 if ( '1' === $post['invisible'] ) {
@@ -418,7 +420,7 @@ case 'viewuser':
             if ($allowavatars == 'no') {
                 $post['avatar'] = '';
             }
-            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) != 'https:' ) {
+            if ( $https_only && strpos( $post['avatar'], ':' ) !== false && substr( $post['avatar'], 0, 6 ) !== 'https:' ) {
                 $post['avatar'] = '';
             }
             if ($rank['avatarrank'] != '') {
@@ -433,7 +435,7 @@ case 'viewuser':
             }
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] != '' && $allowavatars != "no") {
+                if ($post['avatar'] !== '' && $allowavatars != "no") {
                     $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
                 }
             }

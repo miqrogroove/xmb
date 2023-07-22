@@ -233,8 +233,9 @@ if (noSubmit('editsubmit')) {
     $htmlis = $lang['textoff'];
 
     $avatar = '';
+	null_string( $member['avatar'] );
     if ($SETTINGS['avastatus'] == 'on') {
-        if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) != 'https:' ) {
+        if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
             $member['avatar'] = '';
         }
         eval('$avatar = "'.template('memcp_profile_avatarurl').'";');

@@ -247,8 +247,9 @@ if ($action == 'profile') {
         $htmlis = $lang['textoff'];
 
         $avatar = '';
+		null_string( $member['avatar'] );
         if ($SETTINGS['avastatus'] == 'on') {
-            if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) != 'https:' ) {
+            if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
                 $member['avatar'] = '';
             }
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
@@ -754,12 +755,13 @@ if ($action == 'profile') {
     $db->free_result($q);
 
     $member = $self;
+	null_string( $member['avatar'] );
 
-    if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) != 'https:' ) {
+    if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
         $member['avatar'] = '';
     }
 
-    if ($member['avatar'] != '') {
+    if ($member['avatar'] !== '') {
         $member['avatar'] = '<img src="'.$member['avatar'].'" border="0" alt="'.$lang['altavatar'].'" />';
     }
 
