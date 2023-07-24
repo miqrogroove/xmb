@@ -75,6 +75,7 @@ function getSession( string $token, string $username ): array {
  * SQL command
  *
  * @since 1.9.12
+ * @return mysqli_result|bool
  */
 function getSessionsByName( string $username ) {
     global $db;
@@ -995,6 +996,7 @@ function deleteAttachmentsByID( array $aid_list, bool $quarantine = false ) {
  * SQL command
  *
  * @since 1.9.12
+ * @return mysqli_result|bool
  */
 function getAttachmentPaths( array $aid_list, bool $quarantine = false ) {
     global $db;
@@ -1388,7 +1390,7 @@ function addWhosonline( string $address, string $username, int $time, string $ur
  * @param bool $quarantine Was this record in a private table for later review?
  * @return int Poll ID number or zero if not found.
 */
-function getPollId( int $tid, bool $quarantine = false  ) {
+function getPollId( int $tid, bool $quarantine = false  ): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
@@ -1403,6 +1405,28 @@ function getPollId( int $tid, bool $quarantine = false  ) {
     $db->free_result($query);
     
     return $id;
+}
+
+/**
+ * Retrieve the entire ranks table.
+ *
+ * @since 1.9.12.05
+ * @return array of associative table rows.
+*/
+function getRanks(): array {
+    global $db;
+    
+    $result = $db->query("SELECT * FROM ".X_PREFIX."ranks");
+
+    $ranks = [];
+    while( $row = $db->fetch_array( $result ) ) {
+        $ranks[] =& $row;
+        unset( $row );
+    }
+    
+    $db->free_result( $result );
+
+    return $ranks;
 }
 
 return;

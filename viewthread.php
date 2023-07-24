@@ -361,17 +361,16 @@ if ($action == '') {
 
     $specialrank = array();
     $rankposts = array();
-    $queryranks = $db->query("SELECT id, title, posts, stars, allowavatars, avatarrank FROM ".X_PREFIX."ranks");
-    while($query = $db->fetch_row($queryranks)) {
-        $title = $query[1];
-        $rposts= $query[2];
-        if ($title == 'Super Administrator' || $title == 'Administrator' || $title == 'Super Moderator' || $title == 'Moderator') {
-            $specialrank[$title] = "$query[0],$query[1],$query[2],$query[3],$query[4],$query[5]";
+    $queryranks = \XMB\SQL\getRanks();
+    foreach( $queryranks as $query ) {
+        if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
+            $specialrank[$query['title']] =& $query;
         } else {
-            $rankposts[$rposts]  = "$query[0],$query[1],$query[2],$query[3],$query[4],$query[5]";
+            $rankposts[$query['posts']] =& $query;
         }
+		unset( $query );
     }
-    $db->free_result($queryranks);
+    unset( $queryranks );
 
     $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid='$tid'");
 
@@ -609,31 +608,34 @@ if ($action == '') {
             }
 
             $showtitle = $post['status'];
-            $rank = array();
+
             if ($post['status'] == 'Administrator' || $post['status'] == 'Super Administrator' || $post['status'] == 'Super Moderator' || $post['status'] == 'Moderator') {
+                // Specify the staff rank.
                 $sr = $post['status'];
-                $rankinfo = explode(",", $specialrank[$sr]);
-                $rank['allowavatars'] = $rankinfo[4];
-                $rank['title'] = $lang[$status_translate[$status_enum[$sr]]];
-                $rank['stars'] = $rankinfo[3];
-                $rank['avatarrank'] = $rankinfo[5];
+                $rank = [
+                    'allowavatars' => $specialrank[$sr]['allowavatars'],
+                    'title' => $lang[$status_translate[$status_enum[$sr]]],
+                    'stars' => $specialrank[$sr]['stars'],
+                    'avatarrank' => $specialrank[$sr]['avatarrank'],
+                ];
             } else if ($post['status'] == 'Banned') {
-                $rank['allowavatars'] = 'no';
-                $rank['title'] = $lang['textbanned'];
-                $rank['stars'] = 0;
-                $rank['avatarrank'] = '';
+                // Specify no rank.
+                $rank = [
+                    'allowavatars' => 'no',
+                    'title' => $lang['textbanned'],
+                    'stars' => 0,
+                    'avatarrank' => '',
+                ];
             } else {
-                $last_max = -1;
-                foreach($rankposts as $key => $rankstuff) {
-                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $last_max ) {
-                        $last_max = $key;
-                        $rankinfo = explode(",", $rankstuff);
-                        $rank['allowavatars'] = $rankinfo[4];
-                        $rank['title'] = $rankinfo[1];
-                        $rank['stars'] = $rankinfo[3];
-                        $rank['avatarrank'] = $rankinfo[5];
+                // Find the appropriate member rank.
+                $max = -1;
+                $keys = array_keys( $rankposts );
+                foreach( $keys as $key ) {
+                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $max ) {
+                        $max = $key;
                     }
                 }
+                $rank =& $rankposts[$max];
             }
 
             $allowavatars = $rank['allowavatars'];
