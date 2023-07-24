@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ switch($page) {
     case 'messages':
         setCanonicalLink("faq.php?page=$page");
         loadtemplates('faq_messages_smilierow', 'faq_messages');
-        $smilierows = NULL;
+        $smilierows = '';
         nav($lang['textpostread']);
         $querysmilie = $db->query("SELECT * FROM `" .X_PREFIX. "smilies` WHERE type = 'smiley'");
         while($smilie = $db->fetch_array($querysmilie)) {

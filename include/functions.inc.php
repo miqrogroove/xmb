@@ -57,11 +57,11 @@ function loginUser($invisible = null) {
 /**
  * Responsible for setting up session variables.
  *
- * @param  int    $force_inv Optional.
+ * @param  bool   $force_inv Optional.
  * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
  * @return bool
  */
-function elevateUser($force_inv = false, $serror = '') {
+function elevateUser( bool $force_inv = false, string $serror = '' ) {
     global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum, $onlinetime;
 
     $maxurl = 150; //Schema constant.
@@ -149,7 +149,7 @@ function elevateUser($force_inv = false, $serror = '') {
             $dateformat = $self['dateformat'];
         }
         $sig = $self['sig'];
-        $invisible = $self['invisible'];
+        $invisible = (int) $self['invisible'];
         $onlineuser = $xmbuser;
     } else {
         $timeoffset = $SETTINGS['def_tz'];
@@ -167,7 +167,7 @@ function elevateUser($force_inv = false, $serror = '') {
         $self['username'] = '';
     }
 
-    if ($force_inv === TRUE) {
+    if ( $force_inv ) {
         $invisible = 1;
     }
 
@@ -537,7 +537,13 @@ function smile(&$txt) {
     return true;
 }
 
-function postify($message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
+/**
+ * Perform BBCode, Smilie, and Word Wrapping for a single post body.
+ *
+ * @since 1.0
+ * @param string $message For PHP 8.1 compatibility, null input is no longer allowed.
+ */
+function postify( string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes" ) {
     if ( 'yes' == $allowhtml ) {
         trigger_error( 'The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED );
     }
@@ -1069,7 +1075,7 @@ function modcheckPost(&$username, &$mods, &$origstatus) {
                     $retval = '';
                 }
                 break;
-            //If member does not have X_MOD then modcheck() returned a null string.  No reason to continue testing.
+            //If member does not have X_MOD then modcheck() returned an empty string.  No reason to continue testing.
         }
     }
 
@@ -1082,6 +1088,7 @@ function forum($forum, $template, $index_subforums) {
     global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
+    null_string( $forum['description'] );
     $forum['description'] = html_entity_decode($forum['description']);
 
     if ( ! empty( $forum['lastpost'] ) ) {
@@ -1128,7 +1135,7 @@ function forum($forum, $template, $index_subforums) {
         }
         $moderators = implode( ', ', $list );
         $forum['moderator'] = "{$lang['textmodby']} $moderators";
-        if ( '' != $forum['description'] ) {
+        if ( '' !== $forum['description'] ) {
             $forum['moderator'] = '<br />' . $forum['moderator'];
         }
     }
@@ -1146,7 +1153,7 @@ function forum($forum, $template, $index_subforums) {
     if (!empty($subforums)) {
         $subforums = implode(', ', $subforums);
         $subforums = "{$lang['textsubforums']} <span class='plainlinks'>$subforums</span>";
-        if ( '' != $forum['description'] || '' != $forum['moderator'] ) {
+        if ( '' !== $forum['description'] || '' != $forum['moderator'] ) {
             $subforums = '<br />' . $subforums;
         }
     } else {
@@ -1216,7 +1223,7 @@ function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
  * @param int $lastpage Total number of pages in the collection.
  * @param string $mpurl Read-Only Variable. Relative URL of the first page in the collection.
  * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
- * @return string Null string if the $lastpage parameter was <= 1 or $page was invalid.
+ * @return string HTML links. Empty string if the $lastpage parameter was <= 1 or $page was invalid.
  */
 function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
     global $lang;
@@ -1741,7 +1748,15 @@ function validateTpp() {
     }
 }
 
-function altMail($to, $subject, $message, $additional_headers='', $additional_parameters=null) {
+/**
+ * Send a mail message.
+ *
+ * Works just like php's altMail() function, but allows sending trough alternative mailers as well.
+ *
+ * @since 1.9.2
+ * @return bool Success
+ */
+function altMail( string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '' ) {
     global $mailer, $SETTINGS;
     static $handlers;
 
@@ -2778,6 +2793,7 @@ function more_theme_vars() {
         $THEME['topbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['top']})'";
     }
 
+    null_string( $THEME['boardimg'] );
     $l = parse_url($THEME['boardimg']);
     if (!isset($l['scheme']) || !isset($l['host'])) {
         $boardimg = $THEME['imgdir'].'/'.$THEME['boardimg'];

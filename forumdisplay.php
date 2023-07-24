@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2023, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -272,7 +272,8 @@ if ($db->num_rows($querytop) == 0) {
 }
 
 while($thread = $db->fetch_array($querytop)) {
-    if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
+    null_string( $thread['icon'] );
+    if ($thread['icon'] !== '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
     } else {
         $thread['icon'] = '';

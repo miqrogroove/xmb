@@ -402,7 +402,7 @@ if ( X_SCRIPT != 'files.php' && X_SCRIPT != 'css.php' ) {
 
 ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
 
-$oldtopics = postedVar( 'oldtopics', null, false, false, false, 'c' );
+$oldtopics = postedVar( 'oldtopics', '', false, false, false, 'c' );
 if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
 }

@@ -95,6 +95,7 @@ case 'viewuser':
     $rankposts = array();
     $queryranks = \XMB\SQL\getRanks();
     foreach( $queryranks as $query ) {
+        $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
             $specialrank[$query['title']] =& $query;
         } else {

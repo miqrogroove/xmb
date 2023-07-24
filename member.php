@@ -121,7 +121,7 @@ switch($action) {
                 case 1:
                     if ( 'on' == $SETTINGS['google_captcha'] ) {
                         // Check Google's results
-                        $response = postedVar( 'g-recaptcha-response', null, false, false );
+                        $response = postedVar( 'g-recaptcha-response', '', false, false );
                         $ssl_lib = ROOT.'trust.pem';
                         $installed = time() < 2097705600; // Expires 2036-06-21 and won't be used until updated.
                         $curl = curl_init( 'https://www.google.com/recaptcha/api/siteverify' );
@@ -655,8 +655,8 @@ switch($action) {
         }
 
         $memberinfo['password'] = '';
-		
-		null_string( $memberinfo['avatar'] );
+
+        null_string( $memberinfo['avatar'] );
 
         $member = $db->escape( $member );
 
@@ -678,6 +678,7 @@ switch($action) {
             }
 
             $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
+            null_string( $rank['avatarrank'] );
         }
 
         eval('$header = "'.template('header').'";');
@@ -711,7 +712,7 @@ switch($action) {
         $rank['avatarrank'] = trim($rank['avatarrank']);
         $memberinfo['avatar'] = trim($memberinfo['avatar']);
 
-        if ($rank['avatarrank'] != '') {
+        if ( $rank['avatarrank'] !== '' ) {
             $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
@@ -719,13 +720,13 @@ switch($action) {
             $memberinfo['avatar'] = '';
         }
 
-        if ($memberinfo['avatar'] !== '') {
+        if ( $memberinfo['avatar'] !== '' ) {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if ( ($rank['avatarrank'] || $memberinfo['avatar']) && $site != '' ) {
+        if ( ( $rank['avatarrank'] || $memberinfo['avatar'] ) && $site != '' ) {
             $sitelink = $site;
-            if ($memberinfo['avatar'] !== '') {
+            if ( $memberinfo['avatar'] !== '' ) {
                 $newsitelink = "<a href=\"$sitelink\" onclick=\"window.open(this.href); return false;\">{$memberinfo['avatar']}</a></td>";
             } else {
                 $newsitelink = '';
@@ -776,7 +777,7 @@ switch($action) {
         if (X_SADMIN) {
             $admin_edit = "<br />$lang[adminoption] <a href=\"./editprofile.php?user=$encodeuser\">$lang[admin_edituseraccount]</a>";
         } else {
-            $admin_edit = NULL;
+            $admin_edit = '';
         }
 
         if ($memberinfo['mood'] != '') {
