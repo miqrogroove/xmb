@@ -683,6 +683,7 @@ if ($action == '') {
             $avatar = '';
             $rank['avatar'] = '';
             $post['postnum'] = 'N/A';
+            $post['usesig'] = 'no';
             $tharegdate = 'N/A';
             $email = '';
             $site = '';

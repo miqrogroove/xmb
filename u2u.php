@@ -181,7 +181,7 @@ switch($action) {
         $msgto = postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
         $subject = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
         $message = postedVar('message', '', TRUE, FALSE);
-        $leftpane = u2u_send($u2uid, $msgto, $subject, $message, $u2upreview);
+        $leftpane = u2u_send( $u2uid, $msgto, $subject, $message );
         break;
     case 'view':
         $leftpane = u2u_view($u2uid, $folders);

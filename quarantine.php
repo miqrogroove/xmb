@@ -269,6 +269,7 @@ case 'viewuser':
                 $email = $approve.$delete;
                 $post['author'] = $lang['textanonymous'];
                 $post['postnum'] = 'N/A';
+                $post['usesig'] = 'no';
                 $profilelink = $lang['textanonymous'];
             }
             $site = '';
@@ -465,6 +466,7 @@ case 'viewuser':
                 $email = $approve.$delete;
                 $post['author'] = $lang['textanonymous'];
                 $post['postnum'] = 'N/A';
+                $post['usesig'] = 'no';
                 $profilelink = $lang['textanonymous'];
             }
             $site = '';
