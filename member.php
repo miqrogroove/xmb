@@ -687,7 +687,7 @@ switch($action) {
         if (X_GUEST) {
             $memberlinks = '';
         } else {
-            $memberlinks = " <small>(<a href=\"u2u.php?action=send&amp;username=$encodeuser\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href=\"buddy.php?action=add&amp;buddys=$encodeuser\" onclick=\"Popup(this.href, 'Window', 450, 400); return false;\">{$lang['addtobuddies']}</a>)</small>";
+            $memberlinks = " <small>(<a href='u2u.php?action=send&amp;username=$encodeuser' onclick='Popup(this.href, \"Window\", 700, 450); return false;'>{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href='buddy.php?action=add&amp;buddys=$encodeuser' onclick='Popup(this.href, \"Window\", 450, 400); return false;'>{$lang['addtobuddies']}</a>)</small>";
         }
 
         $daysreg = ($onlinetime - (int) $memberinfo['regdate']) / (24*3600);
@@ -727,7 +727,7 @@ switch($action) {
         if ( ( $rank['avatarrank'] || $memberinfo['avatar'] ) && $site != '' ) {
             $sitelink = $site;
             if ( $memberinfo['avatar'] !== '' ) {
-                $newsitelink = "<a href=\"$sitelink\" onclick=\"window.open(this.href); return false;\">{$memberinfo['avatar']}</a></td>";
+                $newsitelink = "<a href='$sitelink' onclick='window.open(this.href); return false;'>{$memberinfo['avatar']}</a></td>";
             } else {
                 $newsitelink = '';
             }
@@ -775,7 +775,7 @@ switch($action) {
         }
 
         if (X_SADMIN) {
-            $admin_edit = "<br />$lang[adminoption] <a href=\"./editprofile.php?user=$encodeuser\">$lang[admin_edituseraccount]</a>";
+            $admin_edit = "<br />{$lang['adminoption']} <a href='./editprofile.php?user=$encodeuser'>{$lang['admin_edituseraccount']}</a>";
         } else {
             $admin_edit = '';
         }
@@ -847,7 +847,7 @@ switch($action) {
             $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
             $lpsubject = rawHTMLsubject(stripslashes($post['subject']));
-            $lastpost = "<a href=\"./viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}\">$lpsubject</a> ($lastposttext)";
+            $lastpost = "<a href='./viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";
         } else {
             $lastpost = $lang['textnopostsyet'];
         }

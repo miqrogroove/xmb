@@ -745,9 +745,9 @@ if ($action == '') {
 
         if ($post['usesig'] == 'yes') {
             $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
-            eval("\$post['message'] .= \"".template('viewthread_post_sig')."\";");
+            eval('$post["message"] .= "'.template('viewthread_post_sig').'";');
         } else {
-            eval("\$post['message'] .= \"".template('viewthread_post_nosig')."\";");
+            eval('$post["message"] .= "'.template('viewthread_post_nosig').'";');
         }
 
         if (!isset($rank['avatar'])) {
