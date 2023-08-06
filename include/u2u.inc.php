@@ -239,8 +239,8 @@ function u2u_view($u2uid, $folders) {
 
     $query = $db->query("SELECT u.*, m.avatar FROM ".X_PREFIX."u2u AS u LEFT JOIN ".X_PREFIX."members AS m ON u.msgfrom=m.username WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     $u2u = $db->fetch_array($query);
-	null_string( $self['avatar'] );
-	null_string( $u2u['avatar'] );
+    null_string( $self['avatar'] );
+    null_string( $u2u['avatar'] );
     if ($u2u) {
         if ( 'on' == $SETTINGS['images_https_only'] ) {
             if ( strpos( $self['avatar'], ':' ) !== false && substr( $self['avatar'], 0, 6 ) !== 'https:' ) {

@@ -369,7 +369,7 @@ if ($action == '') {
         } else {
             $rankposts[$query['posts']] =& $query;
         }
-		unset( $query );
+        unset( $query );
     }
     unset( $queryranks );
 
@@ -527,7 +527,7 @@ if ($action == '') {
             $db->query('UPDATE '.X_PREFIX.'posts SET fid='.$thread['fid'].' WHERE pid='.$post['pid']);
         }
 
-		null_string( $post['avatar'] );
+        null_string( $post['avatar'] );
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
         if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
