@@ -2874,7 +2874,7 @@ function bbcode_imgs( array $matches ): string {
  * @param string|null $var Passed by reference for easier coding.
  */
 function null_string( &$var ) {
-	$var = $var ?? '';
+    $var = $var ?? '';
 }
 
 return;
