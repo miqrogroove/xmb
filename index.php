@@ -421,5 +421,3 @@ function getIndexForums( array $forums, array $cat, bool $catsonly ): array {
 
     return $sorted;
 }
-
-?>

@@ -205,4 +205,3 @@ eval('$statspage = "'.template('feature_statistics').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $statspage, $footer;
-?>

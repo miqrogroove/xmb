@@ -98,4 +98,3 @@ eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $faq, $footer;
-?>

@@ -125,5 +125,3 @@ if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
 }
 
 echo "\n</body></html>";
-
-?>

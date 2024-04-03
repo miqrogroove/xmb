@@ -216,4 +216,3 @@ eval('$todaypage = "'.template('today').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $todaypage, $footer;
-?>

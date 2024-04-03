@@ -1017,4 +1017,4 @@ function moderate_cleanup($xmbuser) {
     }
     $db->free_result($result);
 }
-?>
+

@@ -898,4 +898,4 @@ function statuscheck($fid) {
 
     return (modcheck($self['username'], $forum['moderator']) == 'Moderator');
 }
-?>
+

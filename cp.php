@@ -2178,4 +2178,4 @@ if ($action == "search") {
 echo '</table></td></tr></table>';
 end_time();
 eval('echo "'.template('footer').'";');
-?>
+

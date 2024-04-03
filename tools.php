@@ -558,4 +558,3 @@ switch($action) {
 echo '</td></tr></table></table>';
 end_time();
 eval('echo "'.template('footer').'";');
-?>

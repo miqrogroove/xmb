@@ -197,4 +197,3 @@ if ($action == 'report') {
 
 end_time();
 eval('echo "'.template('footer').'";');
-?>

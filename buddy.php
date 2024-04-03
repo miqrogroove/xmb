@@ -74,4 +74,3 @@ switch($action) {
         buddy_display();
         break;
 }
-?>

@@ -76,5 +76,3 @@ function rmFromDir($path) {
         @unlink($path);
     }
 }
-
-?>

@@ -157,4 +157,3 @@ function show_error($text) {
 function show_finished($text) {
     file_put_contents( LOG_FILE, "\r\n$text<!-- done. -->", FILE_APPEND );
 }
-?>

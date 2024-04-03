@@ -230,4 +230,3 @@ if (!X_STAFF) {
 eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
 $tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
 eval('echo "'.template($tu2u).'";');
-?>

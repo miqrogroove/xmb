@@ -399,4 +399,3 @@ if (noSubmit('editsubmit')) {
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $editpage, $footer;
-?>

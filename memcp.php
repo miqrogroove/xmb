@@ -849,4 +849,3 @@ if ($action == 'profile') {
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $mempage, $footer;
-?>

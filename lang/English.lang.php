@@ -1329,3 +1329,4 @@ $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmb'] = "XMB";
 $lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
+

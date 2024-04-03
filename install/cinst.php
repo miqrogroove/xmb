@@ -424,4 +424,6 @@ if (file_exists('./install')) {
 } else {
     show_result(X_INST_OK);
 }
-?>
+
+return;
+
