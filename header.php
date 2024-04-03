@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2023, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -37,15 +37,6 @@ require ROOT.'include/global.inc.php';
 
 /* Global Constants and Initialized Values */
 
-$versioncompany = 'The XMB Group';
-$versionshort = '1.9.12';
-$versiongeneral = 'XMB 1.9.12';
-$copyright = '2001-2023';
-$alpha = '';
-$beta = '';
-$gamma = '';
-$service_pack = '';
-$versionbuild = 20230805;
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
 $onlinetime = time();
@@ -161,10 +152,10 @@ define('IS_IE', ($browser == 'ie'));
 assertEmptyOutputStream('header.php or global.inc.php');
 
 
-/* Load the Configuration Created by Install */
+/* Load the Version Constants */
 
-require ROOT.'config.php';
-assertEmptyOutputStream('config.php');
+require ROOT.'include/version.php';
+assertEmptyOutputStream('version.php');
 
 if (!$show_full_info) {
     $versionshort = '';
@@ -178,6 +169,12 @@ if (!$show_full_info) {
     $versiongeneral .= ' ';
 }
 $versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
+
+
+/* Load the Configuration Created by Install */
+
+require ROOT.'config.php';
+assertEmptyOutputStream('config.php');
 
 if (!defined('DEBUG')) define('DEBUG', FALSE);
 if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);

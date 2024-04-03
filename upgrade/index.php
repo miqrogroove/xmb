@@ -25,11 +25,12 @@
 header( 'X-Frame-Options: deny' );
 
 // Script constants
-define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '7.0.0');
+define('IN_CODE', true);
 define('X_SCRIPT', 'upgrade.php');
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
+
+require ROOT.'include/version.php';
 
 // Check configuration
 if (ini_get('display_errors')) {
@@ -85,9 +86,9 @@ if ( false === $result ) {
 // Ready to Upgrade
 if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
 ?>
-<h1>XMB 1.9.12 Upgrade Script</h1>
+<h1><?=$versiongeneral;?> Upgrade Script</h1>
 
-<p>This script is compatible with XMB versions 1.8 through 1.9.11, and XMB 1.9.12 Betas.
+<p>This script is compatible with XMB versions 1.8 and greater, including <?=$versiongeneral;?> Betas.
 
 <p>This script is NOT compatible with older versions.
 
@@ -113,7 +114,7 @@ if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
 } else if ( '2' === $_GET['step'] ) {
 
     ?>
-    <h1>XMB 1.9.12 Upgrade Script</h1>
+    <h1><?=$versiongeneral;?> Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
 
