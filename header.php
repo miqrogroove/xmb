@@ -152,25 +152,6 @@ define('IS_IE', ($browser == 'ie'));
 assertEmptyOutputStream('header.php or global.inc.php');
 
 
-/* Load the Version Constants */
-
-require ROOT.'include/version.php';
-assertEmptyOutputStream('version.php');
-
-if (!$show_full_info) {
-    $versionshort = '';
-    $versiongeneral = 'XMB';
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-} else {
-    $versiongeneral .= ' ';
-}
-$versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
-
-
 /* Load the Configuration Created by Install */
 
 require ROOT.'config.php';
@@ -209,6 +190,25 @@ foreach($config_array as $key => $value) {
     }
 }
 unset($config_array);
+
+
+/* Load the Version Constants */
+
+require ROOT.'include/version.php';
+assertEmptyOutputStream('version.php');
+
+if (!$show_full_info) {
+    $versionshort = '';
+    $versiongeneral = 'XMB';
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = '[HIDDEN]';
+} else {
+    $versiongeneral .= ' ';
+}
+$versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
 
 
 /* Validate URL Configuration and Security */
