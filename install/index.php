@@ -76,8 +76,6 @@ $req['files'] = array(
 
 // Script Constants
 define('ROOT', '../');
-define('DEBUG', TRUE);
-define('LOG_MYSQL_ERRORS', FALSE);
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
@@ -152,14 +150,27 @@ function show_result($type) {
  * @param string $tablepre
  */
 function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre ) {
-    if ( 'mysql' != $database && 'mysqli' != $database ) return;
-
     // Force upgrade to mysqli
     if ( 'mysql' === $database ) $database = 'mysqli';
 
     if ( ! is_readable( ROOT."db/$database.php" ) ) return;
 
-    if ( 'mysql' == $database ) {
+/*
+    $config_array = array(
+        'dbname' => 'DB/NAME',
+        'dbuser' => 'DB/USER',
+        'dbpw' => 'DB/PW',
+        'dbhost' => 'DB_HOST',
+        'tablepre' => 'TABLE/PRE',
+    );
+    foreach($config_array as $key => $value) {
+        if (${$key} === $value) {
+            return;
+        }
+    }
+*/
+
+    if ('mysql' == $database) {
 
         $link = @mysql_connect( $dbhost, $dbuser, $dbpw );
         if ( false === $link ) return;
@@ -177,24 +188,27 @@ function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconne
         }
         mysql_close( $link );
 
-    } else if ( 'mysqli' == $database ) {
+    } else if ('mysqli' == $database && extension_loaded('mysqli')) {
 
-        $link = @new mysqli( $dbhost, $dbuser, $dbpw, $dbname );
-        if ( mysqli_connect_error() ) return;
+        mysqli_report(MYSQLI_REPORT_OFF);
 
-        $result = $link->query( "SHOW TABLES LIKE '{$tablepre}settings'" );
-        if ( false !== $result ) {
+        $link = @new mysqli($dbhost, $dbuser, $dbpw, $dbname);
+        if (mysqli_connect_error()) return;
+
+        $result = $link->query("SHOW TABLES LIKE '{$tablepre}settings'");
+        if (false !== $result) {
             $count = $result->num_rows;
             $result->free();
-            if ( 1 === $count ) {
-                error( 'XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.' );
+            if (1 === $count) {
+                error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
             }
         }
         $link->close();
     }
 }
 
-error_reporting(E_ALL&~E_NOTICE);
+//error_reporting(E_ALL&~E_NOTICE);
+error_reporting(-1);
 
 if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4) {
     header("Content-type: text/html;charset=ISO-8859-1");

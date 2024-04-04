@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -109,13 +109,13 @@ if (!defined('IN_CODE')) {
 // Debug-mode
 
     /**
-     * To turn on DEBUG mode (you can then see ALL queries done at the bottom of each screen (except buddy-list & u2u)
-     * just uncomment this variable. These queries are ONLY visible to the user currently loading that page
-     * and ONLY visible to Super Administrators. Comment first line and uncomment second line to use debug mode.
+     * To turn off DEBUG mode, uncomment the first line and comment the second line.
+     * This mode helps with troubleshooting during install, and allows the new Super Administrator to see
+     * database performance after install.
      */
 
-    define('DEBUG', FALSE);
-    // define('DEBUG', TRUE);
+    // define('DEBUG', FALSE);
+    define('DEBUG', TRUE);
 
     /**
      * To enable logging of all MySQL errors (necessary in the case of registration, login, or captcha errors), comment first

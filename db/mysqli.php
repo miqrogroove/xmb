@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -52,50 +52,57 @@ class dbstuff {
      * @param string $dbname
      * @param bool   $pconnect Keep the connection open after the script ends.
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
+     * @return bool  Whether or not the database was found after connecting.
      */
-    public function connect( string $dbhost, string $dbuser, string $dbpw, string $dbname, bool $pconnect = false, bool $force_db = false ) {
+    public function connect(string $dbhost, string $dbuser, string $dbpw, string $dbname, bool $pconnect = false, bool $force_db = false): bool {
 
-        if ( $pconnect ) {
+        if ($pconnect) {
             $dbhost = "p:$dbhost";
         }
 
-        if ( $force_db ) {
+        if ($force_db) {
             $database = $dbname;
         } else {
             $database = '';
         }
 
-        $this->link = @new mysqli( $dbhost, $dbuser, $dbpw, $database );
-
-        if ( mysqli_connect_error() ) {
-            header( 'HTTP/1.0 500 Internal Server Error' );
-            echo "<h3>Database connection error!</h3>\n";
-            echo "A connection to the Database could not be established.<br />\n";
-            echo "Please check the MySQL username, password, database name and host.<br />\n";
-            echo "Make sure <i>config.php</i> is correctly configured.<br />\n";
-            echo "Details may be logged if LOG_MYSQL_ERRORS was set.<br /><br />\n";
-            $sql = '';
-            $this->panic( $sql );
+        // Depending on PHP version and any 3rd party MySQLi implementations, connection attempts might throw Exceptions.
+        try {
+            // We also need to suppress warnings that appear when MySQLi Exceptions are disabled.
+            $this->link = @new mysqli($dbhost, $dbuser, $dbpw, $database);
+        } catch (mysqli_sql_exception $e) {
+            // This Exception only needs to be caught.
+        } finally {
+            if (mysqli_connect_error()) {
+                header('HTTP/1.0 500 Internal Server Error');
+                echo "<h3>Database connection error!</h3>\n";
+                echo "A connection to the Database could not be established.<br />\n";
+                echo "Please check the MySQL username, password, database name and host.<br />\n";
+                echo "Make sure <i>config.php</i> is correctly configured.<br />\n";
+                echo "Details may be logged if LOG_MYSQL_ERRORS was set.<br /><br />\n";
+                $sql = '';
+                $this->panic($sql);
+            }
         }
 
         unset($GLOBALS['dbhost'], $GLOBALS['dbuser'], $GLOBALS['dbpw']);
 
         // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
-        $result = $this->link->set_charset( 'latin1' );
-        if ( false === $result ) {
-            header( 'HTTP/1.0 500 Internal Server Error' );
+        $result = $this->link->set_charset('latin1');
+        if (false === $result) {
+            header('HTTP/1.0 500 Internal Server Error');
             echo "<h3>Database connection error!</h3>\n";
             echo 'The database connection could not be configured for XMB.<br />';
             echo 'Please ensure the mysqli_set_charset function is working.<br /><br />';
             $sql = '';
-            $this->panic( $sql );
+            $this->panic($sql);
         }
 
-        if ( $force_db ) {
+        if ($force_db) {
             $this->db = $dbname;
             return true;
         } else {
-            return $this->select_db( $dbname, $force_db );
+            return $this->select_db($dbname, $force_db);
         }
     }
 
