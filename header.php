@@ -160,6 +160,22 @@ assertEmptyOutputStream('config.php');
 if (!defined('DEBUG')) define('DEBUG', FALSE);
 if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);
 
+require ROOT.'include/version.php';
+assertEmptyOutputStream('version.php');
+
+if (!$show_full_info) {
+    $versionshort = '';
+    $versiongeneral = 'XMB';
+    $alpha = '';
+    $beta = '';
+    $gamma = '';
+    $service_pack = '';
+    $versionbuild = '[HIDDEN]';
+} else {
+    $versiongeneral .= ' ';
+}
+$versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
+
 if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
     assertEmptyOutputStream('debug.inc.php');
@@ -190,25 +206,6 @@ foreach($config_array as $key => $value) {
     }
 }
 unset($config_array);
-
-
-/* Load the Version Constants */
-
-require ROOT.'include/version.php';
-assertEmptyOutputStream('version.php');
-
-if (!$show_full_info) {
-    $versionshort = '';
-    $versiongeneral = 'XMB';
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-} else {
-    $versiongeneral .= ' ';
-}
-$versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
 
 
 /* Validate URL Configuration and Security */
@@ -281,7 +278,7 @@ if ($ipcheck == 'on') {
 
 // Force upgrade to mysqli when available.
 if ( 'mysql' === $database ) $database = 'mysqli';
-if ( ! extension_loaded( 'mysqli' ) ) {
+if ( 'mysqli' === $database && ! extension_loaded( 'mysqli' ) ) {
     header('HTTP/1.0 500 Internal Server Error');
     exit("Error: The PHP mysqli extension is missing.");
 }
