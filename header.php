@@ -276,12 +276,8 @@ if ($ipcheck == 'on') {
     }
 }
 
-// Force upgrade to mysqli when available.
+// Force upgrade to mysqli.
 if ( 'mysql' === $database ) $database = 'mysqli';
-if ( 'mysqli' === $database && ! extension_loaded( 'mysqli' ) ) {
-    header('HTTP/1.0 500 Internal Server Error');
-    exit("Error: The PHP mysqli extension is missing.");
-}
 
 /* Load Common Files and Establish Database Connection */
 
