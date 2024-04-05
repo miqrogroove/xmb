@@ -303,6 +303,7 @@ assertEmptyOutputStream('tokens.inc.php');
 
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
+unset($dbhost, $dbuser, $dbpw);
 
 // Make all settings global, and put them in the $SETTINGS[] array
 // This is the first query, so do not panic unless query logging is enabled.

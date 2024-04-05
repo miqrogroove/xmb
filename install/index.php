@@ -149,13 +149,8 @@ function show_result($type) {
  * @param bool   $pconnect
  * @param string $tablepre
  */
-function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre ) {
-    // Force upgrade to mysqli
-    if ( 'mysql' === $database ) $database = 'mysqli';
-
-    if ( ! is_readable( ROOT."db/$database.php" ) ) return;
-
-/*
+function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre) {
+    // When config.php has default values, XMB is not installed.
     $config_array = array(
         'dbname' => 'DB/NAME',
         'dbuser' => 'DB/USER',
@@ -168,43 +163,28 @@ function already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconne
             return;
         }
     }
-*/
 
-    if ('mysql' == $database) {
+    if (!defined('DEBUG')) define('DEBUG', FALSE);
+    if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);
 
-        $link = @mysql_connect( $dbhost, $dbuser, $dbpw );
-        if ( false === $link ) return;
+    // Force upgrade to mysqli
+    if ('mysql' === $database) $database = 'mysqli';
 
-        $result = mysql_select_db( $dbname );
-        if ( false !== $result ) {
-            $result = mysql_query( "SHOW TABLES LIKE '{$tablepre}settings'", $link );
-            if ( false !== $result ) {
-                $count = mysql_num_rows( $result );
-                mysql_free_result( $result );
-                if ( 1 === $count ) {
-                    error( 'XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.' );
-                }
-            }
-        }
-        mysql_close( $link );
+    if (!is_readable(ROOT."db/{$database}.php")) return;
+    require_once ROOT."db/{$database}.php";
 
-    } else if ('mysqli' == $database && extension_loaded('mysqli')) {
-
-        mysqli_report(MYSQLI_REPORT_OFF);
-
-        $link = @new mysqli($dbhost, $dbuser, $dbpw, $dbname);
-        if (mysqli_connect_error()) return;
-
-        $result = $link->query("SHOW TABLES LIKE '{$tablepre}settings'");
-        if (false !== $result) {
-            $count = $result->num_rows;
-            $result->free();
-            if (1 === $count) {
-                error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
-            }
-        }
-        $link->close();
+    $db = new dbstuff;
+    $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
+    if (!$result) return;
+    
+    $like_name = $db->like_escape($tablepre . 'settings');
+    $result = $db->query("SHOW TABLES LIKE '$like_name'");
+    $count = $db->num_rows($result);
+    $db->free_result($result);
+    if (1 === $count) {
+        error('XMB Already Installed', 'An existing installation of XMB has been detected. Please <a href="../index.php">click here to go to your forum.</a><br />If you wish to overwrite this installation, please drop your settings table. To install another forum on the same database, enter a different table prefix in config.php.');
     }
+    $db->close();
 }
 
 //error_reporting(E_ALL&~E_NOTICE);
@@ -538,9 +518,9 @@ www.xmbforum2.com
                             </ol>
                             <p>
                                 <select size="1" name="method">
-                                    <option value="1">1)&nbsp;  Show the  configuration on  screen</option>
-                                    <option value="2">2)&nbsp;  Attempt to create  config.php for me.</option>
-                                    <option value="3">3)&nbsp;  Download config.php  onto my computer</option>
+                                    <option value="1">1)&nbsp; Show the configuration on screen.</option>
+                                    <option value="2">2)&nbsp; Attempt to create config.php for me.</option>
+                                    <option value="3">3)&nbsp; Download config.php onto my computer.</option>
                                 </select>
                             </p>
                         </td>
@@ -565,7 +545,7 @@ www.xmbforum2.com
                         <td><input type="text" name="db_host" size="40" value="localhost" /></td>
                     </tr>
                     <tr>
-                        <td>Database Type<br /><span>The type of database server run. At this time, only mysql is supported</span></td>
+                        <td>Database Type<br /><span>The type of database server. At this time, only mysql is supported</span></td>
                         <td><?php echo $types?></td>
                     </tr>
                     <tr>
@@ -805,38 +785,29 @@ www.xmbforum2.com
         show_act('Checking Database Files');
 
         // Force upgrade to mysqli
-        if ( 'mysql' === $database ) $database = 'mysqli';
+        if ('mysql' === $database) $database = 'mysqli';
 
-        if (!file_exists(ROOT.'db/'.$database.'.php')) {
+        if (!file_exists(ROOT."db/{$database}.php")) {
             show_result(X_INST_ERR);
             error('Database connection', 'XMB could not locate the <i>/db/'.$database.'.php</i> file, you have configured xmb to use this database-type. For it to work you will need to upload the file, or change the config.php file to reflect a different choice.', true);
         }
         show_result(X_INST_OK);
+        
+        require_once ROOT."db/{$database}.php";
 
+        $db = new dbstuff;
+        
         show_act('Checking Database API');
         // let's check if the actual functionality exists...
-        $err = false;
-        switch($database) {
-            case 'mysqli':
-                if ( ! extension_loaded( 'mysqli' ) ) {
-                    show_result(X_INST_ERR);
-                    $err = true;
-                }
-                break;
-            default:
-                show_result(X_INST_ERR);
-                error('Database Handler', 'Unknown handler provided', true);
-                break;
-        }
 
-        if ($err === true) {
+        if (!$db->installed()) {
             error('Database Handler', 'XMB has determined that your php installation does not support the functions required to use <i>'.$database.'</i> to store all data.', true);
             unset($err);
         }
         show_result(X_INST_OK);
 
         // let's check the connection itself.
-        show_act('Checking Database Connection Security');
+        show_act('Checking Database Username Security');
         if ($dbuser == 'root') {
             show_result(X_INST_WARN);
             error('Security hazard', 'You have configured XMB to use root access to the database, this is a security hazard. If your server gets hacked, or php itself crashes, the config.php file might be available freely to anyone looking at it, and thus reveal your root username/password. Please consider making a new user for XMB to run as.', false);
@@ -845,46 +816,21 @@ www.xmbforum2.com
         }
 
         show_act('Checking Database Connection');
-        switch($database) {
-            case 'mysql':
-                $link = mysql_connect($dbhost, $dbuser, $dbpw);
-                if (!$link) {
-                    show_result(X_INST_ERR);
-                    error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysql_errno().': '.mysql_error(), true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                $sqlver = mysql_get_server_info($link);
-                mysql_close($link);
-                show_act('Checking Database Version');
-                if (version_compare($sqlver, MYSQL_MIN_VER, '<')) {
-                    show_result(X_INST_ERR);
-                    error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
-                } else {
-                    show_result(X_INST_OK);
-                }
-                break;
-            case 'mysqli':
-                $link = new mysqli( $dbhost, $dbuser, $dbpw );
-                if ( mysqli_connect_error() ) {
-                    show_result( X_INST_ERR );
-                    error( 'Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_error().': '.mysqli_connect_errno(), true );
-                } else {
-                    show_result( X_INST_OK );
-                }
-                $sqlver = $link->server_info;
-                $link->close();
-                show_act( 'Checking Database Version' );
-                if ( version_compare( $sqlver, MYSQL_MIN_VER, '<' ) ) {
-                    show_result( X_INST_ERR );
-                    error( 'Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true );
-                } else {
-                    show_result( X_INST_OK );
-                }
-                break;
-            default:
-                show_result(X_INST_SKIP);
-                break;
+        $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
+        if (!$result) {
+            show_result( X_INST_ERR );
+            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_error().': '.mysqli_connect_errno(), true);
+        } else {
+            show_result( X_INST_OK );
+        }
+        $sqlver = $db->server_info;
+        $db->close();
+        show_act('Checking Database Version');
+        if (version_compare($sqlver, MYSQL_MIN_VER, '<')) {
+            show_result(X_INST_ERR);
+            error('Version mismatch', 'XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$sqlver.' is running.', true);
+        } else {
+            show_result(X_INST_OK);
         }
 
         // throw in all stuff then :)
