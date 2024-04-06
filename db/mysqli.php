@@ -44,14 +44,11 @@ class dbstuff {
     private $querylist  = [];   // array - Log of all SQL commands sent.  Stored for DEBUG mode only.
     private $querytimes = [];   // array - Log of all SQL execution times.  Stored for DEBUG mode only.
     private $timer      = 0.0;  // float - Date/time the last query started.  Class scope not needed, just simplifies code.
+    private $test_error = '';   // string - Any error message collected by test_connect().
 
     public function __construct() {
         // Force older versions of PHP to behave like PHP v8.1.  This assumes there are no incompatible mysqli scripts running.
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        
-        // Just for testing purposes.
-        ini_set('display_errors', '1');
-
     }
     
     /**
@@ -138,11 +135,26 @@ class dbstuff {
             $this->link = new mysqli($dbhost, $dbuser, $dbpw, $dbname);
             $this->link->set_charset('latin1');
         } catch (mysqli_sql_exception $e) {
+            $this->test_error = $e->getMessage();
             return false;
         }
         
         $this->db = $dbname;
+        $this->test_error = '';
         return true;
+    }
+    
+    /**
+     * Gets any error message that was encountered during the last call to test_connect().
+     *
+     * Error messages are likely to contain sensitive file path info.
+     * This method is intended for use by Super Administrators and install/upgrade scripts only.
+     *
+     * @since 1.9.12.06
+     * @return string Error message or empty string.
+     */
+    public function get_test_error(): string {
+        return $this->test_error;
     }
 
     /**
@@ -159,7 +171,7 @@ class dbstuff {
      *
      * @param string $database The full name of the MySQL database.
      * @param bool $force Optional. Specifies error mode. Dies if true.
-     * @return bool TRUE on success, FALSE on failure with $force.
+     * @return bool TRUE on success, FALSE on failure with !$force.
      */
     public function select_db($database, $force = true) {
         try {
@@ -322,7 +334,8 @@ class dbstuff {
             $depth = 1; // Go back before dbstuff::panic() and see who called dbstuff::query().
             $filename = $trace[$depth]['file'];
             $linenum = $trace[$depth]['line'];
-            $log .= "Executed by {$filename} on line {$linenum}";
+            $function = $trace[$depth]['function'];
+            $log .= "\$db->{$function}() was called by {$filename} on line {$linenum}";
 
             if (!ini_get('log_errors')) {
                 ini_set('log_errors', true);
@@ -379,7 +392,7 @@ class dbstuff {
         }
     }
 
-    public function regexp_escape( string $rawstring ): string {
+    public function regexp_escape(string $rawstring): string {
         try {
             return $this->link->real_escape_string(preg_quote($rawstring));
         } catch (mysqli_sql_exception $e) {
@@ -516,17 +529,12 @@ class dbstuff {
     /**
      * Retrieves the column count from a query result.
      */
-    public function num_fields( mysqli_result $query ): int {
+    public function num_fields(mysqli_result $query): int {
         return $query->field_count;
     }
 
     public function insert_id() {
-    	if (DEBUG && LOG_MYSQL_ERRORS) {
-            $id = $this->last_id;
-        } else {
-            $id = $this->link->insert_id;
-        }
-        return $id;
+        return $this->link->insert_id;
     }
 
     /**
@@ -548,13 +556,14 @@ class dbstuff {
         }
     }
 
-    public function affected_rows() {
-    	if (DEBUG && LOG_MYSQL_ERRORS) {
-            $return = $this->last_rows;
-        } else {
-            $return = $this->link->affected_rows;
+    public function affected_rows(): int {
+        $count = $this->link->affected_rows;
+
+        if (!is_int($count)) {
+            trigger_error('XMB encountered an unexpected value in mysqli_affected_rows and stopped for safety.', E_USER_ERROR);
         }
-        return $return;
+        
+        return $count;
     }
 
     /**

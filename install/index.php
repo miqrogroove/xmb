@@ -80,12 +80,6 @@ define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
 define('X_INST_SKIP', 3);
-define('COMMENTOUTPUT', false);
-define('MAXATTACHSIZE', 256000);
-define('IPREG', 'on');
-define('IPCHECK', 'off');
-define('SPECQ', false);
-define('SHOWFULLINFO', false);
 define('IN_CODE', true);
 
 require ROOT.'include/version.php';
@@ -334,21 +328,6 @@ www.xmbforum2.com
             $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
             $configuration = str_replace($find, $replace, $configuration);
 
-            // Change Comment Output Option
-            if (isset($_REQUEST['c_output'])) {
-                $configuration = str_replace("comment_output = FALSE;", "comment_output = TRUE;", $configuration);
-            }
-
-            // IP Check
-            if (isset($_REQUEST['ip_check'])) {
-                $configuration = str_replace("ipcheck        = 'off';", "ipcheck        = 'on';", $configuration);
-            }
-
-            // Allow Special Queries
-            if (isset($_REQUEST['allowspecialq'])) {
-                $configuration = str_replace("allow_spec_q   = FALSE;", "allow_spec_q   = TRUE;", $configuration);
-            }
-
             // Show Full Footer Info
             if (!isset($_REQUEST['showfullinfo'])) {
                 $configuration = str_replace("show_full_info = TRUE;", "show_full_info = FALSE;", $configuration);
@@ -558,26 +537,6 @@ www.xmbforum2.com
                     <tr>
                         <td>Full URL<br /><span>Put the full URL of your boards here, without any file names. Be sure to include a slash at the end.</span></td>
                         <td><input type="text" name="fullurl" size="40" value="<?php echo "$scheme://".$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')-7);?>" /></td>
-                    </tr>
-                    <tr>
-                        <td>Maximum Attachment Size<br /><span>Enter the maximum allowed attachment size for your board here. (250*1024) for example, would be 250KB</span></td>
-                        <td><input name="maxattachsize" size="40" value="(250*1024)" /></td>
-                    </tr>
-                    <tr>
-                        <td>Comment Output<br /><span>This setting will allow you to chose whether you want comments indicating templates. Default: Off</span></td>
-                        <td><input type="checkbox" name="c_output" value="TRUE" /></td>
-                    </tr>
-                    <tr>
-                        <td>Restrict User Registration Per IP<br /><span>This will restrict registration of users to one per IP address every 24 hours. Default: On</span></td>
-                        <td><input type="checkbox" name="ip_reg" value="on" checked="checked" /></td>
-                    </tr>
-                    <tr>
-                        <td>IP Validation Check<br /><span>This will check users' IP addresses are valid IPv4 or IPv6 type, if none of these. Default: Off</span></td>
-                        <td><input type="checkbox" name="ip_check" value="off" /></td>
-                    </tr>
-                    <tr>
-                        <td>Allow Special Queries<br /><span>This specifies whether special database queries such as USE database and SHOW database are allowed. Default: off</span></td>
-                        <td><input type="checkbox" name="allowspecialq" value="off" /></td>
                     </tr>
                     <tr>
                         <td>Show Full XMB Version Info<br /><span>This will show the full version information of your XMB Board. Default: Off</span></td>
@@ -819,11 +778,11 @@ www.xmbforum2.com
         $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
         if (!$result) {
             show_result( X_INST_ERR );
-            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.mysqli_connect_error().': '.mysqli_connect_errno(), true);
+            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.$db->get_test_error().'"', true);
         } else {
             show_result( X_INST_OK );
         }
-        $sqlver = $db->server_info;
+        $sqlver = $db->server_version();
         $db->close();
         show_act('Checking Database Version');
         if (version_compare($sqlver, MYSQL_MIN_VER, '<')) {
