@@ -276,12 +276,8 @@ if ($ipcheck == 'on') {
     }
 }
 
-// Force upgrade to mysqli when available.
+// Force upgrade to mysqli.
 if ( 'mysql' === $database ) $database = 'mysqli';
-if ( 'mysqli' === $database && ! extension_loaded( 'mysqli' ) ) {
-    header('HTTP/1.0 500 Internal Server Error');
-    exit("Error: The PHP mysqli extension is missing.");
-}
 
 /* Load Common Files and Establish Database Connection */
 
@@ -307,6 +303,7 @@ assertEmptyOutputStream('tokens.inc.php');
 
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
+unset($dbhost, $dbuser, $dbpw);
 
 // Make all settings global, and put them in the $SETTINGS[] array
 // This is the first query, so do not panic unless query logging is enabled.
