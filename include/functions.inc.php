@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2023, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -30,28 +30,29 @@ if (!defined('IN_CODE')) {
 /**
  * Sets up some extra variables after a new login.
  *
- * @param  bool   $invisible    Optional.
+ * @since 1.9.10
+ * @param bool $invisible Optional. Result of the 'Browse the board invisible' option at login.
  */
 function loginUser($invisible = null) {
     global $self, $session, $db, $lastvisit;
 
-    if ( $session->getStatus() == 'good' ) {
-        $dbname = $db->escape($self['username']);
+    if ($session->getStatus() !== 'good') return;
 
-        if (!is_null($invisible)) {
-            if ( $invisible && '0' === $self['invisible'] ) {
-                $db->query("UPDATE ".X_PREFIX."members SET invisible='1' WHERE username='$dbname'");
-                $self['invisible'] = 1;
-            } elseif ( !$invisible && '1' === $self['invisible'] ) {
-                $db->query("UPDATE ".X_PREFIX."members SET invisible='0' WHERE username='$dbname'");
-                $self['invisible'] = 0;
-            }
+    if (!is_null($invisible)) {
+        $old = $self['invisible'];
+        if ($invisible) {
+            $self['invisible'] = '1';
+        } else {
+            $self['invisible'] = '0';
         }
-
-        // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-        put_cookie('xmblvb', $self['lastvisit'], (time() + X_ONLINE_TIMER)); // lvb == last visit
-        $lastvisit = $self['lastvisit']; // Used by forumdisplay
+        if ($old !== $self['invisible']) {
+            \XMB\SQL\changeMemberVisibility($self['username'], $self['invisible']);            
+        }
     }
+
+    // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
+    put_cookie('xmblvb', $self['lastvisit'], (time() + X_ONLINE_TIMER)); // lvb == last visit
+    $lastvisit = $self['lastvisit']; // Used by forumdisplay
 }
 
 /**
@@ -61,7 +62,7 @@ function loginUser($invisible = null) {
  * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
  * @return bool
  */
-function elevateUser( bool $force_inv = false, string $serror = '' ) {
+function elevateUser(bool $force_inv = false, string $serror = '') {
     global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum, $onlinetime;
 
     $maxurl = 150; //Schema constant.
@@ -73,7 +74,7 @@ function elevateUser( bool $force_inv = false, string $serror = '' ) {
     //$self['username'] is a good alternative for future template use.
     //$xmbpw was historically abused and will no longer contain a value.
 
-    if ( 'good' == $state || 'already-logged-in' == $state ) {
+    if ('good' == $state || 'already-logged-in' == $state) {
         // 'good' means normal login or resumed session.
         // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
         $self = $session->getMember();
@@ -149,7 +150,7 @@ function elevateUser( bool $force_inv = false, string $serror = '' ) {
             $dateformat = $self['dateformat'];
         }
         $sig = $self['sig'];
-        $invisible = (int) $self['invisible'];
+        $invisible = $self['invisible'];
         $onlineuser = $xmbuser;
     } else {
         $timeoffset = $SETTINGS['def_tz'];
@@ -159,7 +160,7 @@ function elevateUser( bool $force_inv = false, string $serror = '' ) {
         $ppp = (int) $SETTINGS['postperpage'];
         $memtime = (int) $SETTINGS['timeformat'];
         $sig = '';
-        $invisible = 0;
+        $invisible = '0';
         $onlineuser = 'xguest123';
         $self['ban'] = '';
         $self['sig'] = '';
@@ -167,8 +168,8 @@ function elevateUser( bool $force_inv = false, string $serror = '' ) {
         $self['username'] = '';
     }
 
-    if ( $force_inv ) {
-        $invisible = 1;
+    if ($force_inv) {
+        $invisible = '1';
     }
 
     if ($memtime == 24) {
@@ -181,13 +182,13 @@ function elevateUser( bool $force_inv = false, string $serror = '' ) {
     $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
 
     // Save This Session
-    if ( X_SCRIPT != 'upgrade.php' && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && ( X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER ) ) {
+    if (X_SCRIPT != 'upgrade.php' && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
         global $onlineip, $url;
 
         $wollocation = substr($url, 0, $maxurl);
         $newtime = $onlinetime - X_ONLINE_TIMER;
-        \XMB\SQL\deleteOldWhosonline( $onlineip, $self['username'], $newtime );
-        \XMB\SQL\addWhosonline( $onlineip, $self['username'], $onlinetime, $wollocation, $invisible );
+        \XMB\SQL\deleteOldWhosonline($onlineip, $self['username'], $newtime);
+        \XMB\SQL\addWhosonline($onlineip, $self['username'], $onlinetime, $wollocation, $invisible);
     }
 }
 

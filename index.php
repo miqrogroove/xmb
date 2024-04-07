@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -165,10 +165,10 @@ if ($gid == 0) {
         }
         $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
-            if ( '0' !== $online['invisible'] && X_ADMIN ) {
+            if ( '1' === $online['invisible'] && X_ADMIN ) {
                 $member[] = $online;
                 $hiddencount++;
-            } else if ( '0' !== $online['invisible'] ) {
+            } else if ( '1' === $online['invisible'] ) {
                 $hiddencount++;
             } else {
                 $member[] = $online;
@@ -215,7 +215,7 @@ if ($gid == 0) {
             $pre = '<span class="status_'.str_replace(' ', '_', $online['status']).'">';
             $suff = '</span>';
 
-            if ( '0' !== $online['invisible'] ) {
+            if ( '1' === $online['invisible'] ) {
                 $pre .= '<strike>';
                 $suff = '</strike>'.$suff;
                 if (!X_ADMIN && $online['username'] !== $xmbuser) {
@@ -224,7 +224,7 @@ if ($gid == 0) {
                 }
             }
 
-            if ( $online['username'] === $xmbuser && '0' !== $online['invisible'] ) {
+            if ( $online['username'] === $xmbuser && '1' === $online['invisible'] ) {
                 $show_inv_key = true;
             }
 
@@ -253,7 +253,7 @@ if ($gid == 0) {
             if (X_ADMIN) {
                 $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' $where ORDER BY lastvisit DESC");
             } else {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != 1 $where ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' $where ORDER BY lastvisit DESC");
             }
 
             $todaymembersnum = $db->num_rows($query);

@@ -868,4 +868,3 @@ switch($action) {
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $memberpage, $footer;
-
