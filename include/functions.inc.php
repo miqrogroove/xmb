@@ -78,7 +78,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         // 'good' means normal login or resumed session.
         // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
         $self = $session->getMember();
-        $xmbuser = $db->escape( $self['username'] );
+        $xmbuser = $db->escape($self['username']);
     } else {
         $self = array();
         $self['status'] = '';
@@ -137,7 +137,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
 
     // Set more globals
     global $timeoffset, $themeuser, $status, $tpp, $ppp, $memtime, $dateformat,
-           $sig, $invisible, $timecode, $dformatorig, $onlineuser;
+           $sig, $invisible, $timecode, $dformatorig;
 
     if ($xmbuser != '') {
         $timeoffset = $self['timeoffset'];
@@ -151,7 +151,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         }
         $sig = $self['sig'];
         $invisible = $self['invisible'];
-        $onlineuser = $xmbuser;
+        $onlineuser = $self['username'];
     } else {
         $timeoffset = $SETTINGS['def_tz'];
         $themeuser = '';
@@ -188,7 +188,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         $wollocation = substr($url, 0, $maxurl);
         $newtime = $onlinetime - X_ONLINE_TIMER;
         \XMB\SQL\deleteOldWhosonline($onlineip, $self['username'], $newtime);
-        \XMB\SQL\addWhosonline($onlineip, $self['username'], $onlinetime, $wollocation, $invisible);
+        \XMB\SQL\addWhosonline($onlineip, $onlineuser, $onlinetime, $wollocation, $invisible);
     }
 }
 

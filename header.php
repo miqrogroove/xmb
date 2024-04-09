@@ -60,6 +60,7 @@ $filetype = '';
 $full_url = '';
 $navigation = '';
 $newu2umsg = '';
+$onlineuser = '';
 $othertid = '';
 $password = '';
 $pluglink = '';
