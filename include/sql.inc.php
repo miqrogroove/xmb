@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2023, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -257,6 +257,25 @@ function getMemberByName( string $username ): array {
     }
     $db->free_result($query);
     return $member;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12.06
+ * @param string $username Must be HTML encoded.
+ * @param string $invisible Should be '0' for no or '1' for yes.
+ */
+function changeMemberVisibility(string $username, string $invisible) {
+    global $db;
+
+    $db->escape_fast($username);
+    $db->escape_fast($invisible);
+
+    // The members.invisible field is a SET type and must be sent as a string.
+    // Otherwise, MySQL would coerce integer literals to a bit set value rather than a string value.
+
+    $db->query("UPDATE ".X_PREFIX."members SET invisible='$invisible' WHERE username='$username'");
 }
 
 /**
@@ -1370,16 +1389,20 @@ function deleteOldWhosonline( string $address, string $username, int $timelimit 
  * @param string $address Current remote IP address.
  * @param int $time The session start timestamp.
  * @param string $url The relative URL.
- * @param int $invisible Should be 0 for no or 1 for yes.
+ * @param string $invisible Should be '0' for no or '1' for yes.
  */
-function addWhosonline( string $address, string $username, int $time, string $url, int $invisible ) {
+function addWhosonline(string $address, string $username, int $time, string $url, string $invisible) {
     global $db;
 
-    $db->escape_fast( $address );
-    $db->escape_fast( $username );
-    $db->escape_fast( $url );
+    $db->escape_fast($address);
+    $db->escape_fast($username);
+    $db->escape_fast($url);
+    $db->escape_fast($invisible);
 
-    $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$username', '$address', $time, '$url', $invisible)");
+    // The members.invisible field is a SET type and must be sent as a string.
+    // Otherwise, MySQL would coerce integer literals to a bit set value rather than a string value.
+
+    $db->query("INSERT INTO ".X_PREFIX."whosonline (username, ip, time, location, invisible) VALUES ('$username', '$address', $time, '$url', '$invisible')");
 }
 
 /**

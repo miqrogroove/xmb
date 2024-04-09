@@ -85,10 +85,12 @@ while(ob_get_level() > 0) {
 }
 ob_implicit_flush(1);
 
-require(ROOT.'include/global.inc.php');
-require_once(ROOT.'config.php');
-require_once(ROOT.'db/'.$database.'.php');
-require(ROOT.'include/schema.inc.php');
+require ROOT.'include/global.inc.php';
+require_once ROOT.'config.php';
+require_once ROOT.'db/'.$database.'.php';
+require ROOT.'include/schema.inc.php';
+require ROOT.'include/sql.inc.php';
+require ROOT.'include/translation.inc.php';
 
 define('X_PREFIX', $tablepre);
 
@@ -404,11 +406,28 @@ $db->query(
 show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
-$db->query("INSERT INTO ".X_PREFIX."members (`username`, `password`, `regdate`, `email`, `status`, `bio`, `sig`, `showemail`, `theme`, `langfile`, `timeformat`, `dateformat`, `mood`, `pwdate`, `tpp`, `ppp`, `ignoreu2u`, `u2ufolders`, `saveogu2u`, `emailonu2u`, `useoldu2u`) VALUES ('$vUsername', '$vPassword', $myDate, '$vEmail', 'Super Administrator', '', '', 'no', 0, 'English', 12, 'dd-mm-yyyy', '', $myDate, 30, 30, '', '', 'yes', 'no', 'no')");
+\XMB\SQL\addMember([
+    'username'   => $vUsername,
+    'password'   => $vPassword,
+    'pwdate'     => $myDate,
+    'regdate'    => $myDate,
+    'regip'      => $_SERVER['REMOTE_ADDR'],
+    'email'      => $vEmail,
+    'status'     => 'Super Administrator',
+    'showemail'  => 'no',
+    'langfile'   => 'English',
+    'timeformat' => 12,
+    'dateformat' => 'dd-mm-yyyy',
+    'mood'       => '',
+    'tpp'        => 30,
+    'ppp'        => 30,
+    'saveogu2u'  => 'yes',
+    'emailonu2u' => 'no',
+    'useoldu2u'  => 'no',
+]);
 show_result(X_INST_OK);
 
 show_act("Inserting data into translation tables");
-require ROOT.'include/translation.inc.php';
 $upload = file_get_contents(ROOT.'lang/English.lang.php');
 installNewTranslation($upload);
 show_result(X_INST_OK);
@@ -426,4 +445,3 @@ if (file_exists('./install')) {
 }
 
 return;
-

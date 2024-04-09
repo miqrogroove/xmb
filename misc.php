@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -244,7 +244,7 @@ switch($action) {
 
         $where = "WHERE username != 'xguest123'";
         if (!X_ADMIN) {
-            $where .= " AND (invisible='0' OR username='$xmbuser')";
+            $where .= " AND (invisible != '1' OR username='$xmbuser')";
         }
 
         // UNION Syntax Reminder: "Use of ORDER BY for individual SELECT statements implies nothing about the order in which the rows appear."
