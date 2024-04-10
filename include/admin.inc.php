@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -459,6 +459,11 @@ function readFileAsINI($filename) {
     return $thefile;
 }
 
+/**
+ * Output an HTML table body representing the results of a database query.
+ *
+ * @since 1.9.1
+ */
 function dump_query($resource, $header=true) {
     global $altbg2, $altbg1, $db, $cattext;
     if (!$db->error()) {
@@ -482,7 +487,9 @@ function dump_query($resource, $header=true) {
             for($i=0;$i<$count;$i++) {
                 echo '<td align="left">';
 
-                if (trim($a[$i]) == '') {
+                if (null === $a[$i]) {
+                    echo '<em>NULL</em>';
+                } elseif (trim($a[$i]) == '') {
                     echo '&nbsp;';
                 } else {
                     echo nl2br(cdataOut($a[$i]));
