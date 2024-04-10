@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ class spelling {
         return true;
     }
 
-    function check_word(&$word) {
+    function check_word($word) {
         if (pspell_check($this->link, $word)) {
             return true;
         } else {

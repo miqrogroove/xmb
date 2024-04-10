@@ -1036,6 +1036,15 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
     }
 }
 
+/**
+ * Check whether the specified moderator is privileged according a specific forum's list of moderators.
+ *
+ * @since 1.0
+ * @param string $username The username for the moderator of the post.
+ * @param string $mods The forums.moderator value of the forum being moderated.
+ * @param bool $override Whether to just return 'Moderator', for example by passing a boolean user level.
+ * @return string Either 'Moderator' or an empty string.
+ */
 function modcheck($username, $mods, $override=X_SMOD) {
 
     $retval = '';
@@ -1055,7 +1064,16 @@ function modcheck($username, $mods, $override=X_SMOD) {
     return $retval;
 }
 
-function modcheckPost(&$username, &$mods, &$origstatus) {
+/**
+ * Check whether the specified moderator is privileged according to a specific post author's status.
+ *
+ * @since 1.9.10
+ * @param string $username The username for the moderator of the post.
+ * @param string $mods The forums.moderator value of the forum being moderated.
+ * @param string $origstatus The members.status value for the author of the post.
+ * @return string Either 'Moderator' or an empty string.
+ */
+function modcheckPost($username, $mods, $origstatus) {
     global $SETTINGS;
     $retval = modcheck($username, $mods);
 
@@ -1534,7 +1552,14 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
     return true;
 }
 
-function get_extension(&$filename) {
+/**
+ * Get the filename extension, if any.
+ *
+ * @since 1.9.1
+ * @param string $filename
+ * @return string
+ */
+function get_extension($filename) {
     $a = explode('.', $filename);
     $count = count($a);
     if ($count == 1) {
