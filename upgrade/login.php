@@ -58,5 +58,3 @@ if ( strlen( $username ) == 0 ) {
 
     echo "Cookies set.  <a href='{$full_url}upgrade/'>Return to upgrade.</a>";
 }
-
-?>

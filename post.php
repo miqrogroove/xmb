@@ -1526,4 +1526,3 @@ function postLinkBBcode(&$message) {
 function softerror(&$msg) {
     return error($msg, FALSE, '', '<br />', FALSE, FALSE, TRUE, FALSE);
 }
-
