@@ -362,16 +362,16 @@ if ($action == '') {
     $specialrank = array();
     $rankposts = array();
     $queryranks = \XMB\SQL\getRanks();
-    foreach( $queryranks as $query ) {
+    foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
             $specialrank[$query['title']] =& $query;
         } else {
             $rankposts[$query['posts']] =& $query;
         }
-        unset( $query );
+        unset($query);
     }
-    unset( $queryranks );
+    unset($queryranks);
 
     $db->query("UPDATE ".X_PREFIX."threads SET views=views+1 WHERE tid='$tid'");
 
@@ -619,7 +619,7 @@ if ($action == '') {
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
-            } else if ($post['status'] == 'Banned') {
+            } elseif ($post['status'] == 'Banned') {
                 // Specify no rank.
                 $rank = [
                     'allowavatars' => 'no',
@@ -627,12 +627,20 @@ if ($action == '') {
                     'stars' => 0,
                     'avatarrank' => '',
                 ];
+            } elseif (count($rankposts) === 0) {
+                // Specify no rank.
+                $rank = [
+                    'allowavatars' => 'no',
+                    'title' => '',
+                    'stars' => 0,
+                    'avatarrank' => '',
+                ];
             } else {
                 // Find the appropriate member rank.
                 $max = -1;
-                $keys = array_keys( $rankposts );
-                foreach( $keys as $key ) {
-                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $max ) {
+                $keys = array_keys($rankposts);
+                foreach($keys as $key) {
+                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
                         $max = $key;
                     }
                 }
@@ -894,4 +902,3 @@ if ($action == '') {
     header('HTTP/1.0 404 Not Found');
     error($lang['textnoaction']);
 }
-

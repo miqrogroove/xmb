@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -1331,10 +1331,14 @@ if ($action == "ranks") {
         </tr>
         <?php
         $avatarno = $avataryes = '';
+        $default_found = false;
         $query = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
         while($rank = $db->fetch_array($query)) {
             if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
                 $staff_disable = 'disabled';
+            } elseif ($rank['posts'] === '0' && ! $default_found) {
+                $staff_disable = 'disabled';
+                $default_found = true;
             } else {
                 $staff_disable = '';
             }
@@ -2642,4 +2646,3 @@ if ($action == "regeneratethumbnail") {
 echo '</table></td></tr></table>';
 end_time();
 eval('echo "'.template('footer').'";');
-

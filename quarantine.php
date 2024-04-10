@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2023, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -94,21 +94,21 @@ case 'viewuser':
     $specialrank = array();
     $rankposts = array();
     $queryranks = \XMB\SQL\getRanks();
-    foreach( $queryranks as $query ) {
+    foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
             $specialrank[$query['title']] =& $query;
         } else {
             $rankposts[$query['posts']] =& $query;
         }
-        unset( $query );
+        unset($query);
     }
-    unset( $queryranks );
+    unset($queryranks);
 
     $thisbg = $altbg2;
     $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 
-    if ( 'viewuser' == $action ) {
+    if ('viewuser' == $action) {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$dbuser'");
     } else {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");        
@@ -116,14 +116,14 @@ case 'viewuser':
 
     $threadcount = $db->num_rows( $result );
 
-    if ( $threadcount > 0 ) {
+    if ($threadcount > 0) {
         echo "<h3>{$lang['moderation_new_threads']}</h3>\n";
         while($thread = $db->fetch_array($result)){
             $tid = $thread['tid'];
             $fid = $thread['fid'];
             $forum = getForum($fid);
             $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
-            if ( 'viewforum' == $action ) {
+            if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvethread&amp;tid=$tid' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletethread&amp;tid=$tid' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
             }
@@ -131,8 +131,8 @@ case 'viewuser':
             $pollhtml = $poll = '';
             $vote_id = $voted = 0;
 
-            if ( '1' === $thread['pollopts'] ) {
-                $vote_id = \XMB\SQL\getPollId( $tid, true );
+            if ('1' === $thread['pollopts']) {
+                $vote_id = \XMB\SQL\getPollId($tid, true);
             }
 
             if ($vote_id > 0) {
@@ -158,7 +158,7 @@ case 'viewuser':
             echo "<table border=\"0\" cellspacing=\"{$THEME['borderwidth']}\" cellpadding=\"$tablespace\" width=\"100%\">\n";
             echo "<tr class=\"header\"><td width=\"18%\">{$lang['textauthor']} </td><td>{$lang['textsubject']} {$thread['subject']}</td></tr>\n";
 
-            if ( 'viewuser' == $action ) {
+            if ('viewuser' == $action) {
                 $result2 = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid=$tid");
                 $post = array_merge($db->fetch_array($result2), $member);
             } else {
@@ -202,7 +202,7 @@ case 'viewuser':
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
-            } else if ($post['status'] == 'Banned') {
+            } elseif ($post['status'] == 'Banned') {
                 // Specify no rank.
                 $rank = [
                     'allowavatars' => 'no',
@@ -210,12 +210,20 @@ case 'viewuser':
                     'stars' => 0,
                     'avatarrank' => '',
                 ];
+            } elseif (count($rankposts) === 0) {
+                // Specify no rank.
+                $rank = [
+                    'allowavatars' => 'no',
+                    'title' => '',
+                    'stars' => 0,
+                    'avatarrank' => '',
+                ];
             } else {
                 // Find the appropriate member rank.
                 $max = -1;
-                $keys = array_keys( $rankposts );
-                foreach( $keys as $key ) {
-                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $max ) {
+                $keys = array_keys($rankposts);
+                foreach($keys as $key) {
+                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
                         $max = $key;
                     }
                 }
@@ -223,7 +231,7 @@ case 'viewuser':
             }
 
             $allowavatars = $rank['allowavatars'];
-            if ( 'viewuser' == $action ) {
+            if ('viewuser' == $action) {
                 $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
                 $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
             } else {
@@ -241,7 +249,7 @@ case 'viewuser':
             } else {
                 $rank['avatar'] = '';
             }
-            if ( 'viewuser' == $action ) {
+            if ('viewuser' == $action) {
                 $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
             } else {
                 $tharegdate = 'N/A';
@@ -319,6 +327,8 @@ case 'viewuser':
             echo $post;
             echo "</table></td></tr></table><br />\n";
 
+            // Remove array reference(s)
+            unset($rank);
         }
     }
     $db->free_result($result);
@@ -399,7 +409,7 @@ case 'viewuser':
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
-            } else if ($post['status'] == 'Banned') {
+            } elseif ($post['status'] == 'Banned') {
                 // Specify no rank.
                 $rank = [
                     'allowavatars' => 'no',
@@ -407,12 +417,20 @@ case 'viewuser':
                     'stars' => 0,
                     'avatarrank' => '',
                 ];
+            } elseif (count($rankposts) === 0) {
+                // Specify no rank.
+                $rank = [
+                    'allowavatars' => 'no',
+                    'title' => '',
+                    'stars' => 0,
+                    'avatarrank' => '',
+                ];
             } else {
                 // Find the appropriate member rank.
                 $max = -1;
-                $keys = array_keys( $rankposts );
-                foreach( $keys as $key ) {
-                    if ( (int) $post['postnum'] >= (int) $key && (int) $key > (int) $max ) {
+                $keys = array_keys($rankposts);
+                foreach($keys as $key) {
+                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
                         $max = $key;
                     }
                 }
@@ -514,7 +532,7 @@ case 'viewuser':
             }
             eval('$post = "'.template('viewthread_post').'";');
             echo $post;
-            if ( 'viewuser' == $action ) {
+            if ('viewuser' == $action) {
                 echo "</table></td></tr></table><br />\n";
             } else {
                 if ($thisbg == $altbg2) {
@@ -523,8 +541,11 @@ case 'viewuser':
                     $thisbg = $altbg2;
                 }
             }
+
+            // Remove array reference(s)
+            unset($rank);
         } //wend
-        if ( 'viewforum' == $action ) {
+        if ('viewforum' == $action) {
             echo "</table></td></tr></table><br />\n";
         }
     }
@@ -1017,4 +1038,3 @@ function moderate_cleanup($xmbuser) {
     }
     $db->free_result($result);
 }
-

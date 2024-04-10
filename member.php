@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2023, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -476,16 +476,16 @@ switch($action) {
             }
 
             // Generate form outputs
-            if ( 1 == $stepout ) {
-                if ( 'on' == $SETTINGS['google_captcha'] ) {
+            if (1 == $stepout) {
+                if ('on' == $SETTINGS['google_captcha']) {
                     // Display reCAPTCHA
                     $css .= "\n<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
                     eval('$memberpage = "'.template('member_reg_gcaptcha').'";');
-                } elseif ( 'on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status'] ) {
+                } elseif ('on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status']) {
                     // Display XMB captcha.
                     $casesense = '';
                     $imghash = '';
-                    if ( 'on' == $SETTINGS['captcha_code_casesensitive'] ) {
+                    if ('on' == $SETTINGS['captcha_code_casesensitive']) {
                         $casesense = "<p>{$lang['captchacaseon']}</p>";
                     }
                     require_once ROOT.'include/captcha.inc.php';
@@ -494,7 +494,7 @@ switch($action) {
                         $imghash = $Captcha->GenerateCode();
                         eval('$memberpage = "'.template('member_reg_captcha').'";');
                     } else {
-                        trigger_error( 'XMB captcha is enabled but not working.', E_USER_ERROR );
+                        trigger_error('XMB captcha is enabled but not working.', E_USER_ERROR);
                     }
                 } else {
                     // Skip the captcha step
@@ -502,28 +502,28 @@ switch($action) {
                 }
             }
 
-            if ( 2 == $stepout ) {
-                if ( (int) $SETTINGS['pruneusers'] > 0 ) {
+            if (2 == $stepout) {
+                if ((int) $SETTINGS['pruneusers'] > 0) {
                     $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
                     $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
                 }
 
-                if ( (int) $SETTINGS['maxdayreg'] > 0 ) {
+                if ((int) $SETTINGS['maxdayreg'] > 0) {
                     $time = $onlinetime - 86400; // subtract 24 hours
                     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
-                    if ( (int) $db->result($query, 0) > (int) $SETTINGS['maxdayreg'] ) {
+                    if ((int) $db->result($query, 0) > (int) $SETTINGS['maxdayreg']) {
                         error($lang['max_regs']);
                     }
                     $db->free_result($query);
                 }
 
-                if ( 'on' == $SETTINGS['coppa'] ) {
+                if ('on' == $SETTINGS['coppa']) {
                     // Display COPPA
                     $optionlist = "<option value='0'></option>\n";
-                    for ( $i = 1; $i <= 120; $i++ ) {
+                    for ($i = 1; $i <= 120; $i++) {
                         $optionlist .= "<option value='$i'>$i</option>\n";
                     }
-                    $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_AYS_EXP, true );
+                    $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_AYS_EXP, true);
                     eval('$memberpage = "'.template('member_coppa').'";');
                 } else {
                     // Skip COPPA
@@ -531,10 +531,10 @@ switch($action) {
                 }
             }
 
-            if ( 3 == $stepout ) {
-                if ( 'on' == $SETTINGS['bbrules'] ) {
+            if (3 == $stepout) {
+                if ('on' == $SETTINGS['bbrules']) {
                     // Display the rules form
-                    $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
+                    $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
                     $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
                     eval('$memberpage = "'.template('member_reg_rules').'";');
                 } else {
@@ -543,7 +543,7 @@ switch($action) {
                 }
             }
 
-            if ( 4 == $stepout ) {
+            if (4 == $stepout) {
                 // Display new user form
                 $captcharegcheck = '';
                 $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
@@ -586,7 +586,7 @@ switch($action) {
                     eval('$pwtd = "'.template('member_reg_password').'";');
                 }
 
-                if ( '24' === $SETTINGS['timeformat'] ) {
+                if ('24' === $SETTINGS['timeformat']) {
                     $timeFormat12Checked = '';
                     $timeFormat24Checked = $cheHTML;
                 } else {
@@ -626,12 +626,12 @@ switch($action) {
                 eval('$memberpage = "'.template('member_reg').'";');
             }
 
-            if ( 5 == $stepout ) {
+            if (5 == $stepout) {
                 // Display success message
-                if ( 'on' == $SETTINGS['emailcheck'] ) {
-                    $memberpage = message( $lang['emailpw'], false, '', '', false, false, true, false );
+                if ('on' == $SETTINGS['emailcheck']) {
+                    $memberpage = message($lang['emailpw'], false, '', '', false, false, true, false);
                 } else {
-                    $memberpage = message( $lang['regged'], false, '', '', $full_url, false, true, false );
+                    $memberpage = message($lang['regged'], false, '', '', $full_url, false, true, false);
                 }
             }
         }
@@ -647,29 +647,29 @@ switch($action) {
             error($lang['nomember']);
         }
 
-        $memberinfo = \XMB\SQL\getMemberByName( $member );
+        $memberinfo = \XMB\SQL\getMemberByName($member);
 
-        if ( empty( $memberinfo ) || ( 'on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN ) ) {
+        if (empty( $memberinfo ) || ('on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN)) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         }
 
         $memberinfo['password'] = '';
 
-        null_string( $memberinfo['avatar'] );
+        null_string($memberinfo['avatar']);
 
-        $member = $db->escape( $member );
+        $member = $db->escape($member);
 
         if ($memberinfo['status'] == 'Banned') {
             $memberinfo['avatar'] = '';
-            $rank = array(
-            'title' => 'Banned',
-            'posts' => 0,
-            'id' => 0,
-            'stars' => 0,
-            'allowavatars' => 'no',
-            'avatarrank' => ''
-            );
+            $rank = [
+                'title' => 'Banned',
+                'posts' => 0,
+                'id' => 0,
+                'stars' => 0,
+                'allowavatars' => 'no',
+                'avatarrank' => '',
+            ];
         } else {
             if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
                 $limit = "title = '$memberinfo[status]'";
@@ -678,7 +678,19 @@ switch($action) {
             }
 
             $rank = $db->fetch_array($db->query("SELECT * FROM ".X_PREFIX."ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
-            null_string( $rank['avatarrank'] );
+            if (null === $rank) {
+                $memberinfo['avatar'] = '';
+                $rank = [
+                    'title' => '',
+                    'posts' => 0,
+                    'id' => 0,
+                    'stars' => 0,
+                    'allowavatars' => 'no',
+                    'avatarrank' => '',
+                ];
+            } else {
+                null_string($rank['avatarrank']);
+            }
         }
 
         eval('$header = "'.template('header').'";');
