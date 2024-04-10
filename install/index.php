@@ -133,6 +133,21 @@ function show_result($type) {
 }
 
 /**
+ * Take a posted variable and convert it to a PHP string literal.
+ *
+ * Useful for sanitizing config.php modifications.
+ *
+ * @since 1.9.12.06
+ * @param string $name The name of the posted variable.
+ * @return string The PHP string literal version of the input.
+ */
+function input_to_literal(string $name): string {
+    $ret = $_POST[$name];
+    $ret = str_replace(["\\", "'"], ["\\\\", "\\'"], $ret);
+    return "'$ret'";
+}
+
+/**
  * Haults the script if XMB is already installed.
  *
  * @since 1.9.11.09
@@ -322,16 +337,77 @@ www.xmbforum2.com
         switch($vSubStep) {
         case 'create':
             // Open config.php
-            $configuration = file_get_contents(ROOT.'config.php');
+            if (is_readable(ROOT.'config.php')) {
+                $configuration = file_get_contents(ROOT.'config.php');
+            } else {
+                $configuration = '';
+            }
 
             // Now, replace the main text values with those given by user
-            $find = array('DB/NAME', 'DB/USER', 'DB/PW', "= 'localhost';", 'TABLE/PRE', 'FULLURL', "= 'default';", 'MAILER_USER', 'MAILER_PASS', 'MAILER_HOST', 'MAILER_PORT');
-            $replace = array($_REQUEST['db_name'], $_REQUEST['db_user'], $_REQUEST['db_pw'], "= '{$_REQUEST['db_host']}';", $_REQUEST['table_pre'], $_REQUEST['fullurl'], "= '{$_REQUEST['MAILER_TYPE']}';", $_REQUEST['MAILER_USER'], $_REQUEST['MAILER_PASS'], $_REQUEST['MAILER_HOST'], $_REQUEST['MAILER_PORT']);
+            $find = [
+                "'DB/NAME'",
+                "'DB/USER'",
+                "'DB/PW'",
+                "'localhost'",
+                "'TABLE/PRE'",
+                "'FULLURL'",
+                "'default'",
+                "'MAILER_USER'",
+                "'MAILER_PASS'",
+                "'MAILER_HOST'",
+                "'MAILER_PORT'",
+            ];
+            $replace = [
+                input_to_literal('db_name'),
+                input_to_literal('db_user'),
+                input_to_literal('db_pw'),
+                input_to_literal('db_host'),
+                input_to_literal('table_pre'),
+                input_to_literal('fullurl'),
+                input_to_literal('MAILER_TYPE'),
+                input_to_literal('MAILER_USER'),
+                input_to_literal('MAILER_PASS'),
+                input_to_literal('MAILER_HOST'),
+                input_to_literal('MAILER_PORT'),
+            ];
+            foreach ($find as $phrase) {
+                if (strpos($configuration, $phrase) === false) {
+                    $configuration = "<?php\n"
+                        . "\$dbname   = 'DB/NAME';\n"
+                        . "\$dbuser   = 'DB/USER';\n"
+                        . "\$dbpw     = 'DB/PW';\n"
+                        . "\$dbhost   = 'localhost';\n"
+                        . "\$database = 'mysql';\n"
+                        . "\$pconnect = 0;\n"
+                        . "\$tablepre = 'TABLE/PRE';\n"
+                        . "\$full_url = 'FULLURL';\n"
+                        . "\$comment_output = false;\n"
+                        . "\$mailer['type']     = 'default';\n"
+                        . "\$mailer['username'] = 'MAILER_USER';\n"
+                        . "\$mailer['password'] = 'MAILER_PASS';\n"
+                        . "\$mailer['host']     = 'MAILER_HOST';\n"
+                        . "\$mailer['port']     = 'MAILER_PORT';\n"
+                        . "\$i = 1;\n"
+                        . "\$plugname[\$i]  = '';\n"
+                        . "\$plugurl[\$i]   = '';\n"
+                        . "\$plugadmin[\$i] = false;\n"
+                        . "\$plugimg[\$i]   = '';\n"
+                        . "\$i++;\n"
+                        . "\$ipcheck        = 'off';\n"
+                        . "\$allow_spec_q   = false;\n"
+                        . "\$show_full_info = true;\n\n"
+                        . "define('DEBUG', true);\n"
+                        . "define('LOG_MYSQL_ERRORS', false);\n"
+                        . "\n// Do not edit below this line.\nreturn;\n";
+                    break;
+                }
+            }
+
             $configuration = str_replace($find, $replace, $configuration);
 
             // Show Full Footer Info
             if (!isset($_REQUEST['showfullinfo'])) {
-                $configuration = str_replace("show_full_info = TRUE;", "show_full_info = FALSE;", $configuration);
+                $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
             }
 
             switch($_REQUEST['method']) {
@@ -499,7 +575,7 @@ www.xmbforum2.com
                             <p>
                                 <select size="1" name="method">
                                     <option value="1">1)&nbsp; Show the configuration on screen.</option>
-                                    <option value="2">2)&nbsp; Attempt to create config.php for me.</option>
+                                    <option value="2" selected="selected">2)&nbsp; Attempt to create config.php for me.</option>
                                     <option value="3">3)&nbsp; Download config.php onto my computer.</option>
                                 </select>
                             </p>
@@ -518,7 +594,7 @@ www.xmbforum2.com
                     </tr>
                     <tr>
                         <td>Database Password<br /><span>Password for the Database User</span></td>
-                        <td><input type="password" name="db_pw" size="40" /></td>
+                        <td><input type="text" name="db_pw" size="40" /></td>
                     </tr>
                     <tr>
                         <td>Database Host<br /><span>Database host location, usually "localhost"</span></td>
@@ -569,13 +645,11 @@ www.xmbforum2.com
                         <td>SMTP Port:</td>
                         <td><input type="text" name="MAILER_PORT" value="25" /></td>
                     </tr>
-                    <tr>
-                        <td colspan="2" class="configure"><input type="submit" value="Configure" name="submit" /></td>
-                    </tr>
                 </table>
+                <p class="button"><input type="submit" value="Save Configuration" /></p>
             </form>
             <form action="index.php?step=5" method="post">
-                <p class="button"><input type="submit" value="Next Step" /></p>
+                <p class="button"><input type="submit" value="I saved it already: Go to Next Step" /></p>
             </form>
         </div>
         <div class="bottom"><span></span></div>
