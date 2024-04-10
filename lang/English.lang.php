@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2021, The XMB Group
+ * Copyright (c) 2001-2024, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -151,7 +151,7 @@ $lang['bbcode_help_color'] = "Color Tag\\nSets the text color. Any named color c
 $lang['bbcode_help_email'] = "E-mail Tag\\nTurns an e-mail address into a mailto hyperlink.\\nUsage: [email]someone@anywhere.com[/email]\\nUsage: [email=someone@anywhere.com]link text[/email]";
 $lang['bbcode_help_font'] = "Font Tag\\nSets the font face for the enclosed text.\\nUsage: [font=Arial]The font of this text is Arial[/font]";
 $lang['bbcode_help_image'] = "Image Tag\\nInserts an image into the post.\\nUsage: [img]http://www.anywhere.com/image.gif[/img]";
-$lang['bbcode_help_italic'] = "Italicise Tag\\nMakes the enclosed text italicized.\\nUsage: [i]This is some italicized text[/i]";
+$lang['bbcode_help_italic'] = "Italicize Tag\\nMakes the enclosed text italicized.\\nUsage: [i]This is some italicized text[/i]";
 $lang['bbcode_help_link'] = "Hyperlink Tag\\nTurns an URL into a hyperlink.\\nUsage: [url]http://www.anywhere.com[/url]\\nUsage: [url=http://www.anywhere.com]link text[/url]";
 $lang['bbcode_help_list'] = "List Tag\\nBuilds a bulleted, numbered, or alphabetical list.\\nUsage: [list]\\n[*]item1\\n[*]item2\\n[*]item3\\n[/list]";
 $lang['bbcode_help_quote'] = "Quote tag\\nQuotes the enclosed text to reference something specific that someone has posted.\\nUsage: [quote]This is a quote[/quote]";
@@ -224,7 +224,7 @@ $lang['cb_insert_code'] = "Insert Code Formatted text";
 $lang['cb_insert_email'] = "Insert E-mail Hyperlink";
 $lang['cb_insert_hyperlink'] = "Insert a Hyperlink";
 $lang['cb_insert_image'] = "Insert an Image";
-$lang['cb_insert_italics'] = "Insert Italicised text";
+$lang['cb_insert_italics'] = "Insert Italicized text";
 $lang['cb_insert_list'] = "Insert List";
 $lang['cb_insert_quote'] = "Insert Quoted text";
 $lang['cb_insert_underlined'] = "Insert Underlined text";
@@ -997,7 +997,7 @@ $lang['textnewforum'] = "New Forum";
 $lang['textnewgroup'] = "New Category";
 $lang['textnewip'] = "New IP:";
 $lang['textnewmember'] = '[NOTIFY] New Member signup';
-$lang['textnewmember2'] = 'A new member has registered on your board. This notification e-mail has been sent because the "Notify (Super)Admins on new registrations"-option is turned ON in Settings. To stop recieving these notifications, turn it OFF.';
+$lang['textnewmember2'] = 'A new member has registered on your board. This notification e-mail has been sent because the "Notify (Super)Admins on new registrations"-option is turned ON in Settings. To stop receiving these notifications, turn it OFF.';
 $lang['textnewpassword'] = "New Password";
 $lang['textnewpicon'] = "New Post Icon:";
 $lang['textnewpoll'] = "New Poll";
@@ -1072,7 +1072,7 @@ $lang['textpwincorrect'] = 'You entered an incorrect password';
 $lang['textquote'] = "Quote:";
 $lang['textre'] = "Re:";
 $lang['textread'] = "Read";
-$lang['textreason'] = "Please use this form to alert the forum administrators of rule infractions or unacceptable behavior. By doing so you help to keep our forums a nice place to visit!<br />Thank you!<br /><br /> <strong>Note:</strong> This form is not to be used to alert the administrators that you have not recieved a reply to your post!";
+$lang['textreason'] = "Please use this form to alert the forum administrators of rule infractions or unacceptable behavior. By doing so you help to keep our forums a nice place to visit!<br />Thank you!<br /><br /> <strong>Note:</strong> This form is not to be used to alert the administrators that you have not received a reply to your post!";
 $lang['textregdate'] = "Registration Date";
 $lang['textreggedonly'] = "Allow only registered users to view boards?";
 $lang['textregister'] = "Register";
@@ -1329,4 +1329,3 @@ $lang['whoview'] = "Who Can View This Forum?";
 $lang['xmb'] = "XMB";
 $lang['xmbforum'] = '<abbr title="eXtreme Message Board">XMB</abbr> Forum Software';
 $lang['xmbgroup'] = "The XMB Group";
-
