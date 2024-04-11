@@ -432,6 +432,25 @@ $upload = file_get_contents(ROOT.'lang/English.lang.php');
 installNewTranslation($upload);
 show_result(X_INST_OK);
 
+// Debug mode is enabled by default during install. Need to turn it off so the new forums will look normal.
+if (DEBUG) {
+    show_act("Deactivating debug mode");
+    if (is_writable(ROOT.'config.php')) {
+        $configuration = file_get_contents(ROOT.'config.php');
+        $configuration = str_ireplace("define('DEBUG', true);", "define('DEBUG', false);", $configuration);
+        $result = file_put_contents(ROOT.'config.php', $configuration);
+        if (false === $result){
+            show_result(X_INST_SKIP);
+            error('Permissions Notice', 'XMB could not update the config.php file.');
+        } else {
+            show_result(X_INST_OK);
+        }
+    } else {
+        show_result(X_INST_SKIP);
+        error('Permissions Notice', 'XMB could not update the config.php file.');
+    }
+}
+
 // Try to remove all files now
 show_act('Removing installer files');
 chdir('..');

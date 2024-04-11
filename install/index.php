@@ -594,7 +594,7 @@ www.xmbforum2.com
                     </tr>
                     <tr>
                         <td>Database Password<br /><span>Password for the Database User</span></td>
-                        <td><input type="text" name="db_pw" size="40" /></td>
+                        <td><input type="password" name="db_pw" size="40" autocomplete="new-password" /></td>
                     </tr>
                     <tr>
                         <td>Database Host<br /><span>Database host location, usually "localhost"</span></td>
