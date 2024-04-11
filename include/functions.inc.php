@@ -1393,23 +1393,24 @@ function smilieinsert($type='normal') {
     return $smilieinsert;
 }
 
+/**
+ * @since 1.5
+ */
 function updateforumcount($fid) {
     global $db;
-    $fid = intval($fid);
+    $fid = (int) $fid;
 
     $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
-    $postcount = $db->result($query, 0);
+    $postcount = (int) $db->result($query, 0);
     $db->free_result($query);
 
     $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."forums AS f INNER JOIN ".X_PREFIX."threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
-    $threadcount = $db->result($query, 0);
+    $threadcount = (int) $db->result($query, 0);
     $db->free_result($query);
 
-    $query = $db->query("SELECT t.lastpost FROM ".X_PREFIX."forums AS f LEFT JOIN ".X_PREFIX."threads AS t USING(fid) WHERE f.fid=$fid OR f.fup=$fid ORDER BY t.lastpost DESC LIMIT 0, 1");
-    $lp = $db->fetch_array($query);
-    $db->escape_fast($lp['lastpost']);
-    $db->query("UPDATE ".X_PREFIX."forums SET posts='$postcount', threads='$threadcount', lastpost='{$lp['lastpost']}' WHERE fid='$fid'");
-    $db->free_result($query);
+    $lastpost = \XMB\SQL\findLaspostByForum($fid);
+    
+    \XMB\SQL\setForumCounts($fid, $postcount, $threadcount, $lastpost);
 }
 
 function updatethreadcount($tid) {

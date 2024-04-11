@@ -690,6 +690,45 @@ function setThreadLastpost( int $tid, string $lastpost, bool $quarantine = false
 }
 
 /**
+ * Find the most recent lastpost value among all threads in the given forum.
+ *
+ * @since 1.9.12.06
+ */
+function findLaspostByForum(int $fid): string {
+    global $db;
+
+    $query = $db->query("SELECT t.lastpost
+    FROM ".X_PREFIX."forums AS f
+    LEFT JOIN ".X_PREFIX."threads AS t USING (fid)
+    WHERE f.fid = $fid OR f.fup = $fid
+    ORDER BY t.lastpost DESC
+    LIMIT 1");
+
+    if ($db->num_rows($query) === 0) {
+        $result = ''; // Forum not found.
+    } else {
+        $result = $db->result($query, 0);
+        if (null === $result) $result = ''; // Forum is empty.
+    }
+    $db->free_result($query);
+
+    return $result;
+}
+
+/**
+ * SQL command
+ *
+ * @since 1.9.12.06
+ */
+function setForumCounts(int $fid, int $postcount, int $threadcount, string $lastpost) {
+    global $db;
+
+    $db->escape_fast($lastpost);
+
+    $db->query("UPDATE ".X_PREFIX."forums SET posts = $postcount, threads = $threadcount, lastpost = '$lastpost' WHERE fid = $fid");
+}
+
+/**
  * SQL command
  *
  * @since 1.9.12
