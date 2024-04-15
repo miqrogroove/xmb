@@ -1413,6 +1413,9 @@ function updateforumcount($fid) {
     \XMB\SQL\setForumCounts($fid, $postcount, $threadcount, $lastpost);
 }
 
+/**
+ * @since 1.5
+ */
 function updatethreadcount($tid) {
     global $db;
     $tid = intval($tid);
