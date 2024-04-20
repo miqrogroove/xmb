@@ -748,7 +748,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $replacements[] = '<!-- nobr --><a href="viewthread.php?tid=$2&amp;goto=search&amp;pid=$1"><strong><!-- /nobr -->$3</strong> &nbsp;<img src="'.$THEME['imgdir'].'/lastpost.gif" border="0" alt="" style="vertical-align: middle;" /></a>';
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
-        $patterns[] = '/\[youtube\]([a-z0-9_-]+)\[\/youtube\]/i';
+        $patterns[] = '@\[youtube\](?:[^\[]*(?:v\=|/))?([a-z0-9_-]++)[^\[]*\[/youtube\]@i';
         $replacements[] = '<!-- nobr --><iframe class="video" src="https://www.youtube.com/embed/\1" allowfullscreen></iframe><!-- /nobr -->';
     }
 
