@@ -940,11 +940,11 @@ if ($action == 'themes') {
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['textboardlogo']?></td>
-        <td><input type="text" name="boardlogonew" value="<?php echo $boardimg?>" /></td>
+        <td><input type="text" name="boardlogonew" value="logo.gif" /></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['imgdir']?></td>
-        <td><input type="text" name="imgdirnew" value="images" /></td>
+        <td><input type="text" name="imgdirnew" value="images/new" /></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
         <td><?php echo $lang['imgdiradm']?></td>

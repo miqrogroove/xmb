@@ -2823,12 +2823,12 @@ function more_theme_vars() {
         $THEME['topbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['top']})'";
     }
 
-    null_string( $THEME['boardimg'] );
+    null_string($THEME['boardimg']);
     $l = parse_url($THEME['boardimg']);
-    if (!isset($l['scheme']) || !isset($l['host'])) {
-        $boardimg = $THEME['imgdir'].'/'.$THEME['boardimg'];
+    if (!isset($l['scheme'])) {
+        $THEME['boardimg'] = $THEME['imgdir'].'/'.$THEME['boardimg'];
     }
-    $THEME['logo'] = '<a href="./"><img src="'.$boardimg.'" alt="'.$SETTINGS['bbname'].'" border="0" /></a>';
+    $THEME['logo'] = "<a href='./'><img src='{$THEME['boardimg']}' alt='{$SETTINGS['bbname']}' border='0' /></a>";
 
     // Font stuff...
     $fontedit = preg_replace('#(\D)#', '', $THEME['fontsize']);
