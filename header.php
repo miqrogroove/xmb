@@ -134,7 +134,7 @@ $status_translate = array(
 
 // discover the most likely browser
 // so we can use bbcode specifically made for it
-$browser = 'opera'; // default to opera
+$browser = 'mozilla'; // default to mozilla
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
     if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') && false === strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
         $browser = 'mozilla';
