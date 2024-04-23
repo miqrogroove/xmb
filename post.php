@@ -350,6 +350,7 @@ if ( X_STAFF ) {
 
 $messageinput = postedVar('message', '', TRUE, FALSE);  //postify() is responsible for DECODING if html is allowed.
 $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+$subjectinput = trim($subjectinput);
 $subjectinput = str_replace(array("\r", "\n"), array('', ''), $subjectinput);
 
 if ($SETTINGS['spellcheck'] == 'on') {
@@ -426,11 +427,9 @@ switch($action) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['textreply']);
 
-        if ($SETTINGS['subject_in_title'] == 'on') {
-            $threadSubject = '- '.$threadname;
+        if ($SETTINGS['subject_in_title'] === 'on') {
+            $threadSubject = '- ' . $threadname;
         }
-
-        eval('$header = "'.template('header').'";');
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
 
@@ -728,6 +727,9 @@ switch($action) {
             $message = rawHTMLmessage($messageinput);
 
             if (isset($previewpost)) {
+                if ($SETTINGS['subject_in_title'] === 'on' && $subject !== '') {
+                    $threadSubject = '- ' . $subject;
+                }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
                 } else {
@@ -827,11 +829,7 @@ switch($action) {
             nav($lang['textpostnew']);
         }
 
-        if ($SETTINGS['subject_in_title'] == 'on') {
-            $threadSubject = '- '.$dissubject;
-        }
-
-        eval('$header = "'.template('header').'";');
+        $threadSubject = '- ' . $lang['textpostnew'];
 
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -1134,6 +1132,9 @@ switch($action) {
             $message = rawHTMLmessage($messageinput);
 
             if (isset($previewpost)) {
+                if ($SETTINGS['subject_in_title'] === 'on' && $subject !== '') {
+                    $threadSubject = '- ' . $subject;
+                }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
                 } else {
@@ -1204,11 +1205,9 @@ switch($action) {
         nav('<a href="viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         nav($lang['texteditpost']);
 
-        if ($SETTINGS['subject_in_title'] == 'on') {
-            $threadSubject = '- '.$threadname;
+        if ($SETTINGS['subject_in_title'] === 'on') {
+            $threadSubject = '- ' . $threadname;
         }
-
-        eval('$header = "'.template('header').'";');
 
         $editvalid = TRUE; // This new flag will indicate a message was submitted and successful.
 
@@ -1379,6 +1378,10 @@ switch($action) {
                 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
             }
 
+            if ($SETTINGS['subject_in_title'] === 'on' && $postinfo['subject'] !== '') {
+                $threadSubject = '- ' . $postinfo['subject'];
+            }
+
             // Fill $attachment
             $attachment = '';
             $files = array();
@@ -1488,6 +1491,7 @@ switch($action) {
         break;
 }
 
+eval('$header = "'.template('header').'";');
 end_time();
 eval('$footer = "'.template('footer').'";');
 echo $header, $errors, $postpage, $footer;
