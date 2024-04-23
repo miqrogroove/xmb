@@ -933,27 +933,13 @@ function bbcodeLongURLs( array $url ): string {
 }
 
 /**
- * Adds relative font size values to the theme's font size.
+ * Creates a styled span relative to the theme's font size.
  *
  * @since 1.9.11
  */
-function bbcodeSizeTags( array $matches ): string {
-    global $THEME;
-    static $cachedFs;
-
-    // Cache the theme font size in an array.
-    if (!is_array($cachedFs) || count($cachedFs) != 2) {
-        preg_match('#([0-9]+)([a-z]+)?#i', $THEME['fontsize'], $res);
-        $cachedFs[0] = $res[1];
-        $cachedFs[1] = $res[2];
-
-        if (empty($cachedFs[1])) {
-            $cachedFs[1] = 'px';
-        }
-    }
-
+function bbcodeSizeTags(array $matches): string {
     $relative = (int) $matches[1];
-    $o = ( $relative + $cachedFs[0] ) . $cachedFs[1];
+    $o = fontSize($relative);
 
     $html = "<span style='font-size: $o;'>";
 
@@ -2831,10 +2817,8 @@ function more_theme_vars() {
     $THEME['logo'] = "<a href='./'><img src='{$THEME['boardimg']}' alt='{$SETTINGS['bbname']}' border='0' /></a>";
 
     // Font stuff...
-    $fontedit = preg_replace('#(\D)#', '', $THEME['fontsize']);
-    $fontsuf = preg_replace('#(\d)#', '', $THEME['fontsize']);
-    $THEME['font1'] = $fontedit-1 . $fontsuf;
-    $THEME['font3'] = $fontedit+2 . $fontsuf;
+    $THEME['font1'] = fontSize(-1);
+    $THEME['font3'] = fontSize(2);
 }
 
 /**
@@ -2905,6 +2889,37 @@ function bbcode_imgs( array $matches ): string {
  */
 function null_string( &$var ) {
     $var = $var ?? '';
+}
+
+/**
+ * Adds relative font size values to the theme's font size.
+ *
+ * @since 1.9.12.07
+ * @param int $add Change applied to the theme font size.
+ * @return string CSS font size, like '12px'.
+ */
+function fontSize(int $add): string {
+    global $THEME;
+    static $cachedFs;
+
+    // Cache the theme font size in an array.
+    if (!isset($cachedFs)) {
+        preg_match('#([0-9]+)([a-z]*)#i', $THEME['fontsize'], $result);
+        if (empty($result[1])) {
+            $result[1] = '12';
+        }
+        if (empty($result[2])) {
+            $result[2] = 'px';
+        }
+        $cachedFs = [
+            'qty'  => (int) $result[1],
+            'unit' => $result[2],
+        ];
+    }
+
+    $css = ($cachedFs['qty'] + $add) . $cachedFs['unit'];
+
+    return $css;
 }
 
 return;
