@@ -607,7 +607,7 @@ case 'approveall':
 
     if ( onSubmit( 'yessubmit' ) ) {
         require_once ROOT.'include/attach.inc.php';
-        $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_posts WHERE author='$member'"), 0);
+        $count = \XMB\SQL\countPosts($quarantine, 0, $rawmember);
         $thatime = $onlinetime - $count;
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
         while($thread = $db->fetch_array($result)) {

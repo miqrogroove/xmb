@@ -826,33 +826,41 @@ function getPostBody( int $pid, bool $quarantine = false ): string {
 }
 
 /**
- * SQL command
+ * Count posts using various filters.
  *
  * @since 1.9.12
+ * @param bool   $quarantine Optional. Set to true when counting quarantined posts.
+ * @param int    $tid        Optional. Filter result for a single thread.
+ * @param string $username   Optional. Filter result for a single user.
+ * @param int    $before     Optional. Timestamp of latest post to include in the count. Since 1.9.12.07.
+ * @return int
  */
-function countPosts( bool $quarantine = false, int $tid = 0, string $username = '' ): int {
+function countPosts(bool $quarantine = false, int $tid = 0, string $username = '', int $before = 0): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
     $where = [];
-    if ( $tid != 0 ) {
+    if ($tid != 0) {
         $where[] = "tid = $tid";
     }
-    if ( $username != '' ) {
-        $sqluser = $db->escape( $username );
+    if ($username != '') {
+        $sqluser = $db->escape($username);
         $where[] = "author = '$sqluser'";
     }
-
-    if ( empty( $where ) ) {
-        $where = '';
-    } else {
-        $where = "WHERE " . implode( ' AND ', $where );
+    if ($before != 0) {
+        $where[] = "dateline <= $before";
     }
 
-    $query = $db->query( "SELECT COUNT(*) FROM $table $where" );
-    $result = (int) $db->result( $query, 0 );
-    $db->free_result( $query );
+    if (empty($where)) {
+        $where = '';
+    } else {
+        $where = "WHERE " . implode(' AND ', $where);
+    }
+
+    $query = $db->query("SELECT COUNT(*) FROM $table $where");
+    $result = (int) $db->result($query, 0);
+    $db->free_result($query);
 
     return $result;
 }

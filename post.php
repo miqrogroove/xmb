@@ -780,8 +780,7 @@ switch($action) {
                 $closeoption = '';
             }
 
-            $querytop = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-            $replynum = (int) $db->result($querytop, 0);
+            $replynum = \XMB\SQL\countPosts(false, $tid);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
                 $trevltmsg = str_replace( '$threadlink', $threadlink, $lang['evaltrevlt'] );
@@ -812,7 +811,6 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            $db->free_result($querytop);
 
             if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == $status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
@@ -1080,9 +1078,7 @@ switch($action) {
             if ( $quarantine ) {
                 message( $lang['moderation_hold'] );
             } else {
-                $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$tid'");
-                $posts = $db->result($query, 0);
-                $db->free_result($query);
+                $posts = \XMB\SQL\countPosts(false, $tid);
 
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
@@ -1312,7 +1308,7 @@ switch($action) {
                 $db->escape_fast($dbmessage);
                 $db->escape_fast($dbsubject);
 
-                if ( (int) $isfirstpost['pid'] == $pid ) {
+                if ((int) $isfirstpost['pid'] == $pid) {
                     $db->query("UPDATE ".X_PREFIX."threads SET icon='$sql_posticon', subject='$dbsubject' WHERE tid=$tid");
                 }
 
@@ -1325,11 +1321,8 @@ switch($action) {
                 }
                 \XMB\Attach\deleteByPost($pid);
 
-                if ( (int) $isfirstpost['pid'] == $pid ) {
-                    $query = $db->query("SELECT COUNT(*) AS pcount FROM ".X_PREFIX."posts WHERE tid=$tid");
-                    $numrows = $db->fetch_array($query);
-                    $numrows = (int) $numrows['pcount'];
-                    $db->free_result($query);
+                if ((int) $isfirstpost['pid'] == $pid) {
+                    $numrows = \XMB\SQL\countPosts(false, $tid);
 
                     if ($numrows == 0) {
                         $threaddelete = 'yes';
@@ -1344,19 +1337,19 @@ switch($action) {
                         $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid OR closed='moved|$tid'");
                     } else {
                         $db->query("UPDATE ".X_PREFIX."posts SET subject='".$db->escape($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
+                        updatethreadcount($tid);
                     }
+                } else {
+                    updatethreadcount($tid);
                 }
                 if ($forum['type'] == 'sub') {
                     updateforumcount($fup['fid']);
                 }
-                updatethreadcount($tid);
                 updateforumcount($fid);
             }
 
             if ($threaddelete == 'no') {
-                $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE dateline <= {$orig['dateline']} AND tid=$tid");
-                $posts = $db->result($query,0);
-                $db->free_result($query);
+                $posts = \XMB\SQL\countPosts(false, $tid, '', (int) $orig['dateline']);
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 message($lang['editpostmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);

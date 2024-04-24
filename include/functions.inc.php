@@ -1404,11 +1404,13 @@ function updateforumcount($fid) {
  */
 function updatethreadcount($tid) {
     global $db;
-    $tid = intval($tid);
+    $tid = (int) $tid;
+    $quarantine = false;
 
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid='$tid'");
-    $replycount = $db->num_rows($query);
-    $db->free_result($query);
+    $replycount = \XMB\SQL\countPosts($quarantine, $tid);
+
+    if ($replycount === 0) return; // Sanity check: Nothing left to do.
+
     $replycount--;
     $query = $db->query("SELECT dateline, author, pid FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 1");
     $lp = $db->fetch_array($query);

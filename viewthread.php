@@ -34,6 +34,7 @@ $tid = getInt('tid');
 $fid = getInt('fid');
 $goto = postedVar('goto', '', FALSE, FALSE, FALSE, 'g');
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+$quarantine = false;
 
 if ($goto == 'lastpost') {
     if ($pid > 0) {
@@ -42,17 +43,13 @@ if ($goto == 'lastpost') {
             $post = $db->fetch_array($query);
             $tid = $post['tid'];
 
-            $query = $db->query("SELECT COUNT(*) as postcount FROM ".X_PREFIX."posts WHERE tid=$tid AND dateline <= {$post['dateline']}");
-            $posts = $db->result($query, 0);
-            $db->free_result($query);
+            $posts = \XMB\SQL\countPosts($quarantine, $tid, '', (int) $post['dateline']);
         } else {
             header('HTTP/1.0 404 Not Found');
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
-        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $posts = (int) $db->result($query, 0);
-        $db->free_result($query);
+        $posts = \XMB\SQL\countPosts($quarantine, $tid);
 
         if ($posts == 0) {
             header('HTTP/1.0 404 Not Found');
@@ -93,9 +90,7 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid");
-        $posts = $db->result($query, 0);
-        $db->free_result($query);
+        $posts = \XMB\SQL\countPosts($quarantine, $tid);
     } else {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
@@ -112,8 +107,8 @@ if ($goto == 'lastpost') {
     $tidtest = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid");
     if ($db->num_rows($tidtest) == 1) {
         $post = $db->fetch_array($tidtest);
-        $posts = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid = $tid AND dateline <= {$post['dateline']}"), 0);
-        $page = quickpage(($posts), $ppp);
+        $posts = \XMB\SQL\countPosts($quarantine, $tid, '', (int) $post['dateline']);
+        $page = quickpage($posts, $ppp);
         if ($page == 1) {
             $page = '';
         } else {
@@ -183,7 +178,7 @@ $db->free_result($query);
 $thislast = explode('|', $thread['lastpost']);
 
 // Perform automatic maintenance
-if ( (int) $thread['replies'] != (int) $thread['postcount'] - 1) {
+if ((int) $thread['replies'] != (int) $thread['postcount'] - 1) {
     updatethreadcount($tid);
 }
 
@@ -448,7 +443,7 @@ if ($action == '') {
 
     if ( X_MEMBER && 'yes' == $self['waiting_for_mod'] ) {
         $quarantine = true;
-        $result = \XMB\SQL\countPosts( $quarantine, $tid, $self['username'] );
+        $result = \XMB\SQL\countPosts($quarantine, $tid, $self['username']);
         if ( $result > 0 ) {
             if ( 1 == $result ) {
                 $msg = $lang['moderation_replies_single'];
@@ -457,6 +452,7 @@ if ($action == '') {
             }
             $poll .= message( $msg, false, '', '', false, false, true, false ) . "<br />\n";
         }
+        $quarantine = false;
     }
 
     $startdate = '0';
