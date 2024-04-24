@@ -174,8 +174,8 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
         }
     }
 
-    if (!defined('DEBUG')) define('DEBUG', FALSE);
-    if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);
+    if (!defined('DEBUG')) define('DEBUG', true);
+    if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', false);
 
     // Force upgrade to mysqli
     if ('mysql' === $database) $database = 'mysqli';
