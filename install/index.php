@@ -229,7 +229,7 @@ if (is_readable(ROOT.'config.php')) {
         $config_error = $e->getMessage();
     }
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
-        already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre );
+        already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
     }
 } else {
 	$config_success = false;
