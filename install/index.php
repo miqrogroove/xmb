@@ -218,11 +218,22 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 <?php
 }
 
+// Check the status of the config.php file, if any
+$config_success = true;
+$config_error = '';
 if (is_readable(ROOT.'config.php')) {
-    include ROOT.'config.php';
+    try {
+        include ROOT.'config.php';
+    } catch (Throwable $e) {
+        $config_success = false;
+        $config_error = $e->getMessage();
+    }
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
         already_installed( $database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre );
     }
+} else {
+	$config_success = false;
+	$config_error = 'The config.php file was not found, or bad permissions.';
 }
 
 $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 0;
@@ -662,7 +673,9 @@ www.xmbforum2.com
 
     case 5: // Make the administrator set a username and password for the super admin user
 
-        require_once(ROOT.'config.php');
+        if (!$config_success) {
+            error('Incorrect Configuration', $config_error);
+        }
 
         $config_array = array(
             'dbname' => 'DB/NAME',
@@ -813,9 +826,10 @@ www.xmbforum2.com
         show_result(X_INST_OK);
 
         // check db-connection.
-        require_once(ROOT.'config.php');
+        if (!$config_success) {
+            error('Incorrect Configuration', $config_error);
+        }
 
-        // double check all stuff here
         show_act('Checking Database Files');
 
         // Force upgrade to mysqli

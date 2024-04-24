@@ -28,11 +28,11 @@ if (!defined('IN_CODE')) {
 }
 
 // Database connection settings
-    $dbname         = 'DB/NAME';   // Name of your database
-    $dbuser         = 'DB/USER';   // Username used to access it
-    $dbpw           = 'DB/PW';     // Password used to access it
-    $dbhost         = 'localhost'; // Database host, usually 'localhost'
-    $database       = 'mysql';     // Database type, currently only mysql is supported.
+    $dbname         = 'DB/NAME';   // Name of your database.
+    $dbuser         = 'DB/USER';   // Username for database account.
+    $dbpw           = 'DB/PW';     // Password for database account.  For help with quotes and slashes, see https://www.php.net/manual/en/language.types.string.php
+    $dbhost         = 'localhost'; // Database host. Usually, 'localhost'.
+    $database       = 'mysql';     // Database type. Currently, only mysql is supported.
     $pconnect       = 0;           // Persistent connection, 1 = on, 0 = off, use if 'too many connections'-errors appear
 
 // Table Settings
