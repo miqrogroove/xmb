@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define( 'XMB_SCHEMA_VER', 8 );
+define('XMB_SCHEMA_VER', 8);
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
@@ -54,7 +54,7 @@ function xmb_schema_table($action, $name) {
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
-function xmb_schema_drop($name){
+function xmb_schema_drop(string $name): string {
     return "DROP TABLE IF EXISTS ".X_PREFIX.$name;
 }
 
@@ -65,23 +65,23 @@ function xmb_schema_drop($name){
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
-function xmb_schema_create($name){
+function xmb_schema_create(string $name): string {
     switch($name) {
     case 'attachments':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `aid` int(10) NOT NULL auto_increment,
-          `pid` int(10) NOT NULL default 0,
-          `filename` varchar(120) NOT NULL default '',
-          `filetype` varchar(120) NOT NULL default '',
-          `filesize` varchar(120) NOT NULL default '',
+          `aid` int NOT NULL auto_increment,
+          `pid` int NOT NULL DEFAULT 0,
+          `filename` varchar(120) NOT NULL DEFAULT '',
+          `filetype` varchar(120) NOT NULL DEFAULT '',
+          `filesize` varchar(120) NOT NULL DEFAULT '',
           `attachment` longblob NOT NULL,
-          `downloads` int(10) NOT NULL default 0,
+          `downloads` int NOT NULL DEFAULT 0,
           `img_size` VARCHAR(9) NOT NULL,
           `parentid` INT NOT NULL DEFAULT '0',
           `subdir` VARCHAR( 15 ) NOT NULL,
           `uid` INT NOT NULL DEFAULT '0',
-          `updatetime` TIMESTAMP NOT NULL default current_timestamp,
+          `updatetime` TIMESTAMP NOT NULL DEFAULT current_timestamp,
           PRIMARY KEY  (`aid`),
           KEY `pid` (`pid`),
           KEY `parentid` (`parentid`),
@@ -91,12 +91,12 @@ function xmb_schema_create($name){
     case 'banned':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `ip1` smallint(3) NOT NULL default 0,
-          `ip2` smallint(3) NOT NULL default 0,
-          `ip3` smallint(3) NOT NULL default 0,
-          `ip4` smallint(3) NOT NULL default 0,
-          `dateline` int(10) NOT NULL default 0,
-          `id` smallint(6) NOT NULL AUTO_INCREMENT,
+          `ip1` smallint NOT NULL DEFAULT 0,
+          `ip2` smallint NOT NULL DEFAULT 0,
+          `ip3` smallint NOT NULL DEFAULT 0,
+          `ip4` smallint NOT NULL DEFAULT 0,
+          `dateline` int NOT NULL DEFAULT 0,
+          `id` smallint NOT NULL AUTO_INCREMENT,
           PRIMARY KEY  (`id`),
           KEY `ip1` (`ip1`),
           KEY `ip2` (`ip2`),
@@ -107,51 +107,51 @@ function xmb_schema_create($name){
     case 'buddys':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `username` varchar(32) NOT NULL default '',
-          `buddyname` varchar(32) NOT NULL default '',
+          `username` varchar(32) NOT NULL DEFAULT '',
+          `buddyname` varchar(32) NOT NULL DEFAULT '',
           KEY `username` (username (8))
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'captchaimages':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `imagehash` varchar(32) NOT NULL default '',
-          `imagestring` varchar(12) NOT NULL default '',
-          `dateline` int(10) NOT NULL default '0',
+          `imagehash` varchar(32) NOT NULL DEFAULT '',
+          `imagestring` varchar(12) NOT NULL DEFAULT '',
+          `dateline` int NOT NULL DEFAULT '0',
           KEY `dateline` (`dateline`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'favorites':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `tid` int(10) NOT NULL default 0,
-          `username` varchar(32) NOT NULL default '',
-          `type` varchar(32) NOT NULL default '',
+          `tid` int NOT NULL DEFAULT 0,
+          `username` varchar(32) NOT NULL DEFAULT '',
+          `type` varchar(32) NOT NULL DEFAULT '',
           KEY `tid` (`tid`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'forums':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `type` varchar(15) NOT NULL default '',
-          `fid` smallint(6) NOT NULL auto_increment,
-          `name` varchar(128) NOT NULL default '',
-          `status` varchar(15) NOT NULL default '',
-          `lastpost` varchar(54) NOT NULL default '',
-          `moderator` varchar(100) NOT NULL default '',
-          `displayorder` smallint(6) NOT NULL default 0,
+          `type` varchar(15) NOT NULL DEFAULT '',
+          `fid` smallint NOT NULL auto_increment,
+          `name` varchar(128) NOT NULL DEFAULT '',
+          `status` varchar(15) NOT NULL DEFAULT '',
+          `lastpost` varchar(54) NOT NULL DEFAULT '',
+          `moderator` varchar(100) NOT NULL DEFAULT '',
+          `displayorder` smallint NOT NULL DEFAULT 0,
           `description` text,
-          `allowsmilies` char(3) NOT NULL default '',
-          `allowbbcode` char(3) NOT NULL default '',
+          `allowsmilies` char(3) NOT NULL DEFAULT '',
+          `allowbbcode` char(3) NOT NULL DEFAULT '',
           `userlist` text NOT NULL,
-          `theme` smallint(3) NOT NULL default 0,
-          `posts` int(10) NOT NULL default 0,
-          `threads` int(10) NOT NULL default 0,
-          `fup` smallint(6) NOT NULL default 0,
-          `postperm` varchar(11) NOT NULL default '0,0,0,0',
-          `allowimgcode` char(3) NOT NULL default '',
-          `attachstatus` varchar(15) NOT NULL default '',
-          `password` varchar(32) NOT NULL default '',
+          `theme` smallint NOT NULL DEFAULT 0,
+          `posts` int NOT NULL DEFAULT 0,
+          `threads` int NOT NULL DEFAULT 0,
+          `fup` smallint NOT NULL DEFAULT 0,
+          `postperm` varchar(11) NOT NULL DEFAULT '0,0,0,0',
+          `allowimgcode` char(3) NOT NULL DEFAULT '',
+          `attachstatus` varchar(15) NOT NULL DEFAULT '',
+          `password` varchar(32) NOT NULL DEFAULT '',
           PRIMARY KEY  (`fid`),
           KEY `fup` (`fup`),
           KEY `type` (`type`),
@@ -162,18 +162,18 @@ function xmb_schema_create($name){
     case 'hold_attachments':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `aid` int(10) NOT NULL auto_increment,
-          `pid` int(10) NOT NULL default 0,
-          `filename` varchar(120) NOT NULL default '',
-          `filetype` varchar(120) NOT NULL default '',
-          `filesize` varchar(120) NOT NULL default '',
+          `aid` int NOT NULL auto_increment,
+          `pid` int NOT NULL DEFAULT 0,
+          `filename` varchar(120) NOT NULL DEFAULT '',
+          `filetype` varchar(120) NOT NULL DEFAULT '',
+          `filesize` varchar(120) NOT NULL DEFAULT '',
           `attachment` longblob NOT NULL,
-          `downloads` int(10) NOT NULL default 0,
+          `downloads` int NOT NULL DEFAULT 0,
           `img_size` VARCHAR(9) NOT NULL,
           `parentid` INT NOT NULL DEFAULT '0',
           `subdir` VARCHAR( 15 ) NOT NULL,
           `uid` INT NOT NULL DEFAULT '0',
-          `updatetime` TIMESTAMP NOT NULL default current_timestamp,
+          `updatetime` TIMESTAMP NOT NULL DEFAULT current_timestamp,
           PRIMARY KEY  (`aid`),
           KEY `pid` (`pid`),
           KEY `parentid` (`parentid`),
@@ -183,28 +183,28 @@ function xmb_schema_create($name){
     case 'hold_favorites':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `tid` int(10) NOT NULL default 0,
-          `username` varchar(32) NOT NULL default '',
-          `type` varchar(32) NOT NULL default '',
+          `tid` int NOT NULL DEFAULT 0,
+          `username` varchar(32) NOT NULL DEFAULT '',
+          `type` varchar(32) NOT NULL DEFAULT '',
           KEY `tid` (`tid`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'hold_posts':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `fid` smallint(6) NOT NULL default '0',
-          `tid` int(10) NOT NULL default '0',
-          `pid` int(10) NOT NULL auto_increment,
-          `author` varchar(32) NOT NULL default '',
+          `fid` smallint NOT NULL DEFAULT '0',
+          `tid` int NOT NULL DEFAULT '0',
+          `pid` int NOT NULL auto_increment,
+          `author` varchar(32) NOT NULL DEFAULT '',
           `message` text NOT NULL,
           `subject` tinytext NOT NULL,
-          `dateline` int(10) NOT NULL default 0,
-          `icon` varchar(50) default NULL,
-          `usesig` varchar(15) NOT NULL default '',
-          `useip` varchar(15) NOT NULL default '',
-          `bbcodeoff` varchar(15) NOT NULL default '',
-          `smileyoff` varchar(15) NOT NULL default '',
-          `newtid` int(10) NOT NULL default '0',
+          `dateline` int NOT NULL DEFAULT 0,
+          `icon` varchar(50) DEFAULT NULL,
+          `usesig` varchar(15) NOT NULL DEFAULT '',
+          `useip` varchar(15) NOT NULL DEFAULT '',
+          `bbcodeoff` varchar(15) NOT NULL DEFAULT '',
+          `smileyoff` varchar(15) NOT NULL DEFAULT '',
+          `newtid` int NOT NULL DEFAULT '0',
           PRIMARY KEY  (`pid`),
           KEY `fid` (`fid`),
           KEY `dateline` (`dateline`),
@@ -215,17 +215,17 @@ function xmb_schema_create($name){
     case 'hold_threads':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `tid` int(10) NOT NULL auto_increment,
-          `fid` smallint(6) NOT NULL default 0,
-          `subject` varchar(128) NOT NULL default '',
-          `icon` varchar(75) NOT NULL default '',
-          `lastpost` varchar(54) NOT NULL default '',
-          `views` bigint(32) NOT NULL default 0,
-          `replies` int(10) NOT NULL default 0,
-          `author` varchar(32) NOT NULL default '',
-          `closed` varchar(15) NOT NULL default '',
-          `topped` tinyint(1) NOT NULL default 0,
-          `pollopts` tinyint(1) NOT NULL default 0,
+          `tid` int NOT NULL auto_increment,
+          `fid` smallint NOT NULL DEFAULT 0,
+          `subject` varchar(128) NOT NULL DEFAULT '',
+          `icon` varchar(75) NOT NULL DEFAULT '',
+          `lastpost` varchar(54) NOT NULL DEFAULT '',
+          `views` bigint NOT NULL DEFAULT 0,
+          `replies` int NOT NULL DEFAULT 0,
+          `author` varchar(32) NOT NULL DEFAULT '',
+          `closed` varchar(15) NOT NULL DEFAULT '',
+          `topped` tinyint NOT NULL DEFAULT 0,
+          `pollopts` tinyint NOT NULL DEFAULT 0,
           PRIMARY KEY  (`tid`),
           KEY `lastpost` (`lastpost`),
           KEY `author` (author (8)),
@@ -236,7 +236,7 @@ function xmb_schema_create($name){
     case 'hold_vote_desc':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
+          `vote_id` mediumint unsigned NOT NULL auto_increment,
           `topic_id` INT UNSIGNED NOT NULL,
           PRIMARY KEY  (`vote_id`),
           KEY `topic_id` (`topic_id`)
@@ -245,10 +245,10 @@ function xmb_schema_create($name){
     case 'hold_vote_results':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `vote_id` mediumint(8) unsigned NOT NULL default '0',
-          `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
-          `vote_option_text` varchar(255) NOT NULL default '',
-          `vote_result` int(11) NOT NULL default '0',
+          `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
+          `vote_option_id` tinyint unsigned NOT NULL DEFAULT '0',
+          `vote_option_text` varchar(255) NOT NULL DEFAULT '',
+          `vote_result` int NOT NULL DEFAULT '0',
           KEY `vote_option_id` (`vote_option_id`),
           KEY `vote_id` (`vote_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -283,10 +283,10 @@ function xmb_schema_create($name){
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `username` varchar(32) NOT NULL,
-          `action` varchar(64) NOT NULL default '',
-          `fid` smallint(6) NOT NULL default 0,
-          `tid` int(10) NOT NULL default 0,
-          `date` int(10) NOT NULL default 0,
+          `action` varchar(64) NOT NULL DEFAULT '',
+          `fid` smallint NOT NULL DEFAULT 0,
+          `tid` int NOT NULL DEFAULT 0,
+          `date` int NOT NULL DEFAULT 0,
           KEY `username` (username (8)),
           KEY `action` (action (8)),
           INDEX ( `fid` ),
@@ -297,51 +297,51 @@ function xmb_schema_create($name){
     case 'members':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `uid` int(12) NOT NULL auto_increment,
-          `username` varchar(32) NOT NULL default '',
-          `password` varchar(32) NOT NULL default '',
-          `regdate` int(10) NOT NULL default 0,
+          `uid` int NOT NULL auto_increment,
+          `username` varchar(32) NOT NULL DEFAULT '',
+          `password` varchar(32) NOT NULL DEFAULT '',
+          `regdate` int NOT NULL DEFAULT 0,
           `postnum` MEDIUMINT NOT NULL DEFAULT 0,
-          `email` varchar(60) NOT NULL default '',
-          `site` varchar(75) NOT NULL default '',
-          `aim` varchar(40) NOT NULL default '',
-          `status` varchar(35) NOT NULL default '',
-          `location` varchar(50) NOT NULL default '',
+          `email` varchar(60) NOT NULL DEFAULT '',
+          `site` varchar(75) NOT NULL DEFAULT '',
+          `aim` varchar(40) NOT NULL DEFAULT '',
+          `status` varchar(35) NOT NULL DEFAULT '',
+          `location` varchar(50) NOT NULL DEFAULT '',
           `bio` text NOT NULL,
           `sig` text NOT NULL,
-          `showemail` varchar(15) NOT NULL default '',
-          `timeoffset` DECIMAL(4,2) NOT NULL default 0,
-          `icq` varchar(30) NOT NULL default '',
-          `avatar` varchar(120) default NULL,
-          `yahoo` varchar(40) NOT NULL default '',
-          `customstatus` varchar(250) NOT NULL default '',
-          `theme` smallint(3) NOT NULL default 0,
-          `bday` varchar(10) NOT NULL default '0000-00-00',
-          `langfile` varchar(40) NOT NULL default '',
-          `tpp` smallint(6) NOT NULL default 0,
-          `ppp` smallint(6) NOT NULL default 0,
-          `newsletter` char(3) NOT NULL default '',
-          `regip` varchar(15) NOT NULL default '',
-          `timeformat` int(5) NOT NULL default 0,
-          `msn` varchar(40) NOT NULL default '',
-          `ban` varchar(15) NOT NULL default '0',
-          `dateformat` varchar(10) NOT NULL default '',
+          `showemail` varchar(15) NOT NULL DEFAULT '',
+          `timeoffset` DECIMAL(4,2) NOT NULL DEFAULT 0,
+          `icq` varchar(30) NOT NULL DEFAULT '',
+          `avatar` varchar(120) DEFAULT NULL,
+          `yahoo` varchar(40) NOT NULL DEFAULT '',
+          `customstatus` varchar(250) NOT NULL DEFAULT '',
+          `theme` smallint NOT NULL DEFAULT 0,
+          `bday` varchar(10) NOT NULL DEFAULT '0000-00-00',
+          `langfile` varchar(40) NOT NULL DEFAULT '',
+          `tpp` smallint NOT NULL DEFAULT 0,
+          `ppp` smallint NOT NULL DEFAULT 0,
+          `newsletter` char(3) NOT NULL DEFAULT '',
+          `regip` varchar(15) NOT NULL DEFAULT '',
+          `timeformat` int NOT NULL DEFAULT 0,
+          `msn` varchar(40) NOT NULL DEFAULT '',
+          `ban` varchar(15) NOT NULL DEFAULT '0',
+          `dateformat` varchar(10) NOT NULL DEFAULT '',
           `ignoreu2u` text NOT NULL,
-          `lastvisit` int(10) unsigned NOT NULL default 0,
-          `mood` varchar(128) NOT NULL default 'Not Set',
-          `pwdate` int(10) NOT NULL default 0,
-          `invisible` SET('1','0') default 0,
+          `lastvisit` int UNSIGNED NOT NULL DEFAULT 0,
+          `mood` varchar(128) NOT NULL DEFAULT 'Not Set',
+          `pwdate` int NOT NULL DEFAULT 0,
+          `invisible` SET('1','0') DEFAULT 0,
           `u2ufolders` text NOT NULL,
-          `saveogu2u` char(3) NOT NULL default '',
-          `emailonu2u` char(3) NOT NULL default '',
-          `useoldu2u` char(3) NOT NULL default '',
+          `saveogu2u` char(3) NOT NULL DEFAULT '',
+          `emailonu2u` char(3) NOT NULL DEFAULT '',
+          `useoldu2u` char(3) NOT NULL DEFAULT '',
           `u2ualert` TINYINT NOT NULL DEFAULT '0',
-          `bad_login_date` int(10) unsigned NOT NULL default 0,
-          `bad_login_count` int(10) unsigned NOT NULL default 0,
-          `bad_session_date` int(10) unsigned NOT NULL default 0,
-          `bad_session_count` int(10) unsigned NOT NULL default 0,
-          `sub_each_post` varchar(3) NOT NULL default 'no',
-          `waiting_for_mod` varchar(3) NOT NULL default 'no',
+          `bad_login_date` int unsigned NOT NULL DEFAULT 0,
+          `bad_login_count` int unsigned NOT NULL DEFAULT 0,
+          `bad_session_date` int unsigned NOT NULL DEFAULT 0,
+          `bad_session_count` int unsigned NOT NULL DEFAULT 0,
+          `sub_each_post` varchar(3) NOT NULL DEFAULT 'no',
+          `waiting_for_mod` varchar(3) NOT NULL DEFAULT 'no',
           PRIMARY KEY  (`uid`),
           UNIQUE KEY `userunique` (`username`),
           KEY `status` (`status`),
@@ -354,18 +354,18 @@ function xmb_schema_create($name){
     case 'posts':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `fid` smallint(6) NOT NULL default '0',
-          `tid` int(10) NOT NULL default '0',
-          `pid` int(10) NOT NULL auto_increment,
-          `author` varchar(32) NOT NULL default '',
+          `fid` smallint NOT NULL DEFAULT '0',
+          `tid` int NOT NULL DEFAULT '0',
+          `pid` int NOT NULL auto_increment,
+          `author` varchar(32) NOT NULL DEFAULT '',
           `message` text NOT NULL,
           `subject` tinytext NOT NULL,
-          `dateline` int(10) NOT NULL default 0,
-          `icon` varchar(50) default NULL,
-          `usesig` varchar(15) NOT NULL default '',
-          `useip` varchar(15) NOT NULL default '',
-          `bbcodeoff` varchar(15) NOT NULL default '',
-          `smileyoff` varchar(15) NOT NULL default '',
+          `dateline` int NOT NULL DEFAULT 0,
+          `icon` varchar(50) DEFAULT NULL,
+          `usesig` varchar(15) NOT NULL DEFAULT '',
+          `useip` varchar(15) NOT NULL DEFAULT '',
+          `bbcodeoff` varchar(15) NOT NULL DEFAULT '',
+          `smileyoff` varchar(15) NOT NULL DEFAULT '',
           PRIMARY KEY  (`pid`),
           KEY `fid` (`fid`),
           KEY `dateline` (`dateline`),
@@ -376,12 +376,12 @@ function xmb_schema_create($name){
     case 'ranks':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `title` varchar(100) NOT NULL default '',
+          `title` varchar(100) NOT NULL DEFAULT '',
           `posts` MEDIUMINT DEFAULT 0,
-          `id` smallint(5) NOT NULL auto_increment,
-          `stars` smallint(6) NOT NULL default 0,
-          `allowavatars` char(3) NOT NULL default '',
-          `avatarrank` varchar(90) default NULL,
+          `id` smallint NOT NULL auto_increment,
+          `stars` smallint NOT NULL DEFAULT 0,
+          `allowavatars` char(3) NOT NULL DEFAULT '',
+          `avatarrank` varchar(90) DEFAULT NULL,
           PRIMARY KEY  (`id`),
           KEY `title` (`title`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -389,8 +389,8 @@ function xmb_schema_create($name){
     case 'restricted':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `name` varchar(32) NOT NULL default '',
-          `id` smallint(6) NOT NULL auto_increment,
+          `name` varchar(32) NOT NULL DEFAULT '',
+          `id` smallint NOT NULL auto_increment,
           `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
           `partial` ENUM('0', '1') DEFAULT '1' NOT NULL,
           PRIMARY KEY  (`id`)
@@ -401,9 +401,9 @@ function xmb_schema_create($name){
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `token` varchar(32) NOT NULL,
           `username` varchar(32) NOT NULL,
-          `login_date` int(10) unsigned NOT NULL,
-          `expire` int(10) unsigned NOT NULL,
-          `regenerate` int(10) unsigned NOT NULL,
+          `login_date` int unsigned NOT NULL,
+          `expire` int unsigned NOT NULL,
+          `regenerate` int unsigned NOT NULL,
           `replaces` varchar(32) NOT NULL,
           `agent` varchar(255) NOT NULL,
           PRIMARY KEY (`token`),
@@ -424,18 +424,18 @@ function xmb_schema_create($name){
     case 'smilies':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `type` varchar(15) NOT NULL default '',
-          `code` varchar(40) NOT NULL default '',
-          `url` varchar(40) NOT NULL default '',
-          `id` smallint(6) NOT NULL auto_increment,
+          `type` varchar(15) NOT NULL DEFAULT '',
+          `code` varchar(40) NOT NULL DEFAULT '',
+          `url` varchar(40) NOT NULL DEFAULT '',
+          `id` smallint NOT NULL auto_increment,
           PRIMARY KEY  (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'templates':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `id` smallint(6) NOT NULL auto_increment,
-          `name` varchar(32) NOT NULL default '',
+          `id` smallint NOT NULL auto_increment,
+          `name` varchar(32) NOT NULL DEFAULT '',
           `template` text NOT NULL,
           PRIMARY KEY  (`id`),
           KEY `name` (`name`)
@@ -444,30 +444,30 @@ function xmb_schema_create($name){
     case 'themes':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `themeid` smallint(3) NOT NULL auto_increment,
-          `name` varchar(32) NOT NULL default '',
-          `bgcolor` varchar(25) NOT NULL default '',
-          `altbg1` varchar(15) NOT NULL default '',
-          `altbg2` varchar(15) NOT NULL default '',
-          `link` varchar(15) NOT NULL default '',
-          `bordercolor` varchar(15) NOT NULL default '',
-          `header` varchar(15) NOT NULL default '',
-          `headertext` varchar(15) NOT NULL default '',
-          `top` varchar(15) NOT NULL default '',
-          `catcolor` varchar(15) NOT NULL default '',
-          `tabletext` varchar(15) NOT NULL default '',
-          `text` varchar(15) NOT NULL default '',
-          `borderwidth` varchar(15) NOT NULL default '',
-          `tablewidth` varchar(15) NOT NULL default '',
-          `tablespace` varchar(15) NOT NULL default '',
-          `font` varchar(40) NOT NULL default '',
-          `fontsize` varchar(40) NOT NULL default '',
-          `boardimg` varchar(128) default NULL,
-          `imgdir` varchar(120) NOT NULL default '',
+          `themeid` smallint NOT NULL auto_increment,
+          `name` varchar(32) NOT NULL DEFAULT '',
+          `bgcolor` varchar(25) NOT NULL DEFAULT '',
+          `altbg1` varchar(15) NOT NULL DEFAULT '',
+          `altbg2` varchar(15) NOT NULL DEFAULT '',
+          `link` varchar(15) NOT NULL DEFAULT '',
+          `bordercolor` varchar(15) NOT NULL DEFAULT '',
+          `header` varchar(15) NOT NULL DEFAULT '',
+          `headertext` varchar(15) NOT NULL DEFAULT '',
+          `top` varchar(15) NOT NULL DEFAULT '',
+          `catcolor` varchar(15) NOT NULL DEFAULT '',
+          `tabletext` varchar(15) NOT NULL DEFAULT '',
+          `text` varchar(15) NOT NULL DEFAULT '',
+          `borderwidth` varchar(15) NOT NULL DEFAULT '',
+          `tablewidth` varchar(15) NOT NULL DEFAULT '',
+          `tablespace` varchar(15) NOT NULL DEFAULT '',
+          `font` varchar(40) NOT NULL DEFAULT '',
+          `fontsize` varchar(40) NOT NULL DEFAULT '',
+          `boardimg` varchar(128) DEFAULT NULL,
+          `imgdir` varchar(120) NOT NULL DEFAULT '',
           `admdir` VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin',
-          `smdir` varchar(120) NOT NULL default 'images/smilies',
-          `cattext` varchar(15) NOT NULL default '',
-          `version` int(10) unsigned NOT NULL default 0,
+          `smdir` varchar(120) NOT NULL DEFAULT 'images/smilies',
+          `cattext` varchar(15) NOT NULL DEFAULT '',
+          `version` int unsigned NOT NULL DEFAULT 0,
           PRIMARY KEY  (`themeid`),
           KEY `name` (`name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -475,17 +475,17 @@ function xmb_schema_create($name){
     case 'threads':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `tid` int(10) NOT NULL auto_increment,
-          `fid` smallint(6) NOT NULL default 0,
-          `subject` varchar(128) NOT NULL default '',
-          `icon` varchar(75) NOT NULL default '',
-          `lastpost` varchar(54) NOT NULL default '',
-          `views` bigint(32) NOT NULL default 0,
-          `replies` int(10) NOT NULL default 0,
-          `author` varchar(32) NOT NULL default '',
-          `closed` varchar(15) NOT NULL default '',
-          `topped` tinyint(1) NOT NULL default 0,
-          `pollopts` tinyint(1) NOT NULL default 0,
+          `tid` int NOT NULL auto_increment,
+          `fid` smallint NOT NULL DEFAULT 0,
+          `subject` varchar(128) NOT NULL DEFAULT '',
+          `icon` varchar(75) NOT NULL DEFAULT '',
+          `lastpost` varchar(54) NOT NULL DEFAULT '',
+          `views` bigint NOT NULL DEFAULT 0,
+          `replies` int NOT NULL DEFAULT 0,
+          `author` varchar(32) NOT NULL DEFAULT '',
+          `closed` varchar(15) NOT NULL DEFAULT '',
+          `topped` tinyint NOT NULL DEFAULT 0,
+          `pollopts` tinyint NOT NULL DEFAULT 0,
           PRIMARY KEY  (`tid`),
           KEY `lastpost` (`lastpost`),
           KEY `author` (author (8)),
@@ -500,7 +500,7 @@ function xmb_schema_create($name){
           `username` varchar(32) NOT NULL,
           `action` varchar(32) NOT NULL,
           `object` varchar(32) NOT NULL,
-          `expire` int(10) unsigned NOT NULL,
+          `expire` int unsigned NOT NULL,
           PRIMARY KEY (`token`),
           KEY `expire` (`expire`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -508,17 +508,17 @@ function xmb_schema_create($name){
     case 'u2u':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `u2uid` bigint(10) NOT NULL auto_increment,
-          `msgto` varchar(32) NOT NULL default '',
-          `msgfrom` varchar(32) NOT NULL default '',
-          `type` set('incoming','outgoing','draft') NOT NULL default '',
-          `owner` varchar(32) NOT NULL default '',
-          `folder` varchar(32) NOT NULL default '',
-          `subject` varchar(64) NOT NULL default '',
+          `u2uid` bigint NOT NULL auto_increment,
+          `msgto` varchar(32) NOT NULL DEFAULT '',
+          `msgfrom` varchar(32) NOT NULL DEFAULT '',
+          `type` set('incoming','outgoing','draft') NOT NULL DEFAULT '',
+          `owner` varchar(32) NOT NULL DEFAULT '',
+          `folder` varchar(32) NOT NULL DEFAULT '',
+          `subject` varchar(64) NOT NULL DEFAULT '',
           `message` text NOT NULL,
-          `dateline` int(10) NOT NULL default 0,
-          `readstatus` set('yes','no') NOT NULL default '',
-          `sentstatus` set('yes','no') NOT NULL default '',
+          `dateline` int NOT NULL DEFAULT 0,
+          `readstatus` set('yes','no') NOT NULL DEFAULT '',
+          `sentstatus` set('yes','no') NOT NULL DEFAULT '',
           PRIMARY KEY  (`u2uid`),
           KEY `msgto` (msgto (8)),
           KEY `msgfrom` (msgfrom (8)),
@@ -530,7 +530,7 @@ function xmb_schema_create($name){
     case 'vote_desc':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `vote_id` mediumint(8) unsigned NOT NULL auto_increment,
+          `vote_id` mediumint unsigned NOT NULL auto_increment,
           `topic_id` INT UNSIGNED NOT NULL,
           PRIMARY KEY  (`vote_id`),
           KEY `topic_id` (`topic_id`)
@@ -539,10 +539,10 @@ function xmb_schema_create($name){
     case 'vote_results':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `vote_id` mediumint(8) unsigned NOT NULL default '0',
-          `vote_option_id` tinyint(4) unsigned NOT NULL default '0',
-          `vote_option_text` varchar(255) NOT NULL default '',
-          `vote_result` int(11) NOT NULL default '0',
+          `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
+          `vote_option_id` tinyint unsigned NOT NULL DEFAULT '0',
+          `vote_option_text` varchar(255) NOT NULL DEFAULT '',
+          `vote_result` int NOT NULL DEFAULT '0',
           KEY `vote_option_id` (`vote_option_id`),
           KEY `vote_id` (`vote_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -550,9 +550,9 @@ function xmb_schema_create($name){
     case 'vote_voters':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `vote_id` mediumint(8) unsigned NOT NULL default '0',
-          `vote_user_id` mediumint(8) NOT NULL default '0',
-          `vote_user_ip` char(8) NOT NULL default '',
+          `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
+          `vote_user_id` mediumint NOT NULL DEFAULT '0',
+          `vote_user_ip` char(8) NOT NULL DEFAULT '',
           KEY `vote_id` (`vote_id`),
           KEY `vote_user_id` (`vote_user_id`),
           KEY `vote_user_ip` (`vote_user_ip`)
@@ -561,11 +561,11 @@ function xmb_schema_create($name){
     case 'whosonline':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `username` varchar(32) NOT NULL default '',
-          `ip` varchar(15) NOT NULL default '',
-          `time` int(10) NOT NULL default 0,
-          `location` varchar(150) NOT NULL default '',
-          `invisible` SET('1','0') default '0',
+          `username` varchar(32) NOT NULL DEFAULT '',
+          `ip` varchar(15) NOT NULL DEFAULT '',
+          `time` int NOT NULL DEFAULT 0,
+          `location` varchar(150) NOT NULL DEFAULT '',
+          `invisible` SET('1','0') DEFAULT '0',
           KEY `username` (username (8)),
           KEY `ip` (`ip`),
           KEY `time` (`time`),
@@ -575,9 +575,9 @@ function xmb_schema_create($name){
     case 'words':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `find` varchar(60) NOT NULL default '',
-          `replace1` varchar(60) NOT NULL default '',
-          `id` smallint(6) NOT NULL auto_increment,
+          `find` varchar(60) NOT NULL DEFAULT '',
+          `replace1` varchar(60) NOT NULL DEFAULT '',
+          `id` smallint NOT NULL auto_increment,
           PRIMARY KEY  (`id`),
           KEY `find` (`find`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
@@ -639,7 +639,7 @@ function xmb_schema_list(): array {
  * @param string $name The name of the XMB table, with no prefix.
  * @return bool
  */
-function xmb_schema_table_exists($name) {
+function xmb_schema_table_exists(string $name): bool {
     global $db;
 
     $sqlname = $db->like_escape(X_PREFIX.$name);
@@ -659,7 +659,7 @@ function xmb_schema_table_exists($name) {
  * @param string $subpart Optional. The number of indexed characters, if you want to only find indexes that have this attribute.
  * @return bool
  */
-function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
+function xmb_schema_index_exists(string $table, string $column, string $index = '', string $subpart = ''): bool {
     global $db;
 
     if (empty($column) && empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
@@ -690,7 +690,7 @@ function xmb_schema_index_exists($table, $column, $index = '', $subpart = '') {
  * @param string $table The name of the XMB table, with no prefix.
  * @return array
  */
-function xmb_schema_columns_list($table) {
+function xmb_schema_columns_list(string $table): array {
     global $db;
 
     $columns = array();

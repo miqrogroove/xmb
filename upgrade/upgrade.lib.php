@@ -191,7 +191,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'banned';
     $colname = 'id';
-    $coltype = "smallint(6) NOT NULL AUTO_INCREMENT";
+    $coltype = "smallint NOT NULL AUTO_INCREMENT";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Extra']) != 'auto_increment') {
@@ -200,11 +200,13 @@ function upgrade_schema_to_v0() {
     $db->free_result($query);
 
     $columns = array(
-    'dateline' => "int(10) NOT NULL default 0");
+    'dateline' => "int NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'bigint(30)') {
+        // Prior to MySQL 8.0, the column type was always "bigint(30)".
+        // From v8.0 the integer width is deprecated and DESCRIBE always returns "bigint" only.
+        if (stripos($row['Type'], 'bigint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -234,8 +236,8 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'buddys';
     $columns = array(
-    'username' => "varchar(32) NOT NULL default ''",
-    'buddyname' => "varchar(32) NOT NULL default ''");
+    'username' => "varchar(32) NOT NULL DEFAULT ''",
+    'buddyname' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -269,18 +271,18 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'favorites';
     $columns = array(
-    'tid' => "int(10) NOT NULL default 0");
+    'tid' => "int NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)') {
+        if (stripos($row['Type'], 'smallint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
     }
 
     $columns = array(
-    'username' => "varchar(32) NOT NULL default ''");
+    'username' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -291,7 +293,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'type' => "varchar(32) NOT NULL default ''");
+    'type' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -327,7 +329,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'themeid' => "smallint(3) NOT NULL auto_increment");
+    'themeid' => "smallint NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -337,7 +339,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'name' => "varchar(32) NOT NULL default ''");
+    'name' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -348,7 +350,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'boardimg' => "varchar(128) default NULL");
+    'boardimg' => "varchar(128) DEFAULT NULL");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -429,7 +431,7 @@ function upgrade_schema_to_v0() {
         fixPostPerm();   // 1.8 => 1.9.1
         fixForumPerms(); // 1.9.1 => 1.9.9
 
-        // Drop columns now so that any errors later on wont leave both sets of permissions.
+        // Drop columns now so that any errors later on won't leave both sets of permissions.
         show_progress('Deleting the old permissions data');
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
@@ -460,8 +462,8 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'lastpost' => "varchar(54) NOT NULL default ''",
-    'password' => "varchar(32) NOT NULL default ''");
+    'lastpost' => "varchar(54) NOT NULL DEFAULT ''",
+    'password' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -472,7 +474,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'theme' => "smallint(3) NOT NULL default 0");
+    'theme' => "smallint NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -489,23 +491,11 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'name';
-    $coltype = "varchar(128) NOT NULL default ''";
+    $coltype = "varchar(128) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(50)') {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-    }
-
-    $columns = array(
-    'posts' => "int(10) NOT NULL default 0",
-    'threads' => "int(10) NOT NULL default 0");
-    foreach($columns as $colname => $coltype) {
-        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
-        $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'int(100)') {
-            $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
-        }
-        $db->free_result($query);
     }
 
     $columns = array(
@@ -561,45 +551,45 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'addtime' => "DECIMAL(4,2) NOT NULL default 0",
-    'max_avatar_size' => "varchar(9) NOT NULL default '100x100'",
-    'footer_options' => "varchar(45) NOT NULL default 'queries-phpsql-loadtimes-totaltime'",
-    'space_cats' => "char(3) NOT NULL default 'no'",
-    'spellcheck' => "char(3) NOT NULL default 'off'",
-    'allowrankedit' => "char(3) NOT NULL default 'on'",
-    'notifyonreg' => "SET('off','u2u','email') NOT NULL default 'off'",
-    'subject_in_title' => "char(3) NOT NULL default ''",
-    'def_tz' => "decimal(4,2) NOT NULL default '0.00'",
-    'indexshowbar' => "tinyint(2) NOT NULL default 2",
-    'resetsigs' => "char(3) NOT NULL default 'off'",
-    'pruneusers' => "smallint(3) NOT NULL default 0",
-    'ipreg' => "char(3) NOT NULL default 'on'",
-    'maxdayreg' => "smallint(5) UNSIGNED NOT NULL default 25",
-    'maxattachsize' => "int(10) UNSIGNED NOT NULL default 256000",
-    'captcha_status' => "set('on','off') NOT NULL default 'on'",
-    'captcha_reg_status' => "set('on','off') NOT NULL default 'on'",
-    'captcha_post_status' => "set('on','off') NOT NULL default 'on'",
-    'captcha_code_charset' => "varchar(128) NOT NULL default 'A-Z'",
-    'captcha_code_length' => "int(2) NOT NULL default '8'",
-    'captcha_code_casesensitive' => "set('on','off') NOT NULL default 'off'",
-    'captcha_code_shadow' => "set('on','off') NOT NULL default 'off'",
-    'captcha_image_type' => "varchar(4) NOT NULL default 'png'",
-    'captcha_image_width' => "int(3) NOT NULL default '250'",
-    'captcha_image_height' => "int(3) NOT NULL default '50'",
-    'captcha_image_bg' => "varchar(128) NOT NULL default ''",
-    'captcha_image_dots' => "int(3) NOT NULL default '0'",
-    'captcha_image_lines' => "int(2) NOT NULL default '70'",
-    'captcha_image_fonts' => "varchar(128) NOT NULL default ''",
-    'captcha_image_minfont' => "int(2) NOT NULL default '16'",
-    'captcha_image_maxfont' => "int(2) NOT NULL default '25'",
-    'captcha_image_color' => "set('on','off') NOT NULL default 'off'",
-    'showsubforums' => "set('on','off') NOT NULL default 'off'",
-    'regoptional' => "set('on','off') NOT NULL default 'off'",
-    'quickreply_status' => "set('on','off') NOT NULL default 'on'",
-    'quickjump_status' => "set('on','off') NOT NULL default 'on'",
-    'index_stats' => "set('on','off') NOT NULL default 'on'",
-    'onlinetodaycount' => "smallint(5) NOT NULL default '50'",
-    'onlinetoday_status' => "set('on','off') NOT NULL default 'on'");
+    'addtime' => "DECIMAL(4,2) NOT NULL DEFAULT 0",
+    'max_avatar_size' => "varchar(9) NOT NULL DEFAULT '100x100'",
+    'footer_options' => "varchar(45) NOT NULL DEFAULT 'queries-phpsql-loadtimes-totaltime'",
+    'space_cats' => "char(3) NOT NULL DEFAULT 'no'",
+    'spellcheck' => "char(3) NOT NULL DEFAULT 'off'",
+    'allowrankedit' => "char(3) NOT NULL DEFAULT 'on'",
+    'notifyonreg' => "SET('off','u2u','email') NOT NULL DEFAULT 'off'",
+    'subject_in_title' => "char(3) NOT NULL DEFAULT ''",
+    'def_tz' => "decimal(4,2) NOT NULL DEFAULT '0.00'",
+    'indexshowbar' => "tinyint NOT NULL DEFAULT 2",
+    'resetsigs' => "char(3) NOT NULL DEFAULT 'off'",
+    'pruneusers' => "smallint NOT NULL DEFAULT 0",
+    'ipreg' => "char(3) NOT NULL DEFAULT 'on'",
+    'maxdayreg' => "smallint UNSIGNED NOT NULL DEFAULT 25",
+    'maxattachsize' => "int UNSIGNED NOT NULL DEFAULT 256000",
+    'captcha_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'captcha_reg_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'captcha_post_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'captcha_code_charset' => "varchar(128) NOT NULL DEFAULT 'A-Z'",
+    'captcha_code_length' => "int NOT NULL DEFAULT '8'",
+    'captcha_code_casesensitive' => "set('on','off') NOT NULL DEFAULT 'off'",
+    'captcha_code_shadow' => "set('on','off') NOT NULL DEFAULT 'off'",
+    'captcha_image_type' => "varchar(4) NOT NULL DEFAULT 'png'",
+    'captcha_image_width' => "int NOT NULL DEFAULT '250'",
+    'captcha_image_height' => "int NOT NULL DEFAULT '50'",
+    'captcha_image_bg' => "varchar(128) NOT NULL DEFAULT ''",
+    'captcha_image_dots' => "int NOT NULL DEFAULT '0'",
+    'captcha_image_lines' => "int NOT NULL DEFAULT '70'",
+    'captcha_image_fonts' => "varchar(128) NOT NULL DEFAULT ''",
+    'captcha_image_minfont' => "int NOT NULL DEFAULT '16'",
+    'captcha_image_maxfont' => "int NOT NULL DEFAULT '25'",
+    'captcha_image_color' => "set('on','off') NOT NULL DEFAULT 'off'",
+    'showsubforums' => "set('on','off') NOT NULL DEFAULT 'off'",
+    'regoptional' => "set('on','off') NOT NULL DEFAULT 'off'",
+    'quickreply_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'quickjump_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'index_stats' => "set('on','off') NOT NULL DEFAULT 'on'",
+    'onlinetodaycount' => "smallint NOT NULL DEFAULT '50'",
+    'onlinetoday_status' => "set('on','off') NOT NULL DEFAULT 'on'");
     $missing = array_diff(array_keys($columns), $existing);
     foreach($missing as $colname) {
         $coltype = $columns[$colname];
@@ -607,7 +597,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'adminemail';
-    $coltype = "varchar(60) NOT NULL default 'webmaster@domain.ext'";
+    $coltype = "varchar(60) NOT NULL DEFAULT 'webmaster@domain.ext'";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(32)' || strtolower($row['Type']) == 'varchar(50)') {
@@ -615,8 +605,8 @@ function upgrade_schema_to_v0() {
         }
 
     $columns = array(
-    'langfile' => "varchar(34) NOT NULL default 'English'",
-    'bbname' => "varchar(32) NOT NULL default 'Your Forums'");
+    'langfile' => "varchar(34) NOT NULL DEFAULT 'English'",
+    'bbname' => "varchar(32) NOT NULL DEFAULT 'Your Forums'");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -627,7 +617,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'theme' => "smallint(3) NOT NULL default 1");
+    'theme' => "smallint NOT NULL DEFAULT 1");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -644,7 +634,7 @@ function upgrade_schema_to_v0() {
         }
 
     $columns = array(
-    'dateformat' => "varchar(10) NOT NULL default 'dd-mm-yyyy'");
+    'dateformat' => "varchar(10) NOT NULL DEFAULT 'dd-mm-yyyy'");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -655,7 +645,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'tickerdelay' => "int(6) NOT NULL default 4000");
+    'tickerdelay' => "int NOT NULL DEFAULT 4000");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -668,9 +658,9 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'todaysposts' => "char(3) NOT NULL default 'on'",
-    'stats' => "char(3) NOT NULL default 'on'",
-    'authorstatus' => "char(3) NOT NULL default 'on'",
+    'todaysposts' => "char(3) NOT NULL DEFAULT 'on'",
+    'stats' => "char(3) NOT NULL DEFAULT 'on'",
+    'authorstatus' => "char(3) NOT NULL DEFAULT 'on'",
     'tickercontents' => "text NOT NULL");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -709,15 +699,15 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'uid';
-    $coltype = "int(12) NOT NULL auto_increment";
+    $coltype = "int NOT NULL auto_increment";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(6)' || strtolower($row['Type']) == 'int(6)') {
+    if (stripos($row['Type'], 'smallint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'username';
-    $coltype = "varchar(32) NOT NULL default ''";
+    $coltype = "varchar(32) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(25)') {
@@ -725,7 +715,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'password';
-    $coltype = "varchar(32) NOT NULL default ''";
+    $coltype = "varchar(32) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
@@ -733,10 +723,10 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'regdate';
-    $coltype = "int(10) NOT NULL default 0";
+    $coltype = "int NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'bigint(30)') {
+    if (stripos($row['Type'], 'bigint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -744,20 +734,20 @@ function upgrade_schema_to_v0() {
     $coltype = "MEDIUMINT NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'int(10)') {
+    if (stripos($row['Type'], 'int') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'timeoffset';
-    $coltype = "DECIMAL(4,2) NOT NULL default 0";
+    $coltype = "DECIMAL(4,2) NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'int(5)') {
+    if (stripos($row['Type'], 'int') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'avatar';
-    $coltype = "varchar(120) default NULL";
+    $coltype = "varchar(120) DEFAULT NULL";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(90)') {
@@ -765,7 +755,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'theme';
-    $coltype = "smallint(3) NOT NULL default 0";
+    $coltype = "smallint NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(30)') {
@@ -779,7 +769,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'regip';
-    $coltype = "varchar(15) NOT NULL default ''";
+    $coltype = "varchar(15) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
@@ -787,17 +777,17 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'lastvisit';
-    $coltype = "int(10) unsigned NOT NULL default 0";
+    $coltype = "int UNSIGNED NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'varchar(30)' || strtolower($row['Type']) == 'bigint(30)' || strtolower($row['Null']) == 'yes') {
+    if (strtolower($row['Type']) == 'varchar(30)' || stripos($row['Type'], 'bigint') === 0 || strtolower($row['Null']) == 'yes') {
         // SQL mode STRICT_TRANS_TABLES requires explicit conversion of non-numeric values before modifying column types in any table.
         upgrade_query("UPDATE ".X_PREFIX."$table SET $colname = '0' WHERE $colname = '' OR $colname IS NULL");
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'mood';
-    $coltype = "varchar(128) NOT NULL default 'Not Set'";
+    $coltype = "varchar(128) NOT NULL DEFAULT 'Not Set'";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(15)' || strtolower($row['Type']) == 'varchar(32)') {
@@ -805,18 +795,18 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'pwdate';
-    $coltype = "int(10) NOT NULL default 0";
+    $coltype = "int NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'bigint(30)') {
+    if (stripos($row['Type'], 'bigint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $columns = array(
-    'email' => "varchar(60) NOT NULL default ''",
-    'site' => "varchar(75) NOT NULL default ''",
-    'aim' => "varchar(40) NOT NULL default ''",
-    'location' => "varchar(50) NOT NULL default ''",
+    'email' => "varchar(60) NOT NULL DEFAULT ''",
+    'site' => "varchar(75) NOT NULL DEFAULT ''",
+    'aim' => "varchar(40) NOT NULL DEFAULT ''",
+    'location' => "varchar(50) NOT NULL DEFAULT ''",
     'bio' => "text NOT NULL",
     'ignoreu2u' => "text NOT NULL");
     foreach($columns as $colname => $coltype) {
@@ -828,7 +818,7 @@ function upgrade_schema_to_v0() {
         $db->free_result($query);
     }
     $columns = array(
-    'bday' => "varchar(10) NOT NULL default '0000-00-00'");
+    'bday' => "varchar(10) NOT NULL DEFAULT '0000-00-00'");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -839,11 +829,11 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'invisible' => "SET('1','0') default 0",
+    'invisible' => "SET('1','0') DEFAULT 0",
     'u2ufolders' => "text NOT NULL",
-    'saveogu2u' => "char(3) NOT NULL default ''",
-    'emailonu2u' => "char(3) NOT NULL default ''",
-    'useoldu2u' => "char(3) NOT NULL default ''");
+    'saveogu2u' => "char(3) NOT NULL DEFAULT ''",
+    'emailonu2u' => "char(3) NOT NULL DEFAULT ''",
+    'useoldu2u' => "char(3) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -913,7 +903,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'threads';
     $colname = 'subject';
-    $coltype = "varchar(128) NOT NULL default ''";
+    $coltype = "varchar(128) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(100)') {
@@ -921,23 +911,23 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'views';
-    $coltype = "bigint(32) NOT NULL default 0";
+    $coltype = "bigint NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(4)' || strtolower($row['Type']) == 'int(100)') {
+    if (stripos($row['Type'], 'smallint') === 0 || stripos($row['Type'], 'int') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'replies';
-    $coltype = "int(10) NOT NULL default 0";
+    $coltype = "int NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(5)' || strtolower($row['Type']) == 'int(100)') {
+    if (stripos($row['Type'], 'smallint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
     $colname = 'lastpost';
-    $coltype = "varchar(54) NOT NULL default ''";
+    $coltype = "varchar(54) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(32)' || strtolower($row['Type']) == 'varchar(30)') {
@@ -945,7 +935,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'pollopts';
-    $coltype = "tinyint(1) NOT NULL default 0";
+    $coltype = "tinyint NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'text') {
@@ -955,7 +945,7 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'author';
-    $coltype = "varchar(32) NOT NULL default ''";
+    $coltype = "varchar(32) NOT NULL DEFAULT ''";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
     if (strtolower($row['Type']) == 'varchar(40)') {
@@ -963,10 +953,10 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'topped';
-    $coltype = "tinyint(1) NOT NULL default 0";
+    $coltype = "tinyint NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'smallint(6)') {
+    if (stripos($row['Type'], 'smallint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -1009,13 +999,13 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'attachments';
     $columns = array(
-    'aid' => "int(10) NOT NULL auto_increment",
-    'pid' => "int(10) NOT NULL default 0",
-    'downloads' => "int(10) NOT NULL default 0");
+    'aid' => "int NOT NULL auto_increment",
+    'pid' => "int NOT NULL DEFAULT 0",
+    'downloads' => "int NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)') {
+        if (stripos($row['Type'], 'smallint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -1029,7 +1019,7 @@ function upgrade_schema_to_v0() {
     }
     $filesize_was_missing = FALSE;
     $columns = array(
-    'filesize' => "varchar(120) NOT NULL default ''");
+    'filesize' => "varchar(120) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -1056,19 +1046,19 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'posts';
     $columns = array(
-    'tid' => "int(10) NOT NULL default '0'");
+    'tid' => "int NOT NULL DEFAULT '0'");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)') {
+        if (stripos($row['Type'], 'smallint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
     }
 
     $columns = array(
-    'author' => "varchar(32) NOT NULL default ''",
-    'useip' => "varchar(15) NOT NULL default ''");
+    'author' => "varchar(32) NOT NULL DEFAULT ''",
+    'useip' => "varchar(15) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1087,10 +1077,10 @@ function upgrade_schema_to_v0() {
     }
 
     $colname = 'dateline';
-    $coltype = "int(10) NOT NULL default 0";
+    $coltype = "int NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) == 'bigint(30)') {
+    if (stripos($row['Type'], 'bigint') === 0) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -1128,7 +1118,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'ranks';
     $columns = array(
-    'title' => "varchar(100) NOT NULL default ''");
+    'title' => "varchar(100) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1140,11 +1130,11 @@ function upgrade_schema_to_v0() {
 
     $columns = array(
     'posts' => "MEDIUMINT DEFAULT 0",
-    'id' => "smallint(5) NOT NULL auto_increment");
+    );
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)') {
+        if (stripos($row['Type'], 'smallint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
@@ -1195,7 +1185,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'templates';
     $columns = array(
-    'name' => "varchar(32) NOT NULL default ''");
+    'name' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1228,20 +1218,20 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'u2u';
     $columns = array(
-    'u2uid' => "bigint(10) NOT NULL auto_increment");
+    'u2uid' => "bigint NOT NULL auto_increment");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'smallint(6)' || strtolower($row['Type']) == 'int(6)') {
+        if (stripos($row['Type'], 'smallint') === 0 || stripos($row['Type'], 'int') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
     }
 
     $columns = array(
-    'msgto' => "varchar(32) NOT NULL default ''",
-    'msgfrom' => "varchar(32) NOT NULL default ''",
-    'folder' => "varchar(32) NOT NULL default ''");
+    'msgto' => "varchar(32) NOT NULL DEFAULT ''",
+    'msgfrom' => "varchar(32) NOT NULL DEFAULT ''",
+    'folder' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1252,18 +1242,18 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'dateline' => "int(10) NOT NULL default 0");
+    'dateline' => "int NOT NULL DEFAULT 0");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
-        if (strtolower($row['Type']) == 'bigint(30)') {
+        if (stripos($row['Type'], 'bigint') === 0) {
             $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
         }
         $db->free_result($query);
     }
 
     $columns = array(
-    'subject' => "varchar(64) NOT NULL default ''");
+    'subject' => "varchar(64) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1274,9 +1264,9 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'type' => "set('incoming','outgoing','draft') NOT NULL default ''",
-    'owner' => "varchar(32) NOT NULL default ''",
-    'sentstatus' => "set('yes','no') NOT NULL default ''");
+    'type' => "set('incoming','outgoing','draft') NOT NULL DEFAULT ''",
+    'owner' => "varchar(32) NOT NULL DEFAULT ''",
+    'sentstatus' => "set('yes','no') NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -1311,7 +1301,7 @@ function upgrade_schema_to_v0() {
     }
 
     $columns = array(
-    'readstatus' => "set('yes','no') NOT NULL default ''");
+    'readstatus' => "set('yes','no') NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1386,7 +1376,7 @@ function upgrade_schema_to_v0() {
     $sql = array();
     $table = 'restricted';
     $columns = array(
-    'name' => "varchar(32) NOT NULL default ''");
+    'name' => "varchar(32) NOT NULL DEFAULT ''");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         $row = $db->fetch_array($query);
@@ -1495,7 +1485,7 @@ function upgrade_schema_to_v2() {
     'parentid' => "INT NOT NULL DEFAULT '0'",
     'subdir' => "VARCHAR(15) NOT NULL",
     'uid' => "INT NOT NULL DEFAULT '0'",
-    'updatetime' => "TIMESTAMP NOT NULL default current_timestamp");
+    'updatetime' => "TIMESTAMP NOT NULL DEFAULT current_timestamp");
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
         if ($db->num_rows($query) == 0) {
@@ -1754,12 +1744,12 @@ function upgrade_schema_to_v5() {
     $sql = [];
     $table = 'members';
     $columns = [
-    'bad_login_date' => "int(10) unsigned NOT NULL default 0",
-    'bad_login_count' => "int(10) unsigned NOT NULL default 0",
-    'bad_session_date' => "int(10) unsigned NOT NULL default 0",
-    'bad_session_count' => "int(10) unsigned NOT NULL default 0",
-    'sub_each_post' => "varchar(3) NOT NULL default 'no'",
-    'waiting_for_mod' => "varchar(3) NOT NULL default 'no'",
+    'bad_login_date' => "int unsigned NOT NULL DEFAULT 0",
+    'bad_login_count' => "int unsigned NOT NULL DEFAULT 0",
+    'bad_session_date' => "int unsigned NOT NULL DEFAULT 0",
+    'bad_session_count' => "int unsigned NOT NULL DEFAULT 0",
+    'sub_each_post' => "varchar(3) NOT NULL DEFAULT 'no'",
+    'waiting_for_mod' => "varchar(3) NOT NULL DEFAULT 'no'",
     ];
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1770,10 +1760,10 @@ function upgrade_schema_to_v5() {
     }
 
     $colname = 'lastvisit';
-    $coltype = "int(10) unsigned NOT NULL default 0";
+    $coltype = "int unsigned NOT NULL DEFAULT 0";
     $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
     $row = $db->fetch_array($query);
-    if (strtolower($row['Type']) != 'int(10) unsigned') {
+    if (stripos($row['Type'], 'int') !== 0 || stripos($row['Type'], 'unsigned') === null) {
         $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
     }
 
@@ -1831,13 +1821,13 @@ function upgrade_schema_to_v5() {
     unset( $settings['sightml'] );
 
     show_progress('Replacing the settings table');
-    xmb_schema_table( 'overwrite', 'settings' );
+    xmb_schema_table('overwrite', 'settings');
     $sql = [];
-    foreach( $settings as $name => $value ) {
-        $db->escape_fast( $value );
+    foreach($settings as $name => $value) {
+        $db->escape_fast($value);
         $sql[] = "('$name', '$value')";
     }
-    upgrade_query('INSERT INTO '.X_PREFIX."settings (name, value) VALUES ". implode( ',', $sql ));
+    upgrade_query('INSERT INTO '.X_PREFIX."settings (name, value) VALUES " . implode(',', $sql));
 
     show_progress('Requesting to lock the forums table');
     upgrade_query('LOCK TABLES '.X_PREFIX."forums WRITE");
@@ -1858,7 +1848,7 @@ function upgrade_schema_to_v5() {
 
     if (count($sql) > 0) {
         show_progress('Deleting columns in the forums table');
-        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' ' . implode(', ', $sql);
         upgrade_query($sql);
     }
 
@@ -1888,7 +1878,7 @@ function upgrade_schema_to_v6() {
     $sql = [];
     $table = 'themes';
     $columns = [
-    'version' => "int(10) unsigned NOT NULL default 0",
+    'version' => "int unsigned NOT NULL DEFAULT 0",
     ];
     foreach($columns as $colname => $coltype) {
         $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
@@ -1900,7 +1890,7 @@ function upgrade_schema_to_v6() {
 
     if (count($sql) > 0) {
         show_progress('Adding columns to the themes table');
-        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' ' . implode(', ', $sql);
         upgrade_query($sql);
     }
 
@@ -1951,7 +1941,7 @@ function upgrade_schema_to_v7() {
 
     if (count($sql) > 0) {
         show_progress('Deleting columns in the vote_desc table');
-        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' ' . implode(', ', $sql);
         upgrade_query($sql);
     }
 
@@ -1973,7 +1963,7 @@ function upgrade_schema_to_v8() {
     show_progress('Gathering schema information from the settings table');
     $table = 'settings';
     $query = upgrade_query('SELECT value FROM '.X_PREFIX.$table.' WHERE name = "images_https_only"');
-    if ( $db->num_rows( $query ) != 1 ) {
+    if ($db->num_rows($query) != 1) {
         show_progress('Adding data to the settings table');
         upgrade_query('INSERT INTO '.X_PREFIX.$table.' SET value = "off", name = "images_https_only"');
     }
