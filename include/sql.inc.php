@@ -246,7 +246,7 @@ function addMember(array $values): int {
  */
 function getMemberByName(string $username): array {
     global $db;
-    
+
     $sqluser = $db->escape($username);
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username = '$sqluser'");
@@ -1094,7 +1094,7 @@ function getAttachmentParents(int $pid, bool $quarantine = false): array {
         $results[] = $row;
     }
     $db->free_result($query);
-    
+
     return $results;
 }
 
@@ -1254,7 +1254,7 @@ function getAttachmentIDsByThread(array $tid_list, bool $quarantine = false, int
 
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
     $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
-    
+
     if (0 == $notpid) {
         $where = '';
     } else {
@@ -1284,7 +1284,7 @@ function getAttachmentIDsByUser(string $username, bool $quarantine = false): arr
 
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
     $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
-    
+
     $query = $db->query("SELECT aid FROM $table1 INNER JOIN $table2 USING (pid) WHERE author = '$sqluser'");
     while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
@@ -1485,7 +1485,7 @@ function getPollId(int $tid, bool $quarantine = false): int {
 */
 function getRanks(): array {
     global $db;
-    
+
     $result = $db->query("SELECT * FROM ".X_PREFIX."ranks");
 
     $ranks = [];
