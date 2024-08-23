@@ -36,13 +36,13 @@ if (!defined('IN_CODE')) {
  *
  * @since 1.9.12
  */
-function saveSession( string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent ): bool {
+function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent): bool {
     global $db;
 
-    $sqltoken = $db->escape( $token );
-    $sqluser = $db->escape( $username );
-    $sqlreplace = $db->escape( $replace );
-    $sqlagent = $db->escape( $agent );
+    $sqltoken = $db->escape($token);
+    $sqluser = $db->escape($username);
+    $sqlreplace = $db->escape($replace);
+    $sqlagent = $db->escape($agent);
 
     $db->query("INSERT IGNORE INTO ".X_PREFIX."sessions SET token = '$sqltoken', username = '$sqluser', login_date = $date,
         expire = $expire, regenerate = $regenerate, replaces = '$sqlreplace', agent = '$sqlagent'");
@@ -55,11 +55,11 @@ function saveSession( string $token, string $username, int $date, int $expire, i
  *
  * @since 1.9.12
  */
-function getSession( string $token, string $username ): array {
+function getSession(string $token, string $username): array {
     global $db;
-    
-    $sqltoken = $db->escape( $token );
-    $sqluser = $db->escape( $username );
+
+    $sqltoken = $db->escape($token);
+    $sqluser = $db->escape($username);
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."sessions WHERE token = '$sqltoken' AND username = '$sqluser'");
     if ($db->num_rows($query) == 1) {
@@ -77,10 +77,10 @@ function getSession( string $token, string $username ): array {
  * @since 1.9.12
  * @return mysqli_result|bool
  */
-function getSessionsByName( string $username ) {
+function getSessionsByName(string $username) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     return $db->query("SELECT * FROM ".X_PREFIX."sessions WHERE username = '$sqluser'");
 }
@@ -90,10 +90,10 @@ function getSessionsByName( string $username ) {
  *
  * @since 1.9.12
  */
-function deleteSession( string $token ) {
+function deleteSession(string $token) {
     global $db;
-    
-    $sqltoken = $db->escape( $token );
+
+    $sqltoken = $db->escape($token);
 
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE token = '$sqltoken'");
 }
@@ -103,10 +103,10 @@ function deleteSession( string $token ) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByName( string $username ) {
+function deleteSessionsByName(string $username) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE username = '$sqluser'");
 }
@@ -116,9 +116,9 @@ function deleteSessionsByName( string $username ) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByDate( int $expired ) {
+function deleteSessionsByDate(int $expired) {
     global $db;
-    
+
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE expire < $expired");
 }
 
@@ -127,15 +127,15 @@ function deleteSessionsByDate( int $expired ) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByList( string $username, array $ids, string $current_token ) {
+function deleteSessionsByList(string $username, array $ids, string $current_token) {
     global $db;
-    
-    if ( empty( $ids ) ) return;
-    
-    $sqluser = $db->escape( $username );
-    $sqltoken = $db->escape( $current_token );
-    $ids = array_map( [$db, 'escape'], $ids );
-    $ids = "'" . implode( "','", $ids ) . "'";
+
+    if (empty($ids)) return;
+
+    $sqluser = $db->escape($username);
+    $sqltoken = $db->escape($current_token);
+    $ids = array_map([$db, 'escape'], $ids);
+    $ids = "'" . implode("','", $ids) . "'";
 
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE username = '$sqluser' AND LEFT(token, 4) IN ($ids) AND token != '$sqltoken' AND replaces != '$sqltoken'");
 }
@@ -145,10 +145,10 @@ function deleteSessionsByList( string $username, array $ids, string $current_tok
  *
  * @since 1.9.12
  */
-function clearSessionParent( string $token ) {
+function clearSessionParent(string $token) {
     global $db;
 
-    $sqltoken = $db->escape( $token );
+    $sqltoken = $db->escape($token);
 
     $db->query("UPDATE ".X_PREFIX."sessions SET replaces = '' WHERE token = '$sqltoken'");
 }
@@ -158,11 +158,11 @@ function clearSessionParent( string $token ) {
  *
  * @since 1.9.12
  */
-function getSessionReplacement( string $token, string $username ): array {
+function getSessionReplacement(string $token, string $username): array {
     global $db;
-    
-    $sqltoken = $db->escape( $token );
-    $sqluser = $db->escape( $username );
+
+    $sqltoken = $db->escape($token);
+    $sqluser = $db->escape($username);
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."sessions WHERE replaces = '$sqltoken' AND username = '$sqluser'");
     if ($db->num_rows($query) == 1) {
@@ -181,14 +181,14 @@ function getSessionReplacement( string $token, string $username ): array {
  * @param array $values Field name & value list.
  * @return int Member ID number.
  */
-function addMember( array $values ): int {
+function addMember(array $values): int {
     global $db;
 
     // Defaults:
-    if ( ! isset( $values['bday'] ) ) $values['bday'] = '0000-00-00';
-    if ( ! isset( $values['invisible'] ) ) $values['invisible'] = '0';
-    if ( ! isset( $values['sub_each_post'] ) ) $values['sub_each_post'] = 'no';
-    if ( ! isset( $values['waiting_for_mod'] ) ) $values['waiting_for_mod'] = 'no';
+    if (! isset($values['bday'])) $values['bday'] = '0000-00-00';
+    if (! isset($values['invisible'])) $values['invisible'] = '0';
+    if (! isset($values['sub_each_post'])) $values['sub_each_post'] = 'no';
+    if (! isset($values['waiting_for_mod'])) $values['waiting_for_mod'] = 'no';
 
     // Required values:
     $req = [ 'username', 'password', 'email', 'status', 'regip', 'regdate' ];
@@ -205,34 +205,34 @@ function addMember( array $values ): int {
 
     $sql = [];
 
-    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addMember()", E_USER_ERROR );
-    foreach( $ints as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
+    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addMember()", E_USER_ERROR);
+    foreach($ints as $field) {
+        if (isset($values[$field])) {
+            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
         } else {
             $values[$field] = 0;
         }
         $sql[] = "$field = {$values[$field]}";
     }
-    foreach( $numerics as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_numeric( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
+    foreach($numerics as $field) {
+        if (isset($values[$field])) {
+            if (! is_numeric($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
         } else {
             $values[$field] = 0;
         }
         $sql[] = "$field = {$values[$field]}";
     }
-    foreach( $strings as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR );
-            $db->escape_fast( $values[$field] );
+    foreach($strings as $field) {
+        if (isset($values[$field])) {
+            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
+            $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
         }
         $sql[] = "$field = '{$values[$field]}'";
     }
-    
-    $db->query("INSERT INTO ".X_PREFIX."members SET " . implode( ', ', $sql ));
+
+    $db->query("INSERT INTO ".X_PREFIX."members SET " . implode(', ', $sql));
 
     return $db->insert_id();
 }
@@ -244,10 +244,10 @@ function addMember( array $values ): int {
  * @param string $username Must be HTML encoded.
  * @return array Member record or empty array.
  */
-function getMemberByName( string $username ): array {
+function getMemberByName(string $username): array {
     global $db;
     
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."members WHERE username = '$sqluser'");
     if ($db->num_rows($query) == 1) {
@@ -286,9 +286,9 @@ function changeMemberVisibility(string $username, string $invisible) {
 function countMembers(): int {
     global $db;
 
-    $query = $db->query( "SELECT COUNT(*) FROM ".X_PREFIX."members" );
-    $result = (int) $db->result( $query, 0 );
-    $db->free_result( $query );
+    $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members");
+    $result = (int) $db->result($query, 0);
+    $db->free_result($query);
 
     return $result;
 }
@@ -300,10 +300,10 @@ function countMembers(): int {
  * @param string $username
  * @return int The new value of bad_login_count for this member.
  */
-function raiseLoginCounter( string $username ): int {
+function raiseLoginCounter(string $username): int {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET bad_login_count = LAST_INSERT_ID(bad_login_count + 1) WHERE username = '$sqluser'");
 
@@ -315,10 +315,10 @@ function raiseLoginCounter( string $username ): int {
  *
  * @since 1.9.12
  */
-function resetLoginCounter( string $username, int $date ) {
+function resetLoginCounter(string $username, int $date) {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET bad_login_count = 1, bad_login_date = $date WHERE username = '$sqluser'");
 }
@@ -330,10 +330,10 @@ function resetLoginCounter( string $username, int $date ) {
  * @param string $username
  * @return int The new value of bad_session_count for this member.
  */
-function raiseSessionCounter( string $username ): int {
+function raiseSessionCounter(string $username): int {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET bad_session_count = LAST_INSERT_ID(bad_session_count + 1) WHERE username = '$sqluser'");
 
@@ -345,10 +345,10 @@ function raiseSessionCounter( string $username ): int {
  *
  * @since 1.9.12
  */
-function resetSessionCounter( string $username, int $date ) {
+function resetSessionCounter(string $username, int $date) {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET bad_session_count = 1, bad_session_date = $date WHERE username = '$sqluser'");
 }
@@ -361,15 +361,15 @@ function resetSessionCounter( string $username, int $date ) {
  */
 function getSuperEmails(): array {
     global $db;
-    
+
     $query = $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
-    
+
     $result = [];
-    while ( $admin = $db->fetch_array( $query ) ) {
+    while ($admin = $db->fetch_array($query)) {
         $result[] = $admin;
     }
-    $db->free_result( $query );
-    
+    $db->free_result($query);
+
     return $result;
 }
 
@@ -378,14 +378,14 @@ function getSuperEmails(): array {
  *
  * @since 1.9.12
  */
-function checkUpgradeOldLogin( string $username, string $password ): bool {
+function checkUpgradeOldLogin(string $username, string $password): bool {
     global $db;
-    
-    $sqlpass = $db->escape( $password );
-    $sqluser = $db->escape( $username );
+
+    $sqlpass = $db->escape($password);
+    $sqluser = $db->escape($username);
 
     $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members WHERE username = '$sqluser' AND password = '$sqlpass' AND status = 'Super Administrator'");
-    $count = (int) $db->result( $query, 0 );
+    $count = (int) $db->result($query, 0);
     $db->free_result($query);
 
     return $count == 1;
@@ -396,9 +396,9 @@ function checkUpgradeOldLogin( string $username, string $password ): bool {
  *
  * @since 1.9.12
  */
-function setLostPasswordDate( int $uid, int $date ) {
+function setLostPasswordDate(int $uid, int $date) {
     global $db;
-    
+
     $db->query("UPDATE ".X_PREFIX."members SET pwdate = $date WHERE uid = $uid");
 }
 
@@ -407,9 +407,9 @@ function setLostPasswordDate( int $uid, int $date ) {
  *
  * @since 1.9.12
  */
-function startMemberQuarantine( int $uid ) {
+function startMemberQuarantine(int $uid) {
     global $db;
-    
+
     $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'yes' WHERE uid = $uid");
 }
 
@@ -418,10 +418,10 @@ function startMemberQuarantine( int $uid ) {
  *
  * @since 1.9.12
  */
-function endMemberQuarantine( string $username ) {
+function endMemberQuarantine(string $username) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'no' WHERE username = '$sqluser'");
 }
@@ -431,11 +431,11 @@ function endMemberQuarantine( string $username ) {
  *
  * @since 1.9.12
  */
-function setNewPassword( string $username, string $password ) {
+function setNewPassword(string $username, string $password) {
     global $db;
-    
-    $sqlpass = $db->escape( $password );
-    $sqluser = $db->escape( $username );
+
+    $sqlpass = $db->escape($password);
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET password = '$sqlpass', bad_login_count = 0 WHERE username = '$sqluser'");
 }
@@ -445,10 +445,10 @@ function setNewPassword( string $username, string $password ) {
  *
  * @since 1.9.12
  */
-function setLastvisit( string $username, int $timestamp ) {
+function setLastvisit(string $username, int $timestamp) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET lastvisit = $timestamp WHERE username = '$sqluser'");
 }
@@ -460,10 +460,10 @@ function setLastvisit( string $username, int $timestamp ) {
  *
  * @since 1.9.12
  */
-function raisePostCount( string $username, int $timestamp ) {
+function raisePostCount(string $username, int $timestamp) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET postnum = postnum + 1, lastvisit = $timestamp WHERE username = '$sqluser'");
 }
@@ -473,10 +473,10 @@ function raisePostCount( string $username, int $timestamp ) {
  *
  * @since 1.9.12
  */
-function unlockMember( string $username ) {
+function unlockMember(string $username) {
     global $db;
-    
-    $sqluser = $db->escape( $username );
+
+    $sqluser = $db->escape($username);
 
     $db->query("UPDATE ".X_PREFIX."members SET bad_login_count = 0 WHERE username = '$sqluser'");
 }
@@ -486,11 +486,11 @@ function unlockMember( string $username ) {
  *
  * @since 1.9.12
  */
-function addSetting( string $name, string $value ) {
+function addSetting(string $name, string $value) {
     global $db;
 
-    $sqlname = $db->escape( $name );
-    $sqlvalue = $db->escape( $value );
+    $sqlname = $db->escape($name);
+    $sqlvalue = $db->escape($value);
 
     $db->query("INSERT INTO ".X_PREFIX."settings SET name = '$sqlname', value = '$sqlvalue' ON DUPLICATE KEY UPDATE value = '$sqlvalue' ");
 }
@@ -500,11 +500,11 @@ function addSetting( string $name, string $value ) {
  *
  * @since 1.9.12
  */
-function updateSetting( string $name, string $value ) {
+function updateSetting(string $name, string $value) {
     global $db;
 
-    $sqlname = $db->escape( $name );
-    $sqlvalue = $db->escape( $value );
+    $sqlname = $db->escape($name);
+    $sqlvalue = $db->escape($value);
 
     $db->query("UPDATE ".X_PREFIX."settings SET value = '$sqlvalue' WHERE name = '$sqlname'");
 }
@@ -514,10 +514,10 @@ function updateSetting( string $name, string $value ) {
  *
  * @since 1.9.12
  */
-function deleteSetting( string $name ) {
+function deleteSetting(string $name) {
     global $db;
 
-    $sqlname = $db->escape( $name );
+    $sqlname = $db->escape($name);
 
     $db->query("DELETE FROM ".X_PREFIX."settings WHERE name = '$sqlname'");
 }
@@ -527,9 +527,9 @@ function deleteSetting( string $name ) {
  *
  * @since 1.9.12
  */
-function getTemplateByID( int $id ): array {
+function getTemplateByID(int $id): array {
     global $db;
-    
+
     $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id = $id");
     if ($db->num_rows($query) == 1) {
         $result = $db->fetch_array($query);
@@ -546,9 +546,9 @@ function getTemplateByID( int $id ): array {
  *
  * @since 1.9.12
  */
-function getThemeByID( int $id ): array {
+function getThemeByID(int $id): array {
     global $db;
-    
+
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid = $id");
     if ($db->num_rows($query) == 1) {
         $result = $db->fetch_array($query);
@@ -576,13 +576,13 @@ function raiseThemeVersions() {
  *
  * @since 1.9.12
  */
-function addToken( string $token, string $username, string $action, string $object, int $expire ): bool {
+function addToken(string $token, string $username, string $action, string $object, int $expire): bool {
     global $db;
 
-    $sqltoken = $db->escape( $token );
-    $sqluser = $db->escape( $username );
-    $sqlaction = $db->escape( $action );
-    $sqlobject = $db->escape( $object );
+    $sqltoken = $db->escape($token);
+    $sqluser = $db->escape($username);
+    $sqlaction = $db->escape($action);
+    $sqlobject = $db->escape($object);
 
     $db->query("INSERT IGNORE INTO ".X_PREFIX."tokens SET token = '$sqltoken', username = '$sqluser', action = '$sqlaction', object = '$sqlobject', expire = $expire ");
 
@@ -594,13 +594,13 @@ function addToken( string $token, string $username, string $action, string $obje
  *
  * @since 1.9.12
  */
-function deleteToken( string $token, string $username, string $action, string $object ): bool {
+function deleteToken(string $token, string $username, string $action, string $object): bool {
     global $db;
 
-    $sqltoken = $db->escape( $token );
-    $sqluser = $db->escape( $username );
-    $sqlaction = $db->escape( $action );
-    $sqlobject = $db->escape( $object );
+    $sqltoken = $db->escape($token);
+    $sqluser = $db->escape($username);
+    $sqlaction = $db->escape($action);
+    $sqlobject = $db->escape($object);
 
     $db->query("DELETE FROM ".X_PREFIX."tokens WHERE token = '$sqltoken' AND username = '$sqluser' AND action = '$sqlaction' AND object = '$sqlobject'");
 
@@ -612,7 +612,7 @@ function deleteToken( string $token, string $username, string $action, string $o
  *
  * @since 1.9.12
  */
-function deleteTokensByDate( int $expire ) {
+function deleteTokensByDate(int $expire) {
     global $db;
 
     $db->query("DELETE FROM ".X_PREFIX."tokens WHERE expire < $expire");
@@ -626,7 +626,7 @@ function deleteTokensByDate( int $expire ) {
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Thread ID number.
  */
-function addThread( array &$values, bool $quarantine = false ): int {
+function addThread(array &$values, bool $quarantine = false): int {
     global $db;
 
     // Required values:
@@ -639,23 +639,23 @@ function addThread( array &$values, bool $quarantine = false ): int {
     $ints = ['fid', 'views', 'replies', 'topped', 'pollopts'];
     $strings = ['author', 'lastpost', 'subject', 'icon', 'closed'];
 
-    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addThread()", E_USER_ERROR );
-    foreach( $ints as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR );
+    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addThread()", E_USER_ERROR);
+    foreach($ints as $field) {
+        if (isset($values[$field])) {
+            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR);
         } else {
             $values[$field] = 0;
         }
     }
-    foreach( $strings as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR );
-            $db->escape_fast( $values[$field] );
+    foreach($strings as $field) {
+        if (isset($values[$field])) {
+            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR);
+            $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
         }
     }
-    
+
     $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
 
     $db->query("INSERT INTO $table SET
@@ -679,14 +679,14 @@ function addThread( array &$values, bool $quarantine = false ): int {
  *
  * @since 1.9.12
  */
-function setThreadLastpost( int $tid, string $lastpost, bool $quarantine = false ) {
+function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false) {
     global $db;
 
-    $sqllast = $db->escape( $lastpost );
+    $sqllast = $db->escape($lastpost);
 
     $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
 
-    $db->query( "UPDATE $table SET lastpost = '$sqllast' WHERE tid = $tid" );
+    $db->query("UPDATE $table SET lastpost = '$sqllast' WHERE tid = $tid");
 }
 
 /**
@@ -733,16 +733,16 @@ function setForumCounts(int $fid, int $postcount, int $threadcount, string $last
  *
  * @since 1.9.12
  */
-function countThreadsByUser( string $username, int $fid, bool $quarantine = false ): int {
+function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $table = $quarantine ? X_PREFIX.'hold_threads' : X_PREFIX.'threads';
 
-    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE author = '$sqluser' AND fid = $fid" );
-    $result = (int) $db->result( $query, 0 );
-    $db->free_result( $query );
+    $query = $db->query("SELECT COUNT(*) FROM $table WHERE author = '$sqluser' AND fid = $fid");
+    $result = (int) $db->result($query, 0);
+    $db->free_result($query);
 
     return $result;
 }
@@ -756,21 +756,21 @@ function countThreadsByUser( string $username, int $fid, bool $quarantine = fals
  * @param bool $qthread When starting a quarantined thread, we need to know not to use the tid field for the post to prevent ID collisions.
  * @return int Post ID number.
  */
-function addPost( array &$values, bool $quarantine = false, bool $qthread = false ): int {
+function addPost(array &$values, bool $quarantine = false, bool $qthread = false): int {
     global $db;
 
     // Required values:
     $ints = ['fid', 'tid', 'dateline'];
     $strings = ['author', 'message', 'subject', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff'];
 
-    $all = array_merge( $ints, $strings );
-    foreach( $all as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addPost()", E_USER_ERROR );
-    foreach( $ints as $field ) if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR );
-    foreach( $strings as $field ) {
-        if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR );
-        $db->escape_fast( $values[$field] );
+    $all = array_merge($ints, $strings);
+    foreach($all as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addPost()", E_USER_ERROR);
+    foreach($ints as $field) if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR);
+    foreach($strings as $field) {
+        if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR);
+        $db->escape_fast($values[$field]);
     }
-    
+
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
     $tid_field = $qthread ? 'newtid' : 'tid';
 
@@ -796,10 +796,10 @@ function addPost( array &$values, bool $quarantine = false, bool $qthread = fals
  *
  * @since 1.9.12
  */
-function savePostBody( int $pid, string $body, bool $quarantine = false ) {
+function savePostBody(int $pid, string $body, bool $quarantine = false) {
     global $db;
 
-    $sqlbody = $db->escape( $body );
+    $sqlbody = $db->escape($body);
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
@@ -811,14 +811,14 @@ function savePostBody( int $pid, string $body, bool $quarantine = false ) {
  *
  * @since 1.9.12
  */
-function getPostBody( int $pid, bool $quarantine = false ): string {
+function getPostBody(int $pid, bool $quarantine = false): string {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
 
     $query = $db->query("SELECT message FROM $table WHERE pid = $pid");
-    if ( $db->num_rows( $query ) == 1 ) {
-        $result = $db->result( $query, 0 );
+    if ($db->num_rows($query) == 1) {
+        $result = $db->result($query, 0);
     } else {
         $result = '';
     }
@@ -870,16 +870,16 @@ function countPosts(bool $quarantine = false, int $tid = 0, string $username = '
  *
  * @since 1.9.12
  */
-function addFavoriteIfMissing( int $tid, string $username, string $type, bool $quarantine = false ) {
+function addFavoriteIfMissing(int $tid, string $username, string $type, bool $quarantine = false) {
     global $db;
 
-    $sqluser = $db->escape( $username );
-    $sqltype = $db->escape( $type );
+    $sqluser = $db->escape($username);
+    $sqltype = $db->escape($type);
 
     $table = $quarantine ? X_PREFIX.'hold_favorites' : X_PREFIX.'favorites';
 
     $query = $db->query("SELECT COUNT(*) FROM $table WHERE tid = $tid AND username = '$sqluser' AND type = '$sqltype'");
-    if ( 0 == (int) $db->result($query, 0) ) {
+    if (0 == (int) $db->result($query, 0)) {
         $db->query("INSERT INTO $table SET tid = $tid, username = '$sqluser', type = '$sqltype'");
     }
     $db->free_result($query);
@@ -893,7 +893,7 @@ function addFavoriteIfMissing( int $tid, string $username, string $type, bool $q
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Attachment ID number.
  */
-function addAttachment( array &$values, bool $quarantine = false ): int {
+function addAttachment(array &$values, bool $quarantine = false): int {
     global $db;
 
     // Required values:
@@ -906,18 +906,18 @@ function addAttachment( array &$values, bool $quarantine = false ): int {
     $ints = ['pid', 'parentid', 'uid'];
     $strings = ['filename', 'filetype', 'filesize', 'attachment', 'img_size', 'subdir'];
 
-    foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
-    foreach( $ints as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
+    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
+    foreach($ints as $field) {
+        if (isset($values[$field])) {
+            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
         } else {
             $values[$field] = 0;
         }
     }
-    foreach( $strings as $field ) {
-        if ( isset( $values[$field] ) ) {
-            if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR );
-            $db->escape_fast( $values[$field] );
+    foreach($strings as $field) {
+        if (isset($values[$field])) {
+            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
+            $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
         }
@@ -945,9 +945,9 @@ function addAttachment( array &$values, bool $quarantine = false ): int {
  *
  * @since 1.9.12
  */
-function approveAttachment( int $oldaid, int $newpid, int $newparent ): int {
+function approveAttachment(int $oldaid, int $newpid, int $newparent): int {
     global $db;
-    
+
     $db->query(
         "INSERT INTO ".X_PREFIX."attachments " .
         "      (    pid, filename, filetype, filesize, attachment, downloads,   parentid, uid, updatetime, img_size, subdir) " .
@@ -963,9 +963,9 @@ function approveAttachment( int $oldaid, int $newpid, int $newparent ): int {
  *
  * @since 1.9.12
  */
-function getAttachment( int $aid, bool $quarantine = false ): array {
+function getAttachment(int $aid, bool $quarantine = false): array {
     global $db;
-    
+
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     $query = $db->query("SELECT *, UNIX_TIMESTAMP(updatetime) AS updatestamp FROM $table WHERE aid = $aid");
@@ -984,24 +984,24 @@ function getAttachment( int $aid, bool $quarantine = false ): array {
  *
  * @since 1.9.12
  */
-function getAttachmentAndFID( int $aid, bool $quarantine = false, int $pid = 0, string $filename = '', int $uid = 0 ): array {
+function getAttachmentAndFID(int $aid, bool $quarantine = false, int $pid = 0, string $filename = '', int $uid = 0): array {
     global $db;
-    
+
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
     $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
-    
+
     $where = "a.aid = $aid";
-    
-    if ( $pid != 0 ) {
+
+    if ($pid != 0) {
         $where .= " AND a.pid = $pid";
     }
 
-    if ( $uid != 0 ) {
+    if ($uid != 0) {
         $where .= " AND a.uid = $uid";
     }
-    
-    if ( $filename != '' ) {
-        $db->escape_fast( $filename );
+
+    if ($filename != '') {
+        $db->escape_fast($filename);
         $where .= " AND a.filename = '$filename'";
     }
 
@@ -1021,18 +1021,18 @@ function getAttachmentAndFID( int $aid, bool $quarantine = false, int $pid = 0, 
  *
  * @since 1.9.12
  */
-function getOrphanedAttachments( int $uid, bool $quarantine = false ): array {
+function getOrphanedAttachments(int $uid, bool $quarantine = false): array {
     global $db;
-    
+
     $result = [];
-    
+
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
     thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
     FROM $table AS a LEFT JOIN $table AS thumbs ON a.aid=thumbs.parentid WHERE a.uid = $uid AND a.pid = 0 AND a.parentid = 0");
 
-    while ( $row = $db->fetch_array( $query ) ) {
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row;
     }
     $db->free_result($query);
@@ -1045,13 +1045,13 @@ function getOrphanedAttachments( int $uid, bool $quarantine = false ): array {
  *
  * @since 1.9.12
  */
-function deleteAttachmentsByID( array $aid_list, bool $quarantine = false ) {
+function deleteAttachmentsByID(array $aid_list, bool $quarantine = false) {
     global $db;
 
-    if ( empty( $aid_list ) ) return;
+    if (empty($aid_list)) return;
 
-    $ids = array_map( 'intval', $aid_list );
-    $ids = implode( ",", $ids );
+    $ids = array_map('intval', $aid_list);
+    $ids = implode(",", $ids);
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
@@ -1064,13 +1064,13 @@ function deleteAttachmentsByID( array $aid_list, bool $quarantine = false ) {
  * @since 1.9.12
  * @return mysqli_result|bool
  */
-function getAttachmentPaths( array $aid_list, bool $quarantine = false ) {
+function getAttachmentPaths(array $aid_list, bool $quarantine = false) {
     global $db;
 
-    if ( empty( $aid_list ) ) return;
+    if (empty($aid_list)) return;
 
-    $ids = array_map( 'intval', $aid_list );
-    $ids = implode( ",", $ids );
+    $ids = array_map('intval', $aid_list);
+    $ids = implode(",", $ids);
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
@@ -1082,7 +1082,7 @@ function getAttachmentPaths( array $aid_list, bool $quarantine = false ) {
  *
  * @since 1.9.12
  */
-function getAttachmentParents( int $pid, bool $quarantine = false ): array {
+function getAttachmentParents(int $pid, bool $quarantine = false): array {
     global $db;
 
     $results = [];
@@ -1090,10 +1090,10 @@ function getAttachmentParents( int $pid, bool $quarantine = false ): array {
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
     $query = $db->query("SELECT aid, filesize, parentid FROM $table WHERE pid = $pid ORDER BY parentid");
-    while( $row = $db->fetch_array( $query ) ) {
+    while($row = $db->fetch_array($query)) {
         $results[] = $row;
     }
-    $db->free_result( $query );
+    $db->free_result($query);
     
     return $results;
 }
@@ -1103,7 +1103,7 @@ function getAttachmentParents( int $pid, bool $quarantine = false ): array {
  *
  * @since 1.9.12
  */
-function claimOrphanedAttachments( int $pid, int $uid, bool $quarantine = false ) {
+function claimOrphanedAttachments(int $pid, int $uid, bool $quarantine = false) {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1116,13 +1116,13 @@ function claimOrphanedAttachments( int $pid, int $uid, bool $quarantine = false 
  *
  * @since 1.9.12
  */
-function countOrphanedAttachments( int $uid, bool $quarantine = false ): int {
+function countOrphanedAttachments(int $uid, bool $quarantine = false): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid" );
-    $count = (int) $db->result( $query, 0 );
+    $query = $db->query("SELECT COUNT(*) FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid");
+    $count = (int) $db->result($query, 0);
     $db->free_result($query);
 
     return $count;
@@ -1133,13 +1133,13 @@ function countOrphanedAttachments( int $uid, bool $quarantine = false ): int {
  *
  * @since 1.9.12
  */
-function countAttachmentsByPost( int $pid, bool $quarantine = false ): int {
+function countAttachmentsByPost(int $pid, bool $quarantine = false): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE pid = $pid AND parentid = 0" );
-    $count = (int) $db->result( $query, 0 );
+    $query = $db->query("SELECT COUNT(*) FROM $table WHERE pid = $pid AND parentid = 0");
+    $count = (int) $db->result($query, 0);
     $db->free_result($query);
 
     return $count;
@@ -1150,13 +1150,13 @@ function countAttachmentsByPost( int $pid, bool $quarantine = false ): int {
  *
  * @since 1.9.12
  */
-function countThumbnails( int $aid, bool $quarantine = false ): int {
+function countThumbnails(int $aid, bool $quarantine = false): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $query = $db->query( "SELECT COUNT(*) FROM $table WHERE parentid = $aid AND filename LIKE '%-thumb.jpg'" );
-    $count = (int) $db->result( $query, 0 );
+    $query = $db->query("SELECT COUNT(*) FROM $table WHERE parentid = $aid AND filename LIKE '%-thumb.jpg'");
+    $count = (int) $db->result($query, 0);
     $db->free_result($query);
 
     return $count;
@@ -1167,21 +1167,21 @@ function countThumbnails( int $aid, bool $quarantine = false ): int {
  *
  * @since 1.9.12
  */
-function getAttachmentChildIDs( int $aid, bool $thumbnails_only, bool $quarantine = false ): array {
+function getAttachmentChildIDs(int $aid, bool $thumbnails_only, bool $quarantine = false): array {
     global $db;
 
     $result = [];
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
-    
-    if ( $thumbnails_only ) {
+
+    if ($thumbnails_only) {
         $where = "AND filename LIKE '%-thumb.jpg'";
     } else {
         $where = '';
     }
 
-    $query = $db->query( "SELECT aid FROM $table WHERE parentid = $aid $where" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT aid FROM $table WHERE parentid = $aid $where");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
@@ -1194,15 +1194,15 @@ function getAttachmentChildIDs( int $aid, bool $thumbnails_only, bool $quarantin
  *
  * @since 1.9.12
  */
-function getOrphanedAttachmentIDs( int $uid, bool $quarantine = false ): array {
+function getOrphanedAttachmentIDs(int $uid, bool $quarantine = false): array {
     global $db;
 
     $result = [];
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $query = $db->query( "SELECT aid FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT aid FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
@@ -1215,21 +1215,21 @@ function getOrphanedAttachmentIDs( int $uid, bool $quarantine = false ): array {
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByPost( int $pid, bool $include_children, bool $quarantine = false ): array {
+function getAttachmentIDsByPost(int $pid, bool $include_children, bool $quarantine = false): array {
     global $db;
 
     $result = [];
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    if ( $include_children ) {
+    if ($include_children) {
         $where = '';
     } else {
         $where = 'AND parentid = 0';
     }
 
-    $query = $db->query( "SELECT aid FROM $table WHERE pid = $pid $where" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT aid FROM $table WHERE pid = $pid $where");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
@@ -1242,27 +1242,27 @@ function getAttachmentIDsByPost( int $pid, bool $include_children, bool $quarant
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByThread( array $tid_list, bool $quarantine = false, int $notpid = 0 ): array {
+function getAttachmentIDsByThread(array $tid_list, bool $quarantine = false, int $notpid = 0): array {
     global $db;
 
     $result = [];
 
-    if ( empty( $tid_list ) ) return $result;
+    if (empty($tid_list)) return $result;
 
-    $ids = array_map( 'intval', $tid_list );
-    $ids = implode( ",", $ids );
+    $ids = array_map('intval', $tid_list);
+    $ids = implode(",", $ids);
 
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
     $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
     
-    if ( 0 == $notpid ) {
+    if (0 == $notpid) {
         $where = '';
     } else {
         $where = "AND p.pid != $notpid";
     }
 
-    $query = $db->query( "SELECT a.aid FROM $table1 AS a INNER JOIN $table2 AS p USING (pid) WHERE p.tid IN ($ids) $where" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT a.aid FROM $table1 AS a INNER JOIN $table2 AS p USING (pid) WHERE p.tid IN ($ids) $where");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
@@ -1275,29 +1275,29 @@ function getAttachmentIDsByThread( array $tid_list, bool $quarantine = false, in
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByUser( string $username, bool $quarantine = false ): array {
+function getAttachmentIDsByUser(string $username, bool $quarantine = false): array {
     global $db;
 
-    $sqluser = $db->escape( $username );
+    $sqluser = $db->escape($username);
 
     $result = [];
 
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
     $table2 = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
     
-    $query = $db->query( "SELECT aid FROM $table1 INNER JOIN $table2 USING (pid) WHERE author = '$sqluser'" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT aid FROM $table1 INNER JOIN $table2 USING (pid) WHERE author = '$sqluser'");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
 
-    $query = $db->query( "SELECT aid FROM $table1 INNER JOIN ".X_PREFIX."members USING (uid) WHERE username = '$sqluser'" );
-    while ( $row = $db->fetch_array( $query ) ) {
+    $query = $db->query("SELECT aid FROM $table1 INNER JOIN ".X_PREFIX."members USING (uid) WHERE username = '$sqluser'");
+    while ($row = $db->fetch_array($query)) {
         $result[] = $row['aid'];
     }
     $db->free_result($query);
 
-    return array_unique( $result );
+    return array_unique($result);
 }
 
 /**
@@ -1305,14 +1305,14 @@ function getAttachmentIDsByUser( string $username, bool $quarantine = false ): a
  *
  * @since 1.9.12
  */
-function renameAttachment( int $aid, string $name, bool $quarantine = false ) {
+function renameAttachment(int $aid, string $name, bool $quarantine = false) {
     global $db;
 
-    $sqlname = $db->escape( $name );
+    $sqlname = $db->escape($name);
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $db->query( "UPDATE $table SET filename='$sqlname' WHERE aid = $aid" );
+    $db->query("UPDATE $table SET filename='$sqlname' WHERE aid = $aid");
 }
 
 /**
@@ -1320,14 +1320,14 @@ function renameAttachment( int $aid, string $name, bool $quarantine = false ) {
  *
  * @since 1.9.12
  */
-function setImageDims( int $aid, string $img_size, bool $quarantine = false ) {
+function setImageDims(int $aid, string $img_size, bool $quarantine = false) {
     global $db;
 
-    $sqlsize = $db->escape( $img_size );
+    $sqlsize = $db->escape($img_size);
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $db->query( "UPDATE $table SET img_size='$sqlsize' WHERE aid = $aid" );
+    $db->query("UPDATE $table SET img_size='$sqlsize' WHERE aid = $aid");
 }
 
 /**
@@ -1335,12 +1335,12 @@ function setImageDims( int $aid, string $img_size, bool $quarantine = false ) {
  *
  * @since 1.9.12
  */
-function raiseDownloadCounter( int $aid, bool $quarantine = false ) {
+function raiseDownloadCounter(int $aid, bool $quarantine = false) {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
 
-    $db->query( "UPDATE $table SET downloads = downloads + 1 WHERE aid = $aid" );
+    $db->query("UPDATE $table SET downloads = downloads + 1 WHERE aid = $aid");
 }
 
 /**
@@ -1351,12 +1351,12 @@ function raiseDownloadCounter( int $aid, bool $quarantine = false ) {
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Poll ID number.
  */
-function addVoteDesc( int $tid, bool $quarantine = false ): int {
+function addVoteDesc(int $tid, bool $quarantine = false): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
 
-    $db->query( "INSERT INTO $table SET topic_id = $tid" );
+    $db->query("INSERT INTO $table SET topic_id = $tid");
 
     return $db->insert_id();
 }
@@ -1368,10 +1368,10 @@ function addVoteDesc( int $tid, bool $quarantine = false ): int {
  * @param array $rows Must be an array of arrays representing rows, then values associated to field names.
  * @param bool $quarantine Save these records in a private table for later review?
  */
-function addVoteOptions( array $rows, bool $quarantine = false ) {
+function addVoteOptions(array $rows, bool $quarantine = false) {
     global $db;
 
-    if ( empty( $rows ) ) return;
+    if (empty($rows)) return;
 
     $sqlrows = [];
 
@@ -1385,27 +1385,27 @@ function addVoteOptions( array $rows, bool $quarantine = false ) {
     $ints = ['vote_id', 'vote_option_id', 'vote_result'];
     $strings = ['vote_option_text'];
 
-    foreach( $rows as $values ) {
-        foreach( $req as $field ) if ( ! isset( $values[$field] ) ) trigger_error( "Missing value $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
-        foreach( $ints as $field ) {
-            if ( isset( $values[$field] ) ) {
-                if ( ! is_int( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
+    foreach($rows as $values) {
+        foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
+        foreach($ints as $field) {
+            if (isset($values[$field])) {
+                if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
             } else {
                 $values[$field] = 0;
             }
         }
-        foreach( $strings as $field ) {
-            if ( isset( $values[$field] ) ) {
-                if ( ! is_string( $values[$field] ) ) trigger_error( "Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR );
-                $db->escape_fast( $values[$field] );
+        foreach($strings as $field) {
+            if (isset($values[$field])) {
+                if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
+                $db->escape_fast($values[$field]);
             } else {
                 $values[$field] = '';
             }
         }
-        $sqlrows[] = "( {$values['vote_id']}, {$values['vote_option_id']}, '{$values['vote_option_text']}', {$values['vote_result']} )";
+        $sqlrows[] = "( {$values['vote_id']}, {$values['vote_option_id']}, '{$values['vote_option_text']}', {$values['vote_result']})";
     }
-    $sqlrows = implode( ',', $sqlrows );
-    
+    $sqlrows = implode(',', $sqlrows);
+
     $table = $quarantine ? X_PREFIX.'hold_vote_results' : X_PREFIX.'vote_results';
 
     $db->query("INSERT INTO $table (vote_id, vote_option_id, vote_option_text, vote_result) VALUES $sqlrows");
@@ -1419,12 +1419,12 @@ function addVoteOptions( array $rows, bool $quarantine = false ) {
  * @param string $username Current user.
  * @param int $timelimit The timestamp before which all records may be purged.
  */
-function deleteOldWhosonline( string $address, string $username, int $timelimit ) {
+function deleteOldWhosonline(string $address, string $username, int $timelimit) {
     global $db;
 
-    $db->escape_fast( $address );
-    $db->escape_fast( $username );
-    
+    $db->escape_fast($address);
+    $db->escape_fast($username);
+
     $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE ((ip='$address' AND username='xguest123') OR (username='$username') OR (time < $timelimit))");
 }
 
@@ -1460,20 +1460,20 @@ function addWhosonline(string $address, string $username, int $time, string $url
  * @param bool $quarantine Was this record in a private table for later review?
  * @return int Poll ID number or zero if not found.
 */
-function getPollId( int $tid, bool $quarantine = false  ): int {
+function getPollId(int $tid, bool $quarantine = false): int {
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
 
     $query = $db->query("SELECT vote_id FROM $table WHERE topic_id = $tid");
-    
-    if ( $db->num_rows( $query ) === 0 ) {
+
+    if ($db->num_rows($query) === 0) {
         $id = 0;
     } else {
         $id = (int) $db->result($query, 0);
     }
     $db->free_result($query);
-    
+
     return $id;
 }
 
@@ -1489,12 +1489,12 @@ function getRanks(): array {
     $result = $db->query("SELECT * FROM ".X_PREFIX."ranks");
 
     $ranks = [];
-    while( $row = $db->fetch_array( $result ) ) {
+    while($row = $db->fetch_array($result)) {
         $ranks[] =& $row;
-        unset( $row );
+        unset($row);
     }
-    
-    $db->free_result( $result );
+
+    $db->free_result($result);
 
     return $ranks;
 }
