@@ -1486,7 +1486,7 @@ function getPollId(int $tid, bool $quarantine = false): int {
 function getRanks(): array {
     global $db;
 
-    $result = $db->query("SELECT * FROM ".X_PREFIX."ranks");
+    $result = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
 
     $ranks = [];
     while($row = $db->fetch_array($result)) {

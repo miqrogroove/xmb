@@ -1330,28 +1330,32 @@ if ($action == "ranks") {
         <td class="category"><strong><font color="<?php echo $cattext?>"><?php echo $lang['textavatar']?></font></strong></td>
         </tr>
         <?php
-        $avatarno = $avataryes = '';
         $default_found = false;
-        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
-        while($rank = $db->fetch_array($query)) {
+        $ranks = \XMB\SQL\getRanks();
+
+        foreach ($ranks as $rank) {
+            $deleteable = true;
+            $staff_disable = '';
             if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
-                $staff_disable = 'disabled';
+                $deleteable = false;
+                $staff_disable = 'disabled="disabled"';
             } elseif ($rank['posts'] === '0' && ! $default_found) {
-                $staff_disable = 'disabled';
+                $deleteable = false;
                 $default_found = true;
-            } else {
-                $staff_disable = '';
+                if ($rank['title'] === '') $rank['title'] = 'Newbie';
             }
 
             if ($rank['allowavatars'] == 'yes') {
-                $avataryes = "selected=\"selected\"";
+                $avatarno = '';
+                $avataryes = $selHTML;
             } else {
-                $avatarno = "selected=\"selected\"";
+                $avatarno = $selHTML;
+                $avataryes = '';
             }
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
-            <td class="tablerow" align="center"><input type="checkbox" name="delete[<?php echo $rank['id']?>]" value="<?php echo $rank['id']?>" <?php echo $staff_disable?> /></td>
-            <td class="tablerow" align="left"><input type="text" name="title[<?php echo $rank['id']?>]" value="<?php echo attrOut($rank['title']); ?>" <?php echo $staff_disable?>/></td>
+            <td class="tablerow" align="center"><?php if ($deleteable) { ?><input type="checkbox" name="delete[<?php echo $rank['id']?>]" value="<?php echo $rank['id']?>" /><?php } ?></td>
+            <td class="tablerow" align="left"><input type="text" name="title[<?php echo $rank['id']?>]" value="<?php echo attrOut($rank['title']); ?>" <?php echo $staff_disable?> /></td>
             <td class="tablerow"><input type="text" name="posts[<?php echo $rank['id']?>]" value="<?php echo $rank['posts']?>" <?php echo $staff_disable?> size="5" /></td>
             <td class="tablerow"><input type="text" name="stars[<?php echo $rank['id']?>]" value="<?php echo $rank['stars']?>" size="4" /></td>
             <td class="tablerow"><select name="allowavatars[<?php echo $rank['id']?>]">
@@ -1361,7 +1365,6 @@ if ($action == "ranks") {
             <td class="tablerow"><input type="text" name="avaurl[<?php echo $rank['id']?>]" value="<?php echo $rank['avatarrank']?>" size="20" /></td>
             </tr>
             <?php
-            $avataryes = $avatarno = '';
         }
         ?>
         <tr bgcolor="<?php echo $altbg2?>"><td colspan="6"> </td></tr>
@@ -1399,28 +1402,28 @@ if ($action == "ranks") {
         $newallowavatars = formYesNo('newallowavatars');
         $newavaurl = postedVar('newavaurl', 'javascript', TRUE, TRUE, TRUE);
 
-        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks");
-        $staffranks = array();
-        while($ranks = $db->fetch_array($query)) {
-            if ($ranks['title'] == 'Super Administrator' || $ranks['title'] == 'Administrator' || $ranks['title'] == 'Super Moderator' || $ranks['title'] == 'Moderator') {
-                $title[$ranks['id']] = $ranks['title'];
-                $posts[$ranks['id']] = 0;
-                if ((int) $stars[$ranks['id']] == 0) {
-                    $stars[$ranks['id']] = 1;
+        // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
+        $ranks = \XMB\SQL\getRanks();
+
+        foreach ($ranks as $rank) {
+            if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
+                $title[$rank['id']] = $rank['title'];
+                $posts[$rank['id']] = -1;
+                if ((int) $stars[$rank['id']] == 0) {
+                    $stars[$rank['id']] = 1;
                 }
-                $staffranks[] = $ranks['title'];
+                unset($delete[$rank['id']]);
             }
         }
 
-        $i = 0;
-
-        if ($delete) {
+        if (count($delete) > 0) {
             $del = implode(', ', $delete);
             $db->query("DELETE FROM ".X_PREFIX."ranks WHERE id IN ($del)");
         }
 
-        foreach($id as $key=>$val) {
-            $posts[$key] = (in_array($title[$key], $staffranks)) ? (int) -1 : $posts[$key];
+        foreach ($id as $key => $val) {
+            if (isset($delete[$key])) continue;
+
             $db->query("UPDATE ".X_PREFIX."ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
         }
 
