@@ -37,7 +37,7 @@ function xmb_upgrade() {
 
     show_progress('Confirming forums are turned off');
     if ($SETTINGS['bbstatus'] != 'off') {
-        if ( (int) $SETTINGS['schema_version'] < 5 ) {
+        if ((int) $SETTINGS['schema_version'] < 5) {
             upgrade_query("UPDATE ".X_PREFIX."settings SET bbstatus = 'off'");
         } else {
             upgrade_query("UPDATE ".X_PREFIX."settings SET value = 'off' WHERE name = 'bbstatus'");
@@ -47,7 +47,7 @@ function xmb_upgrade() {
     }
 
     show_progress('Selecting the appropriate change set');
-    switch ( (int) $SETTINGS['schema_version'] ) {
+    switch ((int) $SETTINGS['schema_version']) {
         case XMB_SCHEMA_VER:
             show_progress('Database schema is current, skipping ALTER commands');
             break;
@@ -124,17 +124,18 @@ function xmb_upgrade() {
     show_progress('Deleting the templates.xmb file');
     unlink(ROOT.'templates.xmb');
 
-
     show_progress('Checking for new themes');
-    $query = upgrade_query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
-    if ($db->num_rows($query) == 0 && is_dir(ROOT.'images/davis')) {
-        show_progress('Adding Davis as the new default theme');
-        upgrade_query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
-                                          ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
-        $newTheme = $db->insert_id();
-        upgrade_query("UPDATE ".X_PREFIX."settings SET value='$newTheme' WHERE name='theme'");
+    if ((int) $SETTINGS['schema_version'] < 3) {
+        $query = upgrade_query("SELECT themeid FROM ".X_PREFIX."themes WHERE name='XMB Davis'");
+        if ($db->num_rows($query) == 0 && is_dir(ROOT.'images/davis')) {
+            show_progress('Adding Davis as the new default theme');
+            upgrade_query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
+                                                 ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
+            $newTheme = $db->insert_id();
+            upgrade_query("UPDATE ".X_PREFIX."settings SET value='$newTheme' WHERE name='theme'");
+        }
+        $db->free_result($query);
     }
-    $db->free_result($query);
 }
 
 /**
