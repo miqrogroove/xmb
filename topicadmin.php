@@ -409,12 +409,20 @@ switch($action) {
 
     case 'getip':
         if ($pid) {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE pid='$pid'");
+            $query = $db->query("SELECT useip FROM ".X_PREFIX."posts WHERE pid='$pid'");
         } else {
             $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid={$tids[0]}");
         }
         $ipinfo = $db->fetch_array($query);
         $db->free_result($query);
+        if ($ipinfo['useip'] === '') {
+            $address = $lang['textnone'];
+            $name = $lang['textnone'];
+        } else {
+            $address = $ipinfo['useip'];
+            $name = gethostbyaddr($ipinfo['useip']);
+        }
+        
         ?>
         <form method="post" action="cp.php?action=ipban">
         <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP); ?>" />
@@ -425,7 +433,7 @@ switch($action) {
         <td class="header" colspan="3"><?php echo $lang['textgetip']?></td>
         </tr>
         <tr bgcolor="<?php echo $altbg2?>">
-        <td class="tablerow"><?php echo $lang['textyesip']?> <strong><?php echo $ipinfo['useip']?></strong> - <?php echo gethostbyaddr($ipinfo['useip'])?>
+        <td class="tablerow"><?= $lang['textyesip'] ?> <strong><?= $address ?></strong> - <?= $name ?>
         <?php
 
         $ip = explode('.', $ipinfo['useip']);
