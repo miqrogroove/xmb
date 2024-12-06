@@ -185,10 +185,15 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
     if (X_SCRIPT != 'upgrade.php' && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
         global $onlineip, $url;
 
+        if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
+            $useip = '';
+        } else {
+            $useip = $onlineip;
+        }
         $wollocation = substr($url, 0, $maxurl);
         $newtime = $onlinetime - X_ONLINE_TIMER;
-        \XMB\SQL\deleteOldWhosonline($onlineip, $self['username'], $newtime);
-        \XMB\SQL\addWhosonline($onlineip, $onlineuser, $onlinetime, $wollocation, $invisible);
+        \XMB\SQL\deleteOldWhosonline($useip, $self['username'], $newtime);
+        \XMB\SQL\addWhosonline($useip, $onlineuser, $onlinetime, $wollocation, $invisible);
     }
 }
 
@@ -1728,13 +1733,23 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
     }
 }
 
-function audit( string $user, string $action, int $fid, int $tid ) {
-    global $db, $onlinetime;
+/**
+ * Record a moderator or admin action for auditing.
+ *
+ * @since 1.9.1
+ * @param string $user The plain text version of the username.
+ * @param string $action The script or query used.
+ * @param int $fid The forum ID used.
+ * @param int $tid The thread ID used.
+ * @param int $timestamp The time of the log entry.
+ */
+function audit(string $user, string $action, int $fid = 0, int $tid = 0) {
+    global $onlinetime;
 
     $action = cdataOut($action);
-    $user = cdataOut($user);
 
-    $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ('$tid', '$user', '$action', '$fid', $onlinetime)");
+    \XMB\SQL\addLog($user, $action, $fid, $tid, $onlinetime);
+
     return true;
 }
 

@@ -59,8 +59,8 @@ $aapos = strpos($auditaction, "?");
 if ($aapos !== false) {
     $auditaction = substr($auditaction, $aapos + 1);
 }
-$auditaction = addslashes("$onlineip|#|$auditaction");
-audit($xmbuser, $auditaction, 0, 0);
+$auditaction = "$onlineip|#|$auditaction";
+audit($self['username'], $auditaction);
 
 displayAdminPanel();
 
@@ -1737,13 +1737,15 @@ if ($action == "ipban") {
                 <?php
             }
 
+            $warning = '';
             $ips = explode(".", $onlineip);
-            $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
-            $result = $db->fetch_array($query);
-            if ($result) {
-                $warning = $lang['ipwarning'];
-            } else {
-                $warning = '';
+            if (count($ips) === 4) {
+                $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')");
+                $result = $db->fetch_array($query);
+                if ($result) {
+                    $warning = $lang['ipwarning'];
+                }
+                $db->free_result($result);
             }
             ?>
             <tr bgcolor="<?php echo $altbg2?>">

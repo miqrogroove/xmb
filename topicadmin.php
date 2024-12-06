@@ -216,7 +216,7 @@ switch($action) {
                 }
                 updateforumcount($fid);
 
-                audit($xmbuser, $action, $fid, $tid);
+                audit($self['username'], $action, $fid, $tid);
             }
             message($lang['deletethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
@@ -248,7 +248,7 @@ switch($action) {
             }
 
             $act = ($closed != '') ? 'open' : 'close';
-            audit($xmbuser, $act, $fid, $tid);
+            audit($self['username'], $act, $fid, $tid);
 
             message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
@@ -265,7 +265,7 @@ switch($action) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid IN ($csv)");
                 foreach($tids AS $tid) {
-                    audit($xmbuser, 'close', $fid, $tid);
+                    audit($self['username'], 'close', $fid, $tid);
                 }
             }
             message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
@@ -284,7 +284,7 @@ switch($action) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid IN ($csv)");
                 foreach($tids AS $tid) {
-                    audit($xmbuser, 'open', $fid, $tid);
+                    audit($self['username'], 'open', $fid, $tid);
                 }
             }
             message($lang['closethreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
@@ -339,7 +339,7 @@ switch($action) {
                 $db->query("UPDATE ".X_PREFIX."threads SET fid=$moveto WHERE tid IN ($csv)");
                 $db->query("UPDATE ".X_PREFIX."posts SET fid=$moveto WHERE tid IN ($csv)");
                 foreach($tids AS $tid) {
-                    audit($xmbuser, $action, $moveto, $tid);
+                    audit($self['username'], $action, $moveto, $tid);
                 }
 
                 //Update all summary columns.
@@ -400,7 +400,7 @@ switch($action) {
                 }
 
                 $act = ($topped ? 'untop' : 'top');
-                audit($xmbuser, $act, $fid, $tid);
+                audit($self['username'], $act, $fid, $tid);
             }
 
             message($lang['topthreadmsg'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
@@ -417,7 +417,7 @@ switch($action) {
         $db->free_result($query);
         ?>
         <form method="post" action="cp.php?action=ipban">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="60%" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -429,40 +429,42 @@ switch($action) {
         <?php
 
         $ip = explode('.', $ipinfo['useip']);
-        $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
-        $result = $db->fetch_array($query);
-        $db->free_result($query);
-        if ($result) {
-            $buttontext = $lang['textunbanip'];
-            $foundmask = false;
-            for($i=1; $i<=4; ++$i) {
-                $j = "ip$i";
-                if ( '-1' === $result[$j] ) {
-                    $result[$j] = "*";
-                    $foundmask = true;
+        if (count($ip) === 4) {
+            $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
+            $result = $db->fetch_array($query);
+            $db->free_result($query);
+            if ($result) {
+                $buttontext = $lang['textunbanip'];
+                $foundmask = false;
+                for($i=1; $i<=4; ++$i) {
+                    $j = "ip$i";
+                    if ( '-1' === $result[$j] ) {
+                        $result[$j] = "*";
+                        $foundmask = true;
+                    }
+                }
+
+                if ($foundmask) {
+                    $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
+                    $bannedipmask = str_replace('$ipmask', $ipmask, $lang['evalipmask']);
+                    echo $bannedipmask;
+                } else {
+                    echo $lang['textbannedip'];
+                }
+                echo "<input type='hidden' name='delete[{$result['id']}]' value='1' />";
+            } else {
+                $buttontext = $lang['textbanip'];
+                for($i=1; $i<=4; ++$i) {
+                    $j = $i - 1;
+                    echo "<input type=\"hidden\" name=\"newip$i\" value=\"$ip[$j]\" />";
                 }
             }
-
-            if ($foundmask) {
-                $ipmask = "<strong>$result[ip1].$result[ip2].$result[ip3].$result[ip4]</strong>";
-                $bannedipmask = str_replace( '$ipmask', $ipmask, $lang['evalipmask'] );
-                echo $bannedipmask;
-            } else {
-                echo $lang['textbannedip'];
-            }
-            echo "<input type='hidden' name='delete[{$result['id']}]' value='1' />";
-        } else {
-            $buttontext = $lang['textbanip'];
-            for($i=1; $i<=4; ++$i) {
-                $j = $i - 1;
-                echo "<input type=\"hidden\" name=\"newip$i\" value=\"$ip[$j]\" />";
-            }
+            ?>
+            </td>
+            </tr>
+            <tr bgcolor="<?php echo $altbg1?>"><td class="ctrtablerow"><input type="submit" name="ipbansubmit" value="<?php echo $buttontext?>" />
+            <?php
         }
-        ?>
-        </td>
-        </tr>
-        <tr bgcolor="<?php echo $altbg1?>"><td class="ctrtablerow"><input type="submit" name="ipbansubmit" value="<?php echo $buttontext?>" />
-        <?php
 
         echo '</td></tr></table></td></tr></table></form>';
         break;
@@ -487,7 +489,7 @@ switch($action) {
                     $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$onlinetime|$xmbuser|$pid' WHERE tid=$tid");
                     $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$xmbuser|$pid' $where");
 
-                    audit($xmbuser, $action, $fid, $tid);
+                    audit($self['username'], $action, $fid, $tid);
                 }
                 $db->free_result($query);
             }
@@ -518,7 +520,7 @@ switch($action) {
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
 
                     updatethreadcount($tid); //Also updates lastpost
-                    audit($xmbuser, $action, $fid, $tid);
+                    audit($self['username'], $action, $fid, $tid);
                 }
                 $db->free_result($query);
             }
@@ -594,7 +596,7 @@ switch($action) {
             $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-$movecount, lastpost='$oldlastpost' WHERE tid=$tid");
             $db->free_result($query);
 
-            audit($xmbuser, $action, $fid, $tid);
+            audit($self['username'], $action, $fid, $tid);
 
             if ($forums['type'] == 'sub') {
                 updateforumcount($fup['fid']);
@@ -664,7 +666,7 @@ switch($action) {
             $db->escape_fast($lastpost['author']);
             $db->query("UPDATE ".X_PREFIX."threads SET replies=replies+'$replyadd', subject='{$thread['subject']}', icon='{$thread['icon']}', author='{$thread['author']}', lastpost='{$lastpost['dateline']}|{$lastpost['author']}|{$lastpost['pid']}' WHERE tid=$tid");
 
-            audit($xmbuser, $action, $fid, $tid);
+            audit($self['username'], $action, $fid, $tid);
 
             if ($forums['type'] == 'sub') {
                 updateforumcount($fup['fid']);
@@ -792,7 +794,7 @@ switch($action) {
             }
             updateforumcount($fid);
 
-            audit($xmbuser, $action, $fid, $tid);
+            audit($self['username'], $action, $fid, $tid);
 
             message($lang['complete_threadprune'], false, '', '', $full_url.'forumdisplay.php?fid='.$fid, true, false, true);
         }
@@ -872,7 +874,7 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                audit($xmbuser, $action, $fid, $tid);
+                audit($self['username'], $action, $fid, $tid);
 
                 if ($otherforum['type'] == 'sub') {
                     updateforumcount($otherforum['fup']);

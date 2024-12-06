@@ -548,6 +548,12 @@ switch($action) {
                 }
             }
 
+            if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
+                $useip = '';
+            } else {
+                $useip = $onlineip;
+            }
+
             $values = [
                 'fid' => (int) $fid,
                 'tid' => (int) $tid,
@@ -557,12 +563,12 @@ switch($action) {
                 'subject' => $dbsubject,
                 'icon' => $posticon,
                 'usesig' => $usesig,
-                'useip' => $onlineip,
+                'useip' => $useip,
                 'bbcodeoff' => $bbcodeoff,
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost( $values, $quarantine );
+            $pid = \XMB\SQL\addPost($values, $quarantine);
 
             $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
             if ($moderator && $closetopic == 'yes') {
@@ -965,16 +971,16 @@ switch($action) {
             $lastpost = "$thatime|$username";
             $closed = '';
             $topped = 0;
-            $dbpollopts = ( 'yes' == $poll ) ? 1 : 0;
+            $dbpollopts = ('yes' == $poll) ? 1 : 0;
 
-            if ( X_MEMBER ) {
+            if (X_MEMBER) {
                 $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
-                if ( $moderator ) {
-                    if ( 'yes' == $closetopic ) {
+                if ($moderator) {
+                    if ('yes' == $closetopic) {
                         // Be careful here; threads.closed is historically yes/moved/empty rather than yes/no.
                         $closed = 'yes';
                     }
-                    if ( $toptopic == 'yes' ) {
+                    if ($toptopic == 'yes') {
                         $topped = 1;
                     }
                 }
@@ -991,7 +997,13 @@ switch($action) {
                 'pollopts' => $dbpollopts,
             ];
 
-            $tid = \XMB\SQL\addThread( $values, $quarantine );
+            $tid = \XMB\SQL\addThread($values, $quarantine);
+
+            if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
+                $useip = '';
+            } else {
+                $useip = $onlineip;
+            }
 
             $values = [
                 'fid' => (int) $fid,
@@ -1002,17 +1014,17 @@ switch($action) {
                 'subject' => $dbsubject,
                 'icon' => $posticon,
                 'usesig' => $usesig,
-                'useip' => $onlineip,
+                'useip' => $useip,
                 'bbcodeoff' => $bbcodeoff,
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost( $values, $quarantine, $quarantine ); // 3rd arg signals that this is not a reply.
+            $pid = \XMB\SQL\addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
 
             $lastpost .= "|$pid";
-            \XMB\SQL\setThreadLastpost( $tid, $lastpost, $quarantine );
+            \XMB\SQL\setThreadLastpost($tid, $lastpost, $quarantine);
 
-            if ( ! $quarantine ) {
+            if (! $quarantine) {
                 $where = "WHERE fid=$fid";
                 if ($forum['type'] == 'sub') {
                     $where .= " OR fid={$forum['fup']}";
@@ -1024,7 +1036,7 @@ switch($action) {
             if ($poll == 'yes') {
                 // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
                 $dbsubject = addslashes($subjectinput);
-                $vote_id = \XMB\SQL\addVoteDesc( $tid, $quarantine );
+                $vote_id = \XMB\SQL\addVoteDesc($tid, $quarantine);
                 
                 // Create poll options.  This is the part we care about.
                 $options = [];
@@ -1036,23 +1048,23 @@ switch($action) {
                         'vote_option_text' => $p,
                     ];
                 }
-                \XMB\SQL\addVoteOptions( $options, $quarantine );
+                \XMB\SQL\addVoteOptions($options, $quarantine);
             }
 
             if ( X_MEMBER ) {
                 if ($emailnotify == 'yes') {
-                    \XMB\SQL\addFavoriteIfMissing( (int) $tid, $username, 'subscription', $quarantine );
+                    \XMB\SQL\addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
                 }
 
-                if ( ! $quarantine ) {
-                    \XMB\SQL\raisePostCount( $username, $onlinetime );
+                if (! $quarantine) {
+                    \XMB\SQL\raisePostCount($username, $onlinetime);
                     $expire = $onlinetime + X_ONLINE_TIMER;
-                    if ( empty( $oldtopics ) ) {
+                    if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
                         $oldtopics .= "$pid|";
                     }
-                    put_cookie( 'oldtopics', $oldtopics, $expire );
+                    put_cookie('oldtopics', $oldtopics, $expire);
                 }
             }
 
@@ -1064,19 +1076,19 @@ switch($action) {
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        \XMB\Attach\remoteImages( $pid, $messageinput, $quarantine );
+                        \XMB\Attach\remoteImages($pid, $messageinput, $quarantine);
                         $newdbmessage = addslashes($messageinput);
-                        if ( $newdbmessage !== $dbmessage ) { // Anonymous message was modified after save, in order to use the pid.
-                            \XMB\SQL\savePostBody( $pid, $newdbmessage, $quarantine );
+                        if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                            \XMB\SQL\savePostBody($pid, $newdbmessage, $quarantine);
                         }
                     }
-                } elseif ( X_MEMBER ) {
-                    \XMB\SQL\claimOrphanedAttachments( $pid, (int) $self['uid'], $quarantine );
+                } elseif (X_MEMBER) {
+                    \XMB\SQL\claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
                 }
             }
 
-            if ( $quarantine ) {
-                message( $lang['moderation_hold'] );
+            if ($quarantine) {
+                message($lang['moderation_hold']);
             } else {
                 $posts = \XMB\SQL\countPosts(false, $tid);
 
@@ -1091,9 +1103,9 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = \XMB\SQL\getOrphanedAttachments( (int) $self['uid'], $quarantine );
+                $orphans = \XMB\SQL\getOrphanedAttachments((int) $self['uid'], $quarantine);
                 $counter = 0;
-                foreach ( $orphans as $postinfo ) {
+                foreach ($orphans as $postinfo) {
                     $files[] = $postinfo;
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format($postinfo['filesize'], 0, '.', ',');
@@ -1110,13 +1122,13 @@ switch($action) {
                         }
                     }
                 }
-                $maxuploads = (int) $SETTINGS['filesperpost'] - count( $orphans );
+                $maxuploads = (int) $SETTINGS['filesperpost'] - count($orphans);
                 if ($maxuploads > 0) {
                     $max_dos_limit = (int) ini_get('max_file_uploads');
                     if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
-                    $maxtotal = ( 0 == $max_dos_size ) ? $max_xmb_size : min( $max_dos_size, $max_xmb_size );
+                    $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
                     $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }

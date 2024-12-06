@@ -1412,6 +1412,23 @@ function addVoteOptions(array $rows, bool $quarantine = false) {
 }
 
 /**
+ * SQL command
+ *
+ * @since 1.9.12.07
+ * @param int $vote_id The related vote_desc.vote_id value.
+ * @param int $user_id The voter's numeric member ID.
+ * @param string $user_ip The voter's IP address.
+ * @return int Poll ID number.
+ */
+function addVoter(int $vote_id, int $user_id, string $user_ip) {
+    global $db;
+
+    $db->escape_fast($user_ip);
+
+    $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ($vote_id, $user_id, '$user_ip')");
+}
+
+/**
  * Remove a user's guest record and any other stale records.
  *
  * @since 1.9.12.04
@@ -1497,6 +1514,25 @@ function getRanks(): array {
     $db->free_result($result);
 
     return $ranks;
+}
+
+/**
+ * Save a new entry to the forum log for auditing.
+ *
+ * @since 1.9.12.07
+ * @param string $user The HTML version of the username.
+ * @param string $action The script or query used.
+ * @param int $fid The forum ID used.
+ * @param int $tid The thread ID used.
+ * @param int $timestamp The time of the log entry.
+ */
+function addLog(string $user, string $action, int $fid, int $tid, int $timestamp) {
+    global $db;
+
+    $db->escape_fast($action);
+    $db->escape_fast($user);
+
+    $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ($tid, '$user', '$action', $fid, $timestamp)");
 }
 
 return;

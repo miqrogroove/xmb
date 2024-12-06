@@ -185,7 +185,14 @@ if ($action == 'report') {
     }
 
     // Okay, the user is about to vote
-    $db->query("INSERT INTO ".X_PREFIX."vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ($vote_id, {$self['uid']}, '".encode_ip($onlineip)."')");
+    
+    if ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39) {
+        $userip = '';
+    } else {
+        $userip = $onlineip;
+    }
+    
+    \XMB\SQL\addVoter($vote_id, $self['uid'], $userip);
     $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
 
     if ($tid > 0) {

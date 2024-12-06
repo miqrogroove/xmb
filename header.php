@@ -381,12 +381,12 @@ if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattach
 unset($inimax);
 
 // XMB settings are historically available as individual variables.
-extract( $SETTINGS );
+extract($SETTINGS);
 
 
 /* Set Global HTTP Headers */
 
-if ( X_SCRIPT != 'files.php' && X_SCRIPT != 'css.php' ) {
+if (X_SCRIPT != 'files.php' && X_SCRIPT != 'css.php') {
     header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
@@ -394,13 +394,13 @@ if ( X_SCRIPT != 'files.php' && X_SCRIPT != 'css.php' ) {
 
 ini_set('user_agent', "XMB-eXtreme-Message-Board/1.9; $full_url");
 
-$oldtopics = postedVar( 'oldtopics', '', false, false, false, 'c' );
-if ( X_SCRIPT != 'viewthread.php' && ! empty( $oldtopics ) ) {
+$oldtopics = postedVar('oldtopics', '', false, false, false, 'c');
+if (X_SCRIPT != 'viewthread.php' && ! empty($oldtopics)) {
     put_cookie('oldtopics', $oldtopics, ($onlinetime + X_ONLINE_TIMER));
 }
 
-if ( X_SCRIPT == 'upgrade.php' && (int) $SETTINGS['schema_version'] < 5 ) {
-    define( 'X_SADMIN', \XMB\SQL\checkUpgradeOldLogin( postedVar( 'xmbuser', '', true, false, false, 'c' ), postedVar( 'xmbpw', '', false, false, false, 'c' ) ) );
+if (X_SCRIPT == 'upgrade.php' && (int) $SETTINGS['schema_version'] < 5) {
+    define('X_SADMIN', \XMB\SQL\checkUpgradeOldLogin(postedVar('xmbuser', '', true, false, false, 'c'), postedVar('xmbpw', '', false, false, false, 'c')));
     return;
 }
 
@@ -411,32 +411,35 @@ $serror = '';
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
 // Check if the client is ip-banned
-if ($SETTINGS['ip_banning'] == 'on') {
+if ($SETTINGS['ip_banning'] === 'on') {
     $ips = explode(".", $onlineip);
-    $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
-    $result = $db->num_rows($query);
-    $db->free_result($query);
-    if ($result > 0) {
-        // Block all non-admins
-        $serror = 'ip';
+    if (count($ips) === 4) {
+        $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
+        $result = $db->num_rows($query);
+        $db->free_result($query);
+        if ($result > 0) {
+            // Block all non-admins
+            $serror = 'ip';
+        }
     }
+    unset($ips);
 }
 
 // Check other access restrictions
-if ( '' == $serror ) {
-    if ( (int) $SETTINGS['schema_version'] < 5 ) {
+if ('' === $serror) {
+    if ((int) $SETTINGS['schema_version'] < 5) {
         // During upgrade of session system, no features are available.
         $serror = 'bstatus';
-    } elseif ( ( $action == 'login' || $action == 'lostpw' ) && X_SCRIPT == 'misc.php' ) {
+    } elseif (($action == 'login' || $action == 'lostpw') && X_SCRIPT == 'misc.php') {
         // Allow login
-    } elseif ( X_SCRIPT == 'css.php' || X_SCRIPT == 'lost.php' ) {
+    } elseif (X_SCRIPT == 'css.php' || X_SCRIPT == 'lost.php') {
         // Allow stylesheets and password resets
-    } elseif ( $SETTINGS['bbstatus'] == 'off' ) {
+    } elseif ($SETTINGS['bbstatus'] == 'off') {
         // Block all non-admins
         $serror = 'bstatus';
-    } elseif ( $SETTINGS['regstatus'] == 'on' && ( $action == 'reg' || $action == 'captchaimage' ) && ( X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php' ) ) {
+    } elseif ($SETTINGS['regstatus'] == 'on' && ($action == 'reg' || $action == 'captchaimage') && (X_SCRIPT == 'misc.php' || X_SCRIPT == 'member.php')) {
         // Allow registration
-    } elseif ( $SETTINGS['regviewonly'] == 'on' ) {
+    } elseif ($SETTINGS['regviewonly'] == 'on') {
         // Block all guests
         $serror = 'guest';
     } else {
@@ -446,24 +449,24 @@ if ( '' == $serror ) {
 
 // Authenticate session or login credentials.
 $force_inv = false;
-if ( (int) $SETTINGS['schema_version'] < 5 ) {
+if ((int) $SETTINGS['schema_version'] < 5) {
     $mode = 'disabled';
-} else if ( X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'] ) ) {
+} else if (X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'])) {
     $mode = 'login';
-} else if ( $action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php' ) {
+} else if ($action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php') {
     $mode = 'login';
     $force_inv = (formInt('hide') == 1);
-} else if ( $action == 'logout' && X_SCRIPT == 'misc.php' ) {
+} else if ($action == 'logout' && X_SCRIPT == 'misc.php') {
     $mode = 'logout';
 } else {
     $mode = 'resume';
 }
 
-$session = new \XMB\Session\Manager( $mode );
+$session = new \XMB\Session\Manager($mode);
 
-elevateUser( $force_inv, $serror );
+elevateUser($force_inv, $serror);
 
-if ( X_SCRIPT == 'upgrade.php' ) return;
+if (X_SCRIPT == 'upgrade.php') return;
 
 
 /* Set Up HTML Templates and Themes */
@@ -472,9 +475,9 @@ if ( X_SCRIPT == 'upgrade.php' ) return;
 if ($action != 'attachment' && !($action == 'templates' && isset($download)) && !($action == 'themes' && isset($download))) {
     header("Content-type: text/html;charset={$lang['charset']}");
 }
-if ( function_exists( 'mb_list_encodings' ) ) {
+if (function_exists('mb_list_encodings')) {
     // The list of charsets common to mb_string and htmlspecialchars is extremely restrictive.
-    switch ( strtoupper( $lang['charset'] ) ) {
+    switch (strtoupper($lang['charset'])) {
     case 'UTF-8':
         $newcharset = 'UTF-8';
         break;
@@ -485,13 +488,13 @@ if ( function_exists( 'mb_list_encodings' ) ) {
         $newcharset = 'ISO-8859-1';
         break;
     }
-    if ( ! in_array( $newcharset, mb_list_encodings() ) ) {
+    if (! in_array($newcharset, mb_list_encodings())) {
         $newcharset = 'ISO-8859-1';
     }
 } else {
     $newcharset = 'ISO-8859-1';
 }
-ini_set( 'default_charset', $newcharset );
+ini_set('default_charset', $newcharset);
 
 // Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
 // XMB expects all links to be relative to $full_url + script name + query string.

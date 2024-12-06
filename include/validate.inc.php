@@ -436,7 +436,15 @@ function isChecked($varname, $compare = 'yes') {
     return(($varname == $compare) ? 'checked="checked"' : '');
 }
 
+/**
+ * DEPRECATED by XMB 1.9.12.07
+ *
+ * This function was used to pack decimal-dotted addresses into an 8-char hexadecimal notation.
+ * Its output was never reversed and had no clear purpose.
+ */
 function encode_ip($dotquad_ip) {
+    trigger_error('encode_ip() is deprecated in this version of XMB', E_USER_DEPRECATED);
+
     $ip_sep = explode('.', $dotquad_ip);
     return sprintf('%02x%02x%02x%02x', $ip_sep[0], $ip_sep[1], $ip_sep[2], $ip_sep[3]);
 }
@@ -450,10 +458,10 @@ function isValidFilename($filename) {
  *
  * @since 1.9.12.03
  */
-function bbcode_out( string $message ): string {
+function bbcode_out(string $message): string {
     $retval = $message;
-    $retval = htmlspecialchars( $retval, ENT_QUOTES, null, false );
-    $retval = str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $retval );
+    $retval = htmlspecialchars($retval, ENT_QUOTES, null, false);
+    $retval = str_replace(array('[', ']'), array('&#91;', '&#93;'), $retval);
     return $retval;
 }
 

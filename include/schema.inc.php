@@ -27,7 +27,7 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-define('XMB_SCHEMA_VER', 8);
+define('XMB_SCHEMA_VER', 9);
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
@@ -201,7 +201,7 @@ function xmb_schema_create(string $name): string {
           `dateline` int NOT NULL DEFAULT 0,
           `icon` varchar(50) DEFAULT NULL,
           `usesig` varchar(15) NOT NULL DEFAULT '',
-          `useip` varchar(15) NOT NULL DEFAULT '',
+          `useip` varchar(39) NOT NULL DEFAULT '',
           `bbcodeoff` varchar(15) NOT NULL DEFAULT '',
           `smileyoff` varchar(15) NOT NULL DEFAULT '',
           `newtid` int NOT NULL DEFAULT '0',
@@ -321,7 +321,7 @@ function xmb_schema_create(string $name): string {
           `tpp` smallint NOT NULL DEFAULT 0,
           `ppp` smallint NOT NULL DEFAULT 0,
           `newsletter` char(3) NOT NULL DEFAULT '',
-          `regip` varchar(15) NOT NULL DEFAULT '',
+          `regip` varchar(39) NOT NULL DEFAULT '',
           `timeformat` int NOT NULL DEFAULT 0,
           `msn` varchar(40) NOT NULL DEFAULT '',
           `ban` varchar(15) NOT NULL DEFAULT '0',
@@ -363,7 +363,7 @@ function xmb_schema_create(string $name): string {
           `dateline` int NOT NULL DEFAULT 0,
           `icon` varchar(50) DEFAULT NULL,
           `usesig` varchar(15) NOT NULL DEFAULT '',
-          `useip` varchar(15) NOT NULL DEFAULT '',
+          `useip` varchar(39) NOT NULL DEFAULT '',
           `bbcodeoff` varchar(15) NOT NULL DEFAULT '',
           `smileyoff` varchar(15) NOT NULL DEFAULT '',
           PRIMARY KEY  (`pid`),
@@ -552,17 +552,16 @@ function xmb_schema_create(string $name): string {
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
           `vote_user_id` mediumint NOT NULL DEFAULT '0',
-          `vote_user_ip` char(8) NOT NULL DEFAULT '',
+          `vote_user_ip` varchar(39) NOT NULL DEFAULT '',
           KEY `vote_id` (`vote_id`),
-          KEY `vote_user_id` (`vote_user_id`),
-          KEY `vote_user_ip` (`vote_user_ip`)
+          KEY `vote_user_id` (`vote_user_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'whosonline':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `username` varchar(32) NOT NULL DEFAULT '',
-          `ip` varchar(15) NOT NULL DEFAULT '',
+          `ip` varchar(39) NOT NULL DEFAULT '',
           `time` int NOT NULL DEFAULT 0,
           `location` varchar(150) NOT NULL DEFAULT '',
           `invisible` SET('1','0') DEFAULT '0',

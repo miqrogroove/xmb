@@ -70,6 +70,9 @@ function xmb_upgrade() {
         case 7:
             upgrade_schema_to_v8();
         case 8:
+            upgrade_schema_to_v9();
+            break;
+        case 9:
             //Future use. Break only before case default.
             break;
         default:
@@ -1974,6 +1977,130 @@ function upgrade_schema_to_v8() {
 }
 
 /**
+ * Performs all tasks needed to raise the database schema_version number to 9.
+ *
+ * @since 1.9.12.07
+ */
+function upgrade_schema_to_v9() {
+    global $db;
+
+    $table = 'hold_posts';
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $colname = 'useip';
+    $coltype = "varchar(39) NOT NULL DEFAULT ''";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(15)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Modifying columns in the $table table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    $table = 'members';
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $colname = 'regip';
+    $coltype = "varchar(39) NOT NULL DEFAULT ''";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(15)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Modifying columns in the $table table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    $table = 'posts';
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $colname = 'useip';
+    $coltype = "varchar(39) NOT NULL DEFAULT ''";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(15)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Modifying columns in the $table table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    $table = 'vote_voters';
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $columns = [
+    'vote_user_ip' => 'vote_user_ip',
+    ];
+    foreach($columns as $colname => $coltype) {
+        if (xmb_schema_index_exists($table, $coltype, $colname)) {
+            $sql[] = "DROP INDEX $colname";
+        }
+    }
+
+    $colname = 'vote_user_ip';
+    $coltype = "varchar(39) NOT NULL DEFAULT ''";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'char(8)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Modifying columns in the $table table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    $table = 'whosonline';
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $colname = 'ip';
+    $coltype = "varchar(39) NOT NULL DEFAULT ''";
+    $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+    $row = $db->fetch_array($query);
+    if (strtolower($row['Type']) == 'varchar(15)') {
+        $sql[] = 'MODIFY COLUMN '.$colname.' '.$coltype;
+    }
+
+    if (count($sql) > 0) {
+        show_progress('Modifying columns in the $table table');
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress('Releasing the lock on the $table table');
+    upgrade_query('UNLOCK TABLES');
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '9' WHERE name = 'schema_version'");
+}
+
+/**
  * Recalculates the value of every field in the forums.postperm column.
  *
  * Function has been modified to run without parameters.
@@ -2219,22 +2346,22 @@ function fixPostPerm() {
     global $db;
 
 	$query = upgrade_query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
-	while ( $forum = $db->fetch_array($query) ) {
+	while ($forum = $db->fetch_array($query)) {
 		$update = false;
 		$pp = trim($forum['postperm']);
-		if ( strlen($pp) > 0 && strpos($pp, '|') === false ) {
+		if (strlen($pp) > 0 && strpos($pp, '|') === false) {
 			$update = true;
 			$forum['postperm'] = $pp . '|' . $pp;	// make the postperm the same for thread and reply
 		}
-		if ( $forum['guestposting'] != 'on' && $forum['guestposting'] != 'off' ) {
+		if ($forum['guestposting'] != 'on' && $forum['guestposting'] != 'off') {
 			$forum['guestposting'] = 'off';
 			$update = true;
 		}
-		if ( $forum['private'] == '' ) {
+		if ($forum['private'] == '') {
 			$forum['private'] = '1';	// by default, forums are not private.
 			$update = true;
 		}
-		if ( $update ) {
+		if ($update) {
 			upgrade_query("UPDATE ".X_PREFIX."forums SET postperm='{$forum['postperm']}', guestposting='{$forum['guestposting']}', private='{$forum['private']}' WHERE fid={$forum['fid']}");
 		}
 	}
@@ -2248,19 +2375,19 @@ function fixPostPerm() {
  * @param string $sql
  * @return mixed Result of $db->query()
  */
-function upgrade_query( $sql ) {
+function upgrade_query($sql) {
 	global $db;
 	
-	$result = $db->query( $sql, false );
+	$result = $db->query($sql, false);
 	
-	if ( false === $result ) {
-		$error = '<pre>MySQL encountered the following error: '.cdataOut( $db->error() )."\n\n";
+	if (false === $result) {
+		$error = '<pre>MySQL encountered the following error: ' . cdataOut($db->error()) . "\n\n";
 		if ( '' != $sql ) {
-			$error .= 'In the following query: <em>'.cdataOut( $sql ).'</em>';
+			$error .= 'In the following query: <em>' . cdataOut($sql) . '</em>';
 		}
 		$error .= '</pre>';
 		
-		show_error( $error );
+		show_error($error);
 		exit;
 	}
 	

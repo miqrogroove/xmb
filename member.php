@@ -382,7 +382,11 @@ switch($action) {
 
                     $self['password'] = md5( $self['password'] );
                     $self['regdate'] = $onlinetime;
-                    $self['regip'] = $onlineip;
+                    if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
+                        $self['regip'] = '';
+                    } else {
+                        $self['regip'] = $onlineip;
+                    }
 
                     if ( 'on' == $SETTINGS['regoptional'] ) {
                         $self['location'] = postedVar( 'location', 'javascript', true, false, true );
@@ -441,13 +445,13 @@ switch($action) {
                         }
                     }
 
-                    \XMB\SQL\addMember( $self );
+                    \XMB\SQL\addMember($self);
 
                     $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
 
                     if ($SETTINGS['notifyonreg'] != 'off') {
                         $mailquery = \XMB\SQL\getSuperEmails();
-                        foreach ( $mailquery as $admin ) {
+                        foreach ($mailquery as $admin) {
                             $translate = $lang2[$admin['langfile']];
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
                                 $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");

@@ -106,8 +106,8 @@ $aapos = strpos($auditaction, "?");
 if ($aapos !== false) {
     $auditaction = substr($auditaction, $aapos + 1);
 }
-$auditaction = addslashes("$onlineip|#|$auditaction");
-audit($xmbuser, $auditaction, 0, 0);
+$auditaction = "$onlineip|#|$auditaction";
+audit($self['username'], $auditaction);
 
 displayAdminPanel();
 
