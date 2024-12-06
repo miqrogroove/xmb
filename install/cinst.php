@@ -39,7 +39,7 @@ if (!defined('X_INST_ERR')) {
 
 if (!function_exists('show_act')) {
     function show_act($act) {
-        $act .= str_repeat('.', (75-strlen($act)));
+        $act .= str_repeat('.', (74-strlen($act)));
         echo '<span class="progress">'.$act;
     }
 }
