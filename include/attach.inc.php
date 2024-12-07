@@ -756,50 +756,57 @@ function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape 
         $file = $_FILES[$varname];
     } else {
         $filetype = X_EMPTY_UPLOAD;
-        return FALSE;
+        return false;
     }
 
-    if (UPLOAD_ERR_OK != $file['error']) {
-        switch($file['error']) {
+    switch($file['error']) {
+        case UPLOAD_ERR_OK:
+            break;
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
             $filetype = X_ATTACH_SIZE_EXCEEDED;
-            break;
+            return false;
         case UPLOAD_ERR_NO_FILE:
+        case UPLOAD_ERR_PARTIAL:
             $filetype = X_EMPTY_UPLOAD;
-            break;
-        case 6: //UPLOAD_ERR_NO_TMP_DIR
+            return false;
+        case UPLOAD_ERR_NO_TMP_DIR:
             header('HTTP/1.0 500 Internal Server Error');
-            exit('Fatal Error: XMB can\'t find the upload_tmp_dir. This is a PHP server configuration fault.');
-            break;
+            echo "Fatal Error: XMB can't find the upload_tmp_dir. This is a server configuration fault.";
+            throw new RuntimeException('The FILES array says UPLOAD_ERR_NO_TMP_DIR', $file['error']);
+        case UPLOAD_ERR_CANT_WRITE:
+            header('HTTP/1.0 500 Internal Server Error');
+            echo 'Fatal Error: PHP was unable to save the uploaded file. This is a server configuration fault.';
+            throw new RuntimeException('The FILES array says UPLOAD_ERR_CANT_WRITE', $file['error']);
+        case UPLOAD_ERR_EXTENSION:
+            throw new RuntimeException('A PHP extension blocked a file upload', $file['error']);
         default:
             // See the PHP Manual for additional information.
             if (DEBUG && is_numeric($file['error'])) {
-                header('HTTP/1.0 500 Internal Server Error');
-                exit('XMB Upload Haulted by PHP error code '.$file['error']);
+                throw new RuntimeException("The FILES array says code {$file['error']} prevented an upload", $file['error']);
             }
             $filetype = X_GENERIC_ATTACH_ERROR;
-        }
-        return FALSE;
+            return false;
     }
 
-    if (!is_uploaded_file($file['tmp_name'])) {
+    if (! is_uploaded_file($file['tmp_name'])) {
         $filetype = X_EMPTY_UPLOAD;
-        return FALSE;
+        return false;
     }
 
-    if (!is_readable($file['tmp_name'])) {
+    if (! is_readable($file['tmp_name'])) {
         header('HTTP/1.0 500 Internal Server Error');
-        exit('Fatal Error: XMB does not have read permission in the upload_tmp_dir. This is a PHP server security fault.');
+        echo 'Fatal Error: XMB does not have read permission in the upload_tmp_dir. This is a PHP server security fault.';
+        throw new RuntimeException('Unable to read uploaded file');
     }
 
     $file['name'] = trim($file['name']);
-    if (!isValidFilename($file['name'])) {
+    if (! isValidFilename($file['name'])) {
         $file['name'] = basename($file['tmp_name']);
-        if (!isValidFilename($file['name'])) {
+        if (! isValidFilename($file['name'])) {
             unlink($file['tmp_name']);
             $filetype = X_INVALID_FILENAME;
-            return FALSE;
+            return false;
         }
     }
 
@@ -807,12 +814,12 @@ function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape 
     if ($filesize > (int) $SETTINGS['maxattachsize']) {
         unlink($file['tmp_name']);
         $filetype = X_ATTACH_SIZE_EXCEEDED;
-        return FALSE;
+        return false;
     }
     if ($filesize == 0) {
         unlink($file['tmp_name']);
         $filetype = X_EMPTY_UPLOAD;
-        return FALSE;
+        return false;
     }
 
 
