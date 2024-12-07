@@ -518,11 +518,9 @@ class dbstuff {
      */
     public function num_rows(mysqli_result $query): int {
         $count = $query->num_rows;
-        
-        if (!is_int($count)) {
-            trigger_error('XMB encountered an unexpected value in mysqli_num_rows and stopped for safety.', E_USER_ERROR);
-        }
-        
+
+        if (!is_int($count)) throw new UnexpectedValueException('Row count was not an int');
+
         return $count;
     }
 
@@ -559,10 +557,8 @@ class dbstuff {
     public function affected_rows(): int {
         $count = $this->link->affected_rows;
 
-        if (!is_int($count)) {
-            trigger_error('XMB encountered an unexpected value in mysqli_affected_rows and stopped for safety.', E_USER_ERROR);
-        }
-        
+        if (!is_int($count)) throw new UnexpectedValueException('Row count was not an int');
+
         return $count;
     }
 

@@ -40,10 +40,10 @@ require ROOT.'config.php';
 if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
 } else {
-    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR);
+    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 define('X_PREFIX', $tablepre);
-if ( 'mysql' === $database ) $database = 'mysqli';
+if ('mysql' === $database) $database = 'mysqli';
 require ROOT.'db/'.$database.'.php';
 require ROOT.'include/functions.inc.php';
 $db = new dbstuff;
@@ -53,46 +53,46 @@ if (FALSE === $squery) exit('Fatal Error: XMB is not installed.');
 if ($db->num_rows($squery) == 0) exit('Fatal Error: The XMB settings table is empty.');
 
 // Check schema for upgrade compatibility back to 1.8 SP2.
-$row = $db->fetch_array( $squery );
-if ( isset( $row['langfile'] ) ) {
+$row = $db->fetch_array($squery);
+if (isset($row['langfile'])) {
     // Schema version <= 4 has only one row.
-    foreach ( $row as $key => $val ) {
+    foreach ($row as $key => $val) {
         $SETTINGS[$key] = $val;
     }
-    if ( ! isset( $SETTINGS['schema_version'] ) ) {
+    if (! isset($SETTINGS['schema_version'])) {
         $SETTINGS['schema_version'] = '0';
     }
 } else {
     // Current schema uses a separate row for each setting.
     do {
         $SETTINGS[$row['name']] = $row['value'];
-    } while ( $row = $db->fetch_array( $squery ) );
+    } while ($row = $db->fetch_array($squery));
 }
-$db->free_result( $squery );
-unset( $row );
+$db->free_result($squery);
+unset($row);
 
-if ( (int) $SETTINGS['postperpage'] < 5 ) $SETTINGS['postperpage'] = '30';
-if ( (int) $SETTINGS['topicperpage'] < 5 ) $SETTINGS['topicperpage'] = '30';
-if ( (int) $SETTINGS['memberperpage'] < 5 ) $SETTINGS['memberperpage'] = '30';
-if ( (int) $SETTINGS['smcols'] < 1 ) $SETTINGS['smcols'] = '4';
-if ( empty( $SETTINGS['onlinetodaycount'] ) || (int) $SETTINGS['onlinetodaycount'] < 5 ) {
+if ((int) $SETTINGS['postperpage'] < 5) $SETTINGS['postperpage'] = '30';
+if ((int) $SETTINGS['topicperpage'] < 5) $SETTINGS['topicperpage'] = '30';
+if ((int) $SETTINGS['memberperpage'] < 5) $SETTINGS['memberperpage'] = '30';
+if ((int) $SETTINGS['smcols'] < 1) $SETTINGS['smcols'] = '4';
+if (empty($SETTINGS['onlinetodaycount']) || (int) $SETTINGS['onlinetodaycount'] < 5) {
     $SETTINGS['onlinetodaycount'] = '30';
 }
-if ( empty( $SETTINGS['captcha_code_length'] ) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
+if (empty($SETTINGS['captcha_code_length']) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
     $SETTINGS['captcha_code_length'] = '8';
 }
-if ( empty( $SETTINGS['ip_banning'] ) ) {
+if (empty($SETTINGS['ip_banning'])) {
     $SETTINGS['ip_banning'] == 'off';
 }
-if ( empty( $SETTINGS['schema_version'] ) ) {
+if (empty($SETTINGS['schema_version'])) {
     $SETTINGS['schema_version'] == '0';
 }
 $inimax = phpShorthandValue('upload_max_filesize');
-if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattachsize'] ) {
+if (empty($SETTINGS['maxattachsize']) || $inimax < (int) $SETTINGS['maxattachsize']) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);
-define( 'X_SADMIN', true );
+define('X_SADMIN', true);
 
 
 //Make it happen!

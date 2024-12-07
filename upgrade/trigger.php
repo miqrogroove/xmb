@@ -22,9 +22,9 @@
  *
  **/
 
-ignore_user_abort( true );
-header( 'Expires: 0' );
-header( 'X-Frame-Options: sameorigin' );
+ignore_user_abort(true);
+header('Expires: 0');
+header('X-Frame-Options: sameorigin');
 
 //Script constants
 define('MYSQL_MIN_VER', '4.1.7');
@@ -42,9 +42,9 @@ if (ini_get('display_errors')) {
 }
 
 //Check location
-if (!(is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
-    show_error( 'Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.' );
-    trigger_error('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.', E_USER_ERROR);
+if (! (is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
+    show_error('Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.');
+    throw new Exception('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.');
 }
 
 //Authenticate Browser
@@ -60,43 +60,43 @@ if (DEBUG) {
     echo 'Debug is False - You will not see any errors.';
 }
 
-if (!defined('X_SADMIN') || !X_SADMIN) {
-    show_error( 'This script may be run only by a Super Administrator.<br />Please <a href="login.php" target="_parent">Log In</a> first to begin the upgrade successfully.' );
-    trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+if (! defined('X_SADMIN') || ! X_SADMIN) {
+    show_error('This script may be run only by a Super Administrator.<br />Please <a href="login.php" target="_parent">Log In</a> first to begin the upgrade successfully.');
+    throw new Exception('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR']);
 }
 
 //Check Server Version
 if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
-    show_error( 'XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.' );
-    trigger_error('Admin attempted upgrade with obsolete PHP engine.', E_USER_ERROR);
+    show_error('XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.');
+    throw new Exception('Admin attempted upgrade with obsolete PHP engine.');
 }
 if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
-    show_error( '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.' );
-    trigger_error('Admin attempted upgrade with obsolete MySQL engine.', E_USER_ERROR);
+    show_error('<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.');
+    throw new Exception('Admin attempted upgrade with obsolete MySQL engine.');
 }
 
 
-show_progress( 'Confirming the upgrade files are present' );
+show_progress('Confirming the upgrade files are present');
 
 if (is_dir(ROOT.'install') || is_dir(ROOT.'Install')) {
-	show_error( 'Wrong files present!<br />Please delete any folders named "install".' );
-	trigger_error('Admin attempted upgrade while non-upgrade files were present.', E_USER_ERROR);
+	show_error('Wrong files present!<br />Please delete any folders named "install".');
+	throw new Exception('Admin attempted upgrade while non-upgrade files were present.');
 }
 if (!is_file(ROOT.'templates.xmb')) {
-	show_error( 'Files missing!<br />Please make sure to upload the templates.xmb file.' );
-	trigger_error('Admin attempted upgrade with templates.xmb missing.', E_USER_ERROR);
+	show_error('Files missing!<br />Please make sure to upload the templates.xmb file.');
+	throw new Exception('Admin attempted upgrade with templates.xmb missing.');
 }
 if (!is_file(ROOT.'lang/English.lang.php')) {
-	show_error( 'Files missing!<br />Please make sure to upload the lang/English.lang.php file.' );
-	trigger_error('Admin attempted upgrade with English.lang.php missing.', E_USER_ERROR);
+	show_error('Files missing!<br />Please make sure to upload the lang/English.lang.php file.');
+	throw new Exception('Admin attempted upgrade with English.lang.php missing.');
 }
 if (!is_file(ROOT.'include/schema.inc.php')) {
-	show_error( 'Files missing!<br />Please make sure to upload the include/schema.inc.php file.' );
-	trigger_error('Admin attempted upgrade with schema.lang.php missing.', E_USER_ERROR);
+	show_error('Files missing!<br />Please make sure to upload the include/schema.inc.php file.');
+	throw new Exception('Admin attempted upgrade with schema.lang.php missing.');
 }
 if (!is_file('./upgrade.lib.php')) {
-	show_error( 'Files missing!<br />Please make sure to upload the upgrade/upgrade.lib.php file.' );
-	trigger_error('Admin attempted upgrade with upgrade.lib.php missing.', E_USER_ERROR);
+	show_error('Files missing!<br />Please make sure to upload the upgrade/upgrade.lib.php file.');
+	throw new Exception('Admin attempted upgrade with upgrade.lib.php missing.');
 }
 
 $trigger_old_schema = (int) $SETTINGS['schema_version'];
@@ -104,10 +104,10 @@ $trigger_old_schema = (int) $SETTINGS['schema_version'];
 require('./upgrade.lib.php');
 xmb_upgrade();
 
-if ( $trigger_old_schema < 5 ) {
-    show_finished( '<b>Done! :D</b><br />Now <a href="../misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />' );
+if ($trigger_old_schema < 5) {
+    show_finished('<b>Done! :D</b><br />Now <a href="../misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />');
 } else {
-    show_finished( '<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />' );
+    show_finished('<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
 }
 echo "\nDone.</body></html>";
 
@@ -120,10 +120,10 @@ echo "\nDone.</body></html>";
  * @param string $text Description of current progress.
  */
 function show_progress($text) {
-	$result = file_put_contents( LOG_FILE, "\r\n$text...", FILE_APPEND );
-	if ( false === $result ) {
+	$result = file_put_contents(LOG_FILE, "\r\n$text...", FILE_APPEND);
+	if (false === $result) {
 		echo 'Unable to write to file ' . LOG_FILE;
-		trigger_error( 'Unable to write to file ' . LOG_FILE, E_USER_ERROR );
+		throw new RuntimeException('Unable to write to file ' . LOG_FILE);
 	}
 }
 
@@ -133,10 +133,10 @@ function show_progress($text) {
  * @param string $text
  */
 function show_warning($text) {
-	$result = file_put_contents( LOG_FILE, "\r\n<b>$text</b>", FILE_APPEND );
-	if ( false === $result ) {
+	$result = file_put_contents(LOG_FILE, "\r\n<b>$text</b>", FILE_APPEND);
+	if (false === $result) {
 		echo 'Unable to write to file ' . LOG_FILE;
-		trigger_error( 'Unable to write to file ' . LOG_FILE, E_USER_ERROR );
+		throw new RuntimeException('Unable to write to file ' . LOG_FILE);
 	}
 }
 
@@ -146,7 +146,7 @@ function show_warning($text) {
  * @param string $text Description of current progress.
  */
 function show_error($text) {
-    file_put_contents( LOG_FILE, "\r\n$text<!-- error -->", FILE_APPEND );
+    file_put_contents(LOG_FILE, "\r\n$text<!-- error -->", FILE_APPEND);
 }
 
 /**
@@ -155,5 +155,5 @@ function show_error($text) {
  * @param string $text Description of current progress.
  */
 function show_finished($text) {
-    file_put_contents( LOG_FILE, "\r\n$text<!-- done. -->", FILE_APPEND );
+    file_put_contents(LOG_FILE, "\r\n$text<!-- done. -->", FILE_APPEND);
 }

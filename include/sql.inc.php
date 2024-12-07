@@ -26,6 +26,9 @@ declare(strict_types=1);
 
 namespace XMB\SQL;
 
+use InvalidArgumentException;
+use LogicException;
+
 if (!defined('IN_CODE')) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
@@ -205,10 +208,10 @@ function addMember(array $values): int {
 
     $sql = [];
 
-    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addMember()", E_USER_ERROR);
+    foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
     foreach($ints as $field) {
         if (isset($values[$field])) {
-            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
+            if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
         } else {
             $values[$field] = 0;
         }
@@ -216,7 +219,7 @@ function addMember(array $values): int {
     }
     foreach($numerics as $field) {
         if (isset($values[$field])) {
-            if (! is_numeric($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
+            if (! is_numeric($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
         } else {
             $values[$field] = 0;
         }
@@ -224,7 +227,7 @@ function addMember(array $values): int {
     }
     foreach($strings as $field) {
         if (isset($values[$field])) {
-            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addMember()", E_USER_ERROR);
+            if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
@@ -639,17 +642,17 @@ function addThread(array &$values, bool $quarantine = false): int {
     $ints = ['fid', 'views', 'replies', 'topped', 'pollopts'];
     $strings = ['author', 'lastpost', 'subject', 'icon', 'closed'];
 
-    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addThread()", E_USER_ERROR);
+    foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
     foreach($ints as $field) {
         if (isset($values[$field])) {
-            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR);
+            if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
         } else {
             $values[$field] = 0;
         }
     }
     foreach($strings as $field) {
         if (isset($values[$field])) {
-            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addThread()", E_USER_ERROR);
+            if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
@@ -764,10 +767,10 @@ function addPost(array &$values, bool $quarantine = false, bool $qthread = false
     $strings = ['author', 'message', 'subject', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff'];
 
     $all = array_merge($ints, $strings);
-    foreach($all as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addPost()", E_USER_ERROR);
-    foreach($ints as $field) if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR);
+    foreach($all as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+    foreach($ints as $field) if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
     foreach($strings as $field) {
-        if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addPost()", E_USER_ERROR);
+        if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
         $db->escape_fast($values[$field]);
     }
 
@@ -906,17 +909,17 @@ function addAttachment(array &$values, bool $quarantine = false): int {
     $ints = ['pid', 'parentid', 'uid'];
     $strings = ['filename', 'filetype', 'filesize', 'attachment', 'img_size', 'subdir'];
 
-    foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
+    foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
     foreach($ints as $field) {
         if (isset($values[$field])) {
-            if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
+            if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
         } else {
             $values[$field] = 0;
         }
     }
     foreach($strings as $field) {
         if (isset($values[$field])) {
-            if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addAttachment()", E_USER_ERROR);
+            if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             $db->escape_fast($values[$field]);
         } else {
             $values[$field] = '';
@@ -1386,23 +1389,23 @@ function addVoteOptions(array $rows, bool $quarantine = false) {
     $strings = ['vote_option_text'];
 
     foreach($rows as $values) {
-        foreach($req as $field) if (! isset($values[$field])) trigger_error("Missing value $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
+        foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
         foreach($ints as $field) {
             if (isset($values[$field])) {
-                if (! is_int($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
+                if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             } else {
                 $values[$field] = 0;
             }
         }
         foreach($strings as $field) {
             if (isset($values[$field])) {
-                if (! is_string($values[$field])) trigger_error("Type mismatch in $field for \XMB\SQL\addVoteOptions()", E_USER_ERROR);
+                if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $db->escape_fast($values[$field]);
             } else {
                 $values[$field] = '';
             }
         }
-        $sqlrows[] = "( {$values['vote_id']}, {$values['vote_option_id']}, '{$values['vote_option_text']}', {$values['vote_result']})";
+        $sqlrows[] = "( {$values['vote_id']}, {$values['vote_option_id']}, '{$values['vote_option_text']}', {$values['vote_result']} )";
     }
     $sqlrows = implode(',', $sqlrows);
 

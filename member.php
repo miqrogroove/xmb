@@ -68,36 +68,36 @@ switch($action) {
             4 => 'profile',
             5 => 'done',
         ];
-        $stepin = formInt( 'step' );
+        $stepin = formInt('step');
         $stepout = $stepin + 1;
         $testname = 'regtest';
         $testval = 'xmb';
-        $cookietest = postedVar( $testname, '', false, false, false, 'c' );
+        $cookietest = postedVar($testname, '', false, false, false, 'c');
         $regvalid = true;
 
         $https_only = 'on' == $SETTINGS['images_https_only'];
         $js_https_only = $https_only ? 'true' : 'false';
 
-        if ( 'off' == $SETTINGS['regstatus'] ) {
-            header( 'HTTP/1.0 403 Forbidden' );
+        if ('off' == $SETTINGS['regstatus']) {
+            header('HTTP/1.0 403 Forbidden');
             eval('$memberpage = "'.template('misc_feature_notavailable').'";');
             $regvalid = false;
-        } elseif ( X_MEMBER ) {
+        } elseif (X_MEMBER) {
             eval('$memberpage = "'.template('misc_feature_not_while_loggedin').'";');
             $regvalid = false;
-        } elseif ( $cookietest != $testval ) {
-            put_cookie( $testname, $testval );
-            if ( $stepin > 0 ) {
-                error( $lang['cookies_disabled'] );
+        } elseif ($cookietest != $testval) {
+            put_cookie($testname, $testval);
+            if ($stepin > 0) {
+                error($lang['cookies_disabled']);
             }
-        } elseif ( ! coppa_check() ) {
+        } elseif (! coppa_check()) {
             // User previously attempted registration with age < 13.
-            message( $lang['coppa_fail'] );
+            message($lang['coppa_fail']);
         }
 
-        if ( $regvalid ) {
+        if ($regvalid) {
             // Validate step #
-            switch ( $stepin ) {
+            switch ($stepin) {
                 case 0:
                 case 1:
                     // First step and captcha step don't require a token.
@@ -106,27 +106,27 @@ switch($action) {
                 case 3:
                 case 4:
                     // Other steps will always include a nonce in their forms to guarantee the user didn't skip a step.
-                    request_secure( 'Registration', (string) $stepin, 0, true );
+                    request_secure('Registration', (string) $stepin, 0, true);
                     break;
                 default:
                     // Step value was invalid.
-                    error( $lang['bad_request'] );
+                    error($lang['bad_request']);
             }
 
             // Validate inputs
-            switch ( $stepin ) {
+            switch ($stepin) {
                 case 0:
                     // First hit, nothing to validate yet.
                     break;
                 case 1:
-                    if ( 'on' == $SETTINGS['google_captcha'] ) {
+                    if ('on' == $SETTINGS['google_captcha']) {
                         // Check Google's results
-                        $response = postedVar( 'g-recaptcha-response', '', false, false );
+                        $response = postedVar('g-recaptcha-response', '', false, false);
                         $ssl_lib = ROOT.'trust.pem';
                         $installed = time() < 2097705600; // Expires 2036-06-21 and won't be used until updated.
-                        $curl = curl_init( 'https://www.google.com/recaptcha/api/siteverify' );
+                        $curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
 
-                        curl_setopt_array( $curl, array(
+                        curl_setopt_array($curl, array(
                             CURLOPT_CAINFO => $ssl_lib,
                             CURLOPT_SSL_VERIFYPEER => $installed,
                             CURLOPT_BINARYTRANSFER => TRUE,
@@ -134,7 +134,7 @@ switch($action) {
                             CURLOPT_TIMEOUT => 5,
                             CURLOPT_USERAGENT => "XMB/$versionshort; $full_url",
                             CURLOPT_POST => 1
-                        ) );
+                        ));
 
                         $siteverify = array(
                             'secret'   => $SETTINGS['google_captcha_secret'],
@@ -142,83 +142,80 @@ switch($action) {
                             'remoteip' => $onlineip,
                         );
 
-                        curl_setopt( $curl, CURLOPT_POSTFIELDS, http_build_query( $siteverify ) );
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($siteverify));
 
                         // Fetch the confirmation.
                         $count = 1;
                         $limit = 2;
-                        $raw_result = curl_exec( $curl );
-                        while ( false === $raw_result && $count <= $limit ) {
+                        $raw_result = curl_exec($curl);
+                        while (false === $raw_result && $count <= $limit) {
                             // Some transient errors tend to occur.
-                            if ( $count >= $limit ) {
+                            if ($count >= $limit) {
                                 // This should be rare.
-                                $errorno = curl_errno( $curl );
-                                $errormsg = curl_error( $curl );
-                                trigger_error( "Unable to contact reCAPTCHA API after $limit attempts.  cURL error $errorno: $errormsg", E_USER_WARNING );
+                                $errorno = curl_errno($curl);
+                                $errormsg = curl_error($curl);
+                                trigger_error("Unable to contact reCAPTCHA API after $limit attempts.  cURL error $errorno: $errormsg", E_USER_WARNING);
                                 break;
                             }
 
-                            sleep( 2 );
+                            sleep(2);
                             $count++;
-                            $raw_result = curl_exec( $curl );
+                            $raw_result = curl_exec($curl);
                         }
                         $success = false;
-                        if ( false !== $raw_result ) {
-                            $decoded = json_decode( $raw_result, true );
-                            if ( ! empty( $decoded['success'] ) ) {
-                                if ( true === $decoded['success'] ) {
+                        if (false !== $raw_result) {
+                            $decoded = json_decode($raw_result, true);
+                            if (! empty($decoded['success'])) {
+                                if (true === $decoded['success']) {
                                     $success = true;
                                 }
                             }
                         }
-                        if ( ! $success ) {
-                            error( $lang['google_captcha_fail'] );
+                        if (! $success) {
+                            error($lang['google_captcha_fail']);
                         }
-                    } elseif ( 'on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status'] ) {
+                    } elseif ('on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status']) {
                         // Check XMB's results
                         require ROOT.'include/captcha.inc.php';
                         $Captcha = new Captcha();
-                        if ($Captcha->bCompatible !== false) {
-                            $imghash = postedVar('imghash', '', FALSE, TRUE);
-                            $imgcode = postedVar('imgcode', '', FALSE, FALSE);
-                            if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                                error( $lang['captchaimageinvalid'] );
-                            }
-                        } else {
-                            trigger_error( 'XMB captcha is enabled but not working.', E_USER_ERROR );
+                        if (! $Captcha->bCompatible) throw new RuntimeException('XMB captcha is enabled but not working.');
+                        $imghash = postedVar('imghash', '', FALSE, TRUE);
+                        $imgcode = postedVar('imgcode', '', FALSE, FALSE);
+                        if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                            error($lang['captchaimageinvalid']);
                         }
                     } else {
-                        error( $lang['bad_request'] );
+                        error($lang['bad_request']);
                     }
                     break;
                 case 2:
-                    if ( 'on' == $SETTINGS['coppa'] ) {
+                    if ('on' == $SETTINGS['coppa']) {
                         // Check coppa results
-                        $age = formInt( 'age' );
-                        if ( $age <= 0 ) {
+                        $age = formInt('age');
+                        if ($age <= 0) {
                             // Input was invalid, try again.
                             $stepout = 2;
-                        } elseif ( $age < 13 ) {
-                            put_cookie( 'privacy', 'xmb' );
-                            message( $lang['coppa_fail'] );
+                        } elseif ($age < 13) {
+                            put_cookie('privacy', 'xmb');
+                            message($lang['coppa_fail']);
                         }
                     } else {
-                        error( $lang['bad_request'] );
+                        error($lang['bad_request']);
                     }
                     break;
                 case 3:
                     // Check rules results
-                    if ( noSubmit( 'rulesubmit' ) ) {
-                        error( $lang['bad_request'] );
+                    if (noSubmit('rulesubmit')) {
+                        error($lang['bad_request']);
                     }
                     break;
                 case 4:
                     // Check profile results
                     $self = [];
-                    $self['username'] = trim( postedVar( 'username', '', TRUE, FALSE ) );
+                    $self['username'] = trim(postedVar('username', '', TRUE, FALSE));
 
-                    if ( strlen( $self['username'] ) < 3 || strlen( $self['username'] ) > 32 ) {
-                        error( $lang['username_length_invalid'] );
+                    if (strlen($self['username']) < 3 || strlen($self['username']) > 32) {
+                        error($lang['username_length_invalid']);
                     }
 
                     $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
@@ -235,7 +232,7 @@ switch($action) {
                         $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
                     }
 
-                    if ( $_POST['username'] !== preg_replace( "#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'] ) ) {
+                    if ($_POST['username'] !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $_POST['username'])) {
                         error($lang['restricted']);
                     }
 
@@ -248,9 +245,9 @@ switch($action) {
                         $db->free_result($query);
                     }
 
-                    $self['email'] = postedVar( 'email', 'javascript', true, false, true );
-                    $sql_email = $db->escape( $self['email'] );
-                    if ($SETTINGS['doublee'] == 'off' && false !== strpos( $self['email'], "@") ) {
+                    $self['email'] = postedVar('email', 'javascript', true, false, true);
+                    $sql_email = $db->escape($self['email']);
+                    if ($SETTINGS['doublee'] == 'off' && false !== strpos($self['email'], "@")) {
                         $email1 = ", email";
                         $email2 = "OR email='$sql_email'";
                     } else {
@@ -258,7 +255,7 @@ switch($action) {
                         $email2 = '';
                     }
 
-                    $sql_user = $db->escape( $self['username'] );
+                    $sql_user = $db->escape($self['username']);
                     $query = $db->query("SELECT username$email1 FROM ".X_PREFIX."members WHERE username='$sql_user' $email2");
                     if ($member = $db->fetch_array($query)) {
                         $db->free_result($query);
@@ -274,7 +271,7 @@ switch($action) {
                         $self['password'] = '';
                         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                         $get = strlen($chars) - 1;
-                        for( $i = 0; $i < 10; $i++ ) {
+                        for($i = 0; $i < 10; $i++) {
                             $self['password'] .= $chars[random_int(0, $get)];
                         }
                         $password2 = $self['password'];
@@ -285,7 +282,7 @@ switch($action) {
                         $password2 = $_POST['password2'];
                     }
 
-                    if ( $self['password'] !== $password2 ) {
+                    if ($self['password'] !== $password2) {
                         error($lang['pwnomatch']);
                     }
 
@@ -295,13 +292,13 @@ switch($action) {
                     while($restriction = $db->fetch_array($query)) {
                         $t_username = $self['username'];
                         $t_email = $self['email'];
-                        if ( '0' === $restriction['case_sensitivity'] ) {
+                        if ('0' === $restriction['case_sensitivity']) {
                             $t_username = strtolower($t_username);
                             $t_email = strtolower($t_email);
                             $restriction['name'] = strtolower($restriction['name']);
                         }
 
-                        if ( '1' === $restriction['partial'] ) {
+                        if ('1' === $restriction['partial']) {
                             if (strpos($t_username, $restriction['name']) !== false) {
                                 $fail = true;
                             }
@@ -310,11 +307,11 @@ switch($action) {
                                 $efail = true;
                             }
                         } else {
-                            if ( $t_username === $restriction['name'] ) {
+                            if ($t_username === $restriction['name']) {
                                 $fail = true;
                             }
 
-                            if ( $t_email === $restriction['name'] ) {
+                            if ($t_email === $restriction['name']) {
                                 $efail = true;
                             }
                         }
@@ -336,12 +333,12 @@ switch($action) {
                         error($lang['bademail']);
                     }
 
-                    if ( $self['password'] == '' ) {
+                    if ($self['password'] == '') {
                         error($lang['textpw1']);
                     }
 
-                    $self['langfile'] = postedVar( 'langfilenew', '', false, false );
-                    $langfilenew = $db->escape( $self['langfile'] );
+                    $self['langfile'] = postedVar('langfilenew', '', false, false);
+                    $langfilenew = $db->escape($self['langfile']);
                     $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
                     if ($db->num_rows($result) == 0) {
                         $self['langfile'] = $SETTINGS['langfile'];
@@ -365,22 +362,22 @@ switch($action) {
                     $year = formInt('year');
                     $month = formInt('month');
                     $day = formInt('day');
-                    if ( $year >= 100 && $year <= 1899 ) $year = 0;
+                    if ($year >= 100 && $year <= 1899) $year = 0;
                     $self['bday'] = iso8601_date($year, $month, $day);
 
                     $self['dateformat'] = postedVar('dateformatnew', '', false, false);
-                    $dateformattest = attrOut( $self['dateformat'], 'javascript' );  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-                    if ( strlen( $self['dateformat'] ) == 0 || $self['dateformat'] !== $dateformattest ) {
+                    $dateformattest = attrOut($self['dateformat'], 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
+                    if (strlen($self['dateformat']) == 0 || $self['dateformat'] !== $dateformattest) {
                         $self['dateformat'] = $SETTINGS['dateformat'];
                     }
                     unset($dateformattest);
 
                     $self['timeformat'] = formInt('timeformatnew');
-                    if ( $self['timeformat'] != 12 && $self['timeformat'] != 24 ) {
+                    if ($self['timeformat'] != 12 && $self['timeformat'] != 24) {
                         $self['timeformat'] = $SETTINGS['timeformat'];
                     }
 
-                    $self['password'] = md5( $self['password'] );
+                    $self['password'] = md5($self['password']);
                     $self['regdate'] = $onlinetime;
                     if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                         $self['regip'] = '';
@@ -388,33 +385,33 @@ switch($action) {
                         $self['regip'] = $onlineip;
                     }
 
-                    if ( 'on' == $SETTINGS['regoptional'] ) {
-                        $self['location'] = postedVar( 'location', 'javascript', true, false, true );
-                        $self['icq'] = abs( formInt( 'icq' ) );
-                        $self['yahoo'] = postedVar( 'yahoo', 'javascript', true, false, true );
-                        $self['aim'] = postedVar( 'aim', 'javascript', true, false, true );
-                        $self['msn'] = postedVar( 'msn', 'javascript', true, false, true );
-                        $self['site'] = postedVar( 'site', 'javascript', true, false, true );
-                        $self['bio'] = postedVar( 'bio', 'javascript', true, false, true );
-                        $self['mood'] = postedVar( 'mood', 'javascript', true, false, true );
-                        $self['sig'] = postedVar( 'sig', 'javascript', true, false, true );
+                    if ('on' == $SETTINGS['regoptional']) {
+                        $self['location'] = postedVar('location', 'javascript', true, false, true);
+                        $self['icq'] = abs(formInt('icq'));
+                        $self['yahoo'] = postedVar('yahoo', 'javascript', true, false, true);
+                        $self['aim'] = postedVar('aim', 'javascript', true, false, true);
+                        $self['msn'] = postedVar('msn', 'javascript', true, false, true);
+                        $self['site'] = postedVar('site', 'javascript', true, false, true);
+                        $self['bio'] = postedVar('bio', 'javascript', true, false, true);
+                        $self['mood'] = postedVar('mood', 'javascript', true, false, true);
+                        $self['sig'] = postedVar('sig', 'javascript', true, false, true);
 
                         if ($SETTINGS['avastatus'] == 'on') {
-                            $self['avatar'] = postedVar( 'newavatar', 'javascript', true, false, true );
+                            $self['avatar'] = postedVar('newavatar', 'javascript', true, false, true);
                             $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
 
                             $newavatarcheck = postedVar('newavatarcheck');
 
                             $max_size = explode('x', $SETTINGS['max_avatar_size']);
 
-                            if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
+                            if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
                                 $self['avatar'] = '';
                             } elseif (ini_get('allow_url_fopen')) {
-                                if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0 ) {
+                                if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
                                     $size = @getimagesize($rawavatar);
                                     if ($size === FALSE) {
                                         $self['avatar'] = '';
-                                    } elseif ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) {
+                                    } elseif ($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) {
                                         error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                                     }
                                 }
@@ -436,7 +433,7 @@ switch($action) {
                             closedir($dirHandle);
                             unset($rawavatar);
                             if ($filefound) {
-                                $self['avatar'] = postedVar( 'newavatar', 'javascript', true, false, true );
+                                $self['avatar'] = postedVar('newavatar', 'javascript', true, false, true);
                             } else {
                                 $self['avatar'] = '';
                             }
@@ -458,7 +455,7 @@ switch($action) {
                             } else {
                                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                                 $body = "{$translate['textnewmember2']}\n\n$full_url";
-                                xmb_mail( $adminemail, $translate['textnewmember'], $body, $translate['charset'] );
+                                xmb_mail($adminemail, $translate['textnewmember'], $body, $translate['charset']);
                             }
                         }
                     }
@@ -469,9 +466,9 @@ switch($action) {
                         $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
                         $subject = "[$rawbbname] {$translate['textyourpw']}";
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
-                        xmb_mail( $rawemail, $subject, $body, $translate['charset'] );
+                        xmb_mail($rawemail, $subject, $body, $translate['charset']);
                     } else {
-                        $session->newUser( $self );
+                        $session->newUser($self);
                     }
 
                     $self['password'] = '';
@@ -494,12 +491,9 @@ switch($action) {
                     }
                     require_once ROOT.'include/captcha.inc.php';
                     $Captcha = new Captcha();
-                    if ($Captcha->bCompatible !== false) {
-                        $imghash = $Captcha->GenerateCode();
-                        eval('$memberpage = "'.template('member_reg_captcha').'";');
-                    } else {
-                        trigger_error('XMB captcha is enabled but not working.', E_USER_ERROR);
-                    }
+                    if (! $Captcha->bCompatible) throw new RuntimeException('XMB captcha is enabled but not working.');
+                    $imghash = $Captcha->GenerateCode();
+                    eval('$memberpage = "'.template('member_reg_captcha').'";');
                 } else {
                     // Skip the captcha step
                     $stepout = 2;
@@ -550,10 +544,10 @@ switch($action) {
             if (4 == $stepout) {
                 // Display new user form
                 $captcharegcheck = '';
-                $token = \XMB\Token\create( 'Registration', (string) $stepout, X_NONCE_FORM_EXP, true );
+                $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
 
                 $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
-                $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
+                $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
                 $themelist = array();
                 $themelist[] = '<select name="thememem">';
@@ -598,7 +592,7 @@ switch($action) {
                     $timeFormat24Checked = '';
                 }
 
-                $timezones = timezone_control( $SETTINGS['def_tz'] );
+                $timezones = timezone_control($SETTINGS['def_tz']);
 
                 $avatd = '';
                 if ($SETTINGS['avastatus'] == 'on') {
@@ -653,7 +647,7 @@ switch($action) {
 
         $memberinfo = \XMB\SQL\getMemberByName($member);
 
-        if (empty( $memberinfo ) || ('on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN)) {
+        if (empty($memberinfo) || ('on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN)) {
             header('HTTP/1.0 404 Not Found');
             error($lang['nomember']);
         }
@@ -716,7 +710,7 @@ switch($action) {
 
         $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
 
-        $memberinfo['site'] = format_member_site( $memberinfo['site'] );
+        $memberinfo['site'] = format_member_site($memberinfo['site']);
         $site = $memberinfo['site'];
 
         if (X_MEMBER && $memberinfo['email'] != '' && $memberinfo['showemail'] == 'yes') {
@@ -728,21 +722,21 @@ switch($action) {
         $rank['avatarrank'] = trim($rank['avatarrank']);
         $memberinfo['avatar'] = trim($memberinfo['avatar']);
 
-        if ( $rank['avatarrank'] !== '' ) {
+        if ($rank['avatarrank'] !== '') {
             $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if ( 'on' == $SETTINGS['images_https_only'] && strpos( $memberinfo['avatar'], ':' ) !== false && substr( $memberinfo['avatar'], 0, 6 ) !== 'https:' ) {
+        if ('on' == $SETTINGS['images_https_only'] && strpos($memberinfo['avatar'], ':') !== false && substr($memberinfo['avatar'], 0, 6) !== 'https:') {
             $memberinfo['avatar'] = '';
         }
 
-        if ( $memberinfo['avatar'] !== '' ) {
+        if ($memberinfo['avatar'] !== '') {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if ( ( $rank['avatarrank'] || $memberinfo['avatar'] ) && $site != '' ) {
+        if (($rank['avatarrank'] || $memberinfo['avatar']) && $site != '') {
             $sitelink = $site;
-            if ( $memberinfo['avatar'] !== '' ) {
+            if ($memberinfo['avatar'] !== '') {
                 $newsitelink = "<a href='$sitelink' onclick='window.open(this.href); return false;'>{$memberinfo['avatar']}</a></td>";
             } else {
                 $newsitelink = '';
@@ -763,7 +757,7 @@ switch($action) {
             $customstatus = '';
         }
 
-        if ( ! ( (int) $memberinfo['lastvisit'] > 0 ) ) {
+        if (! ((int) $memberinfo['lastvisit'] > 0)) {
             $lastmembervisittext = $lang['textpendinglogin'];
         } else {
             $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));

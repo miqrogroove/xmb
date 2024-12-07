@@ -44,30 +44,25 @@ if (!defined('IN_CODE')) {
  * @param bool   $anonymous Optional. Must be true if intentionally setting a token for a guest user.  Useful for lost passwords.
  * @return string
  */
-function create( string $action, string $object, int $ttl, $anonymous = false ) {
+function create(string $action, string $object, int $ttl, bool $anonymous = false): string {
     global $db, $self;
 
-    if ( '' == $self['username'] && ! $anonymous ) {
-        trigger_error( '\XMB\Token\create() was called for a guest user with the wrong arguments.', E_USER_ERROR );
-    }
-    if ( strlen( $action ) > 32 || strlen( $action ) < 5 || strlen( $object ) > 32 ) {
-        trigger_error( 'Invalid argument for token creation.', E_USER_ERROR );
-    }
+    if ('' == $self['username'] && ! $anonymous) throw new LogicException('Username missing');
+
+    if (strlen($action) > 32 || strlen($action) < 5 || strlen($object) > 32) throw new InvalidArgumentException('String length out of limit');
 
     $token = bin2hex(random_bytes(16));
     $expires = time() + $ttl;
 
-    $success = \XMB\SQL\addToken( $token, $self['username'], $action, $object, $expires );
+    $success = \XMB\SQL\addToken($token, $self['username'], $action, $object, $expires);
 
-    if ( ! $success ) {
+    if (! $success) {
         // Retry once.
         $token = bin2hex(random_bytes(16));
-        $success = \XMB\SQL\addToken( $token, $self['username'], $action, $object, $expires );
+        $success = \XMB\SQL\addToken($token, $self['username'], $action, $object, $expires);
     }
 
-    if ( ! $success ) {
-        trigger_error( 'XMB was unable to save a new token in the tokens table.', E_USER_ERROR );
-    }
+    if (! $success) throw new RuntimeException('XMB was unable to save a new session token');
 
     return $token;
 }
@@ -84,12 +79,12 @@ function create( string $action, string $object, int $ttl, $anonymous = false ) 
  * @param string $object The same value used in create().
  * @return bool True only if the user provided a unique nonce for the action/object pair.
  */
-function consume( string $token, string $action, string $object ): bool {
+function consume(string $token, string $action, string $object): bool {
     global $db, $self;
 
-    \XMB\SQL\deleteTokensByDate( time() );
+    \XMB\SQL\deleteTokensByDate(time());
 
-    return \XMB\SQL\deleteToken( $token, $self['username'], $action, $object );
+    return \XMB\SQL\deleteToken($token, $self['username'], $action, $object);
 }
 
 return;

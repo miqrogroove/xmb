@@ -27,10 +27,10 @@ define('X_SCRIPT', 'upgrade.php');
 
 require ROOT.'header.php';
 
-$username = postedVar( 'username', '', TRUE, FALSE );
+$username = postedVar('username', '', TRUE, FALSE);
 
-if ( strlen( $username ) == 0 ) {
-    put_cookie( 'xmbuser' );  // Make sure user is logged out.
+if (strlen($username) == 0) {
+    put_cookie('xmbuser');  // Make sure user is logged out.
     ?>
     <form method="post" action="">
         <label>Username: <input type="text" name="username" /></label><br />
@@ -39,20 +39,20 @@ if ( strlen( $username ) == 0 ) {
     </form>
     <?php
 } else {
-    if ( (int) $SETTINGS['schema_version'] >= 5 ) {
+    if ((int) $SETTINGS['schema_version'] >= 5) {
         // Already logged in by \XMB\Session\Manager
-        if ( ! X_SADMIN ) {
+        if (! X_SADMIN) {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
-            trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+            throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
         }
     } else {
-        $password = md5( $_POST['password'] );
-        if ( \XMB\SQL\checkUpgradeOldLogin( $username, $password ) ) {
-            put_cookie( 'xmbuser', $username );
-            put_cookie( 'xmbpw', $password );
+        $password = md5($_POST['password']);
+        if (\XMB\SQL\checkUpgradeOldLogin($username, $password)) {
+            put_cookie('xmbuser', $username);
+            put_cookie('xmbpw', $password);
         } else {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='{$full_url}upgrade/login.php'>Try Again</a>.<br />";
-            trigger_error('Upgrade login failure by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+            throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
         }
     }
 

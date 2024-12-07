@@ -22,7 +22,7 @@
  *
  **/
 
-header( 'X-Frame-Options: deny' );
+header('X-Frame-Options: deny');
 
 // Script constants
 define('IN_CODE', true);
@@ -44,7 +44,7 @@ if (ini_get('display_errors')) {
 if (!(is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
     echo 'Could not find XMB!<br />'
         .'Please make sure the upgrade folder is in the same folder as index.php and header.php.<br />';
-    trigger_error('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.', E_USER_ERROR);
+    throw new Exception('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.');
 }
 
 // Authenticate Browser
@@ -63,28 +63,28 @@ if (DEBUG) {
 if (!defined('X_SADMIN') || !X_SADMIN) {
     echo '<br /><br />This script may be run only by a Super Administrator.<br />'
         .'Please <a href="login.php">click here to Log In</a> first to begin the upgrade successfully.<br />';
-    trigger_error('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR'], E_USER_ERROR);
+    throw new Exception('Unauthenticated upgrade attempt by '.$_SERVER['REMOTE_ADDR']);
 }
 
 // Check Server Version
 if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
     echo '<br /><br />XMB requires PHP version '.PHP_MIN_VER.' or higher to work properly.  Version '.phpversion().' is running.';
-    trigger_error('Admin attempted upgrade with obsolete PHP engine.', E_USER_ERROR);
+    throw new Exception('Admin attempted upgrade with obsolete PHP engine.');
 }
 if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
     echo '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.';
-    trigger_error('Admin attempted upgrade with obsolete MySQL engine.', E_USER_ERROR);
+    throw new Exception('Admin attempted upgrade with obsolete MySQL engine.');
 }
 
 // Initialize Verbose Logging
-$result = file_put_contents( LOG_FILE, 'Initializing Upgrade Engine...' );
-if ( false === $result ) {
+$result = file_put_contents(LOG_FILE, 'Initializing Upgrade Engine...');
+if (false === $result) {
 	echo '<br /><br />Unable to write to file ' . LOG_FILE . '. Please check permissions for the XMB directory.';
-	trigger_error( 'Unable to write to file ' . LOG_FILE, E_USER_ERROR );
+	throw new RuntimeException('Unable to write to file ' . LOG_FILE);
 }
 
 // Ready to Upgrade
-if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
+if (! isset($_GET['step']) || '1' === $_GET['step']) {
 ?>
 <h1><?=$versiongeneral;?> Upgrade Script</h1>
 
@@ -111,7 +111,7 @@ if ( !isset($_GET['step']) || '1' === $_GET['step'] ) {
 </form>
 <?php
 
-} else if ( '2' === $_GET['step'] ) {
+} else if ('2' === $_GET['step']) {
 
     ?>
     <h1><?=$versiongeneral;?> Upgrade Script</h1>

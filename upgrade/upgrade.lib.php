@@ -77,7 +77,7 @@ function xmb_upgrade() {
             break;
         default:
             show_error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
-            trigger_error('Admin attempted upgrade with obsolete upgrade utility.', E_USER_ERROR);
+            throw new Exception('Admin attempted upgrade with obsolete upgrade utility.');
             break;
     }
     show_progress('Database schema is now current');
@@ -182,7 +182,7 @@ function upgrade_schema_to_v0() {
         $missing = array_diff($columns, xmb_schema_columns_list($table));
         if (!empty($missing)) {
             show_error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
-            trigger_error("Admin attempted upgrade with obsolete database.  Columns missing from $table table: ".implode(', ', $missing), E_USER_ERROR);
+            throw new Exception("Admin attempted upgrade with obsolete database.  Columns missing from $table table: ".implode(', ', $missing));
         }
     }
 
@@ -425,7 +425,7 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) == 'varchar(11)') {
             show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
-            trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
+            throw new Exception('Attempted upgrade on inconsistent schema aborted automatically.');
         }
 
         show_progress('Making room for the new values in the postperm column');
@@ -449,7 +449,7 @@ function upgrade_schema_to_v0() {
         $row = $db->fetch_array($query);
         if (strtolower($row['Type']) != 'varchar(11)') {
             show_error('Unexpected schema in forums table.  Upgrade aborted to prevent damage.');
-            trigger_error('Attempted upgrade on inconsistent schema aborted automatically.', E_USER_ERROR);
+            throw new Exception('Attempted upgrade on inconsistent schema aborted automatically.');
         }
     }
 
@@ -2301,12 +2301,12 @@ function fixBirthdays() {
                     $m['langfile'] = $test;
                 } else {
                     show_error('A needed file is missing for date translation: '.ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
-                    trigger_error('fixBirthdays() stopped the upgrade because language "'.$m['langfile'].'" was missing.', E_USER_ERROR);
+                    throw new Exception('fixBirthdays() stopped the upgrade because language "'.$m['langfile'].'" was missing.');
                 }
             }
             if (!isset($cachedLanguages[$m['langfile']])) {
                 $old_error_level = error_reporting();
-                error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR | E_USER_ERROR);
+                error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR);
                 require ROOT.'lang/'.$m['langfile'].'.lang.php';
                 error_reporting($old_error_level);
                 $cachedLanguages[$m['langfile']] = $lang;

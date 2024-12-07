@@ -181,7 +181,7 @@ if (DEBUG) {
     require(ROOT.'include/debug.inc.php');
     assertEmptyOutputStream('debug.inc.php');
 } else {
-    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR);
+    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 
 $config_array = array(
@@ -236,7 +236,7 @@ if (empty($full_url)) {
     } elseif (0 == strlen($url)) {
         header('HTTP/1.0 500 Internal Server Error');
         exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
-    } elseif ( $cookiesecure && $_SERVER['HTTPS'] !== 'on' ) {
+    } elseif ($cookiesecure && $_SERVER['HTTPS'] !== 'on') {
         header('HTTP/1.0 404 Not Found');
         exit('XMB is configured for HTTPS access only.  Set DEBUG to TRUE in config.php to see diagnostic details.');
     }
@@ -278,7 +278,7 @@ if ($ipcheck == 'on') {
 }
 
 // Force upgrade to mysqli.
-if ( 'mysql' === $database ) $database = 'mysqli';
+if ('mysql' === $database) $database = 'mysqli';
 
 /* Load Common Files and Establish Database Connection */
 
@@ -322,60 +322,60 @@ if ($db->num_rows($squery) == 0) {
     exit('Fatal Error: The XMB settings table is empty.');
 }
 // Check schema for upgrade compatibility back to 1.8 SP2.
-$row = $db->fetch_array( $squery );
-if ( isset( $row['langfile'] ) ) {
+$row = $db->fetch_array($squery);
+if (isset($row['langfile'])) {
     // Schema version <= 4 has only one row.
-    foreach ( $row as $key => $val ) {
+    foreach ($row as $key => $val) {
         $SETTINGS[$key] = $val;
     }
-    if ( ! isset( $SETTINGS['schema_version'] ) ) {
+    if (! isset($SETTINGS['schema_version'])) {
         $SETTINGS['schema_version'] = '0';
     }
 } else {
     // Current schema uses a separate row for each setting.
     do {
         $SETTINGS[$row['name']] = $row['value'];
-    } while ( $row = $db->fetch_array( $squery ) );
+    } while ($row = $db->fetch_array($squery));
 }
-$db->free_result( $squery );
-unset( $row );
+$db->free_result($squery);
+unset($row);
 
-if ( (int) $SETTINGS['postperpage'] < 5 ) {
+if ((int) $SETTINGS['postperpage'] < 5) {
     $SETTINGS['postperpage'] = '30';
 }
 
-if ( (int) $SETTINGS['topicperpage'] < 5 ) {
+if ((int) $SETTINGS['topicperpage'] < 5) {
     $SETTINGS['topicperpage'] = '30';
 }
 
-if ( (int) $SETTINGS['memberperpage'] < 5 ) {
+if ((int) $SETTINGS['memberperpage'] < 5) {
     $SETTINGS['memberperpage'] = '30';
 }
 
-if ( (int) $SETTINGS['smcols'] < 1 ) {
+if ((int) $SETTINGS['smcols'] < 1) {
     $SETTINGS['smcols'] = '4';
 }
 
 // The latest upgrade script advertises compatibility with v1.8 SP2.  These defaults might not exist yet.
-if ( empty( $SETTINGS['onlinetodaycount'] ) || (int) $SETTINGS['onlinetodaycount'] < 5 ) {
+if (empty($SETTINGS['onlinetodaycount']) || (int) $SETTINGS['onlinetodaycount'] < 5) {
     $SETTINGS['onlinetodaycount'] = '30';
 }
 
-if ( empty( $SETTINGS['captcha_code_length'] ) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN ) {
+if (empty($SETTINGS['captcha_code_length']) || (int) $SETTINGS['captcha_code_length'] < 3 || (int) $SETTINGS['captcha_code_length'] >= X_NONCE_KEY_LEN) {
     $SETTINGS['captcha_code_length'] = '8';
 }
 
-if ( empty( $SETTINGS['ip_banning'] ) ) {
+if (empty($SETTINGS['ip_banning'])) {
     $SETTINGS['ip_banning'] == 'off';
 }
 
-if ( empty( $SETTINGS['schema_version'] ) ) {
+if (empty($SETTINGS['schema_version'])) {
     $SETTINGS['schema_version'] == '0';
 }
 
 // Validate maxattachsize with PHP configuration.
 $inimax = phpShorthandValue('upload_max_filesize');
-if ( empty( $SETTINGS['maxattachsize'] ) || $inimax < (int) $SETTINGS['maxattachsize'] ) {
+if (empty($SETTINGS['maxattachsize']) || $inimax < (int) $SETTINGS['maxattachsize']) {
     $SETTINGS['maxattachsize'] = $inimax;
 }
 unset($inimax);
@@ -451,7 +451,7 @@ if ('' === $serror) {
 $force_inv = false;
 if ((int) $SETTINGS['schema_version'] < 5) {
     $mode = 'disabled';
-} else if (X_SCRIPT == 'upgrade.php' && isset( $_POST['xmbpw'])) {
+} else if (X_SCRIPT == 'upgrade.php' && isset($_POST['xmbpw'])) {
     $mode = 'login';
 } else if ($action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php') {
     $mode = 'login';
@@ -534,7 +534,7 @@ if (X_MEMBER) {
     $notify = $lang['loggedin'].' <a href="member.php?action=viewpro&amp;member='.recodeOut($xmbuser).'">'.$xmbuser.'</a><br />['.$loginout.' - '.$u2ulink.''.$memcp.''.$cplink.']';
 
     // Update lastvisit in the header shown
-    if ( (int) $self['lastvisit'] < $thetime || ( (int) $self['lastvisit'] > $thetime + X_ONLINE_TIMER && (int) $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
+    if ((int) $self['lastvisit'] < $thetime || ((int) $self['lastvisit'] > $thetime + X_ONLINE_TIMER && (int) $self['lastvisit'] < $onlinetime - X_ONLINE_TIMER)) {
         $thetime = $self['lastvisit'];
     }
     $lastlocal = $thetime + ($self['timeoffset'] * 3600) + ($SETTINGS['addtime'] * 3600);
@@ -575,7 +575,7 @@ if ($tid > 0 && $action != 'templates') {
     $db->free_result($query);
 } else if ($fid > 0) {
     $forum = getForum($fid);
-    if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' ) {
+    if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
         $forumtheme = '0';
     } else {
         $forumtheme = $forum['theme'];
@@ -586,31 +586,31 @@ if ($tid > 0 && $action != 'templates') {
 $validtheme = FALSE;
 if (!$validtheme && (int) $themeuser > 0) {
     $theme = (int) $themeuser;
-    $row = \XMB\SQL\getThemeByID( $theme );
-    if ( ! $validtheme = ( ! empty( $row ) ) ) {
+    $row = \XMB\SQL\getThemeByID($theme);
+    if (! $validtheme = (! empty($row))) {
         $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
     }
 }
 if (!$validtheme && (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
-    $row = \XMB\SQL\getThemeByID( $theme );
-    if ( ! $validtheme = ( ! empty( $row ) ) ) {
+    $row = \XMB\SQL\getThemeByID($theme);
+    if (! $validtheme = (! empty($row))) {
         $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE fid=$fid");
     }
 }
 if (!$validtheme) {
     $theme = (int) $SETTINGS['theme'];
-    $row = \XMB\SQL\getThemeByID( $theme );
-    $validtheme = ( ! empty( $row ) );
+    $row = \XMB\SQL\getThemeByID($theme);
+    $validtheme = (! empty($row));
 }
 if (!$validtheme) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes LIMIT 1");
     if ($validtheme = ($db->num_rows($query) > 0)) {
         $row = $db->fetch_array($query);
         $SETTINGS['theme'] = $row['themeid'];
-        \XMB\SQL\updateSetting( 'theme', $SETTINGS['theme'] );
+        \XMB\SQL\updateSetting('theme', $SETTINGS['theme']);
     }
     $db->free_result($query);
 }
@@ -621,12 +621,12 @@ if (!$validtheme) {
 
 // Make theme-vars semi-global
 $THEME = &$row;
-unset( $row );
+unset($row);
 more_theme_vars();
-extract( $THEME );
+extract($THEME);
 
 $css = '';
-if ( (int) $SETTINGS['schema_version'] >= 6 ) {
+if ((int) $SETTINGS['schema_version'] >= 6) {
     $css = "<link rel='stylesheet' type='text/css' href='{$full_url}css.php?id={$THEME['themeid']}&amp;v={$THEME['version']}' />";
 }
 
@@ -640,13 +640,13 @@ if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
 
 switch ($serror) {
 case 'ip':
-    if ( ! X_ADMIN ) {
+    if (! X_ADMIN) {
         header('HTTP/1.0 403 Forbidden');
         error($lang['bannedmessage']);
     }
     break;
 case 'bstatus':
-    if ( ! X_ADMIN ) {
+    if (! X_ADMIN) {
         header('HTTP/1.0 503 Service Unavailable');
         header('Retry-After: 3600');
         if ($bboffreason != '') {
@@ -657,7 +657,7 @@ case 'bstatus':
     }
     break;
 case 'guest':
-    if ( X_GUEST ) {
+    if (X_GUEST) {
         if ($SETTINGS['regstatus'] == 'on') {
             $message = $lang['reggedonly'].' '.$reglink.' '.$lang['textor'].' <a href="misc.php?action=login">'.$lang['textlogin'].'</a>';
         } else {
@@ -740,7 +740,7 @@ if ((X_ADMIN || $SETTINGS['bbstatus'] == 'on') && (X_MEMBER || $SETTINGS['regvie
         if ($newu2unum > 0) {
             $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
             // Popup Alert
-            if ( '2' === $self['u2ualert'] || ( '1' === $self['u2ualert'] && X_SCRIPT == 'index.php' ) ) {
+            if ('2' === $self['u2ualert'] || ('1' === $self['u2ualert'] && X_SCRIPT == 'index.php')) {
                 $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
                 if ($newu2unum == 1) {
                     $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';
