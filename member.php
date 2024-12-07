@@ -129,8 +129,7 @@ switch($action) {
                         curl_setopt_array($curl, array(
                             CURLOPT_CAINFO => $ssl_lib,
                             CURLOPT_SSL_VERIFYPEER => $installed,
-                            CURLOPT_BINARYTRANSFER => TRUE,
-                            CURLOPT_RETURNTRANSFER => TRUE,
+                            CURLOPT_RETURNTRANSFER => true,
                             CURLOPT_TIMEOUT => 5,
                             CURLOPT_USERAGENT => "XMB/$versionshort; $full_url",
                             CURLOPT_POST => 1
