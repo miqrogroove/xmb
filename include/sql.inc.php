@@ -1538,4 +1538,26 @@ function addLog(string $user, string $action, int $fid, int $tid, int $timestamp
     $db->query("INSERT INTO ".X_PREFIX."logs (tid, username, action, fid, date) VALUES ($tid, '$user', '$action', $fid, $timestamp)");
 }
 
+/**
+ * Fetch the saved IP Address from a post
+ *
+ * @since 1.9.12.07
+ * @param int $pid The post ID number.
+ * @return string The IP Address.
+ */
+function getIPFromPost(int $pid): string {
+    global $db;
+
+    $query = $db->query("SELECT useip FROM ".X_PREFIX."posts WHERE pid = $pid");
+    
+    if ($db->num_rows($query) === 0) {
+        $addr = ''; // Post not found.
+    } else {
+        $addr = $db->result($query, 0);
+    }
+    $db->free_result($query);
+
+    return $addr;
+}
+
 return;

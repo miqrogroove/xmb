@@ -69,7 +69,7 @@ if (count($tids) == 1) {
 
 $forums = getForum($fid);
 
-if ( false === $forums || ( $forums['type'] != 'forum' && $forums['type'] != 'sub' ) || $forums['status'] != 'on' ) {
+if (false === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
@@ -91,13 +91,13 @@ if ($forums['type'] == 'sub') {
         error($lang['privforummsg']);
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ( (int) $fup['fup'] > 0 ) {
+    } else if ((int) $fup['fup'] > 0) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-} else if ( (int) $forums['fup'] > 0 ) { // 'forum' in a 'group'
+} else if ((int) $forums['fup'] > 0) { // 'forum' in a 'group'
     $fup = getForum($forums['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
@@ -167,6 +167,11 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 // Search-link
 $searchlink = makeSearchLink($forums['fid']);
 
+if (0 === $pid && 'getip' === $action) {
+    header('HTTP/1.0 404 Not Found');
+    error($lang['noresults']);
+}
+
 eval('echo "'.template('header').'";');
 
 //Assert permissions on all TIDs
@@ -185,10 +190,10 @@ switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure( 'topicadmin_delete', 'Thread Admin Options/Delete', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_delete', 'Thread Admin Options/Delete', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Delete', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Delete', (string) min($tids));
             require('include/attach.inc.php');
 
             foreach($tids AS $tid) {
@@ -237,10 +242,10 @@ switch($action) {
             } else if ($closed == '') {
                 $lang['textclosethread'] = $lang['textclosethread'];
             }
-            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/OpenOrClose', (string) $tid, X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/OpenOrClose', (string) $tid, X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/OpenOrClose', (string) $tid );
+            request_secure('Thread Admin Options/OpenOrClose', (string) $tid);
             if ($closed == 'yes') {
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid=$tid");
             } else {
@@ -257,10 +262,10 @@ switch($action) {
     case 'f_close':
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/Close', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Close', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Close', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Close', (string) min($tids));
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='yes' WHERE tid IN ($csv)");
@@ -276,10 +281,10 @@ switch($action) {
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
             $lang['textclosethread'] = $lang['textopenthread'];
-            $template = template_secure( 'topicadmin_openclose', 'Thread Admin Options/Open', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Open', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Open', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Open', (string) min($tids));
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE ".X_PREFIX."threads SET closed='' WHERE tid IN ($csv)");
@@ -295,10 +300,10 @@ switch($action) {
         if (noSubmit('movesubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('moveto', false, false, $fid);
-            $template = template_secure( 'topicadmin_move', 'Thread Admin Options/Move', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_move', 'Thread Admin Options/Move', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Move', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Move', (string) min($tids));
             $moveto = formInt('moveto');
             $type = postedVar('type');
 
@@ -373,17 +378,17 @@ switch($action) {
                 }
                 $topped = $db->result($query, 0);
                 $db->free_result($query);
-                if ( '1' === $topped ) {
+                if ('1' === $topped) {
                     $lang['texttopthread'] = $lang['textuntopthread'];
                 }
             } else {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
             $tid = implode(',', $tids);
-            $template = template_secure( 'topicadmin_topuntop', 'Thread Admin Options/Top', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_topuntop', 'Thread Admin Options/Top', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Top', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Top', (string) min($tids));
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT topped FROM ".X_PREFIX."threads WHERE tid=$tid");
                 if ($db->num_rows($query) == 0) {
@@ -393,9 +398,9 @@ switch($action) {
                 $topped = $db->result($query, 0);
                 $db->free_result($query);
 
-                if ( '1' === $topped ) {
+                if ('1' === $topped) {
                     $db->query("UPDATE ".X_PREFIX."threads SET topped='0' WHERE tid=$tid");
-                } else if ( '0' === $topped )    {
+                } else if ('0' === $topped)    {
                     $db->query("UPDATE ".X_PREFIX."threads SET topped='1' WHERE tid=$tid");
                 }
 
@@ -408,21 +413,15 @@ switch($action) {
         break;
 
     case 'getip':
-        if ($pid) {
-            $query = $db->query("SELECT useip FROM ".X_PREFIX."posts WHERE pid='$pid'");
-        } else {
-            $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid={$tids[0]}");
-        }
-        $ipinfo = $db->fetch_array($query);
-        $db->free_result($query);
-        if ($ipinfo['useip'] === '') {
+        $useip = \XMB\SQL\getIPFromPost($pid);
+        if ($useip === '') {
             $address = $lang['textnone'];
             $name = $lang['textnone'];
         } else {
-            $address = $ipinfo['useip'];
-            $name = gethostbyaddr($ipinfo['useip']);
+            $address = $useip;
+            $name = gethostbyaddr($useip);
         }
-        
+
         ?>
         <form method="post" action="cp.php?action=ipban">
         <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP); ?>" />
@@ -436,7 +435,7 @@ switch($action) {
         <td class="tablerow"><?= $lang['textyesip'] ?> <strong><?= $address ?></strong> - <?= $name ?>
         <?php
 
-        $ip = explode('.', $ipinfo['useip']);
+        $ip = explode('.', $useip);
         if (count($ip) === 4) {
             $query = $db->query("SELECT * FROM ".X_PREFIX."banned WHERE (ip1='$ip[0]' OR ip1='-1') AND (ip2='$ip[1]' OR ip2='-1') AND (ip3='$ip[2]' OR ip3='-1') AND (ip4='$ip[3]' OR ip4='-1')");
             $result = $db->fetch_array($query);
@@ -446,7 +445,7 @@ switch($action) {
                 $foundmask = false;
                 for($i=1; $i<=4; ++$i) {
                     $j = "ip$i";
-                    if ( '-1' === $result[$j] ) {
+                    if ('-1' === $result[$j]) {
                         $result[$j] = "*";
                         $foundmask = true;
                     }
@@ -480,10 +479,10 @@ switch($action) {
     case 'bump':
         if (noSubmit('bumpsubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure( 'topicadmin_bump', 'Thread Admin Options/Bump', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_bump', 'Thread Admin Options/Bump', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Bump', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Bump', (string) min($tids));
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline DESC, pid DESC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -509,10 +508,10 @@ switch($action) {
     case 'empty':
         if (noSubmit('emptysubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_empty', 'Thread Admin Options/Empty', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_empty', 'Thread Admin Options/Empty', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Empty', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Empty', (string) min($tids));
             require('include/attach.inc.php');
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
@@ -564,10 +563,10 @@ switch($action) {
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
-            $template = template_secure( 'topicadmin_split', 'Thread Admin Options/Split', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_split', 'Thread Admin Options/Split', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Split', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Split', (string) min($tids));
             $subject = addslashes(postedVar('subject', 'javascript', TRUE, TRUE, TRUE));  // Subjects are historically double-quoted
             if ($subject == '') {
                 error($lang['textnosubject'], false);
@@ -580,7 +579,7 @@ switch($action) {
             while($post = $db->fetch_array($query)) {
                 $db->escape_fast($post['author']);
                 $move = getInt('move'.$post['pid'], 'p');
-                if ( $move == (int) $post['pid'] ) {
+                if ($move == (int) $post['pid']) {
                     if (!$threadcreated) {
                         $thatime = $onlinetime;
                         $db->query("INSERT INTO ".X_PREFIX."threads (fid, subject, icon, lastpost, views, replies, author, closed, topped) VALUES ($fid, '$subject', '', '$thatime|$xmbuser', 0, 0, '{$post['author']}', '', 0)");
@@ -618,10 +617,10 @@ switch($action) {
     case 'merge':
         $tid = $tids[0];
         if (noSubmit('mergesubmit')) {
-            $template = template_secure('topicadmin_merge', 'Thread Admin Options/Merge', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_merge', 'Thread Admin Options/Merge', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Merge', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Merge', (string) min($tids));
             if ($othertid == 0) {
                 error($lang['invalidtid'], false);
             } else if ($tid == $othertid) {
@@ -739,10 +738,10 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            $template = template_secure( 'topicadmin_threadprune', 'Thread Admin Options/Prune', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_threadprune', 'Thread Admin Options/Prune', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Prune', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Prune', (string) min($tids));
             $postcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid=$tid"), 0);
             $delcount = 0;
             foreach($_POST as $key=>$val) {
@@ -812,10 +811,10 @@ switch($action) {
         if (noSubmit('copysubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('newfid', false, false);
-            $template = template_secure( 'topicadmin_copy', 'Thread Admin Options/Copy', (string) min( $tids ), X_NONCE_AYS_EXP );
+            $template = template_secure('topicadmin_copy', 'Thread Admin Options/Copy', (string) min($tids), X_NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
-            request_secure( 'Thread Admin Options/Copy', (string) min( $tids ) );
+            request_secure('Thread Admin Options/Copy', (string) min($tids));
             require('include/attach.inc.php');
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);
@@ -872,7 +871,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    \XMB\Attach\copyByPost( (int) $oldPid, $newpid );
+                    \XMB\Attach\copyByPost((int) $oldPid, $newpid);
                 }
 
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
