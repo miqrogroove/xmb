@@ -39,10 +39,13 @@ define('XMB_SCHEMA_VER', 9);
 function xmb_schema_table($action, $name) {
     global $db;
 
-    if ('drop' == $action || 'overwrite' == $action) {
+    // Check existence to help avoid dropping non-existent tables.
+    $exists = xmb_schema_table_exists($name);
+
+    if ($exists && ('drop' == $action || 'overwrite' == $action)) {
         $db->query(xmb_schema_drop($name));
     }
-    if ('create' == $action || 'overwrite' == $action) {
+    if ('create' == $action && !$exists || 'overwrite' == $action) {
         $db->query(xmb_schema_create($name));
     }
 }
@@ -644,8 +647,10 @@ function xmb_schema_table_exists(string $name): bool {
     $sqlname = $db->like_escape(X_PREFIX.$name);
 
     $result = $db->query("SHOW TABLES LIKE '$sqlname'");
+    $status = $db->num_rows($result) === 1;
+    $db->free_result($result);
 
-    return ($db->num_rows($result) > 0);
+    return $status;
 }
 
 /**
