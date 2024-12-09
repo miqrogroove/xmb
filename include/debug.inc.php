@@ -66,13 +66,13 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
     $success = FALSE;
-    if ( $hostsetting !== $host && $host !== 'www.'.$hostsetting ) {
+    if ($hostsetting !== $host && $host !== 'www.'.$hostsetting) {
         if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
         if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
         $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
     } elseif ($securesetting != $secure) {
         $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-    } elseif ( $pathsetting !== $path && $pathsetting != '' ) {
+    } elseif ($pathsetting !== $path && $pathsetting != '') {
         $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.$path;
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';
@@ -93,9 +93,9 @@ function printAllQueries() {
     if (X_SADMIN) {
         $querytimes = $db->getQueryTimes();
         $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
-        foreach( $db->getQueryList() as $key => $val ) {
+        foreach($db->getQueryList() as $key => $val) {
             $val = mysql_syn_highlight(cdataOut($val));
-            $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format( $querytimes[$key-1], 8 ).'</td><td>'.$val.'</td></tr>';
+            $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
         }
         $stuff[] = '</table>';
     }

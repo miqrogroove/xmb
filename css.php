@@ -26,15 +26,15 @@ define('X_SCRIPT', 'css.php');
 
 require 'header.php';
 
-loadtemplates( 'css' );
+loadtemplates('css');
 
-$THEME = \XMB\SQL\getThemeByID( getInt( 'id' ) );
-if ( empty( $THEME ) ) {
+$THEME = \XMB\SQL\getThemeByID(getInt('id'));
+if (empty($THEME)) {
     header('HTTP/1.0 404 Not Found');
     exit('Not Found');
 }
 more_theme_vars();
-extract( $THEME );
+extract($THEME);
 
 $comment_output = false; // If true, CSS will be invalid.
 eval('$css = "'.template('css').'";');

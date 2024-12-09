@@ -111,7 +111,7 @@ if ($threadcount == 0) {
     
     $threadsInFid = array();
 
-    if ( $SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0 ) {
+    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0) {
         while($thread = $db->fetch_array($query)) {
             $threadsInFid[] = $thread['tid'];
         }
@@ -147,8 +147,8 @@ if ($threadcount == 0) {
         $lastPid = $lastpost[2];
 
         // Translate "Anonymous" author.
-        $lastpostname = trim( $lastpost[1] );
-        if ( 'Anonymous' == $lastpostname ) {
+        $lastpostname = trim($lastpost[1]);
+        if ('Anonymous' == $lastpostname) {
             $lastpostname = $lang['textanonymous'];
         }
 
@@ -165,15 +165,15 @@ if ($threadcount == 0) {
         if ($thread['closed'] == 'yes') {
             $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
         } else {
-            if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
+            if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = 'hot_folder.gif';
             } else {
                 $folder = 'folder.gif';
             }
 
-            $oT = strpos( $oldtopics, "|$lastPid|" );
-            if ( $lastvisit < (int) $dalast && $oT === false ) {
-                if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
+            $oT = strpos($oldtopics, "|$lastPid|");
+            if ($lastvisit < (int) $dalast && $oT === false) {
+                if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                     $folder = 'hot_red_folder.gif';
                 } else {
                     $folder = 'red_folder.gif';
@@ -195,11 +195,11 @@ if ($threadcount == 0) {
         $prefix = '';
         eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
-        if ( '1' === $thread['pollopts'] ) {
+        if ('1' === $thread['pollopts']) {
             $prefix = $lang['pollprefix'].' ';
         }
 
-        if ( '1' === $thread['topped'] ) {
+        if ('1' === $thread['topped']) {
             $prefix = $lang['toppedprefix'].' '.$prefix;
         }
 

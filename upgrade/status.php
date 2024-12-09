@@ -22,12 +22,12 @@
  *
  **/
 
-header( 'Expires: 0' );
-header( 'X-Frame-Options: sameorigin' );
+header('Expires: 0');
+header('X-Frame-Options: sameorigin');
 
 define('LOG_FILE', './upgrade.log');
 
-$log = file_get_contents( LOG_FILE );
+$log = file_get_contents(LOG_FILE);
 $check = substr($log, -14);
 $done = '<!-- done. -->' == $check;
 $error = '<!-- error -->' == $check;
@@ -35,25 +35,25 @@ $error = '<!-- error -->' == $check;
 ?>
 <html>
 <head>
-<?php if ( ! $done && ! $error ) { ?>
+<?php if (! $done && ! $error) { ?>
 <meta http-equiv="refresh" content="2" />
 <?php } ?>
 </head>
 <body>
 <?php
 // Display the log file in reverse order, so latest message is first.
-$lines = explode( "\r\n", $log );
-$counter = count( $lines );
-while( count( $lines ) > 0 ) {
-	echo $counter--, ". ", array_pop( $lines ), "<br>\n";
+$lines = explode("\r\n", $log);
+$counter = count($lines);
+while(count($lines) > 0) {
+	echo $counter--, ". ", array_pop($lines), "<br>\n";
 }
 ?>
 </body>
 </html>
 <?php
 
-if ( $done ) {
-	rmFromDir( dirname(__FILE__) );
+if ($done) {
+	rmFromDir(dirname(__FILE__));
 }
 
 /**

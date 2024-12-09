@@ -184,7 +184,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
 
     if (count($srchfid) > 0) {
-        if ( 0 != $srchfid[0] ) {
+        if (0 != $srchfid[0]) {
             $srchfidcsv = implode(',', $srchfid);
             $sql .= " AND f.fid IN ($srchfidcsv)";
             $ext[] = "f=$srchfidcsv";

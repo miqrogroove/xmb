@@ -31,49 +31,49 @@ loadtemplates(
 'misc_feature_not_while_loggedin'
 );
 
-$token1 = postedVar( 'a', '', false, false, false, 'g' );
-$token2 = postedVar( 'token', '', false, false, false, 'p' );
+$token1 = postedVar('a', '', false, false, false, 'g');
+$token2 = postedVar('token', '', false, false, false, 'p');
 
-$valid_get = preg_match( '%^[a-f0-9]{32}$%', $token1 ) === 1;
-$valid_post = preg_match( '%^[a-f0-9]{32}$%', $token2 ) === 1;
+$valid_get = preg_match('%^[a-f0-9]{32}$%', $token1) === 1;
+$valid_post = preg_match('%^[a-f0-9]{32}$%', $token2) === 1;
 
-if ( X_MEMBER ) {
+if (X_MEMBER) {
     eval('$page = "'.template('misc_feature_not_while_loggedin').'";');
 
-} elseif ( $valid_get ) {
+} elseif ($valid_get) {
     // Link from email received.
     $token = $token1;
     eval('$page = "'.template('lost_pw_reset').'";');
 
-} elseif ( $valid_post ) {
+} elseif ($valid_post) {
     // New password from posted form received.
-    $username = postedVar( 'username', '', true, false );
-    $password1 = postedVar( 'password1', '', false, false );
-    $password2 = postedVar( 'password2', '', false, false );
-    if ( '' == $username ) {
-        error( $lang['textnousername'] );
+    $username = postedVar('username', '', true, false);
+    $password1 = postedVar('password1', '', false, false);
+    $password2 = postedVar('password2', '', false, false);
+    if ('' == $username) {
+        error($lang['textnousername']);
     }
-    if ( strlen($username) < 3 || strlen($username) > 32 ) {
-        error( $lang['username_length_invalid'] );
+    if (strlen($username) < 3 || strlen($username) > 32) {
+        error($lang['username_length_invalid']);
     }
-    if ( '' == $password1 ) {
-        error( $lang['textnopassword'] );
+    if ('' == $password1) {
+        error($lang['textnopassword']);
     }
-    if ( $password1 !== $password2 ) {
-        error( $lang['pwnomatch'] );
+    if ($password1 !== $password2) {
+        error($lang['pwnomatch']);
     }
 
     // Inputs look reasonable.  Check the token.
-    if ( ! \XMB\Token\consume( $token2, 'Lost Password', $username ) ) {
-        error( $lang['lostpw_bad_token'] );
+    if (! \XMB\Token\consume($token2, 'Lost Password', $username)) {
+        error($lang['lostpw_bad_token']);
     }
 
-    $newpassword = md5( $password1 );
-    \XMB\SQL\setNewPassword( $username, $newpassword );
-    message( $lang['lostpw_success'] );
+    $newpassword = md5($password1);
+    \XMB\SQL\setNewPassword($username, $newpassword);
+    message($lang['lostpw_success']);
 
 } else {
-    error( $lang['lostpw_bad_token'] );
+    error($lang['lostpw_bad_token']);
 }
 
 eval('$header = "'.template('header').'";');

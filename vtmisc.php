@@ -91,14 +91,14 @@ if ($forum['type'] == 'sub') {
         error($lang['privforummsg']);
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ( (int) $fup['fup'] > 0 ) {
+    } else if ((int) $fup['fup'] > 0) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} else if ( (int) $forum['fup'] > 0 ) { // 'forum' in a 'group'
+} else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
     $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
@@ -121,7 +121,7 @@ if ($action == 'report') {
     nav($lang['textreportpost']);
     eval('echo "'.template('header').'";');
 
-    if ( 'off' == $SETTINGS['reportpost'] || ( 'on' == $SETTINGS['quarantine_new_users'] && ( 0 == (int) $self['postnum'] || 'yes' == $self['waiting_for_mod'] ) && ! X_STAFF ) ) {
+    if ('off' == $SETTINGS['reportpost'] || ('on' == $SETTINGS['quarantine_new_users'] && (0 == (int) $self['postnum'] || 'yes' == $self['waiting_for_mod']) && ! X_STAFF)) {
         header('HTTP/1.0 403 Forbidden');
         eval('echo "'.template('misc_feature_notavailable').'";');
         end_time();
@@ -163,8 +163,8 @@ if ($action == 'report') {
 
     // Does a poll exist for this thread?
     $tid = intval($tid);
-    $vote_id = \XMB\SQL\getPollId( $tid );
-    if ( $vote_id === 0 ) {
+    $vote_id = \XMB\SQL\getPollId($tid);
+    if ($vote_id === 0) {
         error($lang['pollvotenotselected'], false);
     }
 

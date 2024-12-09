@@ -354,12 +354,12 @@ class Captcha {
             $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
 
             // calculate character starting coordinates
-            $iX = intval( $this->iSpacing / 4 ) + $i * $this->iSpacing;
+            $iX = intval($this->iSpacing / 4) + $i * $this->iSpacing;
             $iCharHeight = $aCharDetails[2] - $aCharDetails[5];
-            $iY = intval( $this->iHeight / 2 + $iCharHeight / 4 );
+            $iY = intval($this->iHeight / 2 + $iCharHeight / 4);
 
             // write text to image
-            imagefttext( $this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i] );
+            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i]);
             
             if ($this->bCharShadow) {
                 $iOffsetAngle = rand(-30, 30);
@@ -367,7 +367,7 @@ class Captcha {
                 $iRandOffsetX = rand(-5, 5);
                 $iRandOffsetY = rand(-5, 5);
                 
-                imagefttext( $this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i] );
+                imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i]);
             }
         }
     }

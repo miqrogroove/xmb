@@ -236,7 +236,7 @@ if ($action == "settings") {
         settingHTML('images_https_only', $imageshttpson, $imageshttpsoff);
 
         $check12 = $check24 = '';
-        if ( '24' === $SETTINGS['timeformat'] ) {
+        if ('24' === $SETTINGS['timeformat']) {
             $check24 = $cheHTML;
         } else {
             $check12 = $cheHTML;
@@ -335,7 +335,7 @@ if ($action == "settings") {
         <a href="#10"><?php echo $lang['admin_main_settings10']; ?></a><br />
         </span>
         <form method="post" action="cp.php?action=settings">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/settings', 'global', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/settings', 'global', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth?>" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -433,7 +433,7 @@ if ($action == "settings") {
         printsetting1($lang['what_tickerstatus'], 'tickerstatusnew', $tickerstatuson, $tickerstatusoff);
         printsetting2($lang['what_tickerdelay'], 'tickerdelaynew', ((int)$SETTINGS['tickerdelay']), 5);
         printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
-        printsetting3($lang['tickercode'], 'tickercodenew', array( $lang['plaintext'], $lang['textbbcode'], $lang['texthtml'] ), array( 'plain', 'bbcode', 'html' ), $tickercodechecked, false);
+        printsetting3($lang['tickercode'], 'tickercodenew', array($lang['plaintext'], $lang['textbbcode'], $lang['texthtml']), array('plain', 'bbcode', 'html'), $tickercodechecked, false);
         ?>
         <tr class="ctrtablerow">
         <td bgcolor="<?php echo $altbg2?>" colspan="2"><input class="submit" type="submit" name="settingsubmit5" value="<?php echo $lang['textsubmitchanges']?>" /></td>
@@ -467,7 +467,7 @@ if ($action == "settings") {
         <td colspan="2"><strong><font color="<?php echo $cattext?>"><a name="8" />&raquo;&nbsp;<?php echo $lang['admin_main_settings8']?></font></strong></td>
         </tr>
         <?php
-        if ( ! ini_get( 'file_uploads' ) ) {
+        if (! ini_get('file_uploads')) {
             printsetting5($lang['status'], 'The file upload feature is disabled.  Please check the configuration of your PHP server.');
         }
         $max_image_sizes = explode('x', $SETTINGS['max_image_size']);
@@ -479,7 +479,7 @@ if ($action == "settings") {
             $subdirchecked[$i] = ($SETTINGS['files_subdir_format'] == $i + 1);
         }
         printsetting2($lang['textfilesperpost'], 'filesperpostnew', ((int)$SETTINGS['filesperpost']), 3);
-        printsetting2($lang['max_attachment_size'], 'maxAttachSize', min( phpShorthandValue( 'upload_max_filesize' ), (int) $SETTINGS['maxattachsize'] ), 12);
+        printsetting2($lang['max_attachment_size'], 'maxAttachSize', min(phpShorthandValue('upload_max_filesize'), (int) $SETTINGS['maxattachsize']), 12);
         printsetting2($lang['textfilessizew'], 'max_image_size_w_new', $max_image_sizes[0], 5);
         printsetting2($lang['textfilessizeh'], 'max_image_size_h_new', $max_image_sizes[1], 5);
         printsetting2($lang['textfilesthumbw'], 'max_thumb_size_w_new', $max_thumb_sizes[0], 5);
@@ -507,7 +507,7 @@ if ($action == "settings") {
         printsetting1($lang['bbinsert'], 'bbinsertnew', $bbinserton, $bbinsertoff);
         printsetting1($lang['smileyinsert'], 'smileyinsertnew', $smileyinserton, $smileyinsertoff);
         printsetting3($lang['footer_options'], 'new_footer_options', $names, $values, $checked);
-        printsetting5( $lang['defaultTimezoneDesc'], timezone_control( $SETTINGS['def_tz'] ) );
+        printsetting5($lang['defaultTimezoneDesc'], timezone_control($SETTINGS['def_tz']));
         printsetting2($lang['addtime'], 'addtimenew', $SETTINGS['addtime'], 3);
         printsetting1($lang['sigbbcode'], 'sigbbcodenew', $sigbbcodeon, $sigbbcodeoff);
         if (!ini_get('allow_url_fopen')) {
@@ -574,7 +574,7 @@ if ($action == "settings") {
         </tr>
         <?php
     } else {
-        request_secure( 'Control Panel/settings', 'global' );
+        request_secure('Control Panel/settings', 'global');
 
         $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
         $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
@@ -582,8 +582,8 @@ if ($action == "settings") {
         if ($avastatusnew != 'on' && $avastatusnew != 'list') {
             $avastatusnew = 'off';
         }
-        $recaptchanew = postedVar( 'recaptchanew' );
-        if ( $recaptchanew != 'on' || trim( postedVar( 'recaptchasecretnew') ) == '' || trim( postedVar( 'recaptchakeynew') ) == '' ) {
+        $recaptchanew = postedVar('recaptchanew');
+        if ($recaptchanew != 'on' || trim(postedVar('recaptchasecretnew')) == '' || trim(postedVar('recaptchakeynew')) == '') {
             $recaptchanew = 'off';
         }
 
@@ -594,7 +594,7 @@ if ($action == "settings") {
             $footer_options = '';
         }
 
-        $maxAttachSize = (string) min( phpShorthandValue( 'upload_max_filesize' ), formInt( 'maxAttachSize' ) );
+        $maxAttachSize = (string) min(phpShorthandValue('upload_max_filesize'), formInt('maxAttachSize'));
         $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : '0';
         $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : '0';
         $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
@@ -608,108 +608,108 @@ if ($action == "settings") {
         $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
         $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
 
-        input_custom_setting( 'addtime', $addtimenew );
-        input_string_setting( 'adminemail', 'adminemailnew' );
-        input_onoff_setting( 'allowrankedit', 'allowrankeditnew' );
-        input_onoff_setting( 'attachimgpost', 'attachimgpostnew' );
-        input_onoff_setting( 'attach_remote_images', 'remoteimages' );
-        input_custom_setting( 'avastatus', $avastatusnew );
-        input_onoff_setting( 'bbinsert', 'bbinsertnew' );
-        input_string_setting( 'bbname', 'bbnamenew' );
-        input_string_setting( 'bboffreason', 'bboffreasonnew' );
-        input_onoff_setting( 'bbrules', 'bbrulesnew' );
-        input_string_setting( 'bbrulestxt', 'bbrulestxtnew', false );
-        input_onoff_setting( 'bbstatus', 'bbstatusnew' );
-        input_onoff_setting( 'captcha_code_casesensitive', 'captchacodecasenew' );
-        input_string_setting( 'captcha_code_charset', 'captchacharsetnew' );
-        input_int_setting( 'captcha_code_length', 'captchacodenew' );
-        input_onoff_setting( 'captcha_code_shadow', 'captchacodeshadownew' );
-        input_string_setting( 'captcha_image_bg', 'captchaimagebgnew' );
-        input_onoff_setting( 'captcha_image_color', 'captchaimagecolornew' );
-        input_int_setting( 'captcha_image_dots', 'captchaimagedotsnew' );
-        input_string_setting( 'captcha_image_fonts', 'captchaimagefontsnew' );
-        input_int_setting( 'captcha_image_height', 'captchaimageheightnew' );
-        input_int_setting( 'captcha_image_lines', 'captchaimagelinesnew' );
-        input_int_setting( 'captcha_image_maxfont', 'captchaimagemaxfontnew' );
-        input_int_setting( 'captcha_image_minfont', 'captchaimageminfontnew' );
-        input_string_setting( 'captcha_image_type', 'captchaimagetypenew' );
-        input_int_setting( 'captcha_image_width', 'captchaimagewidthnew' );
-        input_onoff_setting( 'captcha_post_status', 'captchapostnew' );
-        input_onoff_setting( 'captcha_reg_status', 'captcharegnew' );
-        input_onoff_setting( 'captcha_search_status', 'captchasearchnew' );
-        input_onoff_setting( 'captcha_status', 'captchanew' );
-        input_onoff_setting( 'catsonly', 'catsonlynew' );
-        input_onoff_setting( 'coppa', 'coppanew' );
-        input_string_setting( 'dateformat', 'dateformatnew' );
-        input_custom_setting( 'def_tz', $def_tz_new );
-        input_onoff_setting( 'dotfolders', 'dotfoldersnew' );
-        input_onoff_setting( 'doublee', 'doubleenew' );
-        input_onoff_setting( 'editedby', 'editedbynew' );
-        input_onoff_setting( 'emailcheck', 'emailchecknew' );
-        input_onoff_setting( 'faqstatus', 'faqstatusnew' );
-        input_int_setting( 'filesperpost', 'filesperpostnew' );
-        input_int_setting( 'files_min_disk_size', 'filesminsizenew' );
-        input_string_setting( 'files_storage_path', 'filespathnew' );
-        input_int_setting( 'files_subdir_format', 'filessubdirnew' );
-        input_int_setting( 'file_url_format', 'filesurlpathnew' );
-        input_string_setting( 'files_virtual_url', 'filesbasenew' );
-        input_int_setting( 'floodctrl', 'floodctrlnew' );
-        input_custom_setting( 'footer_options', $footer_options );
-        input_custom_setting( 'google_captcha', $recaptchanew );
-        input_string_setting( 'google_captcha_secret', 'recaptchasecretnew' );
-        input_string_setting( 'google_captcha_sitekey', 'recaptchakeynew' );
-        input_onoff_setting( 'gzipcompress', 'gzipcompressnew' );
-        input_onoff_setting( 'hideprivate', 'hidepriv' );
-        input_onoff_setting( 'hide_banned', 'hidebannednew' );
-        input_int_setting( 'hottopic', 'hottopicnew' );
-        input_onoff_setting( 'images_https_only', 'imageshttpsnew' );
-        input_int_setting( 'indexshowbar', 'indexShowBarNew' );
-        input_onoff_setting( 'index_stats', 'index_statsnew' );
-        input_onoff_setting( 'ipreg', 'ipReg' );
-        input_string_setting( 'langfile', 'langfilenew' );
-        input_custom_setting( 'maxattachsize', $maxAttachSize );
-        input_int_setting( 'maxdayreg', 'maxDayReg' );
-        input_custom_setting( 'max_avatar_size', $max_avatar_size );
-        input_custom_setting( 'max_image_size', $max_image_size );
-        input_custom_setting( 'max_thumb_size', $max_thumb_size );
-        input_int_setting( 'memberperpage', 'memberperpagenew' );
-        input_onoff_setting( 'memliststatus', 'memliststatusnew' );
-        input_custom_setting( 'notifyonreg', $notifyonregnew );
-        input_int_setting( 'onlinetodaycount', 'onlinetodaycountnew' );
-        input_onoff_setting( 'onlinetoday_status', 'onlinetoday_statusnew' );
-        input_int_setting( 'postperpage', 'postperpagenew' );
-        input_int_setting( 'pruneusers', 'pruneusersnew' );
-        input_onoff_setting( 'quarantine_new_users', 'quarantinenew' );
-        input_onoff_setting( 'quickjump_status', 'quickjump_statusnew' );
-        input_onoff_setting( 'quickreply_status', 'quickreply_statusnew' );
-        input_onoff_setting( 'regoptional', 'regoptionalnew' );
-        input_onoff_setting( 'regstatus', 'reg_on' );
-        input_onoff_setting( 'regviewonly', 'regviewnew' );
-        input_onoff_setting( 'reportpost', 'reportpostnew' );
-        input_onoff_setting( 'resetsigs', 'resetSigNew' );
-        input_onoff_setting( 'searchstatus', 'searchstatusnew' );
-        input_onoff_setting( 'showsubforums', 'showsubforumsnew' );
-        input_onoff_setting( 'show_logs_in_threads', 'showlogsnew' );
-        input_onoff_setting( 'sigbbcode', 'sigbbcodenew' );
-        input_string_setting( 'sitename', 'sitenamenew' );
-        input_string_setting( 'siteurl', 'siteurlnew' );
-        input_int_setting( 'smcols', 'smcolsnew' );
-        input_onoff_setting( 'smileyinsert', 'smileyinsertnew' );
-        input_int_setting( 'smtotal', 'smtotalnew' );
-        input_onoff_setting( 'space_cats', 'space_catsnew' );
-        input_custom_setting( 'spellcheck', $spellchecknew );
-        input_onoff_setting( 'stats', 'statsstatusnew' );
-        input_onoff_setting( 'subject_in_title', 'subjectInTitleNew' );
-        input_int_setting( 'theme', 'themenew' );
-        input_string_setting( 'tickercode', 'tickercodenew' );
-        input_string_setting( 'tickercontents', 'tickercontentsnew' );
-        input_int_setting( 'tickerdelay', 'tickerdelaynew' );
-        input_onoff_setting( 'tickerstatus', 'tickerstatusnew' );
-        input_int_setting( 'timeformat', 'timeformatnew' );
-        input_onoff_setting( 'todaysposts', 'todaystatusnew' );
-        input_int_setting( 'topicperpage', 'topicperpagenew' );
-        input_int_setting( 'u2uquota', 'u2uquotanew' );
-        input_onoff_setting( 'whosonlinestatus', 'whos_on' );
+        input_custom_setting('addtime', $addtimenew);
+        input_string_setting('adminemail', 'adminemailnew');
+        input_onoff_setting('allowrankedit', 'allowrankeditnew');
+        input_onoff_setting('attachimgpost', 'attachimgpostnew');
+        input_onoff_setting('attach_remote_images', 'remoteimages');
+        input_custom_setting('avastatus', $avastatusnew);
+        input_onoff_setting('bbinsert', 'bbinsertnew');
+        input_string_setting('bbname', 'bbnamenew');
+        input_string_setting('bboffreason', 'bboffreasonnew');
+        input_onoff_setting('bbrules', 'bbrulesnew');
+        input_string_setting('bbrulestxt', 'bbrulestxtnew', false);
+        input_onoff_setting('bbstatus', 'bbstatusnew');
+        input_onoff_setting('captcha_code_casesensitive', 'captchacodecasenew');
+        input_string_setting('captcha_code_charset', 'captchacharsetnew');
+        input_int_setting('captcha_code_length', 'captchacodenew');
+        input_onoff_setting('captcha_code_shadow', 'captchacodeshadownew');
+        input_string_setting('captcha_image_bg', 'captchaimagebgnew');
+        input_onoff_setting('captcha_image_color', 'captchaimagecolornew');
+        input_int_setting('captcha_image_dots', 'captchaimagedotsnew');
+        input_string_setting('captcha_image_fonts', 'captchaimagefontsnew');
+        input_int_setting('captcha_image_height', 'captchaimageheightnew');
+        input_int_setting('captcha_image_lines', 'captchaimagelinesnew');
+        input_int_setting('captcha_image_maxfont', 'captchaimagemaxfontnew');
+        input_int_setting('captcha_image_minfont', 'captchaimageminfontnew');
+        input_string_setting('captcha_image_type', 'captchaimagetypenew');
+        input_int_setting('captcha_image_width', 'captchaimagewidthnew');
+        input_onoff_setting('captcha_post_status', 'captchapostnew');
+        input_onoff_setting('captcha_reg_status', 'captcharegnew');
+        input_onoff_setting('captcha_search_status', 'captchasearchnew');
+        input_onoff_setting('captcha_status', 'captchanew');
+        input_onoff_setting('catsonly', 'catsonlynew');
+        input_onoff_setting('coppa', 'coppanew');
+        input_string_setting('dateformat', 'dateformatnew');
+        input_custom_setting('def_tz', $def_tz_new);
+        input_onoff_setting('dotfolders', 'dotfoldersnew');
+        input_onoff_setting('doublee', 'doubleenew');
+        input_onoff_setting('editedby', 'editedbynew');
+        input_onoff_setting('emailcheck', 'emailchecknew');
+        input_onoff_setting('faqstatus', 'faqstatusnew');
+        input_int_setting('filesperpost', 'filesperpostnew');
+        input_int_setting('files_min_disk_size', 'filesminsizenew');
+        input_string_setting('files_storage_path', 'filespathnew');
+        input_int_setting('files_subdir_format', 'filessubdirnew');
+        input_int_setting('file_url_format', 'filesurlpathnew');
+        input_string_setting('files_virtual_url', 'filesbasenew');
+        input_int_setting('floodctrl', 'floodctrlnew');
+        input_custom_setting('footer_options', $footer_options);
+        input_custom_setting('google_captcha', $recaptchanew);
+        input_string_setting('google_captcha_secret', 'recaptchasecretnew');
+        input_string_setting('google_captcha_sitekey', 'recaptchakeynew');
+        input_onoff_setting('gzipcompress', 'gzipcompressnew');
+        input_onoff_setting('hideprivate', 'hidepriv');
+        input_onoff_setting('hide_banned', 'hidebannednew');
+        input_int_setting('hottopic', 'hottopicnew');
+        input_onoff_setting('images_https_only', 'imageshttpsnew');
+        input_int_setting('indexshowbar', 'indexShowBarNew');
+        input_onoff_setting('index_stats', 'index_statsnew');
+        input_onoff_setting('ipreg', 'ipReg');
+        input_string_setting('langfile', 'langfilenew');
+        input_custom_setting('maxattachsize', $maxAttachSize);
+        input_int_setting('maxdayreg', 'maxDayReg');
+        input_custom_setting('max_avatar_size', $max_avatar_size);
+        input_custom_setting('max_image_size', $max_image_size);
+        input_custom_setting('max_thumb_size', $max_thumb_size);
+        input_int_setting('memberperpage', 'memberperpagenew');
+        input_onoff_setting('memliststatus', 'memliststatusnew');
+        input_custom_setting('notifyonreg', $notifyonregnew);
+        input_int_setting('onlinetodaycount', 'onlinetodaycountnew');
+        input_onoff_setting('onlinetoday_status', 'onlinetoday_statusnew');
+        input_int_setting('postperpage', 'postperpagenew');
+        input_int_setting('pruneusers', 'pruneusersnew');
+        input_onoff_setting('quarantine_new_users', 'quarantinenew');
+        input_onoff_setting('quickjump_status', 'quickjump_statusnew');
+        input_onoff_setting('quickreply_status', 'quickreply_statusnew');
+        input_onoff_setting('regoptional', 'regoptionalnew');
+        input_onoff_setting('regstatus', 'reg_on');
+        input_onoff_setting('regviewonly', 'regviewnew');
+        input_onoff_setting('reportpost', 'reportpostnew');
+        input_onoff_setting('resetsigs', 'resetSigNew');
+        input_onoff_setting('searchstatus', 'searchstatusnew');
+        input_onoff_setting('showsubforums', 'showsubforumsnew');
+        input_onoff_setting('show_logs_in_threads', 'showlogsnew');
+        input_onoff_setting('sigbbcode', 'sigbbcodenew');
+        input_string_setting('sitename', 'sitenamenew');
+        input_string_setting('siteurl', 'siteurlnew');
+        input_int_setting('smcols', 'smcolsnew');
+        input_onoff_setting('smileyinsert', 'smileyinsertnew');
+        input_int_setting('smtotal', 'smtotalnew');
+        input_onoff_setting('space_cats', 'space_catsnew');
+        input_custom_setting('spellcheck', $spellchecknew);
+        input_onoff_setting('stats', 'statsstatusnew');
+        input_onoff_setting('subject_in_title', 'subjectInTitleNew');
+        input_int_setting('theme', 'themenew');
+        input_string_setting('tickercode', 'tickercodenew');
+        input_string_setting('tickercontents', 'tickercontentsnew');
+        input_int_setting('tickerdelay', 'tickerdelaynew');
+        input_onoff_setting('tickerstatus', 'tickerstatusnew');
+        input_int_setting('timeformat', 'timeformatnew');
+        input_onoff_setting('todaysposts', 'todaystatusnew');
+        input_int_setting('topicperpage', 'topicperpagenew');
+        input_int_setting('u2uquota', 'u2uquotanew');
+        input_onoff_setting('whosonlinestatus', 'whos_on');
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textsettingsupdate'].'</td></tr>';
     }
@@ -721,7 +721,7 @@ if ($action == 'rename') {
     }
 
     if (onSubmit('renamesubmit')) {
-        request_secure( 'Control Panel/Rename User', '' );
+        request_secure('Control Panel/Rename User', '');
         $vUserFrom = postedVar('frmUserFrom', '', TRUE, FALSE);
         $vUserTo = postedVar('frmUserTo', '', TRUE, FALSE);
         $adm = new admin();
@@ -732,7 +732,7 @@ if ($action == 'rename') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form action="cp.php?action=rename" method="post">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Rename User', '', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Rename User', '', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -801,7 +801,7 @@ if ($action == 'forum') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp.php?action=forum">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Forums', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Forums', 'mass-edit', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1046,7 +1046,7 @@ if ($action == 'forum') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=forum&amp;fdetails=<?php echo $fdetails?>">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Forums', (string) $fdetails, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Forums', (string) $fdetails, X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1185,7 +1185,7 @@ if ($action == 'forum') {
         </tr>
         <?php
     } else if (onSubmit('forumsubmit') && !$fdetails) {
-        request_secure( 'Control Panel/Forums', 'mass-edit' );
+        request_secure('Control Panel/Forums', 'mass-edit');
         $queryforum = $db->query("SELECT fid, type, fup FROM ".X_PREFIX."forums WHERE type='forum' OR type='sub'");
         while($forum = $db->fetch_array($queryforum)) {
             $displayorder = formInt('displayorder'.$forum['fid']);
@@ -1195,7 +1195,7 @@ if ($action == 'forum') {
             $moveto = formInt('moveto'.$forum['fid']);
 
             $dsuccess = FALSE;
-            if ( $delete == (int) $forum['fid'] ) {
+            if ($delete == (int) $forum['fid']) {
                 if ($db->num_rows($db->query('SELECT tid FROM '.X_PREFIX.'threads WHERE fid='.$forum['fid'])) > 0) {
                     $dsuccess = FALSE;
                 } elseif ($db->num_rows($db->query('SELECT fid FROM '.X_PREFIX.'forums WHERE fup='.$forum['fid'])) > 0) {
@@ -1213,7 +1213,7 @@ if ($action == 'forum') {
 
             if (!$dsuccess) {
                 $settype = '';
-                if ( $moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
+                if ($moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
                     if ($moveto == 0) {
                         $settype = ", type='forum', fup=0";
                     } else {
@@ -1228,7 +1228,7 @@ if ($action == 'forum') {
                                     $query2 = $db->query("SELECT COUNT(*) AS subcount FROM ".X_PREFIX."forums WHERE fup={$forum['fid']}");
                                     $frow = $db->fetch_array($query2);
                                     $db->free_result($query2);
-                                    if ( '0' === $frow['subcount'] ) {
+                                    if ('0' === $frow['subcount']) {
                                         $settype = ", type='sub', fup=$moveto";
                                     }
                                 }
@@ -1248,7 +1248,7 @@ if ($action == 'forum') {
             $group['status'] = formOnOff('status'.$group['fid']);
             $delete = formInt('delete'.$group['fid']);
 
-            if ( $delete == (int) $group['fid'] ) {
+            if ($delete == (int) $group['fid']) {
                 $query = $db->query("SELECT fid FROM ".X_PREFIX."forums WHERE type='forum' AND fup=$delete");
                 if ($db->num_rows($query) > 0) {
                     message($lang['deleteaborted'].'<br />'.$lang['forumnotempty'], FALSE, '', '', FALSE, FALSE, FALSE, FALSE);
@@ -1272,20 +1272,20 @@ if ($action == 'forum') {
         $newffup = formInt('newffup');
         $newsubfup = formInt('newsubfup');
 
-        if ( $newfname !== $lang['textnewforum'] && $newfname != '' ) {
+        if ($newfname !== $lang['textnewforum'] && $newfname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
         }
 
-        if ( $newgname !== $lang['textnewgroup'] && $newgname != '' ) {
+        if ($newgname !== $lang['textnewgroup'] && $newgname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
         }
 
-        if ( $newsubname !== $lang['textnewsubf'] && $newsubname != '' ) {
+        if ($newsubname !== $lang['textnewsubf'] && $newsubname != '') {
             $db->query("INSERT INTO ".X_PREFIX."forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textforumupdate'].'</td></tr>';
     } else {
-        request_secure( 'Control Panel/Forums', (string) $fdetails );
+        request_secure('Control Panel/Forums', (string) $fdetails);
         $namenew = addslashes(htmlspecialchars(postedVar('namenew', 'javascript', FALSE), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $descnew = postedVar('descnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
@@ -1372,7 +1372,7 @@ if ($action == "mods") {
         $oldfid = '0';
         $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM ".X_PREFIX."forums f LEFT JOIN ".X_PREFIX."forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
         while($forum = $db->fetch_array($query)) {
-            if ( $oldfid !== $forum['cat_fid'] ) {
+            if ($oldfid !== $forum['cat_fid']) {
                 $oldfid = $forum['cat_fid']
                 ?>
                 <tr bgcolor="<?php echo $altbg1?>" class="tablerow">
@@ -1516,7 +1516,7 @@ if ($action == "members") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=members">
-            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Members', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Members', 'mass-edit', X_NONCE_FORM_EXP); ?>" />
             <table cellspacing="0" cellpadding="0" border="0" width="91%" align="center">
             <tr>
             <td bgcolor="<?php echo $bordercolor?>">
@@ -1578,7 +1578,7 @@ if ($action == "members") {
                     break;
                 }
 
-                if ( '0' === $member['lastvisit'] ) {
+                if ('0' === $member['lastvisit']) {
                     $pending = '<br />'.$lang['textpendinglogin'];
                 } else {
                     $pending = '';
@@ -1638,7 +1638,7 @@ if ($action == "members") {
             <?php
         }
     } else if (onSubmit('membersubmit')) {
-        request_secure( 'Control Panel/Members', 'mass-edit' );
+        request_secure('Control Panel/Members', 'mass-edit');
         $query = $db->query("SELECT uid, username, password, status FROM ".X_PREFIX."members $where");
 
         // Guarantee this request will not remove all Super Administrators.
@@ -1683,7 +1683,7 @@ if ($action == "members") {
                 }
             }
 
-            if ( $delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator" ) {
+            if ($delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator") {
                 $db->escape_fast($mem['username']);
                 $db->query("DELETE FROM ".X_PREFIX."members WHERE uid=$delete");
                 $db->query("DELETE FROM ".X_PREFIX."buddys WHERE username='{$mem['username']}'");
@@ -1692,8 +1692,8 @@ if ($action == "members") {
                 $db->query("UPDATE ".X_PREFIX."whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
             } else {
                 $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
-                if ( '' != $queryadd ) {
-                    $session->logoutAll( $mem['username'] );
+                if ('' != $queryadd) {
+                    $session->logoutAll($mem['username']);
                 }
             }
         }
@@ -1708,7 +1708,7 @@ if ($action == "ipban") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=ipban">
-            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', X_NONCE_FORM_EXP); ?>" />
             <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
             <tr><td bgcolor="<?php echo $bordercolor?>">
             <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -1722,7 +1722,7 @@ if ($action == "ipban") {
             while($ipaddress = $db->fetch_array($query)) {
                 for($i=1; $i<=4; ++$i) {
                     $j = "ip" . $i;
-                    if ( '-1' === $ipaddress[$j] ) {
+                    if ('-1' === $ipaddress[$j]) {
                         $ipaddress[$j] = "*";
                     }
                 }
@@ -1767,11 +1767,11 @@ if ($action == "ipban") {
             </tr>
             <?php
         } elseif (onSubmit('ipbandisable')) {
-            request_secure( 'Control Panel/IP Banning', 'mass-edit' );
-            \XMB\SQL\updateSetting( 'ip_banning', 'off' );
+            request_secure('Control Panel/IP Banning', 'mass-edit');
+            \XMB\SQL\updateSetting('ip_banning', 'off');
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         } else {
-            request_secure( 'Control Panel/IP Banning', 'mass-edit' );
+            request_secure('Control Panel/IP Banning', 'mass-edit');
             $newip = array();
             $newip[] = (is_numeric(postedVar('newip1')) || postedVar('newip1') == '*') ? trim(postedVar('newip1')) : '0' ;
             $newip[] = (is_numeric(postedVar('newip2')) || postedVar('newip2') == '*') ? trim(postedVar('newip2')) : '0' ;
@@ -1794,7 +1794,7 @@ if ($action == "ipban") {
             }
             $self['status'] = $lang['textipupdate'];
 
-            if ( '0' !== $newip[0] || '0' !== $newip[1] || '0' !== $newip[2] || '0' !== $newip[3] ) {
+            if ('0' !== $newip[0] || '0' !== $newip[1] || '0' !== $newip[2] || '0' !== $newip[3]) {
                 $invalid = 0;
                 for($i=0; $i<=3 && !$invalid; ++$i) {
                     if ($newip[$i] == "*") {
@@ -1809,7 +1809,7 @@ if ($action == "ipban") {
                 if ($invalid) {
                     $self['status'] = $lang['invalidip'];
                 } else {
-                    if ( '-1' === $ip[1] && '-1' === $ip[2] && '-1' === $ip[3] && '-1' === $ip[4] ) {
+                    if ('-1' === $ip[1] && '-1' === $ip[2] && '-1' === $ip[3] && '-1' === $ip[4]) {
                         $self['status'] = $lang['impossiblebanall'];
                     } else {
                         $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
@@ -1830,7 +1830,7 @@ if ($action == "ipban") {
             <tr bgcolor="<?php echo $altbg2?>">
             <td align="center">
             <form method="post" action="cp.php?action=ipban">
-            <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/IP Banning', 'enable', X_NONCE_AYS_EXP ); ?>" />
+            <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'enable', X_NONCE_AYS_EXP); ?>" />
             <div align="center">
             <input type="submit" class="submit" name="ipbanenable" value="<?php echo $lang['ipbanenable']; ?>" />
             </div>
@@ -1839,8 +1839,8 @@ if ($action == "ipban") {
             </tr>
             <?php
         } else {
-            request_secure( 'Control Panel/IP Banning', 'enable' );
-            \XMB\SQL\updateSetting( 'ip_banning', 'on' );
+            request_secure('Control Panel/IP Banning', 'enable');
+            \XMB\SQL\updateSetting('ip_banning', 'on');
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         }
     }
@@ -1852,19 +1852,19 @@ if ($action == "deleteposts") {
         ?>
         <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['confirmDeletePosts']; ?><br />
         <form action="cp.php?action=deleteposts&amp;member=<?php echo recodeOut($member); ?>" method="post">
-          <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Members/Del Posts', $member, X_NONCE_AYS_EXP ); ?>" />
+          <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Members/Del Posts', $member, X_NONCE_AYS_EXP); ?>" />
           <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
         </form></td></tr>
         <?php
-    } elseif ( $lang['textyes'] === $yessubmit ) {
-        request_secure( 'Control Panel/Members/Del Posts', $member );
+    } elseif ($lang['textyes'] === $yessubmit) {
+        request_secure('Control Panel/Members/Del Posts', $member);
         require('include/attach.inc.php');
 
         // Get TIDs
         $dirty = array();
         $rawuser = $member = postedVar('member', '', true, false, false, 'g');
-        $member = $db->escape( $rawuser );
+        $member = $db->escape($rawuser);
         $countquery = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE author='$member' GROUP BY tid");
         while($post = $db->fetch_array($countquery)) {
             $dirty[] = $post['tid'];
@@ -1883,7 +1883,7 @@ if ($action == "deleteposts") {
         }
 
         // Delete Member's Posts
-        \XMB\Attach\deleteByUser( $rawuser );
+        \XMB\Attach\deleteByUser($rawuser);
         $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
         $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
 
@@ -1942,7 +1942,7 @@ if ($action == "upgrade") {
         // Close table before checking token, to improve any error output.
         echo '</table></td></tr></table><br />';
 
-        request_secure( 'Control Panel/Insert Raw SQL', '' );
+        request_secure('Control Panel/Insert Raw SQL', '');
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
             require('include/attach.inc.php');
@@ -1972,9 +1972,9 @@ if ($action == "upgrade") {
                 }
             }
             $command = $explode[$num];
-            if ( $command != '' ) {
+            if ($command != '') {
                 $query = $db->query("$command -- Injected by $xmbuser using cp.php");
-                $command = cdataOut( $command );
+                $command = cdataOut($command);
                 if (is_bool($query)) {
                     $numfields = 1;
                 } else {
@@ -1985,8 +1985,8 @@ if ($action == "upgrade") {
                 
                 eval('echo "'.template('cp_dump_query_top').'";');
 
-                if ( ! is_bool( $query ) ) {
-                    dump_query( $query );
+                if (! is_bool($query)) {
+                    dump_query($query);
                 }
 
                 eval('echo "'.template('cp_dump_query_bottom').'";');
@@ -2013,7 +2013,7 @@ if ($action == "upgrade") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp.php?action=upgrade" enctype="multipart/form-data">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Insert Raw SQL', '', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Insert Raw SQL', '', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">

@@ -47,15 +47,15 @@ if (!X_SADMIN) {
 }
 
 $rawuser = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
-$member = \XMB\SQL\getMemberByName( $rawuser );
+$member = \XMB\SQL\getMemberByName($rawuser);
 
-if ( empty( $member ) ) {
+if (empty($member)) {
     error($lang['nomember']);
 }
 
 $member['password'] = '';
 
-$user = $db->escape( $rawuser );
+$user = $db->escape($rawuser);
 
 $https_only = 'on' == $SETTINGS['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
@@ -120,13 +120,13 @@ if (noSubmit('editsubmit')) {
     }
 
     $invchecked = '';
-    if ( '1' === $member['invisible'] ) {
+    if ('1' === $member['invisible']) {
         $invchecked = $cheHTML;
     }
 
     $registerdate = gmdate($dateformat, $member['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
 
-    if ( 0 == (int) $member['lastvisit'] ) {
+    if (0 == (int) $member['lastvisit']) {
         $lastlogdate = $lang['textpendinglogin'];
     } else {
         $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
@@ -135,41 +135,41 @@ if (noSubmit('editsubmit')) {
     }
 
     $loginfails = $member['bad_login_count'];
-    if ( 0 == (int) $loginfails ) {
+    if (0 == (int) $loginfails) {
         $loginfails = $lang['textnone'];
         $loginfaildate = $lang['textnone'];
     } else {
-        $loginfaildate = gmdate( $dateformat, $member['bad_login_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600) );
-        $loginfailtime = gmdate( $timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) );
+        $loginfaildate = gmdate($dateformat, $member['bad_login_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
+        $loginfailtime = gmdate($timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
         $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
     $sessfails = $member['bad_session_count'];
-    if ( 0 == (int) $sessfails ) {
+    if (0 == (int) $sessfails) {
         $sessfails = $lang['textnone'];
         $sessfaildate = $lang['textnone'];
     } else {
-        $sessfaildate = gmdate( $dateformat, $member['bad_session_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600) );
-        $sessfailtime = gmdate( $timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) );
+        $sessfaildate = gmdate($dateformat, $member['bad_session_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
+        $sessfailtime = gmdate($timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
         $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
     
-    if ( (int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer ) {
+    if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
     $currdate = gmdate($timecode, $onlinetime + ($SETTINGS['addtime'] * 3600));
-    $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
+    $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
     $themelist = array();
     $themelist[] = '<select name="thememem">';
     $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
     $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
     while($themeinfo = $db->fetch_array($query)) {
-        if ( $themeinfo['themeid'] === $member['theme'] ) {
+        if ($themeinfo['themeid'] === $member['theme']) {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
         } else {
             $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
@@ -218,7 +218,7 @@ if (noSubmit('editsubmit')) {
     }
 
     $check12 = $check24 = '';
-    if ( '24' === $member['timeformat'] ) {
+    if ('24' === $member['timeformat']) {
         $check24 = $cheHTML;
     } else {
         $check12 = $cheHTML;
@@ -233,9 +233,9 @@ if (noSubmit('editsubmit')) {
     $htmlis = $lang['textoff'];
 
     $avatar = '';
-    null_string( $member['avatar'] );
+    null_string($member['avatar']);
     if ($SETTINGS['avastatus'] == 'on') {
-        if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
+        if ($https_only && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
             $member['avatar'] = '';
         }
         eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
@@ -265,10 +265,10 @@ if (noSubmit('editsubmit')) {
 
     $userrecode = recodeOut($member['username']);
 
-    $template = template_secure( 'admintool_editprofile', 'Edit User Account', $member['uid'], X_NONCE_FORM_EXP );
+    $template = template_secure('admintool_editprofile', 'Edit User Account', $member['uid'], X_NONCE_FORM_EXP);
     eval('$editpage = "'.$template.'";');
 } else {
-    request_secure( 'Edit User Account', $member['uid'] );
+    request_secure('Edit User Account', $member['uid']);
     $status = postedVar('status');
     $origstatus = $member['status'];
     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
@@ -335,14 +335,14 @@ if (noSubmit('editsubmit')) {
 
         $max_size = explode('x', $SETTINGS['max_avatar_size']);
 
-        if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
+        if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
             $avatar = '';
         } elseif (ini_get('allow_url_fopen')) {
-            if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
+            if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
                 $size = @getimagesize($rawavatar);
                 if ($size === FALSE) {
                     $avatar = '';
-                } elseif ( ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) && !X_SADMIN ) {
+                } elseif (($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) && !X_SADMIN) {
                     error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                 }
             }
@@ -385,12 +385,12 @@ if (noSubmit('editsubmit')) {
 
         // Force logout and delete cookies.
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
-        $session->logoutAll( $rawuser );
+        $session->logoutAll($rawuser);
     }
 
     $unlock = formYesNo('unlock');
-    if ( 'yes' == $unlock ) {
-        \XMB\SQL\unlockMember( $rawuser );
+    if ('yes' == $unlock) {
+        \XMB\SQL\unlockMember($rawuser);
     }
 
     message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);

@@ -391,7 +391,7 @@ function formYesNo($varname) {
  * This function makes no sense and has no usage.
  */
 function valYesNo($varname, $glob = true) {
-    trigger_error( 'valYesNo() is deprecated in this version of XMB', E_USER_DEPRECATED );
+    trigger_error('valYesNo() is deprecated in this version of XMB', E_USER_DEPRECATED);
     if ($glob) {
         global $varname;
     }

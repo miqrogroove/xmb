@@ -71,7 +71,7 @@ function url_to_text($url) {
     } else if (false !== strpos($url, '/forumdisplay.php')) {
         $temp = explode('?', $url);
         if (count($temp) > 1) {
-            if ( ! isset( $fname ) ) $fname = array();
+            if (! isset($fname)) $fname = array();
 
             $fid = 0;
             $urls = explode('&', $temp[1]);
@@ -88,10 +88,10 @@ function url_to_text($url) {
                 $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
             } else {
                 $locate = getForum($fid);
-                if ( false !== $locate ) {
+                if (false !== $locate) {
                     $perms = checkForumPermissions($locate);
                     if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
-                        $fname[$fid] = fnameOut( $locate['name'] );
+                        $fname[$fid] = fnameOut($locate['name']);
                         $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
                     }
                 }

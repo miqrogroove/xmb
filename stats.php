@@ -54,13 +54,13 @@ $posts = (int) $db->result($query, 2);
 $db->free_result($query);
 
 $query = $db->query("SELECT MIN(regdate) FROM ".X_PREFIX."members");
-$first_date = (int) $db->result( $query, 0 );  // If no aggregate rows, result of MIN() will be null and cast to zero.  Resolves ugly old error checking methods.
+$first_date = (int) $db->result($query, 0);  // If no aggregate rows, result of MIN() will be null and cast to zero.  Resolves ugly old error checking methods.
 $db->free_result($query);
 
-if ( $first_date <= 0 ) {
+if ($first_date <= 0) {
     $days = 0;
 } else {
-    $days = ( $onlinetime - $first_date ) / 86400;
+    $days = ($onlinetime - $first_date) / 86400;
 }
 
 if ($days > 0) {
@@ -163,7 +163,7 @@ $timesearch = $onlinetime - 86400;
 
 $query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 
-if ( $db->num_rows( $query ) == 0 ) {
+if ($db->num_rows($query) == 0) {
     $bestmember = $lang['evalnobestmember'];
 } else {
     $info = $db->fetch_array($query);
@@ -172,33 +172,33 @@ if ( $db->num_rows( $query ) == 0 ) {
     $bestmemberpost = $info['Total'];
     $search  = [ '$membesthtml', '$bestmemberpost' ];
     $replace = [  $membesthtml,   $bestmemberpost  ];
-    $bestmember = str_replace( $search, $replace, $lang['evalbestmember'] );
+    $bestmember = str_replace($search, $replace, $lang['evalbestmember']);
 }
 $db->free_result($query);
 
-$stats1 = str_replace( '$bbname', $bbname, $lang['evalstats1'] );
-$stats2 = str_replace( '$posts', $posts, $lang['evalstats2'] );
-$stats3 = str_replace( '$threads', $threads, $lang['evalstats3'] );
+$stats1 = str_replace('$bbname', $bbname, $lang['evalstats1']);
+$stats2 = str_replace('$posts', $posts, $lang['evalstats2']);
+$stats3 = str_replace('$threads', $threads, $lang['evalstats3']);
 
 $search  = [ '$forumsa', '$forums' ];
 $replace = [  $forumsa,   $forums  ];
-$stats4 = str_replace( $search, $replace, $lang['evalstats4'] );
+$stats4 = str_replace($search, $replace, $lang['evalstats4']);
 
-$stats5 = str_replace( '$members', $members, $lang['evalstats5'] );
-$stats6 = str_replace( '$viewmost', $viewmost, $lang['evalstats6'] );
-$stats7 = str_replace( '$replymost', $replymost, $lang['evalstats7'] );
+$stats5 = str_replace('$members', $members, $lang['evalstats5']);
+$stats6 = str_replace('$viewmost', $viewmost, $lang['evalstats6']);
+$stats7 = str_replace('$replymost', $replymost, $lang['evalstats7']);
 
 $search  = [ '$popforum', '$pop[posts]', '$pop[threads]'  ];
 $replace = [  $popforum,   $pop['posts'], $pop['threads'] ];
-$stats8 = str_replace( $search, $replace, $lang['evalstats8'] );
+$stats8 = str_replace($search, $replace, $lang['evalstats8']);
 
-$stats9 = str_replace( '$mempost', $mempost, $lang['evalstats9'] );
-$stats10 = str_replace( '$forumpost', $forumpost, $lang['evalstats10'] );
-$stats11 = str_replace( '$threadreply', $threadreply, $lang['evalstats11'] );
-$stats12 = str_replace( '$postsday', $postsday, $lang['evalstats12'] );
-$stats13 = str_replace( '$membersday', $membersday, $lang['evalstats13'] );
-$stats14 = str_replace( '$latest', $latest, $lang['evalstats14'] );
-$stats15 = str_replace( '$mapercent', $mapercent, $lang['evalstats15'] );
+$stats9 = str_replace('$mempost', $mempost, $lang['evalstats9']);
+$stats10 = str_replace('$forumpost', $forumpost, $lang['evalstats10']);
+$stats11 = str_replace('$threadreply', $threadreply, $lang['evalstats11']);
+$stats12 = str_replace('$postsday', $postsday, $lang['evalstats12']);
+$stats13 = str_replace('$membersday', $membersday, $lang['evalstats13']);
+$stats14 = str_replace('$latest', $latest, $lang['evalstats14']);
+$stats15 = str_replace('$mapercent', $mapercent, $lang['evalstats15']);
 
 eval('$statspage = "'.template('feature_statistics').'";');
 

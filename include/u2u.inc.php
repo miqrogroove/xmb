@@ -95,7 +95,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
                 $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
                 $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
                 $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
-                xmb_mail( $rawaddress, $translate['textnewu2uemail'], $body, $translate['charset'] );
+                xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
             }
         } else {
             $errors = '<br />'.$lang['u2ublocked'];
@@ -127,8 +127,8 @@ function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2up
     global $THEME, $thewidth;
     global $forward, $reply, $previewsubmit;
 
-    if ( 'deprecated' !== $u2upreview ) {
-        trigger_error( 'The $u2upreview parameter of u2u_send() does not work in this version of XMB.', E_USER_DEPRECATED );
+    if ('deprecated' !== $u2upreview) {
+        trigger_error('The $u2upreview parameter of u2u_send() does not work in this version of XMB.', E_USER_DEPRECATED);
     }
 
     $dbsubject = addslashes($subject); //message and subject were historically double-slashed
@@ -167,7 +167,7 @@ function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2up
             error($lang['u2umsgempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
-        if ( (int) $db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0 ) {
+        if ((int) $db->result($db->query("SELECT count(u2uid) FROM ".X_PREFIX."u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
             error($lang['floodprotect_u2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
         }
 
@@ -239,14 +239,14 @@ function u2u_view($u2uid, $folders) {
 
     $query = $db->query("SELECT u.*, m.avatar FROM ".X_PREFIX."u2u AS u LEFT JOIN ".X_PREFIX."members AS m ON u.msgfrom=m.username WHERE u2uid='$u2uid' AND owner='$xmbuser'");
     $u2u = $db->fetch_array($query);
-    null_string( $self['avatar'] );
-    null_string( $u2u['avatar'] );
+    null_string($self['avatar']);
+    null_string($u2u['avatar']);
     if ($u2u) {
-        if ( 'on' == $SETTINGS['images_https_only'] ) {
-            if ( strpos( $self['avatar'], ':' ) !== false && substr( $self['avatar'], 0, 6 ) !== 'https:' ) {
+        if ('on' == $SETTINGS['images_https_only']) {
+            if (strpos($self['avatar'], ':') !== false && substr($self['avatar'], 0, 6) !== 'https:') {
                 $self['avatar'] = '';
             }
-            if ( strpos( $u2u['avatar'], ':' ) !== false && substr( $u2u['avatar'], 0, 6 ) !== 'https:' ) {
+            if (strpos($u2u['avatar'], ':') !== false && substr($u2u['avatar'], 0, 6) !== 'https:') {
                 $u2u['avatar'] = '';
             }
         }
@@ -281,7 +281,7 @@ function u2u_view($u2uid, $folders) {
         if ($u2u['type'] == 'draft') {
             $sendoptions = '<input type="radio" name="mod" value="send" /> '.$lang['textu2u'].'<br />';
             $delchecked = ' checked="checked"';
-        } else if ( $u2u['msgfrom'] !== $self['username'] ) {
+        } else if ($u2u['msgfrom'] !== $self['username']) {
             $sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> '.$lang['textreply'].'<br /><input type="radio" name="mod" value="replydel" /> '.$lang['textreplytrash'].'<br /><input type="radio" name="mod" value="forward" /> '.$lang['textforward'].'<br />';
         } else {
             $delchecked = ' checked="checked"';
@@ -341,7 +341,7 @@ function u2u_print($u2uid, $eMail = false) {
             eval('$css = "'.template('css').'";');
             if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
                 $extra = file_get_contents(ROOT.$THEME['imgdir'].'/theme.css');
-                if ( false !== $extra ) {
+                if (false !== $extra) {
                     $css .= $extra;
                 }
             }
@@ -352,7 +352,7 @@ function u2u_print($u2uid, $eMail = false) {
             $title = "{$lang['textu2utoemail']} $u2usubject";
             $body = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
             $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
-            $result = xmb_mail( $rawemail, $title, $body, $lang['charset'], $html );
+            $result = xmb_mail($rawemail, $title, $body, $lang['charset'], $html);
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {
             global $css;
@@ -513,20 +513,20 @@ function u2u_folderSubmit($u2ufolders, $folders) {
     $error = '';
 
     //Trim all folder names, remove all duplicates, use case-insensitivity due to absence of explicit column collation.
-    $newfolders = explode( ',', $u2ufolders );
+    $newfolders = explode(',', $u2ufolders);
     $testarray = ['inbox', 'outbox', 'drafts', 'trash'];
-    foreach( $newfolders as $key => $value ) {
-        $value = trim( $value );
-        if ( strlen( $value ) > U2U_FOLDER_COL_SIZE ) {
-            $value = substr( $value, 0, U2U_FOLDER_COL_SIZE );
+    foreach($newfolders as $key => $value) {
+        $value = trim($value);
+        if (strlen($value) > U2U_FOLDER_COL_SIZE) {
+            $value = substr($value, 0, U2U_FOLDER_COL_SIZE);
         }
-        $ci_value = strtolower( $value );
-        if ( strpos( $ci_value, '&lt;' ) !== false || strpos( $ci_value, '&gt;' ) !== false ) {
+        $ci_value = strtolower($value);
+        if (strpos($ci_value, '&lt;') !== false || strpos($ci_value, '&gt;') !== false) {
             // Angle braces are problematic because we use these folder names in URL query strings.
             $value = '';
         }
-        if ( empty( $value ) || in_array( $ci_value, $testarray ) ) {
-            unset( $newfolders[$key] );
+        if (empty($value) || in_array($ci_value, $testarray)) {
+            unset($newfolders[$key]);
         } else {
             $newfolders[$key] = $value;
             $testarray[] = $ci_value;
@@ -615,7 +615,7 @@ function u2u_display($folder, $folders) {
         if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
             if ($onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
-                if ( '1' === $u2u['invisible'] ) {
+                if ('1' === $u2u['invisible']) {
                     if (!X_ADMIN) {
                         $online = $lang['textoffline'];
                     } else {
@@ -727,7 +727,7 @@ function u2u_folderList() {
             $link = $value;
         }
 
-        if ( $link === $folder ) {
+        if ($link === $folder) {
             $value = '<strong>'.$value.'</strong>';
         }
 

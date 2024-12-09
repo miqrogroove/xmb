@@ -181,7 +181,7 @@ switch($action) {
         $msgto = postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
         $subject = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
         $message = postedVar('message', '', TRUE, FALSE);
-        $leftpane = u2u_send( $u2uid, $msgto, $subject, $message );
+        $leftpane = u2u_send($u2uid, $msgto, $subject, $message);
         break;
     case 'view':
         $leftpane = u2u_view($u2uid, $folders);
@@ -215,17 +215,17 @@ if (!X_STAFF) {
         $barwidth = 100;
         $search  = [ '$u2ucount', '$u2uquota'            ];
         $replace = [  $u2ucount,   $SETTINGS['u2uquota'] ];
-        $uqinfo = str_replace( $search, $replace, $lang['evaluqinfo_over'] );
+        $uqinfo = str_replace($search, $replace, $lang['evaluqinfo_over']);
     } else {
         $percent = number_format($percentage, 2);
         $barwidth = number_format($percentage, 0);
         $search  = [ '$u2ucount', '$percent', '$u2uquota'            ];
         $replace = [  $u2ucount,   $percent,   $SETTINGS['u2uquota'] ];
-        $uqinfo = str_replace( $search, $replace, $lang['evaluqinfo'] );
+        $uqinfo = str_replace($search, $replace, $lang['evaluqinfo']);
     }
 } else {
     $barwidth = $percentage = 0;
-    $uqinfo = str_replace( '$u2ucount', $u2ucount, $lang['evalu2ustaffquota'] );
+    $uqinfo = str_replace('$u2ucount', $u2ucount, $lang['evalu2ustaffquota']);
 }
 eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
 $tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';

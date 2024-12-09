@@ -110,7 +110,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         }
         // Save some write locks by updating in 60-second intervals.
         if (abs(time() - (int)$self['lastvisit']) > 60) {
-            \XMB\SQL\setLastvisit( $self['username'], $onlinetime );
+            \XMB\SQL\setLastvisit($self['username'], $onlinetime);
             // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
         }
     } else {
@@ -204,7 +204,7 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
  * @param array $member The member's database record.
  * @return string Specific error codes, otherwise 'good'.
  */
-function loginAuthorization( array $member ): string {
+function loginAuthorization(array $member): string {
     global $serror;
     
     $guess_limit = 10;
@@ -215,11 +215,11 @@ function loginAuthorization( array $member ): string {
         return 'ip-banned';
     } else if ($member['status'] == 'Banned') {
         return 'member-banned';
-    } else if ( (int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer ) {
-        auditBadLogin( $member );
-        if ( $member['status'] != 'Super Administrator' ) {
+    } else if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
+        auditBadLogin($member);
+        if ($member['status'] != 'Super Administrator') {
             return 'password-locked';
-        } else if ( (int) $member['bad_login_count'] >= $admin_limit ) {
+        } else if ((int) $member['bad_login_count'] >= $admin_limit) {
             return 'password-locked';
         } else {
             // Super Admin has partial immunity to mitigate denial of service.
@@ -236,30 +236,30 @@ function loginAuthorization( array $member ): string {
  * @since 1.9.12
  * @param array $member The member's database record.
  */
-function auditBadLogin( array $member ) {
+function auditBadLogin(array $member) {
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
     $reset_timer = 86400;
 
-    if ( time() >= (int) $member['bad_login_date'] + $reset_timer ) {
+    if (time() >= (int) $member['bad_login_date'] + $reset_timer) {
         // Allowed less than 10 failures.  After 24 hours, reset.
-        \XMB\SQL\resetLoginCounter( $member['username'], time() );
-    } elseif ( (int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer ) {
+        \XMB\SQL\resetLoginCounter($member['username'], time());
+    } elseif ((int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer) {
         // User had more than 10 failures and should be locked out.  After 2 hours, reset.
-        \XMB\SQL\resetLoginCounter( $member['username'], time() );
+        \XMB\SQL\resetLoginCounter($member['username'], time());
     } else {
-        $count = \XMB\SQL\raiseLoginCounter( $member['username'] );
-        if ( $count == $guess_limit ) {
+        $count = \XMB\SQL\raiseLoginCounter($member['username']);
+        if ($count == $guess_limit) {
             // Email the Super Administrators about this.
             $lang2 = loadPhrases(array('charset','security_subject','login_audit_mail'));
 
             $mailquery = \XMB\SQL\getSuperEmails();
-            foreach ( $mailquery as $admin ) {
+            foreach ($mailquery as $admin) {
                 $translate = $lang2[$admin['langfile']];
                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                 $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
                 $body = "{$translate['login_audit_mail']}\n\n$name";
-                xmb_mail( $adminemail, $translate['security_subject'], $body, $translate['charset'] );
+                xmb_mail($adminemail, $translate['security_subject'], $body, $translate['charset']);
             }
         }
     }
@@ -271,13 +271,13 @@ function auditBadLogin( array $member ) {
  * @since 1.9.12
  * @param array $member The member's database record.
  */
-function auditBadSession( array $member ) {
+function auditBadSession(array $member) {
     $reset_timer = 86400;
     
-    if ( time() > (int) $member['bad_login_date'] + $reset_timer ) {
-        \XMB\SQL\resetSessionCounter( $member['username'], time() );
+    if (time() > (int) $member['bad_login_date'] + $reset_timer) {
+        \XMB\SQL\resetSessionCounter($member['username'], time());
     } else {
-        $count = \XMB\SQL\raiseSessionCounter( $member['username'] );
+        $count = \XMB\SQL\raiseSessionCounter($member['username']);
     }
 }
 
@@ -389,7 +389,7 @@ function template($name) {
     }
 }
 
-function templatecache( int $type, string $name, string $data = '' ) {
+function templatecache(int $type, string $name, string $data = '') {
     static $cache;
 
     switch($type) {
@@ -410,8 +410,8 @@ function templatecache( int $type, string $name, string $data = '' ) {
 function loadtemplates() {
     global $db;
 
-    if ( func_num_args() < 1 ) {
-        trigger_error( 'Not enough arguments given to loadtemplates()', E_USER_WARNING );
+    if (func_num_args() < 1) {
+        trigger_error('Not enough arguments given to loadtemplates()', E_USER_WARNING);
     } else {
         $namesarray = array_unique(array_merge(func_get_args(), array('header','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
         $sql = "'".implode("', '", $namesarray)."'";
@@ -433,11 +433,11 @@ function loadtemplates() {
  * @param int    $ttl    Validity time in seconds.
  * @return string
  */
-function template_secure( string $name, string $action, string $id, int $ttl ) {
-    $token = \XMB\Token\create( $action, $id, $ttl );
+function template_secure(string $name, string $action, string $id, int $ttl) {
+    $token = \XMB\Token\create($action, $id, $ttl);
     $placeholder = '<input type="hidden" name="token" value="" />';
     $replace = "<input type='hidden' name='token' value='$token' />";
-    return str_replace( addslashes( $placeholder ), $replace, template( $name ) );
+    return str_replace(addslashes($placeholder), $replace, template($name));
 }
 
 /**
@@ -449,17 +449,17 @@ function template_secure( string $name, string $action, string $id, int $ttl ) {
  * @param int    $expire Deprecated.
  * @param bool   $error_header Display header template on errors?
  */
-function request_secure( string $action, string $id, int $expire = 0, bool $error_header = false ) {
+function request_secure(string $action, string $id, int $expire = 0, bool $error_header = false) {
     global $lang;
 
-    if ( 0 != $expire ) {
-        trigger_error( 'The $expire parameter of request_secure() does not work in this version of XMB.', E_USER_DEPRECATED );
+    if (0 != $expire) {
+        trigger_error('The $expire parameter of request_secure() does not work in this version of XMB.', E_USER_DEPRECATED);
     }
 
-    $token = postedVar( 'token', '', false, false );
+    $token = postedVar('token', '', false, false);
 
-    if ( ! \XMB\Token\consume( $token, $action, $id ) ) {
-        error( $lang['bad_token'], $error_header );
+    if (! \XMB\Token\consume($token, $action, $id)) {
+        error($lang['bad_token'], $error_header);
     }
 }
 
@@ -469,7 +469,7 @@ function request_secure( string $action, string $id, int $expire = 0, bool $erro
  * template_key() is no longer needed because we can now store more information in the tokens table.
  */
 function template_key($action, $id) {
-    trigger_error( 'template_key() is deprecated in this version of XMB.', E_USER_DEPRECATED );
+    trigger_error('template_key() is deprecated in this version of XMB.', E_USER_DEPRECATED);
 
     $id_len = X_NONCE_KEY_LEN - strlen($action);
     if (strlen($id) > $id_len) {
@@ -513,32 +513,32 @@ function censor($txt) {
 function smile(&$txt) {
     global $smiliesnum, $smiliecache, $THEME;
 
-    if ( 0 == $smiliesnum ) {
+    if (0 == $smiliesnum) {
         return true;
     }
 
     // Parse the input for HTML tags
     $pattern = "/(<[^>]*+>)/";
-    $parts = preg_split( $pattern, $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+    $parts = preg_split($pattern, $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
     // Loop through the parts and avoid the HTML tags
-    foreach ( $parts as &$part ) {
-        if ( substr( $part, 0, 1 ) == '<' ) {
+    foreach ($parts as &$part) {
+        if (substr($part, 0, 1) == '<') {
             continue;
         }
         
-        foreach ( $smiliecache as $code => $url ) {
+        foreach ($smiliecache as $code => $url) {
             // Most $part values won't contain any smilies, so optimize by writing new strings only when necessary.
-            if ( false === strpos( $part, $code ) ) {
+            if (false === strpos($part, $code)) {
                 continue;
             }
-            $altcode = attrOut( $code );
-            $part = str_replace( $code, "<img src='./{$THEME['smdir']}/$url' style='border:none' alt='$altcode' />", $part );
+            $altcode = attrOut($code);
+            $part = str_replace($code, "<img src='./{$THEME['smdir']}/$url' style='border:none' alt='$altcode' />", $part);
         }
     }
     
     // Put the parts back together
-    $txt = implode( "", $parts );
+    $txt = implode("", $parts);
     
     return true;
 }
@@ -549,9 +549,9 @@ function smile(&$txt) {
  * @since 1.0
  * @param string $message For PHP 8.1 compatibility, null input is no longer allowed.
  */
-function postify( string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes" ) {
-    if ( 'yes' == $allowhtml ) {
-        trigger_error( 'The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED );
+function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
+    if ('yes' == $allowhtml) {
+        trigger_error('The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED);
     }
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
@@ -763,12 +763,12 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
 
     if ($allowimgcode != 'no' && $allowimgcode != 'off') {
         $https_only = 'on' == $SETTINGS['images_https_only'];
-        $base_pattern = get_img_regexp( $https_only );
+        $base_pattern = get_img_regexp($https_only);
 
         $patterns = array();
         $patterns[] = '/\[img\]' . $base_pattern . '\[\/img\]/i';
         $patterns[] = '/\[img=([0-9]*?){1}x([0-9]*?)\]' . $base_pattern . '\[\/img\]/i';
-        $message = preg_replace_callback( $patterns, 'bbcode_imgs', $message );
+        $message = preg_replace_callback($patterns, 'bbcode_imgs', $message);
     }
 
     if ($allowurlcode) {
@@ -798,7 +798,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
     $patterns = array();
     $patterns[] = "#\\[email\\]([^\"'<>]+?)\\[/email\\]#i";
     $patterns[] = "#\\[email=([^\"'<>\\[\\]]+)\\](.+?)\\[/email\\]#i";
-    $message = preg_replace_callback( $patterns, 'bbcode_emails', $message );
+    $message = preg_replace_callback($patterns, 'bbcode_emails', $message);
 
     return TRUE;
 }
@@ -909,7 +909,7 @@ function bbcodeBalanceTags(&$message, $regex){
  * @param array $url Expects $url[0] to be the raw BBCode, $url[1] to be the URL only, and optionally $url[2] to be the display text.
  * @return string The HTML replacement for $url[0] if the code was valid, else the code is unchaged.
  */
-function bbcodeLongURLs( array $url ): string {
+function bbcodeLongURLs(array $url): string {
     $url_max_display_len = 60;
     $scheme_whitelist = array('http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'svn');
 
@@ -932,7 +932,7 @@ function bbcodeLongURLs( array $url ): string {
         $text = substr($url[1], 0, $url_max_display_len).'...';
     }
 
-    $href = bbcode_out( $href );
+    $href = bbcode_out($href);
 
     return "<!-- nobr --><a href='$href' onclick='window.open(this.href); return false;'><!-- /nobr -->$text</a>";
 }
@@ -964,7 +964,7 @@ function bbcodeSizeTags(array $matches): string {
  * @param bool   $bBBcodeOnForThisPost
  * @param bool   $quarantine Are these files in a private table for later review?
  */
-function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false ) {
+function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false) {
     global $lang, $SETTINGS;
 
     $count = 0;
@@ -974,7 +974,7 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
         $post = array();
         $post['filename'] = attrOut($attach['filename']);
         $post['filetype'] = attrOut($attach['filetype']);
-        $post['fileurl'] = \XMB\Attach\getURL( (int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine );
+        $post['fileurl'] = \XMB\Attach\getURL((int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine);
         $attachsize = \XMB\Attach\getSizeFormatted($attach['filesize']);
 
         $post['filedims'] = '';
@@ -983,8 +983,8 @@ function bbcodeFileTags( string &$message, array &$files, int $pid, bool $bBBcod
         $extension = strtolower(get_extension($post['filename']));
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
-            if ( (int) $attach['thumbid'] > 0 ) {
-                $post['thumburl'] = \XMB\Attach\getURL( (int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine );
+            if ((int) $attach['thumbid'] > 0) {
+                $post['thumburl'] = \XMB\Attach\getURL((int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine);
                 $result = explode('x', $attach['thumbsize']);
                 $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
                 eval('$output = "'.template('viewthread_post_attachmentthumb').'";');
@@ -1045,7 +1045,7 @@ function modcheck($username, $mods, $override=X_SMOD) {
         $username = strtoupper($username);
         $mods = explode(',', $mods);
         foreach($mods as $key=>$moderator) {
-            if ( strtoupper(trim($moderator)) === $username ) {
+            if (strtoupper(trim($moderator)) === $username) {
                 $retval = 'Moderator';
                 break;
             }
@@ -1098,16 +1098,16 @@ function forum($forum, $template, $index_subforums) {
     global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
-    null_string( $forum['description'] );
+    null_string($forum['description']);
     $forum['description'] = html_entity_decode($forum['description']);
 
-    if ( ! empty( $forum['lastpost'] ) ) {
+    if (! empty($forum['lastpost'])) {
         $lastpost = explode('|', $forum['lastpost']);
         $dalast = $lastpost[0];
 
         // Translate "Anonymous" author.
-        $lastpostname = trim( $lastpost[1] );
-        if ( 'Anonymous' == $lastpostname ) {
+        $lastpostname = trim($lastpost[1]);
+        if ('Anonymous' == $lastpostname) {
             $lastpostname = $lang['textanonymous'];
         }
 
@@ -1124,8 +1124,8 @@ function forum($forum, $template, $index_subforums) {
         eval('$lastpostrow = "'.template($template.'_nolastpost').'";');
     }
 
-    $oT = strpos( $oldtopics, "|$lastPid|" );
-    if ( $lastvisit < $dalast && $oT === false ) {
+    $oT = strpos($oldtopics, "|$lastPid|");
+    if ($lastvisit < $dalast && $oT === false) {
         $folder = '<img src="'.$THEME['imgdir'].'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
     } else {
         $folder = '<img src="'.$THEME['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
@@ -1137,15 +1137,15 @@ function forum($forum, $template, $index_subforums) {
 
     $foruminfo = '';
 
-    if ( ! empty( $forum['moderator'] ) ) {
+    if (! empty($forum['moderator'])) {
         $list = [];
         $moderators = explode(', ', $forum['moderator']);
-        foreach ( $moderators as $moderator ) {
-            $list[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut( $moderator ).'">'.$moderator.'</a>';
+        foreach ($moderators as $moderator) {
+            $list[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderator).'">'.$moderator.'</a>';
         }
-        $moderators = implode( ', ', $list );
+        $moderators = implode(', ', $list);
         $forum['moderator'] = "{$lang['textmodby']} $moderators";
-        if ( '' !== $forum['description'] ) {
+        if ('' !== $forum['description']) {
             $forum['moderator'] = '<br />' . $forum['moderator'];
         }
     }
@@ -1154,7 +1154,7 @@ function forum($forum, $template, $index_subforums) {
     if (count($index_subforums) > 0) {
         for($i=0; $i < count($index_subforums); $i++) {
             $sub = $index_subforums[$i];
-            if ( $sub['fup'] === $forum['fid'] ) {
+            if ($sub['fup'] === $forum['fid']) {
                 $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
             }
         }
@@ -1163,7 +1163,7 @@ function forum($forum, $template, $index_subforums) {
     if (!empty($subforums)) {
         $subforums = implode(', ', $subforums);
         $subforums = "{$lang['textsubforums']} <span class='plainlinks'>$subforums</span>";
-        if ( '' !== $forum['description'] || '' != $forum['moderator'] ) {
+        if ('' !== $forum['description'] || '' != $forum['moderator']) {
             $subforums = '<br />' . $subforums;
         }
     } else {
@@ -1501,8 +1501,8 @@ function end_time() {
     }
 
     if (in_array('phpsql', $footer_options)) {
-        $db_duration = number_format( ( $db->getDuration() / $totaltime ) * 100, 1 );
-        $php_duration = number_format( ( 1 - ( $db->getDuration() / $totaltime ) ) * 100, 1);
+        $db_duration = number_format(($db->getDuration() / $totaltime) * 100, 1);
+        $php_duration = number_format((1 - ($db->getDuration() / $totaltime)) * 100, 1);
         eval('$footerstuff["phpsql"] = "'.template('footer_phpsql').'";');
     } else {
         $footerstuff['phpsql'] = '';
@@ -1707,7 +1707,7 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
 
     // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
     if (headers_sent()) {
-        trigger_error( 'Attempted use of put_cookie() after headers already sent.', E_USER_WARNING );
+        trigger_error('Attempted use of put_cookie() after headers already sent.', E_USER_WARNING);
         return false;
     }
 
@@ -1756,7 +1756,7 @@ function audit(string $user, string $action, int $fid = 0, int $tid = 0) {
 function validatePpp() {
     global $ppp, $postperpage;
 
-    if ( empty( $ppp ) || ! is_numeric( $ppp ) ) {
+    if (empty($ppp) || ! is_numeric($ppp)) {
         $ppp = (int) $postperpage;
     } else {
         $ppp = (int) $ppp;
@@ -1770,7 +1770,7 @@ function validatePpp() {
 function validateTpp() {
     global $tpp, $topicperpage;
 
-    if ( empty( $tpp ) || ! is_numeric( $tpp ) ) {
+    if (empty($tpp) || ! is_numeric($tpp)) {
         $tpp = (int) $topicperpage;
     } else {
         $tpp = (int) $tpp;
@@ -1789,7 +1789,7 @@ function validateTpp() {
  * @since 1.9.2
  * @return bool Success
  */
-function altMail( string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '' ) {
+function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '') {
     global $mailer, $SETTINGS;
     static $handlers;
 
@@ -2219,11 +2219,11 @@ function forumJump() {
     }
 
     foreach($permitted['forum']['0'] as $forum) {
-        $dropselc1 = ( $checkid == $forum['fid'] ) ? $selHTML : '';
+        $dropselc1 = ($checkid == $forum['fid']) ? $selHTML : '';
         $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
         if (isset($permitted['sub'][$forum['fid']])) {
             foreach($permitted['sub'][$forum['fid']] as $sub) {
-                $dropselc2 = ( $checkid == $sub['fid'] ) ? $selHTML : '';
+                $dropselc2 = ($checkid == $sub['fid']) ? $selHTML : '';
                 $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
             }
         }
@@ -2231,15 +2231,15 @@ function forumJump() {
 
     foreach($permitted['group']['0'] as $group) {
         if (isset($permitted['forum'][$group['fid']])) {
-            $dropselc3 = ( $checkid == $group['fid'] ) ? $selHTML : '';
+            $dropselc3 = ($checkid == $group['fid']) ? $selHTML : '';
             $forumselect[] = '<option value=""></option>';
             $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
             foreach($permitted['forum'][$group['fid']] as $forum) {
-                $dropselc4 = ( $checkid == $forum['fid'] ) ? $selHTML : '';
+                $dropselc4 = ($checkid == $forum['fid']) ? $selHTML : '';
                 $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                 if (isset($permitted['sub'][$forum['fid']])) {
                     foreach($permitted['sub'][$forum['fid']] as $sub) {
-                        $dropselc5 = ( $checkid == $sub['fid'] ) ? $selHTML : '';
+                        $dropselc5 = ($checkid == $sub['fid']) ? $selHTML : '';
                         $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                     }
                 }
@@ -2307,7 +2307,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
         } elseif (!X_GUEST) {
             $users = explode(',', $userlist);
             foreach($users as $user) {
-                if ( strtolower(trim($user)) === strtolower($self['username']) ) {
+                if (strtolower(trim($user)) === strtolower($self['username'])) {
                     $ret[X_PERMS_USERLIST] = TRUE;
                     $ret[X_PERMS_VIEW] = TRUE;
                     break;
@@ -2327,7 +2327,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
 
     // 6. Check Forum Password
     $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
-    if ( $forum['password'] == '' || $pwinput === $forum['password'] ) {
+    if ($forum['password'] == '' || $pwinput === $forum['password']) {
         $ret[X_PERMS_PASSWORD] = TRUE;
     }
 
@@ -2362,7 +2362,7 @@ function handlePasswordDialog($fid) {
 
     $forum = getForum($fid);
     if (strlen($pwinput) != 0 && $forum !== FALSE) {
-        if ( $pwinput === $forum['password'] ) {
+        if ($pwinput === $forum['password']) {
             put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
             $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
             redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
@@ -2388,7 +2388,7 @@ function createLangFileSelect($currentLangFile) {
                       . "WHERE k.langkey='language' "
                       . "ORDER BY t.cdata ASC");
     while ($row = $db->fetch_array($query)) {
-        if ( $row['devname'] === $currentLangFile ) {
+        if ($row['devname'] === $currentLangFile) {
             $lfs[] = '<option value="'.$row['devname'].'" selected="selected">'.$row['cdata'].'</option>';
         } else {
             $lfs[] = '<option value="'.$row['devname'].'">'.$row['cdata'].'</option>';
@@ -2433,7 +2433,7 @@ function setCanonicalLink($relURI) {
     if ($relURI != './') {
         $testurl .= str_replace('&amp;', '&', $relURI);
     }
-    if ( $url !== $testurl ) {
+    if ($url !== $testurl) {
         $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
     }
 }
@@ -2557,8 +2557,8 @@ function nonce_use($key, $nonce, $expire = 0) {
  * @since 1.9.11.15
  * @return string Regular expression for a user-provided URL to an image.
  */
-function get_img_regexp( bool $https_only = false ): string {
-    if ( $https_only ) {
+function get_img_regexp(bool $https_only = false): string {
+    if ($https_only) {
         return '(https):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
     } else {
         return '(https?|ftp):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
@@ -2576,16 +2576,16 @@ function format_member_site($site) {
     $site = trim($site);
     $length = strlen($site);
 
-    if ( $length < 4 ) {
+    if ($length < 4) {
         // Found some garbage value like 'a.b'
         $url = '';
-    } else if ( false === strpos( $site, '.' ) ) {
+    } else if (false === strpos($site, '.')) {
         // Found some garbage value like 'aaaa'
         $url = '';
-    } else if ( 1 !== preg_match( '@^https?://@i', $site ) ) {
+    } else if (1 !== preg_match('@^https?://@i', $site)) {
         // Scheme missing, assume it starts with a domain name.
         $url = "http://$site";
-    } else if ( $length < 11 ) {
+    } else if ($length < 11) {
         // Found some garbage value like 'http://a.b'
         $url = '';
     } else {
@@ -2606,37 +2606,37 @@ function format_member_site($site) {
  * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
  * @return bool
  */
-function xmb_mail( string $to, string $subject, string $message, string $charset, bool $html = false ) {
+function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false) {
     global $self, $bbname, $adminemail, $cookiedomain;
 
-    if ( PHP_OS == 'WINNT' || PHP_OS == 'WIN32' ) {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
-        ini_set( 'sendmail_from', $adminemail );
+    if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
+        ini_set('sendmail_from', $adminemail);
     }
 
-    $rawbbname = htmlspecialchars_decode( $bbname, ENT_NOQUOTES );
-    if ( ! empty( $self ) ) {
-        $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
+    $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+    if (! empty($self)) {
+        $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
     }
 
-    if ( $html ) {
+    if ($html) {
         $content_type = 'text/html';
     } else {
         $content_type = 'text/plain';
     }
 
     $headers = array();
-    $headers[] = smtpHeaderFrom( $rawbbname, $adminemail );
+    $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
     $headers[] = "X-Mailer: PHP";
     $headers[] = "X-AntiAbuse: Board servername - $cookiedomain";
-    if ( ! empty( $self ) ) {
+    if (! empty($self)) {
         $headers[] = "X-AntiAbuse: Username - $rawusername";
     }
     $headers[] = "Content-Type: $content_type; charset=$charset";
-    $headers = implode( "\r\n", $headers );
+    $headers = implode("\r\n", $headers);
 
     $params = "-f $adminemail";
 
-    return altMail( $to, $subject, $message, $headers, $params );
+    return altMail($to, $subject, $message, $headers, $params);
 }
 
 /**
@@ -2648,7 +2648,7 @@ function xmb_mail( string $to, string $subject, string $message, string $charset
  * @param string $offset Must be in the MySQL Decimal format with 2 places after the decimal.
  * @return string HTML
  */
-function timezone_control( string $offset ): string {
+function timezone_control(string $offset): string {
     global $lang, $selHTML;
     
     $total = 37;
@@ -2658,9 +2658,9 @@ function timezone_control( string $offset ): string {
         $sel[$i] = '';
     }
     
-    $offset = number_format( (float) $offset, 2 );
+    $offset = number_format((float) $offset, 2);
 
-    switch( $offset ) {
+    switch($offset) {
     case '-12.00':
         $sel[1] = $selHTML;
         break;
@@ -2785,7 +2785,7 @@ function timezone_control( string $offset ): string {
  * @param string $raw
  * @return string
  */
-function parse_user_agent( string $raw ): string {
+function parse_user_agent(string $raw): string {
     if     (strpos($raw, 'Opera'     ) || strpos($raw, 'OPR/')     ) return 'Opera'            ;
     elseif (strpos($raw, 'Edge'      )                             ) return 'Edge'             ;
     elseif (strpos($raw, 'Chromium'  )                             ) return 'Chromium'         ;
@@ -2845,7 +2845,7 @@ function more_theme_vars() {
  * @return bool When false the website must not collect any information from the guest.
  */
 function coppa_check(): bool {
-    $privacy =  postedVar( 'privacy', '', false, false, false, 'c' );
+    $privacy =  postedVar('privacy', '', false, false, false, 'c');
     return 'xmb' != $privacy;
 }
 
@@ -2856,9 +2856,9 @@ function coppa_check(): bool {
  * @param array $matches Expects $matches[0] to be the raw BBCode, $matches[1] to be the URL only, and optionally $matches[2] to be the display text.
  * @return string The HTML replacement for $matches[0].
  */
-function bbcode_emails( array $matches ): string {
+function bbcode_emails(array $matches): string {
     $text = $matches[2] ?? $matches[1];
-    $address = bbcode_out( $matches[1] );
+    $address = bbcode_out($matches[1]);
 
     return "<a href='mailto:$address'>$text</a>";
 }
@@ -2870,8 +2870,8 @@ function bbcode_emails( array $matches ): string {
  * @param array $matches Expects different elements depending on the pattern.
  * @return string The HTML replacement for $matches[0].
  */
-function bbcode_imgs( array $matches ): string {
-    if ( count( $matches ) < 5 ) {
+function bbcode_imgs(array $matches): string {
+    if (count($matches) < 5) {
         $width = 0;
         $height = 0;
         $scheme = $matches[1];
@@ -2885,13 +2885,13 @@ function bbcode_imgs( array $matches ): string {
         $query = $matches[5] ?? '';
     }
 
-    if ( $width < 1 || $height < 1 ) {
+    if ($width < 1 || $height < 1) {
         $size = '';
     } else {
         $size = "width='$width' height='$height'";
     }
 
-    $address = bbcode_out( "$scheme://$path$query" );
+    $address = bbcode_out("$scheme://$path$query");
 
     return "<!-- nobr --><img $size src='$address' alt='' border='0' /><!-- /nobr -->";
 }
@@ -2904,7 +2904,7 @@ function bbcode_imgs( array $matches ): string {
  * @since 1.9.12.05
  * @param string|null $var Passed by reference for easier coding.
  */
-function null_string( &$var ) {
+function null_string(&$var) {
     $var = $var ?? '';
 }
 

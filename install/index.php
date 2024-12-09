@@ -534,7 +534,7 @@ www.xmbforum2.com
         default:
             header("Content-type: text/html;charset=ISO-8859-1");
             $scheme = 'http';
-            if ( ! empty( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ) {
+            if (! empty($_SERVER['HTTPS']) && 'on' === $_SERVER['HTTPS']) {
                 $scheme = 'https';
             }
             // Get the DB types...
@@ -866,10 +866,10 @@ www.xmbforum2.com
         show_act('Checking Database Connection');
         $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
         if (!$result) {
-            show_result( X_INST_ERR );
+            show_result(X_INST_ERR);
             error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.$db->get_test_error().'"', true);
         } else {
-            show_result( X_INST_OK );
+            show_result(X_INST_OK);
         }
         $sqlver = $db->server_version();
         $db->close();

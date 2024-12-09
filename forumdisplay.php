@@ -49,13 +49,13 @@ loadtemplates(
 
 smcwcache();
 
-$hottopic = str_replace( '$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval'] );
+$hottopic = str_replace('$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval']);
 
 $fid = getInt('fid');
 
 $forum = getForum($fid);
 
-if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' ) {
+if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     error($lang['textnoforum']);
 }
@@ -86,14 +86,14 @@ if ($forum['type'] == 'sub') {
         }
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
-    } else if ( (int) $fup['fup'] > 0 ) {
+    } else if ((int) $fup['fup'] > 0) {
         $fupup = getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
-} else if ( (int) $forum['fup'] > 0 ) { // 'forum' in a 'group'
+} else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
     $fup = getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
@@ -113,7 +113,7 @@ validatePpp();
 $threadcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
 
 // Perform automatic maintenance
-if ( $forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount ) {
+if ($forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount) {
     updateforumcount($fid);
 }
 
@@ -139,7 +139,7 @@ if ($forum['type'] == 'forum') {
     $forumlist = '';
     $permitted = permittedForums(forumCache(), 'forum');
     foreach($permitted as $sub) {
-        if ( $sub['type'] == 'sub' && (int) $sub['fup'] == $fid ) {
+        if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
             $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
         }
     }
@@ -148,16 +148,16 @@ if ($forum['type'] == 'forum') {
     }
 }
 
-if ( X_MEMBER && 'yes' == $self['waiting_for_mod'] ) {
+if (X_MEMBER && 'yes' == $self['waiting_for_mod']) {
     $quarantine = true;
-    $result = \XMB\SQL\countThreadsByUser( $self['username'], $fid, $quarantine );
-    if ( $result > 0 ) {
-        if ( 1 == $result ) {
+    $result = \XMB\SQL\countThreadsByUser($self['username'], $fid, $quarantine);
+    if ($result > 0) {
+        if (1 == $result) {
             $msg = $lang['moderation_threads_single'];
         } else {
-            $msg = str_replace( '$result', $result, $lang['moderation_threads_eval'] );
+            $msg = str_replace('$result', $result, $lang['moderation_threads_eval']);
         }
-        $subforums .= message( $msg, false, '', '', false, false, true, false ) . "<br />\n";
+        $subforums .= message($msg, false, '', '', false, false, true, false) . "<br />\n";
     }
 }
 
@@ -255,7 +255,7 @@ if ($db->num_rows($querytop) == 0) {
     } else {
         eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
     }
-} elseif ( $SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0 ) {
+} elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];
     }
@@ -272,14 +272,14 @@ if ($db->num_rows($querytop) == 0) {
 }
 
 while($thread = $db->fetch_array($querytop)) {
-    null_string( $thread['icon'] );
+    null_string($thread['icon']);
     if ($thread['icon'] !== '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
     } else {
         $thread['icon'] = '';
     }
 
-    if ( '1' === $thread['topped'] ) {
+    if ('1' === $thread['topped']) {
         $topimage = '<img src="'.$admdir.'/untop.gif" alt="'.$lang['textuntopthread'].'" border="0" />';
     } else {
         $topimage = '<img src="'.$admdir.'/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
@@ -301,8 +301,8 @@ while($thread = $db->fetch_array($querytop)) {
     $dalast = (int) trim($lastpost[0]);
 
     // Translate "Anonymous" author.
-    $lastpostname = trim( $lastpost[1] );
-    if ( 'Anonymous' == $lastpostname ) {
+    $lastpostname = trim($lastpost[1]);
+    if ('Anonymous' == $lastpostname) {
         $lastpostname = $lang['textanonymous'];
     }
 
@@ -311,15 +311,15 @@ while($thread = $db->fetch_array($querytop)) {
     if ($thread['closed'] == 'yes') {
         $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
     } else {
-        if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
+        if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
             $folder = 'hot_folder.gif';
         } else {
             $folder = 'folder.gif';
         }
 
-        $oT = strpos( $oldtopics, "|$lastPid|" );
-        if ( $lastvisit < $dalast && $oT === false ) {
-            if ( (int) $thread['replies'] >= (int) $SETTINGS['hottopic'] ) {
+        $oT = strpos($oldtopics, "|$lastPid|");
+        if ($lastvisit < $dalast && $oT === false) {
+            if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = "hot_red_folder.gif";
             } else {
                 $folder = "red_folder.gif";
@@ -357,11 +357,11 @@ while($thread = $db->fetch_array($querytop)) {
 
     eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
 
-    if ( '1' === $thread['pollopts'] ) {
+    if ('1' === $thread['pollopts']) {
         $prefix = $lang['pollprefix'].' ';
     }
 
-    if ( '1' === $thread['topped'] ) {
+    if ('1' === $thread['topped']) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
@@ -409,7 +409,7 @@ eval('$sortby = "'.template('forumdisplay_sortby').'";');
 $mpage = $mpage['html'];
 $multipage = '';
 $multipage3 = '';
-if ( strlen( $mpage ) != 0 ) {
+if (strlen($mpage) != 0) {
     if ($status1 == 'Moderator') {
         eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
         eval('$multipage3 = "'.template('forumdisplay_multipage_admin3').'";');

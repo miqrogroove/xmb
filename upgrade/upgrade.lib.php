@@ -1782,13 +1782,13 @@ function upgrade_schema_to_v5() {
         }
     }
 
-    if ( ! xmb_schema_index_exists( $table, 'username', 'userunique' ) ) {
+    if (! xmb_schema_index_exists($table, 'username', 'userunique')) {
         show_progress('Removing duplicate username records');
         $query = upgrade_query('SELECT username, MIN(uid) AS firstuser FROM '.X_PREFIX.$table.' GROUP BY username HAVING COUNT(*) > 1');
-        while( $dupe = $db->fetch_array( $query ) ) {
-            $name = $db->escape( $dupe['username'] );
+        while($dupe = $db->fetch_array($query)) {
+            $name = $db->escape($dupe['username']);
             $id = $dupe['firstuser'];
-            upgrade_query( 'DELETE FROM '.X_PREFIX.$table." WHERE username = '$name' AND uid != $id" );
+            upgrade_query('DELETE FROM '.X_PREFIX.$table." WHERE username = '$name' AND uid != $id");
         }
         $sql[] = "ADD UNIQUE INDEX `userunique` (`username`)";
     }
@@ -1814,7 +1814,7 @@ function upgrade_schema_to_v5() {
 
     show_progress('Reading the settings table data');
     $query = upgrade_query('SELECT * FROM '.X_PREFIX.$table);
-    $settings = $db->fetch_array( $query );
+    $settings = $db->fetch_array($query);
     $settings['google_captcha'] = 'off';
     $settings['google_captcha_sitekey'] = '';
     $settings['google_captcha_secret'] = '';
@@ -1822,7 +1822,7 @@ function upgrade_schema_to_v5() {
     $settings['quarantine_new_users'] = 'off';
     $settings['show_logs_in_threads'] = 'off';
     $settings['tickercode'] = 'html';
-    unset( $settings['sightml'] );
+    unset($settings['sightml']);
 
     show_progress('Replacing the settings table');
     xmb_schema_table('overwrite', 'settings');
@@ -2382,7 +2382,7 @@ function upgrade_query($sql) {
 	
 	if (false === $result) {
 		$error = '<pre>MySQL encountered the following error: ' . cdataOut($db->error()) . "\n\n";
-		if ( '' != $sql ) {
+		if ('' != $sql) {
 			$error .= 'In the following query: <em>' . cdataOut($sql) . '</em>';
 		}
 		$error .= '</pre>';

@@ -162,10 +162,10 @@ switch($action) {
 
                 // Loop through all sub-forums
                 foreach($subs_array as $sub) {
-                    if ( $sub['fup'] === $loner['fid'] ) {
+                    if ($sub['fup'] === $loner['fid']) {
                         if ($sub['pid'] !== NULL) {
                             if ($sub['date'] !== NULL) {
-                                if ( (int) $sub['date'] > (int) $sub['dateline'] ) {
+                                if ((int) $sub['date'] > (int) $sub['dateline']) {
                                     $sub['dateline'] = $sub['date'];
                                     $sub['author'] = $sub['username'];
                                 }
@@ -175,7 +175,7 @@ switch($action) {
                         } else {
                             $lp = '';
                         }
-                        if ( $sub['lastpost'] !== $lp ) {
+                        if ($sub['lastpost'] !== $lp) {
                             $db->escape_fast($lp);
                             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$lp' WHERE fid={$sub['fid']}");
                         }
@@ -184,7 +184,7 @@ switch($action) {
 
                 if ($loner['pid'] !== NULL) {
                     if ($loner['date'] !== NULL) {
-                        if ( (int) $loner['date'] > (int) $loner['dateline'] ) {
+                        if ((int) $loner['date'] > (int) $loner['dateline']) {
                             $loner['dateline'] = $loner['date'];
                             $loner['author'] = $loner['username'];
                         }
@@ -198,7 +198,7 @@ switch($action) {
                     $top = 0;
                     $mkey = -1;
                     foreach($lastpost as $key => $v) {
-                        if ( (int) $v['dateline'] > (int) $top ) {
+                        if ((int) $v['dateline'] > (int) $top) {
                             $mkey = $key;
                             $top = $v['dateline'];
                         }
@@ -239,7 +239,7 @@ switch($action) {
 			$count = 0;
             while($thread = $db->fetch_array($lpquery)) {
                 if (!is_null($thread['pid'])) {
-                    if ( $thread['dateline'] === '0' && substr($thread['closed'], 0, 6) == 'moved|' ) {
+                    if ($thread['dateline'] === '0' && substr($thread['closed'], 0, 6) == 'moved|') {
                         // Handle situation where versions before 1.9.11 set posts.dateline=0 when redirecting threads.
                         $newtid = intval(substr($thread['closed'], 6));
                         $lastdate = $db->result($db->query("SELECT MAX(dateline) AS lastdate FROM ".X_PREFIX."posts WHERE tid=$newtid"), 0);
@@ -253,7 +253,7 @@ switch($action) {
                     }
                     $lp = $thread['dateline'].'|'.$thread['author'].'|'.$thread['pid'];
                     if (!is_null($thread['date'])) {
-                        if ( (int) $thread['date'] > (int) $thread['dateline'] ) {
+                        if ((int) $thread['date'] > (int) $thread['dateline']) {
                             $lp = $thread['date'].'|'.$thread['username'].'|'.$thread['pid'];
                         }
                     }
@@ -261,10 +261,10 @@ switch($action) {
                     $lp = '';
                 }
 
-                if ( $thread['lastpost'] !== $lp ) {
-					if ( DEBUG ) {
-						if ( $count++ > 1000 ) {
-							error( 'Please disable DEBUG mode before using this tool to avoid memory exhaustion.', false, '</table></table><br />' );
+                if ($thread['lastpost'] !== $lp) {
+					if (DEBUG) {
+						if ($count++ > 1000) {
+							error('Please disable DEBUG mode before using this tool to avoid memory exhaustion.', false, '</table></table><br />');
 						}
 					}
                     $db->escape_fast($lp);
@@ -422,13 +422,13 @@ switch($action) {
             ?>
             <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['u2udump_confirm']; ?><br />
             <form action="tools.php?action=u2udump" method="post">
-              <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Clear All U2Us', '', X_NONCE_AYS_EXP ); ?>" />
+              <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Clear All U2Us', '', X_NONCE_AYS_EXP); ?>" />
               <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
               <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
             </form></td></tr>
             <?php
-        } else if ( $lang['textyes'] === $yessubmit ) {
-            request_secure( 'Control Panel/Clear All U2Us', '' );
+        } else if ($lang['textyes'] === $yessubmit) {
+            request_secure('Control Panel/Clear All U2Us', '');
             $db->query("TRUNCATE ".X_PREFIX."u2u");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_u2u'].'</td></tr></table></table>';
@@ -445,13 +445,13 @@ switch($action) {
             ?>
             <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['whoodump_confirm']; ?><br />
             <form action="tools.php?action=whosonlinedump" method="post">
-              <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Clear Whos Online', '', X_NONCE_AYS_EXP ); ?>" />
+              <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Clear Whos Online', '', X_NONCE_AYS_EXP); ?>" />
               <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
               <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
             </form></td></tr>
             <?php
-        } else if ( $lang['textyes'] === $yessubmit ) {
-            request_secure( 'Control Panel/Clear Whos Online', '' );
+        } else if ($lang['textyes'] === $yessubmit) {
+            request_secure('Control Panel/Clear Whos Online', '');
             $db->query("TRUNCATE ".X_PREFIX."whosonline");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_whosonline'].'</td></tr></table></table>';
@@ -472,13 +472,13 @@ switch($action) {
             ?>
             <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['logsdump_confirm']; ?><br />
             <form action="tools.php?action=logsdump" method="post">
-              <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Clear CP Logs', '', X_NONCE_AYS_EXP ); ?>" />
+              <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Clear CP Logs', '', X_NONCE_AYS_EXP); ?>" />
               <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
               <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
             </form></td></tr>
             <?php
-        } else if ( $lang['textyes'] === $yessubmit ) {
-            request_secure( 'Control Panel/Clear CP Logs', '' );
+        } else if ($lang['textyes'] === $yessubmit) {
+            request_secure('Control Panel/Clear CP Logs', '');
             $db->query("DELETE FROM ".X_PREFIX."logs WHERE fid=0");
             nav($lang['tools']);
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';

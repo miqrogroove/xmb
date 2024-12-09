@@ -169,14 +169,14 @@ if ($action == 'profile') {
         }
 
         $invchecked = '';
-        if ( '1' === $member['invisible'] ) {
+        if ('1' === $member['invisible']) {
             $invchecked = $cheHTML;
         }
 
         $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
-        $textoffset = str_replace( '$currdate', $currdate, $lang['evaloffset'] );
+        $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-        $timezones = timezone_control( $member['timeoffset'] );
+        $timezones = timezone_control($member['timeoffset']);
 
         $u2uasel0 = $u2uasel1 = $u2uasel2 = '';
         switch($member['u2ualert']) {
@@ -197,7 +197,7 @@ if ($action == 'profile') {
         $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
         $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
         while($themeinfo = $db->fetch_array($query)) {
-            if ( $themeinfo['themeid'] === $member['theme'] ) {
+            if ($themeinfo['themeid'] === $member['theme']) {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
             } else {
                 $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
@@ -232,7 +232,7 @@ if ($action == 'profile') {
         $dayselect = implode("\n", $dayselect);
 
         $check12 = $check24 = '';
-        if ( '24' === $member['timeformat'] ) {
+        if ('24' === $member['timeformat']) {
             $check24 = $cheHTML;
         } else {
             $check12 = $cheHTML;
@@ -247,9 +247,9 @@ if ($action == 'profile') {
         $htmlis = $lang['textoff'];
 
         $avatar = '';
-        null_string( $member['avatar'] );
+        null_string($member['avatar']);
         if ($SETTINGS['avastatus'] == 'on') {
-            if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
+            if ($https_only && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
                 $member['avatar'] = '';
             }
             eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
@@ -275,11 +275,11 @@ if ($action == 'profile') {
         $member['mood'] = rawHTMLsubject($member['mood']);
         $member['sig'] = rawHTMLsubject($member['sig']);
         $optional = '';
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( (int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod']) || X_STAFF) {
             eval('$optional = "'.template('memcp_profile_optional').'";');
         }
         if (X_STAFF) {
-            $template = template_secure( 'memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP );
+            $template = template_secure('memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP);
         } else {
             $template = template('memcp_profile');
         }
@@ -287,20 +287,20 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        if (X_STAFF) request_secure( 'User Control Panel/Edit Profile', $self['uid'], 0, true );
+        if (X_STAFF) request_secure('User Control Panel/Edit Profile', $self['uid'], 0, true);
         if (!empty($_POST['newpassword'])) {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            $member = \XMB\SQL\getMemberByName( $self['username'] );
-            if ( $member['password'] !== md5($_POST['oldpassword']) ) {
+            $member = \XMB\SQL\getMemberByName($self['username']);
+            if ($member['password'] !== md5($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            unset( $member );
+            unset($member);
             if (empty($_POST['newpasswordcf'])) {
                 error($lang['pwnomatch']);
             }
-            if ( $_POST['newpassword'] !== $_POST['newpasswordcf'] ) {
+            if ($_POST['newpassword'] !== $_POST['newpasswordcf']) {
                 error($lang['pwnomatch']);
             }
 
@@ -328,7 +328,7 @@ if ($action == 'profile') {
 
         $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
         $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-        if ( strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest ) {
+        if (strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest) {
             $dateformatnew = $SETTINGS['dateformat'];
         }
         unset($dateformattest);
@@ -354,7 +354,7 @@ if ($action == 'profile') {
         $bday = iso8601_date($year, $month, $day);
         $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
 
-        if ( $email !== $db->escape( $self['email'] ) ) {
+        if ($email !== $db->escape($self['email'])) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
                 $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE email = '$email' AND username != '$xmbuser'");
                 $count1 = (int) $db->result($query,0);
@@ -368,17 +368,17 @@ if ($action == 'profile') {
             $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
             while($restriction = $db->fetch_array($query)) {
                 $t_email = $email;
-                if ( '0' === $restriction['case_sensitivity'] ) {
+                if ('0' === $restriction['case_sensitivity']) {
                     $t_email = strtolower($t_email);
                     $restriction['name'] = strtolower($restriction['name']);
                 }
 
-                if ( '1' === $restriction['partial'] ) {
+                if ('1' === $restriction['partial']) {
                     if (strpos($t_email, $restriction['name']) !== false) {
                         $efail = true;
                     }
                 } else {
-                    if ( $t_email === $restriction['name'] ) {
+                    if ($t_email === $restriction['name']) {
                         $efail = true;
                     }
                 }
@@ -417,14 +417,14 @@ if ($action == 'profile') {
 
             $max_size = explode('x', $SETTINGS['max_avatar_size']);
 
-            if (preg_match('/^' . get_img_regexp( $https_only ) . '$/i', $rawavatar) == 0) {
+            if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
                 $avatar = '';
             } elseif (ini_get('allow_url_fopen')) {
-                if ( (int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
+                if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
                     $size = @getimagesize($rawavatar);
                     if ($size === FALSE) {
                         $avatar = '';
-                    } elseif ( ( $size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1] ) && !X_SADMIN ) {
+                    } elseif (($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) && !X_SADMIN) {
                         error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
                     }
                 }
@@ -454,9 +454,9 @@ if ($action == 'profile') {
             $avatar = '';
         }
 
-        if ( 'on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ( (int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod'] ) || X_STAFF ) {
+        if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod']) || X_STAFF) {
             $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-            $icq = abs( formInt( 'newicq' ) );
+            $icq = abs(formInt('newicq'));
             $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
             $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
             $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
@@ -544,8 +544,8 @@ if ($action == 'profile') {
                 $lastpost = explode('|', $fav['lastpost']);
 
                 // Translate "Anonymous" author.
-                $lastpostname = trim( $lastpost[1] );
-                if ( 'Anonymous' == $lastpostname ) {
+                $lastpostname = trim($lastpost[1]);
+                if ('Anonymous' == $lastpostname) {
                     $lastpostname = $lang['textanonymous'];
                 }
 
@@ -625,8 +625,8 @@ if ($action == 'profile') {
             $lastpost = explode('|', $fav['lastpost']);
 
             // Translate "Anonymous" author.
-            $lastpostname = trim( $lastpost[1] );
-            if ( 'Anonymous' == $lastpostname ) {
+            $lastpostname = trim($lastpost[1]);
+            if ('Anonymous' == $lastpostname) {
                 $lastpostname = $lang['textanonymous'];
             }
 
@@ -656,7 +656,7 @@ if ($action == 'profile') {
         eval('$mempage = "'.template('memcp_subscriptions').'";');
     } else if ($subadd && noSubmit('subsubmit')) {
         $query = $db->query("SELECT COUNT(tid) FROM ".X_PREFIX."favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
-        if ( (int) $db->result( $query, 0 ) == 1 ) {
+        if ((int) $db->result($query, 0) == 1) {
             $db->free_result($query);
             error($lang['subonlistmsg'], TRUE);
         } else {
@@ -679,18 +679,18 @@ if ($action == 'profile') {
         }
         message($lang['subsdeletedmsg'], TRUE, '', '', $full_url.'memcp.php?action=subscriptions', true, false, true);
     }
-} else if ( $action == 'devices' ) {
-    if ( onSubmit( 'devicesubmit' ) ) {
+} else if ($action == 'devices') {
+    if (onSubmit('devicesubmit')) {
         $ids = [];
-        foreach( $_POST as $name => $value ) {
-            if ( substr( $name, 0, 6 ) == 'delete' && strlen( $value ) == 4 && $name == "delete$value" ) {
+        foreach($_POST as $name => $value) {
+            if (substr($name, 0, 6) == 'delete' && strlen($value) == 4 && $name == "delete$value") {
                 $ids[] = $value;
             }
         }
-        if ( ! empty( $ids ) ) {
+        if (! empty($ids)) {
             // This page only handles the default session mechanism for now.
             $lists = [\XMB\Session\FormsAndCookies::class => $ids];
-            $session->logoutByLists( $lists );
+            $session->logoutByLists($lists);
         }
     }
 
@@ -700,17 +700,17 @@ if ($action == 'profile') {
     $other = '';
 
     $lists = $session->getSessionLists();
-    foreach ( $lists as $name => $list ) {
-        if ( $name != \XMB\Session\FormsAndCookies::class ) {
+    foreach ($lists as $name => $list) {
+        if ($name != \XMB\Session\FormsAndCookies::class) {
             // This page only handles the default session mechanism for now.
             continue;
         }
-        foreach ( $list as $device ) {
+        foreach ($list as $device) {
             $did = $device['token'];
             $time = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) + (int) $device['login_date'];
-            $dlogin = gmdate( $dateformat, $time ).' '.$lang['textat'].' '.gmdate( $timecode, $time );
-            $dagent = parse_user_agent( $device['agent'] );
-            if ( $device['current'] ) {
+            $dlogin = gmdate($dateformat, $time).' '.$lang['textat'].' '.gmdate($timecode, $time);
+            $dagent = parse_user_agent($device['agent']);
+            if ($device['current']) {
                 eval('$current .= "'.template('memcp_devices_firstrow').'";');
             } else {
                 eval('$other .= "'.template('memcp_devices_row').'";');
@@ -718,7 +718,7 @@ if ($action == 'profile') {
         }
     }
     
-    if ( '' == $other ) {
+    if ('' == $other) {
         $devicesbtn = '';
     } else {
         eval('$devicesbtn = "'.template('memcp_devices_button').'";');
@@ -727,7 +727,7 @@ if ($action == 'profile') {
     eval('$mempage = "'.template('memcp_devices').'";');
 } else {
     eval('$header = "'.template('header').'";');
-    $usercpwelcome = str_replace( '$xmbuser', $self['username'], $lang['evalusercpwelcome'] );
+    $usercpwelcome = str_replace('$xmbuser', $self['username'], $lang['evalusercpwelcome']);
     $header .= makenav($action);
 
     $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
@@ -737,7 +737,7 @@ if ($action == 'profile') {
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
         if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
-            if ( '1' === $buddy['invisible'] ) {
+            if ('1' === $buddy['invisible']) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
                     continue;
@@ -755,9 +755,9 @@ if ($action == 'profile') {
     $db->free_result($q);
 
     $member = $self;
-    null_string( $member['avatar'] );
+    null_string($member['avatar']);
 
-    if ( $https_only && strpos( $member['avatar'], ':' ) !== false && substr( $member['avatar'], 0, 6 ) !== 'https:' ) {
+    if ($https_only && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
         $member['avatar'] = '';
     }
 
@@ -820,8 +820,8 @@ if ($action == 'profile') {
             $lastpost = explode('|', $fav['lastpost']);
 
             // Translate "Anonymous" author.
-            $lastpostname = trim( $lastpost[1] );
-            if ( 'Anonymous' == $lastpostname ) {
+            $lastpostname = trim($lastpost[1]);
+            if ('Anonymous' == $lastpostname) {
                 $lastpostname = $lang['textanonymous'];
             }
 

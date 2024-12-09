@@ -35,9 +35,9 @@ $filename = '';
 // Moderation of new users
 $quarantine = false;
 $format = (int) $SETTINGS['file_url_format'];
-if ( 'off' == $SETTINGS['quarantine_new_users'] && ! X_SMOD ) {
+if ('off' == $SETTINGS['quarantine_new_users'] && ! X_SMOD) {
     // Access to quarantined files is restricted when that system is not in use.
-} elseif ( getInt('newaid') > 0 ) {
+} elseif (getInt('newaid') > 0) {
     // Otherwise, the newaid variable indicates a request to read attachments for preview or moderation.
     $quarantine = true;
     $format = 99;
@@ -46,7 +46,7 @@ if ( 'off' == $SETTINGS['quarantine_new_users'] && ! X_SMOD ) {
 }
 
 // Parse "Pretty" URLs
-switch( $format ) {
+switch($format) {
 case 1:
 //    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
     $aid = getInt('aid');
@@ -55,7 +55,7 @@ case 1:
 case 2:
 //    $url = "{$virtual_path}files/$pid/$aid/";
     $result = explode('/', $url);
-    if ( count($result) < 4 ) break;
+    if (count($result) < 4) break;
     if ($result[count($result) - 4] == 'files') { // Remember count() is 1-based
         $pid = intval($result[count($result) - 3]);
         $aid = intval($result[count($result) - 2]);
@@ -64,7 +64,7 @@ case 2:
 case 3:
 //    $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
-    if ( count($result) < 3 ) break;
+    if (count($result) < 3) break;
     if ($result[count($result) - 3] == 'files') {
         $aid = intval($result[count($result) - 2]);
         $filename = urldecode($result[count($result) - 1]);
@@ -73,21 +73,21 @@ case 3:
 case 4:
 //    $url = "{$virtual_path}/$pid/$aid/";
     $result = explode('/', $url);
-    if ( count($result) < 3 ) break;
+    if (count($result) < 3) break;
     $pid = intval($result[count($result) - 3]);
     $aid = intval($result[count($result) - 2]);
     break;
 case 5:
 //    $url = "{$virtual_path}/$aid/".rawurlencode($filename);
     $result = explode('/', $url);
-    if ( count($result) < 2 ) break;
+    if (count($result) < 2) break;
     $aid = intval($result[count($result) - 2]);
     $filename = urldecode($result[count($result) - 1]);
     break;
 case 99:
 //    $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
-    $aid = getInt( 'newaid' );
-    $pid = getInt( 'newpid' );
+    $aid = getInt('newaid');
+    $pid = getInt('newpid');
     break;
 default:
     $aid = getInt('aid');
@@ -96,7 +96,7 @@ default:
 }
 
 // Sanity Checks
-if ( $aid <= 0 || $pid < 0 || ( $pid == 0 && $filename == '' && '0' === $self['uid'] ) ) {
+if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid'])) {
     fileError();
 }
 
@@ -104,21 +104,21 @@ if ( $aid <= 0 || $pid < 0 || ( $pid == 0 && $filename == '' && '0' === $self['u
 if ($filename == '') {
     if ($pid == 0 && !X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
-        $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, $pid, $filename, (int) $self['uid'] );
+        $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
     } else {
-        $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, $pid );
+        $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, $pid);
     }
 } else {
-    $file = \XMB\SQL\getAttachmentAndFID( $aid, $quarantine, 0, $filename );
+    $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, 0, $filename);
 }
-if ( empty( $file ) ) {
+if (empty($file)) {
     fileError();
 }
 
 if ($pid > 0 || $file['fid'] != '') {
     $forum = getForum($file['fid']);
 
-    if ( false === $forum || ( $forum['type'] != 'forum' && $forum['type'] != 'sub' ) || $forum['status'] != 'on' || ( $forum['attachstatus'] != 'on' && !X_ADMIN ) ) {
+    if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
         fileError();
     }
 
@@ -171,7 +171,7 @@ if ($file['subdir'] == '') {
     }
     $size = intval(filesize($path));
 }
-if ( $size != (int) $file['filesize'] ) {
+if ($size != (int) $file['filesize']) {
     header('HTTP/1.0 500 Internal Server Error');
     error($lang['filecorrupt']);
 }
@@ -187,14 +187,14 @@ assertEmptyOutputStream('files.php');
 // will be returned without any message-body."
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     date_default_timezone_set('UTC'); // Workaround for stupid PHP 5 problems.
-    if ( strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= (int) $file['updatestamp'] ) {
+    if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= (int) $file['updatestamp']) {
         header('HTTP/1.0 304 Not Modified');
         exit;
     }
 }
 
 // Increment hit counter
-\XMB\SQL\raiseDownloadCounter( $aid, $quarantine );
+\XMB\SQL\raiseDownloadCounter($aid, $quarantine);
 
 // Set response headers
 if ($file['img_size'] == '') {

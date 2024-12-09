@@ -85,8 +85,8 @@ if (X_ADMIN) {
     }
 }
 
-if ( $action == 'templates' || $action == 'lang' ) {
-    header( 'X-XSS-Protection: 0' ); // Disables HTML input errors in Chrome.
+if ($action == 'templates' || $action == 'lang') {
+    header('X-XSS-Protection: 0'); // Disables HTML input errors in Chrome.
 }
 
 nav($lang['textcp']);
@@ -130,13 +130,13 @@ if ($action == 'restrictions') {
         <?php
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted ORDER BY id");
         while($restricted = $db->fetch_array($query)) {
-            if ( '1' === $restricted['case_sensitivity'] ) {
+            if ('1' === $restricted['case_sensitivity']) {
                 $case_check = 'checked="checked"';
             } else {
                 $case_check = '';
             }
 
-            if ( '1' === $restricted['partial'] ) {
+            if ('1' === $restricted['partial']) {
                 $partial_check = 'checked="checked"';
             } else {
                 $partial_check = '';
@@ -234,7 +234,7 @@ if ($action == 'restrictions') {
 if ($action == 'lang') {
     if (noSubmit('importsubmit') && noSubmit('edit') && noSubmit('editsubmit') && noSubmit('detail') && noSubmit('deletesubmit')) {
         // Default screen: Language List, Options to Install, Uninstall, and Export.
-        $langnonce = \XMB\Token\create( 'Control Panel/Translations', 'mass-edit', X_NONCE_FORM_EXP );
+        $langnonce = \XMB\Token\create('Control Panel/Translations', 'mass-edit', X_NONCE_FORM_EXP);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -363,7 +363,7 @@ if ($action == 'lang') {
 
     if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) { // Handle upload of new translation file.
 
-        request_secure( 'Control Panel/Translations', 'mass-edit' );
+        request_secure('Control Panel/Translations', 'mass-edit');
 
         // Retrieve uploaded file
         require('include/attach.inc.php');
@@ -373,7 +373,7 @@ if ($action == 'lang') {
         $upload = \XMB\Attach\getUpload('themefile', $filename, $filetype, $filesize, FALSE);
         if ($upload === FALSE) {
             $message = $lang['langimportfail'];
-            if ( $filetype !== X_EMPTY_UPLOAD ) {
+            if ($filetype !== X_EMPTY_UPLOAD) {
                 $message .= ' '.$attachmentErrors[$filetype];
             }
             error($message, FALSE, '</td></tr></table></td></tr></table><br />');
@@ -417,7 +417,7 @@ if ($action == 'lang') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=lang">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Translations', $self['langfile'] . $phraseid, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Translations', $self['langfile'] . $phraseid, X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -457,7 +457,7 @@ if ($action == 'lang') {
         $phraseid = getInt('phraseid', 'p');
         $newvalue = postedVar('templatenew', '', FALSE); // HTML is always allowed in translations.
 
-        request_secure( 'Control Panel/Translations', $self['langfile'] . $phraseid );
+        request_secure('Control Panel/Translations', $self['langfile'] . $phraseid);
 
         if (!setLangValue($phraseid, $newvalue)) {
             error($lang['generic_missing'], FALSE);
@@ -507,7 +507,7 @@ if ($action == 'lang') {
             ?>
             <tr bgcolor="<?php echo $altbg2?>" class="tablerow">
             <td><?php echo $langkey; ?></td>
-            <?php if ( '0' === $row['phrasecount'] ) { ?>
+            <?php if ('0' === $row['phrasecount']) { ?>
             <td></td>
             <td><a href="cp2.php?action=lang&amp;edit=edit&amp;phraseid=<?php echo $row['phraseid']; ?>"><?php echo $lang['textnewcode']; ?></a></td>
             </tr>
@@ -528,7 +528,7 @@ if ($action == 'lang') {
     }
 
     if (onSubmit('deletesubmit')) {
-        request_secure( 'Control Panel/Translations', 'mass-edit' );
+        request_secure('Control Panel/Translations', 'mass-edit');
         $theme_delete = postedArray('lang_delete', 'int');
         $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile' OR devname='{$SETTINGS['langfile']}'");
         $lockIDs = array();
@@ -556,7 +556,7 @@ if ($action == 'themes') {
     $newtheme = postedVar('newtheme');
 
     if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
-        $themenonce = \XMB\Token\create( 'Control Panel/Themes', 'mass-edit', X_NONCE_FORM_EXP );
+        $themenonce = \XMB\Token\create('Control Panel/Themes', 'mass-edit', X_NONCE_FORM_EXP);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
@@ -668,7 +668,7 @@ if ($action == 'themes') {
     }
 
     if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
-        request_secure( 'Control Panel/Themes', 'mass-edit' );
+        request_secure('Control Panel/Themes', 'mass-edit');
         if (!is_uploaded_file($_FILES['themefile']['tmp_name'])) {
             error($lang['textthemeimportfail'], FALSE, '</td></tr></table></td></tr></table><br />');
         }
@@ -691,7 +691,7 @@ if ($action == 'themes') {
         $valsql = implode(', ', $valsql);
 
         $query = $db->query("SELECT COUNT(themeid) FROM ".X_PREFIX."themes WHERE name='$dbname'");
-        if ( (int) $db->result($query, 0) > 0 ) {
+        if ((int) $db->result($query, 0) > 0) {
             error($lang['theme_already_exists'], false, '</td></tr></table></td></tr></table><br />');
         }
 
@@ -706,7 +706,7 @@ if ($action == 'themes') {
         }
         echo '</td></tr>';
     } else if (onSubmit('themesubmit')) {
-        request_secure( 'Control Panel/Themes', 'mass-edit' );
+        request_secure('Control Panel/Themes', 'mass-edit');
         $theme_delete = postedArray('theme_delete', 'int');
         $theme_name = postedArray('theme_name', 'string', 'javascript', TRUE, TRUE, TRUE);
 
@@ -740,7 +740,7 @@ if ($action == 'themes') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td>
         <form method="post" action="cp2.php?action=themes&amp;single=submit">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Themes', (string) $single_int, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Themes', (string) $single_int, X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -861,7 +861,7 @@ if ($action == 'themes') {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=themes&amp;single=submit">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Themes', 'New Theme', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Themes', 'New Theme', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -967,7 +967,7 @@ if ($action == 'themes') {
         <?php
     } else if ($single_str == "submit" && !$newtheme) {
         $orig = formInt('orig');
-        request_secure( 'Control Panel/Themes', (string) $orig );
+        request_secure('Control Panel/Themes', (string) $orig);
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -994,7 +994,7 @@ if ($action == 'themes') {
         $db->query("UPDATE ".X_PREFIX."themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     } else if ($single_str == "submit" && $newtheme) {
-        request_secure( 'Control Panel/Themes', 'New Theme' );
+        request_secure('Control Panel/Themes', 'New Theme');
         $namenew = postedVar('namenew');
         $bgcolornew = postedVar('bgcolornew');
         $altbg1new = postedVar('altbg1new');
@@ -1165,7 +1165,7 @@ if ($action == "smilies") {
         }
 
         if ($newcode) {
-            if ( (int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0 ) {
+            if ((int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE code='$newcode'"), 0) > 0) {
                 error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
             }
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
@@ -1201,7 +1201,7 @@ if ($action == "smilies") {
         }
 
         if ($newurl2) {
-            if ( (int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0 ) {
+            if ((int) $db->result($db->query("SELECT count(id) FROM ".X_PREFIX."smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
                 error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
             }
             $query = $db->query("INSERT INTO ".X_PREFIX."smilies (type, code, url) VALUES ('picon', '', '$newurl2')");
@@ -1316,7 +1316,7 @@ if ($action == "ranks") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=ranks">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/User Ranks', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/User Ranks', 'mass-edit', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="650" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1388,7 +1388,7 @@ if ($action == "ranks") {
         </tr>
         <?php
     } else {
-        request_secure( 'Control Panel/User Ranks', 'mass-edit' );
+        request_secure('Control Panel/User Ranks', 'mass-edit');
         $id = postedArray('id', 'int');
         $delete = postedArray('delete', 'int');
         $title = postedArray('title', 'string', '', FALSE);
@@ -1441,7 +1441,7 @@ if ($action == "newsletter") {
         <td>
         <form method="post" action="cp2.php?action=newsletter">
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Newsletter', 'send', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Newsletter', 'send', X_NONCE_FORM_EXP); ?>" />
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -1497,7 +1497,7 @@ if ($action == "newsletter") {
         </tr>
         <?php
     } else {
-        request_secure( 'Control Panel/Newsletter', 'send' );
+        request_secure('Control Panel/Newsletter', 'send');
         @set_time_limit(0);
         $newssubject = postedVar('newssubject');
         $newsmessage = postedVar('newsmessage');
@@ -1555,7 +1555,7 @@ if ($action == "newsletter") {
                 }
 
                 $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
-                xmb_mail( $rawemail, $subject, $rawnewsmessage, $charset );
+                xmb_mail($rawemail, $subject, $rawnewsmessage, $charset);
                 $total++;
             }
             error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");
@@ -1571,7 +1571,7 @@ if ($action == "prune") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=prune">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Prune', '', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Prune', '', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1675,7 +1675,7 @@ if ($action == "prune") {
         </tr>
         <?php
     } else {
-        request_secure( 'Control Panel/Prune', '' );
+        request_secure('Control Panel/Prune', '');
         $pruneByDate = postedArray('pruneByDate');
         $pruneByPosts = postedArray('pruneByPosts');
         $pruneFrom = postedVar('pruneFrom', '', FALSE, FALSE);
@@ -1721,7 +1721,7 @@ if ($action == "prune") {
         }
 
         $sign = '';
-        if ( isset($pruneByPosts['check']) && '1' === $pruneByPosts['check'] ) {
+        if (isset($pruneByPosts['check']) && '1' === $pruneByPosts['check']) {
             switch($pruneByPosts['type']) {
                 case 'less':
                     $sign = '<';
@@ -1737,7 +1737,7 @@ if ($action == "prune") {
             $queryWhere[] = 'replies '.$sign.' '.(int) ($pruneByPosts['posts']-1);
         }
 
-        if ( isset($pruneByDate['check']) && '1' === $pruneByDate['check'] ) {
+        if (isset($pruneByDate['check']) && '1' === $pruneByDate['check']) {
             switch($pruneByDate['type']) {
                 case 'less':
                     $queryWhere[] = 'lastpost > "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
@@ -1778,7 +1778,7 @@ if ($action == "prune") {
                     $fids[] = $t['fid'];
                 }
                 set_time_limit(30); // Potentially expensive operations coming up.
-                \XMB\Attach\deleteByThreads( $tids ); // Must delete attachments before posts!
+                \XMB\Attach\deleteByThreads($tids); // Must delete attachments before posts!
                 set_time_limit(30);
                 $tids = implode(',', $tids);
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
@@ -1879,7 +1879,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates', 'Restore All', X_NONCE_AYS_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Templates', 'Restore All', X_NONCE_AYS_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1904,7 +1904,7 @@ if ($action == "templates") {
     }
 
     if (onSubmit('restoresubmit')) {
-        request_secure( 'Control Panel/Templates', 'Restore All' );
+        request_secure('Control Panel/Templates', 'Restore All');
         if (!file_exists('./templates.xmb')) {
             error($lang['no_templates'], false, '</td></tr></table></td></tr></table><br />');
         }
@@ -1943,7 +1943,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates/Edit', (string) $tid, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Templates/Edit', (string) $tid, X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -1986,7 +1986,7 @@ if ($action == "templates") {
         $db->escape_fast($templatenew);
 
         if ($tid == 'new') {
-            request_secure( 'Control Panel/Templates/Add', $namenew );
+            request_secure('Control Panel/Templates/Add', $namenew);
             if (!$namenew) {
                 error($lang['templateempty'], false, '</td></tr></table></td></tr></table><br />');
             } else {
@@ -1998,10 +1998,10 @@ if ($action == "templates") {
                 }
             }
         } else {
-            request_secure( 'Control Panel/Templates/Edit', $tid );
+            request_secure('Control Panel/Templates/Edit', $tid);
             $tid = getInt('tid');
-            $oldtemplate = \XMB\SQL\getTemplateByID( $tid );
-            if ( 'css' == $oldtemplate['name'] ) {
+            $oldtemplate = \XMB\SQL\getTemplateByID($tid);
+            if ('css' == $oldtemplate['name']) {
                 \XMB\SQL\raiseThemeVersions();
             }
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id=$tid");
@@ -2019,7 +2019,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=<?php echo $tid?>">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates/Delete', (string) $tid, X_NONCE_AYS_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Templates/Delete', (string) $tid, X_NONCE_AYS_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -2045,7 +2045,7 @@ if ($action == "templates") {
 
     if (onSubmit('deletesubmit')) {
         $tid = getInt('tid', 'r');
-        request_secure( 'Control Panel/Templates/Delete', (string) $tid );
+        request_secure('Control Panel/Templates/Delete', (string) $tid);
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE id=$tid");
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesdelete'].'</td></tr>';
         redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
@@ -2057,7 +2057,7 @@ if ($action == "templates") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=templates&amp;tid=new">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Templates/Add', $newtemplatename, X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Templates/Add', $newtemplatename, X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="550" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -2158,7 +2158,7 @@ if ($action == "attachments") {
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
         <form method="post" action="cp2.php?action=attachments">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Attachments', 'mass-edit', X_NONCE_FORM_EXP ); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Attachments', 'mass-edit', X_NONCE_FORM_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
         <tr>
         <td bgcolor="<?php echo $bordercolor?>">
@@ -2253,11 +2253,11 @@ if ($action == "attachments") {
                     $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['movetodb'].'</a>';
                 }
             }
-            if ( '0' === $attachment['pid'] ) {
+            if ('0' === $attachment['pid']) {
                 $attachment['author'] = $attachment['username'];
                 $downloadlink = '';
             } else {
-                $downloadlink = '<a href="'.\XMB\Attach\getURL( (int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename'] ).'" target="_blank">'.$lang['textdownload'].'</a>';
+                $downloadlink = '<a href="'.\XMB\Attach\getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
                 if (function_exists('imagecreatetruecolor')) {
                     $newthumblink = '<a href="cp2.php?action=regeneratethumbnail&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['regeneratethumbnail'].'</a>';
                 }
@@ -2268,7 +2268,7 @@ if ($action == "attachments") {
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><input type="text" name="filename<?php echo $attachment['aid']?>" value="<?php echo $attachment['filename']?>">
                 <br /><span class="smalltxt"><?php echo $downloadlink; ?> - <?php echo $movelink; ?> - <?php echo $newthumblink; ?> - <?php echo $deletelink; ?></span></td>
             <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><?php echo $attachment['author']?></td>
-            <?php if ( '0' === $attachment['pid'] ) { ?>
+            <?php if ('0' === $attachment['pid']) { ?>
                 <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"></td>
             <?php } else { ?>
                 <td bgcolor="<?php echo $altbg2?>" class="tablerow" valign="top"><a href="viewthread.php?tid=<?php echo $attachment['tid']?>"><?php echo $attachment['tsubject']?></a><br /><span class="smalltxt"><?php echo $lang['textinforum']?> <a href="forumdisplay.php?fid=<?php echo $attachment['fid']?>"><?php echo $attachment['fname']?></a></span></td>
@@ -2296,10 +2296,10 @@ if ($action == "attachments") {
                             $movelink = '<a href="cp2.php?action=movetodb_attachment&amp;aid='.$child['aid'].'&amp;pid='.$child['pid'].'">'.$lang['movetodb'].'</a>';
                         }
                     }
-                    if ( '0' === $child['pid'] ) {
+                    if ('0' === $child['pid']) {
                         $downloadlink = $lang['thumbnail'];
                     } else {
-                        $downloadlink = '<a href="'.\XMB\Attach\getURL( (int) $child['aid'], (int) $child['pid'], $child['filename'] ).'" target="_blank">'.$lang['thumbnail'].'</a>';
+                        $downloadlink = '<a href="'.\XMB\Attach\getURL((int) $child['aid'], (int) $child['pid'], $child['filename']).'" target="_blank">'.$lang['thumbnail'].'</a>';
                     }
                     ?>
                         <tr>
@@ -2329,7 +2329,7 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('deletesubmit')) {
-        request_secure( 'Control Panel/Attachments', 'mass-edit' );
+        request_secure('Control Panel/Attachments', 'mass-edit');
         require('include/attach.inc.php');
         $filelist = array();
         foreach($_POST as $postedname => $rawvalue) {
@@ -2343,8 +2343,8 @@ if ($action == "attachments") {
         while($attachment = $db->fetch_array($query)) {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
-            if ( $attachment['filename'] !== $postedvalue ) {
-                \XMB\Attach\changeName( (int) $attachment['aid'], (int) $attachment['pid'], $postedvalue );
+            if ($attachment['filename'] !== $postedvalue) {
+                \XMB\Attach\changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2388,7 +2388,7 @@ if ($action == "modlog") {
     while($recordinfo = $db->fetch_array($query)) {
         $date = gmdate($dateformat, $recordinfo['date']);
         $time = gmdate($timecode, $recordinfo['date']);
-        if ( (int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '' ) {
+        if ((int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '') {
             $url = "<a href=\"./viewthread.php?tid=$recordinfo[tid]\" target=\"_blank\">$recordinfo[subject]</a>";
         } else if ($recordinfo['action'] == 'delete') {
             $recordinfo['action'] = '<strong>'.$recordinfo['action'].'</strong>';
@@ -2601,15 +2601,15 @@ if ($action == "delete_attachment") {
         ?>
         <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $lang['attach_delete_ays']; ?><br />
         <form action="cp2.php?action=delete_attachment&amp;aid=<?php echo $aid; ?>" method="post">
-          <input type="hidden" name="token" value="<?php echo \XMB\Token\create( 'Control Panel/Attachments/Delete', (string) $aid, X_NONCE_AYS_EXP ); ?>" />
+          <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/Attachments/Delete', (string) $aid, X_NONCE_AYS_EXP); ?>" />
           <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
           <input type="submit" name="yessubmit" value="<?php echo $lang['textno']; ?>" />
         </form></td></tr>
         <?php
-    } elseif ( $lang['textyes'] === $yessubmit ) {
-        request_secure( 'Control Panel/Attachments/Delete', (string) $aid );
+    } elseif ($lang['textyes'] === $yessubmit) {
+        request_secure('Control Panel/Attachments/Delete', (string) $aid);
         require('include/attach.inc.php');
-        \XMB\Attach\deleteByID( $aid );
+        \XMB\Attach\deleteByID($aid);
         echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['attach_delete_done']}</td></tr>";
     }
 }

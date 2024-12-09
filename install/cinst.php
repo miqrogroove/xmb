@@ -117,7 +117,7 @@ if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername)
     exit();
 }
 
-if ( $frmPassword !== $frmPasswordCfm ) {
+if ($frmPassword !== $frmPasswordCfm) {
     show_result(X_INST_ERR);
     $errStr = 'The passwords do not match. Please press back and try again.';
     error('Bad super administrator credentials', $errStr);
@@ -127,7 +127,7 @@ if ( $frmPassword !== $frmPasswordCfm ) {
 $nonprinting = '\\x00-\\x1F\\x7F-\\x9F\\xAD';
 $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
 $sequences = '|  ';  //Phrases disallowed, each separated by '|'
-if ( $vUsername !== preg_replace( "#[{$nonprinting}{$specials}]{$sequences}#", '', $vUsername ) ) {
+if ($vUsername !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $vUsername)) {
     show_result(X_INST_ERR);
     $errStr = 'The username may not contain special characters. Please press back and try again.';
     error('Bad super administrator credentials', $errStr);
@@ -194,7 +194,7 @@ $db->query(
 show_result(X_INST_OK);
 
 show_act("Inserting data into ".X_PREFIX."settings");
-$db->query( "INSERT INTO ".X_PREFIX."settings
+$db->query("INSERT INTO ".X_PREFIX."settings
 (name, value) VALUES
 ('addtime', '0'),
 ('adminemail', 'webmaster@domain.ext'),

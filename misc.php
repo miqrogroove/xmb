@@ -94,16 +94,16 @@ $misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
-        if ( ! coppa_check() ) {
-            message( $lang['coppa_fail'] );
-        } elseif ( noSubmit( 'loginsubmit' ) ) {
-            if ( X_MEMBER ) {
+        if (! coppa_check()) {
+            message($lang['coppa_fail']);
+        } elseif (noSubmit('loginsubmit')) {
+            if (X_MEMBER) {
                 eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
             } else {
                 eval('$misc = "'.template('misc_login').'";');
             }
         } else {
-            switch( $session->getStatus() ) {
+            switch($session->getStatus()) {
                 case 'good':
                     // Set $invisible to true, false, or null.
                     $invisible = formInt('hide');
@@ -113,21 +113,21 @@ switch($action) {
                         $invisible = ($invisible == 1);
                     }
                     
-                    loginUser( $invisible );
-                    redirect( $full_url, 0 );
+                    loginUser($invisible);
+                    redirect($full_url, 0);
                     break;
                 case 'login-client-disabled':
-                    error( $lang['cookies_disabled'] );
+                    error($lang['cookies_disabled']);
                     break;
                 case 'already-logged-in':
                     eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
                     break;
                 case 'ip-banned':
                 case 'member-banned':
-                    error( $lang['bannedmessage'] );
+                    error($lang['bannedmessage']);
                     break;
                 case 'password-locked':
-                    error( $lang['login_lockout'] );
+                    error($lang['login_lockout']);
                     break;
                 case 'login-no-input':
                 case 'bad-password':
@@ -141,12 +141,12 @@ switch($action) {
         break;
 
     case 'logout':
-        if ( 'logged-out' == $session->getStatus() ) {
+        if ('logged-out' == $session->getStatus()) {
             $gone = $session->getMember();
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='{$gone['username']}'");
             redirect($full_url, 0);
         } else {
-            message( $lang['notloggedin'] );
+            message($lang['notloggedin']);
         }
         break;
 
@@ -157,7 +157,7 @@ switch($action) {
         } else {
             $newurl = str_replace('misc.php?action=search&', 'search.php?', $newurl);
         }
-        if ( $newurl === $url ) { // Unexpected query string.
+        if ($newurl === $url) { // Unexpected query string.
             $newurl = str_replace('&action=search', '', $newurl);
             $newurl = str_replace('/misc', '/search', $newurl);
         }
@@ -196,15 +196,15 @@ switch($action) {
             }
 
             $time = $onlinetime - 86400;
-            if ( (int) $member['pwdate'] > $time ) {
+            if ((int) $member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
             }
             
-            \XMB\SQL\setLostPasswordDate( $member['uid'], time() );
-            $token = \XMB\Token\create( 'Lost Password', $member['username'], X_NONCE_MAX_AGE, true );
+            \XMB\SQL\setLostPasswordDate($member['uid'], time());
+            $token = \XMB\Token\create('Lost Password', $member['username'], X_NONCE_MAX_AGE, true);
             $link = "{$full_url}lost.php?a=$token";
 
-            $lang2 = loadPhrases( ['charset', 'textyourpw', 'lostpw_body_eval'] );
+            $lang2 = loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
             $translate = $lang2[$member['langfile']];
             $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
@@ -212,10 +212,10 @@ switch($action) {
             $subject = "[$rawbbname] {$translate['textyourpw']}";
             $search  = [ '$name', '$link' ];
             $replace = [  $name,   $link  ];
-            $body = str_replace( $search, $replace, $lang['lostpw_body_eval'] );
-            xmb_mail( $emailaddy, $subject, $body, $translate['charset'] );
+            $body = str_replace($search, $replace, $lang['lostpw_body_eval']);
+            xmb_mail($emailaddy, $subject, $body, $translate['charset']);
 
-            message( $lang['emailpw'] );
+            message($lang['emailpw']);
         }
         break;
 
@@ -268,13 +268,13 @@ switch($action) {
                 $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...').'</a>';
             }
 
-            if ( '1' === $online['invisible'] && ( X_ADMIN || $online['username'] === $xmbuser ) ) {
+            if ('1' === $online['invisible'] && (X_ADMIN || $online['username'] === $xmbuser)) {
                 $hidden = ' ('.$lang['hidden'].')';
             } else {
                 $hidden = '';
             }
 
-            if ( X_SADMIN && $online['username'] != 'xguest123' && $online['username'] !== $lang['textguest1'] ) {
+            if (X_SADMIN && $online['username'] != 'xguest123' && $online['username'] !== $lang['textguest1']) {
                 $online['username'] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$username.'</a>'.$hidden;
             } else {
                 $online['username'] = $username;
@@ -445,10 +445,10 @@ switch($action) {
         }
 
         $where[] = "lastvisit != 0";
-        if ( 'on' == $SETTINGS['hide_banned'] ) {
+        if ('on' == $SETTINGS['hide_banned']) {
             $where[] = "status != 'Banned' ";
         }
-        $q = implode( ' AND ', $where );
+        $q = implode(' AND ', $where);
         $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."members WHERE $q"), 0);
         $canonical = 'misc.php?action=list';
         $baseurl = $canonical.$params;
@@ -479,7 +479,7 @@ switch($action) {
                     $email = '';
                 }
 
-                $member['site'] = format_member_site( $member['site'] );
+                $member['site'] = format_member_site($member['site']);
                 if ($member['site'] == '') {
                     $site = '';
                 } else {

@@ -386,7 +386,7 @@ class dbstuff {
 
     public function like_escape(string $rawstring): string {
         try {
-            return $this->link->real_escape_string( str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring) );
+            return $this->link->real_escape_string(str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $rawstring));
         } catch (mysqli_sql_exception $e) {
             $this->panic($e);
         }

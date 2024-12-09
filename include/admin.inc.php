@@ -84,7 +84,7 @@ class admin {
             return $lang['restricted'];
         }
         
-        $session->logoutAll( $userfrom );
+        $session->logoutAll($userfrom);
 
         @set_time_limit(180);
         $db->query("UPDATE ".X_PREFIX."members SET username='$dbuserto' WHERE username='$dbuserfrom'");
@@ -163,17 +163,17 @@ class admin {
 
         $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
         while($restriction = $db->fetch_array($query)) {
-            if ( '0' === $restriction['case_sensitivity'] ) {
+            if ('0' === $restriction['case_sensitivity']) {
                 $t_username = strtolower($userto);
                 $restriction['name'] = strtolower($restriction['name']);
             }
 
-            if ( '1' === $restriction['partial'] ) {
+            if ('1' === $restriction['partial']) {
                 if (strpos($t_username, $restriction['name']) !== false) {
                     $nameokay = false;
                 }
             } else {
-                if ( $t_username === $restriction['name'] ) {
+                if ($t_username === $restriction['name']) {
                     $nameokay = false;
                 }
             }
@@ -400,9 +400,9 @@ function printsetting5($settingDesc, $errorMsg) {
  * @param string $postname   The HTML input name.
  * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
  */
-function input_string_setting( string $dbname, string $postname, bool $htmlencode = true ) {
-    $value = postedVar( $postname, '', $htmlencode, false );
-    input_custom_setting( $dbname, $value );
+function input_string_setting(string $dbname, string $postname, bool $htmlencode = true) {
+    $value = postedVar($postname, '', $htmlencode, false);
+    input_custom_setting($dbname, $value);
 }
 
 /**
@@ -412,9 +412,9 @@ function input_string_setting( string $dbname, string $postname, bool $htmlencod
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $postname The HTML input name.
  */
-function input_int_setting( string $dbname, string $postname ) {
-    $value = (string) formInt( $postname );
-    input_custom_setting( $dbname, $value );
+function input_int_setting(string $dbname, string $postname) {
+    $value = (string) formInt($postname);
+    input_custom_setting($dbname, $value);
 }
 
 /**
@@ -424,9 +424,9 @@ function input_int_setting( string $dbname, string $postname ) {
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $postname The HTML input name.
  */
-function input_onoff_setting( string $dbname, string $postname ) {
-    $value = formOnOff( $postname );
-    input_custom_setting( $dbname, $value );
+function input_onoff_setting(string $dbname, string $postname) {
+    $value = formOnOff($postname);
+    input_custom_setting($dbname, $value);
 }
 
 /**
@@ -436,13 +436,13 @@ function input_onoff_setting( string $dbname, string $postname ) {
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $value
  */
-function input_custom_setting( string $dbname, string $value ) {
+function input_custom_setting(string $dbname, string $value) {
     global $SETTINGS;
 
-    if ( ! isset( $SETTINGS[$dbname] ) ) {
-        \XMB\SQL\addSetting( $dbname, $value );
-    } else if ( $SETTINGS[$dbname] !== $value ) {
-        \XMB\SQL\updateSetting( $dbname, $value );
+    if (! isset($SETTINGS[$dbname])) {
+        \XMB\SQL\addSetting($dbname, $value);
+    } else if ($SETTINGS[$dbname] !== $value) {
+        \XMB\SQL\updateSetting($dbname, $value);
     }
 }
 
