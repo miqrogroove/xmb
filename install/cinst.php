@@ -38,14 +38,16 @@ if (!defined('X_INST_ERR')) {
 }
 
 if (!function_exists('show_act')) {
-    function show_act($act) {
+    function show_act($act)
+    {
         $act .= str_repeat('.', (74-strlen($act)));
         echo '<span class="progress">'.$act;
     }
 }
 
 if (!function_exists('show_result')) {
-    function show_result($type) {
+    function show_result($type)
+    {
         switch($type) {
             case 0:
                 echo '<span class="progressErr">ERROR</span><br />';
@@ -64,7 +66,8 @@ if (!function_exists('show_result')) {
     }
 }
 
-function rmFromDir($path) {
+function rmFromDir($path)
+{
     if (is_dir($path)) {
         $stream = opendir($path);
         while(($file = readdir($stream)) !== false) {

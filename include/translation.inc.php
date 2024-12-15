@@ -36,7 +36,8 @@ if (!defined('IN_CODE')) {
  * @param string $cdata New value and it must be db-escaped!
  * @return bool TRUE on success, FALSE if no translation has been loaded.
  */
-function setNewLangValue($langkey, $cdata) {
+function setNewLangValue($langkey, $cdata)
+{
     global $db, $langfile;
 
     $db->escape_fast($langkey);
@@ -76,7 +77,8 @@ function setNewLangValue($langkey, $cdata) {
  * @param string $cdata is the new value and it must be db-escaped!
  * @return bool TRUE on success.
  */
-function setLangValue($phraseid, $cdata) {
+function setLangValue($phraseid, $cdata)
+{
     global $db, $langfile;
 
     $phraseid = intval($phraseid);
@@ -107,7 +109,8 @@ function setLangValue($phraseid, $cdata) {
  * @param string $langfile Read-Only Variable. Devname of the translation to add to.
  * @return bool TRUE on success, FALSE if the devname does not exist.
  */
-function setManyLangValues(&$lang, &$langfile) {
+function setManyLangValues(&$lang, &$langfile)
+{
     global $db;
 
     // Ensure devname is present in the database.
@@ -168,7 +171,8 @@ function setManyLangValues(&$lang, &$langfile) {
  * @param string $upload Read/Write Variable. Must contain the entire translation file.
  * @return bool TRUE on success.
  */
-function installNewTranslation(&$upload) {
+function installNewTranslation(&$upload)
+{
     global $db, $SETTINGS;
 
     // Perform sanity checks
@@ -282,7 +286,8 @@ function installNewTranslation(&$upload) {
  * @param string $devname Write-Only Variable. Returns the lang_base.devname value.
  * @return string|bool Entire file on success, FALSE otherwise.
  */
-function exportTranslation($langid, &$devname) {
+function exportTranslation($langid, &$devname)
+{
     global $db;
 
     $langid = intval($langid);
@@ -323,7 +328,8 @@ function exportTranslation($langid, &$devname) {
 /**
  * Handles any unexpected configuration that prevented the translation database from loading.
  */
-function langPanic() {
+function langPanic()
+{
     global $SETTINGS;
 
     if (X_SCRIPT == 'upgrade.php') {

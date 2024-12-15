@@ -38,10 +38,11 @@ if ($show_full_info) {
     $versionlong = 'Powered by XMB (Debug Mode)';
 }
 
-function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
+function debugURLsettings($securesetting, $hostsetting, $pathsetting)
+{
     if (!isset($_SERVER['REQUEST_URI'])) {
         if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
-        if (FALSE === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
+        if (false === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
             exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
         } elseif(!extension_loaded('ISAPI') && !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
             exit('Error: FastCGI is missing or not configured on your server.');
@@ -50,22 +51,22 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
         }
     }
 
-    $secure = FALSE;
+    $secure = false;
     if (isset($_SERVER['HTTPS'])) {
         if ($_SERVER['HTTPS'] != 'off') {
-            $secure = TRUE;
+            $secure = true;
         }
     }
     if (substr($hostsetting, 0, 1) == '.') {
         $hostsetting = substr($hostsetting, 1);
     }
     $host = substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':'));
-    if (strpos($host, '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $host)) {
+    if (strpos($host, '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $host)) {
         $host = '';
     }
     $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
 
-    $success = FALSE;
+    $success = false;
     if ($hostsetting !== $host && $host !== 'www.'.$hostsetting) {
         if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
         if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
@@ -77,7 +78,7 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     } elseif (substr($pathsetting, -1) != '/') {
         $reason = 'A forward-slash is required at the end of the URL.';
     } else {
-        $success = TRUE;
+        $success = true;
     }
 
     if (!$success) {
@@ -86,7 +87,8 @@ function debugURLsettings($securesetting, $hostsetting, $pathsetting) {
     }
 }
 
-function printAllQueries() {
+function printAllQueries()
+{
     global $db;
     
     $stuff = array();
@@ -102,7 +104,8 @@ function printAllQueries() {
     return implode("\n", $stuff);
 }
 
-function mysql_syn_highlight($query) {
+function mysql_syn_highlight($query)
+{
     $find = array();
     $replace = array();
 

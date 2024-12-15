@@ -53,10 +53,13 @@ if (X_SADMIN) {
 }
 
 
-/* Admin Panel Functions */
-
-class admin {
-    function rename_user($userfrom, $userto) {
+/**
+ * Admin Panel Functions
+ */
+class admin
+{
+    function rename_user($userfrom, $userto)
+    {
         global $db, $lang, $self, $session;
 
         if (strlen($userto) < 3 || strlen($userto) > 32) {
@@ -152,7 +155,8 @@ class admin {
         return (($self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
     }
 
-    function check_restricted($userto) {
+    function check_restricted($userto)
+    {
         global $db;
 
         $nameokay = true;
@@ -184,7 +188,8 @@ class admin {
     }
 }
 
-function displayAdminPanel() {
+function displayAdminPanel()
+{
     global $lang, $THEME;
 
     ?>
@@ -282,7 +287,8 @@ function displayAdminPanel() {
     <?php
 }
 
-function settingHTML($setting, &$on, &$off) {
+function settingHTML($setting, &$on, &$off)
+{
     global $SETTINGS, $selHTML;
 
     $on = $off = '';
@@ -301,7 +307,8 @@ function settingHTML($setting, &$on, &$off) {
  *
  * @since 1.5.0
  */
-function printsetting1($setname, $varname, $check1, $check2) {
+function printsetting1($setname, $varname, $check1, $check2)
+{
     global $lang, $THEME;
 
     ?>
@@ -322,7 +329,8 @@ function printsetting1($setname, $varname, $check1, $check2) {
  *
  * @since 1.5.0
  */
-function printsetting2($setname, $varname, $value, $size) {
+function printsetting2($setname, $varname, $value, $size)
+{
     global $THEME;
 
     ?>
@@ -338,7 +346,8 @@ function printsetting2($setname, $varname, $value, $size) {
  *
  * @since 1.9.1
  */
-function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=true) {
+function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi = true)
+{
     global $THEME, $selHTML;
 
     foreach($varnames as $key=>$val) {
@@ -362,7 +371,8 @@ function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi=
  *
  * @since 1.9.4
  */
-function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
+function printsetting4($settingDesc, $name, $value, $rows = 5, $cols = 50)
+{
     global $THEME;
 
     ?>
@@ -381,7 +391,8 @@ function printsetting4($settingDesc, $name, $value, $rows=5, $cols=50) {
  *
  * @since 1.9.11
  */
-function printsetting5($settingDesc, $errorMsg) {
+function printsetting5($settingDesc, $errorMsg)
+{
     global $THEME;
 
     ?>
@@ -400,7 +411,8 @@ function printsetting5($settingDesc, $errorMsg) {
  * @param string $postname   The HTML input name.
  * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
  */
-function input_string_setting(string $dbname, string $postname, bool $htmlencode = true) {
+function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
+{
     $value = postedVar($postname, '', $htmlencode, false);
     input_custom_setting($dbname, $value);
 }
@@ -412,7 +424,8 @@ function input_string_setting(string $dbname, string $postname, bool $htmlencode
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $postname The HTML input name.
  */
-function input_int_setting(string $dbname, string $postname) {
+function input_int_setting(string $dbname, string $postname)
+{
     $value = (string) formInt($postname);
     input_custom_setting($dbname, $value);
 }
@@ -424,7 +437,8 @@ function input_int_setting(string $dbname, string $postname) {
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $postname The HTML input name.
  */
-function input_onoff_setting(string $dbname, string $postname) {
+function input_onoff_setting(string $dbname, string $postname)
+{
     $value = formOnOff($postname);
     input_custom_setting($dbname, $value);
 }
@@ -436,7 +450,8 @@ function input_onoff_setting(string $dbname, string $postname) {
  * @param string $dbname The name of the setting as saved in the database.
  * @param string $value
  */
-function input_custom_setting(string $dbname, string $value) {
+function input_custom_setting(string $dbname, string $value)
+{
     global $SETTINGS;
 
     if (! isset($SETTINGS[$dbname])) {
@@ -446,7 +461,8 @@ function input_custom_setting(string $dbname, string $value) {
     }
 }
 
-function readFileAsINI($filename) {
+function readFileAsINI($filename)
+{
     $lines = file($filename);
     foreach($lines as $line_num => $line) {
         $temp = explode("=",$line);
@@ -464,7 +480,8 @@ function readFileAsINI($filename) {
  *
  * @since 1.9.1
  */
-function dump_query($resource, $header=true) {
+function dump_query($resource, $header = true)
+{
     global $altbg2, $altbg1, $db, $cattext;
     if (!$db->error()) {
         $count = $db->num_fields($resource);

@@ -71,7 +71,8 @@ X_INVALID_FILENAME      => $lang['invalidFilename']);
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
  */
-function uploadedFile(string $varname, int $pid = 0, bool $quarantine = false): int {
+function uploadedFile(string $varname, int $pid = 0, bool $quarantine = false): int
+{
     global $attachmentErrors, $self, $SETTINGS;
 
     $usedb = true;
@@ -132,7 +133,8 @@ function uploadedFile(string $varname, int $pid = 0, bool $quarantine = false): 
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int AID of the new attachment on success.  Index into the $attachmentErrors array on failure.
  */
-function remoteFile(string $url, int $pid = 0, bool $quarantine = false): int {
+function remoteFile(string $url, int $pid = 0, bool $quarantine = false): int
+{
     global $attachmentErrors, $self, $SETTINGS;
 
     $usedb = true;
@@ -267,7 +269,8 @@ function remoteFile(string $url, int $pid = 0, bool $quarantine = false): int {
     return $aid;
 }
 
-function private_genericFile(int $pid, bool $usedb, string &$file, string &$filepath, string &$filename, string &$filetype, int $filesize, bool $quarantine) {
+function private_genericFile(int $pid, bool $usedb, string &$file, string &$filepath, string &$filename, string &$filetype, int $filesize, bool $quarantine)
+{
     global $self, $SETTINGS;
 
     // Check if we can store image metadata
@@ -399,7 +402,8 @@ function private_genericFile(int $pid, bool $usedb, string &$file, string &$file
  * @param bool  $quarantine Save this record in a private table for later review?
  * @return mixed
  */
-function doEdits(&$deletes, array $aid_list, int $pid = 0, bool $quarantine = false) {
+function doEdits(&$deletes, array $aid_list, int $pid = 0, bool $quarantine = false)
+{
     $return = true;
     $deletes = array();
     if (! isset($_POST['attachment'])) {
@@ -439,7 +443,8 @@ function doEdits(&$deletes, array $aid_list, int $pid = 0, bool $quarantine = fa
     return $return;
 }
 
-function changeName(int $aid, int $pid, string $newname, bool $quarantine = false) {
+function changeName(int $aid, int $pid, string $newname, bool $quarantine = false)
+{
     if (isValidFilename($newname)) {
         \XMB\SQL\renameAttachment($aid, $newname, $quarantine);
 
@@ -456,7 +461,8 @@ function changeName(int $aid, int $pid, string $newname, bool $quarantine = fals
     }
 }
 
-function copyByPost(int $frompid, int $topid) {
+function copyByPost(int $frompid, int $topid)
+{
     global $db;
 
     if (! X_STAFF) throw new LogicException("Unprivileged access to function");
@@ -498,7 +504,8 @@ function copyByPost(int $frompid, int $topid) {
     }
 }
 
-function private_copyDiskFile($fromaid, $toaid, $subdir) {
+function private_copyDiskFile($fromaid, $toaid, $subdir)
+{
     $path = getFullPathFromSubdir($subdir);
     if ($path != '') {
         if (is_file($path.$fromaid)) {
@@ -507,7 +514,8 @@ function private_copyDiskFile($fromaid, $toaid, $subdir) {
     }
 }
 
-function moveToDB(int $aid, int $pid) {
+function moveToDB(int $aid, int $pid)
+{
     global $db;
 
     if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
@@ -533,7 +541,8 @@ function moveToDB(int $aid, int $pid) {
     unlink($path);
 }
 
-function moveToDisk(int $aid, int $pid) {
+function moveToDisk(int $aid, int $pid)
+{
     global $db;
 
     if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
@@ -575,7 +584,8 @@ function moveToDisk(int $aid, int $pid) {
  * @param int $oldpid The PID number used in the quarantine table `hold_posts`.
  * @param int $newpid The PID number used in the public table `posts`.
  */
-function approve(int $oldpid, int $newpid) {
+function approve(int $oldpid, int $newpid)
+{
     global $db, $SETTINGS;
 
     $aidmap = [];
@@ -633,21 +643,24 @@ function approve(int $oldpid, int $newpid) {
     }
 }
 
-function deleteByID(int $aid, bool $quarantine = false) {
+function deleteByID(int $aid, bool $quarantine = false)
+{
     $thumbs_only = false;
     $aid_list = \XMB\SQL\getAttachmentChildIDs($aid, $thumbs_only, $quarantine);
     $aid_list[] = $aid;
     private_deleteByIDs($aid_list, $quarantine);
 }
 
-function deleteByPost(int $pid, bool $quarantine = false) {
+function deleteByPost(int $pid, bool $quarantine = false)
+{
     $children = true;
     $aid_list = \XMB\SQL\getAttachmentIDsByPost($pid, $children, $quarantine);
     private_deleteByIDs($aid_list, $quarantine);
 }
 
 // Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
-function deleteByThread(int $tid) {
+function deleteByThread(int $tid)
+{
     if (! X_STAFF) throw new LogicException("Unprivileged access to function");
     $tid_list = [$tid];
     $aid_list = \XMB\SQL\getAttachmentIDsByThread($tid_list);
@@ -655,7 +668,8 @@ function deleteByThread(int $tid) {
 }
 
 // Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
-function emptyThread(int $tid, int $notpid) {
+function emptyThread(int $tid, int $notpid)
+{
     if (! X_STAFF) throw new LogicException("Unprivileged access to function");
     $tid_list = [$tid];
     $quarantine = false;
@@ -664,20 +678,23 @@ function emptyThread(int $tid, int $notpid) {
 }
 
 // Important: Call this function BEFORE deleting posts, because it uses a multi-table query.
-function deleteByThreads(array $tid_list, bool $quarantine = false) {
+function deleteByThreads(array $tid_list, bool $quarantine = false)
+{
     if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
     if (empty($tid_list)) return;
     $aid_list = \XMB\SQL\getAttachmentIDsByThread($tid_list, $quarantine);
     private_deleteByIDs($aid_list, $quarantine);
 }
 
-function deleteByUser(string $username, bool $quarantine = false) {
+function deleteByUser(string $username, bool $quarantine = false)
+{
     if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
     $aid_list = \XMB\SQL\getAttachmentIDsByUser($username, $quarantine);
     private_deleteByIDs($aid_list, $quarantine);
 }
 
-function deleteOrphans(): int {
+function deleteOrphans(): int
+{
     global $db;
 
     if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
@@ -698,7 +715,8 @@ function deleteOrphans(): int {
     return count($aid_list);
 }
 
-function private_deleteByIDs(array $aid_list, bool $quarantine = false) {
+function private_deleteByIDs(array $aid_list, bool $quarantine = false)
+{
     global $db;
     
     if (empty($aid_list)) return;
@@ -736,7 +754,8 @@ function private_deleteByIDs(array $aid_list, bool $quarantine = false) {
  * @param bool   $loadfile Optional. When set to TRUE, the uploaded file will be loaded into memory and returned as a string value.
  * @return string|bool The uploaded file or an empty string will be returned on success. FALSE on failure. Uses param $loadfile.
  */
-function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape = false, $loadfile=TRUE) {
+function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape = false, $loadfile = true)
+{
     global $SETTINGS;
 
     if ($dbescape) {
@@ -834,7 +853,8 @@ function getUpload($varname, &$filename, &$filetype, &$filesize, bool $dbescape 
     return $attachment;
 }
 
-function getURL(int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false): string {
+function getURL(int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false): string
+{
     global $full_url, $SETTINGS;
 
     if ($SETTINGS['files_virtual_url'] == '') {
@@ -879,7 +899,8 @@ function getURL(int $aid, int $pid, string $filename, bool $htmlencode = true, b
     return $url;
 }
 
-function getSizeFormatted($attachsize) {
+function getSizeFormatted($attachsize)
+{
     if ($attachsize >= 1073741824) {
         $attachsize = round($attachsize / 1073741824, 2)."GB";
     } else if ($attachsize >= 1048576) {
@@ -899,7 +920,8 @@ function getSizeFormatted($attachsize) {
  * @param string $date Optional. Unix timestamp of the attachment, if not now.
  * @return string
  */
-function getNewSubdir(string $date = '') {
+function getNewSubdir(string $date = '')
+{
     global $SETTINGS;
     if ('' == $date) {
         $timestamp = time();
@@ -926,7 +948,8 @@ function getNewSubdir(string $date = '') {
  * @param bool   $mkdir  Optional.  TRUE causes specified subdirectory to be created.
  * @return string May be empty if file storage not enabled.
  */
-function getFullPathFromSubdir(string $subdir, bool $mkdir = false): string {
+function getFullPathFromSubdir(string $subdir, bool $mkdir = false): string
+{
     global $SETTINGS;
 
     $path = $SETTINGS['files_storage_path'];
@@ -959,7 +982,8 @@ function getFullPathFromSubdir(string $subdir, bool $mkdir = false): string {
  * @param string $path Optional. Directory of preferred temporary file location.
  * @return string Full path to the temporary file.
  */
-function getTempFile(string $path = ''): string {
+function getTempFile(string $path = ''): string
+{
     global $attachmentErrors;
 
     $filepath = false;
@@ -996,7 +1020,8 @@ function getTempFile(string $path = ''): string {
  * @param string $subdir     Optional. Subdirectory to use inside the file storage path, or null string to store it in the database.
  * @return bool
  */
-function createThumbnail(string $filename, string $filepath, int $filesize, CartesianSize $imgSize, bool $quarantine = false, int $aid = 0, int $pid = 0, string $subdir = '') {
+function createThumbnail(string $filename, string $filepath, int $filesize, CartesianSize $imgSize, bool $quarantine = false, int $aid = 0, int $pid = 0, string $subdir = '')
+{
     global $self, $SETTINGS;
 
     // Determine if a thumbnail is needed.
@@ -1080,7 +1105,8 @@ function createThumbnail(string $filename, string $filepath, int $filesize, Cart
  * @param bool   $enlarge_if_smaller Do you want to resize the image if it's smaller than both $width and $height?
  * @return resource|bool The image GD resource on success.  FALSE when $path is not an image file, or if the image is larger than $SETTINGS['max_image_size'].
  */
-function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool $load_if_smaller = FALSE, bool $enlarge_if_smaller = FALSE) {
+function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool $load_if_smaller = FALSE, bool $enlarge_if_smaller = FALSE)
+{
     global $SETTINGS;
 
     // Check if GD is available
@@ -1170,7 +1196,8 @@ function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool 
     return $thumb;
 }
 
-function regenerateThumbnail(int $aid, int $pid, bool $quarantine = false) {
+function regenerateThumbnail(int $aid, int $pid, bool $quarantine = false)
+{
     global $SETTINGS;
 
     // Write attachment to disk
@@ -1252,7 +1279,8 @@ function regenerateThumbnail(int $aid, int $pid, bool $quarantine = false) {
     return TRUE;
 }
 
-function deleteThumbnail(int $aid, bool $quarantine = false) {
+function deleteThumbnail(int $aid, bool $quarantine = false)
+{
     $thumbs = true;
     $aid_list = \XMB\SQL\getAttachmentChildIDs($aid, $thumbs, $quarantine);
     private_deleteByIDs($aid_list, $quarantine);
@@ -1263,48 +1291,58 @@ function deleteThumbnail(int $aid, bool $quarantine = false) {
  *
  * @since 1.9.11
  */
-class CartesianSize {
+class CartesianSize
+{
     private $height;
     private $width;
 
-    public function __construct(int $width = 0, int $height = 0) {
+    public function __construct(int $width = 0, int $height = 0)
+    {
         $this->height = $height;
         $this->width = $width;
     }
 
-    public function aspect() {
+    public function aspect()
+    {
         return $this->width / $this->height;
     }
 
-    public function getHeight(): int {
+    public function getHeight(): int
+    {
         return $this->height;
     }
 
-    public function getWidth(): int {
+    public function getWidth(): int
+    {
         return $this->width;
     }
 
-    public function isBiggerThan(CartesianSize $otherSize) {
+    public function isBiggerThan(CartesianSize $otherSize)
+    {
         // Would overload '>' operator
         return ($this->width > $otherSize->getWidth() || $this->height > $otherSize->getHeight());
     }
 
-    public function isSmallerThan(CartesianSize $otherSize) {
+    public function isSmallerThan(CartesianSize $otherSize)
+    {
         // Would overload '<=' operator
         return ($this->width <= $otherSize->getWidth() && $this->height <= $otherSize->getHeight());
     }
     
-    public function fromArray(array $input): bool {
+    public function fromArray(array $input): bool
+    {
         $this->width = (int) $input[0];
         $this->height = (int) $input[1];
         return ($this->width > 0 && $this->height > 0);
     }
     
-    public function fromString(string $input): bool {
+    public function fromString(string $input): bool
+    {
         return $this->fromArray(explode('x', $input));
     }
     
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return $this->width . 'x' . $this->height;
     }
 }
@@ -1318,7 +1356,8 @@ class CartesianSize {
  * @param bool $quarantine Save this record in a private table for later review?
  * @return mixed True on success, or error code from remoteFile().
  */
-function remoteImages(int $pid, string &$message, bool $quarantine = false) {
+function remoteImages(int $pid, string &$message, bool $quarantine = false)
+{
     // Sanity Checks
     if (!ini_get('allow_url_fopen')) {
         return TRUE;

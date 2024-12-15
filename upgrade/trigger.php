@@ -119,7 +119,8 @@ echo "\nDone.</body></html>";
  *
  * @param string $text Description of current progress.
  */
-function show_progress($text) {
+function show_progress($text)
+{
 	$result = file_put_contents(LOG_FILE, "\r\n$text...", FILE_APPEND);
 	if (false === $result) {
 		echo 'Unable to write to file ' . LOG_FILE;
@@ -132,7 +133,8 @@ function show_progress($text) {
  *
  * @param string $text
  */
-function show_warning($text) {
+function show_warning($text)
+{
 	$result = file_put_contents(LOG_FILE, "\r\n<b>$text</b>", FILE_APPEND);
 	if (false === $result) {
 		echo 'Unable to write to file ' . LOG_FILE;
@@ -145,7 +147,8 @@ function show_warning($text) {
  *
  * @param string $text Description of current progress.
  */
-function show_error($text) {
+function show_error($text)
+{
     file_put_contents(LOG_FILE, "\r\n$text<!-- error -->", FILE_APPEND);
 }
 
@@ -154,6 +157,7 @@ function show_error($text) {
  *
  * @param string $text Description of current progress.
  */
-function show_finished($text) {
+function show_finished($text)
+{
     file_put_contents(LOG_FILE, "\r\n$text<!-- done. -->", FILE_APPEND);
 }

@@ -33,7 +33,8 @@ if (!defined('IN_CODE')) {
  * @since 1.9.10
  * @param bool $invisible Optional. Result of the 'Browse the board invisible' option at login.
  */
-function loginUser($invisible = null) {
+function loginUser($invisible = null)
+{
     global $self, $session, $db, $lastvisit;
 
     if ($session->getStatus() !== 'good') return;
@@ -62,7 +63,8 @@ function loginUser($invisible = null) {
  * @param  string $serror Optional. Informs this function if any session errors occurred before authenticating.
  * @return bool
  */
-function elevateUser(bool $force_inv = false, string $serror = '') {
+function elevateUser(bool $force_inv = false, string $serror = '')
+{
     global $xmbuser, $self, $session, $db, $SETTINGS, $status_enum, $onlinetime;
 
     $maxurl = 150; //Schema constant.
@@ -204,7 +206,8 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
  * @param array $member The member's database record.
  * @return string Specific error codes, otherwise 'good'.
  */
-function loginAuthorization(array $member): string {
+function loginAuthorization(array $member): string
+{
     global $serror;
     
     $guess_limit = 10;
@@ -236,7 +239,8 @@ function loginAuthorization(array $member): string {
  * @since 1.9.12
  * @param array $member The member's database record.
  */
-function auditBadLogin(array $member) {
+function auditBadLogin(array $member)
+{
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
     $reset_timer = 86400;
@@ -271,7 +275,8 @@ function auditBadLogin(array $member) {
  * @since 1.9.12
  * @param array $member The member's database record.
  */
-function auditBadSession(array $member) {
+function auditBadSession(array $member)
+{
     $reset_timer = 86400;
     
     if (time() > (int) $member['bad_login_date'] + $reset_timer) {
@@ -287,7 +292,8 @@ function auditBadSession(array $member) {
  * @param string $devname Name specified by XMB for internal use (usually written in English).
  * @return bool
  */
-function loadLang($devname = "English") {
+function loadLang($devname = "English")
+{
     global $charset, $db, $lang, $langfile;
 
     $db->escape_fast($devname);
@@ -321,7 +327,8 @@ function loadLang($devname = "English") {
  * @param array $langkeys Of strings, used as the $lang array key.
  * @return array Associative indexes lang_base.devname and lang_keys.langkey.
  */
-function loadPhrases($langkeys) {
+function loadPhrases($langkeys)
+{
     global $db;
 
     $csv = "'".implode("', '", $langkeys)."'";
@@ -347,7 +354,8 @@ function loadPhrases($langkeys) {
     }
 }
 
-function nav($add=false, $raquo=true) {
+function nav($add=false, $raquo=true)
+{
     global $navigation;
 
     if (!$add) {
@@ -357,7 +365,8 @@ function nav($add=false, $raquo=true) {
     }
 }
 
-function template($name) {
+function template($name)
+{
     global $db, $comment_output;
 
     $db->escape_fast($name);
@@ -389,7 +398,8 @@ function template($name) {
     }
 }
 
-function templatecache(int $type, string $name, string $data = '') {
+function templatecache(int $type, string $name, string $data = '')
+{
     static $cache;
 
     switch($type) {
@@ -407,7 +417,8 @@ function templatecache(int $type, string $name, string $data = '') {
     }
 }
 
-function loadtemplates() {
+function loadtemplates()
+{
     global $db;
 
     if (func_num_args() < 1) {
@@ -433,7 +444,8 @@ function loadtemplates() {
  * @param int    $ttl    Validity time in seconds.
  * @return string
  */
-function template_secure(string $name, string $action, string $id, int $ttl) {
+function template_secure(string $name, string $action, string $id, int $ttl)
+{
     $token = \XMB\Token\create($action, $id, $ttl);
     $placeholder = '<input type="hidden" name="token" value="" />';
     $replace = "<input type='hidden' name='token' value='$token' />";
@@ -449,7 +461,8 @@ function template_secure(string $name, string $action, string $id, int $ttl) {
  * @param int    $expire Deprecated.
  * @param bool   $error_header Display header template on errors?
  */
-function request_secure(string $action, string $id, int $expire = 0, bool $error_header = false) {
+function request_secure(string $action, string $id, int $expire = 0, bool $error_header = false)
+{
     global $lang;
 
     if (0 != $expire) {
@@ -468,7 +481,8 @@ function request_secure(string $action, string $id, int $expire = 0, bool $error
  *
  * template_key() is no longer needed because we can now store more information in the tokens table.
  */
-function template_key($action, $id) {
+function template_key($action, $id)
+{
     trigger_error('template_key() is deprecated in this version of XMB.', E_USER_DEPRECATED);
 
     $id_len = X_NONCE_KEY_LEN - strlen($action);
@@ -480,7 +494,8 @@ function template_key($action, $id) {
     return $action . $id;
 }
 
-function censor($txt) {
+function censor($txt)
+{
     global $censorcache;
 
     $ignorespaces = TRUE;
@@ -510,7 +525,8 @@ function censor($txt) {
 /**
  * @since 1.9.1
  */
-function smile(&$txt) {
+function smile(&$txt)
+{
     global $smiliesnum, $smiliecache, $THEME;
 
     if (0 == $smiliesnum) {
@@ -549,7 +565,8 @@ function smile(&$txt) {
  * @since 1.0
  * @param string $message For PHP 8.1 compatibility, null input is no longer allowed.
  */
-function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes") {
+function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes")
+{
     if ('yes' == $allowhtml) {
         trigger_error('The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED);
     }
@@ -609,7 +626,8 @@ function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilie
     return $message;
 }
 
-function bbcode(&$message, $allowimgcode, $allowurlcode) {
+function bbcode(&$message, $allowimgcode, $allowurlcode)
+{
     global $lang, $THEME, $SETTINGS;
 
     //Balance simple tags.
@@ -809,12 +827,13 @@ function bbcode(&$message, $allowimgcode, $allowurlcode) {
  * @param string $message
  * @return array Odd number indexes contain the code block contents.
  */
-function bbcodeCode($message){
+function bbcodeCode($message)
+{
     $counter = 0;
     $offset = 0;
     $done = FALSE;
     $messagearray = array();
-    while(!$done){
+    while (! $done) {
         $pos = strpos($message, '[code]', $offset);
         if (FALSE === $pos) {
             $messagearray[$counter] = substr($message, $offset);
@@ -854,7 +873,8 @@ function bbcodeCode($message){
  * @since 1.9.11.12
  * @param string $input Read/Write Variable
  */
-function xmb_wordwrap(&$input) {
+function xmb_wordwrap(&$input)
+{
     $br = trim(nl2br("\n"));
     $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $input);
     for($i = 0; $i < sizeof($messagearray); $i++) {
@@ -876,7 +896,8 @@ function xmb_wordwrap(&$input) {
  * @param string $message Read/Write Variable
  * @param array $regex Indexed by code name
  */
-function bbcodeBalanceTags(&$message, $regex){
+function bbcodeBalanceTags(&$message, $regex)
+{
     foreach($regex as $code => $pattern) {
         if (is_array($pattern)) {
             $open = 0;
@@ -909,7 +930,8 @@ function bbcodeBalanceTags(&$message, $regex){
  * @param array $url Expects $url[0] to be the raw BBCode, $url[1] to be the URL only, and optionally $url[2] to be the display text.
  * @return string The HTML replacement for $url[0] if the code was valid, else the code is unchaged.
  */
-function bbcodeLongURLs(array $url): string {
+function bbcodeLongURLs(array $url): string
+{
     $url_max_display_len = 60;
     $scheme_whitelist = array('http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'svn');
 
@@ -942,7 +964,8 @@ function bbcodeLongURLs(array $url): string {
  *
  * @since 1.9.11
  */
-function bbcodeSizeTags(array $matches): string {
+function bbcodeSizeTags(array $matches): string
+{
     $relative = (int) $matches[1];
     $o = fontSize($relative);
 
@@ -964,7 +987,8 @@ function bbcodeSizeTags(array $matches): string {
  * @param bool   $bBBcodeOnForThisPost
  * @param bool   $quarantine Are these files in a private table for later review?
  */
-function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false) {
+function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false)
+{
     global $lang, $SETTINGS;
 
     $count = 0;
@@ -1036,8 +1060,8 @@ function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcode
  * @param bool $override Whether to just return 'Moderator', for example by passing a boolean user level.
  * @return string Either 'Moderator' or an empty string.
  */
-function modcheck($username, $mods, $override=X_SMOD) {
-
+function modcheck($username, $mods, $override=X_SMOD)
+{
     $retval = '';
     if ($override) {
         $retval = 'Moderator';
@@ -1064,7 +1088,8 @@ function modcheck($username, $mods, $override=X_SMOD) {
  * @param string $origstatus The members.status value for the author of the post.
  * @return string Either 'Moderator' or an empty string.
  */
-function modcheckPost($username, $mods, $origstatus) {
+function modcheckPost($username, $mods, $origstatus)
+{
     global $SETTINGS;
     $retval = modcheck($username, $mods);
 
@@ -1094,7 +1119,8 @@ function modcheckPost($username, $mods, $origstatus) {
 
 // As of version 1.9.11, function forum() is not responsible for any permissions checking.
 // Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
-function forum($forum, $template, $index_subforums) {
+function forum($forum, $template, $index_subforums)
+{
     global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
@@ -1188,7 +1214,8 @@ function forum($forum, $template, $index_subforums) {
  * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
  * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
  */
-function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
+function multipage($num, $perpage, $baseurl, $canonical = TRUE)
+{
     global $cookiepath, $full_url, $lang, $url;
 
     // Initialize
@@ -1235,7 +1262,8 @@ function multipage($num, $perpage, $baseurl, $canonical = TRUE) {
  * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
  * @return string HTML links. Empty string if the $lastpage parameter was <= 1 or $page was invalid.
  */
-function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
+function multi($page, $lastpage, &$mpurl, $isself = TRUE)
+{
     global $lang;
 
     $multipage = $lang['textpages'];
@@ -1324,11 +1352,13 @@ function multi($page, $lastpage, &$mpurl, $isself = TRUE) {
     return $multipage;
 }
 
-function quickpage($things, $thingsperpage) {
+function quickpage($things, $thingsperpage)
+{
     return ((($things > 0) && ($thingsperpage > 0) && ($things > $thingsperpage)) ? ceil($things / $thingsperpage) : 1);
 }
 
-function smilieinsert($type='normal') {
+function smilieinsert($type='normal')
+{
     global $db, $SETTINGS, $THEME, $smiliesnum, $smiliecache;
 
     $counter = 0;
@@ -1387,7 +1417,8 @@ function smilieinsert($type='normal') {
 /**
  * @since 1.5
  */
-function updateforumcount($fid) {
+function updateforumcount($fid)
+{
     global $db;
     $fid = (int) $fid;
 
@@ -1407,7 +1438,8 @@ function updateforumcount($fid) {
 /**
  * @since 1.5
  */
-function updatethreadcount($tid) {
+function updatethreadcount($tid)
+{
     global $db;
     $tid = (int) $tid;
     $quarantine = false;
@@ -1433,7 +1465,8 @@ function updatethreadcount($tid) {
     $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
 
-function smcwcache() {
+function smcwcache()
+{
     global $db, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
     static $cached;
 
@@ -1472,7 +1505,8 @@ function smcwcache() {
 /**
  * Generates sub-templates in the $footerstuff global array.
  */
-function end_time() {
+function end_time()
+{
     global $db, $footerstuff, $lang, $starttime, $SETTINGS;
 
     $mtime2 = explode(' ', microtime());
@@ -1522,7 +1556,8 @@ function end_time() {
     }
 }
 
-function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
+function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER)
+{
     if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
         error('Tried to redirect to potentially insecure url.');
     }
@@ -1556,7 +1591,8 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
  * @param string $filename
  * @return string
  */
-function get_extension($filename) {
+function get_extension($filename)
+{
     $a = explode('.', $filename);
     $count = count($a);
     if ($count == 1) {
@@ -1566,7 +1602,8 @@ function get_extension($filename) {
     }
 }
 
-function ServerLoad() {
+function ServerLoad()
+{
     if ($stats = @exec('uptime')) {
         $parts = explode(',', $stats);
         $count = count($parts);
@@ -1579,7 +1616,8 @@ function ServerLoad() {
     }
 }
 
-function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
+function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
+{
     global $footerstuff, $navigation; // Used by nav() and end_time()
 
     if (isset($GLOBALS)) {
@@ -1638,7 +1676,8 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     return $return;
 }
 
-function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true) {
+function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
+{
     global $footerstuff, $navigation; // Used by nav() and end_time()
 
     if (isset($GLOBALS)) {
@@ -1702,7 +1741,8 @@ function message($msg, $showheader=true, $prepend='', $append='', $redirect=fals
  *
  * @since 1.9.1
  */
-function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false) {
+function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false)
+{
     global $cookiepath, $cookiedomain, $cookiesecure;
 
     // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
@@ -1743,7 +1783,8 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
  * @param int $tid The thread ID used.
  * @param int $timestamp The time of the log entry.
  */
-function audit(string $user, string $action, int $fid = 0, int $tid = 0) {
+function audit(string $user, string $action, int $fid = 0, int $tid = 0)
+{
     global $onlinetime;
 
     $action = cdataOut($action);
@@ -1753,7 +1794,8 @@ function audit(string $user, string $action, int $fid = 0, int $tid = 0) {
     return true;
 }
 
-function validatePpp() {
+function validatePpp()
+{
     global $ppp, $postperpage;
 
     if (empty($ppp) || ! is_numeric($ppp)) {
@@ -1767,7 +1809,8 @@ function validatePpp() {
     }
 }
 
-function validateTpp() {
+function validateTpp()
+{
     global $tpp, $topicperpage;
 
     if (empty($tpp) || ! is_numeric($tpp)) {
@@ -1789,7 +1832,8 @@ function validateTpp() {
  * @since 1.9.2
  * @return bool Success
  */
-function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '') {
+function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '')
+{
     global $mailer, $SETTINGS;
     static $handlers;
 
@@ -1857,7 +1901,8 @@ function altMail(string $to, string $subject, string $message, string $additiona
     }
 }
 
-function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...') {
+function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...')
+{
     if (strlen($string) > $len) {
         if (($shortType & X_SHORTEN_SOFT) === X_SHORTEN_SOFT) {
             $string = preg_replace('#^(.{0,'.$len.'})([\W].*)#', '\1'.$ps, $string);
@@ -1872,7 +1917,8 @@ function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...') 
     }
 }
 
-function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
+function printGmDate($timestamp=null, $altFormat=null, $altOffset=0)
+{
     global $dateformat, $SETTINGS, $timeoffset;
 
     if ($timestamp === null) {
@@ -1895,7 +1941,8 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0) {
     }
 }
 
-function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
+function printGmTime($timestamp=null, $altFormat=null, $altOffset=0)
+{
     global $self, $SETTINGS, $timeoffset, $timecode;
 
     if ($timestamp === null) {
@@ -1909,7 +1956,8 @@ function printGmTime($timestamp=null, $altFormat=null, $altOffset=0) {
     }
 }
 
-function MakeTime() {
+function MakeTime()
+{
    $objArgs = func_get_args();
    $nCount = count($objArgs);
    if ($nCount < 7) {
@@ -1945,7 +1993,8 @@ function MakeTime() {
    return call_user_func_array("gmmktime", $objArgs) + $nOffset;
 }
 
-function iso8601_date($year=0, $month=0, $day=0) {
+function iso8601_date($year=0, $month=0, $day=0)
+{
     $year = (int) $year;
     $month = (int) $month;
     $day = (int) $day;
@@ -1969,7 +2018,8 @@ function iso8601_date($year=0, $month=0, $day=0) {
     return str_pad($year, 4, '0', STR_PAD_LEFT).'-'.str_pad($month, 2, '0', STR_PAD_LEFT).'-'.str_pad($day, 2, '0', STR_PAD_LEFT);
 }
 
-function month2text($num) {
+function month2text($num)
+{
     global $lang;
 
     $num = (int) $num;
@@ -2002,7 +2052,8 @@ function month2text($num) {
  *
  * @return object
  */
-function forumCache() {
+function forumCache()
+{
     global $db;
     static $cache = FALSE;
 
@@ -2022,7 +2073,8 @@ function forumCache() {
 /**
  * Creates an associative array for the specified forum.
  */
-function getForum($fid) {
+function getForum($fid)
+{
     global $db;
 
     $forums = forumCache();
@@ -2049,7 +2101,8 @@ function getForum($fid) {
  * @param bool $usePerms If TRUE then not all forums are returned, only visible forums.
  * @return array
  */
-function getStructuredForums($usePerms=FALSE) {
+function getStructuredForums($usePerms=FALSE)
+{
     global $db;
 
     if ($usePerms) {
@@ -2086,7 +2139,8 @@ function getStructuredForums($usePerms=FALSE) {
  * @param bool $user_status Optional masquerade value passed to checkForumPermissions().
  * @return array
  */
-function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE) {
+function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE)
+{
     global $db, $SETTINGS;
 
     $permitted = array();
@@ -2149,7 +2203,8 @@ function permittedForums($forums, $mode='thread', $output='array', $check_parent
     return $permitted;
 }
 
-function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0) {
+function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0)
+{
     global $lang;
 
     // Initialize $forumselect
@@ -2201,7 +2256,8 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     return implode("\n", $forumselect);
 }
 
-function forumJump() {
+function forumJump()
+{
     global $fid, $lang, $selHTML;
 
     // Initialize $forumselect
@@ -2271,7 +2327,8 @@ function forumJump() {
  * @param string $user_status_in Optional. Masquerade as this user status, e.g. 'Guest'
  * @return array Of bools, indexed by X_PERMS_* constants.
  */
-function checkForumPermissions($forum, $user_status_in=FALSE) {
+function checkForumPermissions($forum, $user_status_in=FALSE)
+{
     global $self, $status_enum;
 
     if (is_string($user_status_in)) {
@@ -2349,12 +2406,14 @@ function checkForumPermissions($forum, $user_status_in=FALSE) {
  * @param int $bitfield Enumerated by X_PERMS_RAW* constants.  Other X_PERMS_* values will not work!
  * @return bool
  */
-function getOneForumPerm($forum, $bitfield) {
+function getOneForumPerm($forum, $bitfield)
+{
     $pp = explode(',', $forum['postperm']);
     return $pp[$bitfield];
 }
 
-function handlePasswordDialog($fid) {
+function handlePasswordDialog($fid)
+{
     global $db, $full_url, $url, $THEME, $lang;
 
     $fid = intval($fid);
@@ -2376,7 +2435,8 @@ function handlePasswordDialog($fid) {
     }
 }
 
-function createLangFileSelect($currentLangFile) {
+function createLangFileSelect($currentLangFile)
+{
     global $db;
 
     $lfs = array();
@@ -2403,7 +2463,8 @@ function createLangFileSelect($currentLangFile) {
  * @param int $fid Optional. Current FID number used to create a context-sensitive search.
  * @return string Empty string if the forum search page is disabled.
  */
-function makeSearchLink($fid=0) {
+function makeSearchLink($fid=0)
+{
     global $THEME, $lang, $SETTINGS;
 
     $fid = intval($fid);
@@ -2426,7 +2487,8 @@ function makeSearchLink($fid=0) {
  *
  * @param string $relURI Path to the current page, relative to the base href (see header.php).
  */
-function setCanonicalLink($relURI) {
+function setCanonicalLink($relURI)
+{
     global $canonical_link, $cookiepath, $url;
 
     $testurl = $cookiepath;
@@ -2438,7 +2500,8 @@ function setCanonicalLink($relURI) {
     }
 }
 
-function phpShorthandValue($ininame) {
+function phpShorthandValue($ininame)
+{
     $rawstring = trim(ini_get($ininame));
     $rchr = strtoupper(substr($rawstring, -1));
     $value = (int) $rawstring;
@@ -2466,7 +2529,8 @@ function phpShorthandValue($ininame) {
  * @param string $fromaddress Must be a fully validated e-mail address.
  * @return string
  */
-function smtpHeaderFrom($fromname, $fromaddress) {
+function smtpHeaderFrom($fromname, $fromaddress)
+{
     $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
     return 'From: "'.$fromname.'" <'.$fromaddress.'>';
 }
@@ -2483,7 +2547,8 @@ function smtpHeaderFrom($fromname, $fromaddress) {
  * @param string $key The known value, such as what the nonce may be used for.
  * @return string
  */
-function nonce_create($key) {
+function nonce_create($key)
+{
     global $db, $self;
 
     $key = substr($key, 0, X_NONCE_KEY_LEN);
@@ -2503,7 +2568,8 @@ function nonce_create($key) {
  * @param  int    $key_length The known length of the key.
  * @return string The key value.
  */
-function nonce_peek($nonce, $key_length) {
+function nonce_peek($nonce, $key_length)
+{
     global $db;
 
     $key_length = (int) $key_length;
@@ -2531,7 +2597,8 @@ function nonce_peek($nonce, $key_length) {
  * @param int    $expire Optional. Number of seconds for which any nonce having the same $key will be valid.
  * @return bool True only if the user provided a unique nonce for the key/nonce pair.
  */
-function nonce_use($key, $nonce, $expire = 0) {
+function nonce_use($key, $nonce, $expire = 0)
+{
     global $db;
 
     $key = substr($key, 0, X_NONCE_KEY_LEN);
@@ -2557,7 +2624,8 @@ function nonce_use($key, $nonce, $expire = 0) {
  * @since 1.9.11.15
  * @return string Regular expression for a user-provided URL to an image.
  */
-function get_img_regexp(bool $https_only = false): string {
+function get_img_regexp(bool $https_only = false): string
+{
     if ($https_only) {
         return '(https):\/\/([:a-z\.\/_\-0-9%~]+)(\?[a-z=0-9&_\-;~]*)?';
     } else {
@@ -2572,7 +2640,8 @@ function get_img_regexp(bool $https_only = false): string {
  * @param string $site The members.site value retrieved from the database.
  * @return string A URL or an empty string.
  */
-function format_member_site($site) {
+function format_member_site($site)
+{
     $site = trim($site);
     $length = strlen($site);
 
@@ -2606,7 +2675,8 @@ function format_member_site($site) {
  * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
  * @return bool
  */
-function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false) {
+function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false)
+{
     global $self, $bbname, $adminemail, $cookiedomain;
 
     if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
@@ -2648,7 +2718,8 @@ function xmb_mail(string $to, string $subject, string $message, string $charset,
  * @param string $offset Must be in the MySQL Decimal format with 2 places after the decimal.
  * @return string HTML
  */
-function timezone_control(string $offset): string {
+function timezone_control(string $offset): string
+{
     global $lang, $selHTML;
     
     $total = 37;
@@ -2785,7 +2856,8 @@ function timezone_control(string $offset): string {
  * @param string $raw
  * @return string
  */
-function parse_user_agent(string $raw): string {
+function parse_user_agent(string $raw): string
+{
     if     (strpos($raw, 'Opera'     ) || strpos($raw, 'OPR/')     ) return 'Opera'            ;
     elseif (strpos($raw, 'Edge'      )                             ) return 'Edge'             ;
     elseif (strpos($raw, 'Chromium'  )                             ) return 'Chromium'         ;
@@ -2802,7 +2874,8 @@ function parse_user_agent(string $raw): string {
  *
  * @since 1.9.12
  */
-function more_theme_vars() {
+function more_theme_vars()
+{
     global $THEME, $SETTINGS;
 
     // Alters certain visibility-variables
@@ -2844,7 +2917,8 @@ function more_theme_vars() {
  * @since 1.9.12
  * @return bool When false the website must not collect any information from the guest.
  */
-function coppa_check(): bool {
+function coppa_check(): bool 
+{
     $privacy =  postedVar('privacy', '', false, false, false, 'c');
     return 'xmb' != $privacy;
 }
@@ -2856,7 +2930,8 @@ function coppa_check(): bool {
  * @param array $matches Expects $matches[0] to be the raw BBCode, $matches[1] to be the URL only, and optionally $matches[2] to be the display text.
  * @return string The HTML replacement for $matches[0].
  */
-function bbcode_emails(array $matches): string {
+function bbcode_emails(array $matches): string
+{
     $text = $matches[2] ?? $matches[1];
     $address = bbcode_out($matches[1]);
 
@@ -2870,7 +2945,8 @@ function bbcode_emails(array $matches): string {
  * @param array $matches Expects different elements depending on the pattern.
  * @return string The HTML replacement for $matches[0].
  */
-function bbcode_imgs(array $matches): string {
+function bbcode_imgs(array $matches): string
+{
     if (count($matches) < 5) {
         $width = 0;
         $height = 0;
@@ -2904,7 +2980,8 @@ function bbcode_imgs(array $matches): string {
  * @since 1.9.12.05
  * @param string|null $var Passed by reference for easier coding.
  */
-function null_string(&$var) {
+function null_string(&$var)
+{
     $var = $var ?? '';
 }
 
@@ -2915,7 +2992,8 @@ function null_string(&$var) {
  * @param int $add Change applied to the theme font size.
  * @return string CSS font size, like '12px'.
  */
-function fontSize(int $add): string {
+function fontSize(int $add): string
+{
     global $THEME;
     static $cachedFs;
 

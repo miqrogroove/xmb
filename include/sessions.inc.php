@@ -38,12 +38,14 @@ if (!defined('IN_CODE')) {
  *
  * @since 1.9.12
  */
-class Data {
+class Data
+{
     public $member;    // Must be the member record array from the database, or an empty array.
     public $permanent; // True if the session should be saved by the client, otherwise false.
     public $status;    // Session input level.  Must be 'good', 'bad', or 'none'.
     
-    public function __construct() {
+    public function __construct() 
+    {
         $this->member = [];
         $this->permanent = false;
         $this->status = 'none';
@@ -59,7 +61,8 @@ class Data {
  *
  * @since 1.9.12
  */
-class Manager {
+class Manager
+{
     private $mechanisms;
     private $status;    // Login failure code, or 'good'.
     private $saved;     // Data object.
@@ -67,7 +70,8 @@ class Manager {
     /**
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      */
-    public function __construct(string $mode) {
+    public function __construct(string $mode) 
+    {
         $this->mechanisms = [new FormsAndCookies];
         $this->status = '';
 
@@ -95,7 +99,8 @@ class Manager {
      * Returns 'good' when the login mode or resume mode is successful.
      * Otherwise, various error codes that must be handled by the caller.
      */
-    public function getStatus(): string {
+    public function getStatus(): string 
+    {
         return $this->status;
     }
 
@@ -104,7 +109,8 @@ class Manager {
      *
      * Provides the member array from the database, or an empty array.
      */
-    public function getMember(): array {
+    public function getMember(): array 
+    {
         return $this->saved->member;
     }
 
@@ -113,7 +119,8 @@ class Manager {
      *
      * Provides an array of arrays, indexed by the name of each Mechanism.
      */
-    public function getSessionLists(): array {
+    public function getSessionLists(): array 
+    {
         $lists = [];
         if ('good' == $this->status) {
             foreach($this->mechanisms as $session) {
@@ -128,7 +135,8 @@ class Manager {
      *
      * @param array $selection Should be structured similar to the return of getSessionLists().
      */
-    public function logoutByLists(array $selection) {
+    public function logoutByLists(array $selection) 
+    {
         if ('good' != $this->status) return;
 
         foreach($this->mechanisms as $session) {
@@ -144,7 +152,8 @@ class Manager {
      *
      * @param string $username If not specified, logs out the member linked to the current session.
      */
-    public function logoutAll(string $username = '') {
+    public function logoutAll(string $username = '') 
+    {
         if ('' == $username) {
             $current_client = true;
             if ('good' == $this->status) {
@@ -163,7 +172,8 @@ class Manager {
     /**
      * Forces creation of a session for a guest user who just completed registration.
      */
-    public function newUser(array $member) {
+    public function newUser(array $member) 
+    {
         $data = new Data();
         $data->member =& $member;
         foreach($this->mechanisms as $session) {
@@ -176,7 +186,8 @@ class Manager {
     /**
      * Initialize the Session Manager for a login action.
      */
-    private function login() {
+    private function login() 
+    {
         $this->status = 'login-no-input';
 
         // First, check that all mechanisms are working and not already in a session.
@@ -241,7 +252,8 @@ class Manager {
     /**
      * Initialize the Session Manager for a logout action.
      */
-    private function logout() {
+    private function logout() 
+    {
 		$this->saved = new Data;
         foreach($this->mechanisms as $session) {
             $data = $session->logout();
@@ -265,7 +277,8 @@ class Manager {
      *
      * Assumes it is only possible to login one mechanism at a time.
      */
-    private function resume() {
+    private function resume()
+    {
         $this->status = 'session-no-input';
 
         // Authenticate any session token.
@@ -315,7 +328,8 @@ class Manager {
  *
  * @since 1.9.12
  */
-interface Mechanism {
+interface Mechanism
+{
     /**
      * Did the client provide a valid ID that matches an XMB member?
      *
@@ -431,8 +445,8 @@ interface Mechanism {
  *
  * @since 1.9.12
  */
-class FormsAndCookies implements Mechanism {
-
+class FormsAndCookies implements Mechanism
+{
     // Mechanism configuration.
     const REGEN_AFTER = 3600;
     const REGEN_ENABLED = true;
@@ -448,7 +462,8 @@ class FormsAndCookies implements Mechanism {
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
     
-    public function checkUsername(): Data {
+    public function checkUsername(): Data
+    {
         $data = new Data;
         $uinput = postedVar('username', '', true, false);
 
@@ -469,7 +484,8 @@ class FormsAndCookies implements Mechanism {
         return $data;
     }
 
-    public function checkPassword(Data $data): Data {
+    public function checkPassword(Data $data): Data
+    {
         $pinput = $_POST['password'];
 
         if (empty($pinput)) {
@@ -489,7 +505,8 @@ class FormsAndCookies implements Mechanism {
         return $data;
     }
 
-    public function checkClientEnabled(): bool {
+    public function checkClientEnabled(): bool
+    {
         $uinput = $this->get_cookie(self::USER_COOKIE);
         $test   = $this->get_cookie(self::TEST_COOKIE);
 
@@ -501,7 +518,8 @@ class FormsAndCookies implements Mechanism {
         }
     }
 
-    public function checkSavedSession(): Data {
+    public function checkSavedSession(): Data
+    {
         $data = new Data;
 
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
@@ -578,7 +596,8 @@ class FormsAndCookies implements Mechanism {
         return $data;
     }
     
-    public function logout(): Data {
+    public function logout(): Data
+    {
         $data = $this->checkSavedSession();
         
         if ('good' == $data->status) {
@@ -602,14 +621,16 @@ class FormsAndCookies implements Mechanism {
         return $data;
     }
     
-    public function logoutAll(string $username, bool $current_client) {
+    public function logoutAll(string $username, bool $current_client)
+    {
         \XMB\SQL\deleteSessionsByName($username);
         if ($current_client) {
             $this->deleteClientData();
         }
     }
     
-    public function deleteClientData() {
+    public function deleteClientData()
+    {
         $this->delete_cookie(self::REGEN_COOKIE);
         $this->delete_cookie(self::SESSION_COOKIE);
         $this->delete_cookie(self::USER_COOKIE);
@@ -632,7 +653,8 @@ class FormsAndCookies implements Mechanism {
      *
      * @param Data
      */
-    public function saveClientData(Data $data): bool {
+    public function saveClientData(Data $data): bool
+    {
         // Create a new session here.
         $token = bin2hex(random_bytes(self::TOKEN_BYTES));
 
@@ -678,7 +700,8 @@ class FormsAndCookies implements Mechanism {
      *
      * @param array $oldsession
      */
-    private function regenerate(array $oldsession) {
+    private function regenerate(array $oldsession)
+    {
         $token = bin2hex(random_bytes(self::TOKEN_BYTES));
 
         $regenerate = time() + self::REGEN_AFTER;
@@ -718,7 +741,8 @@ class FormsAndCookies implements Mechanism {
      *
      * @param array $newsession
      */
-    private function recover(array $newsession) {
+    private function recover(array $newsession)
+    {
         if ((int) $newsession['expire'] > time() + self::SESSION_LIFE_SHORT) {
             $expires = $newsession['expire'];
         } else {
@@ -733,7 +757,8 @@ class FormsAndCookies implements Mechanism {
     /**
      * Deletes all expired tokens in the sessions table.
      */
-    public function collectGarbage() {
+    public function collectGarbage()
+    {
         \XMB\SQL\deleteSessionsByDate(time());
     }
     
@@ -743,7 +768,8 @@ class FormsAndCookies implements Mechanism {
      * @param string $username
      * @return array
      */
-    public function getSessionList(string $username): array {
+    public function getSessionList(string $username): array
+    {
         global $db;
 
         $sessions = [];
@@ -764,18 +790,21 @@ class FormsAndCookies implements Mechanism {
         return $sessions;
     }
 
-    public function logoutByList(string $username, array $selection) {
+    public function logoutByList(string $username, array $selection)
+    {
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
         if (! empty($selection)) {
             \XMB\SQL\deleteSessionsByList($username, $selection, $pinput);
         }
     }
 
-    private function get_cookie(string $name): string {
+    private function get_cookie(string $name): string
+    {
         return postedVar($name, '', false, false, false, 'c');
     }
 
-    private function delete_cookie(string $name) {
+    private function delete_cookie(string $name)
+    {
         if ($this->get_cookie($name) != '') {
             put_cookie($name);
         }

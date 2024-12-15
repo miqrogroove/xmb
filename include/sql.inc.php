@@ -39,7 +39,8 @@ if (!defined('IN_CODE')) {
  *
  * @since 1.9.12
  */
-function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent): bool {
+function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent): bool
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -58,7 +59,8 @@ function saveSession(string $token, string $username, int $date, int $expire, in
  *
  * @since 1.9.12
  */
-function getSession(string $token, string $username): array {
+function getSession(string $token, string $username): array
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -80,7 +82,8 @@ function getSession(string $token, string $username): array {
  * @since 1.9.12
  * @return mysqli_result|bool
  */
-function getSessionsByName(string $username) {
+function getSessionsByName(string $username)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -93,7 +96,8 @@ function getSessionsByName(string $username) {
  *
  * @since 1.9.12
  */
-function deleteSession(string $token) {
+function deleteSession(string $token)
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -106,7 +110,8 @@ function deleteSession(string $token) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByName(string $username) {
+function deleteSessionsByName(string $username)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -119,7 +124,8 @@ function deleteSessionsByName(string $username) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByDate(int $expired) {
+function deleteSessionsByDate(int $expired)
+{
     global $db;
 
     $db->query("DELETE FROM ".X_PREFIX."sessions WHERE expire < $expired");
@@ -130,7 +136,8 @@ function deleteSessionsByDate(int $expired) {
  *
  * @since 1.9.12
  */
-function deleteSessionsByList(string $username, array $ids, string $current_token) {
+function deleteSessionsByList(string $username, array $ids, string $current_token)
+{
     global $db;
 
     if (empty($ids)) return;
@@ -148,7 +155,8 @@ function deleteSessionsByList(string $username, array $ids, string $current_toke
  *
  * @since 1.9.12
  */
-function clearSessionParent(string $token) {
+function clearSessionParent(string $token)
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -161,7 +169,8 @@ function clearSessionParent(string $token) {
  *
  * @since 1.9.12
  */
-function getSessionReplacement(string $token, string $username): array {
+function getSessionReplacement(string $token, string $username): array
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -184,7 +193,8 @@ function getSessionReplacement(string $token, string $username): array {
  * @param array $values Field name & value list.
  * @return int Member ID number.
  */
-function addMember(array $values): int {
+function addMember(array $values): int
+{
     global $db;
 
     // Defaults:
@@ -247,7 +257,8 @@ function addMember(array $values): int {
  * @param string $username Must be HTML encoded.
  * @return array Member record or empty array.
  */
-function getMemberByName(string $username): array {
+function getMemberByName(string $username): array
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -269,7 +280,8 @@ function getMemberByName(string $username): array {
  * @param string $username Must be HTML encoded.
  * @param string $invisible Should be '0' for no or '1' for yes.
  */
-function changeMemberVisibility(string $username, string $invisible) {
+function changeMemberVisibility(string $username, string $invisible)
+{
     global $db;
 
     $db->escape_fast($username);
@@ -286,7 +298,8 @@ function changeMemberVisibility(string $username, string $invisible) {
  *
  * @since 1.9.12
  */
-function countMembers(): int {
+function countMembers(): int
+{
     global $db;
 
     $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members");
@@ -303,7 +316,8 @@ function countMembers(): int {
  * @param string $username
  * @return int The new value of bad_login_count for this member.
  */
-function raiseLoginCounter(string $username): int {
+function raiseLoginCounter(string $username): int
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -318,7 +332,8 @@ function raiseLoginCounter(string $username): int {
  *
  * @since 1.9.12
  */
-function resetLoginCounter(string $username, int $date) {
+function resetLoginCounter(string $username, int $date)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -333,7 +348,8 @@ function resetLoginCounter(string $username, int $date) {
  * @param string $username
  * @return int The new value of bad_session_count for this member.
  */
-function raiseSessionCounter(string $username): int {
+function raiseSessionCounter(string $username): int
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -348,7 +364,8 @@ function raiseSessionCounter(string $username): int {
  *
  * @since 1.9.12
  */
-function resetSessionCounter(string $username, int $date) {
+function resetSessionCounter(string $username, int $date)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -362,7 +379,8 @@ function resetSessionCounter(string $username, int $date) {
  * @since 1.9.12
  * @return array List of row arrays.
  */
-function getSuperEmails(): array {
+function getSuperEmails(): array
+{
     global $db;
 
     $query = $db->query("SELECT username, email, langfile FROM ".X_PREFIX."members WHERE status = 'Super Administrator'");
@@ -381,7 +399,8 @@ function getSuperEmails(): array {
  *
  * @since 1.9.12
  */
-function checkUpgradeOldLogin(string $username, string $password): bool {
+function checkUpgradeOldLogin(string $username, string $password): bool
+{
     global $db;
 
     $sqlpass = $db->escape($password);
@@ -399,7 +418,8 @@ function checkUpgradeOldLogin(string $username, string $password): bool {
  *
  * @since 1.9.12
  */
-function setLostPasswordDate(int $uid, int $date) {
+function setLostPasswordDate(int $uid, int $date)
+{
     global $db;
 
     $db->query("UPDATE ".X_PREFIX."members SET pwdate = $date WHERE uid = $uid");
@@ -410,7 +430,8 @@ function setLostPasswordDate(int $uid, int $date) {
  *
  * @since 1.9.12
  */
-function startMemberQuarantine(int $uid) {
+function startMemberQuarantine(int $uid)
+{
     global $db;
 
     $db->query("UPDATE ".X_PREFIX."members SET waiting_for_mod = 'yes' WHERE uid = $uid");
@@ -421,7 +442,8 @@ function startMemberQuarantine(int $uid) {
  *
  * @since 1.9.12
  */
-function endMemberQuarantine(string $username) {
+function endMemberQuarantine(string $username)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -434,7 +456,8 @@ function endMemberQuarantine(string $username) {
  *
  * @since 1.9.12
  */
-function setNewPassword(string $username, string $password) {
+function setNewPassword(string $username, string $password)
+{
     global $db;
 
     $sqlpass = $db->escape($password);
@@ -448,7 +471,8 @@ function setNewPassword(string $username, string $password) {
  *
  * @since 1.9.12
  */
-function setLastvisit(string $username, int $timestamp) {
+function setLastvisit(string $username, int $timestamp)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -463,7 +487,8 @@ function setLastvisit(string $username, int $timestamp) {
  *
  * @since 1.9.12
  */
-function raisePostCount(string $username, int $timestamp) {
+function raisePostCount(string $username, int $timestamp)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -476,7 +501,8 @@ function raisePostCount(string $username, int $timestamp) {
  *
  * @since 1.9.12
  */
-function unlockMember(string $username) {
+function unlockMember(string $username)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -489,7 +515,8 @@ function unlockMember(string $username) {
  *
  * @since 1.9.12
  */
-function addSetting(string $name, string $value) {
+function addSetting(string $name, string $value)
+{
     global $db;
 
     $sqlname = $db->escape($name);
@@ -503,7 +530,8 @@ function addSetting(string $name, string $value) {
  *
  * @since 1.9.12
  */
-function updateSetting(string $name, string $value) {
+function updateSetting(string $name, string $value)
+{
     global $db;
 
     $sqlname = $db->escape($name);
@@ -517,7 +545,8 @@ function updateSetting(string $name, string $value) {
  *
  * @since 1.9.12
  */
-function deleteSetting(string $name) {
+function deleteSetting(string $name)
+{
     global $db;
 
     $sqlname = $db->escape($name);
@@ -530,7 +559,8 @@ function deleteSetting(string $name) {
  *
  * @since 1.9.12
  */
-function getTemplateByID(int $id): array {
+function getTemplateByID(int $id): array
+{
     global $db;
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."templates WHERE id = $id");
@@ -549,7 +579,8 @@ function getTemplateByID(int $id): array {
  *
  * @since 1.9.12
  */
-function getThemeByID(int $id): array {
+function getThemeByID(int $id): array
+{
     global $db;
 
     $query = $db->query("SELECT * FROM ".X_PREFIX."themes WHERE themeid = $id");
@@ -568,7 +599,8 @@ function getThemeByID(int $id): array {
  *
  * @since 1.9.12
  */
-function raiseThemeVersions() {
+function raiseThemeVersions()
+{
     global $db;
 
     $db->query("UPDATE ".X_PREFIX."themes SET version = version + 1");
@@ -579,7 +611,8 @@ function raiseThemeVersions() {
  *
  * @since 1.9.12
  */
-function addToken(string $token, string $username, string $action, string $object, int $expire): bool {
+function addToken(string $token, string $username, string $action, string $object, int $expire): bool
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -597,7 +630,8 @@ function addToken(string $token, string $username, string $action, string $objec
  *
  * @since 1.9.12
  */
-function deleteToken(string $token, string $username, string $action, string $object): bool {
+function deleteToken(string $token, string $username, string $action, string $object): bool
+{
     global $db;
 
     $sqltoken = $db->escape($token);
@@ -615,7 +649,8 @@ function deleteToken(string $token, string $username, string $action, string $ob
  *
  * @since 1.9.12
  */
-function deleteTokensByDate(int $expire) {
+function deleteTokensByDate(int $expire)
+{
     global $db;
 
     $db->query("DELETE FROM ".X_PREFIX."tokens WHERE expire < $expire");
@@ -629,7 +664,8 @@ function deleteTokensByDate(int $expire) {
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Thread ID number.
  */
-function addThread(array &$values, bool $quarantine = false): int {
+function addThread(array &$values, bool $quarantine = false): int
+{
     global $db;
 
     // Required values:
@@ -682,7 +718,8 @@ function addThread(array &$values, bool $quarantine = false): int {
  *
  * @since 1.9.12
  */
-function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false) {
+function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false)
+{
     global $db;
 
     $sqllast = $db->escape($lastpost);
@@ -697,7 +734,8 @@ function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false)
  *
  * @since 1.9.12.06
  */
-function findLaspostByForum(int $fid): string {
+function findLaspostByForum(int $fid): string
+{
     global $db;
 
     $query = $db->query("SELECT t.lastpost
@@ -723,7 +761,8 @@ function findLaspostByForum(int $fid): string {
  *
  * @since 1.9.12.06
  */
-function setForumCounts(int $fid, int $postcount, int $threadcount, string $lastpost) {
+function setForumCounts(int $fid, int $postcount, int $threadcount, string $lastpost)
+{
     global $db;
 
     $db->escape_fast($lastpost);
@@ -736,7 +775,8 @@ function setForumCounts(int $fid, int $postcount, int $threadcount, string $last
  *
  * @since 1.9.12
  */
-function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int {
+function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -759,7 +799,8 @@ function countThreadsByUser(string $username, int $fid, bool $quarantine = false
  * @param bool $qthread When starting a quarantined thread, we need to know not to use the tid field for the post to prevent ID collisions.
  * @return int Post ID number.
  */
-function addPost(array &$values, bool $quarantine = false, bool $qthread = false): int {
+function addPost(array &$values, bool $quarantine = false, bool $qthread = false): int
+{
     global $db;
 
     // Required values:
@@ -799,7 +840,8 @@ function addPost(array &$values, bool $quarantine = false, bool $qthread = false
  *
  * @since 1.9.12
  */
-function savePostBody(int $pid, string $body, bool $quarantine = false) {
+function savePostBody(int $pid, string $body, bool $quarantine = false)
+{
     global $db;
 
     $sqlbody = $db->escape($body);
@@ -814,7 +856,8 @@ function savePostBody(int $pid, string $body, bool $quarantine = false) {
  *
  * @since 1.9.12
  */
-function getPostBody(int $pid, bool $quarantine = false): string {
+function getPostBody(int $pid, bool $quarantine = false): string
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
@@ -838,7 +881,8 @@ function getPostBody(int $pid, bool $quarantine = false): string {
  * @param int    $before     Optional. Timestamp of latest post to include in the count. Since 1.9.12.07.
  * @return int
  */
-function countPosts(bool $quarantine = false, int $tid = 0, string $username = '', int $before = 0): int {
+function countPosts(bool $quarantine = false, int $tid = 0, string $username = '', int $before = 0): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_posts' : X_PREFIX.'posts';
@@ -873,7 +917,8 @@ function countPosts(bool $quarantine = false, int $tid = 0, string $username = '
  *
  * @since 1.9.12
  */
-function addFavoriteIfMissing(int $tid, string $username, string $type, bool $quarantine = false) {
+function addFavoriteIfMissing(int $tid, string $username, string $type, bool $quarantine = false)
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -896,7 +941,8 @@ function addFavoriteIfMissing(int $tid, string $username, string $type, bool $qu
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Attachment ID number.
  */
-function addAttachment(array &$values, bool $quarantine = false): int {
+function addAttachment(array &$values, bool $quarantine = false): int
+{
     global $db;
 
     // Required values:
@@ -948,7 +994,8 @@ function addAttachment(array &$values, bool $quarantine = false): int {
  *
  * @since 1.9.12
  */
-function approveAttachment(int $oldaid, int $newpid, int $newparent): int {
+function approveAttachment(int $oldaid, int $newpid, int $newparent): int
+{
     global $db;
 
     $db->query(
@@ -966,7 +1013,8 @@ function approveAttachment(int $oldaid, int $newpid, int $newparent): int {
  *
  * @since 1.9.12
  */
-function getAttachment(int $aid, bool $quarantine = false): array {
+function getAttachment(int $aid, bool $quarantine = false): array
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -987,7 +1035,8 @@ function getAttachment(int $aid, bool $quarantine = false): array {
  *
  * @since 1.9.12
  */
-function getAttachmentAndFID(int $aid, bool $quarantine = false, int $pid = 0, string $filename = '', int $uid = 0): array {
+function getAttachmentAndFID(int $aid, bool $quarantine = false, int $pid = 0, string $filename = '', int $uid = 0): array
+{
     global $db;
 
     $table1 = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1024,7 +1073,8 @@ function getAttachmentAndFID(int $aid, bool $quarantine = false, int $pid = 0, s
  *
  * @since 1.9.12
  */
-function getOrphanedAttachments(int $uid, bool $quarantine = false): array {
+function getOrphanedAttachments(int $uid, bool $quarantine = false): array
+{
     global $db;
 
     $result = [];
@@ -1048,7 +1098,8 @@ function getOrphanedAttachments(int $uid, bool $quarantine = false): array {
  *
  * @since 1.9.12
  */
-function deleteAttachmentsByID(array $aid_list, bool $quarantine = false) {
+function deleteAttachmentsByID(array $aid_list, bool $quarantine = false)
+{
     global $db;
 
     if (empty($aid_list)) return;
@@ -1067,7 +1118,8 @@ function deleteAttachmentsByID(array $aid_list, bool $quarantine = false) {
  * @since 1.9.12
  * @return mysqli_result|bool
  */
-function getAttachmentPaths(array $aid_list, bool $quarantine = false) {
+function getAttachmentPaths(array $aid_list, bool $quarantine = false)
+{
     global $db;
 
     if (empty($aid_list)) return;
@@ -1085,7 +1137,8 @@ function getAttachmentPaths(array $aid_list, bool $quarantine = false) {
  *
  * @since 1.9.12
  */
-function getAttachmentParents(int $pid, bool $quarantine = false): array {
+function getAttachmentParents(int $pid, bool $quarantine = false): array
+{
     global $db;
 
     $results = [];
@@ -1106,7 +1159,8 @@ function getAttachmentParents(int $pid, bool $quarantine = false): array {
  *
  * @since 1.9.12
  */
-function claimOrphanedAttachments(int $pid, int $uid, bool $quarantine = false) {
+function claimOrphanedAttachments(int $pid, int $uid, bool $quarantine = false)
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1119,7 +1173,8 @@ function claimOrphanedAttachments(int $pid, int $uid, bool $quarantine = false) 
  *
  * @since 1.9.12
  */
-function countOrphanedAttachments(int $uid, bool $quarantine = false): int {
+function countOrphanedAttachments(int $uid, bool $quarantine = false): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1136,7 +1191,8 @@ function countOrphanedAttachments(int $uid, bool $quarantine = false): int {
  *
  * @since 1.9.12
  */
-function countAttachmentsByPost(int $pid, bool $quarantine = false): int {
+function countAttachmentsByPost(int $pid, bool $quarantine = false): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1153,7 +1209,8 @@ function countAttachmentsByPost(int $pid, bool $quarantine = false): int {
  *
  * @since 1.9.12
  */
-function countThumbnails(int $aid, bool $quarantine = false): int {
+function countThumbnails(int $aid, bool $quarantine = false): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1170,7 +1227,8 @@ function countThumbnails(int $aid, bool $quarantine = false): int {
  *
  * @since 1.9.12
  */
-function getAttachmentChildIDs(int $aid, bool $thumbnails_only, bool $quarantine = false): array {
+function getAttachmentChildIDs(int $aid, bool $thumbnails_only, bool $quarantine = false): array
+{
     global $db;
 
     $result = [];
@@ -1197,7 +1255,8 @@ function getAttachmentChildIDs(int $aid, bool $thumbnails_only, bool $quarantine
  *
  * @since 1.9.12
  */
-function getOrphanedAttachmentIDs(int $uid, bool $quarantine = false): array {
+function getOrphanedAttachmentIDs(int $uid, bool $quarantine = false): array
+{
     global $db;
 
     $result = [];
@@ -1218,7 +1277,8 @@ function getOrphanedAttachmentIDs(int $uid, bool $quarantine = false): array {
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByPost(int $pid, bool $include_children, bool $quarantine = false): array {
+function getAttachmentIDsByPost(int $pid, bool $include_children, bool $quarantine = false): array
+{
     global $db;
 
     $result = [];
@@ -1245,7 +1305,8 @@ function getAttachmentIDsByPost(int $pid, bool $include_children, bool $quaranti
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByThread(array $tid_list, bool $quarantine = false, int $notpid = 0): array {
+function getAttachmentIDsByThread(array $tid_list, bool $quarantine = false, int $notpid = 0): array
+{
     global $db;
 
     $result = [];
@@ -1278,7 +1339,8 @@ function getAttachmentIDsByThread(array $tid_list, bool $quarantine = false, int
  *
  * @since 1.9.12
  */
-function getAttachmentIDsByUser(string $username, bool $quarantine = false): array {
+function getAttachmentIDsByUser(string $username, bool $quarantine = false): array
+{
     global $db;
 
     $sqluser = $db->escape($username);
@@ -1308,7 +1370,8 @@ function getAttachmentIDsByUser(string $username, bool $quarantine = false): arr
  *
  * @since 1.9.12
  */
-function renameAttachment(int $aid, string $name, bool $quarantine = false) {
+function renameAttachment(int $aid, string $name, bool $quarantine = false)
+{
     global $db;
 
     $sqlname = $db->escape($name);
@@ -1323,7 +1386,8 @@ function renameAttachment(int $aid, string $name, bool $quarantine = false) {
  *
  * @since 1.9.12
  */
-function setImageDims(int $aid, string $img_size, bool $quarantine = false) {
+function setImageDims(int $aid, string $img_size, bool $quarantine = false)
+{
     global $db;
 
     $sqlsize = $db->escape($img_size);
@@ -1338,7 +1402,8 @@ function setImageDims(int $aid, string $img_size, bool $quarantine = false) {
  *
  * @since 1.9.12
  */
-function raiseDownloadCounter(int $aid, bool $quarantine = false) {
+function raiseDownloadCounter(int $aid, bool $quarantine = false)
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_attachments' : X_PREFIX.'attachments';
@@ -1354,7 +1419,8 @@ function raiseDownloadCounter(int $aid, bool $quarantine = false) {
  * @param bool $quarantine Save this record in a private table for later review?
  * @return int Poll ID number.
  */
-function addVoteDesc(int $tid, bool $quarantine = false): int {
+function addVoteDesc(int $tid, bool $quarantine = false): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
@@ -1371,7 +1437,8 @@ function addVoteDesc(int $tid, bool $quarantine = false): int {
  * @param array $rows Must be an array of arrays representing rows, then values associated to field names.
  * @param bool $quarantine Save these records in a private table for later review?
  */
-function addVoteOptions(array $rows, bool $quarantine = false) {
+function addVoteOptions(array $rows, bool $quarantine = false)
+{
     global $db;
 
     if (empty($rows)) return;
@@ -1423,7 +1490,8 @@ function addVoteOptions(array $rows, bool $quarantine = false) {
  * @param string $user_ip The voter's IP address.
  * @return int Poll ID number.
  */
-function addVoter(int $vote_id, int $user_id, string $user_ip) {
+function addVoter(int $vote_id, int $user_id, string $user_ip)
+{
     global $db;
 
     $db->escape_fast($user_ip);
@@ -1439,7 +1507,8 @@ function addVoter(int $vote_id, int $user_id, string $user_ip) {
  * @param string $username Current user.
  * @param int $timelimit The timestamp before which all records may be purged.
  */
-function deleteOldWhosonline(string $address, string $username, int $timelimit) {
+function deleteOldWhosonline(string $address, string $username, int $timelimit)
+{
     global $db;
 
     $db->escape_fast($address);
@@ -1458,7 +1527,8 @@ function deleteOldWhosonline(string $address, string $username, int $timelimit) 
  * @param string $url The relative URL.
  * @param string $invisible Should be '0' for no or '1' for yes.
  */
-function addWhosonline(string $address, string $username, int $time, string $url, string $invisible) {
+function addWhosonline(string $address, string $username, int $time, string $url, string $invisible)
+{
     global $db;
 
     $db->escape_fast($address);
@@ -1480,7 +1550,8 @@ function addWhosonline(string $address, string $username, int $time, string $url
  * @param bool $quarantine Was this record in a private table for later review?
  * @return int Poll ID number or zero if not found.
 */
-function getPollId(int $tid, bool $quarantine = false): int {
+function getPollId(int $tid, bool $quarantine = false): int
+{
     global $db;
 
     $table = $quarantine ? X_PREFIX.'hold_vote_desc' : X_PREFIX.'vote_desc';
@@ -1503,7 +1574,8 @@ function getPollId(int $tid, bool $quarantine = false): int {
  * @since 1.9.12.05
  * @return array of associative table rows.
 */
-function getRanks(): array {
+function getRanks(): array
+{
     global $db;
 
     $result = $db->query("SELECT * FROM ".X_PREFIX."ranks ORDER BY stars");
@@ -1529,7 +1601,8 @@ function getRanks(): array {
  * @param int $tid The thread ID used.
  * @param int $timestamp The time of the log entry.
  */
-function addLog(string $user, string $action, int $fid, int $tid, int $timestamp) {
+function addLog(string $user, string $action, int $fid, int $tid, int $timestamp)
+{
     global $db;
 
     $db->escape_fast($action);
@@ -1545,7 +1618,8 @@ function addLog(string $user, string $action, int $fid, int $tid, int $timestamp
  * @param int $pid The post ID number.
  * @return string The IP Address.
  */
-function getIPFromPost(int $pid): string {
+function getIPFromPost(int $pid): string
+{
     global $db;
 
     $query = $db->query("SELECT useip FROM ".X_PREFIX."posts WHERE pid = $pid");

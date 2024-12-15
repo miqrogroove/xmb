@@ -29,7 +29,8 @@ if (!defined('IN_CODE')) {
 
 define('U2U_FOLDER_COL_SIZE', 32);
 
-function u2u_msg($msg, $redirect) {
+function u2u_msg($msg, $redirect)
+{
     global $u2uheader, $u2ufooter, $THEME;
 
     if (!empty($redirect)) {
@@ -39,12 +40,14 @@ function u2u_msg($msg, $redirect) {
     exit;
 }
 
-function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent) {
+function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent)
+{
     global $db, $onlinetime;
     $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
 
-function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
+function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0)
+{
     $errors = '';
     $recipients = array_unique(array_map('trim', explode(',', $msgto)));
 
@@ -67,7 +70,8 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0) {
  * @param int $u2uid Optional.
  * @return string Empty string on success, HTML formatted messages on failure.
  */
-function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
+function u2u_send_recp($msgto, $subject, $message, $u2uid = 0)
+{
     global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
@@ -121,7 +125,8 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
  * @param mixed  $u2upreview This param never worked. It was officially deprecated in XMB 1.9.12.05.
  * @return string The left-hand-pane view
  */
-function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2upreview = 'deprecated'): string {
+function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2upreview = 'deprecated'): string
+{
     global $db, $self, $lang, $xmbuser, $SETTINGS, $del, $full_url;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
     global $THEME, $thewidth;
@@ -222,7 +227,8 @@ function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2up
     return $leftpane;
 }
 
-function u2u_view($u2uid, $folders) {
+function u2u_view($u2uid, $folders)
+{
     global $db, $dateformat, $timecode, $timeoffset, $lang, $self, $oToken, $xmbuser;
     global $THEME, $thewidth, $full_url;
     global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
@@ -307,7 +313,8 @@ function u2u_view($u2uid, $folders) {
     return $leftpane;
 }
 
-function u2u_print($u2uid, $eMail = false) {
+function u2u_print($u2uid, $eMail = false)
+{
     global $SETTINGS, $db, $self, $timeoffset, $lang, $u2uheader, $full_url,
            $u2ufooter, $dateformat, $timecode, $bbname, $xmbuser, $THEME;
 
@@ -364,7 +371,8 @@ function u2u_print($u2uid, $eMail = false) {
     }
 }
 
-function u2u_delete($u2uid, $folder) {
+function u2u_delete($u2uid, $folder)
+{
     global $db, $self, $lang, $xmbuser, $u2uheader, $u2ufooter, $oToken, $full_url;
 
     $u2uid = (int) $u2uid;
@@ -383,7 +391,8 @@ function u2u_delete($u2uid, $folder) {
     u2u_msg($lang['imdeletedmsg'], $full_url.'u2u.php?folder='.recodeOut($folder));
 }
 
-function u2u_mod_delete($folder, $u2u_select) {
+function u2u_mod_delete($folder, $u2u_select)
+{
     global $db, $self, $lang, $oToken, $xmbuser, $full_url;
 
     $in = '';
@@ -401,7 +410,8 @@ function u2u_mod_delete($folder, $u2u_select) {
     u2u_msg($lang['imdeletedmsg'], $full_url.'u2u.php?folder='.recodeOut($folder));
 }
 
-function u2u_move($u2uid, $tofolder) {
+function u2u_move($u2uid, $tofolder)
+{
     global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder, $oToken, $xmbuser, $full_url;
 
     $u2uid = (int) $u2uid;
@@ -425,7 +435,8 @@ function u2u_move($u2uid, $tofolder) {
     }
 }
 
-function u2u_mod_move($tofolder, $u2u_select) {
+function u2u_mod_move($tofolder, $u2u_select)
+{
     global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder, $xmbuser, $full_url;
 
     $in = '';
@@ -450,7 +461,8 @@ function u2u_mod_move($tofolder, $u2u_select) {
     u2u_msg($lang['textmovesucc'], $full_url.'u2u.php?folder='.recodeOut($folder));
 }
 
-function u2u_markUnread($u2uid, $folder, $type) {
+function u2u_markUnread($u2uid, $folder, $type)
+{
     global $db, $self, $lang, $u2uheader, $u2ufooter, $oToken, $xmbuser, $full_url;
 
     $u2uid = (int) $u2uid;
@@ -474,7 +486,8 @@ function u2u_markUnread($u2uid, $folder, $type) {
     u2u_msg($lang['textmarkedunread'], $full_url.'u2u.php?folder='.recodeOut($folder));
 }
 
-function u2u_mod_markUnread($folder, $u2u_select) {
+function u2u_mod_markUnread($folder, $u2u_select)
+{
     global $db, $lang, $u2uheader, $u2ufooter, $self, $oToken, $xmbuser, $full_url;
 
     if (empty($folder)) {
@@ -507,7 +520,8 @@ function u2u_mod_markUnread($folder, $u2u_select) {
     u2u_msg($lang['textmarkedunread'], $full_url.'u2u.php?folder='.recodeOut($folder));
 }
 
-function u2u_folderSubmit($u2ufolders, $folders) {
+function u2u_folderSubmit($u2ufolders, $folders)
+{
     global $db, $lang, $self, $farray, $oToken, $xmbuser, $full_url;
 
     $error = '';
@@ -548,7 +562,8 @@ function u2u_folderSubmit($u2ufolders, $folders) {
     u2u_msg($lang['foldersupdate'].$error, $full_url.'u2u.php?folder=Inbox');
 }
 
-function u2u_ignore() {
+function u2u_ignore()
+{
     global $self, $lang, $db, $oToken, $xmbuser, $full_url;
     global $THEME, $thewidth;
 
@@ -565,7 +580,8 @@ function u2u_ignore() {
     return $leftpane;
 }
 
-function u2u_display($folder, $folders) {
+function u2u_display($folder, $folders)
+{
     global $db, $self, $lang, $xmbuser, $onlinetime;
     global $THEME, $thewidth;
     global $SETTINGS, $timeoffset, $dateformat, $timecode, $oToken;
@@ -701,7 +717,8 @@ function u2u_display($folder, $folders) {
     return $leftpane;
 }
 
-function u2u_folderList() {
+function u2u_folderList()
+{
     global $db, $self, $lang, $THEME, $oToken, $xmbuser;
     global $folder, $folderlist, $folders, $farray; // <--- these are modified in here
 

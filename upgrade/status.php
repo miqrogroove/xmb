@@ -61,7 +61,8 @@ if ($done) {
  *
  * @param string $path
  */
-function rmFromDir($path) {
+function rmFromDir($path)
+{
     if (is_dir($path)) {
         $stream = opendir($path);
         while(($file = readdir($stream)) !== false) {

@@ -36,7 +36,8 @@ define('XMB_SCHEMA_VER', 9);
  * @param string $action Must be 'drop', 'create', or 'overwrite'.
  * @param string $name The name of the XMB table, with no prefix.
  */
-function xmb_schema_table($action, $name) {
+function xmb_schema_table($action, $name)
+{
     global $db;
 
     // Check existence to help avoid dropping non-existent tables.
@@ -57,7 +58,8 @@ function xmb_schema_table($action, $name) {
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
-function xmb_schema_drop(string $name): string {
+function xmb_schema_drop(string $name): string
+{
     return "DROP TABLE IF EXISTS ".X_PREFIX.$name;
 }
 
@@ -68,7 +70,8 @@ function xmb_schema_drop(string $name): string {
  * @param string $name The name of the XMB table, with no prefix.
  * @return string
  */
-function xmb_schema_create(string $name): string {
+function xmb_schema_create(string $name): string
+{
     switch($name) {
     case 'attachments':
         $sql =
@@ -641,7 +644,8 @@ function xmb_schema_list(): array {
  * @param string $name The name of the XMB table, with no prefix.
  * @return bool
  */
-function xmb_schema_table_exists(string $name): bool {
+function xmb_schema_table_exists(string $name): bool
+{
     global $db;
 
     $sqlname = $db->like_escape(X_PREFIX.$name);
@@ -663,7 +667,8 @@ function xmb_schema_table_exists(string $name): bool {
  * @param string $subpart Optional. The number of indexed characters, if you want to only find indexes that have this attribute.
  * @return bool
  */
-function xmb_schema_index_exists(string $table, string $column, string $index = '', string $subpart = ''): bool {
+function xmb_schema_index_exists(string $table, string $column, string $index = '', string $subpart = ''): bool
+{
     global $db;
 
     if (empty($column) && empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
@@ -694,7 +699,8 @@ function xmb_schema_index_exists(string $table, string $column, string $index = 
  * @param string $table The name of the XMB table, with no prefix.
  * @return array
  */
-function xmb_schema_columns_list(string $table): array {
+function xmb_schema_columns_list(string $table): array
+{
     global $db;
 
     $columns = array();

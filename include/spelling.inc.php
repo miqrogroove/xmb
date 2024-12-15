@@ -27,12 +27,14 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-class spelling {
+class spelling
+{
     var $language = '';
     var $link     = 0;
     var $mode     = 0;
 
-    function __construct($language='en', $mode=PSPELL_NORMAL) {
+    function __construct($language='en', $mode=PSPELL_NORMAL)
+    {
         global $charset;
 
         if (!extension_loaded('pspell')) {
@@ -49,7 +51,8 @@ class spelling {
         return true;
     }
 
-    function check_word($word) {
+    function check_word($word)
+    {
         if (pspell_check($this->link, $word)) {
             return true;
         } else {
@@ -57,16 +60,19 @@ class spelling {
         }
     }
 
-    function set_mode($mode=PSPELL_NORMAL) {
+    function set_mode($mode=PSPELL_NORMAL)
+    {
         $this->mode = $mode;
         return pspell_config_mode($mode);
     }
 
-    function get_mode() {
+    function get_mode()
+    {
         return $this->mode;
     }
 
-    function check_text($text) {
+    function check_text($text)
+    {
         $return = array();
 
         preg_match_all("/(?i)\\b['a-z]+\\b/", $text, $words);

@@ -38,7 +38,8 @@ extract($_REQUEST, EXTR_SKIP);
  *
  * @since 1.9.11.15
  */
-function testSuperGlobals() {
+function testSuperGlobals()
+{
     if (! is_array($_GET) || ! is_array($_POST) || ! is_array($_COOKIE) || ! is_array($_SERVER) || ! is_array($_FILES) || ! is_array($_REQUEST)) {
         header('HTTP/1.0 500 Internal Server Error');
         exit('XMB could not find the PHP Superglobals.  Please check PHP configuration.  Detected variables_order setting: ' . ini_get('variables_order'));
@@ -52,7 +53,8 @@ function testSuperGlobals() {
  * @param bool   $use_debug    Optional.  When FALSE the value of DEBUG is ignored.
  * @since 1.9.11
  */
-function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
+function assertEmptyOutputStream($error_source, $use_debug = true)
+{
     global $SETTINGS;
     
     $buffered_fault = (ob_get_length() > 0); // Checks top of buffer stack only.
@@ -61,7 +63,7 @@ function assertEmptyOutputStream($error_source, $use_debug = TRUE) {
     if ($buffered_fault || $unbuffered_fault) {
         if ($buffered_fault) header('HTTP/1.0 500 Internal Server Error');
 
-        if ($use_debug && defined('DEBUG') && DEBUG == FALSE) {
+        if ($use_debug && defined('DEBUG') && DEBUG == false) {
             echo "Error: XMB failed to start.  Set DEBUG to TRUE in config.php to see file system details.";
         } elseif ($unbuffered_fault) {
             headers_sent($filepath, $linenum);

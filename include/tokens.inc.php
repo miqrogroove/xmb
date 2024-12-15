@@ -44,7 +44,8 @@ if (!defined('IN_CODE')) {
  * @param bool   $anonymous Optional. Must be true if intentionally setting a token for a guest user.  Useful for lost passwords.
  * @return string
  */
-function create(string $action, string $object, int $ttl, bool $anonymous = false): string {
+function create(string $action, string $object, int $ttl, bool $anonymous = false): string
+{
     global $db, $self;
 
     if ('' == $self['username'] && ! $anonymous) throw new LogicException('Username missing');
@@ -79,7 +80,8 @@ function create(string $action, string $object, int $ttl, bool $anonymous = fals
  * @param string $object The same value used in create().
  * @return bool True only if the user provided a unique nonce for the action/object pair.
  */
-function consume(string $token, string $action, string $object): bool {
+function consume(string $token, string $action, string $object): bool
+{
     global $db, $self;
 
     \XMB\SQL\deleteTokensByDate(time());

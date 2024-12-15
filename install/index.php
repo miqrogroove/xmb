@@ -85,7 +85,8 @@ define('IN_CODE', true);
 
 require ROOT.'include/version.php';
 
-function error($head, $msg, $die=true) {
+function error($head, $msg, $die = true)
+{
     echo "\n";
     echo '<h1 class="progressErr">'.$head.'</h1>';
     echo '<span class="progressWarn">'.$msg.'</span><br />';
@@ -109,12 +110,14 @@ function error($head, $msg, $die=true) {
     }
 }
 
-function show_act($act) {
+function show_act($act)
+{
     $act .= str_repeat('.', (75-strlen($act)));
     echo '<span class="progress">'.$act;
 }
 
-function show_result($type) {
+function show_result($type)
+{
     switch($type) {
     case 0:
         echo '<span class="progressErr">ERROR</span><br />';
@@ -141,7 +144,8 @@ function show_result($type) {
  * @param string $name The name of the posted variable.
  * @return string The PHP string literal version of the input.
  */
-function input_to_literal(string $name): string {
+function input_to_literal(string $name): string
+{
     $ret = $_POST[$name];
     $ret = str_replace(["\\", "'"], ["\\\\", "\\'"], $ret);
     return "'$ret'";
@@ -159,7 +163,8 @@ function input_to_literal(string $name): string {
  * @param bool   $pconnect
  * @param string $tablepre
  */
-function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre) {
+function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)
+{
     // When config.php has default values, XMB is not installed.
     $config_array = array(
         'dbname' => 'DB/NAME',

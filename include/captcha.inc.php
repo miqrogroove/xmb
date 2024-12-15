@@ -92,7 +92,8 @@ define('CAPTCHA_FILE_TYPE', $SETTINGS['captcha_image_type']);
 
 // don't edit below this line (unless you want to change the class!)
 
-class Captcha {
+class Captcha
+{
     var $oImage;
     var $aFonts;
     var $iWidth;
@@ -115,7 +116,8 @@ class Captcha {
     var $bPoison;
 
     // PHP 5+
-    function __construct($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT) {
+    function __construct($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT)
+    {
         // get parameters
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
         $this->SetNumDots(CAPTCHA_NUM_DOTS);
@@ -136,31 +138,37 @@ class Captcha {
         $this->CheckCompatibility();
     }
 
-    function CalculateSpacing() {
+    function CalculateSpacing()
+    {
         $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
     }
 
-    function SetWidth($iWidth) {
+    function SetWidth($iWidth)
+    {
         $this->iWidth = $iWidth;
         if ($this->iWidth > 500) $this->iWidth = 500; // to prevent perfomance impact
         $this->CalculateSpacing();
     }
 
-    function SetHeight($iHeight) {
+    function SetHeight($iHeight)
+    {
         $this->iHeight = $iHeight;
         if ($this->iHeight > 200) $this->iHeight = 200; // to prevent performance impact
     }
 
-    function SetNumChars($iNumChars) {
+    function SetNumChars($iNumChars)
+    {
         $this->iNumChars = $iNumChars;
         $this->CalculateSpacing();
     }
 
-    function SetNumLines($iNumLines) {
+    function SetNumLines($iNumLines)
+    {
         $this->iNumLines = $iNumLines;
     }
 
-    function DisplayShadow($bCharShadow) {
+    function DisplayShadow($bCharShadow)
+    {
         $this->bCharShadow = $bCharShadow;
     }
 
@@ -168,7 +176,8 @@ class Captcha {
     //   $this->sOwnerText = $sOwnerText;
     //}
 
-    function SetCharSet($vCharSet) {
+    function SetCharSet($vCharSet)
+    {
         // check for input type
         if (is_array($vCharSet)) {
             $this->aCharSet = $vCharSet;
@@ -203,7 +212,8 @@ class Captcha {
         }
     }
 
-    function CaseInsensitive($bCaseInsensitive) {
+    function CaseInsensitive($bCaseInsensitive)
+    {
         $this->bCaseInsensitive = $bCaseInsensitive;
     }
 
@@ -211,19 +221,23 @@ class Captcha {
     //   $this->vBackgroundImages = $vBackgroundImages;
     //}
 
-    function SetMinFontSize($iMinFontSize) {
+    function SetMinFontSize($iMinFontSize)
+    {
         $this->iMinFontSize = $iMinFontSize;
     }
 
-    function SetMaxFontSize($iMaxFontSize) {
+    function SetMaxFontSize($iMaxFontSize)
+    {
         $this->iMaxFontSize = $iMaxFontSize;
     }
 
-    function UseColor($bUseColor) {
+    function UseColor($bUseColor)
+    {
         $this->bUseColor = $bUseColor;
     }
 
-    function SetFileType($sFileType) {
+    function SetFileType($sFileType)
+    {
         // check for valid file type
         if (in_array($sFileType, array('gif', 'png', 'jpeg'))) {
             $this->sFileType = $sFileType;
@@ -232,7 +246,8 @@ class Captcha {
         }
     }
 
-    function DrawLines($bg_lum, $colors) {
+    function DrawLines($bg_lum, $colors)
+    {
         //XMB chooses a lightness range that will always be similar to the background color.
         if ($bg_lum < 128) {
             $rmin = 0;
@@ -278,7 +293,8 @@ class Captcha {
     //   $this->iHeight = $this->iHeight - $iOwnerTextHeight - 5;
     //}
 
-    function GenerateCode() {
+    function GenerateCode()
+    {
         // reset code
         $this->sCode = '';
 
@@ -303,7 +319,8 @@ class Captcha {
         return nonce_create($this->sCode);
     }
 
-    function DrawCharacters($bg_lum, $colors) {
+    function DrawCharacters($bg_lum, $colors)
+    {
         // XMB chooses a lightness range that will never conflict with the background color.
         if ($bg_lum > 127) {
             $rmin = 0;
@@ -372,7 +389,8 @@ class Captcha {
         }
     }
 
-    function WriteFile() {
+    function WriteFile()
+    {
         // Explicitly re-run XMB's output stream check, and do not rely on the DEBUG constant.
         assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', FALSE);
 
@@ -391,7 +409,8 @@ class Captcha {
         }
     }
 
-    function Create($imghash) {
+    function Create($imghash)
+    {
         global $THEME;
 
         $this->bPoison = TRUE;
@@ -462,7 +481,8 @@ class Captcha {
     // All remaining functions are maintained for use with XMB.
 
 
-    function ValidateCode($sUserCode, $imghash) {
+    function ValidateCode($sUserCode, $imghash)
+    {
         if ($this->bPoison) {
             return FALSE;
         }
@@ -480,11 +500,13 @@ class Captcha {
         return nonce_use($sUserCode, $imghash);
     }
 
-    function SetNumDots($iNumDots) {
+    function SetNumDots($iNumDots)
+    {
         $this->iNumDots = $iNumDots;
     }
 
-    function SetFonts($vFonts) {
+    function SetFonts($vFonts)
+    {
         // override any pre-defined file path
         putenv('GDFONTPATH='.realpath('.'));
 
@@ -526,7 +548,8 @@ class Captcha {
         }
     }
 
-    function SetBackgroundImages($vBackgroundImages) {
+    function SetBackgroundImages($vBackgroundImages)
+    {
         // check for input type
         if (is_array($vBackgroundImages)) {
             $aBackgroundImages = $vBackgroundImages;
@@ -571,7 +594,8 @@ class Captcha {
         }
     }
 
-    function DrawDots($colors) {
+    function DrawDots($colors)
+    {
         $rmin = 0;
         $rmax = 255;
 
@@ -593,7 +617,8 @@ class Captcha {
         }
     }
 
-    function RetrieveCode($imghash) {
+    function RetrieveCode($imghash)
+    {
         if ($imghash == 'test') {
             $this->bPoison = TRUE;
             $this->sCode = 'CaPtChA';
@@ -602,7 +627,8 @@ class Captcha {
         }
     }
 
-    function CheckCompatibility() {
+    function CheckCompatibility()
+    {
         // check for required gd functions
         if ($this->bCompatible === false) {
             $this->bPoison = TRUE;

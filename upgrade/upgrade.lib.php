@@ -32,7 +32,8 @@ require(ROOT.'include/schema.inc.php');
 /**
  * Performs all tasks necessary for a normal upgrade.
  */
-function xmb_upgrade() {
+function xmb_upgrade()
+{
     global $db, $SETTINGS;
 
     show_progress('Confirming forums are turned off');
@@ -153,7 +154,8 @@ function xmb_upgrade() {
  *
  * @since 1.9.11.11
  */
-function upgrade_schema_to_v0() {
+function upgrade_schema_to_v0()
+{
     global $db, $SETTINGS;
 
     show_progress('Checking for legacy version tables');
@@ -1424,7 +1426,8 @@ function upgrade_schema_to_v0() {
  *
  * @since 1.9.11 Beta 3
  */
-function upgrade_schema_to_v2() {
+function upgrade_schema_to_v2()
+{
     global $db;
 
     show_progress('Beginning schema upgrade to version number 2');
@@ -1629,7 +1632,8 @@ function upgrade_schema_to_v2() {
  *
  * @since 1.9.11 Beta 4
  */
-function upgrade_schema_to_v3() {
+function upgrade_schema_to_v3()
+{
     global $db;
 
     show_progress('Beginning schema upgrade to version number 3');
@@ -1667,7 +1671,8 @@ function upgrade_schema_to_v3() {
  *
  * @since 1.9.11.11
  */
-function upgrade_schema_to_v4() {
+function upgrade_schema_to_v4()
+{
     global $db;
 
     show_progress('Beginning schema upgrade to version number 4');
@@ -1738,7 +1743,8 @@ function upgrade_schema_to_v4() {
  *
  * @since 1.9.12
  */
-function upgrade_schema_to_v5() {
+function upgrade_schema_to_v5()
+{
     global $db;
 
     show_progress('Requesting to lock the members table');
@@ -1872,7 +1878,8 @@ function upgrade_schema_to_v5() {
  *
  * @since 1.9.12
  */
-function upgrade_schema_to_v6() {
+function upgrade_schema_to_v6()
+{
     global $db;
 
     show_progress('Requesting to lock the themes table');
@@ -1913,7 +1920,8 @@ function upgrade_schema_to_v6() {
  *
  * @since 1.9.12
  */
-function upgrade_schema_to_v7() {
+function upgrade_schema_to_v7()
+{
     global $db;
 
     show_progress('Adding new tables');
@@ -1961,7 +1969,8 @@ function upgrade_schema_to_v7() {
  *
  * @since 1.9.12
  */
-function upgrade_schema_to_v8() {
+function upgrade_schema_to_v8()
+{
     global $db;
 
     show_progress('Gathering schema information from the settings table');
@@ -1981,7 +1990,8 @@ function upgrade_schema_to_v8() {
  *
  * @since 1.9.12.07
  */
-function upgrade_schema_to_v9() {
+function upgrade_schema_to_v9()
+{
     global $db;
 
     $table = 'hold_posts';
@@ -2107,7 +2117,8 @@ function upgrade_schema_to_v9() {
  *
  * @since 1.9.6 RC1
  */
-function fixForumPerms() {
+function fixForumPerms()
+{
     global $db;
     /***
         OLD FORMAT:
@@ -2200,7 +2211,8 @@ function fixForumPerms() {
  *
  * @since 1.9.8
  */
-function fixPolls() {
+function fixPolls()
+{
     global $db;
 
     $q = upgrade_query("SHOW COLUMNS FROM ".X_PREFIX."threads LIKE 'pollopts'");
@@ -2267,7 +2279,8 @@ function fixPolls() {
  *
  * @since 1.9.6 RC1
  */
-function fixBirthdays() {
+function fixBirthdays()
+{
     global $db;
 
     $cachedLanguages = array();
@@ -2342,7 +2355,8 @@ function fixBirthdays() {
  *
  * @since 1.9.1
  */
-function fixPostPerm() {
+function fixPostPerm()
+{
     global $db;
 
 	$query = upgrade_query("SELECT fid, private, postperm, guestposting FROM ".X_PREFIX."forums WHERE type != 'group'");
@@ -2375,7 +2389,8 @@ function fixPostPerm() {
  * @param string $sql
  * @return mixed Result of $db->query()
  */
-function upgrade_query($sql) {
+function upgrade_query($sql)
+{
 	global $db;
 	
 	$result = $db->query($sql, false);

@@ -112,7 +112,8 @@ show_progress('Done');
  *
  * @param string $text Description of current progress.
  */
-function show_progress($text) {
+function show_progress($text)
+{
     echo $text, "...\n";
 }
 
@@ -121,7 +122,8 @@ function show_progress($text) {
  *
  * @param string $text
  */
-function show_warning($text) {
+function show_warning($text)
+{
     echo $text, "\n";
 }
 
@@ -130,6 +132,7 @@ function show_warning($text) {
  *
  * @param string $text Description of current progress.
  */
-function show_error($text) {
+function show_error($text)
+{
     echo $text, "\n";
 }

@@ -27,7 +27,8 @@ if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
 }
 
-function url_to_text($url) {
+function url_to_text($url)
+{
     global $db, $lang, $self, $xmbuser, $SETTINGS;
     static $fname, $tsub;
     static $restrict = '';

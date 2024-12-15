@@ -27,7 +27,8 @@ if (!defined('IN_CODE')) {
     exit('Not allowed to run this file directly.');
 }
 
-function blistmsg($message, $redirect='', $exit=false) {
+function blistmsg($message, $redirect = '', $exit = false)
+{
     global $bordercolor, $tablewidth, $THEME, $tablespace, $altbg1, $css, $bbname, $lang;
     global $charset, $text, $redirectjs;
 
@@ -42,7 +43,8 @@ function blistmsg($message, $redirect='', $exit=false) {
     }
 }
 
-function buddy_add($buddys) {
+function buddy_add($buddys)
+{
     global $db, $lang, $xmbuser, $oToken, $full_url;
 
     if (!is_array($buddys)) {
@@ -77,7 +79,8 @@ function buddy_add($buddys) {
     }
 }
 
-function buddy_edit() {
+function buddy_edit()
+{
     global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
@@ -96,7 +99,8 @@ function buddy_edit() {
     eval('echo "'.template('buddylist_edit').'";');
 }
 
-function buddy_delete($delete) {
+function buddy_delete($delete)
+{
     global $db, $lang, $xmbuser, $oToken, $full_url;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
@@ -113,7 +117,8 @@ function buddy_delete($delete) {
 * @param    none, but takes many globals
 * @return    no return value, but will display a status report or a list of buddies and their online status
 */
-function buddy_addu2u() {
+function buddy_addu2u()
+{
     global $db, $lang, $xmbuser, $oToken, $onlinetime;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
@@ -146,7 +151,8 @@ function buddy_addu2u() {
     }
 }
 
-function buddy_display() {
+function buddy_display()
+{
     global $db, $lang, $xmbuser, $oToken, $onlinetime;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
@@ -154,9 +160,9 @@ function buddy_display() {
     $buddys = array();
     $buddys['offline'] = '';
     $buddys['online'] = '';
-    while($buddy = $db->fetch_array($q)) {
+    while ($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
-        if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+        if ($onlinetime - (int) $buddy['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $buddy['invisible']) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
