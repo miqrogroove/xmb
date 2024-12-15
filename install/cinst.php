@@ -1,4 +1,5 @@
 <?php
+
 /**
  * eXtreme Message Board
  * XMB 1.9.12
@@ -19,8 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- **/
+ */
 
 if (!defined('IN_CODE')) {
     exit("Not allowed to run this file directly.");
