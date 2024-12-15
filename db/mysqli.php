@@ -52,7 +52,7 @@ class dbstuff
         // Force older versions of PHP to behave like PHP v8.1.  This assumes there are no incompatible mysqli scripts running.
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     }
-    
+
     /**
      * Checks PHP dependencies
      *
@@ -143,12 +143,12 @@ class dbstuff
             $this->test_error = $e->getMessage();
             return false;
         }
-        
+
         $this->db = $dbname;
         $this->test_error = '';
         return true;
     }
-    
+
     /**
      * Gets any error message that was encountered during the last call to test_connect().
      *
@@ -239,7 +239,7 @@ class dbstuff
         }
         return true;
     }
-	
+
     /**
      * Fetch an array representing the next row of a result.
      *
@@ -295,14 +295,14 @@ class dbstuff
         if (!headers_sent()) {
             header('HTTP/1.0 500 Internal Server Error');
         }
-        
+
         echo $msg;
 
         if (DEBUG || LOG_MYSQL_ERRORS) {
             $error = $e->getMessage();
             $errno = $e->getCode();
         }
-        
+
         if (LOG_MYSQL_ERRORS) {
             $log_advice = "Please check the error log for details.<br />\n";
         } else {
@@ -604,7 +604,7 @@ class dbstuff
         return "LPAD('".$time."', '15', '0')";
     }
 
-    private function start_timer(
+    private function start_timer()
     {
         $mtime = explode(" ", microtime());
         $this->timer = (float) $mtime[1] + (float) $mtime[0];
@@ -613,7 +613,7 @@ class dbstuff
 
     /**
      * Calculate time since start_timer and add it to duration.
-     * 
+     *
      * @return int Time since start_timer.
      */
     private function stop_timer()
