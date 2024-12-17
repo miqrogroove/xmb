@@ -288,6 +288,7 @@ function auditBadSession(array $member)
 /**
  * Uses the new translation database to populate the old $lang and $langfile variables.
  *
+ * @since 1.9.11
  * @param string $devname Name specified by XMB for internal use (usually written in English).
  * @return bool
  */
@@ -323,6 +324,7 @@ function loadLang($devname = "English")
 /**
  * Uses the new translation database to retrieve a single phrase in all available languages.
  *
+ * @since 1.9.11
  * @param array $langkeys Of strings, used as the $lang array key.
  * @return array Associative indexes lang_base.devname and lang_keys.langkey.
  */
@@ -353,7 +355,17 @@ function loadPhrases($langkeys)
     }
 }
 
-function nav($add=false, $raquo=true)
+/**
+ * nav() - Create a navigation link and add it to the $navigation global
+ *
+ * Create a navigation link using $navigation global with a possible optional addition
+ *
+ * @since 1.9.1
+ * @param    $add        (optional, false) additional navigation element if string or clear navigation if false boolean
+ * @param    $raquo      (optional, true) prepends &raquo; to the string if true, doesn't if false. Defaults to true.
+ * @return   no return value
+ */
+function nav(bool $add = false, bool $raquo = true)
 {
     global $navigation;
 
@@ -364,7 +376,14 @@ function nav($add=false, $raquo=true)
     }
 }
 
-function template($name)
+/**
+ * Fetch a template from the memory cache or database.
+ *
+ * @since 1.0
+ * @param string $name Template name.
+ * @return string The PHP template.
+ */
+function template(string $name): string
 {
     global $db, $comment_output;
 
@@ -397,7 +416,16 @@ function template($name)
     }
 }
 
-function templatecache(int $type, string $name, string $data = '')
+/**
+ * templatecache()
+ * 
+ * @since 1.9.1
+ * @param defined $type get or put
+ * @param string $name the template to retrieve
+ * @param string $data if put, the data to insert
+ * @return mixed true if PUT. If GET, false if not in cache, otherwise a string containing the cache entry
+ **/
+function templatecache(int $type, string $name, string $data = ''): string|bool
 {
     static $cache;
 
@@ -416,6 +444,12 @@ function templatecache(int $type, string $name, string $data = '')
     }
 }
 
+/**
+ * Fetch a template from the database.
+ *
+ * @since 1.5.0
+ * @param string One or more template names may be specified in a list of strings.
+ */
 function loadtemplates()
 {
     global $db;
@@ -475,11 +509,20 @@ function request_secure(string $action, string $id, int $expire = 0, bool $error
     }
 }
 
-function censor($txt)
+/**
+* censor() - censors text
+*
+* Takes text and uses predefined censors on them. Includes option to ignore whitespaces
+*
+* @since 1.9.1
+* @param    $txt    string, the text to apply the censors to
+* @return   string, the censored version of the input string
+*/
+function censor(string $txt): string
 {
     global $censorcache;
 
-    $ignorespaces = TRUE;
+    $ignorespaces = true;
     if (is_array($censorcache)) {
         if (count($censorcache) > 0) {
             $prevfind = '';
@@ -607,6 +650,9 @@ function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilie
     return $message;
 }
 
+/**
+ * @since 1.9.8 SP3
+ */
 function bbcode(&$message, $allowimgcode, $allowurlcode)
 {
     global $lang, $THEME, $SETTINGS;
@@ -805,6 +851,7 @@ function bbcode(&$message, $allowimgcode, $allowurlcode)
 /**
  * Full parsing of [code] tags.
  *
+ * @since 1.9.11.12
  * @param string $message
  * @return array Odd number indexes contain the code block contents.
  */
@@ -1097,8 +1144,12 @@ function modcheckPost($username, $mods, $origstatus)
     return $retval;
 }
 
-// As of version 1.9.11, function forum() is not responsible for any permissions checking.
-// Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
+/**
+ * As of version 1.9.11, function forum() is not responsible for any permissions checking.
+ * Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
+ *
+ * @since 1.0
+ */
 function forum($forum, $template, $index_subforums)
 {
     global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
@@ -1188,6 +1239,7 @@ function forum($forum, $template, $index_subforums)
  *
  * Caller must echo the returned html directly or in a template variable.
  *
+ * @since 1.9.11
  * @param int $num Total number of items in the collection.
  * @param int $perpage Number of items to display on each page.
  * @param string $baseurl Relative URL of the first page in the collection.
@@ -1236,6 +1288,7 @@ function multipage($num, $perpage, $baseurl, $canonical = TRUE)
  * The link to each page in the collection will have the "page" variable added
  * to its query string, except for page number one.
  *
+ * @since 1.5.0
  * @param int $page Current page number, must be >= 1.
  * @param int $lastpage Total number of pages in the collection.
  * @param string $mpurl Read-Only Variable. Relative URL of the first page in the collection.
@@ -1337,6 +1390,9 @@ function quickpage($things, $thingsperpage)
     return ((($things > 0) && ($thingsperpage > 0) && ($things > $thingsperpage)) ? ceil($things / $thingsperpage) : 1);
 }
 
+/**
+ * @since 1.5.0
+ */
 function smilieinsert($type='normal')
 {
     global $db, $SETTINGS, $THEME, $smiliesnum, $smiliecache;
@@ -1445,6 +1501,9 @@ function updatethreadcount($tid)
     $db->query("UPDATE ".X_PREFIX."threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
 }
 
+/**
+ * @since 1.5.0
+ */
 function smcwcache()
 {
     global $db, $smiliecache, $censorcache, $smiliesnum, $wordsnum;
@@ -1484,6 +1543,8 @@ function smcwcache()
 
 /**
  * Generates sub-templates in the $footerstuff global array.
+ *
+ * @since 1.8.0
  */
 function end_time()
 {
@@ -1536,6 +1597,9 @@ function end_time()
     }
 }
 
+/**
+ * @since 1.9.1
+ */
 function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER)
 {
     if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
@@ -1582,6 +1646,9 @@ function get_extension($filename)
     }
 }
 
+/**
+ * @since 1.9.1
+ */
 function ServerLoad()
 {
     if ($stats = @exec('uptime')) {
@@ -1596,6 +1663,9 @@ function ServerLoad()
     }
 }
 
+/**
+ * @since 1.9.1
+ */
 function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
 {
     global $footerstuff, $navigation; // Used by nav() and end_time()
@@ -1656,6 +1726,9 @@ function error($msg, $showheader=true, $prepend='', $append='', $redirect=false,
     return $return;
 }
 
+/**
+ * @since 1.9.8
+ */
 function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
 {
     global $footerstuff, $navigation; // Used by nav() and end_time()
@@ -1774,6 +1847,14 @@ function audit(string $user, string $action, int $fid = 0, int $tid = 0)
     return true;
 }
 
+/**
+ * validatePpp() - validate posts per page
+ *
+ * Validate the global $ppp variable and ensure it's sane
+ * 
+ * @since 1.9.1
+ * @return   none - modifies the global $ppp variable
+ */
 function validatePpp()
 {
     global $ppp, $postperpage;
@@ -1789,6 +1870,14 @@ function validatePpp()
     }
 }
 
+/**
+ * validateTpp() - validate threads per page
+ *
+ * Validate the global $tpp variable and ensure it's sane
+ * 
+ * @since 1.9.1
+ * @return   none - modifies the global $tpp variable
+ */
 function validateTpp()
 {
     global $tpp, $topicperpage;
@@ -1881,6 +1970,9 @@ function altMail(string $to, string $subject, string $message, string $additiona
     }
 }
 
+/**
+ * @since 1.9.3
+ */
 function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...')
 {
     if (strlen($string) > $len) {
@@ -1897,6 +1989,9 @@ function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...')
     }
 }
 
+/**
+ * @since 1.9.8 SP2
+ */
 function printGmDate($timestamp=null, $altFormat=null, $altOffset=0)
 {
     global $dateformat, $SETTINGS, $timeoffset;
@@ -1921,6 +2016,9 @@ function printGmDate($timestamp=null, $altFormat=null, $altOffset=0)
     }
 }
 
+/**
+ * @since 1.9.8 SP2
+ */
 function printGmTime($timestamp=null, $altFormat=null, $altOffset=0)
 {
     global $self, $SETTINGS, $timeoffset, $timecode;
@@ -1936,6 +2034,9 @@ function printGmTime($timestamp=null, $altFormat=null, $altOffset=0)
     }
 }
 
+/**
+ * @since 1.9.8 SP2
+ */
 function MakeTime()
 {
    $objArgs = func_get_args();
@@ -1973,6 +2074,9 @@ function MakeTime()
    return call_user_func_array("gmmktime", $objArgs) + $nOffset;
 }
 
+/**
+ * @since 1.9.4
+ */
 function iso8601_date($year=0, $month=0, $day=0)
 {
     $year = (int) $year;
@@ -1998,6 +2102,9 @@ function iso8601_date($year=0, $month=0, $day=0)
     return str_pad($year, 4, '0', STR_PAD_LEFT).'-'.str_pad($month, 2, '0', STR_PAD_LEFT).'-'.str_pad($day, 2, '0', STR_PAD_LEFT);
 }
 
+/**
+ * @since 1.9.8
+ */
 function month2text($num)
 {
     global $lang;
@@ -2030,6 +2137,7 @@ function month2text($num)
  *
  * Important: The return value is passed by reference.  There is only one query object.  This cannot be used in nested functions.
  *
+ * @since 1.9.11
  * @return object
  */
 function forumCache()
@@ -2052,6 +2160,8 @@ function forumCache()
 
 /**
  * Creates an associative array for the specified forum.
+ *
+ * @since 1.9.11
  */
 function getForum($fid)
 {
@@ -2078,10 +2188,11 @@ function getForum($fid)
  *  $forums = getStructuredForums();
  *  echo fnameOut($forums['forum']['9']['14']['name']);
  *
+ * @since 1.9.11
  * @param bool $usePerms If TRUE then not all forums are returned, only visible forums.
  * @return array
  */
-function getStructuredForums($usePerms=FALSE)
+function getStructuredForums($usePerms = false)
 {
     global $db;
 
@@ -2112,6 +2223,7 @@ function getStructuredForums($usePerms=FALSE)
 /**
  * Creates an array of permitted forum arrays.
  *
+ * @since 1.9.11
  * @param object $forums DB query result, preferably from forumCache().
  * @param string $mode Whether to check for 'forum' listing permissions or 'thread' listing permissions.
  * @param string $output If set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an 'array' of arrays.
@@ -2183,6 +2295,9 @@ function permittedForums($forums, $mode='thread', $output='array', $check_parent
     return $permitted;
 }
 
+/**
+ * @since 1.9.8
+ */
 function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0)
 {
     global $lang;
@@ -2236,6 +2351,9 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
     return implode("\n", $forumselect);
 }
 
+/**
+ * @since 1.9.8
+ */
 function forumJump()
 {
     global $fid, $lang, $selHTML;
@@ -2303,6 +2421,7 @@ function forumJump()
  *  $perms = checkForumPermissions($forum, 'Moderator');
  *  if ($perms[X_PERMS_VIEW]) { //Moderators are allowed to view $forum }
  *
+ * @since 1.9.10
  * @param array $forum One query row from the forums table, preferably provided by getForum().
  * @param string $user_status_in Optional. Masquerade as this user status, e.g. 'Guest'
  * @return array Of bools, indexed by X_PERMS_* constants.
@@ -2382,6 +2501,7 @@ function checkForumPermissions($forum, $user_status_in=FALSE)
  *  if ($viewperms == $status_enum['Guest']) { //$forum is guest-only }
  *  if ($viewperms == $status_enum['Member'] - 1) { //$forum is staff-only }
  *
+ * @since 1.9.11
  * @param array $forum
  * @param int $bitfield Enumerated by X_PERMS_RAW* constants.  Other X_PERMS_* values will not work!
  * @return bool
@@ -2392,6 +2512,9 @@ function getOneForumPerm($forum, $bitfield)
     return $pp[$bitfield];
 }
 
+/**
+ * @since 1.9.10
+ */
 function handlePasswordDialog($fid)
 {
     global $db, $full_url, $url, $THEME, $lang;
@@ -2415,6 +2538,9 @@ function handlePasswordDialog($fid)
     }
 }
 
+/**
+ * @since 1.9.11
+ */
 function createLangFileSelect($currentLangFile)
 {
     global $db;
@@ -2480,6 +2606,9 @@ function setCanonicalLink($relURI)
     }
 }
 
+/**
+ * @since 1.9.11
+ */
 function phpShorthandValue($ininame)
 {
     $rawstring = trim(ini_get($ininame));
