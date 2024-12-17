@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'misc.php');
@@ -105,7 +106,7 @@ switch($action) {
                 eval('$misc = "'.template('misc_login').'";');
             }
         } else {
-            switch($session->getStatus()) {
+            switch(session()->getStatus()) {
                 case 'good':
                     // Set $invisible to true, false, or null.
                     $invisible = formInt('hide');
@@ -143,8 +144,8 @@ switch($action) {
         break;
 
     case 'logout':
-        if ('logged-out' == $session->getStatus()) {
-            $gone = $session->getMember();
+        if ('logged-out' == session()->getStatus()) {
+            $gone = session()->getMember();
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='{$gone['username']}'");
             redirect($full_url, 0);
         } else {

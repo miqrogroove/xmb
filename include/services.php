@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace XMB\Services;
 
 use XMB\Attach;
+use XMB\Session\Manager as SessionMgr;
 use XMB\SQL;
 
 /**
@@ -41,6 +42,22 @@ function attach(?Attach $attach = null): Attach
     static $cache;
     
     if ($attach !== null) $cache = $attach;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared session manager.
+ *
+ * @since 1.10.00
+ * @param Attach $attach Required on first call, otherwise optional. Acts as the setter.
+ * @return Attach
+ */
+function session(?SessionMgr $session = null): SessionMgr
+{
+    static $cache;
+    
+    if ($session !== null) $cache = $session;
     
     return $cache;
 }

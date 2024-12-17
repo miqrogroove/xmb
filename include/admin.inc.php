@@ -22,6 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use XMB\Session\Manager as SessionMgr;
+
 use function XMB\Services\sql;
 
 /* Assert Additional Security */
@@ -50,13 +52,28 @@ if (X_SADMIN) {
 
 
 /**
- * Admin Panel Functions
+ * Provides generic business logic for admin activities
+ * 
+ * @since 1.9.1
  */
 class admin
 {
-    function rename_user($userfrom, $userto)
+    public function __construct(private SessionMgr $session)
     {
-        global $db, $lang, $self, $session;
+        // Property promotion.
+    }
+
+    /**
+     * rename_user()
+     *
+     * @since 1.9.1
+     * @param string $userfrom
+     * @param string $userto new username
+     * @return string to display to the admin once the operation has completed
+     */
+    public function rename_user(string $userfrom, string $userto): string
+    {
+        global $db, $lang, $self;
 
         if (strlen($userto) < 3 || strlen($userto) > 32) {
             return $lang['username_length_invalid'];
@@ -83,7 +100,7 @@ class admin
             return $lang['restricted'];
         }
         
-        $session->logoutAll($userfrom);
+        $this->session->logoutAll($userfrom);
 
         @set_time_limit(180);
         $db->query("UPDATE ".X_PREFIX."members SET username='$dbuserto' WHERE username='$dbuserfrom'");
@@ -151,7 +168,16 @@ class admin
         return (($self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
     }
 
-    function check_restricted($userto)
+    /**
+     * check_restricted()
+     *
+     * Duplicates some logic in member.php.
+     *
+     * @since 1.9.1
+     * @param string $userto Username to check
+     * @return bool Username validity.
+     */
+    private function check_restricted(string $userto): bool
     {
         global $db;
 
@@ -184,6 +210,11 @@ class admin
     }
 }
 
+/**
+ * The admin panel template
+ *
+ * @since 1.9.1
+ */
 function displayAdminPanel()
 {
     global $lang, $THEME;
@@ -283,6 +314,11 @@ function displayAdminPanel()
     <?php
 }
 
+/**
+ * Provides HTML attributes for use with printsetting1().
+ *
+ * @since 1.9.8
+ */
 function settingHTML($setting, &$on, &$off)
 {
     global $SETTINGS, $selHTML;

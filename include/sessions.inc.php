@@ -36,16 +36,9 @@ use XMB\SQL;
  */
 class Data
 {
-    public $member;    // Must be the member record array from the database, or an empty array.
-    public $permanent; // True if the session should be saved by the client, otherwise false.
-    public $status;    // Session input level.  Must be 'good', 'bad', or 'none'.
-    
-    public function __construct() 
-    {
-        $this->member = [];
-        $this->permanent = false;
-        $this->status = 'none';
-    }
+    public array $member = [];      // Must be the member record array from the database, or an empty array.
+    public bool $permanent = false; // True if the session should be saved by the client, otherwise false.
+    public string $status = 'none'; // Session input level.  Must be 'good', 'bad', or 'none'.
 }
 
 /**
@@ -59,17 +52,17 @@ class Data
  */
 class Manager
 {
-    private $mechanisms;
-    private $status;    // Login failure code, or 'good'.
-    private $saved;     // Data object.
+    private array $mechanisms;
+    private string $status = ''; // See getters for details.
+    private Data $saved;
 
     /**
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
+     * @param string $serror Condition prior to authentication.
      */
-    public function __construct(string $mode, SQL $sql)
+    public function __construct(string $mode, private string $serror, SQL $sql)
     {
         $this->mechanisms = [new FormsAndCookies($sql)];
-        $this->status = '';
 
         switch ($mode) {
         case 'login':
@@ -80,7 +73,7 @@ class Manager
             break;
         case 'disabled':
             $this->status = 'session-no-input';
-            $this->saved = new Data;
+            $this->saved = new Data();
             break;
         case 'resume':
         default:
@@ -108,6 +101,23 @@ class Manager
     public function getMember(): array
     {
         return $this->saved->member;
+    }
+
+    /**
+     * Pre-session Errors
+     *
+     * Any error condition, prior to authentication, that was caused by global
+     * settings (ip ban, maintenance mode, members only, etc) is stored here.
+     *
+     * The Session Manager saves this value and later passes it back to the
+     * authorization and escalation logic.  This class has no other knowledge
+     * about the meaning of this value.
+     *
+     * @since 1.10.00
+     */
+    public function getSError(): string
+    {
+        return $this->serror;
     }
 
     /**
@@ -196,7 +206,7 @@ class Manager
             }
             if (! $session->checkClientEnabled()) {
                 $this->status = 'login-client-disabled';
-                $this->saved = new Data;
+                $this->saved = new Data();
                 return;
             }
         }
@@ -209,7 +219,7 @@ class Manager
             // Check for errors
             if ('good' == $data->status) {
                 // Before we even authenticate the user, check if the account is authorized for login.
-                $this->status = loginAuthorization($data->member);
+                $this->status = loginAuthorization($data->member, $this->serror);
                 if ('good' != $this->status) {
                     $data->status = 'bad';
                 }
@@ -250,7 +260,7 @@ class Manager
      */
     private function logout()
     {
-		$this->saved = new Data;
+		$this->saved = new Data();
         foreach($this->mechanisms as $session) {
             $data = $session->logout();
             if ($data->status == 'none') {
@@ -284,7 +294,7 @@ class Manager
             // Check for errors
             if ('good' == $data->status) {
                 // We have authentication, now check authorization.
-                $this->status = loginAuthorization($data->member);
+                $this->status = loginAuthorization($data->member, $this->serror);
                 if ('good' != $this->status) {
                     $data->status = 'bad';
                 }
@@ -465,7 +475,7 @@ class FormsAndCookies implements Mechanism
 
     public function checkUsername(): Data
     {
-        $data = new Data;
+        $data = new Data();
         $uinput = postedVar('username', '', true, false);
 
         if (strlen($uinput) < self::USER_MIN_LEN) {
@@ -490,14 +500,14 @@ class FormsAndCookies implements Mechanism
         $pinput = $_POST['password'];
 
         if (empty($pinput)) {
-            return new Data;
+            return new Data();
         }
         
         $pinput = md5($pinput);
 
         if ($data->member['password'] !== $pinput) {
             auditBadLogin($data->member);
-            $data = new Data;
+            $data = new Data();
             $data->status = 'bad';
             return $data;
         }
@@ -521,7 +531,7 @@ class FormsAndCookies implements Mechanism
 
     public function checkSavedSession(): Data
     {
-        $data = new Data;
+        $data = new Data();
 
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
         $uinput = $this->get_cookie(self::USER_COOKIE);
@@ -614,7 +624,7 @@ class FormsAndCookies implements Mechanism
             // $data->member passes through so the manager knows who is logging out.
         } elseif ('bad' == $data->status) {
             $this->deleteClientData();
-            $data = new Data;
+            $data = new Data();
         } else {
             // There was no session.
         }

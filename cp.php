@@ -25,6 +25,7 @@
 use XMB\UploadStatus;
 
 use function XMB\Services\attach;
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'cp.php');
@@ -729,7 +730,7 @@ if ($action == 'rename') {
         request_secure('Control Panel/Rename User', '');
         $vUserFrom = postedVar('frmUserFrom', '', TRUE, FALSE);
         $vUserTo = postedVar('frmUserTo', '', TRUE, FALSE);
-        $adm = new admin();
+        $adm = new admin(session());
         $myErr = $adm->rename_user($vUserFrom, $vUserTo);
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$myErr.'</td></tr>';
     } else {
@@ -1698,7 +1699,7 @@ if ($action == "members") {
             } else {
                 $db->query("UPDATE ".X_PREFIX."members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
                 if ('' != $queryadd) {
-                    $session->logoutAll($mem['username']);
+                    session()->logoutAll($mem['username']);
                 }
             }
         }

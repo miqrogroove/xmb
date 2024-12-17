@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'editprofile.php');
@@ -387,7 +388,7 @@ if (noSubmit('editsubmit')) {
 
         // Force logout and delete cookies.
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
-        $session->logoutAll($rawuser);
+        session()->logoutAll($rawuser);
     }
 
     $unlock = formYesNo('unlock');

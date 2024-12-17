@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 /* Front Matter */
@@ -440,6 +441,7 @@ if ($SETTINGS['ip_banning'] === 'on') {
             // Block all non-admins
             $serror = 'ip';
         }
+        unset($result);
     }
     unset($ips);
 }
@@ -481,9 +483,9 @@ if ((int) $SETTINGS['schema_version'] < 5) {
     $mode = 'resume';
 }
 
-$session = new \XMB\Session\Manager($mode, sql());
-
-elevateUser($force_inv, $serror);
+session(new \XMB\Session\Manager($mode, $serror, sql()));
+elevateUser($force_inv);
+unset($mode, $serror, $force_inv);
 
 if (X_SCRIPT == 'upgrade.php') return;
 
@@ -657,7 +659,7 @@ if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
 
 /* Theme Ready.  Make pretty errors. */
 
-switch ($serror) {
+switch (session()->getSError()) {
 case 'ip':
     if (! X_ADMIN) {
         header('HTTP/1.0 403 Forbidden');

@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'memcp.php');
@@ -312,7 +313,7 @@ if ($action == 'profile') {
 
             // Force logout and delete cookies.
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
-            $session->logoutAll();
+            session()->logoutAll();
         } else {
             $pwtxt = '';
         }
@@ -692,7 +693,7 @@ if ($action == 'profile') {
         if (! empty($ids)) {
             // This page only handles the default session mechanism for now.
             $lists = [\XMB\Session\FormsAndCookies::class => $ids];
-            $session->logoutByLists($lists);
+            session()->logoutByLists($lists);
         }
     }
 
@@ -701,7 +702,7 @@ if ($action == 'profile') {
     $current = '';
     $other = '';
 
-    $lists = $session->getSessionLists();
+    $lists = session()->getSessionLists();
     foreach ($lists as $name => $list) {
         if ($name != \XMB\Session\FormsAndCookies::class) {
             // This page only handles the default session mechanism for now.

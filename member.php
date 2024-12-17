@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\session;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'member.php');
@@ -219,6 +220,7 @@ switch($action) {
                         error($lang['username_length_invalid']);
                     }
 
+                    // Duplicates some logic in admin.inc.php.
                     $nonprinting = '\\x00-\\x1F\\x7F';  //Universal chars that are invalid.
                     $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
                     $sequences = '|  ';  //Phrases disallowed, each separated by '|'
@@ -469,7 +471,7 @@ switch($action) {
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
                         xmb_mail($rawemail, $subject, $body, $translate['charset']);
                     } else {
-                        $session->newUser($self);
+                        session()->newUser($self);
                     }
 
                     $self['password'] = '';
