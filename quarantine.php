@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'quarantine.php');
 require 'header.php';
@@ -71,7 +74,7 @@ case 'viewuser':
     if ('viewuser' == $action) {
         $user = postedVar('u', '', true, false, false, 'g');
         $dbuser = $db->escape($user);
-        $member = \XMB\SQL\getMemberByName($user);
+        $member = sql()->getMemberByName($user);
         if (empty($member)) {
             error($lang['nomember'], false, '', '</td></tr></table></td></tr></table>');
         }
@@ -93,7 +96,7 @@ case 'viewuser':
 
     $specialrank = array();
     $rankposts = array();
-    $queryranks = \XMB\SQL\getRanks();
+    $queryranks = sql()->getRanks();
     foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
@@ -132,7 +135,7 @@ case 'viewuser':
             $vote_id = $voted = 0;
 
             if ('1' === $thread['pollopts']) {
-                $vote_id = \XMB\SQL\getPollId($tid, true);
+                $vote_id = sql()->getPollId($tid, true);
             }
 
             if ($vote_id > 0) {
@@ -296,8 +299,7 @@ case 'viewuser':
             $smileyoff = $post['smileyoff'];
             $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
-                require_once ROOT.'include/attach.inc.php';
-                $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."hold_attachments AS a LEFT JOIN ".X_PREFIX."hold_attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid = {$post['pid']} AND a.parentid=0");
+                $queryattach = sql()->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
             }
             if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
@@ -503,8 +505,7 @@ case 'viewuser':
             $smileyoff = $post['smileyoff'];
             $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
-                require_once ROOT.'include/attach.inc.php';
-                $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."hold_attachments AS a LEFT JOIN ".X_PREFIX."hold_attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid={$post['pid']} AND a.parentid=0");
+                $queryattach = sql()->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
             }
             if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
@@ -606,8 +607,7 @@ case 'approveall':
     request_secure("Quarantine Panel/approveall", $rawmember);
 
     if (onSubmit('yessubmit')) {
-        require_once ROOT.'include/attach.inc.php';
-        $count = \XMB\SQL\countPosts($quarantine, 0, $rawmember);
+        $count = sql()->countPosts($quarantine, 0, $rawmember);
         $thatime = $onlinetime - $count;
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
         while($thread = $db->fetch_array($result)) {
@@ -636,9 +636,9 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            \XMB\Attach\approve($oldpid, $newpid);
+            attach()->approve($oldpid, $newpid);
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = \XMB\SQL\getPollId($thread['tid'], true);
+                $oldpoll = sql()->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
                     $newpoll = $db->insert_id();
@@ -680,7 +680,7 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            \XMB\Attach\approve((int) $post['pid'], $newpid);
+            attach()->approve((int) $post['pid'], $newpid);
             $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
 
             $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
@@ -722,7 +722,7 @@ case 'approveall':
             $db->free_result($subquery);
         }
         $db->free_result($result);
-        \XMB\SQL\endMemberQuarantine($rawmember);
+        sql()->endMemberQuarantine($rawmember);
         moderate_cleanup($member);
         echo $lang['moderation_approved'];
     } else {
@@ -742,7 +742,7 @@ case 'deleteban':
             $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
             $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = \XMB\SQL\getPollId($thread['tid'], true);
+                $oldpoll = sql()->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
                     $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
@@ -778,7 +778,6 @@ case 'approvethread':
     $thread = $db->fetch_array($result);
     $db->free_result($result);
 
-    require_once ROOT.'include/attach.inc.php';
     $forum = getForum($thread['fid']);
     $member = $db->escape($thread['author']);
     $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}");
@@ -807,9 +806,9 @@ case 'approvethread':
     $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-    \XMB\Attach\approve($oldpid, $newpid);
+    attach()->approve($oldpid, $newpid);
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = \XMB\SQL\getPollId($thread['tid'], true);
+        $oldpoll = sql()->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $db->query(
                 "INSERT INTO ".X_PREFIX."vote_desc " .
@@ -849,7 +848,6 @@ case 'approvereply':
     $post = $db->fetch_array($result);
     $db->free_result($result);
 
-    require_once ROOT.'include/attach.inc.php';
     $forum = getForum($post['fid']);
     $member = $db->escape($post['author']);
     $db->query(
@@ -867,7 +865,7 @@ case 'approvereply':
     $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-    \XMB\Attach\approve((int) $post['pid'], $newpid);
+    attach()->approve((int) $post['pid'], $newpid);
     $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
 
     $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
@@ -926,7 +924,7 @@ case 'deletethread':
     $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
     $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = \XMB\SQL\getPollId($thread['tid'], true);
+        $oldpoll = sql()->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
             $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");

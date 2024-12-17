@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -26,10 +26,7 @@ declare(strict_types=1);
 
 namespace XMB\Token;
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
+use function XMB\Services\sql;
 
 /**
  * Generate a nonce for the current user.
@@ -46,7 +43,7 @@ if (!defined('IN_CODE')) {
  */
 function create(string $action, string $object, int $ttl, bool $anonymous = false): string
 {
-    global $db, $self;
+    global $self;
 
     if ('' == $self['username'] && ! $anonymous) throw new LogicException('Username missing');
 
@@ -55,12 +52,12 @@ function create(string $action, string $object, int $ttl, bool $anonymous = fals
     $token = bin2hex(random_bytes(16));
     $expires = time() + $ttl;
 
-    $success = \XMB\SQL\addToken($token, $self['username'], $action, $object, $expires);
+    $success = sql()->addToken($token, $self['username'], $action, $object, $expires);
 
     if (! $success) {
         // Retry once.
         $token = bin2hex(random_bytes(16));
-        $success = \XMB\SQL\addToken($token, $self['username'], $action, $object, $expires);
+        $success = sql()->addToken($token, $self['username'], $action, $object, $expires);
     }
 
     if (! $success) throw new RuntimeException('XMB was unable to save a new session token');
@@ -82,11 +79,9 @@ function create(string $action, string $object, int $ttl, bool $anonymous = fals
  */
 function consume(string $token, string $action, string $object): bool
 {
-    global $db, $self;
+    global $self;
 
-    \XMB\SQL\deleteTokensByDate(time());
+    sql()->deleteTokensByDate(time());
 
-    return \XMB\SQL\deleteToken($token, $self['username'], $action, $object);
+    return sql()->deleteToken($token, $self['username'], $action, $object);
 }
-
-return;

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'memcp.php');
 
@@ -292,7 +294,7 @@ if ($action == 'profile') {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            $member = \XMB\SQL\getMemberByName($self['username']);
+            $member = sql()->getMemberByName($self['username']);
             if ($member['password'] !== md5($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }

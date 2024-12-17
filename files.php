@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'files.php');
 
@@ -104,12 +106,12 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid
 if ($filename == '') {
     if ($pid == 0 && !X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
-        $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
+        $file = sql()->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
     } else {
-        $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, $pid);
+        $file = sql()->getAttachmentAndFID($aid, $quarantine, $pid);
     }
 } else {
-    $file = \XMB\SQL\getAttachmentAndFID($aid, $quarantine, 0, $filename);
+    $file = sql()->getAttachmentAndFID($aid, $quarantine, 0, $filename);
 }
 if (empty($file)) {
     fileError();
@@ -194,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINC
 }
 
 // Increment hit counter
-\XMB\SQL\raiseDownloadCounter($aid, $quarantine);
+sql()->raiseDownloadCounter($aid, $quarantine);
 
 // Set response headers
 if ($file['img_size'] == '') {

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -36,7 +36,7 @@ if (!defined('IN_CODE')) {
  * @param string $cdata New value and it must be db-escaped!
  * @return bool TRUE on success, FALSE if no translation has been loaded.
  */
-function setNewLangValue($langkey, $cdata)
+function setNewLangValue(string $langkey, string $cdata): bool
 {
     global $db, $langfile;
 
@@ -77,7 +77,7 @@ function setNewLangValue($langkey, $cdata)
  * @param string $cdata is the new value and it must be db-escaped!
  * @return bool TRUE on success.
  */
-function setLangValue($phraseid, $cdata)
+function setLangValue(int $phraseid, string $cdata): bool
 {
     global $db, $langfile;
 
@@ -109,7 +109,7 @@ function setLangValue($phraseid, $cdata)
  * @param string $langfile Read-Only Variable. Devname of the translation to add to.
  * @return bool TRUE on success, FALSE if the devname does not exist.
  */
-function setManyLangValues(&$lang, &$langfile)
+function setManyLangValues(array &$lang, string &$langfile): bool
 {
     global $db;
 
@@ -171,7 +171,7 @@ function setManyLangValues(&$lang, &$langfile)
  * @param string $upload Read/Write Variable. Must contain the entire translation file.
  * @return bool TRUE on success.
  */
-function installNewTranslation(&$upload)
+function installNewTranslation(string &$upload): bool
 {
     global $db, $SETTINGS;
 
@@ -286,7 +286,7 @@ function installNewTranslation(&$upload)
  * @param string $devname Write-Only Variable. Returns the lang_base.devname value.
  * @return string|bool Entire file on success, FALSE otherwise.
  */
-function exportTranslation($langid, &$devname)
+function exportTranslation(int $langid, string &$devname)
 {
     global $db;
 
@@ -357,5 +357,3 @@ function langPanic()
         exit ('Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.');
     }
 }
-
-return;

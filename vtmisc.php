@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'vtmisc.php');
 
@@ -163,7 +165,7 @@ if ($action == 'report') {
 
     // Does a poll exist for this thread?
     $tid = intval($tid);
-    $vote_id = \XMB\SQL\getPollId($tid);
+    $vote_id = sql()->getPollId($tid);
     if ($vote_id === 0) {
         error($lang['pollvotenotselected'], false);
     }
@@ -192,7 +194,7 @@ if ($action == 'report') {
         $userip = $onlineip;
     }
     
-    \XMB\SQL\addVoter($vote_id, $self['uid'], $userip);
+    sql()->addVoter($vote_id, $self['uid'], $userip);
     $db->query("UPDATE ".X_PREFIX."vote_results SET vote_result=vote_result+1 WHERE vote_id=$vote_id AND vote_option_id=$postopnum");
 
     if ($tid > 0) {

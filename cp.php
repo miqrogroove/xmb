@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use XMB\UploadStatus;
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'cp.php');
 
@@ -1768,7 +1773,7 @@ if ($action == "ipban") {
             <?php
         } elseif (onSubmit('ipbandisable')) {
             request_secure('Control Panel/IP Banning', 'mass-edit');
-            \XMB\SQL\updateSetting('ip_banning', 'off');
+            sql()->updateSetting('ip_banning', 'off');
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         } else {
             request_secure('Control Panel/IP Banning', 'mass-edit');
@@ -1840,7 +1845,7 @@ if ($action == "ipban") {
             <?php
         } else {
             request_secure('Control Panel/IP Banning', 'enable');
-            \XMB\SQL\updateSetting('ip_banning', 'on');
+            sql()->updateSetting('ip_banning', 'on');
             echo '<tr bgcolor="'.$altbg2.'"><td class="ctrtablerow">'.$lang['textipupdate'].'</td></tr>';
         }
     }
@@ -1859,7 +1864,6 @@ if ($action == "deleteposts") {
         <?php
     } elseif ($lang['textyes'] === $yessubmit) {
         request_secure('Control Panel/Members/Del Posts', $member);
-        require('include/attach.inc.php');
 
         // Get TIDs
         $dirty = array();
@@ -1883,7 +1887,7 @@ if ($action == "deleteposts") {
         }
 
         // Delete Member's Posts
-        \XMB\Attach\deleteByUser($rawuser);
+        attach()->deleteByUser($rawuser);
         $db->query("DELETE FROM ".X_PREFIX."posts WHERE author='$member'");
         $db->query("UPDATE ".X_PREFIX."members SET postnum = 0 WHERE username='$member'");
 
@@ -1945,13 +1949,9 @@ if ($action == "upgrade") {
         request_secure('Control Panel/Insert Raw SQL', '');
         $upgrade = postedVar('upgrade', '', FALSE, FALSE);
         if (isset($_FILES['sql_file'])) {
-            require('include/attach.inc.php');
-            $filename = '';
-            $filetype = '';
-            $filesize = 0;
-            $add = \XMB\Attach\getUpload('sql_file', $filename, $filetype, $filesize, FALSE);
-            if ($add !== FALSE) {
-                $upgrade .= $add;
+            $result = attach()->getUpload('sql_file');
+            if ($result->status === UploadStatus::Success) {
+                $upgrade .= $result->binaryFile;
                 unlink($_FILES['sql_file']['tmp_name']);
             }
         }

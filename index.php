@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'index.php');
 
@@ -66,7 +68,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
 
 if (X_SMOD) {
     $quarantine = true;
-    $result = \XMB\SQL\countPosts($quarantine);
+    $result = sql()->countPosts($quarantine);
     if ($result > 0) {
         if (1 == $result) {
             $msg = $lang['moderation_notice_single'];

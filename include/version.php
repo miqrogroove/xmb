@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -22,26 +22,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
-
-define('X_VERSION', '1.9.12');
-define('X_VERSION_EXT', '1.9.12.07');
-define('X_VERSION_DATE', '20241207');
+define('X_VERSION', '1.10.00');
+define('X_VERSION_EXT', '1.10.00-alpha');
+define('X_VERSION_DATE', '20241217');
 define('MYSQL_MIN_VER', '4.1.7');
-define('PHP_MIN_VER', '7.0.0');
+define('PHP_MIN_VER', '8.2.0');
 define('COPY_YEAR', '2001-2024');
 
 $versioncompany = 'The XMB Group';
 $versionshort = X_VERSION;
 $versiongeneral = 'XMB ' . X_VERSION;
 $copyright = COPY_YEAR;
-$alpha = '';
+$alpha = 'alpha';
 $beta = '';
 $gamma = '';
 $service_pack = '';
 $versionbuild = X_VERSION_DATE;
-
-return;

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'viewthread.php');
 
@@ -43,13 +46,13 @@ if ($goto == 'lastpost') {
             $post = $db->fetch_array($query);
             $tid = $post['tid'];
 
-            $posts = \XMB\SQL\countPosts($quarantine, $tid, '', (int) $post['dateline']);
+            $posts = sql()->countPosts($quarantine, $tid, '', (int) $post['dateline']);
         } else {
             header('HTTP/1.0 404 Not Found');
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
-        $posts = \XMB\SQL\countPosts($quarantine, $tid);
+        $posts = sql()->countPosts($quarantine, $tid);
 
         if ($posts == 0) {
             header('HTTP/1.0 404 Not Found');
@@ -90,7 +93,7 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $posts = \XMB\SQL\countPosts($quarantine, $tid);
+        $posts = sql()->countPosts($quarantine, $tid);
     } else {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
@@ -107,7 +110,7 @@ if ($goto == 'lastpost') {
     $tidtest = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid");
     if ($db->num_rows($tidtest) == 1) {
         $post = $db->fetch_array($tidtest);
-        $posts = \XMB\SQL\countPosts($quarantine, $tid, '', (int) $post['dateline']);
+        $posts = sql()->countPosts($quarantine, $tid, '', (int) $post['dateline']);
         $page = quickpage($posts, $ppp);
         if ($page == 1) {
             $page = '';
@@ -356,7 +359,7 @@ if ($action == '') {
 
     $specialrank = array();
     $rankposts = array();
-    $queryranks = \XMB\SQL\getRanks();
+    $queryranks = sql()->getRanks();
     foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
@@ -374,7 +377,7 @@ if ($action == '') {
     $vote_id = $voted = 0;
 
     if ('1' === $thread['pollopts']) {
-        $vote_id = \XMB\SQL\getPollId($tid);
+        $vote_id = sql()->getPollId($tid);
     }
 
     if ($vote_id > 0) {
@@ -443,7 +446,7 @@ if ($action == '') {
 
     if (X_MEMBER && 'yes' == $self['waiting_for_mod']) {
         $quarantine = true;
-        $result = \XMB\SQL\countPosts($quarantine, $tid, $self['username']);
+        $result = sql()->countPosts($quarantine, $tid, $self['username']);
         if ($result > 0) {
             if (1 == $result) {
                 $msg = $lang['moderation_replies_single'];
@@ -512,7 +515,6 @@ if ($action == '') {
     $querypost = $db->query($sql);
 
     if ($forum['attachstatus'] == 'on') {
-        require('include/attach.inc.php');
         $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
     }
 
@@ -813,8 +815,7 @@ if ($action == '') {
     // Redirect to new URL
     $file = $db->fetch_array($query);
     $db->free_result($query);
-    require('include/attach.inc.php');
-    $url = \XMB\Attach\getURL((int) $file['aid'], $pid, $file['filename'], false);
+    $url = attach()->getURL((int) $file['aid'], $pid, $file['filename'], false);
     header('HTTP/1.0 301 Moved Permanently');
     header('Location: '.$url);
 } else if ($action == 'printable') {
@@ -858,7 +859,6 @@ if ($action == '') {
 
     $querypost = $db->query($sql);
     if ($forum['attachstatus'] == 'on') {
-        require('include/attach.inc.php');
         $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
     }
 

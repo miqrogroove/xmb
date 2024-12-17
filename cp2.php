@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use XMB\UploadStatus;
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'cp2.php');
 
@@ -366,15 +371,11 @@ if ($action == 'lang') {
         request_secure('Control Panel/Translations', 'mass-edit');
 
         // Retrieve uploaded file
-        require('include/attach.inc.php');
-        $filename = '';
-        $filetype = '';
-        $filesize = 0;
-        $upload = \XMB\Attach\getUpload('themefile', $filename, $filetype, $filesize, FALSE);
-        if ($upload === FALSE) {
+        $upload = attach()->getUpload('themefile');
+        if ($upload->status !== UploadStatus::Success) {
             $message = $lang['langimportfail'];
-            if ($filetype !== X_EMPTY_UPLOAD) {
-                $message .= ' '.$attachmentErrors[$filetype];
+            if ($upload->status !== UploadStatus::EmptyUpload) {
+                $message .= ' '.uploadErrorMsg($upload->status);
             }
             error($message, FALSE, '</td></tr></table></td></tr></table><br />');
         }
@@ -382,7 +383,7 @@ if ($action == 'lang') {
 
         // Install uploaded file
         require('include/translation.inc.php');
-        $result = installNewTranslation($upload);
+        $result = installNewTranslation($upload->binaryFile);
 
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
         if ($result) {
@@ -1331,7 +1332,7 @@ if ($action == "ranks") {
         </tr>
         <?php
         $default_found = false;
-        $ranks = \XMB\SQL\getRanks();
+        $ranks = sql()->getRanks();
 
         foreach ($ranks as $rank) {
             $deleteable = true;
@@ -1403,7 +1404,7 @@ if ($action == "ranks") {
         $newavaurl = postedVar('newavaurl', 'javascript', TRUE, TRUE, TRUE);
 
         // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
-        $ranks = \XMB\SQL\getRanks();
+        $ranks = sql()->getRanks();
 
         foreach ($ranks as $rank) {
             if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
@@ -1767,7 +1768,6 @@ if ($action == "prune") {
         }
 
         if (count($queryWhere) > 0) {
-            require('include/attach.inc.php');
             $tids = array();
             $fids = array();
             $queryWhere = implode(' AND ', $queryWhere);
@@ -1778,7 +1778,7 @@ if ($action == "prune") {
                     $fids[] = $t['fid'];
                 }
                 set_time_limit(30); // Potentially expensive operations coming up.
-                \XMB\Attach\deleteByThreads($tids); // Must delete attachments before posts!
+                attach()->deleteByThreads($tids); // Must delete attachments before posts!
                 set_time_limit(30);
                 $tids = implode(',', $tids);
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid IN ($tids)");
@@ -1928,7 +1928,7 @@ if ($action == "templates") {
         }
 
         $db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
-        \XMB\SQL\raiseThemeVersions();
+        sql()->raiseThemeVersions();
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['templatesrestoredone'].'</td></tr>';
         redirect($full_url.'cp2.php?action=templates', 2, X_REDIRECT_JS);
     }
@@ -2000,9 +2000,9 @@ if ($action == "templates") {
         } else {
             request_secure('Control Panel/Templates/Edit', $tid);
             $tid = getInt('tid');
-            $oldtemplate = \XMB\SQL\getTemplateByID($tid);
+            $oldtemplate = sql()->getTemplateByID($tid);
             if ('css' == $oldtemplate['name']) {
-                \XMB\SQL\raiseThemeVersions();
+                sql()->raiseThemeVersions();
             }
             $db->query("UPDATE ".X_PREFIX."templates SET template='$templatenew' WHERE id=$tid");
         }
@@ -2144,7 +2144,6 @@ if ($action == "attachments") {
     }
 
     if (onSubmit('searchsubmit')) {
-        require('include/attach.inc.php');
         $dblikefilename = $db->like_escape(postedVar('filename', '', FALSE, FALSE));
         $author = postedVar('author');
         $forumprune = postedVar('forumprune');
@@ -2230,12 +2229,12 @@ if ($action == "attachments") {
                           . "LEFT JOIN ".X_PREFIX."threads t ON t.tid=p.tid "
                           . "LEFT JOIN ".X_PREFIX."forums f ON f.fid=t.fid "
                           . "LEFT JOIN ".X_PREFIX."members m ON a.uid=m.uid $restriction1 $orderby");
-        $diskpath = \XMB\Attach\getFullPathFromSubdir('');
+        $diskpath = attach()->getFullPathFromSubdir('');
         if ($diskpath !== FALSE) {
             $diskpath = is_dir($diskpath);
         }
         while($attachment = $db->fetch_array($query)) {
-            $attachsize = \XMB\Attach\getSizeFormatted($attachment['filesize']);
+            $attachsize = attach()->getSizeFormatted($attachment['filesize']);
 
             $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
             $attachment['fname'] = fnameOut($attachment['fname']);
@@ -2257,7 +2256,7 @@ if ($action == "attachments") {
                 $attachment['author'] = $attachment['username'];
                 $downloadlink = '';
             } else {
-                $downloadlink = '<a href="'.\XMB\Attach\getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
+                $downloadlink = '<a href="'.attach()->getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']).'" target="_blank">'.$lang['textdownload'].'</a>';
                 if (function_exists('imagecreatetruecolor')) {
                     $newthumblink = '<a href="cp2.php?action=regeneratethumbnail&amp;aid='.$attachment['aid'].'&amp;pid='.$attachment['pid'].'">'.$lang['regeneratethumbnail'].'</a>';
                 }
@@ -2283,7 +2282,7 @@ if ($action == "attachments") {
             }
             while($child = $db->fetch_array($query2)) {
                 if ($child['parentid'] == $attachment['aid'] && substr($child['filename'], -10) == '-thumb.jpg') {
-                    $attachsize = \XMB\Attach\getSizeFormatted($child['filesize']);
+                    $attachsize = attach()->getSizeFormatted($child['filesize']);
                     $movelink = '';
                     if ($child['subdir'] == '') {
                         $child['subdir'] = 'DB';
@@ -2299,7 +2298,7 @@ if ($action == "attachments") {
                     if ('0' === $child['pid']) {
                         $downloadlink = $lang['thumbnail'];
                     } else {
-                        $downloadlink = '<a href="'.\XMB\Attach\getURL((int) $child['aid'], (int) $child['pid'], $child['filename']).'" target="_blank">'.$lang['thumbnail'].'</a>';
+                        $downloadlink = '<a href="'.attach()->getURL((int) $child['aid'], (int) $child['pid'], $child['filename']).'" target="_blank">'.$lang['thumbnail'].'</a>';
                     }
                     ?>
                         <tr>
@@ -2330,7 +2329,6 @@ if ($action == "attachments") {
 
     if (onSubmit('deletesubmit')) {
         request_secure('Control Panel/Attachments', 'mass-edit');
-        require('include/attach.inc.php');
         $filelist = array();
         foreach($_POST as $postedname => $rawvalue) {
             if (substr($postedname, 0, 8) == 'filename' && is_numeric($fileaid = substr($postedname, 8))) {
@@ -2344,7 +2342,7 @@ if ($action == "attachments") {
             $afilename = "filename" . $attachment['aid'];
             $postedvalue = trim(postedVar($afilename, '', FALSE, FALSE));
             if ($attachment['filename'] !== $postedvalue) {
-                \XMB\Attach\changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
+                attach()->changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
             }
         }
         echo "<tr bgcolor=\"$altbg2\" class=\"tablerow\"><td align=\"center\">$lang[textattachmentsupdate]</td></tr>";
@@ -2608,39 +2606,33 @@ if ($action == "delete_attachment") {
         <?php
     } elseif ($lang['textyes'] === $yessubmit) {
         request_secure('Control Panel/Attachments/Delete', (string) $aid);
-        require('include/attach.inc.php');
-        \XMB\Attach\deleteByID($aid);
+        attach()->deleteByID($aid);
         echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['attach_delete_done']}</td></tr>";
     }
 }
 
 if ($action == "movetodb_attachment") {
-    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    \XMB\Attach\moveToDB($aid, $pid);
+    attach()->moveToDB($aid, $pid);
     echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['movetodb_done']}</td></tr>";
 }
 
 if ($action == "movetodisk_attachment") {
-    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    \XMB\Attach\moveToDisk($aid, $pid);
+    attach()->moveToDisk($aid, $pid);
     echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>{$lang['movetodisk_done']}</td></tr>";
 }
 
 if ($action == "regeneratethumbnail") {
-    require('include/attach.inc.php');
     $aid = getInt('aid');
     $pid = getInt('pid');
-    $result = \XMB\Attach\regenerateThumbnail($aid, $pid);
-    if ($result < 0) {
-        $msg = $attachmentErrors[$result];
-    } elseif (FALSE === $result) {
-        $msg = $lang['error'];
-    } else {
+    $status = attach()->regenerateThumbnail($aid, $pid);
+    if ($status === UploadStatus::Success) {
         $msg = $lang['tool_completed'];
+    } else {
+        $msg = uploadErrorMsg($status);
     }
 
     echo "<tr bgcolor='$altbg2' class='ctrtablerow'><td>$msg</td></tr>";

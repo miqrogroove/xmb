@@ -22,28 +22,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\sql;
+declare(strict_types=1);
 
-define('X_SCRIPT', 'css.php');
+namespace XMB;
 
-require 'header.php';
-
-loadtemplates('css');
-
-$THEME = sql()->getThemeByID(getInt('id'));
-if (empty($THEME)) {
-    header('HTTP/1.0 404 Not Found');
-    exit('Not Found');
+enum UploadStatus
+{
+    case Success;         // Formerly any int >= 0
+    case BadStoragePath;  // Formerly X_BAD_STORAGE_PATH
+    case CountExceeded;   // Formerly X_ATTACH_COUNT_EXCEEDED
+    case DimsExceeded;    // Formerly X_IMAGE_DIMS_EXCEEDED
+    case EmptyUpload;     // Formerly X_EMPTY_UPLOAD
+    case GenericError;    // Formerly X_GENERIC_ATTACH_ERROR
+    case InvalidFilename; // Formerly X_INVALID_FILENAME
+    case InvalidURL;      // Formerly X_INVALID_REMOTE_LINK
+    case NotAnImage;      // Formerly X_NOT_AN_IMAGE
+    case NoTempFile;      // Formerly X_NO_TEMP_FILE
+    case SizeExceeded;    // Formerly X_ATTACH_SIZE_EXCEEDED
 }
-more_theme_vars();
-extract($THEME);
-
-$comment_output = false; // If true, CSS will be invalid.
-eval('$css = "'.template('css').'";');
-
-header("Content-type: text/css");
-header("Content-Description: XMB Stylesheet");
-header("Cache-Control: public, max-age=604800");
-header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
-
-echo $css;

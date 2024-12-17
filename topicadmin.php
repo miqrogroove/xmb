@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'topicadmin.php');
 
@@ -194,7 +197,6 @@ switch($action) {
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Delete', (string) min($tids));
-            require('include/attach.inc.php');
 
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");
@@ -204,7 +206,7 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                \XMB\Attach\deleteByThread($tid);  // Must delete attachments before posts!
+                attach()->deleteByThread($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$tid");
 
@@ -413,7 +415,7 @@ switch($action) {
         break;
 
     case 'getip':
-        $useip = \XMB\SQL\getIPFromPost($pid);
+        $useip = sql()->getIPFromPost($pid);
         if ($useip === '') {
             $address = $lang['textnone'];
             $name = $lang['textnone'];
@@ -512,7 +514,6 @@ switch($action) {
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Empty', (string) min($tids));
-            require('include/attach.inc.php');
             foreach($tids AS $tid) {
                 $query = $db->query("SELECT pid FROM ".X_PREFIX."posts WHERE tid=$tid ORDER BY dateline ASC LIMIT 1");
                 if ($db->num_rows($query) == 1) {
@@ -523,7 +524,7 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
                     }
 
-                    \XMB\Attach\emptyThread($tid, $pid);  // Must delete attachments before posts!
+                    attach()->emptyThread($tid, $pid);  // Must delete attachments before posts!
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
 
                     updatethreadcount($tid); //Also updates lastpost
@@ -752,7 +753,6 @@ switch($action) {
             if ($delcount >= $postcount) {
                 error($lang['cantthreadprune'], false);
             }
-            require('include/attach.inc.php');
             if (X_SADMIN || $SETTINGS['allowrankedit'] == 'off') {
                 $query = $db->query("SELECT author, pid, message FROM ".X_PREFIX."posts WHERE tid=$tid");
                 while($post = $db->fetch_array($query))    {
@@ -762,7 +762,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        \XMB\Attach\deleteByPost($move);
+                        attach()->deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -780,7 +780,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        \XMB\Attach\deleteByPost($move);
+                        attach()->deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -815,7 +815,6 @@ switch($action) {
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Copy', (string) min($tids));
-            require('include/attach.inc.php');
             if (!formInt('newfid')) {
                 error($lang['privforummsg'], false);
             }
@@ -871,7 +870,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    \XMB\Attach\copyByPost((int) $oldPid, $newpid);
+                    attach()->copyByPost((int) $oldPid, $newpid);
                 }
 
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");

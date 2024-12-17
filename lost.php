@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'lost.php');
 
@@ -69,7 +71,7 @@ if (X_MEMBER) {
     }
 
     $newpassword = md5($password1);
-    \XMB\SQL\setNewPassword($username, $newpassword);
+    sql()->setNewPassword($username, $newpassword);
     message($lang['lostpw_success']);
 
 } else {

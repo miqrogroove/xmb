@@ -22,28 +22,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\sql;
+declare(strict_types=1);
 
-define('X_SCRIPT', 'css.php');
+namespace XMB\Services;
 
-require 'header.php';
+use XMB\Attach;
+use XMB\SQL;
 
-loadtemplates('css');
-
-$THEME = sql()->getThemeByID(getInt('id'));
-if (empty($THEME)) {
-    header('HTTP/1.0 404 Not Found');
-    exit('Not Found');
+/**
+ * Get the shared file attachment service.
+ *
+ * @since 1.10.00
+ * @param Attach $attach Required on first call, otherwise optional. Acts as the setter.
+ * @return Attach
+ */
+function attach(?Attach $attach = null): Attach
+{
+    static $cache;
+    
+    if ($attach !== null) $cache = $attach;
+    
+    return $cache;
 }
-more_theme_vars();
-extract($THEME);
 
-$comment_output = false; // If true, CSS will be invalid.
-eval('$css = "'.template('css').'";');
-
-header("Content-type: text/css");
-header("Content-Description: XMB Stylesheet");
-header("Cache-Control: public, max-age=604800");
-header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
-
-echo $css;
+/**
+ * Get the shared SQL service.
+ *
+ * @since 1.10.00
+ * @param SQL $xmbsql Required on first call, otherwise optional. Acts as the setter.
+ * @return SQL
+ */
+function sql(?SQL $xmbsql = null): SQL
+{
+    static $cache;
+    
+    if ($xmbsql !== null) $cache = $xmbsql;
+    
+    return $cache;
+}

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -22,10 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 /**
  * Sets up some extra variables after a new login.
@@ -47,7 +45,7 @@ function loginUser($invisible = null)
             $self['invisible'] = '0';
         }
         if ($old !== $self['invisible']) {
-            \XMB\SQL\changeMemberVisibility($self['username'], $self['invisible']);            
+            sql()->changeMemberVisibility($self['username'], $self['invisible']);            
         }
     }
 
@@ -112,7 +110,7 @@ function elevateUser(bool $force_inv = false, string $serror = '')
         }
         // Save some write locks by updating in 60-second intervals.
         if (abs(time() - (int)$self['lastvisit']) > 60) {
-            \XMB\SQL\setLastvisit($self['username'], $onlinetime);
+            sql()->setLastvisit($self['username'], $onlinetime);
             // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
         }
     } else {
@@ -194,8 +192,8 @@ function elevateUser(bool $force_inv = false, string $serror = '')
         }
         $wollocation = substr($url, 0, $maxurl);
         $newtime = $onlinetime - X_ONLINE_TIMER;
-        \XMB\SQL\deleteOldWhosonline($useip, $self['username'], $newtime);
-        \XMB\SQL\addWhosonline($useip, $onlineuser, $onlinetime, $wollocation, $invisible);
+        sql()->deleteOldWhosonline($useip, $self['username'], $newtime);
+        sql()->addWhosonline($useip, $onlineuser, $onlinetime, $wollocation, $invisible);
     }
 }
 
@@ -247,17 +245,17 @@ function auditBadLogin(array $member)
 
     if (time() >= (int) $member['bad_login_date'] + $reset_timer) {
         // Allowed less than 10 failures.  After 24 hours, reset.
-        \XMB\SQL\resetLoginCounter($member['username'], time());
+        sql()->resetLoginCounter($member['username'], time());
     } elseif ((int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer) {
         // User had more than 10 failures and should be locked out.  After 2 hours, reset.
-        \XMB\SQL\resetLoginCounter($member['username'], time());
+        sql()->resetLoginCounter($member['username'], time());
     } else {
-        $count = \XMB\SQL\raiseLoginCounter($member['username']);
+        $count = sql()->raiseLoginCounter($member['username']);
         if ($count == $guess_limit) {
             // Email the Super Administrators about this.
             $lang2 = loadPhrases(array('charset','security_subject','login_audit_mail'));
 
-            $mailquery = \XMB\SQL\getSuperEmails();
+            $mailquery = sql()->getSuperEmails();
             foreach ($mailquery as $admin) {
                 $translate = $lang2[$admin['langfile']];
                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
@@ -280,9 +278,9 @@ function auditBadSession(array $member)
     $reset_timer = 86400;
     
     if (time() > (int) $member['bad_login_date'] + $reset_timer) {
-        \XMB\SQL\resetSessionCounter($member['username'], time());
+        sql()->resetSessionCounter($member['username'], time());
     } else {
-        $count = \XMB\SQL\raiseSessionCounter($member['username']);
+        $count = sql()->raiseSessionCounter($member['username']);
     }
 }
 
@@ -977,8 +975,7 @@ function bbcodeSizeTags(array $matches): string
 /**
  * Processes tags like [file]1234[/file]
  *
- * Caller must include attach.inc.php, query the attachments table,
- * and load the needed templates.
+ * Caller should query the attachments table and load the needed templates.
  *
  * @since 1.9.11
  * @param string $message Read/Write Variable.  Returns the processed HTML.
@@ -998,8 +995,8 @@ function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcode
         $post = array();
         $post['filename'] = attrOut($attach['filename']);
         $post['filetype'] = attrOut($attach['filetype']);
-        $post['fileurl'] = \XMB\Attach\getURL((int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine);
-        $attachsize = \XMB\Attach\getSizeFormatted($attach['filesize']);
+        $post['fileurl'] = attach()->getURL((int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine);
+        $attachsize = attach()->getSizeFormatted($attach['filesize']);
 
         $post['filedims'] = '';
         $output = '';
@@ -1008,7 +1005,7 @@ function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcode
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
         if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
             if ((int) $attach['thumbid'] > 0) {
-                $post['thumburl'] = \XMB\Attach\getURL((int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine);
+                $post['thumburl'] = attach()->getURL((int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine);
                 $result = explode('x', $attach['thumbsize']);
                 $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
                 eval('$output = "'.template('viewthread_post_attachmentthumb').'";');
@@ -1430,9 +1427,9 @@ function updateforumcount($fid)
     $threadcount = (int) $db->result($query, 0);
     $db->free_result($query);
 
-    $lastpost = \XMB\SQL\findLaspostByForum($fid);
+    $lastpost = sql()->findLaspostByForum($fid);
     
-    \XMB\SQL\setForumCounts($fid, $postcount, $threadcount, $lastpost);
+    sql()->setForumCounts($fid, $postcount, $threadcount, $lastpost);
 }
 
 /**
@@ -1444,7 +1441,7 @@ function updatethreadcount($tid)
     $tid = (int) $tid;
     $quarantine = false;
 
-    $replycount = \XMB\SQL\countPosts($quarantine, $tid);
+    $replycount = sql()->countPosts($quarantine, $tid);
 
     if ($replycount === 0) return; // Sanity check: Nothing left to do.
 
@@ -1789,7 +1786,7 @@ function audit(string $user, string $action, int $fid = 0, int $tid = 0)
 
     $action = cdataOut($action);
 
-    \XMB\SQL\addLog($user, $action, $fid, $tid, $onlinetime);
+    sql()->addLog($user, $action, $fid, $tid, $onlinetime);
 
     return true;
 }

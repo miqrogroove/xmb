@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -189,7 +189,7 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
     require_once ROOT."db/{$database}.php";
 
     $db = new dbstuff;
-    $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
+    $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
     if (!$result) return;
     
     $like_name = $db->like_escape($tablepre . 'settings');
@@ -853,7 +853,7 @@ www.xmbforum2.com
         show_act('Checking Database API');
         // let's check if the actual functionality exists...
 
-        if (!$db->installed()) {
+        if (!$db->isInstalled()) {
             error('Database Handler', 'XMB has determined that your php installation does not support the functions required to use <i>'.$database.'</i> to store all data.', true);
             unset($err);
         }
@@ -869,10 +869,10 @@ www.xmbforum2.com
         }
 
         show_act('Checking Database Connection');
-        $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
+        $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
         if (!$result) {
             show_result(X_INST_ERR);
-            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.$db->get_test_error().'"', true);
+            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error '.$db->getTestError().'"', true);
         } else {
             show_result(X_INST_OK);
         }

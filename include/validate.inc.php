@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,11 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
 
 /**
 * Has the named submit button been invoked?
@@ -408,24 +403,6 @@ function formYesNo($varname)
 }
 
 /**
- * DEPRECATED by XMB 1.9.12
- *
- * This function makes no sense and has no usage.
- */
-function valYesNo($varname, $glob = true)
-{
-    trigger_error('valYesNo() is deprecated in this version of XMB', E_USER_DEPRECATED);
-    if ($glob) {
-        global $varname;
-    }
-
-    if (isset($varname) && strtolower($varname) == 'yes') {
-        return 'yes';
-    }
-    return 'no';
-}
-
-/**
  * Sanitizes a POST integer and checks it for 1 value
  *
  * @param   string   $varname   name of the variable in $_POST
@@ -462,20 +439,6 @@ function isChecked($varname, $compare = 'yes')
     return(($varname == $compare) ? 'checked="checked"' : '');
 }
 
-/**
- * DEPRECATED by XMB 1.9.12.07
- *
- * This function was used to pack decimal-dotted addresses into an 8-char hexadecimal notation.
- * Its output was never reversed and had no clear purpose.
- */
-function encode_ip($dotquad_ip)
-{
-    trigger_error('encode_ip() is deprecated in this version of XMB', E_USER_DEPRECATED);
-
-    $ip_sep = explode('.', $dotquad_ip);
-    return sprintf('%02x%02x%02x%02x', $ip_sep[0], $ip_sep[1], $ip_sep[2], $ip_sep[3]);
-}
-
 function isValidFilename($filename)
 {
     return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
@@ -493,5 +456,3 @@ function bbcode_out(string $message): string
     $retval = str_replace(array('[', ']'), array('&#91;', '&#93;'), $retval);
     return $retval;
 }
-
-return;

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -22,11 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
-
+use function XMB\Services\sql;
 
 /* Assert Additional Security */
 
@@ -455,9 +451,9 @@ function input_custom_setting(string $dbname, string $value)
     global $SETTINGS;
 
     if (! isset($SETTINGS[$dbname])) {
-        \XMB\SQL\addSetting($dbname, $value);
+        sql()->addSetting($dbname, $value);
     } else if ($SETTINGS[$dbname] !== $value) {
-        \XMB\SQL\updateSetting($dbname, $value);
+        sql()->updateSetting($dbname, $value);
     }
 }
 
@@ -497,7 +493,7 @@ function dump_query($resource, $header = true)
             echo '</tr>';
         }
 
-        while($a = $db->fetch_array($resource, SQL_NUM)) {
+        while($a = $db->fetch_array($resource, $db::SQL_NUM)) {
             ?>
             <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
             <?php

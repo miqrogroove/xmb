@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'member.php');
 
@@ -343,7 +345,7 @@ switch($action) {
                         $self['langfile'] = $SETTINGS['langfile'];
                     }
 
-                    $count1 = \XMB\SQL\countMembers();
+                    $count1 = sql()->countMembers();
                     $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
                     $self['timeoffset'] = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
@@ -441,12 +443,12 @@ switch($action) {
                         }
                     }
 
-                    \XMB\SQL\addMember($self);
+                    sql()->addMember($self);
 
                     $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
 
                     if ($SETTINGS['notifyonreg'] != 'off') {
-                        $mailquery = \XMB\SQL\getSuperEmails();
+                        $mailquery = sql()->getSuperEmails();
                         foreach ($mailquery as $admin) {
                             $translate = $lang2[$admin['langfile']];
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
@@ -644,7 +646,7 @@ switch($action) {
             error($lang['nomember']);
         }
 
-        $memberinfo = \XMB\SQL\getMemberByName($member);
+        $memberinfo = sql()->getMemberByName($member);
 
         if (empty($memberinfo) || ('on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN)) {
             header('HTTP/1.0 404 Not Found');

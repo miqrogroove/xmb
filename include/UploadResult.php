@@ -22,28 +22,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\sql;
+declare(strict_types=1);
 
-define('X_SCRIPT', 'css.php');
+namespace XMB;
 
-require 'header.php';
-
-loadtemplates('css');
-
-$THEME = sql()->getThemeByID(getInt('id'));
-if (empty($THEME)) {
-    header('HTTP/1.0 404 Not Found');
-    exit('Not Found');
+class UploadResult
+{
+    public int    $aid = 0;
+    public string $binaryFile = ''; // To be assigned by reference where appropriate.
+    public string $filename = '';
+    public int    $filesize = 0;
+    public string $filetype = '';
+    
+    public function __construct(public UploadStatus $status)
+    {
+        // Property promotion
+    }
 }
-more_theme_vars();
-extract($THEME);
-
-$comment_output = false; // If true, CSS will be invalid.
-eval('$css = "'.template('css').'";');
-
-header("Content-type: text/css");
-header("Content-Description: XMB Stylesheet");
-header("Cache-Control: public, max-age=604800");
-header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
-
-echo $css;

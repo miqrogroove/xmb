@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -27,11 +27,7 @@ declare(strict_types=1);
 namespace XMB\Session;
 
 use RuntimeException;
-
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
+use XMB\SQL;
 
 /**
  * Session Data objects are used to pass results between functions.
@@ -70,9 +66,9 @@ class Manager
     /**
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      */
-    public function __construct(string $mode) 
+    public function __construct(string $mode, SQL $sql)
     {
-        $this->mechanisms = [new FormsAndCookies];
+        $this->mechanisms = [new FormsAndCookies($sql)];
         $this->status = '';
 
         switch ($mode) {
@@ -99,7 +95,7 @@ class Manager
      * Returns 'good' when the login mode or resume mode is successful.
      * Otherwise, various error codes that must be handled by the caller.
      */
-    public function getStatus(): string 
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -109,7 +105,7 @@ class Manager
      *
      * Provides the member array from the database, or an empty array.
      */
-    public function getMember(): array 
+    public function getMember(): array
     {
         return $this->saved->member;
     }
@@ -119,7 +115,7 @@ class Manager
      *
      * Provides an array of arrays, indexed by the name of each Mechanism.
      */
-    public function getSessionLists(): array 
+    public function getSessionLists(): array
     {
         $lists = [];
         if ('good' == $this->status) {
@@ -135,7 +131,7 @@ class Manager
      *
      * @param array $selection Should be structured similar to the return of getSessionLists().
      */
-    public function logoutByLists(array $selection) 
+    public function logoutByLists(array $selection)
     {
         if ('good' != $this->status) return;
 
@@ -152,7 +148,7 @@ class Manager
      *
      * @param string $username If not specified, logs out the member linked to the current session.
      */
-    public function logoutAll(string $username = '') 
+    public function logoutAll(string $username = '')
     {
         if ('' == $username) {
             $current_client = true;
@@ -172,7 +168,7 @@ class Manager
     /**
      * Forces creation of a session for a guest user who just completed registration.
      */
-    public function newUser(array $member) 
+    public function newUser(array $member)
     {
         $data = new Data();
         $data->member =& $member;
@@ -186,7 +182,7 @@ class Manager
     /**
      * Initialize the Session Manager for a login action.
      */
-    private function login() 
+    private function login()
     {
         $this->status = 'login-no-input';
 
@@ -204,7 +200,7 @@ class Manager
                 return;
             }
         }
-        
+
         // Next, authenticate the login.
         foreach($this->mechanisms as $session) {
             // Fetch the user record
@@ -252,7 +248,7 @@ class Manager
     /**
      * Initialize the Session Manager for a logout action.
      */
-    private function logout() 
+    private function logout()
     {
 		$this->saved = new Data;
         foreach($this->mechanisms as $session) {
@@ -455,13 +451,18 @@ class FormsAndCookies implements Mechanism
     const TEST_DATA = 'xmb';
     const TOKEN_BYTES = 16;
     const USER_MIN_LEN = 3;
-    
+
     // Cookie names.
     const REGEN_COOKIE = 'id2';
     const SESSION_COOKIE = 'xmbpw';
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
-    
+
+    public function __construct(private SQL $sql)
+    {
+        // Property promotion.
+    }
+
     public function checkUsername(): Data
     {
         $data = new Data;
@@ -471,7 +472,7 @@ class FormsAndCookies implements Mechanism
             return $data;
         }
         
-        $member = \XMB\SQL\getMemberByName($uinput);
+        $member = $this->sql->getMemberByName($uinput);
         
         if (empty($member)) {
             $data->status = 'bad';
@@ -530,7 +531,7 @@ class FormsAndCookies implements Mechanism
             return $data;
         }
         
-        $member = \XMB\SQL\getMemberByName($uinput);
+        $member = $this->sql->getMemberByName($uinput);
         
         if (empty($member)) {
             $data->status = 'none';
@@ -539,7 +540,7 @@ class FormsAndCookies implements Mechanism
         
         $member['password'] = '';
         
-        $details = \XMB\SQL\getSession($pinput, $uinput);
+        $details = $this->sql->getSession($pinput, $uinput);
 
         if (empty($details)) {
             auditBadSession($member);
@@ -559,21 +560,21 @@ class FormsAndCookies implements Mechanism
             $cookie2 = $this->get_cookie(self::REGEN_COOKIE);
             if ($cookie2 != '' && $cookie2 === $details['replaces']) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
-                \XMB\SQL\deleteSession($details['replaces']);
-                \XMB\SQL\clearSessionParent($details['token']);
+                $this->sql->deleteSession($details['replaces']);
+                $this->sql->clearSessionParent($details['token']);
                 $details['replaces'] = '';
                 $this->delete_cookie(self::REGEN_COOKIE);
             } elseif ($details['replaces'] != '') {
                 // Abnormal: Client responded with the new token but doesn't posess the current (old) token.
                 // Regeneration is compromised.  Both tokens must be destroyed.
-                \XMB\SQL\deleteSession($details['replaces']);
-                \XMB\SQL\deleteSession($details['token']);
+                $this->sql->deleteSession($details['replaces']);
+                $this->sql->deleteSession($details['token']);
                 auditBadSession($member);
                 $data->status = 'bad';
                 return $data;
             } elseif (time() > (int) $details['regenerate']) {
                 // Current session needs to be regenerated.
-                $newdetails = \XMB\SQL\getSessionReplacement($pinput, $uinput);
+                $newdetails = $this->sql->getSessionReplacement($pinput, $uinput);
                 if (empty($newdetails)) {
                     // Normal: This is the first stale hit. New token is needed.
                     $this->regenerate($details);
@@ -590,23 +591,23 @@ class FormsAndCookies implements Mechanism
                 // Current session is stable.
             }
         }
-        
+
         $data->member = &$member;
         $data->status = 'good';
         return $data;
     }
-    
+
     public function logout(): Data
     {
         $data = $this->checkSavedSession();
-        
+
         if ('good' == $data->status) {
             $token = $this->get_cookie(self::SESSION_COOKIE);
-            $child = \XMB\SQL\getSessionReplacement($token, $data->member['username']);
+            $child = $this->sql->getSessionReplacement($token, $data->member['username']);
 
-            \XMB\SQL\deleteSession($token);
+            $this->sql->deleteSession($token);
             if (! empty($child)) {
-                \XMB\SQL\deleteSession($child['token']);
+                $this->sql->deleteSession($child['token']);
             }
             $this->deleteClientData();
             $data->status = 'logged-out';
@@ -620,15 +621,15 @@ class FormsAndCookies implements Mechanism
 
         return $data;
     }
-    
+
     public function logoutAll(string $username, bool $current_client)
     {
-        \XMB\SQL\deleteSessionsByName($username);
+        $this->sql->deleteSessionsByName($username);
         if ($current_client) {
             $this->deleteClientData();
         }
     }
-    
+
     public function deleteClientData()
     {
         $this->delete_cookie(self::REGEN_COOKIE);
@@ -673,12 +674,12 @@ class FormsAndCookies implements Mechanism
             $agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 255);
         }
 
-        $success = \XMB\SQL\saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
+        $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
 
         if (! $success) {
             // Retry once.
             $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-            $success = \XMB\SQL\saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
+            $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
         }
 
         if (! $success) {
@@ -694,7 +695,7 @@ class FormsAndCookies implements Mechanism
         
         return true;
     }
-    
+
     /**
      * Creates a new session token and cookies for a client whose session has become stale.
      *
@@ -713,12 +714,12 @@ class FormsAndCookies implements Mechanism
             $agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 255);
         }
 
-        $success = \XMB\SQL\saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
+        $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
 
         if (! $success) {
             // Retry once.
             $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-            $success = \XMB\SQL\saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
+            $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
         }
 
         if (! $success) {
@@ -759,9 +760,9 @@ class FormsAndCookies implements Mechanism
      */
     public function collectGarbage()
     {
-        \XMB\SQL\deleteSessionsByDate(time());
+        $this->sql->deleteSessionsByDate(time());
     }
-    
+
     /**
      * Retrieve list of all valid sessions for the current user.
      *
@@ -775,7 +776,7 @@ class FormsAndCookies implements Mechanism
         $sessions = [];
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
 
-        $result = \XMB\SQL\getSessionsByName($username);
+        $result = $this->sql->getSessionsByName($username);
         while ($session = $db->fetch_array($result)) {
             if ((int) $session['expire'] < time()) {
                 continue;
@@ -794,7 +795,7 @@ class FormsAndCookies implements Mechanism
     {
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
         if (! empty($selection)) {
-            \XMB\SQL\deleteSessionsByList($username, $selection, $pinput);
+            $this->sql->deleteSessionsByList($username, $selection, $pinput);
         }
     }
 
@@ -810,5 +811,3 @@ class FormsAndCookies implements Mechanism
         }
     }
 }
-
-return;

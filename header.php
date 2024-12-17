@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -22,6 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 /* Front Matter */
 
@@ -284,29 +286,46 @@ if ('mysql' === $database) $database = 'mysqli';
 
 define('X_PREFIX', $tablepre); // Secured table prefix constant
 
+// Get remaining inclusions.  None of them should produce any output.
+ob_start();
+
+// Interfaces and base dependencies go first.
+require ROOT.'db/DBStuff.php';
+require ROOT.'include/CartesianSize.php';
+require ROOT.'include/UploadStatus.php';
+
+// Secondary dependencies
+require ROOT.'include/UploadResult.php';
+
+// Implementations
 require ROOT.'db/'.$database.'.php';
-assertEmptyOutputStream('db/'.$database.'.php');
-
-require ROOT.'include/sql.inc.php';
-assertEmptyOutputStream('sql.inc.php');
-
-require ROOT.'include/validate.inc.php';
-assertEmptyOutputStream('validate.inc.php');
-
+require ROOT.'include/attach.inc.php';
 require ROOT.'include/functions.inc.php';
-assertEmptyOutputStream('functions.inc.php');
-
+require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
-assertEmptyOutputStream('sessions.inc.php');
-
+require ROOT.'include/sql.inc.php';
 require ROOT.'include/tokens.inc.php';
-assertEmptyOutputStream('tokens.inc.php');
+require ROOT.'include/validate.inc.php';
 
-$db = new dbstuff;
-$db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, TRUE);
+assertEmptyOutputStream('the db/* and include/* files');
+ob_end_clean();
+
+// Connect the database.
+
+switch ($database) {
+    default:
+        $db = new \XMB\MySQLiDatabase();
+}
+$db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, force_db: true);
 unset($dbhost, $dbuser, $dbpw);
 
-// Make all settings global, and put them in the $SETTINGS[] array
+/* Create base services */
+
+sql(new \XMB\SQL($db, $tablepre));
+attach(new \XMB\Attach(sql()));
+
+/* Make all settings global, and put them in the $SETTINGS[] array */
+
 // This is the first query, so do not panic unless query logging is enabled.
 $squery = $db->query("SELECT * FROM ".X_PREFIX."settings", (DEBUG && LOG_MYSQL_ERRORS));
 // Assume XMB is not installed if first query fails.
@@ -400,7 +419,7 @@ if (X_SCRIPT != 'viewthread.php' && ! empty($oldtopics)) {
 }
 
 if (X_SCRIPT == 'upgrade.php' && (int) $SETTINGS['schema_version'] < 5) {
-    define('X_SADMIN', \XMB\SQL\checkUpgradeOldLogin(postedVar('xmbuser', '', true, false, false, 'c'), postedVar('xmbpw', '', false, false, false, 'c')));
+    define('X_SADMIN', sql()->checkUpgradeOldLogin(postedVar('xmbuser', '', true, false, false, 'c'), postedVar('xmbpw', '', false, false, false, 'c')));
     return;
 }
 
@@ -462,7 +481,7 @@ if ((int) $SETTINGS['schema_version'] < 5) {
     $mode = 'resume';
 }
 
-$session = new \XMB\Session\Manager($mode);
+$session = new \XMB\Session\Manager($mode, sql());
 
 elevateUser($force_inv, $serror);
 
@@ -586,7 +605,7 @@ if ($tid > 0 && $action != 'templates') {
 $validtheme = FALSE;
 if (!$validtheme && (int) $themeuser > 0) {
     $theme = (int) $themeuser;
-    $row = \XMB\SQL\getThemeByID($theme);
+    $row = sql()->getThemeByID($theme);
     if (! $validtheme = (! empty($row))) {
         $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."members SET theme=0 WHERE uid={$self['uid']}");
@@ -594,7 +613,7 @@ if (!$validtheme && (int) $themeuser > 0) {
 }
 if (!$validtheme && (int) $forumtheme > 0) {
     $theme = (int) $forumtheme;
-    $row = \XMB\SQL\getThemeByID($theme);
+    $row = sql()->getThemeByID($theme);
     if (! $validtheme = (! empty($row))) {
         $themeuser = '0';
         $db->query("UPDATE ".X_PREFIX."forums SET theme=0 WHERE fid=$fid");
@@ -602,7 +621,7 @@ if (!$validtheme && (int) $forumtheme > 0) {
 }
 if (!$validtheme) {
     $theme = (int) $SETTINGS['theme'];
-    $row = \XMB\SQL\getThemeByID($theme);
+    $row = sql()->getThemeByID($theme);
     $validtheme = (! empty($row));
 }
 if (!$validtheme) {
@@ -610,7 +629,7 @@ if (!$validtheme) {
     if ($validtheme = ($db->num_rows($query) > 0)) {
         $row = $db->fetch_array($query);
         $SETTINGS['theme'] = $row['themeid'];
-        \XMB\SQL\updateSetting('theme', $SETTINGS['theme']);
+        sql()->updateSetting('theme', $SETTINGS['theme']);
     }
     $db->free_result($query);
 }

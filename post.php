@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.9.12
+ * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2024, The XMB Group
@@ -21,6 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use XMB\UploadStatus;
+
+use function XMB\Services\attach;
+use function XMB\Services\sql;
 
 define('X_SCRIPT', 'post.php');
 
@@ -244,7 +249,7 @@ if (X_STAFF || 'off' == $SETTINGS['quarantine_new_users']) {
             $quarantine = false;
         } else {
             // Member has not posted before and will be flagged for quarantine starting now.
-            \XMB\SQL\startMemberQuarantine((int) $self['uid']);
+            sql()->startMemberQuarantine((int) $self['uid']);
         }
     } else {
         // Guests have no immunity.
@@ -254,8 +259,7 @@ if (X_STAFF || 'off' == $SETTINGS['quarantine_new_users']) {
 if (!ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 } elseif ($forum['attachstatus'] == 'on') {
-    require 'include/attach.inc.php';
-    $maxsize = \XMB\Attach\getSizeFormatted(min(phpShorthandValue('upload_max_filesize'), (int) $SETTINGS['maxattachsize']));
+    $maxsize = attach()->getSizeFormatted(min(phpShorthandValue('upload_max_filesize'), (int) $SETTINGS['maxattachsize']));
     $attachlimits = " {$lang['attachmaxsize']} $maxsize.  {$lang['attachmaxdims']} {$SETTINGS['max_image_size']}.";
 }
 
@@ -436,32 +440,32 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = \XMB\Attach\uploadedFile('attach'.$i, 0, $quarantine);
-                    if ($result < 0 && $result != X_EMPTY_UPLOAD) {
-                        $errors .= softerror($attachmentErrors[$result]);
-                        $replyvalid = FALSE;
+                    $result = attach()->uploadedFile('attach'.$i, 0, $quarantine);
+                    if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
+                        $errors .= softerror(uploadErrorMsg($result->status));
+                        $replyvalid = false;
                     }
                 }
             }
-            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
-            $result = \XMB\Attach\doEdits($deletes, $aid_list, 0, $quarantine);
-            if ($result < 0) {
-                $errors .= softerror($attachmentErrors[$result]);
-                $replyvalid = FALSE;
+            $aid_list = sql()->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
+            $status = attach()->doEdits($deletes, $aid_list, 0, $quarantine);
+            if ($status !== UploadStatus::Success) {
+                $errors .= softerror(uploadErrorMsg($status));
+                $replyvalid = false;
             }
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $result = \XMB\Attach\remoteImages(0, $messageinput, $quarantine);
-                if ($result < 0) {
-                    $errors .= softerror($attachmentErrors[$result]);
-                    $replyvalid = FALSE;
+                $status = attach()->remoteImages(0, $messageinput, $quarantine);
+                if ($status !== UploadStatus::Success) {
+                    $errors .= softerror(uploadErrorMsg($status));
+                    $replyvalid = false;
                 }
             }
-            $attachSkipped = FALSE;
+            $attachSkipped = false;
         } else {
-            $attachSkipped = TRUE;
+            $attachSkipped = true;
         }
 
         //Check all replying permissions for this $tid.
@@ -568,7 +572,7 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost($values, $quarantine);
+            $pid = sql()->addPost($values, $quarantine);
 
             $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
             if ($moderator && $closetopic == 'yes') {
@@ -587,7 +591,7 @@ switch($action) {
                 unset($where);
 
                 if (X_MEMBER) {
-                    \XMB\SQL\raisePostCount($username, $onlinetime);
+                    sql()->raisePostCount($username, $onlinetime);
                     $expire = $onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
@@ -642,25 +646,25 @@ switch($action) {
             }
 
             if ('yes' == $emailnotify) {
-                \XMB\SQL\addFavoriteIfMissing((int) $tid, $username, 'subscription');
+                sql()->addFavoriteIfMissing((int) $tid, $username, 'subscription');
             }
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            \XMB\Attach\uploadedFile('attach'.$i, $pid, $quarantine);
+                            attach()->uploadedFile('attach'.$i, $pid, $quarantine);
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        \XMB\Attach\remoteImages($pid, $messageinput, $quarantine);
+                        attach()->remoteImages($pid, $messageinput, $quarantine);
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            \XMB\SQL\savePostBody($pid, $newdbmessage, $quarantine);
+                            sql()->savePostBody($pid, $newdbmessage, $quarantine);
                         }
                     }
                 } elseif (X_MEMBER) {
-                    \XMB\SQL\claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
+                    sql()->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
                 }
             }
 
@@ -696,7 +700,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = \XMB\SQL\getOrphanedAttachments((int) $self['uid'], $quarantine);
+                $orphans = sql()->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
                 $counter = 0;
                 foreach ($orphans as $postinfo) {
                     $files[] = $postinfo;
@@ -722,7 +726,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset($orphans);
@@ -786,7 +790,7 @@ switch($action) {
                 $closeoption = '';
             }
 
-            $replynum = \XMB\SQL\countPosts(false, $tid);
+            $replynum = sql()->countPosts(false, $tid);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
                 $trevltmsg = str_replace('$threadlink', $threadlink, $lang['evaltrevlt']);
@@ -841,27 +845,27 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = \XMB\Attach\uploadedFile('attach'.$i, 0, $quarantine);
-                    if ($result < 0 && $result != X_EMPTY_UPLOAD) {
-                        $errors .= softerror($attachmentErrors[$result]);
-                        $topicvalid = FALSE;
+                    $result = attach()->uploadedFile('attach'.$i, 0, $quarantine);
+                    if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
+                        $errors .= softerror(uploadErrorMsg($result->status));
+                        $topicvalid = false;
                     }
                 }
             }
-            $aid_list = \XMB\SQL\getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
-            $result = \XMB\Attach\doEdits($deletes, $aid_list, 0, $quarantine);
-            if ($result < 0) {
-                $errors .= softerror($attachmentErrors[$result]);
-                $topicvalid = FALSE;
+            $aid_list = sql()->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
+            $status = attach()->doEdits($deletes, $aid_list, 0, $quarantine);
+            if ($status !== UploadStatus::Success) {
+                $errors .= softerror(uploadErrorMsg($status));
+                $topicvalid = false;
             }
             foreach($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $result = \XMB\Attach\remoteImages(0, $messageinput, $quarantine);
-                if ($result < 0) {
-                    $errors .= softerror($attachmentErrors[$result]);
-                    $topicvalid = FALSE;
+                $status = attach()->remoteImages(0, $messageinput, $quarantine);
+                if ($status !== UploadStatus::Success) {
+                    $errors .= softerror(uploadErrorMsg($status));
+                    $topicvalid = false;
                 }
             }
             $attachSkipped = FALSE;
@@ -997,7 +1001,7 @@ switch($action) {
                 'pollopts' => $dbpollopts,
             ];
 
-            $tid = \XMB\SQL\addThread($values, $quarantine);
+            $tid = sql()->addThread($values, $quarantine);
 
             if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                 $useip = '';
@@ -1019,10 +1023,10 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = \XMB\SQL\addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
+            $pid = sql()->addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
 
             $lastpost .= "|$pid";
-            \XMB\SQL\setThreadLastpost($tid, $lastpost, $quarantine);
+            sql()->setThreadLastpost($tid, $lastpost, $quarantine);
 
             if (! $quarantine) {
                 $where = "WHERE fid=$fid";
@@ -1036,7 +1040,7 @@ switch($action) {
             if ($poll == 'yes') {
                 // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
                 $dbsubject = addslashes($subjectinput);
-                $vote_id = \XMB\SQL\addVoteDesc($tid, $quarantine);
+                $vote_id = sql()->addVoteDesc($tid, $quarantine);
                 
                 // Create poll options.  This is the part we care about.
                 $options = [];
@@ -1048,16 +1052,16 @@ switch($action) {
                         'vote_option_text' => $p,
                     ];
                 }
-                \XMB\SQL\addVoteOptions($options, $quarantine);
+                sql()->addVoteOptions($options, $quarantine);
             }
 
             if (X_MEMBER) {
                 if ($emailnotify == 'yes') {
-                    \XMB\SQL\addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
+                    sql()->addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
                 }
 
                 if (! $quarantine) {
-                    \XMB\SQL\raisePostCount($username, $onlinetime);
+                    sql()->raisePostCount($username, $onlinetime);
                     $expire = $onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
@@ -1072,25 +1076,25 @@ switch($action) {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            \XMB\Attach\uploadedFile('attach'.$i, $pid, $quarantine);
+                            attach()->uploadedFile('attach'.$i, $pid, $quarantine);
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        \XMB\Attach\remoteImages($pid, $messageinput, $quarantine);
+                        attach()->remoteImages($pid, $messageinput, $quarantine);
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            \XMB\SQL\savePostBody($pid, $newdbmessage, $quarantine);
+                            sql()->savePostBody($pid, $newdbmessage, $quarantine);
                         }
                     }
                 } elseif (X_MEMBER) {
-                    \XMB\SQL\claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
+                    sql()->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
                 }
             }
 
             if ($quarantine) {
                 message($lang['moderation_hold']);
             } else {
-                $posts = \XMB\SQL\countPosts(false, $tid);
+                $posts = sql()->countPosts(false, $tid);
 
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
@@ -1103,7 +1107,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = \XMB\SQL\getOrphanedAttachments((int) $self['uid'], $quarantine);
+                $orphans = sql()->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
                 $counter = 0;
                 foreach ($orphans as $postinfo) {
                     $files[] = $postinfo;
@@ -1129,7 +1133,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset($orphans);
@@ -1235,29 +1239,29 @@ switch($action) {
             if ($forum['attachstatus'] == 'on') {
                 for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                     if (isset($_FILES['attach'.$i])) {
-                        $result = \XMB\Attach\uploadedFile('attach'.$i, $pid);
-                        if ($result < 0 && $result != X_EMPTY_UPLOAD) {
-                            $errors .= softerror($attachmentErrors[$result]);
-                            $editvalid = FALSE;
+                        $result = attach()->uploadedFile('attach'.$i, $pid);
+                        if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
+                            $errors .= softerror(uploadErrorMsg($result->status));
+                            $editvalid = false;
                         }
                     }
                 }
                 $children = false;
-                $aid_list = \XMB\SQL\getAttachmentIDsByPost($pid, $children);
-                $result = \XMB\Attach\doEdits($deletes, $aid_list, $pid);
-                if ($result < 0) {
-                    $errors .= softerror($attachmentErrors[$result]);
-                    $editvalid = FALSE;
+                $aid_list = sql()->getAttachmentIDsByPost($pid, $children);
+                $status = attach()->doEdits($deletes, $aid_list, $pid);
+                if ($status !== UploadStatus::Success) {
+                    $errors .= softerror(uploadErrorMsg($status));
+                    $editvalid = false;
                 }
                 foreach($deletes as $aid) {
                     $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
                 }
                 $temp = '';
                 if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                    $result = \XMB\Attach\remoteImages($pid, $messageinput);
-                    if ($result < 0) {
-                        $errors .= softerror($attachmentErrors[$result]);
-                        $editvalid = FALSE;
+                    $status = attach()->remoteImages($pid, $messageinput);
+                    if ($status !== UploadStatus::Success) {
+                        $errors .= softerror(uploadErrorMsg($status));
+                        $editvalid = false;
                     }
                 }
             }
@@ -1326,15 +1330,14 @@ switch($action) {
 
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$sql_posticon', subject='$dbsubject' WHERE pid=$pid");
             } else {
-                require_once('include/attach.inc.php');
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$pid");
                 if ($orig['author'] != 'Anonymous') {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
                 }
-                \XMB\Attach\deleteByPost($pid);
+                attach()->deleteByPost($pid);
 
                 if ((int) $isfirstpost['pid'] == $pid) {
-                    $numrows = \XMB\SQL\countPosts(false, $tid);
+                    $numrows = sql()->countPosts(false, $tid);
 
                     if ($numrows == 0) {
                         $threaddelete = 'yes';
@@ -1361,7 +1364,7 @@ switch($action) {
             }
 
             if ($threaddelete == 'no') {
-                $posts = \XMB\SQL\countPosts(false, $tid, '', (int) $orig['dateline']);
+                $posts = sql()->countPosts(false, $tid, '', (int) $orig['dateline']);
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 message($lang['editpostmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
@@ -1399,7 +1402,7 @@ switch($action) {
                     $postinfo['downloads'] = $attach['downloads'];
                     $postinfo['filename'] = attrOut($attach['filename']);
                     $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
-                    $postinfo['url'] = \XMB\Attach\getURL((int) $attach['aid'], $pid, $attach['filename']);
+                    $postinfo['url'] = attach()->getURL((int) $attach['aid'], $pid, $attach['filename']);
                     eval('$attachment .= "'.template('post_edit_attachment').'";');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$attach['aid']}[/file]";
@@ -1420,7 +1423,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' '.\XMB\Attach\getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
                     eval('$attachment .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
