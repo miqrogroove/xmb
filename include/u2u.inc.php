@@ -117,19 +117,14 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid = 0)
  * @param string $msgto The recipient(s) of this U2U message.
  * @param string $subject The U2U Subject
  * @param string $message The U2U message body
- * @param mixed  $u2upreview This param never worked. It was officially deprecated in XMB 1.9.12.05.
  * @return string The left-hand-pane view
  */
-function u2u_send($u2uid, string $msgto, string $subject, string $message, $u2upreview = 'deprecated'): string
+function u2u_send($u2uid, string $msgto, string $subject, string $message): string
 {
     global $db, $self, $lang, $xmbuser, $SETTINGS, $del, $full_url;
     global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
     global $THEME, $thewidth;
     global $forward, $reply, $previewsubmit;
-
-    if ('deprecated' !== $u2upreview) {
-        trigger_error('The $u2upreview parameter of u2u_send() does not work in this version of XMB.', E_USER_DEPRECATED);
-    }
 
     $dbsubject = addslashes($subject); //message and subject were historically double-slashed
     $dbmessage = addslashes($message);

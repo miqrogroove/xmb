@@ -22,6 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use LogicException;
+
 use function XMB\Services\attach;
 use function XMB\Services\sql;
 
@@ -474,24 +476,6 @@ function request_secure(string $action, string $id, int $expire = 0, bool $error
     }
 }
 
-/**
- * DEPRECATED by XMB 1.9.12
- *
- * template_key() is no longer needed because we can now store more information in the tokens table.
- */
-function template_key($action, $id)
-{
-    trigger_error('template_key() is deprecated in this version of XMB.', E_USER_DEPRECATED);
-
-    $id_len = X_NONCE_KEY_LEN - strlen($action);
-    if (strlen($id) > $id_len) {
-        $id = substr($id, -$id_len);
-    } else {
-        $id = str_pad($id, $id_len, '0', STR_PAD_LEFT);
-    }
-    return $action . $id;
-}
-
 function censor($txt)
 {
     global $censorcache;
@@ -565,8 +549,8 @@ function smile(&$txt)
  */
 function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes")
 {
-    if ('yes' == $allowhtml) {
-        trigger_error('The allowhtml parameter to function postify() is deprecated in this version of XMB', E_USER_DEPRECATED);
+    if ('no' !== $allowhtml) {
+        throw new LogicException('The allowhtml parameter only accepts a value of "no" in this version of XMB.');
     }
 
     $bballow = ($allowbbcode == 'yes' || $allowbbcode == 'on') ? (($bbcodeoff != 'off' && $bbcodeoff != 'yes') ? true : false) : false;
