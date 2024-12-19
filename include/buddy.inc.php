@@ -22,11 +22,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit('Not allowed to run this file directly.');
-}
-
 function blistmsg($message, $redirect = '', $exit = false)
 {
     global $bordercolor, $tablewidth, $THEME, $tablespace, $altbg1, $css, $bbname, $lang;
@@ -180,5 +175,3 @@ function buddy_display()
     }
     eval('echo "'.template('buddylist').'";');
 }
-
-return;

@@ -1552,4 +1552,23 @@ class SQL
 
         return $theme;
     }
+
+    /**
+     * Fetch the first theme in the themes table.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @return int
+     */
+    public function countU2UInbox(string $username): int
+    {
+        $this->db->escape_fast($username);
+
+        $query = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "u2u WHERE owner = '$username' AND folder = 'Inbox' AND readstatus = 'no'");
+
+        $result = (int) $this->db->result($query, 0);
+        $this->db->free_result($query);
+
+        return $result;
+    }
 }

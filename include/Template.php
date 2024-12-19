@@ -74,6 +74,53 @@ class Template
     }
 
     /**
+     * These variables are almost always needed in the header and footer templates.
+     *
+     * In case the error template gets used early in the bootup, it's best to initialize those variables.
+     *
+     * This is not called by the constructor because the Template code can be re-used for custom scripts,
+     * or for individual templates, to help eliminate variable name conflicts.
+     */
+    public function init()
+    {
+        $list = [
+            'baseelement',
+            'bbcodescript',
+            'browser',
+            'canonical_link',
+            'copyright',
+            'css',
+            'lastvisittext',
+            'links',
+            'navigation',
+            'newu2umsg',
+            'notify',
+            'pluglink',
+            'reglink',
+            'quickjump',
+            'searchlink',
+            'threadSubject',
+            'versionbuild',
+            'versioncompany',
+            'versionlong',
+        ];
+
+        foreach ($list as $name) {
+            $this->$data[$name] = '';
+        }
+
+        $this->data['footerstuff'] = [
+            'load' => '',
+            'phpsql' => '',
+            'totaltime' => '',
+            'querydump' => '',
+            'querynum' => '',
+        ];
+
+        $this->addRefs();
+    }
+
+    /**
      * This can be used as often as needed to ensure the references are current.
      */
     public function addRefs()

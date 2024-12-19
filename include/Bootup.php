@@ -26,9 +26,12 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMB\Session\Manager as SessionMgr;
+
 use function assertEmptyOutputStream;
 use function XMB\Validate\attrOut;
 use function XMB\Validate\getInt;
+use function XMB\Validate\onSubmit;
 use function XMB\Validate\postedVar;
 use function XMB\Validate\recodeOut;
 
@@ -97,6 +100,8 @@ class Bootup
         require ROOT.'include/version.php';
         assertEmptyOutputStream('version.php');
 
+        $this->template->copyright = $copyright;
+        $this->template->versioncompany = $versioncompany;
         if (! $show_full_info) {
             $versionshort = '';
             $versiongeneral = 'XMB';
@@ -397,7 +402,7 @@ class Bootup
         }
     }
     
-    public function createSession()
+    public function prepareSession(): array
     {
         $serror = '';
         $action = postedVar('action', '', false, false, false, 'g');
@@ -456,9 +461,11 @@ class Bootup
             $mode = 'resume';
         }
 
-        session(new \XMB\Session\Manager($mode, $serror, sql()));
-        elevateUser($force_inv);
-        unset($mode, $serror, $force_inv);
+        return [
+            'force_inv' => $force_inv,
+            'mode' => $mode,
+            'serror' => $serror,
+        ];
     }
     
     public function setCharset()
@@ -565,9 +572,9 @@ class Bootup
         $this->vars->lastvisit = $thetime; // Used by forumdisplay
     }
 
-    public function sendErrors()
+    public function sendErrors(SessionMgr $session)
     {
-        switch (session()->getSError()) {
+        switch ($session->getSError()) {
         case 'ip':
             if (! X_ADMIN) {
                 header('HTTP/1.0 403 Forbidden');
@@ -596,6 +603,27 @@ class Bootup
             }
             break;
         }
+    }
+    
+    public function checkU2U(SQL $sql)
+    {
+        // check for new u2u's
+        $newu2unum->countU2UInbox($this->vars->self['username']);
+        $newu2umsg = '';
+        if ($newu2unum > 0) {
+            $newu2umsg = "<a href='u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . ' ' . $this->vars->lang['newu2u2'] . '</a>';
+            // Popup Alert
+            if ('2' === $this->vars->self['u2ualert'] || ('1' === $this->vars->self['u2ualert'] && 'index.php' === basename($_SERVER['SCRIPT_NAME']))) {
+                $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
+                if ($newu2unum == 1) {
+                    $newu2umsg .= 'u2uAlertMsg = "' . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . $this->vars->lang['u2ualert5'] . '"; ';
+                } else {
+                    $newu2umsg .= 'u2uAlertMsg = "' . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . $this->vars->lang['u2ualert6'] . '"; ';
+                }
+                $newu2umsg .= "if (confirm(u2uAlertMsg)) { Popup('u2u.php', 'testWindow', 700, 450); } } setTimeout('u2uAlert();', 10);</script>";
+            }
+        }
+        $this->template->newu2umsg = $newu2umsg;
     }
     
     public function createNavbarLinks()
@@ -660,6 +688,33 @@ class Bootup
         // create forum jump
         if ($this->vars->settings['quickjump_status'] == 'on') {
             $this->template->quickjump = forumJump();
+        }
+    }
+    
+    public function startCompression()
+    {
+        $action = postedVar('action', '', false, false, false, 'g');
+        if (
+            $this->vars->settings['gzipcompress'] == 'on'
+            && $action != 'captchaimage'
+            && basename($_SERVER['SCRIPT_NAME']) != 'files.php'
+            && ! $this->vars->debug
+        ) {
+            if (($res = @ini_get('zlib.output_compression')) > 0) {
+                // leave it
+            } else if ($res === false) {
+                // ini_get not supported. So let's just leave it
+            } else {
+                if (function_exists('gzopen')) {
+                    $r = @ini_set('zlib.output_compression', 4096);
+                    $r2 = @ini_set('zlib.output_compression_level', '3');
+                    if (false === $r || false === $r2) {
+                        ob_start('ob_gzhandler');
+                    }
+                } else {
+                    ob_start('ob_gzhandler');
+                }
+            }
         }
     }
 }

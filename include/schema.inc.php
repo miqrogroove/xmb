@@ -22,11 +22,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
-
 define('XMB_SCHEMA_VER', 9);
 
 /**
@@ -713,5 +708,3 @@ function xmb_schema_columns_list(string $table): array
 
     return $columns;
 }
-
-return;

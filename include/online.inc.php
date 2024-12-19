@@ -22,11 +22,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
-
 function url_to_text($url)
 {
     global $db, $lang, $self, $xmbuser, $SETTINGS;
@@ -251,5 +246,3 @@ function url_to_text($url)
     $return['text'] = $location;
     return $return;
 }
-
-return;

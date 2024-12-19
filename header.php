@@ -28,6 +28,7 @@ use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\template;
 use function XMB\Services\theme;
+use function XMB\Services\observer;
 use function XMB\Services\vars;
 
 /* Front Matter */
@@ -38,35 +39,19 @@ if ('header.php' === basename($_SERVER['SCRIPT_NAME'])) {
 }
 if (!defined('ROOT')) define('ROOT', './');
 error_reporting(-1); // Report all errors until config.php loads successfully.
-define('IN_CODE', TRUE);
-require ROOT.'include/global.inc.php';
 
 
 /* Global Constants and Initialized Values */
 
 $mtime = explode(" ", microtime());
 $starttime = $mtime[1] + $mtime[0];
+unset($mtime);
 $onlinetime = time();
-$time = $onlinetime;
 $selHTML = 'selected="selected"';
 $cheHTML = 'checked="checked"';
 $server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
 
-$canonical_link = '';
-$bbcodescript = '';
-$cssInclude = '';
-$threadSubject = '';
-$filesize = 0;
-$filename = '';
-$filetype = '';
-$full_url = '';
-$navigation = '';
 $onlineuser = '';
-$othertid = '';
-$password = '';
-$smiliesnum = 0;
-$status = '';
-$wordsnum = 0;
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -140,20 +125,29 @@ require ROOT.'include/Template.php';
 require ROOT.'include/ThemeManager.php';
 require ROOT.'include/tokens.inc.php';
 require ROOT.'include/validate.inc.php';
+require ROOT.'include/global.inc.php';
 
-assertEmptyOutputStream('the db/* and include/* files');
-ob_end_clean();
 
 /* Create base services */
 
 vars(new \XMB\Variables());
+
+observer(new \XMB\Observer(vars()));
 template(new \XMB\Template(vars()));
+template()->init();
+
 $boot = new \XMB\Bootup(template(), vars());
+
+observer()->testSuperGlobals();
+observer()->assertEmptyOutputStream('the db/* and include/* files');
+
+ob_end_clean();
+
 
 /* Load the Configuration Created by Install */
 
 require ROOT.'config.php';
-assertEmptyOutputStream('config.php');
+observer()->assertEmptyOutputStream('config.php');
 
 $boot->loadConfig();
 $boot->setBrowser();
@@ -198,7 +192,10 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 /* Authorize User, Set Up Session, and Load Language Translation */
 
-$boot->createSession();
+$params = $boot->prepareSession();
+session(new \XMB\Session\Manager($params['mode'], $params['serror'], sql()));
+elevateUser($params['force_inv']);
+unset($params);
 
 if (defined('XMB_UPGRADE')) return;
 
@@ -212,69 +209,22 @@ theme()->setTheme();
 
 /* Theme Ready.  Make pretty errors. */
 
-$boot->sendErrors();
+$boot->sendErrors(session());
 
 
 /* Finish HTML Templates */
-if ((X_ADMIN || vars()->settings['bbstatus'] == 'on') && (X_MEMBER || vars()->settings['regviewonly'] == 'off')) {
 
+if ((X_ADMIN || vars()->settings['bbstatus'] == 'on') && (X_MEMBER || vars()->settings['regviewonly'] == 'off')) {
     $boot->createNavbarLinks();
     $boot->makePlugLinks();
     $boot->makeQuickJump();
-
-    // check for new u2u's
-    if (X_MEMBER) {
-        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' AND readstatus='no'");
-        $newu2unum = (int) $db->result($query, 0);
-        $db->free_result($query);
-        if ($newu2unum > 0) {
-            $newu2umsg = "<a href=\"u2u.php\" onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">{$lang['newu2u1']} $newu2unum {$lang['newu2u2']}</a>";
-            // Popup Alert
-            if ('2' === $self['u2ualert'] || ('1' === $self['u2ualert'] && X_SCRIPT == 'index.php')) {
-                $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
-                if ($newu2unum == 1) {
-                    $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert5'].'"; ';
-                } else {
-                    $newu2umsg .= 'u2uAlertMsg = "'.$lang['newu2u1'].' '.$newu2unum.$lang['u2ualert6'].'"; ';
-                }
-                $newu2umsg .= "if (confirm(u2uAlertMsg)) { Popup('u2u.php', 'testWindow', 700, 450); } } setTimeout('u2uAlert();', 10);</script>";
-            }
-        }
-    }
-} else {
-    template()->links = '';
-    template()->newu2umsg = '';
-    template()->pluglink = '';
-    template()->searchlink = '';
-    template()->quickjump = '';
+    if (X_MEMBER) $boot->checkU2U(sql());
 }
 
 
 /* Perform HTTP Connection Maintenance */
 
-assertEmptyOutputStream('header.php');
-
-// Gzip-compression
-if ($SETTINGS['gzipcompress'] == 'on'
- && $action != 'captchaimage'
- && X_SCRIPT != 'files.php'
- && !DEBUG) {
-    if (($res = @ini_get('zlib.output_compression')) > 0) {
-        // leave it
-    } else if ($res === false) {
-        // ini_get not supported. So let's just leave it
-    } else {
-        if (function_exists('gzopen')) {
-            $r = @ini_set('zlib.output_compression', 4096);
-            $r2 = @ini_set('zlib.output_compression_level', '3');
-            if (FALSE === $r || FALSE === $r2) {
-                ob_start('ob_gzhandler');
-            }
-        } else {
-            ob_start('ob_gzhandler');
-        }
-    }
-}
+$boot->startCompression();
 
 unset($boot);
 

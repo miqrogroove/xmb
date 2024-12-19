@@ -22,11 +22,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
-
 // Name assigned by XMB for internal use.
 $devname = 'English';
 

@@ -28,6 +28,7 @@ namespace XMB\Services;
 
 use XMB\Attach;
 use XMB\Debug;
+use XMB\Global;
 use XMB\Session\Manager as SessionMgr;
 use XMB\SQL;
 use XMB\Template;
@@ -78,6 +79,22 @@ function debug(?Debug $debug = null): Debug
     static $cache;
     
     if ($debug !== null) $cache = $debug;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared observer service.
+ *
+ * @since 1.10.00
+ * @param Observer $observer Required on first call, otherwise optional. Acts as the setter.
+ * @return Observer
+ */
+function observer(?Observer $observer = null): Observer
+{
+    static $cache;
+    
+    if ($observer !== null) $cache = $observer;
     
     return $cache;
 }
