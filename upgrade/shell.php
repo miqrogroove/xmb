@@ -26,20 +26,18 @@
 header('HTTP/1.0 403 Forbidden');
 exit('This file is provided to illustrate customized XMB upgrade techniques.');
 
-ignore_user_abort(TRUE);
+ignore_user_abort(true);
 
 //Script constants.
 define('ROOT', '../'); // Location of XMB files relative to this script.
 
 //Emulate logic needed from XMB's header.php file.
 error_reporting(-1);
-define('IN_CODE', TRUE);
+define('IN_CODE', true);
 $SETTINGS = array();
 define('X_NONCE_KEY_LEN', 12);
 require ROOT.'config.php';
-if (DEBUG) {
-    require(ROOT.'include/debug.inc.php');
-} else {
+if (! DEBUG) {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 define('X_PREFIX', $tablepre);

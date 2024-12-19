@@ -23,7 +23,7 @@
  */
 
 define('ROOT', '../');
-define('X_SCRIPT', 'upgrade.php');
+define('XMB_UPGRADE', true);
 
 require ROOT.'header.php';
 

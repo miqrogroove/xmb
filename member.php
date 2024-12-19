@@ -128,13 +128,14 @@ switch($action) {
                         $ssl_lib = ROOT.'trust.pem';
                         $installed = time() < 2097705600; // Expires 2036-06-21 and won't be used until updated.
                         $curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
+                        $agent = $versionshort == '' ? 'XMB' : "XMB/$versionshort";
 
                         curl_setopt_array($curl, array(
                             CURLOPT_CAINFO => $ssl_lib,
                             CURLOPT_SSL_VERIFYPEER => $installed,
                             CURLOPT_RETURNTRANSFER => true,
                             CURLOPT_TIMEOUT => 5,
-                            CURLOPT_USERAGENT => "XMB/$versionshort; $full_url",
+                            CURLOPT_USERAGENT => ini_get('user_agent'),
                             CURLOPT_POST => 1
                         ));
 

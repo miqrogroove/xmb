@@ -25,6 +25,7 @@
 use function XMB\Services\attach;
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 /**
  * Sets up some extra variables after a new login.
@@ -64,7 +65,7 @@ function loginUser($invisible = null)
  */
 function elevateUser(bool $force_inv = false)
 {
-    global $xmbuser, $self, $db, $SETTINGS, $status_enum, $onlinetime;
+    global $self, $db, $SETTINGS, $status_enum, $onlinetime;
 
     $maxurl = 150; //Schema constant.
 
@@ -85,11 +86,11 @@ function elevateUser(bool $force_inv = false)
         $self['status'] = '';
         $xmbuser = '';
     }
-
+    vars()->xmbuser = $xmbuser;
     $self['password'] = '';
 
     // Initialize the new translation system
-    if (X_SCRIPT != 'upgrade.php') {
+    if (! defined('XMB_UPGRADE')) {
         $success = false;
         if (!empty($self['langfile'])) {
             $success = loadLang($self['langfile']);
@@ -137,12 +138,11 @@ function elevateUser(bool $force_inv = false)
     }
 
     // Set more globals
-    global $timeoffset, $themeuser, $status, $tpp, $ppp, $memtime, $dateformat,
+    global $timeoffset, $status, $tpp, $ppp, $memtime, $dateformat,
            $sig, $invisible, $timecode, $dformatorig;
 
     if ($xmbuser != '') {
         $timeoffset = $self['timeoffset'];
-        $themeuser = $self['theme'];
         $status = $self['status'];
         $tpp = (int) $self['tpp'];
         $ppp = (int) $self['ppp'];
@@ -155,7 +155,6 @@ function elevateUser(bool $force_inv = false)
         $onlineuser = $self['username'];
     } else {
         $timeoffset = $SETTINGS['def_tz'];
-        $themeuser = '';
         $status = 'member';
         $tpp = (int) $SETTINGS['topicperpage'];
         $ppp = (int) $SETTINGS['postperpage'];
@@ -184,7 +183,7 @@ function elevateUser(bool $force_inv = false)
 
     // Save This Session
     $serror = session()->getSError();
-    if (X_SCRIPT != 'upgrade.php' && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
+    if (! defined('XMB_UPGRADE') && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
         global $onlineip, $url;
 
         if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
@@ -2979,48 +2978,6 @@ function parse_user_agent(string $raw): string
 }
 
 /**
- * Calculates extra theme strings that are dynamically generated for every hit.
- *
- * @since 1.9.12
- */
-function more_theme_vars()
-{
-    global $THEME, $SETTINGS;
-
-    // Alters certain visibility-variables
-    if (false === strpos($THEME['bgcolor'], '.')) {
-        $THEME['bgcode'] = "background-color: {$THEME['bgcolor']};";
-    } else {
-        $THEME['bgcode'] = "background-image: url({$THEME['imgdir']}/{$THEME['bgcolor']});";
-    }
-
-    if (false === strpos($THEME['catcolor'], '.')) {
-        $THEME['catbgcode'] = "bgcolor='{$THEME['catcolor']}'";
-        $THEME['catcss'] = "background-color: {$THEME['catcolor']};";
-    } else {
-        $THEME['catbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['catcolor']})'";
-        $THEME['catcss'] = "background-image: url({$THEME['imgdir']}/{$THEME['catcolor']});";
-    }
-
-    if (false === strpos($THEME['top'], '.')) {
-        $THEME['topbgcode'] = "bgcolor='{$THEME['top']}'";
-    } else {
-        $THEME['topbgcode'] = "style='background-image: url({$THEME['imgdir']}/{$THEME['top']})'";
-    }
-
-    null_string($THEME['boardimg']);
-    $l = parse_url($THEME['boardimg']);
-    if (!isset($l['scheme'])) {
-        $THEME['boardimg'] = $THEME['imgdir'].'/'.$THEME['boardimg'];
-    }
-    $THEME['logo'] = "<a href='./'><img src='{$THEME['boardimg']}' alt='{$SETTINGS['bbname']}' border='0' /></a>";
-
-    // Font stuff...
-    $THEME['font1'] = fontSize(-1);
-    $THEME['font3'] = fontSize(2);
-}
-
-/**
  * Checks if guest recently tried to register and disclosed age < 13
  *
  * @since 1.9.12
@@ -3093,37 +3050,3 @@ function null_string(&$var)
 {
     $var = $var ?? '';
 }
-
-/**
- * Adds relative font size values to the theme's font size.
- *
- * @since 1.9.12.07
- * @param int $add Change applied to the theme font size.
- * @return string CSS font size, like '12px'.
- */
-function fontSize(int $add): string
-{
-    global $THEME;
-    static $cachedFs;
-
-    // Cache the theme font size in an array.
-    if (!isset($cachedFs)) {
-        preg_match('#([0-9]+)([a-z]*)#i', $THEME['fontsize'], $result);
-        if (empty($result[1])) {
-            $result[1] = '12';
-        }
-        if (empty($result[2])) {
-            $result[2] = 'px';
-        }
-        $cachedFs = [
-            'qty'  => (int) $result[1],
-            'unit' => $result[2],
-        ];
-    }
-
-    $css = ($cachedFs['qty'] + $add) . $cachedFs['unit'];
-
-    return $css;
-}
-
-return;

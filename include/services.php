@@ -27,8 +27,12 @@ declare(strict_types=1);
 namespace XMB\Services;
 
 use XMB\Attach;
+use XMB\Debug;
 use XMB\Session\Manager as SessionMgr;
 use XMB\SQL;
+use XMB\Template;
+use XMB\Theme\Manager as ThemeMgr;
+use XMB\Variables;
 
 /**
  * Get the shared file attachment service.
@@ -47,11 +51,43 @@ function attach(?Attach $attach = null): Attach
 }
 
 /**
+ * Get the shared database service.
+ *
+ * @since 1.10.00
+ * @param DBStuff $db Required on first call, otherwise optional. Acts as the setter.
+ * @return DBStuff
+ */
+function db(?DBStuff $db = null): DBStuff
+{
+    static $cache;
+    
+    if ($db !== null) $cache = $db;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared debug service.
+ *
+ * @since 1.10.00
+ * @param Debug $debug Required on first call, otherwise optional. Acts as the setter.
+ * @return Debug
+ */
+function debug(?Debug $debug = null): Debug
+{
+    static $cache;
+    
+    if ($debug !== null) $cache = $debug;
+    
+    return $cache;
+}
+
+/**
  * Get the shared session manager.
  *
  * @since 1.10.00
- * @param Attach $attach Required on first call, otherwise optional. Acts as the setter.
- * @return Attach
+ * @param SessionMgr $session Required on first call, otherwise optional. Acts as the setter.
+ * @return SessionMgr
  */
 function session(?SessionMgr $session = null): SessionMgr
 {
@@ -74,6 +110,54 @@ function sql(?SQL $xmbsql = null): SQL
     static $cache;
     
     if ($xmbsql !== null) $cache = $xmbsql;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared template service.
+ *
+ * @since 1.10.00
+ * @param Template $template Required on first call, otherwise optional. Acts as the setter.
+ * @return Template
+ */
+function template(?Template $template = null): Template
+{
+    static $cache;
+    
+    if ($template !== null) $cache = $template;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared theme manager.
+ *
+ * @since 1.10.00
+ * @param ThemeMgr $theme Required on first call, otherwise optional. Acts as the setter.
+ * @return ThemeMgr
+ */
+function theme(?ThemeMgr $theme = null): ThemeMgr
+{
+    static $cache;
+    
+    if ($theme !== null) $cache = $theme;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared variables service.
+ *
+ * @since 1.10.00
+ * @param Variables $vars Required on first call, otherwise optional. Acts as the setter.
+ * @return Variables
+ */
+function vars(?Variables $vars = null): Variables
+{
+    static $cache;
+    
+    if ($vars !== null) $cache = $vars;
     
     return $cache;
 }

@@ -332,8 +332,8 @@ function langPanic()
 {
     global $SETTINGS;
 
-    if (X_SCRIPT == 'upgrade.php') {
-        return TRUE;
+    if (defined('XMB_UPGRADE')) {
+        return true;
     }
     if (!loadLang()) {
         if (file_exists(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') || file_exists(ROOT.'upgrade.php')) {

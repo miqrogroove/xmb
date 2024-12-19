@@ -394,7 +394,7 @@ www.xmbforum2.com
                         . "\$dbpw     = 'DB/PW';\n"
                         . "\$dbhost   = 'localhost';\n"
                         . "\$database = 'mysql';\n"
-                        . "\$pconnect = 0;\n"
+                        . "\$pconnect = false;\n"
                         . "\$tablepre = 'TABLE/PRE';\n"
                         . "\$full_url = 'FULLURL';\n"
                         . "\$comment_output = false;\n"
@@ -409,11 +409,11 @@ www.xmbforum2.com
                         . "\$plugadmin[\$i] = false;\n"
                         . "\$plugimg[\$i]   = '';\n"
                         . "\$i++;\n"
-                        . "\$ipcheck        = 'off';\n"
-                        . "\$allow_spec_q   = false;\n"
-                        . "\$show_full_info = true;\n\n"
-                        . "define('DEBUG', true);\n"
-                        . "define('LOG_MYSQL_ERRORS', false);\n"
+                        . "\$ipcheck          = false;\n"
+                        . "\$allow_spec_q     = false;\n"
+                        . "\$show_full_info   = true;\n\n"
+                        . "\$debug            = false;\n"
+                        . "\$log_mysql_errors = false;\n\n"
                         . "\n// Do not edit below this line.\nreturn;\n";
                     break;
                 }
@@ -701,8 +701,8 @@ www.xmbforum2.com
             }
         }
 
-        $versionlong = '';
-        require ROOT.'include/debug.inc.php';
+        require ROOT.'include/Bootup.php';
+        $boot = new \XMB\Bootup();
         $array = parse_url($full_url);
         if (!isset($array['path'])) {
             $array['path'] = '/';
@@ -712,7 +712,7 @@ www.xmbforum2.com
         } elseif (substr($array['host'], 0, 4) === 'www.') {
             $array['host'] = substr($array['host'], 3);
         }
-        debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
+        $boot->debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
         unset($array);
 
 

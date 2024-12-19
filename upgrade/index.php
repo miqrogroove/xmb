@@ -25,8 +25,7 @@
 header('X-Frame-Options: deny');
 
 // Script constants
-define('IN_CODE', true);
-define('X_SCRIPT', 'upgrade.php');
+define('XMB_UPGRADE', true);
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
 

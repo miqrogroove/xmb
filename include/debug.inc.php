@@ -22,126 +22,69 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('IN_CODE')) {
-    header('HTTP/1.0 403 Forbidden');
-    exit("Not allowed to run this file directly.");
-}
+declare(strict_types=1);
 
-if ($show_full_info) {
-    $versionlong .= ' (Debug Mode)';
-} else {
-    $alpha = '';
-    $beta = '';
-    $gamma = '';
-    $service_pack = '';
-    $versionbuild = '[HIDDEN]';
-    $versionlong = 'Powered by XMB (Debug Mode)';
-}
+namespace XMB;
 
-function debugURLsettings($securesetting, $hostsetting, $pathsetting)
+class Debug
 {
-    if (!isset($_SERVER['REQUEST_URI'])) {
-        if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
-        if (false === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
-            exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
-        } elseif(!extension_loaded('ISAPI') && !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
-            exit('Error: FastCGI is missing or not configured on your server.');
-        } else {
-            exit('Error: Unexpected environment.  Please make sure FastCGI is working.');
-        }
+    public function __construct(private DBStuff $db)
+    {
+        // Property promotion.
     }
-
-    $secure = false;
-    if (isset($_SERVER['HTTPS'])) {
-        if ($_SERVER['HTTPS'] != 'off') {
-            $secure = true;
-        }
-    }
-    if (substr($hostsetting, 0, 1) == '.') {
-        $hostsetting = substr($hostsetting, 1);
-    }
-    $host = substr($_SERVER['HTTP_HOST'], 0, strcspn($_SERVER['HTTP_HOST'], ':'));
-    if (strpos($host, '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $host)) {
-        $host = '';
-    }
-    $path = substr($_SERVER['REQUEST_URI'], 0, strlen($pathsetting));
-
-    $success = false;
-    if ($hostsetting !== $host && $host !== 'www.'.$hostsetting) {
-        if (0 == strlen($hostsetting)) $hostsetting = 'The domain name';
-        if (0 == strlen($host)) $host = $_SERVER['HTTP_HOST'];
-        $reason = 'Host names do not match.  '.$hostsetting.' should be '.$host;
-    } elseif ($securesetting != $secure) {
-        $reason = '$full_url should start with http'.($secure ? 's' : '').'://';
-    } elseif ($pathsetting !== $path && $pathsetting != '') {
-        $reason = 'URI paths do not match.<br />'.$pathsetting.' was expected, but server saw '.$path;
-    } elseif (substr($pathsetting, -1) != '/') {
-        $reason = 'A forward-slash is required at the end of the URL.';
-    } else {
-        $success = true;
-    }
-
-    if (!$success) {
-        if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
-        exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
-    }
-}
-
-function printAllQueries()
-{
-    global $db;
     
-    $stuff = array();
-    if (X_SADMIN) {
-        $querytimes = $db->getQueryTimes();
-        $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
-        foreach($db->getQueryList() as $key => $val) {
-            $val = mysql_syn_highlight(cdataOut($val));
-            $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
+    public function printAllQueries(): string
+    {
+        $stuff = array();
+        if (X_SADMIN) {
+            $querytimes = $this->db->getQueryTimes();
+            $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
+            foreach($this->db->getQueryList() as $key => $val) {
+                $val = mysql_syn_highlight(cdataOut($val));
+                $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
+            }
+            $stuff[] = '</table>';
         }
-        $stuff[] = '</table>';
-    }
-    return implode("\n", $stuff);
-}
-
-function mysql_syn_highlight($query)
-{
-    $find = array();
-    $replace = array();
-
-    $find[] = 'SELECT';
-    $find[] = 'UPDATE ';
-    $find[] = 'DELETE';
-    $find[] = 'INSERT INTO ';
-    $find[] = 'INSERT IGNORE INTO ';
-    $find[] = ' DUPLICATE KEY ';
-    $find[] = ' WHERE ';
-    $find[] = ' ON ';
-    $find[] = ' FROM ';
-    $find[] = ' GROUP BY ';
-    $find[] = 'ORDER BY ';
-    $find[] = ' LEFT JOIN ';
-    $find[] = ' RIGHT JOIN ';
-    $find[] = ' INNER JOIN ';
-    $find[] = ' IN ';
-    $find[] = ' SET ';
-    $find[] = ' AS ';
-    $find[] = '(';
-    $find[] = ')';
-    $find[] = ' ASC';
-    $find[] = ' DESC';
-    $find[] = ' AND ';
-    $find[] = ' OR ';
-    $find[] = ' NOT';
-    $find[] = ' USING';
-    $find[] = ' VALUES ';
-    $find[] = ' UNION ALL ';
-
-    foreach($find as $key=>$val) {
-        $replace[$key] = '</em><strong>'.$val.'</strong><em>';
+        return implode("\n", $stuff);
     }
 
-    return '<em>'.str_replace($find, $replace, $query).'</em>';
-}
+    private function mysql_syn_highlight($query)
+    {
+        $find = array();
+        $replace = array();
 
-return;
+        $find[] = 'SELECT';
+        $find[] = 'UPDATE ';
+        $find[] = 'DELETE';
+        $find[] = 'INSERT INTO ';
+        $find[] = 'INSERT IGNORE INTO ';
+        $find[] = ' DUPLICATE KEY ';
+        $find[] = ' WHERE ';
+        $find[] = ' ON ';
+        $find[] = ' FROM ';
+        $find[] = ' GROUP BY ';
+        $find[] = 'ORDER BY ';
+        $find[] = ' LEFT JOIN ';
+        $find[] = ' RIGHT JOIN ';
+        $find[] = ' INNER JOIN ';
+        $find[] = ' IN ';
+        $find[] = ' SET ';
+        $find[] = ' AS ';
+        $find[] = '(';
+        $find[] = ')';
+        $find[] = ' ASC';
+        $find[] = ' DESC';
+        $find[] = ' AND ';
+        $find[] = ' OR ';
+        $find[] = ' NOT';
+        $find[] = ' USING';
+        $find[] = ' VALUES ';
+        $find[] = ' UNION ALL ';
+
+        foreach($find as $key=>$val) {
+            $replace[$key] = '</em><strong>'.$val.'</strong><em>';
+        }
+
+        return '<em>'.str_replace($find, $replace, $query).'</em>';
+    }
+}

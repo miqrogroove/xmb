@@ -1489,4 +1489,67 @@ class SQL
 
         return $addr;
     }
+
+    /**
+     * Fetch the forum ID and theme based on a thread ID.
+     *
+     * @since 1.10.00
+     * @param int $tid The thread ID number.
+     * @return array The forum ID and theme.
+     */
+    public function getFIDFromTID(int $tid): array
+    {
+        $query = $this->db->query("SELECT f.fid, f.theme FROM " . $this->tablepre . "forums f RIGHT JOIN " . $this->tablepre . "threads t USING (fid) WHERE t.tid = $tid");
+
+        if ($this->db->num_rows($query) === 0) {
+            $forum = []; // Post not found.
+        } else {
+            $forum = $this->db->fetch_array($query);
+        }
+        $this->db->free_result($query);
+
+        return $forum;
+    }
+    
+    /**
+     * Reset a user's theme to default.
+     *
+     * @since 1.10.00
+     * @param int $uid The member ID number.
+     */
+    public function resetUserTheme(int $uid)
+    {
+        $this->db->query("UPDATE " . $this->tablepre . "members SET theme = 0 WHERE uid = $uid");
+    }    
+
+    /**
+     * Reset a forum's theme to default.
+     *
+     * @since 1.10.00
+     * @param int $uid The member ID number.
+     */
+    public function resetForumTheme(int $fid)
+    {
+        $this->db->query("UPDATE " . $this->tablepre . "forums SET theme = 0 WHERE fid = $fid");
+    }    
+
+    /**
+     * Fetch the first theme in the themes table.
+     *
+     * @since 1.10.00
+     * @return array The theme record.
+     */
+    public function getFirstTheme(): array
+    {
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "themes LIMIT 1");
+
+        if ($this->db->num_rows($query) === 0) {
+            $theme = []; // No themes found.
+        } else {
+            $theme = $this->db->fetch_array($query);
+        }
+        $this->db->free_result($query);
+
+        return $theme;
+    }
 }

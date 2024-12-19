@@ -29,7 +29,7 @@ header('X-Frame-Options: sameorigin');
 //Script constants
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '7.0.0');
-define('X_SCRIPT', 'upgrade.php');
+define('XMB_UPGRADE', true);
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
 
