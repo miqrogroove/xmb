@@ -24,6 +24,7 @@
 
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'misc.php');
 
@@ -198,7 +199,7 @@ switch($action) {
                 error($lang['bannedmessage']);
             }
 
-            $time = $onlinetime - 86400;
+            $time = vars()->onlinetime - 86400;
             if ((int) $member['pwdate'] > $time) {
                 error($lang['lostpw_in24hrs']);
             }
@@ -263,7 +264,7 @@ switch($action) {
         $onlineusers = '';
         while($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
-            $onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            vars()->onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
@@ -311,7 +312,7 @@ switch($action) {
             exit();
         }
 
-        $datecut = $onlinetime - (3600 * 24);
+        $datecut = vars()->onlinetime - (3600 * 24);
         if (X_ADMIN) {
             $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {

@@ -28,7 +28,8 @@ namespace XMB\Services;
 
 use XMB\Attach;
 use XMB\Debug;
-use XMB\Global;
+use XMB\DBStuff;
+use XMB\Observer;
 use XMB\Session\Manager as SessionMgr;
 use XMB\SQL;
 use XMB\Template;

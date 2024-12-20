@@ -106,7 +106,7 @@ class Template
         ];
 
         foreach ($list as $name) {
-            $this->$data[$name] = '';
+            $this->data[$name] = '';
         }
 
         $this->data['footerstuff'] = [

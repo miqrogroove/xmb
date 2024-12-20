@@ -24,6 +24,7 @@
 
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'member.php');
 
@@ -241,7 +242,7 @@ switch($action) {
                     }
 
                     if ($SETTINGS['ipreg'] != 'off') {
-                        $time = $onlinetime-86400;
+                        $time = vars()->onlinetime - 86400;
                         $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip='$onlineip' AND regdate >= $time");
                         if ($db->num_rows($query) >= 1) {
                             error($lang['reg_today']);
@@ -382,7 +383,7 @@ switch($action) {
                     }
 
                     $self['password'] = md5($self['password']);
-                    $self['regdate'] = $onlinetime;
+                    $self['regdate'] = vars()->onlinetime;
                     if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                         $self['regip'] = '';
                     } else {
@@ -455,7 +456,7 @@ switch($action) {
                         foreach ($mailquery as $admin) {
                             $translate = $lang2[$admin['langfile']];
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
-                                $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
+                                $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".vars()->onlinetime."', 'no', 'yes')");
                             } else {
                                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                                 $body = "{$translate['textnewmember2']}\n\n$full_url";
@@ -506,12 +507,12 @@ switch($action) {
 
             if (2 == $stepout) {
                 if ((int) $SETTINGS['pruneusers'] > 0) {
-                    $prunebefore = $onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
+                    $prunebefore = vars()->onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
                     $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
                 }
 
                 if ((int) $SETTINGS['maxdayreg'] > 0) {
-                    $time = $onlinetime - 86400; // subtract 24 hours
+                    $time = vars()->onlinetime - 86400; // subtract 24 hours
                     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
                     if ((int) $db->result($query, 0) > (int) $SETTINGS['maxdayreg']) {
                         error($lang['max_regs']);
@@ -550,7 +551,7 @@ switch($action) {
                 $captcharegcheck = '';
                 $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
 
-                $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
+                $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
                 $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
                 $themelist = array();
@@ -615,9 +616,7 @@ switch($action) {
                     eval('$avatd = "'.template('member_reg_avatarlist').'";');
                 }
 
-                if (empty($dformatorig)) {
-                    $dformatorig = $SETTINGS['dateformat'];
-                }
+                $dformatorig = $SETTINGS['dateformat'];
 
                 $regoptional = '';
                 if ($SETTINGS['regoptional'] == 'on') {
@@ -704,7 +703,7 @@ switch($action) {
             $memberlinks = " <small>(<a href='u2u.php?action=send&amp;username=$encodeuser' onclick='Popup(this.href, \"Window\", 700, 450); return false;'>{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href='buddy.php?action=add&amp;buddys=$encodeuser' onclick='Popup(this.href, \"Window\", 450, 400); return false;'>{$lang['addtobuddies']}</a>)</small>";
         }
 
-        $daysreg = ($onlinetime - (int) $memberinfo['regdate']) / (24*3600);
+        $daysreg = (vars()->onlinetime - (int) $memberinfo['regdate']) / (24*3600);
         if ($daysreg > 1) {
             $ppd = $memberinfo['postnum'] / $daysreg;
             $ppd = round($ppd, 2);

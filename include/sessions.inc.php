@@ -29,6 +29,10 @@ namespace XMB\Session;
 use RuntimeException;
 use XMB\SQL;
 
+use function XMB\Validate\formYesNo;
+use function XMB\Validate\postedVar;
+
+
 /**
  * Session Data objects are used to pass results between functions.
  *
@@ -476,7 +480,7 @@ class FormsAndCookies implements Mechanism
     public function checkUsername(): Data
     {
         $data = new Data();
-        $uinput = postedVar('username', '', true, false);
+        $uinput = postedVar('username', dbescape: false);
 
         if (strlen($uinput) < self::USER_MIN_LEN) {
             return $data;
@@ -811,7 +815,12 @@ class FormsAndCookies implements Mechanism
 
     private function get_cookie(string $name): string
     {
-        return postedVar($name, '', false, false, false, 'c');
+        return postedVar(
+            varname: $name,
+            htmlencode: false,
+            dbescape: false,
+            sourcearray: 'c',
+        );
     }
 
     private function delete_cookie(string $name)

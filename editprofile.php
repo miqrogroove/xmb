@@ -24,6 +24,7 @@
 
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'editprofile.php');
 
@@ -164,7 +165,7 @@ if (noSubmit('editsubmit')) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
-    $currdate = gmdate($timecode, $onlinetime + ($SETTINGS['addtime'] * 3600));
+    $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
     $themelist = array();

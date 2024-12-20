@@ -22,7 +22,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
 
+namespace XMB;
 
 /***************************************************************/
 /* PhpCaptcha - A visual and audio CAPTCHA generation library
@@ -64,73 +66,49 @@
 Documentation is available at http://www.ejeliot.com/pages/2
 
 */
-/************************ Default Options **********************/
-
-
-// class defaults - change to effect globally
-
-define('CAPTCHA_WIDTH', $SETTINGS['captcha_image_width']);
-define('CAPTCHA_HEIGHT', $SETTINGS['captcha_image_height']);
-define('CAPTCHA_NUM_CHARS', $SETTINGS['captcha_code_length']);
-define('CAPTCHA_NUM_DOTS', $SETTINGS['captcha_image_dots']);
-define('CAPTCHA_NUM_LINES', $SETTINGS['captcha_image_lines']);
-define('CAPTCHA_CHAR_SHADOW', $SETTINGS['captcha_code_shadow'] == 'on' ? true : false);
-define('CAPTCHA_CHAR_SET', $SETTINGS['captcha_code_charset']);
-define('CAPTCHA_FONTS', $SETTINGS['captcha_image_fonts']);
-define('CAPTCHA_CASE_INSENSITIVE', $SETTINGS['captcha_code_casesensitive'] == 'on' ? false : true);
-define('CAPTCHA_BACKGROUND_IMAGES', $SETTINGS['captcha_image_bg']);
-define('CAPTCHA_MIN_FONT_SIZE', $SETTINGS['captcha_image_minfont']);
-define('CAPTCHA_MAX_FONT_SIZE', $SETTINGS['captcha_image_maxfont']);
-define('CAPTCHA_USE_COLOR', $SETTINGS['captcha_image_color'] == 'on' ? true : false);
-define('CAPTCHA_FILE_TYPE', $SETTINGS['captcha_image_type']);
-
-/************************ End Default Options **********************/
-
-// don't edit below this line (unless you want to change the class!)
 
 class Captcha
 {
-    var $oImage;
-    var $aFonts;
-    var $iWidth;
-    var $iHeight;
-    var $iNumChars;
-    var $iNumDots;
-    var $iNumLines;
-    var $iSpacing;
-    var $bCharShadow;
-    var $aCharSet;
-    var $bCaseInsensitive;
-    var $aBackgroundImages;
-    var $iMinFontSize;
-    var $iMaxFontSize;
-    var $bUseColor;
-    var $sFileType;
-    var $sCode = '';
+    private $oImage;
+    private array $aFonts;
+    private int $iWidth;
+    private int $iHeight;
+    private int $iNumChars;
+    private int $iNumDots;
+    private int $iNumLines;
+    private int $iSpacing;
+    private bool $bCharShadow;
+    private array $aCharSet;
+    private bool $bCaseInsensitive;
+    private array $aBackgroundImages;
+    private int $iMinFontSize;
+    private int $iMaxFontSize;
+    private bool $bUseColor;
+    private string $sFileType;
+    private string $sCode = '';
     // XMB Members
-    var $bCompatible;
-    var $bPoison;
+    public readonly bool $bCompatible;
+    public bool $bPoison;
 
-    // PHP 5+
-    function __construct($iWidth = CAPTCHA_WIDTH, $iHeight = CAPTCHA_HEIGHT)
+    function __construct(private Observer $observer, private Variables $vars)
     {
         // get parameters
-        $this->SetNumChars(CAPTCHA_NUM_CHARS);
-        $this->SetNumDots(CAPTCHA_NUM_DOTS);
-        $this->SetNumLines(CAPTCHA_NUM_LINES);
-        $this->DisplayShadow(CAPTCHA_CHAR_SHADOW);
-        $this->SetCharSet(CAPTCHA_CHAR_SET);
-        $this->SetFonts(CAPTCHA_FONTS);
-        $this->CaseInsensitive(CAPTCHA_CASE_INSENSITIVE);
-        $this->SetBackgroundImages(CAPTCHA_BACKGROUND_IMAGES);
-        $this->SetMinFontSize(CAPTCHA_MIN_FONT_SIZE);
-        $this->SetMaxFontSize(CAPTCHA_MAX_FONT_SIZE);
-        $this->UseColor(CAPTCHA_USE_COLOR);
-        $this->SetFileType(CAPTCHA_FILE_TYPE);
-        $this->SetWidth($iWidth);
-        $this->SetHeight($iHeight);
+        $this->SetNumChars($this->vars->settings['captcha_code_length']);
+        $this->SetNumDots($this->vars->settings['captcha_image_dots']);
+        $this->SetNumLines($this->vars->settings['captcha_image_lines']);
+        $this->DisplayShadow($this->vars->settings['captcha_code_shadow'] == 'on' ? true : false);
+        $this->SetCharSet($this->vars->settings['captcha_code_charset']);
+        $this->SetFonts($this->vars->settings['captcha_image_fonts']);
+        $this->CaseInsensitive($this->vars->settings['captcha_code_casesensitive'] == 'on' ? false : true);
+        $this->SetBackgroundImages($this->vars->settings['captcha_image_bg']);
+        $this->SetMinFontSize($this->vars->settings['captcha_image_minfont']);
+        $this->SetMaxFontSize($this->vars->settings['captcha_image_maxfont']);
+        $this->UseColor($this->vars->settings['captcha_image_color'] == 'on' ? true : false);
+        $this->SetFileType($this->vars->settings['captcha_image_type']);
+        $this->SetWidth($this->vars->settings['captcha_image_width']);
+        $this->SetHeight($this->vars->settings['captcha_image_height']);
         // Initialize XMB Members
-        $this->bPoison = FALSE;
+        $this->bPoison = false;
         $this->CheckCompatibility();
     }
 
@@ -242,7 +220,7 @@ class Captcha
         }
     }
 
-    function DrawLines($bg_lum, $colors)
+    private function DrawLines($bg_lum, $colors)
     {
         //XMB chooses a lightness range that will always be similar to the background color.
         if ($bg_lum < 128) {
@@ -289,7 +267,7 @@ class Captcha
     //   $this->iHeight = $this->iHeight - $iOwnerTextHeight - 5;
     //}
 
-    function GenerateCode()
+    public function GenerateCode()
     {
         // reset code
         $this->sCode = '';
@@ -315,7 +293,7 @@ class Captcha
         return nonce_create($this->sCode);
     }
 
-    function DrawCharacters($bg_lum, $colors)
+    private function DrawCharacters($bg_lum, $colors)
     {
         // XMB chooses a lightness range that will never conflict with the background color.
         if ($bg_lum > 127) {
@@ -385,17 +363,17 @@ class Captcha
         }
     }
 
-    function WriteFile()
+    private function WriteFile()
     {
         // Explicitly re-run XMB's output stream check, and do not rely on the DEBUG constant.
-        assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', FALSE);
+        $this->observer->assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', use_debug: false);
 
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
         
         switch($this->sFileType) {
             case 'gif':
-                imagegif ($this->oImage);
+                imagegif($this->oImage);
                 break;
             case 'png':
                 imagepng($this->oImage);
@@ -405,16 +383,14 @@ class Captcha
         }
     }
 
-    function Create($imghash)
+    public function Create($imghash)
     {
-        global $THEME;
-
-        $this->bPoison = TRUE;
+        $this->bPoison = true;
 
         // XMB calculates the color components of alternative background color 2 to match theme.
-        $bg_red = hexdec(substr($THEME['altbg2'], 1, 2));
-        $bg_green = hexdec(substr($THEME['altbg2'], 3, 2));
-        $bg_blue = hexdec(substr($THEME['altbg2'], 5, 2));
+        $bg_red = hexdec(substr($this->vars->theme['altbg2'], 1, 2));
+        $bg_green = hexdec(substr($this->vars->theme['altbg2'], 3, 2));
+        $bg_blue = hexdec(substr($this->vars->theme['altbg2'], 5, 2));
         $bg_lum = (max($bg_red, $bg_green, $bg_blue) + min($bg_red, $bg_green, $bg_blue)) >> 1;
         $colors = array();
 
@@ -477,16 +453,16 @@ class Captcha
     // All remaining functions are maintained for use with XMB.
 
 
-    function ValidateCode($sUserCode, $imghash)
+    public function ValidateCode($sUserCode, $imghash)
     {
         if ($this->bPoison) {
-            return FALSE;
+            return false;
         }
 
-        $this->bPoison = TRUE;
+        $this->bPoison = true;
 
         if (strlen($sUserCode) != $this->iNumChars || $imghash == 'test') {
-            return FALSE;
+            return false;
         }
 
         if ($this->bCaseInsensitive) {
@@ -496,12 +472,12 @@ class Captcha
         return nonce_use($sUserCode, $imghash);
     }
 
-    function SetNumDots($iNumDots)
+    private function SetNumDots($iNumDots)
     {
         $this->iNumDots = $iNumDots;
     }
 
-    function SetFonts($vFonts)
+    private function SetFonts($vFonts)
     {
         // override any pre-defined file path
         putenv('GDFONTPATH='.realpath('.'));
@@ -544,7 +520,7 @@ class Captcha
         }
     }
 
-    function SetBackgroundImages($vBackgroundImages)
+    private function SetBackgroundImages($vBackgroundImages)
     {
         // check for input type
         if (is_array($vBackgroundImages)) {
@@ -590,7 +566,7 @@ class Captcha
         }
     }
 
-    function DrawDots($colors)
+    private function DrawDots($colors)
     {
         $rmin = 0;
         $rmax = 255;
@@ -613,21 +589,21 @@ class Captcha
         }
     }
 
-    function RetrieveCode($imghash)
+    private function RetrieveCode($imghash)
     {
         if ($imghash == 'test') {
-            $this->bPoison = TRUE;
+            $this->bPoison = true;
             $this->sCode = 'CaPtChA';
         } else {
             $this->sCode = nonce_peek($imghash, $this->iNumChars);
         }
     }
 
-    function CheckCompatibility()
+    private function CheckCompatibility()
     {
         // check for required gd functions
         if ($this->bCompatible === false) {
-            $this->bPoison = TRUE;
+            $this->bPoison = true;
             return false;
         } else if (!function_exists('imagecreate')
                 || !function_exists("image$this->sFileType")
@@ -635,11 +611,11 @@ class Captcha
                 || !function_exists('imageftbbox')
                 || !function_exists('imagefttext')) {
             $this->bCompatible = false;
-            $this->bPoison = TRUE;
+            $this->bPoison = true;
             return false;
         } else if (empty($this->aFonts)) {
             $this->bCompatible = false;
-            $this->bPoison = TRUE;
+            $this->bPoison = true;
             return false;
         } else {
             $this->bCompatible = true;

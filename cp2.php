@@ -26,6 +26,7 @@ use XMB\UploadStatus;
 
 use function XMB\Services\attach;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'cp2.php');
 
@@ -2208,7 +2209,7 @@ if ($action == "attachments") {
         }
 
         if ($daysold !== '') {
-            $datethen = $onlinetime - (86400 * $daysold);
+            $datethen = vars()->onlinetime - (86400 * $daysold);
             $restriction .= "AND p.dateline <= $datethen ";
             $orderby = ' ORDER BY p.dateline ASC';
         }

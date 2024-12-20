@@ -22,6 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\vars;
+
 define('U2U_FOLDER_COL_SIZE', 32);
 
 function u2u_msg($msg, $redirect)
@@ -37,7 +39,10 @@ function u2u_msg($msg, $redirect)
 
 function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent)
 {
-    global $db, $onlinetime;
+    global $db;
+
+    $onlinetime = vars()->onlinetime;
+
     $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
 
@@ -67,7 +72,7 @@ function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0)
  */
 function u2u_send_recp($msgto, $subject, $message, $u2uid = 0)
 {
-    global $db, $self, $SETTINGS, $lang, $onlinetime, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
+    global $db, $self, $SETTINGS, $lang, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
 
     $del = ('yes' === $del) ? 'yes' : 'no';
     $errors = '';
@@ -572,7 +577,7 @@ function u2u_ignore()
 
 function u2u_display($folder, $folders)
 {
-    global $db, $self, $lang, $xmbuser, $onlinetime;
+    global $db, $self, $lang, $xmbuser;
     global $THEME, $thewidth;
     global $SETTINGS, $timeoffset, $dateformat, $timecode, $oToken;
 
@@ -620,7 +625,7 @@ function u2u_display($folder, $folders)
 
         if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
-            if ($onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
+            if (vars()->onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
                 if ('1' === $u2u['invisible']) {
                     if (!X_ADMIN) {
                         $online = $lang['textoffline'];

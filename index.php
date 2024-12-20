@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'index.php');
 
@@ -247,7 +248,7 @@ if ($gid == 0) {
 
         $whosonlinetoday = '';
         if ($SETTINGS['onlinetoday_status'] == 'on') {
-            $datecut = $onlinetime - (3600 * 24);
+            $datecut = vars()->onlinetime - (3600 * 24);
             $where = '';
             if ('on' == $SETTINGS['hide_banned']) {
                 $where = "AND status != 'Banned'";

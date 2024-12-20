@@ -37,31 +37,45 @@ class Variables
     public array $plugimg = [];
     public array $plugname = [];
     public array $plugurl = [];
+    public array $self = [];
     public array $settings = [];
     public array $smiliecache = [];
     public array $theme = [];
 
+    public string $charset = '';
+    public string $cheHTML = 'checked="checked"';
     public string $cookiedomain = '';
     public string $cookiepath = '';
-    public string $cookiesecure = '';
+    public string $dateformat = '';
     public string $dbname = '';
     public string $dbuser = '';
     public string $dbpw = '';
     public string $dbhost = '';
     public string $database = '';
     public string $full_url = '';
+    public string $langfile = '';
     public string $onlineip = '';
+    public string $selHTML = 'selected="selected"';
     public string $tablepre = '';
+    public string $timecode = '';
+    public string $timeoffset = '';
     public string $url = '';
     public string $versionshort = '';
     public string $xmbuser = '';
 
     public bool $allow_spec_q = false;
-    public bool $debug = false;
     public bool $comment_output = false;
+    public bool $cookiesecure = false;
+    public bool $debug = false;
     public bool $ipcheck = false;
+    public bool $log_mysql_errors = false;
     public bool $pconnect = false;
     public bool $show_full_info = true;
     
     public int $lastvisit = 0;
+    public int $onlinetime = 0;
+    public int $ppp = 0;
+    public int $tpp = 0;
+    
+    public float $starttime = 0;
 }

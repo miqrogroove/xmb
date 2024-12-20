@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\observer;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'files.php');
@@ -179,7 +180,7 @@ if ($size != (int) $file['filesize']) {
 }
 
 // Verify output stream is empty
-assertEmptyOutputStream('files.php');
+observer()->assertEmptyOutputStream('files.php');
 
 // Do not issue any errors below this line
 

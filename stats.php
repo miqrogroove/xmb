@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'stats.php');
+use function XMB\Services\vars;
 
 require 'header.php';
 
@@ -60,7 +60,7 @@ $db->free_result($query);
 if ($first_date <= 0) {
     $days = 0;
 } else {
-    $days = ($onlinetime - $first_date) / 86400;
+    $days = (vars()->onlinetime - $first_date) / 86400;
 }
 
 if ($days > 0) {
@@ -159,7 +159,7 @@ if (strlen($fids) == 0) {
 $postsday = number_format($posts / $days, 2);
 
 // Get best member
-$timesearch = $onlinetime - 86400;
+$timesearch = vars()->onlinetime - 86400;
 
 $query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 

@@ -24,6 +24,7 @@
 
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'memcp.php');
 
@@ -176,7 +177,7 @@ if ($action == 'profile') {
             $invchecked = $cheHTML;
         }
 
-        $currdate = gmdate($timecode, $onlinetime+ ($SETTINGS['addtime'] * 3600));
+        $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
         $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
         $timezones = timezone_control($member['timeoffset']);
@@ -739,7 +740,7 @@ if ($action == 'profile') {
     $buddys['online'] = '';
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
-        if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+        if (vars()->onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $buddy['invisible']) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');

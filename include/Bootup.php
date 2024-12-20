@@ -28,18 +28,22 @@ namespace XMB;
 
 use XMB\Session\Manager as SessionMgr;
 
-use function assertEmptyOutputStream;
 use function XMB\Validate\attrOut;
 use function XMB\Validate\getInt;
 use function XMB\Validate\onSubmit;
 use function XMB\Validate\postedVar;
 use function XMB\Validate\recodeOut;
 
+/**
+ * Provides most of the procedural logic formerly in header.php.
+ *
+ * @since 1.10.00
+ */
 class Bootup
 {
     private DBStuff $db;
     
-    public function __construct(private Template $template, private Variables $vars)
+    public function __construct(private Observer $observer, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -47,7 +51,7 @@ class Bootup
     public function loadConfig()
     {
         require ROOT.'config.php';
-        assertEmptyOutputStream('config.php');
+        $this->observer->assertEmptyOutputStream('config.php');
         
         if ($ipcheck === 'on') $ipcheck = true;
         
@@ -98,11 +102,11 @@ class Bootup
     public function setVersion()
     {
         require ROOT.'include/version.php';
-        assertEmptyOutputStream('version.php');
+        $this->observer->assertEmptyOutputStream('version.php');
 
         $this->template->copyright = $copyright;
         $this->template->versioncompany = $versioncompany;
-        if (! $show_full_info) {
+        if (! $this->vars->show_full_info) {
             $versionshort = '';
             $versiongeneral = 'XMB';
             $alpha = '';
@@ -131,12 +135,12 @@ class Bootup
             header('HTTP/1.0 500 Internal Server Error');
             exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
         } else {
-            $array = parse_url($$this->vars->full_url);
+            $array = parse_url($this->vars->full_url);
 
             $cookiesecure = ($array['scheme'] == 'https');
 
             $cookiedomain = $array['host'];
-            if (strpos($cookiedomain, '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
+            if (strpos($cookiedomain, '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
                 $cookiedomain = '';
             } elseif (substr($cookiedomain, 0, 4) === 'www.') {
                 $cookiedomain = substr($cookiedomain, 3);
@@ -147,8 +151,8 @@ class Bootup
             }
             $cookiepath = $array['path'];
 
-            if (DEBUG) {
-                $boot->debugURLsettings($cookiesecure, $cookiedomain, $cookiepath);
+            if ($this->vars->debug) {
+                $this->debugURLsettings($cookiesecure, $cookiedomain, $cookiepath);
             } elseif (0 == strlen($this->vars->url)) {
                 header('HTTP/1.0 500 Internal Server Error');
                 exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
@@ -283,7 +287,7 @@ class Bootup
 
         switch ($this->vars->database) {
             default:
-                $this->db = new \XMB\MySQLiDatabase();
+                $this->db = new \XMB\MySQLiDatabase($this->vars->debug, $this->vars->log_mysql_errors);
         }
         $this->db->connect(
             $this->vars->dbhost,
@@ -520,7 +524,7 @@ class Bootup
         // Read last visit cookies
         $xmblva = getInt('xmblva', 'c'); // Previous request timestamp.
         $xmblvb = getInt('xmblvb', 'c'); // Ending timestamp of previous session.
-        $onlinetime = time();
+        $onlinetime = $this->vars->onlinetime;
 
         if ($xmblvb > 0) {
             $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're still in a session and persisting the value from the last visit.

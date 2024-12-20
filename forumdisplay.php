@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'forumdisplay.php');
 
@@ -185,7 +186,7 @@ switch($p_extension) {
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
-    $cusdate = $onlinetime - $cusdate;
+    $cusdate = vars()->onlinetime - $cusdate;
     $cusdate = "AND lastpost > '$cusdate'";
 } else {
     $cusdate = '';

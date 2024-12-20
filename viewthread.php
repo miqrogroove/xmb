@@ -24,6 +24,7 @@
 
 use function XMB\Services\attach;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'viewthread.php');
 
@@ -197,7 +198,7 @@ if (strpos($thread['closed'], '|') !== false) {
 $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
 
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
-$expire = $onlinetime + X_ONLINE_TIMER;
+$expire = vars()->onlinetime + X_ONLINE_TIMER;
 if (false === strpos($oldtopics, "|$lastPid|")) {
     if (empty($oldtopics)) {
         $oldtopics = "|$lastPid|";
@@ -473,7 +474,7 @@ if ($action == '') {
         $startdate = $row['dateline'];
         $startpid = $row['pid'];
         if ($rowcount <= $ppp) {
-            $enddate = $onlinetime;
+            $enddate = vars()->onlinetime;
         } else {
             $db->data_seek($query1, $rowcount - 1);
             $row = $db->fetch_array($query1);
@@ -528,7 +529,7 @@ if ($action == '') {
         null_string($post['avatar']);
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
-        if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
+        if (vars()->onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $post['invisible']) {
                 if (!X_ADMIN) {
                     $onlinenow = $lang['memberisoff'];

@@ -30,6 +30,9 @@ use XMB\SQL;
 use XMB\Template;
 use XMB\Variables;
 
+use function XMB\Validate\getInt;
+use function XMB\Validate\PostedVar;
+
 class Manager
 {
     public function __construct(private SQL $sql, private Template $template, private Variables $vars)
@@ -100,7 +103,7 @@ class Manager
         $this->vars->theme = &$row;
         $this->template->addRefs();
         unset($row);
-        more_theme_vars();
+        $this->more_theme_vars();
 
         $this->template->css = '';
         if ((int) $this->vars->settings['schema_version'] >= 6) {

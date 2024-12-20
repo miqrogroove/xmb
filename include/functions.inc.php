@@ -23,9 +23,13 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\db;
 use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
+use function XMB\Validate\fnameOut;
+use function XMB\Validate\getInt;
+use function XMB\Validate\postedVar;
 
 /**
  * Sets up some extra variables after a new login.
@@ -65,7 +69,9 @@ function loginUser($invisible = null)
  */
 function elevateUser(bool $force_inv = false)
 {
-    global $self, $db, $SETTINGS, $status_enum, $onlinetime;
+    global $status_enum;
+    
+    $vars = vars();
 
     $maxurl = 150; //Schema constant.
 
@@ -79,24 +85,24 @@ function elevateUser(bool $force_inv = false)
     if ('good' == $state || 'already-logged-in' == $state) {
         // 'good' means normal login or resumed session.
         // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
-        $self = session()->getMember();
-        $xmbuser = $db->escape($self['username']);
+        $vars->self = session()->getMember();
+        $xmbuser = db()->escape($vars->self['username']);
     } else {
-        $self = array();
-        $self['status'] = '';
+        $vars->self = array();
+        $vars->self['status'] = '';
         $xmbuser = '';
     }
-    vars()->xmbuser = $xmbuser;
-    $self['password'] = '';
+    $vars->xmbuser = $xmbuser;
+    $vars->self['password'] = '';
 
     // Initialize the new translation system
     if (! defined('XMB_UPGRADE')) {
         $success = false;
-        if (!empty($self['langfile'])) {
-            $success = loadLang($self['langfile']);
+        if (!empty($vars->self['langfile'])) {
+            $success = loadLang($vars->self['langfile']);
         }
         if (!$success) {
-            $success = loadLang($SETTINGS['langfile']);
+            $success = loadLang($vars->settings['langfile']);
         }
         if (!$success) {
             require_once(ROOT.'include/translation.inc.php');
@@ -111,8 +117,8 @@ function elevateUser(bool $force_inv = false)
             define('X_GUEST', FALSE);
         }
         // Save some write locks by updating in 60-second intervals.
-        if (abs(time() - (int)$self['lastvisit']) > 60) {
-            sql()->setLastvisit($self['username'], $onlinetime);
+        if (abs(time() - (int)$vars->self['lastvisit']) > 60) {
+            sql()->setLastvisit($vars->self['username'], $vars->onlinetime);
             // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
         }
     } else {
@@ -123,49 +129,44 @@ function elevateUser(bool $force_inv = false)
     }
 
     // Enumerate status
-    if (isset($status_enum[$self['status']])) {
-        $int_status = $status_enum[$self['status']];
+    if (isset($status_enum[$vars->self['status']])) {
+        $int_status = $status_enum[$vars->self['status']];
     } else {
         $int_status = $status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
     }
 
     if (!defined('X_STAFF')) {
-        define('X_SADMIN', ($self['status'] == 'Super Administrator'));
+        define('X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
         define('X_ADMIN', ($int_status <= $status_enum['Administrator']));
         define('X_SMOD', ($int_status <= $status_enum['Super Moderator']));
         define('X_MOD', ($int_status <= $status_enum['Moderator']));
         define('X_STAFF', X_MOD);
     }
 
-    // Set more globals
-    global $timeoffset, $status, $tpp, $ppp, $memtime, $dateformat,
-           $sig, $invisible, $timecode, $dformatorig;
+    // Set variables
+    $vars->dateformat = $vars->settings['dateformat'];
 
     if ($xmbuser != '') {
-        $timeoffset = $self['timeoffset'];
-        $status = $self['status'];
-        $tpp = (int) $self['tpp'];
-        $ppp = (int) $self['ppp'];
-        $memtime = (int) $self['timeformat'];
-        if ($self['dateformat'] != '') {
-            $dateformat = $self['dateformat'];
+        $vars->timeoffset = $vars->self['timeoffset'];
+        $vars->tpp = (int) $vars->self['tpp'];
+        $vars->ppp = (int) $vars->self['ppp'];
+        $memtime = (int) $vars->self['timeformat'];
+        if ($vars->self['dateformat'] != '') {
+            $vars->dateformat = $vars->self['dateformat'];
         }
-        $sig = $self['sig'];
         $invisible = $self['invisible'];
-        $onlineuser = $self['username'];
+        $onlineuser = $vars->self['username'];
     } else {
-        $timeoffset = $SETTINGS['def_tz'];
-        $status = 'member';
-        $tpp = (int) $SETTINGS['topicperpage'];
-        $ppp = (int) $SETTINGS['postperpage'];
-        $memtime = (int) $SETTINGS['timeformat'];
-        $sig = '';
+        $vars->timeoffset = $vars->settings['def_tz'];
+        $vars->tpp = (int) $vars->settings['topicperpage'];
+        $vars->ppp = (int) $vars->settings['postperpage'];
+        $memtime = (int) $vars->settings['timeformat'];
         $invisible = '0';
         $onlineuser = 'xguest123';
-        $self['ban'] = '';
-        $self['sig'] = '';
-        $self['uid'] = '0';
-        $self['username'] = '';
+        $vars->self['ban'] = '';
+        $vars->self['sig'] = '';
+        $vars->self['uid'] = '0';
+        $vars->self['username'] = '';
     }
 
     if ($force_inv) {
@@ -173,28 +174,29 @@ function elevateUser(bool $force_inv = false)
     }
 
     if ($memtime == 24) {
-        $timecode = "H:i";
+        $vars->timecode = "H:i";
     } else {
-        $timecode = "h:i A";
+        $vars->timecode = "h:i A";
     }
 
-    $dformatorig = $dateformat;
-    $dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $dateformat);
+    $vars->dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $vars->dateformat);
 
     // Save This Session
     $serror = session()->getSError();
-    if (! defined('XMB_UPGRADE') && X_SCRIPT != 'css.php' && X_SCRIPT != 'files.php' && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)) {
-        global $onlineip, $url;
-
-        if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
+    if (! defined('XMB_UPGRADE')
+        && basename($_SERVER['SCRIPT_NAME']) != 'css.php'
+        && basename($_SERVER['SCRIPT_NAME']) != 'files.php'
+        && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)
+    ) {
+        if (strlen($vars->onlineip) > 15 && ((int) $vars->settings['schema_version'] < 9 || strlen($vars->onlineip) > 39)) {
             $useip = '';
         } else {
-            $useip = $onlineip;
+            $useip = $vars->onlineip;
         }
-        $wollocation = substr($url, 0, $maxurl);
-        $newtime = $onlinetime - X_ONLINE_TIMER;
-        sql()->deleteOldWhosonline($useip, $self['username'], $newtime);
-        sql()->addWhosonline($useip, $onlineuser, $onlinetime, $wollocation, $invisible);
+        $wollocation = substr($vars->url, 0, $maxurl);
+        $newtime = $vars->onlinetime - $vars::ONLINE_TIMER;
+        sql()->deleteOldWhosonline($useip, $vars->self['username'], $newtime);
+        sql()->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);
     }
 }
 
@@ -291,9 +293,9 @@ function auditBadSession(array $member)
  * @param string $devname Name specified by XMB for internal use (usually written in English).
  * @return bool
  */
-function loadLang($devname = "English")
+function loadLang(string $devname = "English"): bool
 {
-    global $charset, $db, $lang, $langfile;
+    $db = db();
 
     $db->escape_fast($devname);
 
@@ -307,16 +309,16 @@ function loadLang($devname = "English")
 
     // Load the $lang array.
     if ($db->num_rows($result) > 0) {
-        $langfile = $devname;
-        $lang = array();
+        vars()->langfile = $devname;
+        vars()->lang = array();
         while($row = $db->fetch_array($result)) {
-            $lang[$row['langkey']] = $row['cdata'];
+            vars()->lang[$row['langkey']] = $row['cdata'];
         }
         $db->free_result($result);
-        $charset = $lang['charset'];
-        return TRUE;
+        vars()->charset = vars()->lang['charset'];
+        return true;
     } else {
-        return FALSE;
+        return false;
     }
 }
 
@@ -1547,12 +1549,12 @@ function smcwcache()
  */
 function end_time()
 {
-    global $db, $footerstuff, $lang, $starttime, $SETTINGS;
+    global $db, $footerstuff, $lang, $SETTINGS;
 
     $mtime2 = explode(' ', microtime());
     $endtime = $mtime2[1] + $mtime2[0];
 
-    $totaltime = ($endtime - $starttime);
+    $totaltime = ($endtime - vars()->starttime);
 
     $footer_options = explode('-', $SETTINGS['footer_options']);
 
@@ -1837,11 +1839,9 @@ function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $s
  */
 function audit(string $user, string $action, int $fid = 0, int $tid = 0)
 {
-    global $onlinetime;
-
     $action = cdataOut($action);
 
-    sql()->addLog($user, $action, $fid, $tid, $onlinetime);
+    sql()->addLog($user, $action, $fid, $tid, vars()->onlinetime);
 
     return true;
 }
@@ -2141,8 +2141,9 @@ function month2text($num)
  */
 function forumCache()
 {
-    global $db;
     static $cache = FALSE;
+
+    $db = db();
 
     if ($cache === FALSE) {
         $cache = $db->query("SELECT f.* FROM ".X_PREFIX."forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
@@ -2232,7 +2233,7 @@ function getStructuredForums($usePerms = false)
  */
 function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE)
 {
-    global $db, $SETTINGS;
+    $db = db();
 
     $permitted = array();
     $fids['group'] = array();
@@ -2247,7 +2248,7 @@ function permittedForums($forums, $mode='thread', $output='array', $check_parent
                 $fids[$forum['type']][] = $forum['fid'];
             }
         } elseif ($mode == 'forum') {
-            if ($SETTINGS['hideprivate'] == 'off' || $forum['type'] == 'group' || $perms[X_PERMS_VIEW]) {
+            if (vars()->settings['hideprivate'] == 'off' || $forum['type'] == 'group' || $perms[X_PERMS_VIEW]) {
                 $permitted[] = $forum;
                 $fids[$forum['type']][] = $forum['fid'];
             }
@@ -2355,17 +2356,17 @@ function forumList($selectname='srchfid', $multiple=false, $allowall=true, $curr
  */
 function forumJump()
 {
-    global $fid, $lang, $selHTML;
+    global $fid, $selHTML;
 
     // Initialize $forumselect
     $forumselect = array();
     $checkid = max($fid, getInt('gid', 'r'));
 
     $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
-    $forumselect[] = '<option value="">'.$lang['forumjumpselect'].'</option>';
+    $forumselect[] = '<option value="">' . vars()->lang['forumjumpselect'] . '</option>';
 
     // Populate $forumselect
-    $permitted = getStructuredForums(TRUE);
+    $permitted = getStructuredForums(true);
 
     if (0 == count($permitted['group']['0']) && 0 == count($permitted['forum']['0'])) {
         return '';
@@ -2427,12 +2428,12 @@ function forumJump()
  */
 function checkForumPermissions($forum, $user_status_in=FALSE)
 {
-    global $self, $status_enum;
+    global $status_enum;
 
     if (is_string($user_status_in)) {
         $user_status = $status_enum[$user_status_in];
     } else {
-        $user_status = $status_enum[$self['status']];
+        $user_status = $status_enum[vars()->self['status']];
     }
 
     // 1. Initialize $ret with zero permissions
@@ -2456,13 +2457,13 @@ function checkForumPermissions($forum, $user_status_in=FALSE)
     if ($user_status_in === FALSE) {
         $userlist = $forum['userlist'];
 
-        if (modcheck($self['username'], $forum['moderator'], FALSE) == "Moderator") {
+        if (modcheck(vars()->self['username'], $forum['moderator'], false) == "Moderator") {
             $ret[X_PERMS_USERLIST] = TRUE;
             $ret[X_PERMS_VIEW] = TRUE;
         } elseif (!X_GUEST) {
             $users = explode(',', $userlist);
             foreach($users as $user) {
-                if (strtolower(trim($user)) === strtolower($self['username'])) {
+                if (strtolower(trim($user)) === strtolower(vars()->self['username'])) {
                     $ret[X_PERMS_USERLIST] = TRUE;
                     $ret[X_PERMS_VIEW] = TRUE;
                     break;
@@ -2568,20 +2569,19 @@ function createLangFileSelect($currentLangFile)
  * @param int $fid Optional. Current FID number used to create a context-sensitive search.
  * @return string Empty string if the forum search page is disabled.
  */
-function makeSearchLink($fid=0)
+function makeSearchLink($fid = 0): string
 {
-    global $THEME, $lang, $SETTINGS;
-
     $fid = intval($fid);
 
-    if ($SETTINGS['searchstatus'] == 'on') {
+    if (vars()->settings['searchstatus'] == 'on') {
         $fid = intval($fid);
         if ($fid == 0) {
             $fid = '';
         } else {
             $fid = "?fid=$fid";
         }
-        return '<img src="'.$THEME['imgdir'].'/top_search.gif" alt="'.$lang['altsearch'].'" border="0" /> <a href="search.php'.$fid.'"><font class="navtd">'.$lang['textsearch'].'</font></a> &nbsp; ';
+        return '<img src="' . vars()->theme['imgdir'] . '/top_search.gif" alt="' . vars()->lang['altsearch'] . '" border="0" /> <a href="search.php'
+            . $fid . '"><font class="navtd">' . vars()->lang['textsearch'] . '</font></a> &nbsp; ';
     } else {
         return '';
     }

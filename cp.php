@@ -27,6 +27,7 @@ use XMB\UploadStatus;
 use function XMB\Services\attach;
 use function XMB\Services\session;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'cp.php');
 
@@ -34,6 +35,8 @@ require 'header.php';
 require ROOT.'include/admin.inc.php';
 
 header('X-Robots-Tag: noindex');
+
+$onlinetime = vars()->onlinetime;
 
 loadtemplates(
 'cp_dump_query_bottom',

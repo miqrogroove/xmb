@@ -44,7 +44,7 @@ class Observer
     {
         if (! is_array($_GET) || ! is_array($_POST) || ! is_array($_COOKIE) || ! is_array($_SERVER) || ! is_array($_FILES) || ! is_array($_REQUEST)) {
             header('HTTP/1.0 500 Internal Server Error');
-            echo 'XMB could not find the PHP Superglobals.  Please check PHP configuration.  Detected variables_order setting: ' . ini_get('variables_order'));
+            echo 'XMB could not find the PHP Superglobals.  Please check PHP configuration.  Detected variables_order setting: ' . ini_get('variables_order');
             throw new RuntimeException('PHP Superglobals are missing');
         }
     }

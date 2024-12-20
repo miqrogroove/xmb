@@ -26,6 +26,7 @@ use XMB\UploadStatus;
 
 use function XMB\Services\attach;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'post.php');
 
@@ -519,7 +520,7 @@ switch($action) {
         if ($replyvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = $onlinetime - $floodctrl;
+                $rightnow = vars()->onlinetime - $floodctrl;
                 if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
                     $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
@@ -530,7 +531,7 @@ switch($action) {
         }
 
         if ($replyvalid) {
-            $thatime = $onlinetime;
+            $thatime = vars()->onlinetime;
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
             }
@@ -561,7 +562,7 @@ switch($action) {
             $values = [
                 'fid' => (int) $fid,
                 'tid' => (int) $tid,
-                'dateline' => $onlinetime,
+                'dateline' => vars()->onlinetime,
                 'author' => $username,
                 'message' => $dbmessage,
                 'subject' => $dbsubject,
@@ -591,8 +592,8 @@ switch($action) {
                 unset($where);
 
                 if (X_MEMBER) {
-                    sql()->raisePostCount($username, $onlinetime);
-                    $expire = $onlinetime + X_ONLINE_TIMER;
+                    sql()->raisePostCount($username, vars()->onlinetime);
+                    $expire = vars()->onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
@@ -745,7 +746,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
+                $currtime = vars()->onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -914,7 +915,7 @@ switch($action) {
         if ($topicvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = $onlinetime - $floodctrl;
+                $rightnow = vars()->onlinetime - $floodctrl;
                 if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
                     $errors .= softerror($lang['floodprotect']);
                     $topicvalid = FALSE;
@@ -942,7 +943,7 @@ switch($action) {
         }
 
         if ($topicvalid) {
-            $thatime = $onlinetime;
+            $thatime = vars()->onlinetime;
 
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
@@ -1012,7 +1013,7 @@ switch($action) {
             $values = [
                 'fid' => (int) $fid,
                 'tid' => $tid,
-                'dateline' => $onlinetime,
+                'dateline' => vars()->onlinetime,
                 'author' => $username,
                 'message' => $dbmessage,
                 'subject' => $dbsubject,
@@ -1061,8 +1062,8 @@ switch($action) {
                 }
 
                 if (! $quarantine) {
-                    sql()->raisePostCount($username, $onlinetime);
-                    $expire = $onlinetime + X_ONLINE_TIMER;
+                    sql()->raisePostCount($username, vars()->onlinetime);
+                    $expire = vars()->onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
@@ -1152,7 +1153,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = $onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
+                $currtime = vars()->onlinetime + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;

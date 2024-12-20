@@ -24,9 +24,12 @@
 
 use function XMB\Services\attach;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 define('X_SCRIPT', 'quarantine.php');
 require 'header.php';
+
+$onlinetime = vars()->onlinetime;
 
 nav("<a href='quarantine.php'>{$lang['moderation_meta_name']}</a>");
 

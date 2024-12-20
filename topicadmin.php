@@ -24,8 +24,7 @@
 
 use function XMB\Services\attach;
 use function XMB\Services\sql;
-
-define('X_SCRIPT', 'topicadmin.php');
+use function XMB\Services\vars;
 
 require 'header.php';
 
@@ -33,6 +32,8 @@ if (X_GUEST) {
     redirect("{$full_url}misc.php?action=login", 0);
     exit;
 }
+
+$onlinetime = vars()->onlinetime;
 
 smcwcache();
 

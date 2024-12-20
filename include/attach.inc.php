@@ -410,7 +410,7 @@ class Attach
                 $deletes[] = $aid;
                 $result = $this->uploadedFile('replace_'.$aid, $pid, $quarantine);
                 if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
-                    $return = $status;
+                    $return = $result->status;
                 }
                 break;
             case 'rename':

@@ -24,6 +24,7 @@
 
 use function XMB\Services\attach;
 use function XMB\Services\db;
+use function XMB\Services\debug;
 use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\template;
@@ -44,14 +45,6 @@ error_reporting(-1); // Report all errors until config.php loads successfully.
 /* Global Constants and Initialized Values */
 
 $mtime = explode(" ", microtime());
-$starttime = $mtime[1] + $mtime[0];
-unset($mtime);
-$onlinetime = time();
-$selHTML = 'selected="selected"';
-$cheHTML = 'checked="checked"';
-$server = substr($_SERVER['SERVER_SOFTWARE'], 0, 3);
-
-$onlineuser = '';
 
 define('X_CACHE_GET', 1);
 define('X_CACHE_PUT', 2);
@@ -99,8 +92,6 @@ $status_translate = array(
 (1 << 30) => 'textbanned'
 );
 
-assertEmptyOutputStream('header.php or global.inc.php');
-
 
 /* Load Common Files. None of them should produce any output. */
 
@@ -118,6 +109,7 @@ require ROOT.'include/attach.inc.php';
 require ROOT.'include/Bootup.php';
 require ROOT.'include/debug.inc.php';
 require ROOT.'include/functions.inc.php';
+require ROOT.'include/Observer.php';
 require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
 require ROOT.'include/sql.inc.php';
@@ -125,7 +117,6 @@ require ROOT.'include/Template.php';
 require ROOT.'include/ThemeManager.php';
 require ROOT.'include/tokens.inc.php';
 require ROOT.'include/validate.inc.php';
-require ROOT.'include/global.inc.php';
 
 
 /* Create base services */
@@ -136,18 +127,19 @@ observer(new \XMB\Observer(vars()));
 template(new \XMB\Template(vars()));
 template()->init();
 
-$boot = new \XMB\Bootup(template(), vars());
+$boot = new \XMB\Bootup(observer(), template(), vars());
 
 observer()->testSuperGlobals();
 observer()->assertEmptyOutputStream('the db/* and include/* files');
 
 ob_end_clean();
 
+vars()->onlinetime = (int) $mtime[1];
+vars()->starttime = $mtime[1] + $mtime[0];
+unset($mtime);
+
 
 /* Load the Configuration Created by Install */
-
-require ROOT.'config.php';
-observer()->assertEmptyOutputStream('config.php');
 
 $boot->loadConfig();
 $boot->setBrowser();
@@ -164,7 +156,7 @@ if (! vars()->debug) {
 
 db($boot->connectDB());
 
-debug(new \XMB\Debug(db());
+debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
 attach(new \XMB\Attach(sql()));
@@ -228,4 +220,4 @@ $boot->startCompression();
 
 unset($boot);
 
-assertEmptyOutputStream('header.php');
+observer()->assertEmptyOutputStream('header.php');

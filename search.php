@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'search.php');
+use function XMB\Services\vars;
 
 require 'header.php';
 
@@ -150,12 +150,12 @@ if (!isset($searchsubmit) && !isset($page)) {
          . "WHERE f.fid IN($forums)";
 
     if ($srchfrom <= 0) {
-        $srchfrom = $onlinetime;
+        $srchfrom = vars()->onlinetime;
         $srchfromold = 0;
     } else {
         $srchfromold = $srchfrom;
     }
-    $srchfrom = $onlinetime - $srchfrom;
+    $srchfrom = vars()->onlinetime - $srchfrom;
 
     $ext = array();
     if (!empty($srchtxt)) {

@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'today.php');
+use function XMB\Services\vars;
 
 require 'header.php';
 
@@ -47,7 +47,7 @@ $daysold = getInt('daysold', 'r');
 if ($daysold < 1) {
     $daysold = 1;
 }
-$srchfrom = $onlinetime - (86400 * $daysold);
+$srchfrom = vars()->onlinetime - (86400 * $daysold);
 
 $tids = array();
 $fids = permittedForums(forumCache(), 'thread', 'csv');

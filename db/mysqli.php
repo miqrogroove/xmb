@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use Exception;
 use mysqli;
 use mysqli_sql_exception;
 use RuntimeException;
@@ -50,7 +51,7 @@ class MySQLiDatabase implements DBStuff
     private float      $timer      = 0.0;  // Date/time the last query started.  Class scope not needed, just simplifies code.
     private string     $test_error = '';   // Any error message collected by testConnect().
 
-    public function __construct()
+    public function __construct(private bool $debug, private bool $logErrors)
     {
         // Force older versions of PHP to behave like PHP v8.1.  This assumes there are no incompatible mysqli scripts running.
         if ($this->isInstalled()) {
@@ -328,18 +329,18 @@ class MySQLiDatabase implements DBStuff
         
         echo $msg;
 
-        if (DEBUG || LOG_MYSQL_ERRORS) {
+        if ($this->debug || $this->logErrors) {
             $error = $e->getMessage();
             $errno = $e->getCode();
         }
         
-        if (LOG_MYSQL_ERRORS) {
+        if ($this->logErrors) {
             $log_advice = "Please check the error log for details.<br />\n";
         } else {
             $log_advice = "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
         }
 
-    	if (DEBUG && (!defined('X_SADMIN') || X_SADMIN)) {
+    	if ($this->debug && (!defined('X_SADMIN') || X_SADMIN)) {
             require_once(ROOT.'include/validate.inc.php');
 
             // MySQL error text may contain sensitive file path info.
@@ -360,11 +361,11 @@ class MySQLiDatabase implements DBStuff
             }
         } else {
             echo "The system has failed to process your request.<br />\n", $log_advice;
-            if (defined('X_SADMIN') && X_SADMIN && ! DEBUG) {
+            if (defined('X_SADMIN') && X_SADMIN && ! $this->debug) {
                 echo "To display details, please set DEBUG to true in config.php.<br />\n";
             }
     	}
-        if (LOG_MYSQL_ERRORS) {
+        if ($this->logErrors) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
             if ($sql != '') {
                 if ((1153 == $errno || 2006 == $errno) && strlen($sql) > 16000) {
@@ -470,8 +471,8 @@ class MySQLiDatabase implements DBStuff
         }
         $this->querytimes[] = $this->stop_timer();
         $this->querynum++;
-    	if (DEBUG) {
-            if (LOG_MYSQL_ERRORS) {
+    	if ($this->debug) {
+            if ($this->logErrors) {
                 $this->last_id = $this->link->insert_id;
                 $this->last_rows = $this->link->affected_rows;
                 $warnings = $this->link->warning_count;
@@ -526,7 +527,7 @@ class MySQLiDatabase implements DBStuff
             }
         }
         $this->querynum++;
-    	if (DEBUG && (!defined('X_SADMIN') || X_SADMIN)) {
+    	if ($this->debug && (!defined('X_SADMIN') || X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();

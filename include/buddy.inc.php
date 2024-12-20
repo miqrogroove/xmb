@@ -114,7 +114,7 @@ function buddy_delete($delete)
 */
 function buddy_addu2u()
 {
-    global $db, $lang, $xmbuser, $oToken, $onlinetime;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $buddys = array();
@@ -128,7 +128,7 @@ function buddy_addu2u()
         while($buddy = $db->fetch_array($q)) {
             $buddyout = $buddy['buddyname'];
             $recodename = recodeOut($buddy['buddyname']);
-            if ($onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+            if (vars()->onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
                 if ('1' === $buddy['invisible']) {
                     if (!X_ADMIN) {
                         eval('$buddys["offline"] .= "'.template('buddy_u2u_off').'";');
@@ -148,7 +148,7 @@ function buddy_addu2u()
 
 function buddy_display()
 {
-    global $db, $lang, $xmbuser, $oToken, $onlinetime;
+    global $db, $lang, $xmbuser, $oToken;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
     $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
@@ -157,7 +157,7 @@ function buddy_display()
     $buddys['online'] = '';
     while ($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
-        if ($onlinetime - (int) $buddy['lastvisit'] <= X_ONLINE_TIMER) {
+        if (vars()->onlinetime - (int) $buddy['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $buddy['invisible']) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
