@@ -2566,6 +2566,7 @@ function createLangFileSelect($currentLangFile)
 /**
  * Creates an XHTML link to the forum search page.
  *
+ * @since 1.9.11
  * @param int $fid Optional. Current FID number used to create a context-sensitive search.
  * @return string Empty string if the forum search page is disabled.
  */
@@ -2590,6 +2591,7 @@ function makeSearchLink($fid = 0): string
 /**
  * Sets an SEO variable used in the header template to indicate the proper current relative URI.
  *
+ * @since 1.9.11
  * @param string $relURI Path to the current page, relative to the base href (see header.php).
  */
 function setCanonicalLink($relURI)
