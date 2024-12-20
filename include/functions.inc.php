@@ -22,183 +22,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 use function XMB\Services\attach;
 use function XMB\Services\db;
-use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
-use function XMB\Validate\fnameOut;
-use function XMB\Validate\getInt;
-use function XMB\Validate\postedVar;
-
-/**
- * Sets up some extra variables after a new login.
- *
- * @since 1.9.10
- * @param bool $invisible Optional. Result of the 'Browse the board invisible' option at login.
- */
-function loginUser($invisible = null)
-{
-    global $self, $db, $lastvisit;
-
-    if (session()->getStatus() !== 'good') return;
-
-    if (!is_null($invisible)) {
-        $old = $self['invisible'];
-        if ($invisible) {
-            $self['invisible'] = '1';
-        } else {
-            $self['invisible'] = '0';
-        }
-        if ($old !== $self['invisible']) {
-            sql()->changeMemberVisibility($self['username'], $self['invisible']);            
-        }
-    }
-
-    // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-    put_cookie('xmblvb', $self['lastvisit'], (time() + X_ONLINE_TIMER)); // lvb == last visit
-    $lastvisit = $self['lastvisit']; // Used by forumdisplay
-}
-
-/**
- * Responsible for setting up session variables.
- *
- * @since 1.9.10
- * @param  bool   $force_inv Optional.
- * @return bool
- */
-function elevateUser(bool $force_inv = false)
-{
-    global $status_enum;
-    
-    $vars = vars();
-
-    $maxurl = 150; //Schema constant.
-
-    $state = session()->getStatus();
-
-    //Usernames are historically html encoded in the XMB database, as well as in cookies.
-    //$xmbuser is often used as a raw value in queries and should be sql escaped.
-    //$self['username'] is a good alternative for future template use.
-    //$xmbpw was historically abused and will no longer contain a value.
-
-    if ('good' == $state || 'already-logged-in' == $state) {
-        // 'good' means normal login or resumed session.
-        // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
-        $vars->self = session()->getMember();
-        $xmbuser = db()->escape($vars->self['username']);
-    } else {
-        $vars->self = array();
-        $vars->self['status'] = '';
-        $xmbuser = '';
-    }
-    $vars->xmbuser = $xmbuser;
-    $vars->self['password'] = '';
-
-    // Initialize the new translation system
-    if (! defined('XMB_UPGRADE')) {
-        $success = false;
-        if (!empty($vars->self['langfile'])) {
-            $success = loadLang($vars->self['langfile']);
-        }
-        if (!$success) {
-            $success = loadLang($vars->settings['langfile']);
-        }
-        if (!$success) {
-            require_once(ROOT.'include/translation.inc.php');
-            langPanic();
-        }
-    }
-
-    // Set the user status constants.
-    if ($xmbuser != '') {
-        if (!defined('X_GUEST')) {
-            define('X_MEMBER', TRUE);
-            define('X_GUEST', FALSE);
-        }
-        // Save some write locks by updating in 60-second intervals.
-        if (abs(time() - (int)$vars->self['lastvisit']) > 60) {
-            sql()->setLastvisit($vars->self['username'], $vars->onlinetime);
-            // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
-        }
-    } else {
-        if (!defined('X_GUEST')) {
-            define('X_MEMBER', FALSE);
-            define('X_GUEST', TRUE);
-        }
-    }
-
-    // Enumerate status
-    if (isset($status_enum[$vars->self['status']])) {
-        $int_status = $status_enum[$vars->self['status']];
-    } else {
-        $int_status = $status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
-    }
-
-    if (!defined('X_STAFF')) {
-        define('X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
-        define('X_ADMIN', ($int_status <= $status_enum['Administrator']));
-        define('X_SMOD', ($int_status <= $status_enum['Super Moderator']));
-        define('X_MOD', ($int_status <= $status_enum['Moderator']));
-        define('X_STAFF', X_MOD);
-    }
-
-    // Set variables
-    $vars->dateformat = $vars->settings['dateformat'];
-
-    if ($xmbuser != '') {
-        $vars->timeoffset = $vars->self['timeoffset'];
-        $vars->tpp = (int) $vars->self['tpp'];
-        $vars->ppp = (int) $vars->self['ppp'];
-        $memtime = (int) $vars->self['timeformat'];
-        if ($vars->self['dateformat'] != '') {
-            $vars->dateformat = $vars->self['dateformat'];
-        }
-        $invisible = $self['invisible'];
-        $onlineuser = $vars->self['username'];
-    } else {
-        $vars->timeoffset = $vars->settings['def_tz'];
-        $vars->tpp = (int) $vars->settings['topicperpage'];
-        $vars->ppp = (int) $vars->settings['postperpage'];
-        $memtime = (int) $vars->settings['timeformat'];
-        $invisible = '0';
-        $onlineuser = 'xguest123';
-        $vars->self['ban'] = '';
-        $vars->self['sig'] = '';
-        $vars->self['uid'] = '0';
-        $vars->self['username'] = '';
-    }
-
-    if ($force_inv) {
-        $invisible = '1';
-    }
-
-    if ($memtime == 24) {
-        $vars->timecode = "H:i";
-    } else {
-        $vars->timecode = "h:i A";
-    }
-
-    $vars->dateformat = str_replace(array('mm', 'MM', 'dd', 'DD', 'yyyy', 'YYYY', 'yy', 'YY'), array('n', 'n', 'j', 'j', 'Y', 'Y', 'y', 'y'), $vars->dateformat);
-
-    // Save This Session
-    $serror = session()->getSError();
-    if (! defined('XMB_UPGRADE')
-        && basename($_SERVER['SCRIPT_NAME']) != 'css.php'
-        && basename($_SERVER['SCRIPT_NAME']) != 'files.php'
-        && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)
-    ) {
-        if (strlen($vars->onlineip) > 15 && ((int) $vars->settings['schema_version'] < 9 || strlen($vars->onlineip) > 39)) {
-            $useip = '';
-        } else {
-            $useip = $vars->onlineip;
-        }
-        $wollocation = substr($vars->url, 0, $maxurl);
-        $newtime = $vars->onlinetime - $vars::ONLINE_TIMER;
-        sql()->deleteOldWhosonline($useip, $vars->self['username'], $newtime);
-        sql()->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);
-    }
-}
 
 /**
  * Determine if the authenticated user is allowed to access this website.
@@ -1153,7 +984,7 @@ function modcheckPost($username, $mods, $origstatus)
  */
 function forum($forum, $template, $index_subforums)
 {
-    global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $lastvisit, $THEME, $SETTINGS;
+    global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $THEME, $SETTINGS;
 
     $forum['name'] = fnameOut($forum['name']);
     null_string($forum['description']);
@@ -1183,7 +1014,7 @@ function forum($forum, $template, $index_subforums)
     }
 
     $oT = strpos($oldtopics, "|$lastPid|");
-    if ($lastvisit < $dalast && $oT === false) {
+    if (vars()->lastvisit < $dalast && $oT === false) {
         $folder = '<img src="'.$THEME['imgdir'].'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
     } else {
         $folder = '<img src="'.$THEME['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';

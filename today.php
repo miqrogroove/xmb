@@ -172,7 +172,7 @@ if ($threadcount == 0) {
             }
 
             $oT = strpos($oldtopics, "|$lastPid|");
-            if ($lastvisit < (int) $dalast && $oT === false) {
+            if (vars()->lastvisit < (int) $dalast && $oT === false) {
                 if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                     $folder = 'hot_red_folder.gif';
                 } else {

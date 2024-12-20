@@ -22,29 +22,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
 define('X_SCRIPT', 'index.php');
 
 require 'header.php';
-
-loadtemplates(
-'index',
-'index_category',
-'index_category_hr',
-'index_category_spacer',
-'index_forum',
-'index_forum_lastpost',
-'index_forum_nolastpost',
-'index_noforum',
-'index_ticker',
-'index_stats',
-'index_welcome_guest',
-'index_welcome_member',
-'index_whosonline',
-'index_whosonline_today'
-);
 
 $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {

@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace XMB\Validate;
+namespace XMB;
 
 /**
 * Has the named submit button been invoked?
@@ -33,7 +33,7 @@ namespace XMB\Validate;
 *
 * @return   boolean   true if the submit is present, false otherwise
 */
-function onSubmit($submitname)
+function onSubmit(string $submitname): bool
 {
     $retval = (isset($_POST[$submitname]) && !empty($_POST[$submitname]));
     if (!$retval) {
@@ -50,14 +50,14 @@ function onSubmit($submitname)
 *
 * @return   boolean   true if the no submit is present, false otherwise
 */
-function noSubmit($submitname)
+function noSubmit(string $submitname): bool
 {
-    return (!onSubmit($submitname));
+    return ! onSubmit($submitname);
 }
 
 // postedVar is an all-purpose function for retrieving and sanitizing user input.
 // This is the preferred function as of version 1.9.8 SP3.
-function postedVar($varname, $word = '', $htmlencode = true, $dbescape = true, $quoteencode = false, $sourcearray = 'p')
+function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
 {
     $retval = '';
 
@@ -104,7 +104,7 @@ function postedVar($varname, $word = '', $htmlencode = true, $dbescape = true, $
     return $retval;
 }
 
-function postedArray($varname, $type = 'string', $word = '', $htmlencode = true, $dbescape = true, $quoteencode = false, $sourcearray = 'p')
+function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
 {
     switch($sourcearray) {
     case 'p':
@@ -191,23 +191,23 @@ function postedArray($varname, $type = 'string', $word = '', $htmlencode = true,
    return $arrayItems;
 }
 
-function recodeOut($rawstring)
+function recodeOut(string $rawstring): string
 {
     return rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES));
 }
 
-function recodeJavaOut($rawstring)
+function recodeJavaOut(string $rawstring): string
 {
     return rawurlencode(rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES)));
 }
 
-function cdataOut($rawstring)
+function cdataOut(string $rawstring): string
 {
     return htmlspecialchars($rawstring, ENT_NOQUOTES);
 }
 
 //Never safe for STYLE attributes.
-function attrOut($rawstring, $word = '')
+function attrOut(string $rawstring, string $word = ''): string
 {
     $retval = $rawstring;
     if ($word != '') {
@@ -216,7 +216,7 @@ function attrOut($rawstring, $word = '')
     return htmlspecialchars($retval, ENT_QUOTES);
 }
 
-function rawHTMLmessage($rawstring, $allowhtml='no')
+function rawHTMLmessage(string $rawstring, string $allowhtml='no'): string
 {
     if ($allowhtml == 'yes') {
         return censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
@@ -226,15 +226,15 @@ function rawHTMLmessage($rawstring, $allowhtml='no')
 }
 
 //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
-function rawHTMLsubject($rawstring)
+function rawHTMLsubject(string $rawstring): string
 {
     return censor(decimalEntityDecode($rawstring));
 }
 
-function decimalEntityDecode($rawstring)
+function decimalEntityDecode(string $rawstring): string
 {
     $currPos = 0;
-    while(($currPos = strpos($rawstring, '&amp;#', $currPos)) !== FALSE) {
+    while(($currPos = strpos($rawstring, '&amp;#', $currPos)) !== false) {
         $tempPos = strpos($rawstring, ';', $currPos + 6);
         $entLen = $tempPos - ($currPos + 6);
         if ($entLen >= 3 && $entLen <= 6) {
@@ -257,7 +257,7 @@ function decimalEntityDecode($rawstring)
  * This function must not be used for any other purpose.
  * Forum names historically used double-slashed db values and default (ENT_COMPAT) quote decoding.
  */
-function fnameOut($rawstring)
+function fnameOut(string $rawstring): string
 {
     return htmlspecialchars_decode(stripslashes($rawstring), ENT_COMPAT);
 }
@@ -269,33 +269,33 @@ function fnameOut($rawstring)
  * @param   string   $sourcearray   abbreviation of the superglobal name, g for $_GET by default
  * @return   integer   the "safe" integer if the variable is available, zero otherwise
 */
-function getInt($varname, $sourcearray = 'g')
+function getInt(string $varname, string $sourcearray = 'g'): int
 {
-    $foundvar = FALSE;
+    $foundvar = false;
     switch($sourcearray) {
         case 'g':
             if (isset($_GET[$varname])) {
                 $retval = $_GET[$varname];
-                $foundvar = TRUE;
+                $foundvar = true;
             }
             break;
         case 'p':
             if (isset($_POST[$varname])) {
                 $retval = $_POST[$varname];
-                $foundvar = TRUE;
+                $foundvar = true;
             }
             break;
         case 'c':
             if (isset($_COOKIE[$varname])) {
                 $retval = $_COOKIE[$varname];
-                $foundvar = TRUE;
+                $foundvar = true;
             }
             break;
         case 'r':
         default:
             if (isset($_REQUEST[$varname])) {
                 $retval = $_REQUEST[$varname];
-                $foundvar = TRUE;
+                $foundvar = true;
             }
             break;
     }
@@ -315,7 +315,7 @@ function getInt($varname, $sourcearray = 'g')
  * @param   string   $varname   name of the variable in $_REQUEST
  * @return   integer   the "safe" integer if the variable is available, zero otherwise
  */
-function getRequestInt($varname)
+function getRequestInt(string $varname): int
 {
     $retval = 0;
     if (isset($_REQUEST[$varname]) && is_numeric($_REQUEST[$varname])) {
@@ -329,14 +329,14 @@ function getRequestInt($varname)
  *
  * @param   string   $varname   name of the variable in $_POST
  * @param   boolean   $setZero   should the return be set to zero if the variable doesnt exist?
- * @return   mixed   the "safe" integer or zero, empty string otherwise
+ * @return   int|null   the "safe" integer or zero, null otherwise
  */
-function formInt($varname, $setZero = true)
+function formInt(string $varname, bool $setZero = true): ?int
 {
     if ($setZero) {
         $retval = 0;
     } else {
-        $retval = '';
+        $retval = null;
     }
 
     if (isset($_POST[$varname]) && is_numeric($_POST[$varname])) {
@@ -356,7 +356,7 @@ function formInt($varname, $setZero = true)
  * @param   string   $varname   the form field to find and sanitize
  * @return   mixed   false if not set or no elements, an array() of integers otherwise
  */
-function getFormArrayInt($varname, $doCount = true)
+function getFormArrayInt(string $varname, bool $doCount = true) array|false
 {
     if (!isset($_POST[$varname]) || empty($_POST[$varname])) {
         return false;
@@ -384,7 +384,7 @@ function getFormArrayInt($varname, $doCount = true)
  * @param   string   $varname   name of the variable in $_POST
  * @return   string   on if set to on, off otherwise
   */
-function formOnOff($varname)
+function formOnOff(string $varname): string
 {
     if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'on') {
         return 'on';
@@ -398,7 +398,7 @@ function formOnOff($varname)
  * @param   string   $varname   name of the variable in $_POST
  * @return   string   yes if set to yes, no otherwise
  */
-function formYesNo($varname)
+function formYesNo(string $varname): string
 {
     if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'yes') {
         return 'yes';
@@ -412,7 +412,7 @@ function formYesNo($varname)
  * @param   string   $varname   name of the variable in $_POST
  * @return   integer   1 if set to 1, 0 otherwise
  */
-function form10($varname)
+function form10(string $varname): int
 {
     return(formInt($varname) == 1) ? 1 : 0;
 }
@@ -423,7 +423,7 @@ function form10($varname)
  * @param   string   $varname   name of the variable in $_POST
  * @return   boolean   true if set to true, false otherwise
  */
-function formBool($varname)
+function formBool(string $varname): bool
 {
     if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == "true") {
         return 'true';
@@ -438,14 +438,14 @@ function formBool($varname)
  * @param   string   $compare   is $compare equal to $varname?
  * @return   string   checked html if $compare is equal to $varname, empty otherwise
  */
-function isChecked($varname, $compare = 'yes')
+function isChecked(string $varname, string $compare = 'yes'): string
 {
     return(($varname == $compare) ? 'checked="checked"' : '');
 }
 
-function isValidFilename($filename)
+function isValidFilename(string $filename): bool
 {
-    return preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
+    return (bool) preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
 
 /**

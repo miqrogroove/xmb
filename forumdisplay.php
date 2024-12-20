@@ -321,7 +321,7 @@ while($thread = $db->fetch_array($querytop)) {
         }
 
         $oT = strpos($oldtopics, "|$lastPid|");
-        if ($lastvisit < $dalast && $oT === false) {
+        if (vars()->lastvisit < $dalast && $oT === false) {
             if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = "hot_red_folder.gif";
             } else {

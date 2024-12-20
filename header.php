@@ -25,6 +25,7 @@
 use function XMB\Services\attach;
 use function XMB\Services\db;
 use function XMB\Services\debug;
+use function XMB\Services\login;
 use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\template;
@@ -109,6 +110,7 @@ require ROOT.'include/attach.inc.php';
 require ROOT.'include/Bootup.php';
 require ROOT.'include/debug.inc.php';
 require ROOT.'include/functions.inc.php';
+require ROOT.'include/Login.php';
 require ROOT.'include/Observer.php';
 require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
@@ -186,7 +188,8 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 $params = $boot->prepareSession();
 session(new \XMB\Session\Manager($params['mode'], $params['serror'], sql()));
-elevateUser($params['force_inv']);
+login(new \XMB\Login(db(), session(), sql(), vars()))
+login()->elevateUser($params['force_inv']);
 unset($params);
 
 if (defined('XMB_UPGRADE')) return;

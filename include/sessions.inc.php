@@ -29,8 +29,8 @@ namespace XMB\Session;
 use RuntimeException;
 use XMB\SQL;
 
-use function XMB\Validate\formYesNo;
-use function XMB\Validate\postedVar;
+use function XMB\formYesNo;
+use function XMB\postedVar;
 
 
 /**

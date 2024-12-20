@@ -29,6 +29,7 @@ namespace XMB\Services;
 use XMB\Attach;
 use XMB\Debug;
 use XMB\DBStuff;
+use XMB\Login;
 use XMB\Observer;
 use XMB\Session\Manager as SessionMgr;
 use XMB\SQL;
@@ -80,6 +81,22 @@ function debug(?Debug $debug = null): Debug
     static $cache;
     
     if ($debug !== null) $cache = $debug;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared login service.
+ *
+ * @since 1.10.00
+ * @param Login $login Required on first call, otherwise optional. Acts as the setter.
+ * @return Login
+ */
+function login(?Login $login = null): Login
+{
+    static $cache;
+    
+    if ($login !== null) $cache = $login;
     
     return $cache;
 }

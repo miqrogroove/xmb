@@ -117,7 +117,7 @@ switch($action) {
                         $invisible = ($invisible == 1);
                     }
                     
-                    loginUser($invisible);
+                    login()->loginUser($invisible);
                     redirect($full_url, 0);
                     break;
                 case 'login-client-disabled':

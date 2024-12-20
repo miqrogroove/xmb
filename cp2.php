@@ -2149,11 +2149,11 @@ if ($action == "attachments") {
         $author = postedVar('author');
         $forumprune = postedVar('forumprune');
         $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
-        $sizeless = formInt('sizeless', FALSE);
-        $sizemore = formInt('sizemore', FALSE);
-        $dlcountless = formInt('dlcountless', FALSE);
-        $dlcountmore = formInt('dlcountmore', FALSE);
-        $daysold = formInt('daysold', FALSE);
+        $sizeless = formInt('sizeless');
+        $sizemore = formInt('sizemore', setZero: false);
+        $dlcountless = formInt('dlcountless');
+        $dlcountmore = formInt('dlcountmore', setZero: false);
+        $daysold = formInt('daysold', setZero: false);
         ?>
         <tr bgcolor="<?php echo $altbg2?>">
         <td align="center">
@@ -2182,22 +2182,22 @@ if ($action == "attachments") {
             $restriction .= "AND a.filename LIKE '%$dblikefilename%' ";
         }
 
-        if ($sizeless !== '') {
+        if ($sizeless > 0) {
             $restriction .= "AND a.filesize < $sizeless ";
             $orderby = ' ORDER BY a.filesize DESC';
         }
 
-        if ($sizemore !== '') {
+        if ($sizemore !== null) {
             $restriction .= "AND a.filesize > $sizemore ";
             $orderby = ' ORDER BY a.filesize DESC';
         }
 
-        if ($dlcountless !== '') {
+        if ($dlcountless > 0) {
             $restriction .= "AND a.downloads < $dlcountless ";
             $orderby = ' ORDER BY a.downloads DESC';
         }
 
-        if ($dlcountmore !== '') {
+        if ($dlcountmore !== null) {
             $restriction .= "AND a.downloads > $dlcountmore ";
             $orderby = ' ORDER BY a.downloads DESC ';
         }
@@ -2208,7 +2208,7 @@ if ($action == "attachments") {
             $restriction .= "AND t.fid=$forumprune ";
         }
 
-        if ($daysold !== '') {
+        if ($daysold !== null) {
             $datethen = vars()->onlinetime - (86400 * $daysold);
             $restriction .= "AND p.dateline <= $datethen ";
             $orderby = ' ORDER BY p.dateline ASC';
