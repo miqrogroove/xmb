@@ -1,0 +1,1 @@
+<a href="search.php?srchuname=<?= $encodename&amp;searchsubmit=a&amp;f=all&amp;srchfrom=0 ?>" title="<?= $lang['altfindposts'] ?>"><img src="<?= $THEME['imgdir'] ?>/find.gif" border="0" alt="<?= $lang['altfindposts'] ?>" /></a>

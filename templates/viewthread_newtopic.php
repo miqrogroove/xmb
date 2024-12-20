@@ -1,0 +1,1 @@
+<a href="post.php?action=newthread&amp;fid=<?= $fid ?>" title="<?= $lang['altpostnewthread'] ?>"><img src="<?= $THEME['imgdir'] ?>/newtopic.gif" border="0" alt="<?= $lang['altpostnewthread'] ?>" /></a>

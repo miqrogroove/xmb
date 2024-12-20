@@ -1,0 +1,1 @@
+<a href="post.php?action=edit&amp;fid=<?= $fid&amp;tid=$tid&amp;pid=$post['pid'] ?>" title="<?= $lang['alteditpost'] ?>"><img src="<?= $THEME['imgdir'] ?>/edit.gif" border="0" alt="<?= $lang['alteditpost'] ?>" /></a>

@@ -1,0 +1,1 @@
+<a href="topicadmin.php?action=getip&amp;fid=<?= $fid&amp;tid=$tid&amp;pid=$post['pid'] ?>" title="<?= $lang['altgetip'] ?>"><img src="<?= $THEME['imgdir'] ?>/ip.gif" border="0" alt="<?= $lang['altgetip'] ?>" /></a>

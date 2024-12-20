@@ -1,0 +1,1 @@
+<a href="<?= $post['fileurl'] ?>" title="<?= $post['filename'] ?> - <?= $attachsize ?>" onclick="window.open(this.href); return false;"><img src="<?= $post['thumburl'] ?>" alt="<?= $post['filename'] ?> - <?= $attachsize ?>" border="0px" <?= $post['filedims'] ?> /></a>
