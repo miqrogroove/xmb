@@ -28,12 +28,6 @@ namespace XMB;
 
 use XMB\Session\Manager as SessionMgr;
 
-use function XMB\Validate\attrOut;
-use function XMB\Validate\getInt;
-use function XMB\Validate\onSubmit;
-use function XMB\Validate\postedVar;
-use function XMB\Validate\recodeOut;
-
 /**
  * Provides most of the procedural logic formerly in header.php.
  *
@@ -608,11 +602,11 @@ class Bootup
             break;
         }
     }
-    
+
     public function checkU2U(SQL $sql)
     {
         // check for new u2u's
-        $newu2unum->countU2UInbox($this->vars->self['username']);
+        $newu2unum = $sql->countU2UInbox($this->vars->self['username']);
         $newu2umsg = '';
         if ($newu2unum > 0) {
             $newu2umsg = "<a href='u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . ' ' . $this->vars->lang['newu2u2'] . '</a>';

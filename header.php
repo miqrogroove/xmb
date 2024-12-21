@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\core;
 use function XMB\Services\db;
 use function XMB\Services\debug;
 use function XMB\Services\login;
@@ -164,6 +165,8 @@ sql(new \XMB\SQL(db(), vars()->tablepre));
 attach(new \XMB\Attach(sql()));
 theme(new \XMB\Theme\Manager(sql(), template(), vars()));
 
+core(new \XMB\Core(attach(), sql(), vars()))
+
 $boot->loadSettings();
 $boot->setHeaders();
 
@@ -188,7 +191,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 $params = $boot->prepareSession();
 session(new \XMB\Session\Manager($params['mode'], $params['serror'], sql()));
-login(new \XMB\Login(db(), session(), sql(), vars()))
+login(new \XMB\Login(session(), sql(), vars()))
 login()->elevateUser($params['force_inv']);
 unset($params);
 

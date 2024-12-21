@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace XMB\Services;
 
 use XMB\Attach;
+use XMB\Core;
 use XMB\Debug;
 use XMB\DBStuff;
 use XMB\Login;
@@ -49,6 +50,22 @@ function attach(?Attach $attach = null): Attach
     static $cache;
     
     if ($attach !== null) $cache = $attach;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared core service.
+ *
+ * @since 1.10.00
+ * @param Core $core Required on first call, otherwise optional. Acts as the setter.
+ * @return Core
+ */
+function core(?Core $core = null): Core
+{
+    static $cache;
+    
+    if ($core !== null) $cache = $core;
     
     return $cache;
 }

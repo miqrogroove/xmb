@@ -26,10 +26,7 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use XMB\DBStuff;
 use XMB\Session\Manager as SessionMgr;
-use XMB\SQL;
-use XMB\Variables;
 
 /**
  * This class provides methods that depend on the Session service.
@@ -40,7 +37,7 @@ use XMB\Variables;
  */
 class Login
 {
-    public function __construct(private DBStuff $db, private SessionMgr $session, private SQL $sql, private Variables $vars)
+    public function __construct(private SessionMgr $session, private SQL $sql, private Variables $vars)
     {
         // Property promotion.
     }
@@ -100,7 +97,7 @@ class Login
             // 'good' means normal login or resumed session.
             // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
             $vars->self = $this->session->getMember();
-            $vars->xmbuser = $this->db->escape($vars->self['username']);
+            $vars->xmbuser = $this->sql->db->escape($vars->self['username']);
         } else {
             $vars->self = ['status' => ''];
             $vars->xmbuser = '';

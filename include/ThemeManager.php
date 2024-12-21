@@ -30,8 +30,8 @@ use XMB\SQL;
 use XMB\Template;
 use XMB\Variables;
 
-use function XMB\Validate\getInt;
-use function XMB\Validate\PostedVar;
+use function XMB\getInt;
+use function XMB\PostedVar;
 
 class Manager
 {
