@@ -31,7 +31,8 @@ use XMB\Template;
 use XMB\Variables;
 
 use function XMB\getInt;
-use function XMB\PostedVar;
+use function XMB\getPhpInput;
+use function XMB\null_string;
 
 class Manager
 {
@@ -43,7 +44,7 @@ class Manager
     public function setTheme()
     {
         // Get themes, [fid, [tid]]
-        $action = postedVar('action', '', false, false, false, 'g');
+        $action = getPhpInput('action', 'g');
         $forumtheme = 0;
         $fid = getInt('fid', 'r');
         $tid = getInt('tid', 'r');

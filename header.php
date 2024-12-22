@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\bbcode;
 use function XMB\Services\core;
 use function XMB\Services\db;
 use function XMB\Services\debug;
@@ -110,6 +111,7 @@ require ROOT.'include/Variables.php';
 require ROOT.'include/attach.inc.php';
 require ROOT.'include/BBCode.php';
 require ROOT.'include/Bootup.php';
+require ROOT.'include/BootupLoader.php';
 require ROOT.'include/debug.inc.php';
 require ROOT.'include/format.php';
 require ROOT.'include/functions.inc.php';
@@ -172,21 +174,23 @@ attach(new \XMB\Attach(bbcode(), db(), sql()));
 
 core(new \XMB\Core(attach(), bbcode(), db(), sql(), vars()));
 
-$boot->loadSettings();
-$boot->setHeaders();
+unset($boot);
+
+
+/* Start 2nd Phase of Bootup */
+
+$loader = new \XMB\BootupLoader(core(), db(), template(), vars());
+
+$loader->loadSettings();
+$loader->setHeaders(core());
 
 if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
-    $xmbuser = postedVar(
+    $xmbuser = core()->postedVar(
         varname: 'xmbuser',
         dbescape: false,
         sourcearray: 'c',
     );
-    $xmbpw = postedVar(
-        varname: 'xmbpw',
-        htmlencode: false,
-        dbescape: false,
-        sourcearray: 'c',
-    );
+    $xmbpw = getPhpInput('xmbpw', 'c');
     define('X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
     unset($xmbuser, $xmbpw);
     return;
@@ -194,7 +198,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 /* Authorize User, Set Up Session, and Load Language Translation */
 
-$params = $boot->prepareSession();
+$params = $loader->prepareSession();
 session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql()));
 login(new \XMB\Login(core(), db(), session(), sql(), vars()));
 login()->elevateUser($params['force_inv']);
@@ -205,9 +209,9 @@ if (defined('XMB_UPGRADE')) return;
 
 /* Set Up HTML Templates and Themes */
 
-$boot->setCharset();
-$boot->setBaseElement();
-$boot->setVisit();
+$loader->setCharset();
+$loader->setBaseElement();
+$loader->setVisit();
 theme()->setTheme();
 
 /* Theme Ready.  Make pretty errors. */
@@ -218,17 +222,17 @@ login()->sendErrors();
 /* Finish HTML Templates */
 
 if ((X_ADMIN || vars()->settings['bbstatus'] == 'on') && (X_MEMBER || vars()->settings['regviewonly'] == 'off')) {
-    $boot->createNavbarLinks();
-    $boot->makePlugLinks();
-    $boot->makeQuickJump();
-    if (X_MEMBER) $boot->checkU2U(sql());
+    $loader->createNavbarLinks();
+    $loader->makePlugLinks();
+    $loader->makeQuickJump();
+    if (X_MEMBER) $loader->checkU2U(sql());
 }
 
 
 /* Perform HTTP Connection Maintenance */
 
-$boot->startCompression();
+$loader->startCompression();
 
-unset($boot);
+unset($loader);
 
 observer()->assertEmptyOutputStream('header.php');

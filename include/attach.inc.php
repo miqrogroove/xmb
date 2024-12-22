@@ -414,7 +414,7 @@ class Attach
                 }
                 break;
             case 'rename':
-                $rename = trim(postedVar('rename_'.$aid, '', FALSE, FALSE));
+                $rename = trim(getPhpInput('rename_'.$aid));
                 $status = $this->changeName($aid, $pid, $rename, $quarantine);
                 if ($status !== UploadStatus::Success) {
                     $return = $status;

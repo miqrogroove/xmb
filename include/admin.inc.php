@@ -24,6 +24,7 @@
 
 use XMB\Session\Manager as SessionMgr;
 
+use function XMB\Services\core;
 use function XMB\Services\sql;
 
 /* Assert Additional Security */
@@ -445,7 +446,7 @@ function printsetting5($settingDesc, $errorMsg)
  */
 function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
 {
-    $value = postedVar($postname, '', $htmlencode, false);
+    $value = core()->postedVar($postname, '', $htmlencode, false);
     input_custom_setting($dbname, $value);
 }
 

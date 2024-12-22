@@ -30,6 +30,9 @@ class Variables
 {
     const int ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
     
+    const string cheHTML = 'checked="checked"';
+    const string selHTML = 'selected="selected"';
+
     public array $censorcache = [];
     public array $lang = [];
     public array $mailer = [];
@@ -43,7 +46,6 @@ class Variables
     public array $theme = [];
 
     public string $charset = '';
-    public string $cheHTML = 'checked="checked"';
     public string $cookiedomain = '';
     public string $cookiepath = '';
     public string $dateformat = '';
@@ -54,8 +56,8 @@ class Variables
     public string $database = '';
     public string $full_url = '';
     public string $langfile = '';
+    public string $oldtopics = '';
     public string $onlineip = '';
-    public string $selHTML = 'selected="selected"';
     public string $tablepre = '';
     public string $timecode = '';
     public string $timeoffset = '';

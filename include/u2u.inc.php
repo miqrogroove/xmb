@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\core;
 use function XMB\Services\vars;
 
 define('U2U_FOLDER_COL_SIZE', 32);
@@ -139,7 +140,13 @@ function u2u_send($u2uid, string $msgto, string $subject, string $message): stri
 
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
-    $username = postedVar('username', 'javascript', TRUE, FALSE, TRUE, 'g'); //username is the param from u2u links on profiles.
+    $username = core()->postedVar(
+        varname: 'username',
+        word: 'javascript',
+        dbescape: false,
+        quoteencode: true,
+        sourcearray: 'g',
+    ); //username is the param from u2u links on profiles.
 
     if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
         error($lang['textbanfromu2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
@@ -564,7 +571,7 @@ function u2u_ignore()
 
     $leftpane = '';
     if (onSubmit('ignoresubmit')) {
-        $ignorelist = postedVar('ignorelist');
+        $ignorelist = core()->postedVar('ignorelist');
         $self['ignoreu2u'] = $ignorelist;
         $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
         u2u_msg($lang['ignoreupdate'], $full_url.'u2u.php?action=ignore');

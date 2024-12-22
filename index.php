@@ -26,24 +26,20 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use function XMB\Services\core;
-use function XMB\Services\db;
-use function XMB\Services\sql;
-use function XMB\Services\template;
-use function XMB\Services\vars;
+require './header.php';
 
-require 'header.php';
-
-$core = core();
-$db = db();
+$core = \XMB\Servies\core();
+$db = \XMB\Servies\db();
+$sql = \XMB\Services\sql();
+$template = \XMB\Servies\template();
+$vars = \XMB\Servies\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
-$template = template();
 
 $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
     $template->contents = '';
-    $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $SETTINGS['tickercontents']));
+    $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $SETTINGS['tickercontents']));
     $counter = 0;
     foreach ($news as $item) {
         if (strlen(trim($item)) == 0) {
@@ -242,7 +238,7 @@ if ($gid == 0) {
 
         $whosonlinetoday = '';
         if ($SETTINGS['onlinetoday_status'] == 'on') {
-            $datecut = vars()->onlinetime - (3600 * 24);
+            $datecut = $vars->onlinetime - (3600 * 24);
             $where = '';
             if ('on' == $SETTINGS['hide_banned']) {
                 $where = "AND status != 'Banned'";

@@ -132,14 +132,16 @@ class Template
 
     public function process(string $filename, bool $echo = false): string
     {
-        $code = 'This is a test: $myvar $ovar';
-        
-        //var_dump(get_defined_vars());
-        //exit;
-        
         extract($this->data);
         
-        eval('$output = "' . $code . '";');
-        echo $output;
+        if (! $echo) ob_start();
+        
+        include "./templates/$filename";
+        
+        if ($echo) {
+            return '';
+        } else {
+            return ob_get_clean();
+        }
     }
 }

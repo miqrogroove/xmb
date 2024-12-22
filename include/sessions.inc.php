@@ -27,9 +27,11 @@ declare(strict_types=1);
 namespace XMB\Session;
 
 use RuntimeException;
+use XMB\Core;
 use XMB\SQL;
 
 use function XMB\formYesNo;
+use function XMB\getPhpInput;
 use function XMB\postedVar;
 
 
@@ -480,7 +482,7 @@ class FormsAndCookies implements Mechanism
     public function checkUsername(): Data
     {
         $data = new Data();
-        $uinput = postedVar('username', dbescape: false);
+        $uinput = $this->core->postedVar('username', dbescape: false);
 
         if (strlen($uinput) < self::USER_MIN_LEN) {
             return $data;
@@ -815,12 +817,7 @@ class FormsAndCookies implements Mechanism
 
     private function get_cookie(string $name): string
     {
-        return postedVar(
-            varname: $name,
-            htmlencode: false,
-            dbescape: false,
-            sourcearray: 'c',
-        );
+        return getPhpInput($name, 'c');
     }
 
     private function delete_cookie(string $name)

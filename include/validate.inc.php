@@ -55,140 +55,56 @@ function noSubmit(string $submitname): bool
     return ! onSubmit($submitname);
 }
 
-// postedVar is an all-purpose function for retrieving and sanitizing user input.
-// This is the preferred function as of version 1.9.8 SP3.
-function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+/**
+ * Retrieves user input and ensures compatiblity with non-binary-safe functions.
+ *
+ * @since 1.10.00
+ */
+function getPhpInput(string $varname, string $sourcearray = 'p'): string
 {
-    $retval = '';
+    $retval = getRawInput($varname, $sourcearray);
+
+    if (is_string($retval)) {
+        $retval = str_replace("\x00", '', $retval);
+    } else {
+        $retval = '';
+    }
+
+    return $retval;
+}
+
+/**
+ * Retrieve a string or array input without filtering.
+ *
+ * @since 1.10.00
+ */
+function getRawInput(string $varname, string $sourcearray = 'p'): string|array|null
+{
+    $retval = null;
 
     switch($sourcearray) {
-    case 'p':
-        $sourcearray =& $_POST;
-        break;
-    case 'g':
-        $sourcearray =& $_GET;
-        break;
-    case 'c':
-        $sourcearray =& $_COOKIE;
-        break;
-    case 'r':
-    default:
-        $sourcearray =& $_REQUEST;
+        case 'p':
+            $sourcearray = &$_POST;
+            break;
+        case 'g':
+            $sourcearray = &$_GET;
+            break;
+        case 'c':
+            $sourcearray = &$_COOKIE;
+            break;
+        case 'r':
+        default:
+            $sourcearray = &$_REQUEST;
         break;
     }
 
     if (isset($sourcearray[$varname])) {
-        if (is_string($sourcearray[$varname])) {
+        if (is_string($sourcearray[$varname]) || is_array($sourcearray[$varname])) {
             $retval = $sourcearray[$varname];
-            $retval = str_replace("\x00", '', $retval);
-
-            if ($word != '') {
-                $retval = str_ireplace($word, "_".$word, $retval);
-            }
-
-            if ($htmlencode) {
-                if ($quoteencode) {
-                    $retval = htmlspecialchars($retval, ENT_QUOTES);
-                } else {
-                    $retval = htmlspecialchars($retval, ENT_NOQUOTES);
-                }
-            }
-
-            if ($dbescape) {
-                $GLOBALS['db']->escape_fast($retval);
-            }
         }
     }
 
-    unset($sourcearray);
     return $retval;
-}
-
-function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
-{
-    switch($sourcearray) {
-    case 'p':
-        $sourcearray =& $_POST;
-        break;
-    case 'g':
-        $sourcearray =& $_GET;
-        break;
-    case 'c':
-        $sourcearray =& $_COOKIE;
-        break;
-    case 'r':
-    default:
-        $sourcearray =& $_REQUEST;
-        break;
-    }
-
-    // Convert a single or comma delimited list to an array
-    if (isset($sourcearray[$varname]) && !is_array($sourcearray[$varname])) {
-        if (strpos($sourcearray[$varname], ',') !== false) {
-            $sourcearray[$varname] = explode(',', $sourcearray[$varname]);
-        } else {
-            $sourcearray[$varname] = array($sourcearray[$varname]);
-        }
-    }
-
-    $arrayItems = array();
-    if (isset($sourcearray[$varname]) && is_array($sourcearray[$varname]) && count($sourcearray[$varname]) > 0) {
-        $arrayItems = $sourcearray[$varname];
-        foreach($arrayItems as $item => $theObject) {
-            $theObject =& $arrayItems[$item];
-            switch($type) {
-            case 'onoff':
-                if (strtolower($theObject) == 'on') {
-                    $theObject = 'on';
-                } else {
-                    $theObject = 'off';
-                }
-                break;
-            case 'yesno':
-                if (strtolower($theObject) == 'yes') {
-                    $theObject = 'yes';
-                } else {
-                    $theObject = 'no';
-                }
-                break;
-                break;
-            case 'int':
-                if (is_string($theObject)) {
-                    $theObject = intval($theObject);
-                } else {
-                    $theObject = 0;
-                }
-                break;
-            case 'string':
-            default:
-                if (is_string($theObject)) {
-                    $theObject = str_replace("\x00", '', $theObject);
-
-                    if ($word != '') {
-                        $theObject = str_ireplace($word, "_".$word, $theObject);
-                    }
-
-                    if ($htmlencode) {
-                        if ($quoteencode) {
-                            $theObject = htmlspecialchars($theObject, ENT_QUOTES);
-                        } else {
-                            $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
-                        }
-                    }
-
-                    if ($dbescape) {
-                        $GLOBALS['db']->escape_fast($theObject);
-                    }
-                } else {
-                    $theObject = '';
-                }
-                break;
-            }
-            unset($theObject);
-        }
-   }
-
-   return $arrayItems;
 }
 
 function recodeOut(string $rawstring): string
@@ -214,21 +130,6 @@ function attrOut(string $rawstring, string $word = ''): string
         $retval = str_ireplace($word, "_".$word, $retval);
     }
     return htmlspecialchars($retval, ENT_QUOTES);
-}
-
-function rawHTMLmessage(string $rawstring, string $allowhtml='no'): string
-{
-    if ($allowhtml == 'yes') {
-        return censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
-    } else {
-        return censor(decimalEntityDecode($rawstring));
-    }
-}
-
-//Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
-function rawHTMLsubject(string $rawstring): string
-{
-    return censor(decimalEntityDecode($rawstring));
 }
 
 function decimalEntityDecode(string $rawstring): string
@@ -271,42 +172,13 @@ function fnameOut(string $rawstring): string
 */
 function getInt(string $varname, string $sourcearray = 'g'): int
 {
-    $foundvar = false;
-    switch($sourcearray) {
-        case 'g':
-            if (isset($_GET[$varname])) {
-                $retval = $_GET[$varname];
-                $foundvar = true;
-            }
-            break;
-        case 'p':
-            if (isset($_POST[$varname])) {
-                $retval = $_POST[$varname];
-                $foundvar = true;
-            }
-            break;
-        case 'c':
-            if (isset($_COOKIE[$varname])) {
-                $retval = $_COOKIE[$varname];
-                $foundvar = true;
-            }
-            break;
-        case 'r':
-        default:
-            if (isset($_REQUEST[$varname])) {
-                $retval = $_REQUEST[$varname];
-                $foundvar = true;
-            }
-            break;
-    }
-
-    if ($foundvar && is_numeric($retval)) {
-        $retval = intval($retval);
+    $retval = getRawInput($varname, $sourcearray);
+    
+    if (is_numeric($retval)) {
+        return (int) $retval;
     } else {
-        $retval = 0;
+        return 0;
     }
-
-    return $retval;
 }
 
 /**
@@ -317,11 +189,7 @@ function getInt(string $varname, string $sourcearray = 'g'): int
  */
 function getRequestInt(string $varname): int
 {
-    $retval = 0;
-    if (isset($_REQUEST[$varname]) && is_numeric($_REQUEST[$varname])) {
-        $retval = intval($_REQUEST[$varname]);
-    }
-    return $retval;
+    return getInt($varname, 'r');
 }
 
 /**
@@ -356,7 +224,7 @@ function formInt(string $varname, bool $setZero = true): ?int
  * @param   string   $varname   the form field to find and sanitize
  * @return   mixed   false if not set or no elements, an array() of integers otherwise
  */
-function getFormArrayInt(string $varname, bool $doCount = true) array|false
+function getFormArrayInt(string $varname, bool $doCount = true): array|false
 {
     if (!isset($_POST[$varname]) || empty($_POST[$varname])) {
         return false;
@@ -386,10 +254,12 @@ function getFormArrayInt(string $varname, bool $doCount = true) array|false
   */
 function formOnOff(string $varname): string
 {
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'on') {
-        return 'on';
+    $retval = getRawInput($varname);
+    
+    if ($retval !== 'on') {
+        $retval = 'off';
     }
-    return 'off';
+    return $retval;
 }
 
 /**
@@ -400,10 +270,12 @@ function formOnOff(string $varname): string
  */
 function formYesNo(string $varname): string
 {
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == 'yes') {
-        return 'yes';
+    $retval = getRawInput($varname);
+    
+    if ($retval !== 'yes') {
+        $retval = 'no';
     }
-    return 'no';
+    return $retval;
 }
 
 /**
@@ -425,10 +297,7 @@ function form10(string $varname): int
  */
 function formBool(string $varname): bool
 {
-    if (isset($_POST[$varname]) && strtolower($_POST[$varname]) == "true") {
-        return 'true';
-    }
-    return 'false';
+    return getRawInput($varname) === 'true';
 }
 
 /**

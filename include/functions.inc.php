@@ -34,6 +34,97 @@ class Core
     }
 
     /**
+     * All-purpose function for retrieving and sanitizing user input.
+     *
+     * @since 1.9.8 SP3
+     */
+    function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+    {
+        $retval = getPhpInput($varname, $sourcearray);
+
+        if ($word != '') {
+            $retval = str_ireplace($word, "_".$word, $retval);
+        }
+
+        if ($htmlencode) {
+            if ($quoteencode) {
+                $retval = htmlspecialchars($retval, ENT_QUOTES);
+            } else {
+                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
+            }
+        }
+
+        if ($dbescape) {
+            $this->db->escape_fast($retval);
+        }
+
+        return $retval;
+    }
+
+    function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+    {
+        $arrayItems = getRawInput($varname, $sourcearray);
+
+        // Convert a single or comma delimited list to an array
+        if (is_string($arrayItems)) {
+            if (strpos($arrayItems, ',') !== false) {
+                $arrayItems = explode(',', $arrayItems);
+            } else {
+                $arrayItems = [$arrayItems];
+            }
+        } elseif (is_null($retval)) {
+            $arrayItems = [];
+        }
+
+        foreach($arrayItems as $item => $theObject) {
+            $theObject = &$arrayItems[$item];
+            switch($type) {
+                case 'onoff':
+                    if (strtolower($theObject) !== 'on') {
+                        $theObject = 'off';
+                    }
+                    break;
+                case 'yesno':
+                    if (strtolower($theObject) !== 'yes') {
+                        $theObject = 'no';
+                    }
+                    break;
+                    break;
+                case 'int':
+                    $theObject = (int) $theObject;
+                    break;
+                case 'string':
+                default:
+                    if (is_string($theObject)) {
+                        $theObject = str_replace("\x00", '', $theObject);
+
+                        if ($word != '') {
+                            $theObject = str_ireplace($word, "_".$word, $theObject);
+                        }
+
+                        if ($htmlencode) {
+                            if ($quoteencode) {
+                                $theObject = htmlspecialchars($theObject, ENT_QUOTES);
+                            } else {
+                                $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
+                            }
+                        }
+
+                        if ($dbescape) {
+                            $this->db->escape_fast($theObject);
+                        }
+                    } else {
+                        $theObject = '';
+                    }
+                    break;
+            }
+            unset($theObject);
+        }
+
+       return $arrayItems;
+    }
+
+    /**
      * Determine if the authenticated user is allowed to access this website.
      *
      * @since 1.9.12
@@ -338,7 +429,7 @@ class Core
             trigger_error('The $expire parameter of request_secure() does not work in this version of XMB.', E_USER_DEPRECATED);
         }
 
-        $token = postedVar('token', '', false, false);
+        $token = getPhpInput('token');
 
         if (! \XMB\Token\consume($token, $action, $id)) {
             error($lang['bad_token'], $error_header);
@@ -419,6 +510,21 @@ class Core
         return true;
     }
 
+    public function rawHTMLmessage(string $rawstring, string $allowhtml='no'): string
+    {
+        if ($allowhtml == 'yes') {
+            return $this->censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
+        } else {
+            return $this->censor(decimalEntityDecode($rawstring));
+        }
+    }
+
+    //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
+    public function rawHTMLsubject(string $rawstring): string
+    {
+        return censor(decimalEntityDecode($rawstring));
+    }
+
     /**
      * Perform BBCode, Smilie, and Word Wrapping for a single post body.
      *
@@ -450,7 +556,7 @@ class Core
             $message = implode("<!-- code -->", $message);
 
             // Do BBCode
-            $message = rawHTMLmessage($message, $allowhtml);
+            $message = $this->rawHTMLmessage($message, $allowhtml);
             $this->bbcode->process($message, $allowimgcode, $allowurlcode);
             if ($smiliesallow) {
                 smile($message);
@@ -472,7 +578,7 @@ class Core
                 $message = str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message);
             }
         } else {
-            $message = rawHTMLmessage($message, $allowhtml);
+            $message = $this->rawHTMLmessage($message, $allowhtml);
             if ($smiliesallow) {
                 smile($message);
             }
@@ -625,7 +731,7 @@ class Core
     function modcheckPost($username, $mods, $origstatus)
     {
         global $SETTINGS;
-        $retval = modcheck($username, $mods);
+        $retval = $this->modcheck($username, $mods);
 
         if ($retval != '' && $SETTINGS['allowrankedit'] != 'off') {
             switch($origstatus) {
@@ -1594,7 +1700,7 @@ class Core
     {
         $db = $this->db;
 
-        $forums = forumCache();
+        $forums = $this->forumCache();
         while($forum = $db->fetch_array($forums)) {
             if (intval($forum['fid']) == intval($fid)) {
                 return $forum;
@@ -1624,10 +1730,10 @@ class Core
         $db = $this->db;
 
         if ($usePerms) {
-            $forums = permittedForums(forumCache(), 'forum');
+            $forums = $this->permittedForums($this->forumCache(), 'forum');
         } else {
             $forums = array();
-            $query = forumCache();
+            $query = $this->forumCache();
             while($forum = $db->fetch_array($query)) {
                 $forums[] = $forum;
             }
@@ -1668,7 +1774,7 @@ class Core
         $fids['sub'] = array();
 
         while($forum = $db->fetch_array($forums)) {
-            $perms = checkForumPermissions($forum, $user_status);
+            $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
                 if ($forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
                     $permitted[] = $forum;
@@ -1748,7 +1854,7 @@ class Core
         }
 
         // Populate $forumselect
-        $permitted = getStructuredForums(TRUE);
+        $permitted = $this->getStructuredForums(true);
 
         foreach($permitted['forum']['0'] as $forum) {
             $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
@@ -1781,30 +1887,28 @@ class Core
     /**
      * @since 1.9.8
      */
-    function forumJump()
+    public function forumJump()
     {
-        global $fid, $selHTML;
-
         // Initialize $forumselect
         $forumselect = array();
-        $checkid = max($fid, getInt('gid', 'r'));
+        $checkid = max(getInt('fid', 'r'), getInt('gid', 'r'));
 
         $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
         $forumselect[] = '<option value="">' . $this->vars->lang['forumjumpselect'] . '</option>';
 
         // Populate $forumselect
-        $permitted = getStructuredForums(true);
+        $permitted = $this->getStructuredForums(true);
 
         if (0 == count($permitted['group']['0']) && 0 == count($permitted['forum']['0'])) {
             return '';
         }
 
         foreach($permitted['forum']['0'] as $forum) {
-            $dropselc1 = ($checkid == $forum['fid']) ? $selHTML : '';
+            $dropselc1 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
             $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
                 foreach($permitted['sub'][$forum['fid']] as $sub) {
-                    $dropselc2 = ($checkid == $sub['fid']) ? $selHTML : '';
+                    $dropselc2 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
                     $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                 }
             }
@@ -1812,15 +1916,15 @@ class Core
 
         foreach($permitted['group']['0'] as $group) {
             if (isset($permitted['forum'][$group['fid']])) {
-                $dropselc3 = ($checkid == $group['fid']) ? $selHTML : '';
+                $dropselc3 = ($checkid == $group['fid']) ? $this->vars::selHTML : '';
                 $forumselect[] = '<option value=""></option>';
                 $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
                 foreach($permitted['forum'][$group['fid']] as $forum) {
-                    $dropselc4 = ($checkid == $forum['fid']) ? $selHTML : '';
+                    $dropselc4 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
                     $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
                         foreach($permitted['sub'][$forum['fid']] as $sub) {
-                            $dropselc5 = ($checkid == $sub['fid']) ? $selHTML : '';
+                            $dropselc5 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
                             $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                         }
                     }
@@ -1884,7 +1988,7 @@ class Core
         if ($user_status_in === FALSE) {
             $userlist = $forum['userlist'];
 
-            if (modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
+            if ($this->modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
                 $ret[X_PERMS_USERLIST] = TRUE;
                 $ret[X_PERMS_VIEW] = TRUE;
             } elseif (!X_GUEST) {
@@ -1900,7 +2004,7 @@ class Core
         }
 
         // 4. Check COPPA Flag
-        $coppa = coppa_check();
+        $coppa = $this->coppa_check();
 
         // 5. Set Effective Permissions
         $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL]   && $coppa;
@@ -1909,7 +2013,7 @@ class Core
         $ret[X_PERMS_VIEW]   = $ret[X_PERMS_RAWVIEW] || $ret[X_PERMS_USERLIST];
 
         // 6. Check Forum Password
-        $pwinput = postedVar('fidpw'.$forum['fid'], '', FALSE, FALSE, FALSE, 'c');
+        $pwinput = getPhpInput('fidpw'.$forum['fid'], 'c');
         if ($forum['password'] == '' || $pwinput === $forum['password']) {
             $ret[X_PERMS_PASSWORD] = TRUE;
         }
@@ -1949,7 +2053,7 @@ class Core
         $db = $this->db;
 
         $fid = intval($fid);
-        $pwinput = postedVar('pw', '', FALSE, FALSE);
+        $pwinput = getPhpInput('pw');
 
         $forum = getForum($fid);
         if (strlen($pwinput) != 0 && $forum !== FALSE) {
@@ -2186,8 +2290,6 @@ class Core
      */
     function timezone_control(string $offset): string
     {
-        global $lang, $selHTML;
-        
         $total = 37;
         
         $sel = [];
@@ -2199,116 +2301,116 @@ class Core
 
         switch($offset) {
         case '-12.00':
-            $sel[1] = $selHTML;
+            $sel[1] = $this->vars::selHTML;
             break;
         case '-11.00':
-            $sel[2] = $selHTML;
+            $sel[2] = $this->vars::selHTML;
             break;
         case '-10.00':
-            $sel[3] = $selHTML;
+            $sel[3] = $this->vars::selHTML;
             break;
         case '-9.50':
-            $sel[37] = $selHTML;
+            $sel[37] = $this->vars::selHTML;
             break;
         case '-9.00':
-            $sel[4] = $selHTML;
+            $sel[4] = $this->vars::selHTML;
             break;
         case '-8.00':
-            $sel[5] = $selHTML;
+            $sel[5] = $this->vars::selHTML;
             break;
         case '-7.00':
-            $sel[6] = $selHTML;
+            $sel[6] = $this->vars::selHTML;
             break;
         case '-6.00':
-            $sel[7] = $selHTML;
+            $sel[7] = $this->vars::selHTML;
             break;
         case '-5.00':
-            $sel[8] = $selHTML;
+            $sel[8] = $this->vars::selHTML;
             break;
         case '-4.00':
-            $sel[9] = $selHTML;
+            $sel[9] = $this->vars::selHTML;
             break;
         case '-3.50':
-            $sel[10] = $selHTML;
+            $sel[10] = $this->vars::selHTML;
             break;
         case '-3.00':
-            $sel[11] = $selHTML;
+            $sel[11] = $this->vars::selHTML;
             break;
         case '-2.00':
-            $sel[12] = $selHTML;
+            $sel[12] = $this->vars::selHTML;
             break;
         case '-1.00':
-            $sel[13] = $selHTML;
+            $sel[13] = $this->vars::selHTML;
             break;
         case '1.00':
-            $sel[15] = $selHTML;
+            $sel[15] = $this->vars::selHTML;
             break;
         case '2.00':
-            $sel[16] = $selHTML;
+            $sel[16] = $this->vars::selHTML;
             break;
         case '3.00':
-            $sel[17] = $selHTML;
+            $sel[17] = $this->vars::selHTML;
             break;
         case '3.50':
-            $sel[18] = $selHTML;
+            $sel[18] = $this->vars::selHTML;
             break;
         case '4.00':
-            $sel[19] = $selHTML;
+            $sel[19] = $this->vars::selHTML;
             break;
         case '4.50':
-            $sel[20] = $selHTML;
+            $sel[20] = $this->vars::selHTML;
             break;
         case '5.00':
-            $sel[21] = $selHTML;
+            $sel[21] = $this->vars::selHTML;
             break;
         case '5.50':
-            $sel[22] = $selHTML;
+            $sel[22] = $this->vars::selHTML;
             break;
         case '5.75':
-            $sel[23] = $selHTML;
+            $sel[23] = $this->vars::selHTML;
             break;
         case '6.00':
-            $sel[24] = $selHTML;
+            $sel[24] = $this->vars::selHTML;
             break;
         case '6.50':
-            $sel[25] = $selHTML;
+            $sel[25] = $this->vars::selHTML;
             break;
         case '7.00':
-            $sel[26] = $selHTML;
+            $sel[26] = $this->vars::selHTML;
             break;
         case '8.00':
-            $sel[27] = $selHTML;
+            $sel[27] = $this->vars::selHTML;
             break;
         case '9.00':
-            $sel[28] = $selHTML;
+            $sel[28] = $this->vars::selHTML;
             break;
         case '9.50':
-            $sel[29] = $selHTML;
+            $sel[29] = $this->vars::selHTML;
             break;
         case '10.00':
-            $sel[30] = $selHTML;
+            $sel[30] = $this->vars::selHTML;
             break;
         case '10.50':
-            $sel[36] = $selHTML;
+            $sel[36] = $this->vars::selHTML;
             break;
         case '11.00':
-            $sel[31] = $selHTML;
+            $sel[31] = $this->vars::selHTML;
             break;
         case '12.00':
-            $sel[32] = $selHTML;
+            $sel[32] = $this->vars::selHTML;
             break;
         case '12.75':
-            $sel[35] = $selHTML;
+            $sel[35] = $this->vars::selHTML;
             break;
         case '13.00':
-            $sel[33] = $selHTML;
+            $sel[33] = $this->vars::selHTML;
             break;
         case '14.00':
-            $sel[34] = $selHTML;
+            $sel[34] = $this->vars::selHTML;
             break;
         case '0.00':
         default:
-            $sel[14] = $selHTML;
+            $sel[14] = $this->vars::selHTML;
         }
 
         eval('$control = "'.template('timezone_control').'";');
@@ -2323,7 +2425,7 @@ class Core
      */
     function coppa_check(): bool 
     {
-        $privacy = postedVar('privacy', '', false, false, false, 'c');
+        $privacy = getPhpInput('privacy', 'c');
         return 'xmb' != $privacy;
     }
 }

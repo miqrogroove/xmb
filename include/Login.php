@@ -108,10 +108,10 @@ class Login
         if (! defined('XMB_UPGRADE')) {
             $success = false;
             if (!empty($vars->self['langfile'])) {
-                $success = loadLang($vars->self['langfile']);
+                $success = $this->core->loadLang($vars->self['langfile']);
             }
             if (!$success) {
-                $success = loadLang($vars->settings['langfile']);
+                $success = $this->core->loadLang($vars->settings['langfile']);
             }
             if (!$success) {
                 require_once(ROOT.'include/translation.inc.php');
