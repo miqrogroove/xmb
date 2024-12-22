@@ -108,8 +108,10 @@ require ROOT.'include/Variables.php';
 
 // Implementations
 require ROOT.'include/attach.inc.php';
+require ROOT.'include/BBCode.php';
 require ROOT.'include/Bootup.php';
 require ROOT.'include/debug.inc.php';
+require ROOT.'include/format.php';
 require ROOT.'include/functions.inc.php';
 require ROOT.'include/Login.php';
 require ROOT.'include/Observer.php';
@@ -162,10 +164,13 @@ db($boot->connectDB());
 debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
-attach(new \XMB\Attach(sql()));
 theme(new \XMB\Theme\Manager(sql(), template(), vars()));
 
-core(new \XMB\Core(attach(), sql(), vars()))
+bbcode(new \XMB\BBCode(theme(), vars()));
+
+attach(new \XMB\Attach(bbcode(), db(), sql()));
+
+core(new \XMB\Core(attach(), bbcode(), db(), sql(), vars()));
 
 $boot->loadSettings();
 $boot->setHeaders();
@@ -190,8 +195,8 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $boot->prepareSession();
-session(new \XMB\Session\Manager($params['mode'], $params['serror'], sql()));
-login(new \XMB\Login(session(), sql(), vars()))
+session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql()));
+login(new \XMB\Login(core(), db(), session(), sql(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);
 
@@ -207,7 +212,7 @@ theme()->setTheme();
 
 /* Theme Ready.  Make pretty errors. */
 
-$boot->sendErrors(session());
+login()->sendErrors();
 
 
 /* Finish HTML Templates */

@@ -37,7 +37,7 @@ use XMB\Session\Manager as SessionMgr;
  */
 class Login
 {
-    public function __construct(private SessionMgr $session, private SQL $sql, private Variables $vars)
+    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Variables $vars)
     {
         // Property promotion.
     }
@@ -67,7 +67,7 @@ class Login
         }
 
         // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-        put_cookie('xmblvb', $vars->self['lastvisit'], (time() + $vars::ONLINE_TIMER)); // lvb == last visit
+        $this->core->put_cookie('xmblvb', $vars->self['lastvisit'], (time() + $vars::ONLINE_TIMER)); // lvb == last visit
         $vars->lastvisit = $vars->self['lastvisit']; // Used in forumdisplay and a few other spots.
     }
 
@@ -97,7 +97,7 @@ class Login
             // 'good' means normal login or resumed session.
             // 'already-logged-in' is a soft error that might result from login races or multiple open tabs.
             $vars->self = $this->session->getMember();
-            $vars->xmbuser = $this->sql->db->escape($vars->self['username']);
+            $vars->xmbuser = $this->db->escape($vars->self['username']);
         } else {
             $vars->self = ['status' => ''];
             $vars->xmbuser = '';
@@ -208,4 +208,43 @@ class Login
             $this->sql->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);
         }
     }
+
+    /**
+     * Display session startup errors.
+     *
+     * Formerly part of header.php.  If any errors are found, the script will end here.
+     */
+    public function sendErrors()
+    {
+        switch ($this->session->getSError()) {
+        case 'ip':
+            if (! X_ADMIN) {
+                header('HTTP/1.0 403 Forbidden');
+                $this->core->error($this->vars->lang['bannedmessage']);
+            }
+            break;
+        case 'bstatus':
+            if (! X_ADMIN) {
+                header('HTTP/1.0 503 Service Unavailable');
+                header('Retry-After: 3600');
+                if ($this->vars->settings['bboffreason'] != '') {
+                    $this->core->message(nl2br($this->vars->settings['bboffreason']));
+                } else {
+                    $this->core->message($this->vars->lang['textbstatusdefault']);
+                }
+            }
+            break;
+        case 'guest':
+            if (X_GUEST) {
+                if ($this->vars->settings['bboffreason']['regstatus'] == 'on') {
+                    $message = $this->vars->lang['reggedonly'].' '.$this->template->reglink.' '.$this->vars->lang['textor'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
+                } else {
+                    $message = $this->vars->lang['reggedonly'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
+                }
+                $this->core->message($message);
+            }
+            break;
+        }
+    }
+
 }

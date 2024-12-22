@@ -90,7 +90,7 @@ class Captcha
     public readonly bool $bCompatible;
     public bool $bPoison;
 
-    function __construct(private Observer $observer, private Variables $vars)
+    function __construct(private Core $core, private Observer $observer, private Variables $vars)
     {
         // get parameters
         $this->SetNumChars($this->vars->settings['captcha_code_length']);
@@ -290,7 +290,7 @@ class Captcha
         // XMB saves code in DB and returns hashed code.
         $this->bPoison = TRUE;
 
-        return nonce_create($this->sCode);
+        return $this->core->nonce_create($this->sCode);
     }
 
     private function DrawCharacters($bg_lum, $colors)
@@ -469,7 +469,7 @@ class Captcha
             $sUserCode = strtoupper($sUserCode);
         }
 
-        return nonce_use($sUserCode, $imghash);
+        return $this->core->nonce_use($sUserCode, $imghash);
     }
 
     private function SetNumDots($iNumDots)
@@ -595,7 +595,7 @@ class Captcha
             $this->bPoison = true;
             $this->sCode = 'CaPtChA';
         } else {
-            $this->sCode = nonce_peek($imghash, $this->iNumChars);
+            $this->sCode = $this->core->nonce_peek($imghash, $this->iNumChars);
         }
     }
 

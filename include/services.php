@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace XMB\Services;
 
 use XMB\Attach;
+use XMB\BBCode;
 use XMB\Core;
 use XMB\Debug;
 use XMB\DBStuff;
@@ -50,6 +51,22 @@ function attach(?Attach $attach = null): Attach
     static $cache;
     
     if ($attach !== null) $cache = $attach;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared bbcode service.
+ *
+ * @since 1.10.00
+ * @param BBCode $bbcode Required on first call, otherwise optional. Acts as the setter.
+ * @return BBCode
+ */
+function bbcode(?BBCode $bbcode = null): BBCode
+{
+    static $cache;
+    
+    if ($bbcode !== null) $cache = $bbcode;
     
     return $cache;
 }

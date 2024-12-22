@@ -570,39 +570,6 @@ class Bootup
         $this->vars->lastvisit = $thetime; // Used by forumdisplay
     }
 
-    public function sendErrors(SessionMgr $session)
-    {
-        switch ($session->getSError()) {
-        case 'ip':
-            if (! X_ADMIN) {
-                header('HTTP/1.0 403 Forbidden');
-                error($this->vars->lang['bannedmessage']);
-            }
-            break;
-        case 'bstatus':
-            if (! X_ADMIN) {
-                header('HTTP/1.0 503 Service Unavailable');
-                header('Retry-After: 3600');
-                if ($this->vars->settings['bboffreason'] != '') {
-                    message(nl2br($this->vars->settings['bboffreason']));
-                } else {
-                    message($this->vars->lang['textbstatusdefault']);
-                }
-            }
-            break;
-        case 'guest':
-            if (X_GUEST) {
-                if ($this->vars->settings['bboffreason']['regstatus'] == 'on') {
-                    $message = $this->vars->lang['reggedonly'].' '.$this->template->reglink.' '.$this->vars->lang['textor'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
-                } else {
-                    $message = $this->vars->lang['reggedonly'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
-                }
-                message($message);
-            }
-            break;
-        }
-    }
-
     public function checkU2U(SQL $sql)
     {
         // check for new u2u's

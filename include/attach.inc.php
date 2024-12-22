@@ -31,7 +31,7 @@ use RuntimeException;
 
 class Attach
 {
-    public function __construct(private SQL $sql)
+    public function __construct(private BBCode $bbcode, private DBStuff $db, private SQL $sql)
     {
         // Property promotion.
     }
@@ -451,7 +451,7 @@ class Attach
 
     public function copyByPost(int $frompid, int $topid)
     {
-        global $db;
+        $db = $this->db;
 
         if (! X_STAFF) throw new LogicException("Unprivileged access to function");
 
@@ -504,7 +504,7 @@ class Attach
 
     public function moveToDB(int $aid, int $pid): bool
     {
-        global $db;
+        $db = $this->db;
 
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
@@ -532,7 +532,7 @@ class Attach
 
     public function moveToDisk(int $aid, int $pid): bool
     {
-        global $db;
+        $db = $this->db;
 
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
@@ -685,7 +685,7 @@ class Attach
 
     public function deleteOrphans(): int
     {
-        global $db;
+        $db = $this->db;
 
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
@@ -707,7 +707,7 @@ class Attach
 
     private function deleteByIDs(array $aid_list, bool $quarantine = false)
     {
-        global $db;
+        $db = $this->db;
         
         if (empty($aid_list)) return;
 
@@ -1273,7 +1273,7 @@ class Attach
         }
 
         // Remove the code block contents from $message.
-        $messagearray = bbcodeCode($message);
+        $messagearray = $this->bbcode->parseCodeBlocks($message);
         $message = array();
         for($i = 0; $i < count($messagearray); $i += 2) {
             $message[$i] = $messagearray[$i];

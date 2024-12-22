@@ -26,16 +26,23 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use function XMB\Services\core;
+use function XMB\Services\db;
 use function XMB\Services\sql;
+use function XMB\Services\template;
 use function XMB\Services\vars;
-
-define('X_SCRIPT', 'index.php');
 
 require 'header.php';
 
+$core = core();
+$db = db();
+$lang = &$vars->lang;
+$SETTINGS = &$vars->settings;
+$template = template();
+
 $ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on') {
-    $contents = '';
+    $template->contents = '';
     $news = explode("\n", str_replace(array("\r\n", "\r"), array("\n"), $SETTINGS['tickercontents']));
     $counter = 0;
     foreach ($news as $item) {
@@ -43,12 +50,12 @@ if ($SETTINGS['tickerstatus'] == 'on') {
             continue;
         }
         if ('bbcode' == $SETTINGS['tickercode']) {
-            $item = postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
+            $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
         } elseif ('html' == $SETTINGS['tickercode']) {
             $item = rawHTMLmessage($item, 'yes');
         }
         $item = str_replace('\"', '"', addslashes($item));
-        $contents .= "\tcontents[$counter]='$item';\n";
+        $template->contents .= "\tcontents[$counter]='$item';\n";
         $counter++;
     }
     eval('$ticker = "'.template('index_ticker').'";');
@@ -63,7 +70,7 @@ if (X_SMOD) {
         } else {
             $msg = str_replace('$result', $result, $lang['moderation_notice_eval']);
         }
-        $ticker .= message($msg, false, '', '', false, false, true, false) . "<br />\n";
+        $ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
     }
 }
 
@@ -74,37 +81,37 @@ if (onSubmit('gid')) {
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
-    $cat = getForum($gid);
+    $cat = $core->getForum($gid);
 
     if ($cat === FALSE) {
         header('HTTP/1.0 404 Not Found');
-        error($lang['textnocat']);
+        $core->error($lang['textnocat']);
     } elseif ($cat['type'] != 'group') {
         header('HTTP/1.0 404 Not Found');
-        error($lang['textnocat']);
+        $core->error($lang['textnocat']);
     } elseif (!isset($forums['forum'][$gid])) {
         // Does this user not have permissions for any existing forums in this group?
-        $allforums = getStructuredForums(FALSE);
+        $allforums = $core->getStructuredForums(FALSE);
         if (isset($allforums['forum'][$gid])) {
             if (X_GUEST) {
-                redirect("{$full_url}misc.php?action=login", 0);
+                $core->redirect("{$full_url}misc.php?action=login", 0);
                 exit;
             } else {
-                error($lang['privforummsg']);
+                $core->error($lang['privforummsg']);
             }
         }
         unset($allforums);
     }
 
-    setCanonicalLink("index.php?gid=$gid");
-    nav(fnameOut($cat['name']));
+    $core->setCanonicalLink("index.php?gid=$gid");
+    $core->nav(fnameOut($cat['name']));
     if ($SETTINGS['subject_in_title'] == 'on') {
-        $threadSubject = '- '.fnameOut($cat['name']);
+        $template->threadSubject = '- '.fnameOut($cat['name']);
     }
 } else {
     $gid = 0;
     $cat = array();
-    setCanonicalLink('./');
+    $core->setCanonicalLink('./');
 }
 
 eval('$header = "'.template('header').'";');
@@ -125,10 +132,10 @@ if ($SETTINGS['index_stats'] == 'on') {
         $posts = (int) $db->result($query, 2);
         $db->free_result($query);
 
-        $memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
+        $template->memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
         $search  = [ '$threads', '$posts', '$members' ];
         $replace = [  $threads,   $posts,   $members  ];
-        $indexstats = str_replace($search, $replace, $lang['evalindexstats']);
+        $template->indexstats = str_replace($search, $replace, $lang['evalindexstats']);
         eval('$statsbar = "'.template('index_stats').'";');
     }
     $db->free_result($query1);
@@ -264,11 +271,11 @@ if ($gid == 0) {
             $db->free_result($query);
 
             if ($todaymembersnum == 1) {
-                $memontoday = $todaymembersnum.$lang['textmembertoday'];
+                $template->memontoday = $todaymembersnum.$lang['textmembertoday'];
             } else {
-                $memontoday = $todaymembersnum.$lang['textmemberstoday'];
+                $template->memontoday = $todaymembersnum.$lang['textmemberstoday'];
             }
-            $last50today = str_replace('$onlinetodaycount', $SETTINGS['onlinetodaycount'], $lang['last50todayeval']);
+            $template->last50today = str_replace('$onlinetodaycount', $SETTINGS['onlinetodaycount'], $lang['last50todayeval']);
             eval('$whosonlinetoday = "'.template('index_whosonline_today').'";');
         }
 
@@ -280,7 +287,8 @@ if ($gid == 0) {
 
 $fquery = getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
-$indexBarTop = $indexBar = $forumlist = $spacer = '';
+$template->indexBarTop = '';
+$indexBar = $forumlist = $spacer = '';
 $forumarray = array();
 $catLessForums = 0;
 
@@ -291,7 +299,7 @@ if ($SETTINGS['space_cats'] == 'on') {
 if ($SETTINGS['catsonly'] != 'on') {
     if ($SETTINGS['indexshowbar'] == 1) {
         eval('$indexBar = "'.template('index_category_hr').'";');
-        $indexBarTop = $indexBar;
+        $template->indexBarTop = $indexBar;
     }
 
     if ($SETTINGS['indexshowbar'] == 2) {
@@ -354,7 +362,7 @@ if ($forumlist == '') {
 unset($fquery);
 
 if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
-    $indexBarTop = '';
+    $template->indexBarTop = '';
 }
 
 eval('$index = "'.template('index').'";');

@@ -64,9 +64,9 @@ class Manager
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      * @param string $serror Condition prior to authentication.
      */
-    public function __construct(string $mode, private string $serror, SQL $sql)
+    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql)
     {
-        $this->mechanisms = [new FormsAndCookies($sql)];
+        $this->mechanisms = [new FormsAndCookies($core, $sql)];
 
         switch ($mode) {
         case 'login':
@@ -223,7 +223,7 @@ class Manager
             // Check for errors
             if ('good' == $data->status) {
                 // Before we even authenticate the user, check if the account is authorized for login.
-                $this->status = loginAuthorization($data->member, $this->serror);
+                $this->status = $this->core->loginAuthorization($data->member, $this->serror);
                 if ('good' != $this->status) {
                     $data->status = 'bad';
                 }
@@ -472,7 +472,7 @@ class FormsAndCookies implements Mechanism
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
 
-    public function __construct(private SQL $sql)
+    public function __construct(private Core $core, private SQL $sql)
     {
         // Property promotion.
     }
@@ -510,7 +510,7 @@ class FormsAndCookies implements Mechanism
         $pinput = md5($pinput);
 
         if ($data->member['password'] !== $pinput) {
-            auditBadLogin($data->member);
+            $this->core->auditBadLogin($data->member);
             $data = new Data();
             $data->status = 'bad';
             return $data;
@@ -528,7 +528,7 @@ class FormsAndCookies implements Mechanism
         if (strlen($uinput) >= self::USER_MIN_LEN || self::TEST_DATA == $test) {
             return true;
         } else {
-            put_cookie('test', self::TEST_DATA, time() + (86400*365));
+            $this->core->put_cookie('test', self::TEST_DATA, time() + (86400*365));
             return false;
         }
     }
@@ -557,13 +557,13 @@ class FormsAndCookies implements Mechanism
         $details = $this->sql->getSession($pinput, $uinput);
 
         if (empty($details)) {
-            auditBadSession($member);
+            $this->core->auditBadSession($member);
             $data->status = 'bad';
             return $data;
         }
         
         if (time() > (int) $details['expire']) {
-            auditBadSession($member);
+            $this->core->auditBadSession($member);
             $data->status = 'bad';
             return $data;
         }
@@ -583,7 +583,7 @@ class FormsAndCookies implements Mechanism
                 // Regeneration is compromised.  Both tokens must be destroyed.
                 $this->sql->deleteSession($details['replaces']);
                 $this->sql->deleteSession($details['token']);
-                auditBadSession($member);
+                $this->core->auditBadSession($member);
                 $data->status = 'bad';
                 return $data;
             } elseif (time() > (int) $details['regenerate']) {
@@ -704,8 +704,8 @@ class FormsAndCookies implements Mechanism
             $expires = 0;
         }
 
-        put_cookie(self::USER_COOKIE, $data->member['username'], $expires);
-        put_cookie(self::SESSION_COOKIE, $token, $expires);
+        $this->core->put_cookie(self::USER_COOKIE, $data->member['username'], $expires);
+        $this->core->put_cookie(self::SESSION_COOKIE, $token, $expires);
         
         return true;
     }
@@ -746,9 +746,9 @@ class FormsAndCookies implements Mechanism
             $expires = 0;
         }
 
-        put_cookie(self::USER_COOKIE, $oldsession['username'], $expires);
-        put_cookie(self::SESSION_COOKIE, $token, $expires);
-        put_cookie(self::REGEN_COOKIE, $replaces, $expires);
+        $this->core->put_cookie(self::USER_COOKIE, $oldsession['username'], $expires);
+        $this->core->put_cookie(self::SESSION_COOKIE, $token, $expires);
+        $this->core->put_cookie(self::REGEN_COOKIE, $replaces, $expires);
     }
 
     /**
@@ -764,9 +764,9 @@ class FormsAndCookies implements Mechanism
             $expires = 0;
         }
 
-        put_cookie(self::USER_COOKIE, $newsession['username'], $expires);
-        put_cookie(self::SESSION_COOKIE, $newsession['token'], $expires);
-        put_cookie(self::REGEN_COOKIE, $newsession['replaces'], $expires);
+        $this->core->put_cookie(self::USER_COOKIE, $newsession['username'], $expires);
+        $this->core->put_cookie(self::SESSION_COOKIE, $newsession['token'], $expires);
+        $this->core->put_cookie(self::REGEN_COOKIE, $newsession['replaces'], $expires);
     }
 
     /**
@@ -826,7 +826,7 @@ class FormsAndCookies implements Mechanism
     private function delete_cookie(string $name)
     {
         if ($this->get_cookie($name) != '') {
-            put_cookie($name);
+            $this->core->put_cookie($name);
         }
     }
 }
