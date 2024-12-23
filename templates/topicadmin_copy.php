@@ -5,14 +5,14 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['copythread']: ?></strong></font></td>
+<td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['copythread'] ?>:</strong></font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['loggedinuser'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $self['username'] ?> <?= $lang['textminilogout'] ?></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['copythreadto']: ?></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['copythreadto'] ?>:</td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $forumselect ?></td>
 </tr>
 <tr class="ctrtablerow">

@@ -9,8 +9,8 @@
 <td colspan="6" class="category"><font class="mediumtxt" color="<?= $THEME['cattext'] ?>"><strong><?= $lang['spellingchecker'] ?></strong></font></td>
 </tr>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="50%"><?= $lang['found']: ?></td>
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="50%"><?= $lang['replacedby']: ?></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="50%"><?= $lang['found'] ?>:</td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="50%"><?= $lang['replacedby'] ?>:</td>
 </tr>
 <?= $suggestions ?>
 <tr>

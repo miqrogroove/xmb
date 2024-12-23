@@ -12,7 +12,7 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $self['username'] ?> <?= $lang['textminilogout'] ?></td>
 </tr>
 <tr class="header">
-<td><?= $lang['deletebutton']? ?></td>
+<td><?= $lang['deletebutton'] ?>?</td>
 <td><?= $lang['textpost'] ?></td>
 </tr>
 <?= $posts ?>

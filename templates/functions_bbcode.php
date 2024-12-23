@@ -40,5 +40,5 @@ var bbcode_prompt_youtube = "<?= $lang['bbcode_prompt_youtube'] ?>";
 
 var messageElement;
 </script>
-<script language="JavaScript" type="text/javascript" src="./js/bbcodefns-<?= $browser.js?v=1.9.12 ?>"></script>
+<script language="JavaScript" type="text/javascript" src="./js/bbcodefns-<?= $browser ?>.js?v=1.9.12"></script>
 <script language="JavaScript" type="text/javascript">window.onload = loadEls;</script>

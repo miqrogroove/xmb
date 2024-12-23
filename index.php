@@ -36,40 +36,6 @@ $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
-$ticker = '';
-if ($SETTINGS['tickerstatus'] == 'on') {
-    $template->contents = '';
-    $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $SETTINGS['tickercontents']));
-    $counter = 0;
-    foreach ($news as $item) {
-        if (strlen(trim($item)) == 0) {
-            continue;
-        }
-        if ('bbcode' == $SETTINGS['tickercode']) {
-            $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
-        } elseif ('html' == $SETTINGS['tickercode']) {
-            $item = $core->rawHTMLmessage($item, 'yes');
-        }
-        $item = str_replace('\"', '"', addslashes($item));
-        $template->contents .= "\tcontents[$counter]='$item';\n";
-        $counter++;
-    }
-    $ticker = $template->process('index_ticker.php');
-}
-
-if (X_SMOD) {
-    $quarantine = true;
-    $result = $sql->countPosts($quarantine);
-    if ($result > 0) {
-        if (1 == $result) {
-            $msg = $lang['moderation_notice_single'];
-        } else {
-            $msg = str_replace('$result', $result, $lang['moderation_notice_eval']);
-        }
-        $ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
-    }
-}
-
 $forums = $core->getStructuredForums(usePerms: true);
 
 if (onSubmit('gid')) {
@@ -112,8 +78,45 @@ if (onSubmit('gid')) {
 
 $header = $template->process('header.php');
 
-$statsbar = '';
-if ($SETTINGS['index_stats'] == 'on') {
+$body = new \XMB\Template($vars);
+$body->addRefs();
+
+$ticker = '';
+if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
+    $template->contents = '';
+    $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $SETTINGS['tickercontents']));
+    $counter = 0;
+    foreach ($news as $item) {
+        if (strlen(trim($item)) == 0) {
+            continue;
+        }
+        if ('bbcode' == $SETTINGS['tickercode']) {
+            $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
+        } elseif ('html' == $SETTINGS['tickercode']) {
+            $item = $core->rawHTMLmessage($item, 'yes');
+        }
+        $item = str_replace('\"', '"', addslashes($item));
+        $template->contents .= "\tcontents[$counter]='$item';\n";
+        $counter++;
+    }
+    $ticker = $template->process('index_ticker.php');
+}
+
+if (X_SMOD && $gid == 0) {
+    $quarantine = true;
+    $result = $sql->countPosts($quarantine);
+    if ($result > 0) {
+        if (1 == $result) {
+            $msg = $lang['moderation_notice_single'];
+        } else {
+            $msg = str_replace('$result', $result, $lang['moderation_notice_eval']);
+        }
+        $ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
+    }
+}
+
+$body->statsbar = '';
+if ($SETTINGS['index_stats'] == 'on' && $gid == 0) {
     $where = '';
     if ('on' == $SETTINGS['hide_banned']) {
         $where = "AND status != 'Banned'";
@@ -132,21 +135,20 @@ if ($SETTINGS['index_stats'] == 'on') {
         $search  = [ '$threads', '$posts', '$members' ];
         $replace = [  $threads,   $posts,   $members  ];
         $template->indexstats = str_replace($search, $replace, $lang['evalindexstats']);
-        eval('$statsbar = "'.template('index_stats').'";');
+        $body->statsbar = $template->process('index_stats.php');
     }
     $db->free_result($query1);
 }
 
+$body->welcome = '';
+$body->whosonline = '';
 if ($gid == 0) {
     if (X_MEMBER) {
-        eval('$welcome = "'.template('index_welcome_member').'";');
-    } elseif (coppa_check()) {
-        eval('$welcome = "'.template('index_welcome_guest').'";');
-    } else {
-        $welcome = '';
+        $body->welcome = $template->process('index_welcome_member.php');
+    } elseif ($core->coppa_check()) {
+        $body->welcome = $template->process('index_welcome_guest.php');
     }
 
-    $whosonline = $whosonlinetoday = '';
     if ($SETTINGS['whosonlinestatus'] == 'on') {
         $hiddencount = 0;
         $membercount = 0;
@@ -193,9 +195,9 @@ if ($gid == 0) {
         $search  = [ '$guestn', '$membern', '$hiddenn', '$bbname' ];
         $replace = [  $guestn,   $membern,   $hiddenn,   $bbname  ];
         $whosonmsg = str_replace($search, $replace, $lang['whosoneval']);
-        $memonmsg = "<span class='smalltxt'>$whosonmsg</span>";
+        $template->memonmsg = "<span class='smalltxt'>$whosonmsg</span>";
 
-        $memtally = array();
+        $memtally = [];
         $num = 1;
         $show_total = (X_ADMIN) ? ($membercount+$hiddencount) : ($membercount);
 
@@ -226,17 +228,17 @@ if ($gid == 0) {
         }
 
         if (X_ADMIN || $show_inv_key === true) {
-            $hidden = ' - <strike>'.$lang['texthmem'].'</strike>';
+            $template->hidden = ' - <strike>'.$lang['texthmem'].'</strike>';
         } else {
-            $hidden = '';
+            $template->hidden = '';
         }
 
-        $memtally = implode(', ', $memtally);
-        if ($memtally == '') {
-            $memtally = '&nbsp;';
+        $template->memtally = implode(', ', $memtally);
+        if ($template->memtally == '') {
+            $template->memtally = '&nbsp;';
         }
 
-        $whosonlinetoday = '';
+        $template->whosonlinetoday = '';
         if ($SETTINGS['onlinetoday_status'] == 'on') {
             $datecut = $vars->onlinetime - (3600 * 24);
             $where = '';
@@ -250,7 +252,7 @@ if ($gid == 0) {
             }
 
             $todaymembersnum = $db->num_rows($query);
-            $todaymembers = array();
+            $todaymembers = [];
             $pre = $suff = '';
             $x = 0;
             while($memberstoday = $db->fetch_array($query)) {
@@ -263,7 +265,7 @@ if ($gid == 0) {
                     continue;
                 }
             }
-            $todaymembers = implode(', ', $todaymembers);
+            $template->todaymembers = implode(', ', $todaymembers);
             $db->free_result($query);
 
             if ($todaymembersnum == 1) {
@@ -272,41 +274,39 @@ if ($gid == 0) {
                 $template->memontoday = $todaymembersnum.$lang['textmemberstoday'];
             }
             $template->last50today = str_replace('$onlinetodaycount', $SETTINGS['onlinetodaycount'], $lang['last50todayeval']);
-            eval('$whosonlinetoday = "'.template('index_whosonline_today').'";');
+            $template->whosonlinetoday = $template->process('index_whosonline_today.php');
         }
 
-        eval('$whosonline = "'.template('index_whosonline').'";');
+        $body->whosonline = $template->process('index_whosonline.php');
     }
-} else {
-    $ticker = $welcome = $whosonline = $statsbar = $whosonlinetoday = '';
 }
 
 $fquery = getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
-$template->indexBarTop = '';
+$body->indexBarTop = '';
 $indexBar = $forumlist = $spacer = '';
-$forumarray = array();
+$forumarray = [];
 $catLessForums = 0;
 
 if ($SETTINGS['space_cats'] == 'on') {
-    eval('$spacer = "'.template('index_category_spacer').'";');
+    $spacer = $template->process('index_category_spacer.php');
 }
 
 if ($SETTINGS['catsonly'] != 'on') {
     if ($SETTINGS['indexshowbar'] == 1) {
-        eval('$indexBar = "'.template('index_category_hr').'";');
-        $template->indexBarTop = $indexBar;
+        $indexBar = $template->process('index_category_hr.php');
+        $body->indexBarTop = $indexBar;
     }
 
     if ($SETTINGS['indexshowbar'] == 2) {
-        eval('$indexBarTop = "'.template('index_category_hr').'";');
+        $body->indexBarTop = $template->process('index_category_hr.php');
     }
 } else if ($gid > 0) {
-    eval('$indexBar = "'.template('index_category_hr').'";');
+    $indexBar = $template->process('index_category_hr.php');
 }
 
 // Collect Subforums ordered by fup, displayorder
-$index_subforums = array();
+$index_subforums = [];
 if ($SETTINGS['showsubforums'] == 'on') {
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         foreach($forums['sub'] as $subForumsByFUP) {
@@ -321,7 +321,7 @@ $lastcat = '0';
 foreach($fquery as $thing) {
 
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        $cforum = forum($thing, "index_forum", $index_subforums);
+        $cforum = $core->forum($thing, "index_forum", $index_subforums);
     } else {
         $cforum = '';
     }
@@ -350,20 +350,20 @@ foreach($fquery as $thing) {
 }
 
 $forumarray[] = $forumlist;
-$forumlist = implode($spacer, $forumarray);
+$body->forumlist = implode($spacer, $forumarray);
 
-if ($forumlist == '') {
-    eval('$forumlist = "'.template('index_noforum').'";');
+if ($body->forumlist == '') {
+    $body->forumlist = $template->process('index_noforum.php');
 }
 unset($fquery);
 
 if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
-    $template->indexBarTop = '';
+    $body->indexBarTop = '';
 }
 
-eval('$index = "'.template('index').'";');
+$index = $body->process('index.php');
 end_time();
-eval('$footer = "'.template('footer').'";');
+$footer = $template->process('footer.php');
 echo $header, $index, $footer;
 
 /**

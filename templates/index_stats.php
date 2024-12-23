@@ -4,7 +4,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td align="left" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textstats']: ?></strong></font></td>
+<td align="left" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textstats'] ?>:</strong></font></td>
 <td align="left" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['key'] ?></strong></font></td>
 </tr>
 <tr class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>">

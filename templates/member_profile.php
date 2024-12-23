@@ -11,11 +11,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textregistered'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $memberinfo['regdate'] ?> (<?= $ppd ?> <?= $lang['textmesperday']) ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $memberinfo['regdate'] ?> (<?= $ppd ?> <?= $lang['textmesperday'] ?>)</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textposts'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $memberinfo['postnum'] ?> (<?= $percent% ?> <?= $lang['textoftotposts']) ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $memberinfo['postnum'] ?> (<?= $percent ?>% <?= $lang['textoftotposts'] ?>)</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['textstatus'] ?><br /><?= $newsitelink ?></td>

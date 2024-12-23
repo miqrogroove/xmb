@@ -14,7 +14,7 @@
 <script type="text/javascript">
  <!--//--><![CDATA[//><!--
   var uploadBoxCount = 1;
-  var uploadBoxMax = <?= $maxuploads; ?>
+  var uploadBoxMax = <?= $maxuploads ?>;
   var uploadTotalLimits = '<?= $lang['attachmaxtotal'] ?>';
 
   if (uploadBoxMax > 1) {

@@ -1,1 +1,1 @@
-[<?= $lang['queries']: ?> <strong><?= $querynum ?></strong>]
+[<?= $lang['queries'] ?>: <strong><?= $querynum ?></strong>]

@@ -32,7 +32,7 @@
 <tr class="header" align="center">
 <td width="20%"><?= $lang['textusername'] ?></td>
 <td width="16%"><?= $lang['status'] ?></td>
-<td width="10%"><?= $lang['textemail']: ?></td>
+<td width="10%"><?= $lang['textemail'] ?>:</td>
 <td width="10%"><?= $lang['textsite'] ?></td>
 <td width="19%"><?= $lang['textlocation'] ?></td>
 <td width="19%"><?= $lang['textregistered'] ?></td>
