@@ -172,7 +172,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), sql(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), sql(), template(), vars()));
 
 unset($boot);
 

@@ -81,7 +81,7 @@ $header = $template->process('header.php');
 $body = new \XMB\Template($vars);
 $body->addRefs();
 
-$ticker = '';
+$body->ticker = '';
 if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
     $template->contents = '';
     $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $SETTINGS['tickercontents']));
@@ -99,7 +99,7 @@ if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
         $template->contents .= "\tcontents[$counter]='$item';\n";
         $counter++;
     }
-    $ticker = $template->process('index_ticker.php');
+    $body->ticker = $template->process('index_ticker.php');
 }
 
 if (X_SMOD && $gid == 0) {
@@ -111,7 +111,7 @@ if (X_SMOD && $gid == 0) {
         } else {
             $msg = str_replace('$result', $result, $lang['moderation_notice_eval']);
         }
-        $ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
+        $body->ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
     }
 }
 
@@ -193,7 +193,7 @@ if ($gid == 0) {
         }
 
         $search  = [ '$guestn', '$membern', '$hiddenn', '$bbname' ];
-        $replace = [  $guestn,   $membern,   $hiddenn,   $bbname  ];
+        $replace = [  $guestn,   $membern,   $hiddenn,   $vars->settings['bbname']  ];
         $whosonmsg = str_replace($search, $replace, $lang['whosoneval']);
         $template->memonmsg = "<span class='smalltxt'>$whosonmsg</span>";
 
@@ -362,7 +362,7 @@ if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
 }
 
 $index = $body->process('index.php');
-end_time();
+$template->footerstuff = $core->end_time();
 $footer = $template->process('footer.php');
 echo $header, $index, $footer;
 

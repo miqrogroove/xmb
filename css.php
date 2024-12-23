@@ -24,11 +24,7 @@
 
 use function XMB\Services\sql;
 
-define('X_SCRIPT', 'css.php');
-
-require 'header.php';
-
-loadtemplates('css');
+require './header.php';
 
 $THEME = sql()->getThemeByID(getInt('id'));
 if (empty($THEME)) {

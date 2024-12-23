@@ -28,8 +28,14 @@ namespace XMB;
 
 class Core
 {
-    public function __construct(private Attach $attach, private BBCode $bbcode, private DBStuff $db, private SQL $sql, private Variables $vars)
-    {
+    public function __construct(
+        private Attach $attach,
+        private BBCode $bbcode,
+        private DBStuff $db,
+        private SQL $sql,
+        private Template $template,
+        private Variables $vars,
+    ) {
         // Property promotion
     }
 
@@ -763,13 +769,17 @@ class Core
      *
      * @since 1.0
      */
-    function forum($forum, $template, $index_subforums)
+    function forum($forum, $templateName, $index_subforums)
     {
-        global $timecode, $dateformat, $lang, $timeoffset, $oldtopics, $THEME, $SETTINGS;
+        $lang = &$this->vars->lang;
+        
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
 
         $forum['name'] = fnameOut($forum['name']);
         null_string($forum['description']);
         $forum['description'] = html_entity_decode($forum['description']);
+        $template->forum = $forum;
 
         if (! empty($forum['lastpost'])) {
             $lastpost = explode('|', $forum['lastpost']);
@@ -783,29 +793,27 @@ class Core
 
             $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
-            $lastpostdate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-            $lastposttime = gmdate($timecode, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-            $lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
-            eval('$lastpostrow = "'.template($template.'_lastpost').'";');
+            $lastpostdate = gmdate($this->vars->dateformat, $lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600));
+            $lastposttime = gmdate($this->vars->timecode, $lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600));
+            $template->lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
+            $template->lastpostrow = $template->process($templateName.'_lastpost.php');
         } else {
             $dalast = 0;
             $lastPid = 0;
-            $lastpost = $lang['textnever'];
-            eval('$lastpostrow = "'.template($template.'_nolastpost').'";');
+            $template->lastpostrow = $template->process($templateName.'_nolastpost.php');
         }
 
-        $oT = strpos($oldtopics, "|$lastPid|");
+        $oT = strpos($this->vars->oldtopics, "|$lastPid|");
         if ($this->vars->lastvisit < $dalast && $oT === false) {
-            $folder = '<img src="'.$THEME['imgdir'].'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
+            $folder = '<img src="'.$this->vars->theme['imgdir'].'/red_folder.gif" alt="'.$lang['altredfolder'].'" border="0" />';
         } else {
-            $folder = '<img src="'.$THEME['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
+            $folder = '<img src="'.$this->vars->theme['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
         }
 
         if ($dalast == '') {
-            $folder = '<img src="'.$THEME['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
+            $folder = '<img src="'.$this->vars->theme['imgdir'].'/folder.gif" alt="'.$lang['altfolder'].'" border="0" />';
         }
-
-        $foruminfo = '';
+        $template->folder = $folder;
 
         if (! empty($forum['moderator'])) {
             $list = [];
@@ -818,9 +826,10 @@ class Core
             if ('' !== $forum['description']) {
                 $forum['moderator'] = '<br />' . $forum['moderator'];
             }
+            $template->forum['moderator'] = $forum['moderator'];
         }
 
-        $subforums = array();
+        $subforums = [];
         if (count($index_subforums) > 0) {
             for($i=0; $i < count($index_subforums); $i++) {
                 $sub = $index_subforums[$i];
@@ -839,11 +848,9 @@ class Core
         } else {
             $subforums = '';
         }
-        eval('$foruminfo = "'.template($template).'";');
+        $template->subforums = $subforums;
 
-        $dalast = '';
-
-        return $foruminfo;
+        return $template->process($templateName . '.php');
     }
 
     /**
@@ -1159,27 +1166,28 @@ class Core
     }
 
     /**
-     * Generates sub-templates in the $footerstuff global array.
+     * Generates sub-templates in the $footerstuff array and returns it.
      *
      * @since 1.8.0
      */
-    function end_time()
+    function end_time(): array
     {
-        global $footerstuff, $lang, $SETTINGS;
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
         
-        $db = $this->db;
+        $footerstuff = [];
 
         $mtime2 = explode(' ', microtime());
         $endtime = $mtime2[1] + $mtime2[0];
 
         $totaltime = ($endtime - $this->vars->starttime);
 
-        $footer_options = explode('-', $SETTINGS['footer_options']);
+        $footer_options = explode('-', $this->vars->settings['footer_options']);
 
         if (X_ADMIN && in_array('serverload', $footer_options)) {
-            $load = ServerLoad();
-            if (!empty($load)) {
-                eval('$footerstuff["load"] = "'.template('footer_load').'";');
+            $template->load = ServerLoad();
+            if (!empty($template->load)) {
+                $footerstuff['load'] = $template->process('footer_load.php');
             } else {
                 $footerstuff['load'] = '';
             }
@@ -1188,32 +1196,34 @@ class Core
         }
 
         if (in_array('queries', $footer_options)) {
-            $querynum = $db->getQueryCount();
-            eval('$footerstuff["querynum"] = "'.template('footer_querynum').'";');
+            $template->querynum = $this->db->getQueryCount();
+            $footerstuff['querynum'] = $template->process('footer_querynum.php');
         } else {
             $footerstuff['querynum'] = '';
         }
 
         if (in_array('phpsql', $footer_options)) {
-            $db_duration = number_format(($db->getDuration() / $totaltime) * 100, 1);
-            $php_duration = number_format((1 - ($db->getDuration() / $totaltime)) * 100, 1);
-            eval('$footerstuff["phpsql"] = "'.template('footer_phpsql').'";');
+            $template->db_duration = number_format(($this->db->getDuration() / $totaltime) * 100, 1);
+            $template->php_duration = number_format((1 - ($this->db->getDuration() / $totaltime)) * 100, 1);
+            $footerstuff['phpsql'] = $template->process('footer_phpsql.php');
         } else {
             $footerstuff['phpsql'] = '';
         }
 
         if (in_array('loadtimes', $footer_options) && X_ADMIN) {
-            $totaltime = number_format($totaltime, 7);
-            eval('$footerstuff["totaltime"] = "'.template('footer_totaltime').'";');
+            $template->totaltime = number_format($totaltime, 7);
+            $footerstuff['totaltime'] = $template->process('footer_totaltime.php');
         } else {
             $footerstuff['totaltime'] = '';
         }
 
-        if (X_SADMIN && DEBUG) {
+        if (X_SADMIN && $this->vars->settings->debug) {
             $footerstuff['querydump'] = printAllQueries();
         } else {
             $footerstuff['querydump'] = '';
         }
+        
+        return $footerstuff;
     }
 
     /**
