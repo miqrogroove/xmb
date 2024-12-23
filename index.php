@@ -28,11 +28,11 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Servies\core();
-$db = \XMB\Servies\db();
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
-$template = \XMB\Servies\template();
-$vars = \XMB\Servies\vars();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
@@ -48,18 +48,18 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         if ('bbcode' == $SETTINGS['tickercode']) {
             $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
         } elseif ('html' == $SETTINGS['tickercode']) {
-            $item = rawHTMLmessage($item, 'yes');
+            $item = $core->rawHTMLmessage($item, 'yes');
         }
         $item = str_replace('\"', '"', addslashes($item));
         $template->contents .= "\tcontents[$counter]='$item';\n";
         $counter++;
     }
-    eval('$ticker = "'.template('index_ticker').'";');
+    $ticker = $template->process('index_ticker.php');
 }
 
 if (X_SMOD) {
     $quarantine = true;
-    $result = sql()->countPosts($quarantine);
+    $result = $sql->countPosts($quarantine);
     if ($result > 0) {
         if (1 == $result) {
             $msg = $lang['moderation_notice_single'];
@@ -70,7 +70,7 @@ if (X_SMOD) {
     }
 }
 
-$forums = getStructuredForums(TRUE);
+$forums = $core->getStructuredForums(usePerms: true);
 
 if (onSubmit('gid')) {
     $gid = getInt('gid');
@@ -79,7 +79,7 @@ if (onSubmit('gid')) {
     $SETTINGS['index_stats'] = 'off';
     $cat = $core->getForum($gid);
 
-    if ($cat === FALSE) {
+    if ($cat === false) {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnocat']);
     } elseif ($cat['type'] != 'group') {
@@ -87,7 +87,7 @@ if (onSubmit('gid')) {
         $core->error($lang['textnocat']);
     } elseif (!isset($forums['forum'][$gid])) {
         // Does this user not have permissions for any existing forums in this group?
-        $allforums = $core->getStructuredForums(FALSE);
+        $allforums = $core->getStructuredForums(usePerms: false);
         if (isset($allforums['forum'][$gid])) {
             if (X_GUEST) {
                 $core->redirect("{$full_url}misc.php?action=login", 0);
@@ -110,7 +110,7 @@ if (onSubmit('gid')) {
     $core->setCanonicalLink('./');
 }
 
-eval('$header = "'.template('header').'";');
+$header = $template->process('header.php');
 
 $statsbar = '';
 if ($SETTINGS['index_stats'] == 'on') {

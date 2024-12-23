@@ -11,7 +11,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>"><font class="mediumtxt"><?= $message$redirectjs ?></font></td>
+<td class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>"><font class="mediumtxt"><?= $message ?><?= $redirectjs ?></font></td>
 </tr>
 </table>
 </td>

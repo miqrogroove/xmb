@@ -20,7 +20,7 @@
 </tr>
 <?= $rows ?>
 <tr class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>">
-<td colspan="8"><?= $lang['todayshow']&nbsp;&nbsp; ?><input type="text" name="daysold" size="3" value="<?= $daysold ?>" />&nbsp;&nbsp;<?= $lang['todaydays']&nbsp;&nbsp; ?><input class="submit" type="submit" name="searchsubmit" value="<?= $lang['todaygo'] ?>" /></td>
+<td colspan="8"><?= $lang['todayshow'] ?>&nbsp;&nbsp;<input type="text" name="daysold" size="3" value="<?= $daysold ?>" />&nbsp;&nbsp;<?= $lang['todaydays'] ?>&nbsp;&nbsp;<input class="submit" type="submit" name="searchsubmit" value="<?= $lang['todaygo'] ?>" /></td>
 </tr>
 <?= $multipage ?>
 </table>

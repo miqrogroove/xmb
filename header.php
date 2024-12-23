@@ -192,7 +192,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
     );
     $xmbpw = getPhpInput('xmbpw', 'c');
     define('X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
-    unset($xmbuser, $xmbpw);
+    unset($loader, $xmbuser, $xmbpw);
     return;
 }
 

@@ -5,7 +5,7 @@
 </tr>
 <tr>
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2" class="mediumtxt">
-<?= $todaymembers&nbsp; ?>
+<?= $todaymembers ?>&nbsp;
 </td>
 </tr>
 <tr>

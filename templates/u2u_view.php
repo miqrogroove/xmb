@@ -22,7 +22,7 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>" class="smalltxt"><?= $u2udateline ?></td>
 </tr>
 <tr class="tablerow" valign="top">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="15%"><?= $lang['textmessage']$u2uavatar ?></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="15%"><?= $lang['textmessage'] ?><?= $u2uavatar ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $u2umessage ?></td>
 </tr>
 </table>

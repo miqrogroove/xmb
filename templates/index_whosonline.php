@@ -26,7 +26,7 @@
 <img src="<?= $THEME['imgdir'] ?>/online.gif" alt="<?= $lang['whosonline'] ?>" border="0" />
 </td>
 <td bgcolor="<?= $THEME['altbg2'] ?>" class="mediumtxt">
-<?= $memtally&nbsp; ?>
+<?= $memtally ?>&nbsp;
 </td>
 </tr>
 <?= $whosonlinetoday ?>

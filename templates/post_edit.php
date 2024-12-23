@@ -1,5 +1,5 @@
 <?= $preview ?>
-<form method="post" name="input" action="post.php?action=edit&amp;fid=<?= $fid&amp;tid=$tid&amp;pid=$pid ?>" enctype="multipart/form-data">
+<form method="post" name="input" action="post.php?action=edit&amp;fid=<?= $fid ?>&amp;tid=<?= $tid ?>&amp;pid=<?= $pid ?>" enctype="multipart/form-data">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

@@ -1,5 +1,5 @@
 <br />
-<form action="post.php?fid=<?= $fid&amp;tid=$tid&amp;action=$action&amp;pid=$pid ?>" method="post">
+<form action="post.php?fid=<?= $fid ?>&amp;tid=<?= $tid ?>&amp;action=<?= $action ?>&amp;pid=<?= $pid ?>" method="post">
 <input type="hidden" name="token" value="" />
 <table border="0" cellpadding="0" cellspacing="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

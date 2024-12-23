@@ -1,5 +1,5 @@
 <?= $preview ?>
-<form method="post" name="input" action="post.php?action=newthread&amp;fid=<?= $fid&amp;poll=yes ?>" enctype="multipart/form-data" onsubmit="return disableButton(this);">
+<form method="post" name="input" action="post.php?action=newthread&amp;fid=<?= $fid ?>&amp;poll=yes" enctype="multipart/form-data" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

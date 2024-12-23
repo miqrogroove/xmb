@@ -5,7 +5,7 @@
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr>
 <td class="nav" style="padding-bottom: 1px" bgcolor="<?= $THEME['altbg2'] ?>">&nbsp;<a href="./"><?= $SETTINGS['bbname'] ?></a><?= $navigation ?></td>
-<td class="tablerow" align="right" bgcolor="<?= $THEME['altbg2'] ?>"><?= $quickjump&nbsp; ?></td>
+<td class="tablerow" align="right" bgcolor="<?= $THEME['altbg2'] ?>"><?= $quickjump ?>&nbsp;</td>
 <td align="right" bgcolor="<?= $THEME['altbg2'] ?>" width="2%"><a href="#top" title="<?= $lang['gototop'] ?>"><img src="<?= $THEME['imgdir'] ?>/arrow_up.gif" style="margin-right: 3px" border="0" alt="<?= $lang['gototop'] ?>" /></a></td>
 </tr>
 </table>

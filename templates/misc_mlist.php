@@ -11,7 +11,7 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><a href="misc.php?action=list&amp;order=location<?= $ext ?>"><strong><?= $lang['location'] ?></strong></a></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><a href="misc.php?action=list<?= $ext ?>"><strong><?= $lang['textregdate'] ?></strong></a></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><a href="misc.php?action=list&amp;desc=desc&amp;order=postnum<?= $ext ?>"><strong><?= $lang['textpostnum'] ?></strong></a></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>" width="10%"><a href="misc.php?action=list<?= $sflip$ext ?>"><strong><?= $ascdesc ?></strong></a></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" width="10%"><a href="misc.php?action=list<?= $sflip ?><?= $ext ?>"><strong><?= $ascdesc ?></strong></a></td>
 </tr>
 </table>
 </td>
@@ -40,7 +40,7 @@
 </tr>
 <?= $members ?>
 <tr class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>">
-<td align="center" colspan="7"><?= $lang['textsrchusr']&nbsp;&nbsp; ?><input type="text" size="15" name="srchmem" value="<?= $srchmem ?>" />&nbsp;&nbsp;<input type="submit" class="submit" value="<?= $lang['textgo'] ?>" /></td>
+<td align="center" colspan="7"><?= $lang['textsrchusr'] ?>&nbsp;&nbsp;<input type="text" size="15" name="srchmem" value="<?= $srchmem ?>" />&nbsp;&nbsp;<input type="submit" class="submit" value="<?= $lang['textgo'] ?>" /></td>
 </tr>
 <?= $multipage ?>
 </table>

@@ -31,7 +31,7 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="smalltxt" valign="top"><?= $post['icon'] ?> <a href="viewthread.php?tid=<?= $post['tid'] ?>&amp;goto=search&amp;pid=<?= $post['pid'] ?>" title="<?= $linktitle ?>" rel="nofollow"><?= $poston ?></a></td>
-<td class="smalltxt" align="right" valign="top"><?= $edit$repquote$reportlink ?></td>
+<td class="smalltxt" align="right" valign="top"><?= $edit ?><?= $repquote ?><?= $reportlink ?></td>
 </tr>
 </table>
 </td>
@@ -51,7 +51,7 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="smalltxt">
-<?= $profile$email$site$search$u2u$aim$icq$msn$yahoo ?>
+<?= $profile ?><?= $email ?><?= $site ?><?= $search ?><?= $u2u ?><?= $aim ?><?= $icq ?><?= $msn ?><?= $yahoo ?>
 </td>
 <td align="right"><?= $ip ?></td>
 </tr>

@@ -6,7 +6,7 @@
 </tr>
 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="tablerow">
 <td rowspan="2" valign="top" width="19%"><font class="mediumtxt"><strong><?= $username ?></strong></font><br /><br /></td>
-<td><?= $thread['icon']&nbsp;$poston ?></td>
+<td><?= $thread['icon'] ?>&nbsp;<?= $poston ?></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="tablerow">
 <td><strong><font class="subject"><?= $dissubject ?></font></strong><br /><br /><font class="mediumtxt"><?= $message1 ?></td>

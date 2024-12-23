@@ -93,7 +93,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttimeformat'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="radio" value="24" name="timeformatnew" <?= $timeFormat24Checked ?> />&nbsp;<?= $lang['text24hour']&nbsp; ?><input type="radio" value="12" name="timeformatnew" <?= $timeFormat12Checked ?> />&nbsp;<?= $lang['text12hour'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="radio" value="24" name="timeformatnew" <?= $timeFormat24Checked ?>/>&nbsp;<?= $lang['text24hour'] ?>&nbsp;<input type="radio" value="12" name="timeformatnew" <?= $timeFormat12Checked ?> />&nbsp;<?= $lang['text12hour'] ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['dateformat'] ?></td>

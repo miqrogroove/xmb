@@ -19,7 +19,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['textstatus'] ?><br /><?= $newsitelink ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $showtitle$customstatus ?><br /><?= $stars ?><br /><br /><?= $rank['avatarrank'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $showtitle ?><?= $customstatus ?><br /><?= $stars ?><br /><br /><?= $rank['avatarrank'] ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['lastactive'] ?></td>
