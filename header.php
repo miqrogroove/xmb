@@ -49,8 +49,6 @@ error_reporting(-1); // Report all errors until config.php loads successfully.
 
 $mtime = explode(" ", microtime());
 
-define('X_CACHE_GET', 1);
-define('X_CACHE_PUT', 2);
 define('X_NONCE_AYS_EXP', 300); // Yes/no prompt expiration, in seconds.
 define('X_NONCE_FORM_EXP', 3600); // Form expiration, in seconds.
 define('X_NONCE_MAX_AGE', 86400); // CAPTCHA expiration, in seconds.

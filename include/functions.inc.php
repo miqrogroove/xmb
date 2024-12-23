@@ -287,116 +287,20 @@ class Core
     }
 
     /**
-     * nav() - Create a navigation link and add it to the $navigation global
+     * nav() - Create a navigation link and add it to the $navigation template property.
      *
      * Create a navigation link using $navigation global with a possible optional addition
      *
      * @since 1.9.1
-     * @param    $add        (optional, false) additional navigation element if string or clear navigation if false boolean
+     * @param    $add        (optional, false) additional navigation element if string or clear navigation if null.
      * @param    $raquo      (optional, true) prepends &raquo; to the string if true, doesn't if false. Defaults to true.
-     * @return   no return value
      */
-    function nav(bool $add = false, bool $raquo = true)
+    function nav(?string $add = null, bool $raquo = true)
     {
-        global $navigation;
-
-        if (!$add) {
-            $navigation = '';
+        if (is_null($add)) {
+            $this->template->navigation = '';
         } else {
-            $navigation .= ($raquo ? ' &raquo; ' : ''). $add;
-        }
-    }
-
-    /**
-     * Fetch a template from the memory cache or database.
-     *
-     * @since 1.0
-     * @param string $name Template name.
-     * @return string The PHP template.
-     */
-    function template(string $name): string
-    {
-        global $comment_output;
-        
-        $db = $this->db;
-
-        $db->escape_fast($name);
-
-        if (($template = templatecache(X_CACHE_GET, $name)) === false) {
-            $query = $db->query("SELECT template FROM " . $this->vars->tablepre . "templates WHERE name='$name'");
-            if ($db->num_rows($query) == 1) {
-                if (X_SADMIN && DEBUG) {
-                    trigger_error('Efficiency Notice: The template "'.$name.'" was not preloaded.', E_USER_NOTICE);
-                }
-                $gettemplate = $db->fetch_array($query);
-                templatecache(X_CACHE_PUT, $name, $gettemplate['template']);
-                $template = $gettemplate['template'];
-            } else {
-                if (X_SADMIN && DEBUG) {
-                    trigger_error('Efficiency Warning: The template "'.$name.'" could not be found.', E_USER_WARNING);
-                }
-            }
-            $db->free_result($query);
-        }
-
-        // PHP will not strip slashes from mismatched quotes so we have to do it here first e.g. "Not \' Good"
-        $template = str_replace("\\'","'", $template);
-
-        if ($name != 'phpinclude' && $comment_output === true) {
-            return "<!--Begin Template: $name -->\n$template\n<!-- End Template: $name -->";
-        } else {
-            return $template;
-        }
-    }
-
-    /**
-     * templatecache()
-     * 
-     * @since 1.9.1
-     * @param defined $type get or put
-     * @param string $name the template to retrieve
-     * @param string $data if put, the data to insert
-     * @return mixed true if PUT. If GET, false if not in cache, otherwise a string containing the cache entry
-     **/
-    function templatecache(int $type, string $name, string $data = ''): string|bool
-    {
-        static $cache;
-
-        switch($type) {
-            case X_CACHE_GET:
-                if (!isset($cache[$name])) {
-                    return false;
-                } else {
-                    return $cache[$name];
-                }
-                break;
-            case X_CACHE_PUT:
-                $cache[$name] = $data;
-                return true;
-                break;
-        }
-    }
-
-    /**
-     * Fetch a template from the database.
-     *
-     * @since 1.5.0
-     * @param string One or more template names may be specified in a list of strings.
-     */
-    function loadtemplates()
-    {
-        $db = $this->db;
-
-        if (func_num_args() < 1) {
-            trigger_error('Not enough arguments given to loadtemplates()', E_USER_WARNING);
-        } else {
-            $namesarray = array_unique(array_merge(func_get_args(), array('header','error','message','footer','footer_querynum','footer_phpsql','footer_totaltime','footer_load')));
-            $sql = "'".implode("', '", $namesarray)."'";
-            $query = $db->query("SELECT name, template FROM " . $this->vars->tablepre . "templates WHERE name IN ($sql)");
-            while($template = $db->fetch_array($query)) {
-                templatecache(X_CACHE_PUT, $template['name'], $template['template']);
-            }
-            $db->free_result($query);
+            $this->template->navigation .= ($raquo ? ' &raquo; ' : ''). $add;
         }
     }
 

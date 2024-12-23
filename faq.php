@@ -22,79 +22,79 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'faq.php');
+declare(strict_types=1);
 
-require 'header.php';
+namespace XMB;
 
-$page = postedVar('page', '', FALSE, FALSE, FALSE, 'g');
+require './header.php';
 
-if ($SETTINGS['faqstatus'] == 'off' && $page != 'forumrules') {
+$core = \XMB\Services\core();
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
+
+$page = getPhpInput('page', 'g');
+
+$core->nav('<a href="faq.php">' . $vars->lang['textfaq'] . '</a>');
+
+if ($vars->settings['faqstatus'] == 'off' && $page != 'forumrules') {
     header('HTTP/1.0 403 Forbidden');
-    loadtemplates('misc_feature_notavailable');
-    nav('<a href="faq.php">'.$lang['textfaq']. '</a>');
-    eval('$header = "'.template('header').'";');
-    eval('$featureoff = "'.template('misc_feature_notavailable').'";');
-    end_time();
-    eval('$footer = "'.template('footer').'";');
+    $header = $template->process('header.php');
+    $featureoff = $template->process('misc_feature_notavailable.php');
+    $core->end_time();
+    $footer = $template->process('footer.php');
     echo $header, $featureoff, $footer;
     exit();
 }
 
-nav('<a href="faq.php">'.$lang['textfaq'].'</a>');
-
 switch($page) {
     case 'usermaint':
-        setCanonicalLink("faq.php?page=$page");
-        loadtemplates('faq_usermaint');
-        nav($lang['textuserman']);
-        eval('$faq = "'.template('faq_usermaint').'";');
+        $core->setCanonicalLink("faq.php?page=$page");
+        $core->nav($vars->lang['textuserman']);
+        $faq = $template->process('faq_usermaint.php');
         break;
     case 'using':
-        setCanonicalLink("faq.php?page=$page");
-        loadtemplates('faq_using_rankrow', 'faq_using');
-        nav($lang['textuseboa']);
-        $stars = $rankrows   = '';
-        $query = $db->query("SELECT * FROM ".X_PREFIX."ranks WHERE title !='Moderator' AND title !='Super Moderator' AND title !='Super Administrator' AND title !='Administrator' ORDER BY posts ASC");
-        while($ranks = $db->fetch_array($query)) {
-            $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $ranks['stars']);
-            eval('$rankrows .= "'.template('faq_using_rankrow').'";');
-            $stars = '';
+        $core->setCanonicalLink("faq.php?page=$page");
+        $core->nav($vars->lang['textuseboa']);
+        $template->stars = '';
+        $template->rankrows = '';
+        $ranks = $sql->getRanks(noStaff: true);
+        foreach ($ranks as $rank) {
+            $template->ranks = $rank;
+            $template->stars = str_repeat('<img src="' . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', (int) $rank['stars']);
+            $template->rankrows .= $template->process('faq_using_rankrow.php');
         }
-        $db->free_result($query);
-        eval('$faq = "'.template('faq_using').'";');
+        $faq = $template->process('faq_using.php');
         break;
     case 'messages':
-        setCanonicalLink("faq.php?page=$page");
-        loadtemplates('faq_messages_smilierow', 'faq_messages');
-        $smilierows = '';
-        nav($lang['textpostread']);
-        $querysmilie = $db->query("SELECT * FROM `" .X_PREFIX. "smilies` WHERE type = 'smiley'");
-        while($smilie = $db->fetch_array($querysmilie)) {
-            eval('$smilierows .= "'.template('faq_messages_smilierow').'";');
+        $core->setCanonicalLink("faq.php?page=$page");
+        $core->nav($vars->lang['textpostread']);
+        $template->smilierows = '';
+        $smilies = $sql->getSmilies();
+        foreach ($smilies as $smilie) {
+            $template->smilie = $smilie;
+            $template->smilierows .= $template->process('faq_messages_smilierow.php');
         }
-        $db->free_result($querysmilie);
-        eval('$faq = "'.template('faq_messages').'";');
+        $faq = $template->process('faq_messages.php');
         break;
     case 'forumrules':
-        setCanonicalLink("faq.php?page=$page");
-        loadtemplates('faq_forumrules');
-        nav();
-        nav($lang['textbbrules']);
-        if (empty($SETTINGS['bbrulestxt'])) {
-            $SETTINGS['bbrulestxt'] = $lang['textnone'];
+        $core->setCanonicalLink("faq.php?page=$page");
+        $core->nav();
+        $core->nav($vars->lang['textbbrules']);
+        if (empty($vars->settings['bbrulestxt'])) {
+            $vars->settings['bbrulestxt'] = $this->vars->lang['textnone'];
         } else {
-            $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
+            $vars->settings['bbrulestxt'] = nl2br($vars->settings['bbrulestxt']);
         }
-        eval('$faq = "'.template('faq_forumrules').'";');
+        $faq = $template->process('faq_forumrules.php');
         break;
     default:
-        setCanonicalLink('faq.php');
-        loadtemplates('faq');
-        eval('$faq = "'.template('faq').'";');
+        $core->setCanonicalLink('faq.php');
+        $faq = $template->process('faq.php');
         break;
 }
 
-eval('$header = "'.template('header').'";');
-end_time();
-eval('$footer = "'.template('footer').'";');
+$header = $template->process('header.php');
+$core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $faq, $footer;

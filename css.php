@@ -22,24 +22,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\sql;
+declare(strict_types=1);
+
+namespace XMB;
 
 require './header.php';
 
-$THEME = sql()->getThemeByID(getInt('id'));
-if (empty($THEME)) {
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$themeMgr = \XMB\Services\theme();
+$vars = \XMB\Services\vars();
+
+$vars->comment_output = false; // If true, CSS would be invalid.
+$vars->theme = $sql->getThemeByID(getInt('id'));
+if (empty($vars->theme)) {
     header('HTTP/1.0 404 Not Found');
     exit('Not Found');
 }
-more_theme_vars();
-extract($THEME);
-
-$comment_output = false; // If true, CSS will be invalid.
-eval('$css = "'.template('css').'";');
+$themeMgr->more_theme_vars();
 
 header("Content-type: text/css");
 header("Content-Description: XMB Stylesheet");
 header("Cache-Control: public, max-age=604800");
 header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
 
-echo $css;
+$template->addRefs();
+$template->process('css.php', echo: true);

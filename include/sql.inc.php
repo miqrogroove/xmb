@@ -1434,11 +1434,18 @@ class SQL
      * Retrieve the entire ranks table.
      *
      * @since 1.9.12.05
+     * @param bool $noStaff Optional. When true, none of the staff ranks will be included.
      * @return array of associative table rows.
     */
-    public function getRanks(): array
+    public function getRanks(bool $noStaff = false): array
     {
-        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "ranks ORDER BY stars");
+        if ($noStaff) {
+            $where = "WHERE title NOT IN ('Moderator', 'Super Moderator', 'Super Administrator', 'Administrator')";
+        } else {
+            $where = '';
+        }
+
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "ranks $where ORDER BY stars");
 
         $ranks = [];
         while($row = $this->db->fetch_array($result)) {
@@ -1449,6 +1456,27 @@ class SQL
         $this->db->free_result($result);
 
         return $ranks;
+    }
+
+    /**
+     * Retrieve the list of smilies.
+     *
+     * @since 1.10.00
+     * @return array of associative table rows.
+    */
+    public function getSmilies(): array
+    {
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "smilies WHERE type = 'smiley'");
+
+        $smilies = [];
+        while($row = $this->db->fetch_array($result)) {
+            $smilies[] =& $row;
+            unset($row);
+        }
+
+        $this->db->free_result($result);
+
+        return $smilies;
     }
 
     /**

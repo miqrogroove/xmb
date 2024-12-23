@@ -130,14 +130,27 @@ class Template
         $this->data['THEME'] = &$this->vars->theme;
     }
 
+    /**
+     * XMB Template Processor
+     *
+     * @since 1.0 Formerly "template()".
+     * @since 1.10.00 Now using disk-stored files and full PHP format.
+     * @param string $filename The filename, including extension, of the PHP template.
+     * @param bool $echo Optional. When true, the processed template will be sent to the output stream.
+     * @return string When $echo is false, the processed template will be returned, otherwise an empty string.
+     */
     public function process(string $filename, bool $echo = false): string
     {
         extract($this->data);
-        
+
         if (! $echo) ob_start();
         
+        if ($this->vars->comment_output) echo "<!--Begin Template: $filename -->\n";
+
         include "./templates/$filename";
-        
+
+        if ($this->vars->comment_output) echo "\n<!-- End Template: $filename -->";
+
         if ($echo) {
             return '';
         } else {
