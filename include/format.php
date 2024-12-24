@@ -224,7 +224,7 @@ function null_string(?string &$var)
  * @param string $shortType When 'soft', truncates only if there are words shorter than $len. When 'hard', anything longer than $len will be truncated. Use 'both' when able.
  * @param string $ps This will be appended if the string is truncated.
  */
-public function shortenString(string $string, int $len = 125, string $shortType = 'both', string $ps = '...'): string
+function shortenString(string $string, int $len = 125, string $shortType = 'both', string $ps = '...'): string
 {
     if (strlen($string) > $len) {
         $modified = false;

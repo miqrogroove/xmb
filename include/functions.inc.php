@@ -30,11 +30,9 @@ use InvalidArgumentException;
 
 class Core
 {
-    private bool $forumCacheStatus = false;
     private bool $smilieCacheStatus = false;
 
     private array $censorcache = [];
-    private array $forumcache = [];
     private array $smiliecache = [];
 
     private int $smiliesnum = 0;
@@ -44,6 +42,7 @@ class Core
         private Attach $attach,
         private BBCode $bbcode,
         private DBStuff $db,
+        private Forums $forums,
         private SQL $sql,
         private Template $template,
         private Variables $vars,
@@ -354,7 +353,7 @@ class Core
         $token = getPhpInput('token');
 
         if (! \XMB\Token\consume($token, $action, $id)) {
-            error($lang['bad_token'], $error_header);
+            error($this->vars->lang['bad_token'], $error_header);
         }
     }
 
@@ -446,7 +445,7 @@ class Core
     //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
     public function rawHTMLsubject(string $rawstring): string
     {
-        return censor(decimalEntityDecode($rawstring));
+        return $this->censor(decimalEntityDecode($rawstring));
     }
 
     /**
@@ -624,7 +623,7 @@ class Core
      * @param bool $override Whether to just return 'Moderator', for example by passing a boolean user level.
      * @return string Either 'Moderator' or an empty string.
      */
-    function modcheck($username, $mods, $override=X_SMOD)
+    function modcheck(string $username, string $mods, bool $override = X_SMOD): string
     {
         $retval = '';
         if ($override) {
@@ -784,38 +783,36 @@ class Core
      * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
      * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
      */
-    function multipage($num, $perpage, $baseurl, $canonical = TRUE)
+    function multipage(int $num, int $perpage, string $baseurl, $canonical = true): array
     {
-        global $cookiepath, $full_url, $lang, $url;
-
         // Initialize
         $return = array();
         $page = getInt('page');
-        $max_page = quickpage(intval($num), intval($perpage));
-        if ($canonical === TRUE) $canonical =& $baseurl;
+        $max_page = $this->quickpage(intval($num), intval($perpage));
+        if ($canonical === true) $canonical =& $baseurl;
 
         // Calculate the LIMIT start number for queries
         if ($page > 1 && $page <= $max_page) {
             $return['start'] = ($page-1) * $perpage;
-            if ($canonical !== FALSE) $this->setCanonicalLink($canonical.((strpos($baseurl, '?') !== FALSE) ? '&amp;' : '?').'page='.$page);
+            if ($canonical !== false) $this->setCanonicalLink($canonical.((strpos($baseurl, '?') !== false) ? '&amp;' : '?').'page='.$page);
         } elseif ($page == 0 && !isset($_GET['page'])) {
             $return['start'] = 0;
             $page = 1;
-            if ($canonical !== FALSE) $this->setCanonicalLink($canonical);
+            if ($canonical !== false) $this->setCanonicalLink($canonical);
         } elseif ($page == 1) {
-            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
+            $newurl = preg_replace('/[^\x20-\x7e]/', '', $this->vars->url);
             $newurl = str_replace('&page=1', '', $newurl);
-            $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
+            $newurl = substr($this->vars->full_url, 0, -strlen($this->vars->cookiepath)).$newurl;
             header('HTTP/1.0 301 Moved Permanently');
             header('Location: '.$newurl);
             exit;
         } else {
             header('HTTP/1.0 404 Not Found');
-            error($lang['generic_missing']);
+            $this->error($this->vars->lang['generic_missing']);
         }
 
         // Generate the multipage link bar.
-        $return['html'] = multi($page, $max_page, $baseurl);
+        $return['html'] = $this->multi($page, $max_page, $baseurl);
 
         return $return;
     }
@@ -833,11 +830,9 @@ class Core
      * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
      * @return string HTML links. Empty string if the $lastpage parameter was <= 1 or $page was invalid.
      */
-    function multi($page, $lastpage, &$mpurl, $isself = true)
+    function multi(int $page, int $lastpage, string &$mpurl, bool $isself = true): string
     {
-        global $lang;
-
-        $multipage = $lang['textpages'];
+        $multipage = $this->vars->lang['textpages'];
 
         if ($page >= 1 && $lastpage > 1 && $page <= $lastpage) {
             if ($page >= $lastpage - 3) {
@@ -995,10 +990,9 @@ class Core
     /**
      * @since 1.5
      */
-    function updateforumcount($fid)
+    function updateforumcount(int $fid)
     {
         $db = $this->db;
-        $fid = (int) $fid;
 
         $query = $db->query("SELECT COUNT(*) FROM " . $this->vars->tablepre . "forums AS f INNER JOIN " . $this->vars->tablepre . "posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
         $postcount = (int) $db->result($query, 0);
@@ -1329,52 +1323,6 @@ class Core
     }
 
     /**
-     * validatePpp() - validate posts per page
-     *
-     * Validate the global $ppp variable and ensure it's sane
-     * 
-     * @since 1.9.1
-     * @return   none - modifies the global $ppp variable
-     */
-    function validatePpp()
-    {
-        global $ppp, $postperpage;
-
-        if (empty($ppp) || ! is_numeric($ppp)) {
-            $ppp = (int) $postperpage;
-        } else {
-            $ppp = (int) $ppp;
-        }
-
-        if ($ppp < 5) {
-            $ppp = 30;
-        }
-    }
-
-    /**
-     * validateTpp() - validate threads per page
-     *
-     * Validate the global $tpp variable and ensure it's sane
-     * 
-     * @since 1.9.1
-     * @return   none - modifies the global $tpp variable
-     */
-    function validateTpp()
-    {
-        global $tpp, $topicperpage;
-
-        if (empty($tpp) || ! is_numeric($tpp)) {
-            $tpp = (int) $topicperpage;
-        } else {
-            $tpp = (int) $tpp;
-        }
-
-        if ($tpp < 5) {
-            $tpp = 30;
-        }
-    }
-
-    /**
      * Send a mail message.
      *
      * Works just like php's altMail() function, but allows sending trough alternative mailers as well.
@@ -1528,35 +1476,6 @@ class Core
     }
 
     /**
-     * Provides an array containing all active forums and forum categories.
-     *
-     * @since 1.9.11
-     * @return array
-     */
-    function forumCache()
-    {
-        if (! $this->$forumCacheStatus) {
-            $this->forumcache = $this->sql->getForums();
-        }
-
-        return $this->forumcache;
-    }
-
-    /**
-     * Creates an associative array for the specified forum.
-     *
-     * @since 1.9.11
-     */
-    function getForum(int $fid): ?array
-    {
-        if (isset($this->forumcache[$fid])) {
-            return $this->forumcache[$fid];
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Creates a multi-dimensional array of forums.
      *
      * The array uses the following associative subscripts:
@@ -1574,12 +1493,10 @@ class Core
      */
     function getStructuredForums(bool $usePerms = false): array
     {
-        $db = $this->db;
-
         if ($usePerms) {
             $forums = $this->permittedForums('forum', 'array');
         } else {
-            $forums = &$this->forumcache;
+            $forums = $this->forums->forumCache();
         }
 
         // This function guarantees the following subscripts exist, regardless of forum count.
@@ -1604,17 +1521,19 @@ class Core
      * @param string $mode Whether to check for 'forum' listing permissions or 'thread' listing permissions.
      * @param string $output If set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an 'array' of arrays.
      * @param bool $check_parents Indicates whether each forum's permissions depend on the parent forum also being permitted.
-     * @param bool $user_status Optional masquerade value passed to checkForumPermissions().
+     * @param string $user_status Optional masquerade value passed to checkForumPermissions().
      * @return array
      */
-    function permittedForums(string $mode = 'thread', string $output = 'csv', bool $check_parents = true, bool $user_status = false): array
+    function permittedForums(string $mode = 'thread', string $output = 'csv', bool $check_parents = true, ?string $user_status = null): array
     {
         $permitted = [];
         $fids['group'] = [];
         $fids['forum'] = [];
         $fids['sub'] = [];
 
-        foreach ($this->forumcache as $forum) {
+        $forumcache = $this->forums->forumCache();
+
+        foreach ($forumcache as $forum) {
             $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
                 if ($forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
@@ -1670,11 +1589,60 @@ class Core
     }
 
     /**
+     * Simulates needed SQL results using the forum cache.
+     *
+     * @since 1.9.11
+     * @param array $forums Read-Only Variable. Must be a return value from the function getStructuredForums()
+     * @param array $cat
+     * @param bool  $catsonly
+     * @return array Two-dimensional array of forums (arrays of strings) sorted by the group's displayorder, then the forum's displayorder.
+     */
+    public function getIndexForums(array $forums, array $cat, bool $catsonly): array {
+        $sorted = [];
+
+        if (isset($cat['fid'])) {
+            // Group forums.
+            if (isset($forums['forum'][$cat['fid']])) {
+                foreach($forums['forum'][$cat['fid']] as $forum) {
+                    $forum['cat_fid'] = $cat['fid'];
+                    $forum['cat_name'] = $cat['name'];
+                    $sorted[] = $forum;
+                }
+            }
+        } elseif ($catsonly) {
+            // Groups instead of forums.
+            foreach($forums['group']['0'] as $group) {
+                $group['cat_fid'] = $group['fid'];
+                $group['cat_name'] = $group['name'];
+                $sorted[] = $group;
+            }
+        } else {
+            // Ungrouped forums.
+            foreach($forums['forum']['0'] as $forum) {
+                $forum['cat_fid'] = '0';
+                $forum['cat_name'] = '';
+                $sorted[] = $forum;
+            }
+            // Grouped forums.
+            foreach($forums['group']['0'] as $group) {
+                if (isset($forums['forum'][$group['fid']])) {
+                    foreach($forums['forum'][$group['fid']] as $forum) {
+                        $forum['cat_fid'] = $group['fid'];
+                        $forum['cat_name'] = $group['name'];
+                        $sorted[] = $forum;
+                    }
+                }
+            }
+        }
+        return $sorted;
+    }
+
+    /**
      * @since 1.9.8
      */
     function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0)
     {
-        global $lang;
+        $lang = &$this->vars->lang;
 
         // Initialize $forumselect
         $forumselect = array();
@@ -1895,7 +1863,7 @@ class Core
     {
         $pwinput = getPhpInput('pw');
 
-        $forum = $this->getForum($fid);
+        $forum = $forums->getForum($fid);
         if (strlen($pwinput) != 0 && $forum !== null) {
             if ($pwinput === $forum['password']) {
                 $this->put_cookie('fidpw' . $fid, $forum['password'], time() + (86400*30));
@@ -1904,11 +1872,11 @@ class Core
             } else {
                 $this->template->url = $this->vars->url;
                 $pwform = $this->template->process('forumdisplay_password.php');
-                $this->error($lang['invalidforumpw'], append: $pwform);
+                $this->error($this->vars->lang['invalidforumpw'], append: $pwform);
             }
         } else {
             $pwform = $this->template->process('forumdisplay_password.php');
-            $this->error($lang['forumpwinfo'], append: $pwform);
+            $this->error($this->vars->lang['forumpwinfo'], append: $pwform);
         }
     }
 

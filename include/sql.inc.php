@@ -701,11 +701,26 @@ class SQL
      */
     public function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int
     {
-        $sqluser = $this->db->escape($username);
+        return $this->countThreadsByForum($fid, $username, $quarantine);
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function countThreadsByForum(int $fid, ?string $username = null, bool $quarantine = false): int
+    {
+        if (is_null($username)) {
+            $author = '';
+        } else {
+            $this->db->escape_fast($username);
+            $author =  "AND author = '$username'";
+        }
 
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
-        $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE author = '$sqluser' AND fid = $fid");
+        $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE fid = $fid $author");
         $result = (int) $this->db->result($query, 0);
         $this->db->free_result($query);
 

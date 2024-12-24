@@ -72,7 +72,7 @@ if (onSubmit('gid')) {
     }
 } else {
     $gid = 0;
-    $cat = array();
+    $cat = [];
     $core->setCanonicalLink('./');
 }
 
@@ -281,7 +281,7 @@ if ($gid == 0) {
     }
 }
 
-$fquery = getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
+$fquery = $core->getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
 $body->indexBarTop = '';
 $indexBar = $forumlist = $spacer = '';
@@ -365,53 +365,3 @@ $index = $body->process('index.php');
 $template->footerstuff = $core->end_time();
 $footer = $template->process('footer.php');
 echo $header, $index, $footer;
-
-/**
- * Simulates needed SQL results using the forum cache.
- *
- * @since 1.9.11
- * @param array $forums Read-Only Variable. Must be a return value from the function getStructuredForums()
- * @param array $cat
- * @param bool  $catsonly
- * @return array Two-dimensional array of forums (arrays of strings) sorted by the group's displayorder, then the forum's displayorder.
- */
-function getIndexForums(array $forums, array $cat, bool $catsonly): array {
-    $sorted = array();
-
-    if (isset($cat['fid'])) {
-        // Group forums.
-        if (isset($forums['forum'][$cat['fid']])) {
-            foreach($forums['forum'][$cat['fid']] as $forum) {
-                $forum['cat_fid'] = $cat['fid'];
-                $forum['cat_name'] = $cat['name'];
-                $sorted[] = $forum;
-            }
-        }
-    } elseif ($catsonly) {
-        // Groups instead of forums.
-        foreach($forums['group']['0'] as $group) {
-            $group['cat_fid'] = $group['fid'];
-            $group['cat_name'] = $group['name'];
-            $sorted[] = $group;
-        }
-    } else {
-        // Ungrouped forums.
-        foreach($forums['forum']['0'] as $forum) {
-            $forum['cat_fid'] = '0';
-            $forum['cat_name'] = '';
-            $sorted[] = $forum;
-        }
-        // Grouped forums.
-        foreach($forums['group']['0'] as $group) {
-            if (isset($forums['forum'][$group['fid']])) {
-                foreach($forums['forum'][$group['fid']] as $forum) {
-                    $forum['cat_fid'] = $group['fid'];
-                    $forum['cat_name'] = $group['name'];
-                    $sorted[] = $forum;
-                }
-            }
-        }
-    }
-
-    return $sorted;
-}

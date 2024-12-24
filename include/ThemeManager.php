@@ -26,9 +26,12 @@ declare(strict_types=1);
 
 namespace XMB\Theme;
 
-use XMB\SQL;
-use XMB\Template;
-use XMB\Variables;
+use XMB\{
+    Forums,
+    SQL,
+    Template,
+    Variables,
+};
 
 use function XMB\getInt;
 use function XMB\getPhpInput;
@@ -36,7 +39,7 @@ use function XMB\null_string;
 
 class Manager
 {
-    public function __construct(private SQL $sql, private Template $template, private Variables $vars)
+    public function __construct(private Forums $forums, private SQL $sql, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -58,7 +61,7 @@ class Manager
                 $forumtheme = (int) $forum['theme'];
             }
         } else if ($fid > 0) {
-            $forum = getForum($fid);
+            $forum = $this->forums->getForum($fid);
             if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
                 $forumtheme = 0;
             } else {

@@ -29,6 +29,8 @@ namespace XMB;
 require './header.php';
 
 $core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
@@ -39,7 +41,7 @@ $template->hottopic = str_replace('$hottopic', $SETTINGS['hottopic'], $lang['hot
 
 $fid = getInt('fid');
 
-$forum = $core->getForum($fid);
+$forum = $forums->getForum($fid);
 
 if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
@@ -93,40 +95,39 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 // Search-link
 $searchlink = $core->makeSearchLink((int) $forum['fid']);
 
-validateTpp();
-validatePpp();
-
-$threadcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
+$threadcount = $sql->countThreadsByForum($fid);
 
 // Perform automatic maintenance
 if ($forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount) {
-    updateforumcount($fid);
+    // Note there is a potential race between the values being compared above in a non-transaction database.  This feature needs to be reviewed for performance.
+    $core->updateforumcount($fid);
 }
 
-$mpage = multipage($threadcount, $tpp, 'forumdisplay.php?fid='.$fid);
+$mpage = $core->multipage($threadcount, $vars->tpp, "forumdisplay.php?fid=$fid");
 
-eval('$header = "'.template('header').'";');
+$header = $template->process('header.php');
+
+$template->fid = $fid;
 
 if ($perms[X_PERMS_POLL]) {
-    eval('$newpolllink = "'.template('forumdisplay_newpoll').'";');
+    $template->newpolllink = $template->process('forumdisplay_newpoll.php');
 } else {
-    $newpolllink = '';
+    $template->newpolllink = '';
 }
 
 if ($perms[X_PERMS_THREAD]) {
-    eval('$newtopiclink = "'.template('forumdisplay_newtopic').'";');
+    $template->newtopiclink = $template->process('forumdisplay_newtopic.php');
 } else {
-    $newtopiclink = '';
+    $template->newtopiclink = '';
 }
 
-$index_subforums = array();
 $template->subforums = '';
 if ($forum['type'] == 'forum') {
     $template->forumlist = '';
     $permitted = $core->permittedForums('forum', 'array');
     foreach($permitted as $sub) {
         if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
-            $template->forumlist .= forum($sub, 'forumdisplay_subforum', $index_subforums);
+            $template->forumlist .= forum($sub, 'forumdisplay_subforum', index_subforums: []);
         }
     }
     if ($template->forumlist != '') {
@@ -134,9 +135,9 @@ if ($forum['type'] == 'forum') {
     }
 }
 
-if (X_MEMBER && 'yes' == $self['waiting_for_mod']) {
+if (X_MEMBER && 'yes' == $vars->self['waiting_for_mod']) {
     $quarantine = true;
-    $result = $sql->countThreadsByUser($self['username'], $fid, $quarantine);
+    $result = $sql->countThreadsByUser($vars->self['username'], $fid, $quarantine);
     if ($result > 0) {
         if (1 == $result) {
             $msg = $lang['moderation_threads_single'];
@@ -175,20 +176,20 @@ switch($p_extension) {
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
-    $cusdate = $vars->onlinetime - $cusdate;
-    $cusdate = "AND lastpost > '$cusdate'";
+    $cusdateval = $vars->onlinetime - $cusdate;
+    $cusdatesql = "AND lastpost > '$cusdateval'";
 } else {
-    $cusdate = '';
+    $cusdatesql = '';
 }
 
-$ascdesc = postedVar('ascdesc', '', FALSE, FALSE);
+$ascdesc = $core->postedVar('ascdesc', htmlencode: false, dbescape: false);
 if (strtolower($ascdesc) != 'asc') {
     $ascdesc = "desc";
 }
 
 $forumdisplay_thread = 'forumdisplay_thread';
 
-$status1 = modcheck($self['username'], $forum['moderator']);
+$status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
 if ($status1 == 'Moderator') {
     $forumdisplay_thread = 'forumdisplay_thread_admin';
@@ -203,10 +204,10 @@ if ($mpage['start'] <= 30) {
 } else {
     $query1 = $db->query(
         "SELECT topped, lastpost
-         FROM ".X_PREFIX."threads
+         FROM " . $vars->tablepre . "threads
          WHERE fid=$fid
          ORDER BY topped DESC, lastpost DESC
-         LIMIT {$mpage['start']}, $tpp"
+         LIMIT {$mpage['start']}, " . $vars->tpp
     );
     if ($row = $db->fetch_array($query1)) {
         $db->escape_fast($row['lastpost']);
@@ -228,35 +229,35 @@ if ($mpage['start'] <= 30) {
     $db->free_result($query1);
 }
 
-$threadlist = '';
-$threadsInFid = array();
+$template->threadlist = '';
+$threadsInFid = [];
 
 $querytop = $db->query(
     "SELECT t.*, m.uid, r.uid AS lastauthor
-     FROM ".X_PREFIX."threads AS t
-     LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
-     LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
-     WHERE t.fid=$fid $criteria $cusdate
+     FROM " . $vars->tablepre . "threads AS t
+     LEFT JOIN " . $vars->tablepre . "members AS m ON t.author = m.username
+     LEFT JOIN " . $vars->tablepre . "members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
+     WHERE t.fid=$fid $criteria $cusdatesql
      ORDER BY topped $ascdesc, lastpost $ascdesc
-     LIMIT $offset $tpp"
+     LIMIT $offset " . $vars->tpp
 );
 
 if ($db->num_rows($querytop) == 0) {
     if ($status1 == 'Moderator') {
-        eval('$threadlist = "'.template('forumdisplay_nothreads_admin').'";');
+        $threadlist = $template->process('forumdisplay_nothreads_admin');
     } else {
-        eval('$threadlist = "'.template('forumdisplay_nothreads').'";');
+        $threadlist = $template->process('forumdisplay_nothreads');
     }
-} elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0) {
+} elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $vars->self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];
     }
     $db->data_seek($querytop, 0);
 
     $threadsInFid = implode(',', $threadsInFid);
-    $query = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+    $query = $db->query("SELECT tid FROM " . $vars->tablepre . "posts WHERE tid IN ($threadsInFid) AND author='" . $vars->xmbuser . "' GROUP BY tid");
 
-    $threadsInFid = array();
+    $threadsInFid = [];
     while($row = $db->fetch_array($query)) {
         $threadsInFid[] = $row['tid'];
     }
@@ -272,19 +273,19 @@ while($thread = $db->fetch_array($querytop)) {
     }
 
     if ('1' === $thread['topped']) {
-        $topimage = '<img src="'.$admdir.'/untop.gif" alt="'.$lang['textuntopthread'].'" border="0" />';
+        $topimage = '<img src="' . $vars->theme['admdir'] . '/untop.gif" alt="' . $lang['textuntopthread'] . '" border="0" />';
     } else {
-        $topimage = '<img src="'.$admdir.'/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
+        $topimage = '<img src="' . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
     }
 
-    $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
+    $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
 
     if ($thread['author'] == 'Anonymous') {
-        $authorlink = $lang['textanonymous'];
+        $template->authorlink = $lang['textanonymous'];
     } elseif (is_null($thread['uid'])) {
-        $authorlink = $thread['author'];
+        $template->authorlink = $thread['author'];
     } else {
-        $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
+        $template->authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
     }
 
     $prefix = '';
@@ -309,7 +310,7 @@ while($thread = $db->fetch_array($querytop)) {
             $folder = 'folder.gif';
         }
 
-        $oT = strpos($oldtopics, "|$lastPid|");
+        $oT = strpos($vars->oldtopics, "|$lastPid|");
         if ($vars->lastvisit < $dalast && $oT === false) {
             if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = "hot_red_folder.gif";
@@ -325,10 +326,10 @@ while($thread = $db->fetch_array($querytop)) {
         $folder = '<img src="' . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
-    $lastreplydate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-    $lastreplytime = gmdate($timecode, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+    $lastreplydate = gmdate($vars->dateformat, $lastpost[0] + ($vars->timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+    $lastreplytime = gmdate($vars->timecode, $lastpost[0] + ($vars->timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
 
-    $lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
+    $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
     $moved = explode('|', $thread['closed']);
     if ($moved[0] == 'moved') {
@@ -338,7 +339,7 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['replies'] = "-";
         $thread['views'] = "-";
         $folder = '<img src="' . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
-        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
+        $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE tid='$thread[tid]'");
         $postnum = 0;
         if ($query !== false) {
             $postnum = $db->result($query, 0);
@@ -347,7 +348,10 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['realtid'] = $thread['tid'];
     }
 
-    eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
+    $template->folder = $folder;
+    $template->thread = $thread;
+
+    $template->lastpostrow = $template->process('forumdisplay_thread_lastpost.php');
 
     if ('1' === $thread['pollopts']) {
         $prefix = $lang['pollprefix'].' ';
@@ -357,70 +361,72 @@ while($thread = $db->fetch_array($querytop)) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
-    $multipage2 = '';
+    $template->prefix = $prefix;
 
-    eval('$threadlist .= "'.template($forumdisplay_thread).'";');
-
-    $prefix = '';
+    $template->threadlist .= $template->process('forumdisplay_thread.php');
 }
 $db->free_result($querytop);
 
-$check1 = $check5 = '';
-$check15 = $check30 = '';
-$check60 = $check100 = '';
-$checkyear = $checkall = '';
+$template->check1 = '';
+$template->check5 = '';
+$template->check15 = '';
+$template->check30 = '';
+$template->check60 = '';
+$template->check100 = '';
+$template->checkyear = '';
+$template->checkall = '';
 switch($cusdate) {
     case 86400:
-        $check1 = $selHTML;
+        $template->check1 = $vars::selHTML;
         break;
     case 432000:
-        $check5 = $selHTML;
+        $template->check5 = $vars::selHTML;
         break;
     case 1296000:
-        $check15 = $selHTML;
+        $template->check15 = $vars::selHTML;
         break;
     case 2592000:
-        $check30 = $selHTML;
+        $template->check30 = $vars::selHTML;
         break;
     case 5184000:
-        $check60 = $selHTML;
+        $template->check60 = $vars::selHTML;
         break;
     case 8640000:
-        $check100 = $selHTML;
+        $template->check100 = $vars::selHTML;
         break;
     case 31536000:
-        $checkyear = $selHTML;
+        $template->checkyear = $vars::selHTML;
         break;
     default:
-        $checkall = $selHTML;
+        $template->checkall = $vars::selHTML;
         break;
 }
 
-eval('$sortby = "'.template('forumdisplay_sortby').'";');
+$template->sortby = $template->process('forumdisplay_sortby.php');
 
-$mpage = $mpage['html'];
-$multipage = '';
-$multipage3 = '';
-if (strlen($mpage) != 0) {
+$template->mpage = $mpage['html'];
+$template->multipage = '';
+$template->multipage3 = '';
+if (strlen($template->mpage) != 0) {
     if ($status1 == 'Moderator') {
-        eval('$multipage = "'.template('forumdisplay_multipage_admin').'";');
-        eval('$multipage3 = "'.template('forumdisplay_multipage_admin3').'";');
+        $template->multipage = $template->process('forumdisplay_multipage_admin.php');
+        $template->multipage3 = $template->process('forumdisplay_multipage_admin3.php');
     } else {
-        eval('$multipage = "'.template('forumdisplay_multipage').'";');
+        $template->multipage = $template->process('forumdisplay_multipage.php');
     }
 }
 
 if ($status1 == 'Moderator') {
     if (X_ADMIN) {
-        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails='.$forum['fid'].'" title="'.$lang['alteditsettings'].'"><img src="'.$admdir.'/editforumsets.gif" border="0" alt="" /></a>';
+        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
     } else {
         $fadminlink = '';
     }
-    eval('$forumdisplay = "'.template('forumdisplay_admin').'";');
+    $forumdisplay = $template->process('forumdisplay_admin.php');
 } else {
-    eval('$forumdisplay = "'.template('forumdisplay').'";');
+    $forumdisplay = $template->process('forumdisplay.php');
 }
 
-end_time();
-eval('$footer = "'.template('footer').'";');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $forumdisplay, $footer;

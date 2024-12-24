@@ -22,18 +22,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\attach;
-use function XMB\Services\bbcode;
-use function XMB\Services\core;
-use function XMB\Services\db;
-use function XMB\Services\debug;
-use function XMB\Services\login;
-use function XMB\Services\session;
-use function XMB\Services\sql;
-use function XMB\Services\template;
-use function XMB\Services\theme;
-use function XMB\Services\observer;
-use function XMB\Services\vars;
+use function XMB\Services\{
+    attach,
+    bbcode,
+    core,
+    db,
+    debug,
+    forums,
+    login,
+    session,
+    sql,
+    template,
+    theme,
+    observer,
+    vars,
+};
 
 /* Front Matter */
 
@@ -110,6 +113,7 @@ require ROOT.'include/Bootup.php';
 require ROOT.'include/BootupLoader.php';
 require ROOT.'include/debug.inc.php';
 require ROOT.'include/format.php';
+require ROOT.'include/Forums.php';
 require ROOT.'include/functions.inc.php';
 require ROOT.'include/Login.php';
 require ROOT.'include/Observer.php';
@@ -162,13 +166,15 @@ db($boot->connectDB());
 debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
-theme(new \XMB\Theme\Manager(sql(), template(), vars()));
+forums(new \XMB\Forums(sql()));
+
+theme(new \XMB\Theme\Manager(forums(), sql(), template(), vars()));
 
 bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), sql(), template(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), forums(), sql(), template(), vars()));
 
 unset($boot);
 

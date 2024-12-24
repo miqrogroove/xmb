@@ -26,18 +26,21 @@ declare(strict_types=1);
 
 namespace XMB\Services;
 
-use XMB\Attach;
-use XMB\BBCode;
-use XMB\Core;
-use XMB\Debug;
-use XMB\DBStuff;
-use XMB\Login;
-use XMB\Observer;
-use XMB\Session\Manager as SessionMgr;
-use XMB\SQL;
-use XMB\Template;
-use XMB\Theme\Manager as ThemeMgr;
-use XMB\Variables;
+use XMB\{
+    Attach,
+    BBCode,
+    Core,
+    Debug,
+    DBStuff,
+    Forums,
+    Login,
+    Observer,
+    Session\Manager as SessionMgr,
+    SQL,
+    Template,
+    Theme\Manager as ThemeMgr,
+    Variables,
+};
 
 /**
  * Get the shared file attachment service.
@@ -115,6 +118,22 @@ function debug(?Debug $debug = null): Debug
     static $cache;
     
     if ($debug !== null) $cache = $debug;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared forums service.
+ *
+ * @since 1.10.00
+ * @param Forums $forums Required on first call, otherwise optional. Acts as the setter.
+ * @return Forums
+ */
+function forums(?Forums $forums = null): Forums
+{
+    static $cache;
+    
+    if ($forums !== null) $cache = $forums;
     
     return $cache;
 }
