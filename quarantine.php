@@ -95,8 +95,6 @@ case 'viewuser':
         $token = \XMB\Token\create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', X_NONCE_AYS_EXP);
     }
 
-    smcwcache();
-
     $specialrank = array();
     $rankposts = array();
     $queryranks = sql()->getRanks();

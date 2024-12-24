@@ -26,8 +26,20 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use InvalidArgumentException;
+
 class Core
 {
+    private bool $forumCacheStatus = false;
+    private bool $smilieCacheStatus = false;
+
+    private array $censorcache = [];
+    private array $forumcache = [];
+    private array $smiliecache = [];
+
+    private int $smiliesnum = 0;
+    private int $wordsnum = 0;
+
     public function __construct(
         private Attach $attach,
         private BBCode $bbcode,
@@ -389,6 +401,8 @@ class Core
     function smile(&$txt)
     {
         global $smiliesnum, $smiliecache, $THEME;
+
+        if (! $this->smilieCacheStatus) $this->smcwcache();
 
         if (0 == $smiliesnum) {
             return true;
@@ -921,6 +935,8 @@ class Core
     {
         global $SETTINGS, $THEME, $smiliesnum, $smiliecache;
         
+        if (! $this->smilieCacheStatus) $this->smcwcache();
+
         $db = $this->db;
 
         $counter = 0;
@@ -1028,45 +1044,42 @@ class Core
     }
 
     /**
+     * Smilies and censor cache.
+     *
      * @since 1.5.0
      */
-    function smcwcache()
+    private function smcwcache()
     {
-        global $smiliecache, $censorcache, $smiliesnum, $wordsnum;
-        static $cached;
-        
-        $db = $this->db;
+        if ($this->smilieCacheStatus) return;
 
-        if (!$cached) {
-            $smiliecache = array();
-            $censorcache = array();
+        $smilies = $sql->getSmilies();
+        $this->smiliesnum = count($smilies);
 
-            $query = $db->query("SELECT code, url FROM " . $this->vars->tablepre . "smilies WHERE type='smiley'");
-            $smiliesnum = $db->num_rows($query);
-
-            if ($smiliesnum > 0) {
-                while($smilie = $db->fetch_array($query)) {
-                    $code = $smilie['code'];
-                    $smiliecache[$code] = $smilie['url'];
-                }
-            }
-            $db->free_result($query);
-
-            $query = $db->query("SELECT find, replace1 FROM " . $this->vars->tablepre . "words");
-            $wordsnum = $db->num_rows($query);
-            if ($wordsnum > 0) {
-                while($word = $db->fetch_array($query)) {
-                    $find = $word['find'];
-                    $censorcache[$find] = $word['replace1'];
-                }
-            }
-            $db->free_result($query);
-
-            $cached = true;
-            return true;
+        foreach ($smilies as $smilie) {
+            $this->smiliecache[$smilie['code']] = $smilie['url'];
         }
 
-        return false;
+        $censors = $sql->getCensors();
+        $this->wordsnum = count($censors);
+
+        foreach ($censors as $censor) {
+            $this->censorcache[$censor['find']] = $censor['replace1'];
+        }
+
+        $this->smilieCacheStatus = true;
+    }
+
+    /**
+     * Check if the smilie list has anything.
+     *
+     * @since 1.10.00
+     * @return bool
+     */
+    public function isAnySmilieInstalled(): bool
+    {
+        if (! $this->smilieCacheStatus) $this->smcwcache();
+        
+        return $this->smiliesnum > 0;
     }
 
     /**
@@ -1133,19 +1146,19 @@ class Core
     /**
      * @since 1.9.1
      */
-    function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER)
+    function redirect(string $path, int $timeout = 2, $type = X_REDIRECT_HEADER)
     {
         if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
-            error('Tried to redirect to potentially insecure url.');
+            throw new InvalidArgumentException('Tried to redirect to potentially insecure url.');
         }
 
         if (headers_sent() || $type == X_REDIRECT_JS) {
             ?>
             <script language="javascript" type="text/javascript">
             function redirect() {
-                window.location.replace("<?php echo $path?>");
+                window.location.replace("<?= $path ?>");
             }
-            setTimeout("redirect();", <?php echo ($timeout*1000)?>);
+            setTimeout("redirect();", <?= $timeout * 1000 ?>);
             </script>
             <?php
         } else {
@@ -1157,8 +1170,6 @@ class Core
                 header("Refresh: $timeout; URL=$path");
             }
         }
-
-        return true;
     }
 
     /**
@@ -1179,58 +1190,58 @@ class Core
     }
 
     /**
+     * Display a themed error message.
+     *
      * @since 1.9.1
      */
-    function error($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
-    {
-        global $footerstuff, $navigation; // Used by nav() and end_time()
+    function error(
+        string $msg,
+        bool $showheader = true,
+        string $prepend = '',
+        string $append = '',
+        ?string $redirect = null,
+        bool $die = true,
+        bool $return_as_string = false,
+        bool $showfooter = true,
+        bool $isError = true,
+    ): string {
+        $template = $this->template;
 
-        if (isset($GLOBALS)) {
-        //    extract($GLOBALS, EXTR_SKIP);
+        $template->message = &$msg;
+
+        if ($isError) {
+            $name = 'error';
+        } else {
+            $name = 'message';
         }
-
-        $args = func_get_args();
-
-        $message = (isset($args[0]) ? $args[0] : '');
-        $showheader = (isset($args[1]) ? $args[1] : true);
-        $prepend = (isset($args[2]) ? $args[2] : '');
-        $append = (isset($args[3]) ? $args[3] : '');
-        $redirect = (isset($args[4]) ? $args[4] : false);
-        $die = (isset($args[5]) ? $args[5] : true);
-        $return_str = (isset($args[6]) ? $args[6] : false);
-        $showfooter = (isset($args[7]) ? $args[7] : true);
-
-        $header = $footer = $return = '';
 
         if ($showheader) {
-            nav($lang['error']);
+            nav($this->vars->lang[$name]);
         }
 
-        end_time();
-
-        if ($redirect !== false) {
-            redirect($redirect, 3);
+        if (is_string($redirect)) {
+            $this->redirect($redirect, timeout: 3);
         }
 
-        if ($showheader === false) {
-            $header = '';
+        if ($showheader) {
+            $template->header = $template->process('header.php');
         } else {
-            eval('$header = "'.template('header').'";');
+            $template->header = '';
         }
 
-        $error = '';
-        eval('$error = "'.template('error').'";');
+        $error = $template->process($name . '.php');
 
-        if ($showfooter === true) {
-            eval('$footer = "'.template('footer').'";');
+        if ($showfooter) {
+            $template->footerstuff = $this->end_time();
+            $footer = $template->process('footer.php');
         } else {
             $footer = '';
         }
 
-        if ($return_str !== false) {
+        if ($return_as_string) {
             $return = $prepend . $error . $append . $footer;
         } else {
-            echo $prepend . $error . $append . $footer;
+            echo $prepend, $error, $append, $footer;
             $return = '';
         }
 
@@ -1242,66 +1253,23 @@ class Core
     }
 
     /**
+     * Displays a themed message.
+     *
+     * This helper method is now an alias of error($msg, isError: false).
+     *
      * @since 1.9.8
      */
-    function message($msg, $showheader=true, $prepend='', $append='', $redirect=false, $die=true, $return_as_string=false, $showfooter=true)
-    {
-        global $footerstuff, $navigation; // Used by nav() and end_time()
-
-        if (isset($GLOBALS)) {
-        //    extract($GLOBALS, EXTR_SKIP);
-        }
-
-        $args = func_get_args();
-
-        $message = (isset($args[0]) ? $args[0] : '');
-        $showheader = (isset($args[1]) ? $args[1] : true);
-        $prepend = (isset($args[2]) ? $args[2] : '');
-        $append = (isset($args[3]) ? $args[3] : '');
-        $redirect = (isset($args[4]) ? $args[4] : false);
-        $die = (isset($args[5]) ? $args[5] : true);
-        $return_str = (isset($args[6]) ? $args[6] : false);
-        $showfooter = (isset($args[7]) ? $args[7] : true);
-
-        $header = $footer = $return = '';
-
-        if ($showheader) {
-            nav($lang['message']);
-        }
-
-        end_time();
-
-        if ($redirect !== false) {
-            redirect($redirect, 3);
-        }
-
-        if ($showheader === false) {
-            $header = '';
-        } else {
-            eval('$header = "'.template('header').'";');
-        }
-
-        $success = '';
-        eval('$success = "'.template('message').'";');
-
-        if ($showfooter === true) {
-            eval('$footer = "'.template('footer').'";');
-        } else {
-            $footer = '';
-        }
-
-        if ($return_str !== false) {
-            $return = $prepend . $success . $append . $footer;
-        } else {
-            echo $prepend . $success . $append . $footer;
-            $return = '';
-        }
-
-        if ($die) {
-            exit();
-        }
-
-        return $return;
+    function message(
+        string $msg,
+        bool $showheader = true,
+        string $prepend = '',
+        string $append = '',
+        ?string $redirect = null,
+        bool $die = true,
+        bool $return_as_string = false,
+        bool $showfooter = true
+    ): string {
+        return $this->error($msg, $showheader, $prepend, $append, $redirect, $die, $return_as_string, $showfooter, isError: false);
     }
 
     /**
@@ -1560,30 +1528,18 @@ class Core
     }
 
     /**
-     * Creates a db query result containing all active forums and forum categories.
-     *
-     * Important: The return value is passed by reference.  There is only one query object.  This cannot be used in nested functions.
+     * Provides an array containing all active forums and forum categories.
      *
      * @since 1.9.11
-     * @return object
+     * @return array
      */
     function forumCache()
     {
-        static $cache = FALSE;
-
-        $db = $this->db;
-
-        if ($cache === FALSE) {
-            $cache = $db->query("SELECT f.* FROM " . $this->vars->tablepre . "forums f WHERE f.status='on' ORDER BY f.displayorder ASC");
+        if (! $this->$forumCacheStatus) {
+            $this->forumcache = $this->sql->getForums();
         }
 
-        if ($cache !== FALSE) {
-            if ($db->num_rows($cache) > 0) {
-                $db->data_seek($cache, 0);  // Restores the pointer for fetch_array().
-            }
-        }
-
-        return $cache;
+        return $this->forumcache;
     }
 
     /**
@@ -1591,17 +1547,13 @@ class Core
      *
      * @since 1.9.11
      */
-    function getForum($fid)
+    function getForum(int $fid): ?array
     {
-        $db = $this->db;
-
-        $forums = $this->forumCache();
-        while($forum = $db->fetch_array($forums)) {
-            if (intval($forum['fid']) == intval($fid)) {
-                return $forum;
-            }
+        if (isset($this->forumcache[$fid])) {
+            return $this->forumcache[$fid];
+        } else {
+            return null;
         }
-        return FALSE;
     }
 
     /**
@@ -1620,18 +1572,14 @@ class Core
      * @param bool $usePerms If TRUE then not all forums are returned, only visible forums.
      * @return array
      */
-    function getStructuredForums($usePerms = false)
+    function getStructuredForums(bool $usePerms = false): array
     {
         $db = $this->db;
 
         if ($usePerms) {
-            $forums = $this->permittedForums($this->forumCache(), 'forum');
+            $forums = $this->permittedForums('forum', 'array');
         } else {
-            $forums = array();
-            $query = $this->forumCache();
-            while($forum = $db->fetch_array($query)) {
-                $forums[] = $forum;
-            }
+            $forums = &$this->forumcache;
         }
 
         // This function guarantees the following subscripts exist, regardless of forum count.
@@ -1659,16 +1607,14 @@ class Core
      * @param bool $user_status Optional masquerade value passed to checkForumPermissions().
      * @return array
      */
-    function permittedForums($forums, $mode='thread', $output='array', $check_parents=TRUE, $user_status=FALSE)
+    function permittedForums(string $mode = 'thread', string $output = 'csv', bool $check_parents = true, bool $user_status = false): array
     {
-        $db = $this->db;
+        $permitted = [];
+        $fids['group'] = [];
+        $fids['forum'] = [];
+        $fids['sub'] = [];
 
-        $permitted = array();
-        $fids['group'] = array();
-        $fids['forum'] = array();
-        $fids['sub'] = array();
-
-        while($forum = $db->fetch_array($forums)) {
+        foreach ($this->forumcache as $forum) {
             $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
                 if ($forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
@@ -1852,7 +1798,7 @@ class Core
      * @param string $user_status_in Optional. Masquerade as this user status, e.g. 'Guest'
      * @return array Of bools, indexed by X_PERMS_* constants.
      */
-    function checkForumPermissions($forum, $user_status_in=FALSE)
+    function checkForumPermissions($forum, ?string $user_status_in = null)
     {
         global $status_enum;
 
@@ -1863,35 +1809,35 @@ class Core
         }
 
         // 1. Initialize $ret with zero permissions
-        $ret = array_fill(0, X_PERMS_COUNT, FALSE);
-        $ret[X_PERMS_POLL] = FALSE;
-        $ret[X_PERMS_THREAD] = FALSE;
-        $ret[X_PERMS_REPLY] = FALSE;
-        $ret[X_PERMS_VIEW] = FALSE;
-        $ret[X_PERMS_USERLIST] = FALSE;
-        $ret[X_PERMS_PASSWORD] = FALSE;
+        $ret = array_fill(0, X_PERMS_COUNT, false);
+        $ret[X_PERMS_POLL] = false;
+        $ret[X_PERMS_THREAD] = false;
+        $ret[X_PERMS_REPLY] = false;
+        $ret[X_PERMS_VIEW] = false;
+        $ret[X_PERMS_USERLIST] = false;
+        $ret[X_PERMS_PASSWORD] = false;
 
         // 2. Check Forum Postperm
         $pp = explode(',', $forum['postperm']);
         foreach($pp as $key=>$val) {
             if ((intval($val) & $user_status) != 0) {
-                $ret[$key] = TRUE;
+                $ret[$key] = true;
             }
         }
 
         // 3. Check Forum Userlist
-        if ($user_status_in === FALSE) {
+        if (is_null($user_status_in)) {
             $userlist = $forum['userlist'];
 
             if ($this->modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
-                $ret[X_PERMS_USERLIST] = TRUE;
-                $ret[X_PERMS_VIEW] = TRUE;
+                $ret[X_PERMS_USERLIST] = true;
+                $ret[X_PERMS_VIEW] = true;
             } elseif (!X_GUEST) {
                 $users = explode(',', $userlist);
                 foreach($users as $user) {
                     if (strtolower(trim($user)) === strtolower($this->vars->self['username'])) {
-                        $ret[X_PERMS_USERLIST] = TRUE;
-                        $ret[X_PERMS_VIEW] = TRUE;
+                        $ret[X_PERMS_USERLIST] = true;
+                        $ret[X_PERMS_VIEW] = true;
                         break;
                     }
                 }
@@ -1908,9 +1854,9 @@ class Core
         $ret[X_PERMS_VIEW]   = $ret[X_PERMS_RAWVIEW] || $ret[X_PERMS_USERLIST];
 
         // 6. Check Forum Password
-        $pwinput = getPhpInput('fidpw'.$forum['fid'], 'c');
+        $pwinput = getPhpInput('fidpw' . $forum['fid'], 'c');
         if ($forum['password'] == '' || $pwinput === $forum['password']) {
-            $ret[X_PERMS_PASSWORD] = TRUE;
+            $ret[X_PERMS_PASSWORD] = true;
         }
 
         return $ret;
@@ -1939,30 +1885,30 @@ class Core
     }
 
     /**
+     * Displays a forum-specific password prompt, and accepts password input.
+     *
+     * Should be called when checkForumPermissions() shows X_PERMS_PASSWORD == false and the user is trying to access the forum.
+     *
      * @since 1.9.10
      */
-    function handlePasswordDialog($fid)
+    function handlePasswordDialog(int $fid)
     {
-        global $full_url, $url, $THEME, $lang;
-        
-        $db = $this->db;
-
-        $fid = intval($fid);
         $pwinput = getPhpInput('pw');
 
-        $forum = getForum($fid);
-        if (strlen($pwinput) != 0 && $forum !== FALSE) {
+        $forum = $this->getForum($fid);
+        if (strlen($pwinput) != 0 && $forum !== null) {
             if ($pwinput === $forum['password']) {
-                put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
-                $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-                redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
+                $this->put_cookie('fidpw' . $fid, $forum['password'], time() + (86400*30));
+                $newurl = preg_replace('/[^\x20-\x7e]/', '', $this->vars->url);
+                $this->redirect($this->vars->full_url . substr($newurl, strlen($this->vars->cookiepath)), timeout: 0);
             } else {
-                eval('$pwform = "'.template('forumdisplay_password').'";');
-                error($lang['invalidforumpw'], true, '', $pwform, false, true, false, true);
+                $this->template->url = $this->vars->url;
+                $pwform = $this->template->process('forumdisplay_password.php');
+                $this->error($lang['invalidforumpw'], append: $pwform);
             }
         } else {
-            eval('$pwform = "'.template('forumdisplay_password').'";');
-            error($lang['forumpwinfo'], true, '', $pwform, false, true, false, true);
+            $pwform = $this->template->process('forumdisplay_password.php');
+            $this->error($lang['forumpwinfo'], append: $pwform);
         }
     }
 

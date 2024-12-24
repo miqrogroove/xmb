@@ -2053,7 +2053,6 @@ if ($action == "upgrade") {
 
 if ($action == "search") {
     if (onSubmit('searchsubmit')) {
-        smcwcache();
         $userip = postedVar('userip');
         $postip = postedVar('postip');
         $dblikeprofile = $db->like_escape(postedVar('profileword', '', TRUE, FALSE));

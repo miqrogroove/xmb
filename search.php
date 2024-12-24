@@ -36,7 +36,6 @@ loadtemplates(
 'search_results_row'
 );
 
-smcwcache();
 nav($lang['textsearch']);
 
 $misc = $multipage = $nextlink = '';
@@ -144,7 +143,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     $start = $offset;
     $pagenum = $page+1;
 
-    $forums = permittedForums(forumCache(), 'thread', 'csv');
+    $forums = permittedForums();
     $sql = "SELECT p.*, t.subject AS tsubject "
          . "FROM ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING(tid) INNER JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid "
          . "WHERE f.fid IN($forums)";

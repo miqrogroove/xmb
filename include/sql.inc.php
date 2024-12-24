@@ -1470,13 +1470,61 @@ class SQL
 
         $smilies = [];
         while($row = $this->db->fetch_array($result)) {
-            $smilies[] =& $row;
+            $smilies[] = &$row;
             unset($row);
         }
 
         $this->db->free_result($result);
 
         return $smilies;
+    }
+
+    /**
+     * Retrieve the list of censors.
+     *
+     * @since 1.10.00
+     * @return array of associative table rows.
+    */
+    public function getCensors(): array
+    {
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "words");
+
+        $words = [];
+        while($row = $this->db->fetch_array($result)) {
+            $words[] = &$row;
+            unset($row);
+        }
+
+        $this->db->free_result($result);
+
+        return $words;
+    }
+
+    /**
+     * Retrieve the list of forums.
+     *
+     * @since 1.10.00
+     * @return array of associative table rows.
+    */
+    public function getForums(bool $activeOnly = true): array
+    {
+        if ($activeOnly) {
+            $where = "WHERE status = 'on'";
+        } else {
+            $where = '';
+        }
+        
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "forums $where ORDER BY displayorder ASC");
+
+        $forums = [];
+        while($row = $this->db->fetch_array($result)) {
+            $forums[(int) $row['fid']] = &$row;
+            unset($row);
+        }
+
+        $this->db->free_result($result);
+
+        return $forums;
     }
 
     /**

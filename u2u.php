@@ -54,8 +54,6 @@ loadtemplates(
 'css'
 );
 
-smcwcache();
-
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 $sendmode = ($action == 'send') ? "true" : "false";
 

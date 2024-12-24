@@ -95,6 +95,6 @@ switch($page) {
 }
 
 $header = $template->process('header.php');
-$core->end_time();
+$template->footerstuff = $core->end_time();
 $footer = $template->process('footer.php');
 echo $header, $faq, $footer;

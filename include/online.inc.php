@@ -29,7 +29,7 @@ function url_to_text($url)
     static $restrict = '';
 
     if ($restrict == '') {
-        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        $fids = permittedForums();
         if (strlen($fids) == 0) {
             $restrict = ' FALSE';
         } else {

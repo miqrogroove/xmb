@@ -30,8 +30,6 @@ nav($lang['altstats']);
 
 loadtemplates('feature_statistics');
 
-smcwcache();
-
 if ($SETTINGS['stats'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
     error($lang['fnasorry3'], TRUE);
@@ -40,7 +38,7 @@ if ($SETTINGS['stats'] == 'off') {
 setCanonicalLink('stats.php');
 eval('$header = "'.template('header').'";');
 
-$fids = permittedForums(forumCache(), 'thread', 'csv');
+$fids = permittedForums();
 if (strlen($fids) == 0) {
     $restrict = ' FALSE';
 } else {

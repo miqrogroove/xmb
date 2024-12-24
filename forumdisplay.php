@@ -26,73 +26,72 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use function XMB\Services\sql;
-use function XMB\Services\vars;
-
 require './header.php';
 
+$core = \XMB\Services\core();
 $sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
+$lang = &$vars->lang;
+$SETTINGS = &$vars->settings;
 
-smcwcache();
-
-$hottopic = str_replace('$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval']);
+$template->hottopic = str_replace('$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval']);
 
 $fid = getInt('fid');
 
-$forum = getForum($fid);
+$forum = $core->getForum($fid);
 
 if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
-    error($lang['textnoforum']);
+    $core->error($lang['textnoforum']);
 }
 
-$perms = checkForumPermissions($forum);
-if (!$perms[X_PERMS_VIEW]) {
+$perms = $core->checkForumPermissions($forum);
+if (! $perms[X_PERMS_VIEW]) {
     if (X_GUEST) {
-        redirect("{$full_url}misc.php?action=login", 0);
+        $core->redirect("{$full_url}misc.php?action=login", 0);
         exit;
     } else {
-        error($lang['privforummsg']);
+        $core->error($lang['privforummsg']);
     }
-} else if (!$perms[X_PERMS_PASSWORD]) {
-    handlePasswordDialog($fid);
+} else if (! $perms[X_PERMS_PASSWORD]) {
+    $core->handlePasswordDialog($fid);
 }
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = getForum($forum['fup']);
+    $fup = $core->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    $fupPerms = $core->checkForumPermissions($fup);
+    if (! $fupPerms[X_PERMS_VIEW]) {
         if (X_GUEST) {
-            redirect("{$full_url}misc.php?action=login", 0);
+            $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
             exit;
         } else {
-            error($lang['privforummsg']);
+            $core->error($lang['privforummsg']);
         }
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
-        handlePasswordDialog($fup['fid']);
+    } else if (! $fupPerms[X_PERMS_PASSWORD]) {
+        $core->handlePasswordDialog((int) $fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = getForum($fup['fup']);
-        nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
+        $fupup = $core->getForum((int) $fup['fup']);
+        $core->nav('<a href="index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
         unset($fupup);
     }
-    nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    $core->nav('<a href="forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = getForum($forum['fup']);
-    nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
+    $fup = $core->getForum((int) $forum['fup']);
+    $core->nav('<a href="index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 }
-nav(fnameOut($forum['name']));
+$core->nav(fnameOut($forum['name']));
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.fnameOut($forum['name']);
+    $threadSubject = '- ' . fnameOut($forum['name']);
 }
 
 // Search-link
-$searchlink = makeSearchLink($forum['fid']);
+$searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 validateTpp();
 validatePpp();
@@ -121,30 +120,36 @@ if ($perms[X_PERMS_THREAD]) {
 }
 
 $index_subforums = array();
-$subforums = '';
+$template->subforums = '';
 if ($forum['type'] == 'forum') {
-    $forumlist = '';
-    $permitted = permittedForums(forumCache(), 'forum');
+    $template->forumlist = '';
+    $permitted = $core->permittedForums('forum', 'array');
     foreach($permitted as $sub) {
         if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
-            $forumlist .= forum($sub, "forumdisplay_subforum", $index_subforums);
+            $template->forumlist .= forum($sub, 'forumdisplay_subforum', $index_subforums);
         }
     }
-    if ($forumlist != '') {
-        eval('$subforums .= "'.template('forumdisplay_subforums').'";');
+    if ($template->forumlist != '') {
+        $template->subforums .= $template->process('forumdisplay_subforums.php');
     }
 }
 
 if (X_MEMBER && 'yes' == $self['waiting_for_mod']) {
     $quarantine = true;
-    $result = sql()->countThreadsByUser($self['username'], $fid, $quarantine);
+    $result = $sql->countThreadsByUser($self['username'], $fid, $quarantine);
     if ($result > 0) {
         if (1 == $result) {
             $msg = $lang['moderation_threads_single'];
         } else {
             $msg = str_replace('$result', $result, $lang['moderation_threads_eval']);
         }
-        $subforums .= message($msg, false, '', '', false, false, true, false) . "<br />\n";
+        $subforums .= $core->message(
+            msg: $msg,
+            showheader: false,
+            die: false,
+            return_as_string: true,
+            showfooter: false,
+        ) . "<br />\n";
     }
 }
 
@@ -154,7 +159,7 @@ switch($t_extension) {
     case 'jpg':
     case 'jpeg':
     case 'png':
-        $lang['toppedprefix'] = '<img src="'.$imgdir.'/'.$lang['toppedprefix'].'" alt="'.$lang['toppedpost'].'" border="0" />';
+        $lang['toppedprefix'] = '<img src="' . $vars->theme['imgdir'] . '/'.$lang['toppedprefix'].'" alt="'.$lang['toppedpost'].'" border="0" />';
         break;
 }
 
@@ -164,13 +169,13 @@ switch($p_extension) {
     case 'jpg':
     case 'jpeg':
     case 'png':
-        $lang['pollprefix'] = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
+        $lang['pollprefix'] = '<img src="' . $vars->theme['imgdir'] . '/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
         break;
 }
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
-    $cusdate = vars()->onlinetime - $cusdate;
+    $cusdate = $vars->onlinetime - $cusdate;
     $cusdate = "AND lastpost > '$cusdate'";
 } else {
     $cusdate = '';
@@ -296,7 +301,7 @@ while($thread = $db->fetch_array($querytop)) {
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
     if ($thread['closed'] == 'yes') {
-        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+        $folder = '<img src="' . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
     } else {
         if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
             $folder = 'hot_folder.gif';
@@ -305,7 +310,7 @@ while($thread = $db->fetch_array($querytop)) {
         }
 
         $oT = strpos($oldtopics, "|$lastPid|");
-        if (vars()->lastvisit < $dalast && $oT === false) {
+        if ($vars->lastvisit < $dalast && $oT === false) {
             if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = "hot_red_folder.gif";
             } else {
@@ -317,7 +322,7 @@ while($thread = $db->fetch_array($querytop)) {
             $folder = 'dot_'.$folder;
         }
 
-        $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
+        $folder = '<img src="' . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
     $lastreplydate = gmdate($dateformat, $lastpost[0] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
@@ -332,7 +337,7 @@ while($thread = $db->fetch_array($querytop)) {
         $thread['tid'] = $moved[1];
         $thread['replies'] = "-";
         $thread['views'] = "-";
-        $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+        $folder = '<img src="' . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
         $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE tid='$thread[tid]'");
         $postnum = 0;
         if ($query !== false) {

@@ -122,8 +122,6 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
     error($lang['textnoforum']);
 }
 
-smcwcache();
-
 if ($tid > 0) {
     $query = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
     if ($db->num_rows($query) != 1) {

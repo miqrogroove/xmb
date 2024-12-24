@@ -60,8 +60,6 @@ loadtemplates(
 'timezone_control'
 );
 
-smcwcache();
-
 $buddys = array();
 $favs = '';
 $footer = '';
@@ -530,7 +528,7 @@ if ($action == 'profile') {
     if (!$favadd && noSubmit('favsubmit')) {
         $favnum = 0;
         $favs = '';
-        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        $fids = permittedForums();
         if (strlen($fids) != 0) {
             $query = $db->query(
                 "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies, r.uid AS lastauthor
@@ -804,7 +802,7 @@ if ($action == 'profile') {
 
     $favnum = 0;
     $favs = '';
-    $fids = permittedForums(forumCache(), 'thread', 'csv');
+    $fids = permittedForums();
     if (strlen($fids) != 0) {
         $query2 = $db->query(
             "SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies, r.uid AS lastauthor

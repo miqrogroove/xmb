@@ -35,8 +35,6 @@ if (X_GUEST) {
 
 $onlinetime = vars()->onlinetime;
 
-smcwcache();
-
 $tids = array_unique(postedArray('tid', 'int', '', FALSE, FALSE, FALSE, 'r'));
 $fid = getInt('fid', 'p');
 if ($fid == 0) {

@@ -34,8 +34,6 @@ loadtemplates(
 'today_multipage'
 );
 
-smcwcache();
-
 nav($lang['navtodaysposts']);
 
 if ($SETTINGS['todaysposts'] == 'off') {
@@ -50,7 +48,7 @@ if ($daysold < 1) {
 $srchfrom = vars()->onlinetime - (86400 * $daysold);
 
 $tids = array();
-$fids = permittedForums(forumCache(), 'thread', 'csv');
+$fids = permittedForums();
 
 if (strlen($fids) == 0) {
     $threadcount = 0;

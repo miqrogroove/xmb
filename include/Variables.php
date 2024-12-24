@@ -33,7 +33,6 @@ class Variables
     const string cheHTML = 'checked="checked"';
     const string selHTML = 'selected="selected"';
 
-    public array $censorcache = [];
     public array $lang = [];
     public array $mailer = [];
     public array $plugadmin = [];
@@ -42,7 +41,6 @@ class Variables
     public array $plugurl = [];
     public array $self = [];
     public array $settings = [];
-    public array $smiliecache = [];
     public array $theme = [];
 
     public string $charset = '';

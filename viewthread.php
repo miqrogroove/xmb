@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\core;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
@@ -165,8 +166,6 @@ loadtemplates(
 'viewthread_multipage'
 );
 
-smcwcache();
-
 $posts = '';
 
 $query = $db->query("SELECT t.*, COUNT(*) AS postcount FROM ".X_PREFIX."threads AS t LEFT JOIN ".X_PREFIX."posts USING (tid) WHERE t.tid=$tid GROUP BY t.tid");
@@ -308,7 +307,7 @@ if ($action == '') {
                 }
             }
 
-            if ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes' && $smiliesnum > 0) {
+            if ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes' && core()->isAnySmilieInstalled()) {
                 eval('$quickbbcode = "'.template('functions_bbcode_quickreply').'";');
 
                 $smilies = '<div align="center"><hr /><table border="0"><tr>';

@@ -47,8 +47,6 @@ loadtemplates(
 'timezone_control'
 );
 
-smcwcache();
-
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'reg':
@@ -815,7 +813,7 @@ switch($action) {
         }
 
         // Forum most active in
-        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        $fids = permittedForums();
         if (strlen($fids) > 0) {
             $query = $db->query(
                 "SELECT fid, COUNT(*) AS posts

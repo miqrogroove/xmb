@@ -58,8 +58,6 @@ loadtemplates(
 'popup_header'
 );
 
-smcwcache();
-
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 switch($action) {
     case 'login':
