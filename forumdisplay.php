@@ -183,10 +183,10 @@ switch($p_extension) {
 
 $cusdate = formInt('cusdate');
 if ($cusdate) {
-    $cusdate = $onlinetime - $cusdate;
-    $cusdate = "AND lastpost > '$cusdate'";
+    $cusdateval = $onlinetime - $cusdate;
+    $cusdatesql = "AND lastpost > '$cusdateval'";
 } else {
-    $cusdate = '';
+    $cusdatesql = '';
 }
 
 $ascdesc = postedVar('ascdesc', '', FALSE, FALSE);
@@ -244,7 +244,7 @@ $querytop = $db->query(
      FROM ".X_PREFIX."threads AS t
      LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
      LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
-     WHERE t.fid=$fid $criteria $cusdate
+     WHERE t.fid=$fid $criteria $cusdatesql
      ORDER BY topped $ascdesc, lastpost $ascdesc
      LIMIT $offset $tpp"
 );
