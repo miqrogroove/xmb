@@ -382,7 +382,7 @@ function template($name) {
     // PHP will not strip slashes from mismatched quotes so we have to do it here first e.g. "Not \' Good"
     $template = str_replace("\\'","'", $template);
 
-    if ($name != 'phpinclude' && $comment_output === true) {
+    if ($comment_output === true) {
         return "<!--Begin Template: $name -->\n$template\n<!-- End Template: $name -->";
     } else {
         return $template;
