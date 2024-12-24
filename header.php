@@ -22,21 +22,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\{
-    attach,
-    bbcode,
-    core,
-    db,
-    debug,
-    forums,
-    login,
-    session,
-    sql,
-    template,
-    theme,
-    observer,
-    vars,
-};
+declare(strict_types=1);
+
+namespace XMB\Services;
 
 /* Front Matter */
 
