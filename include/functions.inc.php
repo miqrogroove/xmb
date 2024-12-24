@@ -1484,25 +1484,6 @@ class Core
     }
 
     /**
-     * @since 1.9.3
-     */
-    public function shortenString($string, $len=100, $shortType=X_SHORTEN_SOFT, $ps='...')
-    {
-        if (strlen($string) > $len) {
-            if (($shortType & X_SHORTEN_SOFT) === X_SHORTEN_SOFT) {
-                $string = preg_replace('#^(.{0,'.$len.'})([\W].*)#', '\1'.$ps, $string);
-            }
-
-            if ((strlen($string) > $len+strlen($ps)) && (($shortType & X_SHORTEN_HARD) === X_SHORTEN_HARD)) {
-                $string = substr($string, 0, $len).$ps;
-            }
-            return $string;
-        } else {
-            return $string;
-        }
-    }
-
-    /**
      * @since 1.9.8 SP2
      *
      * This function is recursive.  Why?

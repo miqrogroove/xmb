@@ -22,33 +22,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
-define('X_SCRIPT', 'forumdisplay.php');
+require './header.php';
 
-require 'header.php';
-
-loadtemplates(
-'forumdisplay',
-'forumdisplay_admin',
-'forumdisplay_sortby',
-'forumdisplay_multipage',
-'forumdisplay_multipage_admin',
-'forumdisplay_multipage_admin3',
-'forumdisplay_newpoll',
-'forumdisplay_newtopic',
-'forumdisplay_nothreads',
-'forumdisplay_nothreads_admin',
-'forumdisplay_password',
-'forumdisplay_subforum',
-'forumdisplay_subforum_lastpost',
-'forumdisplay_subforum_nolastpost',
-'forumdisplay_subforums',
-'forumdisplay_thread',
-'forumdisplay_thread_admin',
-'forumdisplay_thread_lastpost'
-);
+$sql = \XMB\Services\sql();
+$vars = \XMB\Services\vars();
 
 smcwcache();
 
@@ -288,7 +272,7 @@ while($thread = $db->fetch_array($querytop)) {
         $topimage = '<img src="'.$admdir.'/top.gif" alt="'.$lang['alttopthread'].'" border="0" />';
     }
 
-    $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
 
     if ($thread['author'] == 'Anonymous') {
         $authorlink = $lang['textanonymous'];

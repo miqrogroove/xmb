@@ -128,7 +128,7 @@ case 'viewuser':
             $tid = $thread['tid'];
             $fid = $thread['fid'];
             $forum = getForum($fid);
-            $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+            $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvethread&amp;tid=$tid' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletethread&amp;tid=$tid' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
@@ -368,7 +368,7 @@ case 'viewuser':
                 $result2 = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
                 $thread = $db->fetch_array($result2);
                 $db->free_result($result2);
-                $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+                $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
                 echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"$tablewidth\" align=\"center\">\n";
                 echo "<tr><td bgcolor=\"$bordercolor\">\n";
                 echo "<table border=\"0\" cellspacing=\"{$THEME['borderwidth']}\" cellpadding=\"$tablespace\" width=\"100%\">\n";

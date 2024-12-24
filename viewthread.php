@@ -195,7 +195,7 @@ if (strpos($thread['closed'], '|') !== false) {
     }
 }
 
-$thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+$thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
 
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 $expire = vars()->onlinetime + X_ONLINE_TIMER;

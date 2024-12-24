@@ -214,3 +214,36 @@ function null_string(?string &$var)
 {
     $var ??= '';
 }
+
+/**
+ * Truncate overlong strings
+ *
+ * @since 1.9.3
+ * @param string $string
+ * @param int $len
+ * @param string $shortType When 'soft', truncates only if there are words shorter than $len. When 'hard', anything longer than $len will be truncated. Use 'both' when able.
+ * @param string $ps This will be appended if the string is truncated.
+ */
+public function shortenString(string $string, int $len = 125, string $shortType = 'both', string $ps = '...'): string
+{
+    if (strlen($string) > $len) {
+        $modified = false;
+        $newlen = $len - strlen($ps);
+
+        if ($shortType == 'soft' || $shortType == 'both') {
+            $matches = [];
+            if (1 === preg_match('#^(.{0,' . $newlen . '})\\W#', $string, $matches)) {
+                $string = $matches[1];
+                $modified = true;
+            }
+        }
+
+        if (! $modified && ($shortType == 'hard' || $shortType == 'both')) {
+            $string = substr($string, 0, $newlen);
+            $modified = true;
+        }
+
+        if ($modified) $string .= $ps;
+    }
+    return $string;
+}

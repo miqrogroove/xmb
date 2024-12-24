@@ -107,7 +107,7 @@ if ($forum['type'] == 'sub') {
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 if ($tid > 0) {
-    $subject = shortenString(rawHTMLsubject(stripslashes($forum['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+    $subject = shortenString(rawHTMLsubject(stripslashes($forum['subject'])));
     nav('<a href="viewthread.php?tid='.$tid.'">'.$subject.'</a>');
     unset($subject);
 }

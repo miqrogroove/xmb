@@ -130,7 +130,7 @@ if ($threadcount == 0) {
     $today_row = array();
     $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
-        $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])), 125, X_SHORTEN_SOFT|X_SHORTEN_HARD, '...');
+        $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
         $forum = getForum($thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 

@@ -55,8 +55,6 @@ define('X_NONCE_MAX_AGE', 86400); // CAPTCHA expiration, in seconds.
 define('X_NONCE_KEY_LEN', 12); // Size of captchaimages.imagestring.
 define('X_REDIRECT_HEADER', 1);
 define('X_REDIRECT_JS', 2);
-define('X_SHORTEN_SOFT', 1);
-define('X_SHORTEN_HARD', 2);
 // permissions constants
 define('X_PERMS_COUNT', 4); //Number of raw bit sets stored in postperm setting.
 // indexes used in permissions arrays
