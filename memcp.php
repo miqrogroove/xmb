@@ -538,7 +538,6 @@ if ($action == 'profile') {
                  WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids)
                  ORDER BY t.lastpost DESC"
             );
-            $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
             while($fav = $db->fetch_array($query)) {
                 $forum = getForum($fav['fid']);
                 $forum['name'] = fnameOut($forum['name']);
@@ -551,8 +550,8 @@ if ($action == 'profile') {
                     $lastpostname = $lang['textanonymous'];
                 }
 
-                $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-                $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+                $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
+                $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
                 $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
                 $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -619,7 +618,6 @@ if ($action == 'profile') {
         );
         $subnum = 0;
         $subscriptions = '';
-        $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         while($fav = $db->fetch_array($query)) {
             $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
@@ -632,8 +630,8 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-            $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+            $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
+            $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -709,7 +707,7 @@ if ($action == 'profile') {
         }
         foreach ($list as $device) {
             $did = $device['token'];
-            $time = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600) + (int) $device['login_date'];
+            $time = core()->timeKludge((int) $device['login_date']);
             $dlogin = gmdate($dateformat, $time).' '.$lang['textat'].' '.gmdate($timecode, $time);
             $dagent = parse_user_agent($device['agent']);
             if ($device['current']) {
@@ -776,10 +774,9 @@ if ($action == 'profile') {
     $u2uquery = $db->query("SELECT * FROM ".X_PREFIX."u2u WHERE owner='$xmbuser' AND folder='Inbox' ORDER BY dateline DESC LIMIT 0, 5");
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
-    $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($message = $db->fetch_array($u2uquery)) {
-        $postdate = gmdate($dateformat, $message['dateline'] + $tmOffset);
-        $posttime = gmdate($timecode, $message['dateline'] + $tmOffset);
+        $postdate = gmdate($dateformat, core()->timeKludge((int) $message['dateline']));
+        $posttime = gmdate($timecode, core()->timeKludge((int) $message['dateline']));
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
         $message['subject'] = rawHTMLsubject(stripslashes($message['subject']));
@@ -814,7 +811,6 @@ if ($action == 'profile') {
              LIMIT 5"
         );
         $favnum = $db->num_rows($query2);
-        $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
         while($fav = $db->fetch_array($query2)) {
             $forum = getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
@@ -827,8 +823,8 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-            $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+            $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
+            $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 

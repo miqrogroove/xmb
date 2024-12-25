@@ -123,7 +123,6 @@ if ($threadcount == 0) {
     }
 
     $today_row = array();
-    $tmOffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
         $forum = getForum($thread['fid']);
@@ -147,8 +146,8 @@ if ($threadcount == 0) {
             $lastpostname = $lang['textanonymous'];
         }
 
-        $lastreplydate = gmdate($dateformat, $lastpost[0] + $tmOffset);
-        $lastreplytime = gmdate($timecode, $lastpost[0] + $tmOffset);
+        $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
+        $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
         $lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
         if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {

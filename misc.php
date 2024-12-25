@@ -241,7 +241,7 @@ switch($action) {
         $onlineusers = '';
         while($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
-            vars()->onlinetime = gmdate ($timecode, $online['time'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            vars()->onlinetime = gmdate ($timecode, core()->timeKludge((int) $online['time']));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80);
@@ -445,14 +445,12 @@ switch($action) {
 
         $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
 
-        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-
         $members = $oldst = '';
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
             while($member = $db->fetch_array($querymem)) {
-                $member['regdate'] = gmdate($dateformat, $member['regdate'] + $adjTime);
+                $member['regdate'] = gmdate($dateformat, core()->timeKludge((int) $member['regdate']));
 
                 if (X_MEMBER && $member['email'] != '' && $member['showemail'] == 'yes') {
                     eval('$email = "'.template('misc_mlist_row_email').'";');

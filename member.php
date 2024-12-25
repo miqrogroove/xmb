@@ -709,7 +709,7 @@ switch($action) {
             $ppd = $memberinfo['postnum'];
         }
 
-        $memberinfo['regdate'] = gmdate($dateformat , $memberinfo['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
+        $memberinfo['regdate'] = gmdate($dateformat, core()->timeKludge($memberinfo['regdate']));
 
         $memberinfo['site'] = format_member_site($memberinfo['site']);
         $site = $memberinfo['site'];
@@ -761,8 +761,8 @@ switch($action) {
         if (! ((int) $memberinfo['lastvisit'] > 0)) {
             $lastmembervisittext = $lang['textpendinglogin'];
         } else {
-            $lastvisitdate = gmdate($dateformat, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-            $lastvisittime = gmdate($timecode, $memberinfo['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            $lastvisitdate = gmdate($dateformat, core()->timeKludge($memberinfo['lastvisit']));
+            $lastvisittime = gmdate($timecode, core()->timeKludge($memberinfo['lastvisit']));
             $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
         }
 
@@ -854,8 +854,8 @@ switch($action) {
         if ($lpfound) {
             $post = $db->fetch_array($pq);
 
-            $lastpostdate = gmdate($dateformat, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-            $lastposttime = gmdate($timecode, $post['dateline'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+            $lastpostdate = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
+            $lastposttime = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
             $lpsubject = rawHTMLsubject(stripslashes($post['subject']));
             $lastpost = "<a href='./viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";

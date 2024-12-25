@@ -110,7 +110,6 @@ case 'viewuser':
     unset($queryranks);
 
     $thisbg = $altbg2;
-    $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 
     if ('viewuser' == $action) {
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$dbuser'");
@@ -185,8 +184,8 @@ case 'viewuser':
             } else {
                 $onlinenow = $lang['memberisoff'];
             }
-            $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
-            $time = gmdate($timecode, $post['dateline'] + $tmoffset);
+            $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
+            $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
             $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
             if ($post['icon'] != '' && file_exists($smdir.'/'.$post['icon'])) {
                 $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
@@ -254,7 +253,7 @@ case 'viewuser':
                 $rank['avatar'] = '';
             }
             if ('viewuser' == $action) {
-                $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+                $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
             } else {
                 $tharegdate = 'N/A';
             }
@@ -391,8 +390,8 @@ case 'viewuser':
             } else {
                 $onlinenow = $lang['memberisoff'];
             }
-            $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
-            $time = gmdate($timecode, $post['dateline'] + $tmoffset);
+            $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
+            $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
             $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
             if ($post['icon'] != '' && file_exists($smdir.'/'.$post['icon'])) {
                 $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
@@ -460,7 +459,7 @@ case 'viewuser':
                 $rank['avatar'] = '';
             }
             if ('viewuser' == $action) {
-                $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+                $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
             } else {
                 $tharegdate = 'N/A';
             }

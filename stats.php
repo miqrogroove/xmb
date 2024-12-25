@@ -131,11 +131,10 @@ $db->free_result($query);
 // Get last 5 posts
 $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
-$adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
 while($last = $db->fetch_array($query)) {
     $last['lastpost'] = (int) $last['lastpost'];
-    $lpdate = gmdate($dateformat, $last['lastpost'] + $adjTime);
-    $lptime = gmdate($timecode, $last['lastpost'] + $adjTime);
+    $lpdate = gmdate($dateformat, core()->timeKludge((int) $last['lastpost']));
+    $lptime = gmdate($timecode, core()->timeKludge((int) $last['lastpost']));
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
     $last['subject'] = shortenString(rawHTMLsubject(stripslashes($last['subject'])));
     $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last['subject'].'</a> ('.$thislast.')';

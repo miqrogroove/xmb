@@ -276,9 +276,9 @@ function u2u_view($u2uid, $folders)
             }
         }
 
-        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-        $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
-        $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
+        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $u2udate = gmdate($dateformat, $adjTime);
+        $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
         $u2usubject = rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
         $u2umessage = postify(stripslashes($u2u['message']), 'no', '', 'yes', 'no');
@@ -335,9 +335,9 @@ function u2u_print($u2uid, $eMail = false)
     $db->free_result($query);
 
     if ($u2u) {
-        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-        $u2udate = gmdate($dateformat, $u2u['dateline'] +  $adjTime);
-        $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
+        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $u2udate = gmdate($dateformat, $adjTime);
+        $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
         $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
         $u2umessage = postify(stripslashes($u2u['message']), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
@@ -657,9 +657,9 @@ function u2u_display($folder, $folders)
             $u2usent = $lang['textu2unotsent'];
         }
 
-        $adjTime = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
-        $u2udate = gmdate($dateformat, $u2u['dateline'] + $adjTime);
-        $u2utime = gmdate($timecode, $u2u['dateline'] + $adjTime);
+        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $u2udate = gmdate($dateformat, $adjTime);
+        $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";
         switch($u2u['type']) {
             case 'outgoing':

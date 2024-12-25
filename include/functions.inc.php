@@ -711,8 +711,8 @@ class Core
 
             $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
-            $lastpostdate = gmdate($this->vars->dateformat, intval($lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600)));
-            $lastposttime = gmdate($this->vars->timecode, intval($lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600)));
+            $lastpostdate = gmdate($this->vars->dateformat, $this->timeKludge((int) $lastpost[0]));
+            $lastposttime = gmdate($this->vars->timecode, $this->timeKludge((int) $lastpost[0]));
             $template->lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
             $template->lastpostrow = $template->process($templateName.'_lastpost.php');
         } else {
@@ -1401,6 +1401,24 @@ class Core
     }
 
     /**
+     * Takes a UTC(?) timestamp and uses the weird XMB logic to convert it to a 'local' timestamp.
+     *
+     * Although this was somewhat standardized in older versions, the code had been duplicated for every display in the system.
+     *
+     * @since 1.10.00
+     *//
+    public function timeKludge(int $timestamp): int
+    {
+        $userHours = (float) $this->vars->timeoffset;
+        $extraHours = (float) $this->vars->settings['addtime'];
+
+        $userOffset = (int) ($userHours * 3600);
+        $extraOffset = (int) ($extraHours * 3600);
+
+        return $timestamp + $userOffset + $extraOffset;
+    }
+
+    /**
      * @since 1.9.8 SP2
      *
      * This function is recursive.  Why?
@@ -1426,26 +1444,6 @@ class Core
             return printGmDate($timestamp, $startStr, $altOffset).substr($textM,0, ($f ? strlen($textM) : 3)).printGmDate($timestamp, $endStr, $altOffset);
         } else {
             return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
-        }
-    }
-
-    /**
-     * @since 1.9.8 SP2
-     *
-     * This function is unused.  Why?
-     */
-    function printGmTime($timestamp=null, $altFormat=null, $altOffset=0)
-    {
-        global $self, $SETTINGS, $timeoffset, $timecode;
-
-        if ($timestamp === null) {
-            $timestamp = time();
-        }
-
-        if ($altFormat !== null) {
-            return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
-        } else {
-            return gmdate($timecode, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
         }
     }
 

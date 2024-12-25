@@ -517,7 +517,6 @@ if ($action == '') {
         $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN ".X_PREFIX."posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
     }
 
-    $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($post = $db->fetch_array($querypost)) {
         // Perform automatic maintenance
         if ($post['type'] == 'post' && $post['fid'] !== $thread['fid']) {
@@ -541,8 +540,8 @@ if ($action == '') {
             $onlinenow = $lang['memberisoff'];
         }
 
-        $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
-        $time = gmdate($timecode, $post['dateline'] + $tmoffset);
+        $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
+        $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
 
         $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
@@ -660,7 +659,7 @@ if ($action == '') {
                 $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
             }
 
-            $tharegdate = gmdate($dateformat, $post['regdate'] + $tmoffset);
+            $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
 
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
@@ -863,10 +862,9 @@ if ($action == '') {
 
     $counter = 0;
     $posts = '';
-    $tmoffset = ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600);
     while($post = $db->fetch_array($querypost)) {
-        $date = gmdate($dateformat, $post['dateline'] + $tmoffset);
-        $time = gmdate($timecode, $post['dateline'] + $tmoffset);
+        $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
+        $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
         $poston = "$date $lang[textat] $time";
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];

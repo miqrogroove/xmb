@@ -326,8 +326,8 @@ while($thread = $db->fetch_array($querytop)) {
         $folder = '<img src="' . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
-    $lastreplydate = gmdate($vars->dateformat, $lastpost[0] + ($vars->timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-    $lastreplytime = gmdate($vars->timecode, $lastpost[0] + ($vars->timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+    $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
+    $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
 
     $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 

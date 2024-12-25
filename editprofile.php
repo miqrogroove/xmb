@@ -128,13 +128,13 @@ if (noSubmit('editsubmit')) {
         $invchecked = $cheHTML;
     }
 
-    $registerdate = gmdate($dateformat, $member['regdate'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
+    $registerdate = gmdate($dateformat, core()->timeKludge((int) $member['regdate']));
 
     if (0 == (int) $member['lastvisit']) {
         $lastlogdate = $lang['textpendinglogin'];
     } else {
-        $lastvisitdate = gmdate($dateformat, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
-        $lastvisittime = gmdate($timecode, $member['lastvisit'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+        $lastvisitdate = gmdate($dateformat, core()->timeKludge((int) $member['lastvisit']));
+        $lastvisittime = gmdate($timecode, core()->timeKludge((int) $member['lastvisit']));
         $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
@@ -143,8 +143,8 @@ if (noSubmit('editsubmit')) {
         $loginfails = $lang['textnone'];
         $loginfaildate = $lang['textnone'];
     } else {
-        $loginfaildate = gmdate($dateformat, $member['bad_login_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
-        $loginfailtime = gmdate($timecode, $member['bad_login_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+        $loginfaildate = gmdate($dateformat, core()->timeKludge((int) $member['bad_login_date']));
+        $loginfailtime = gmdate($timecode, core()->timeKludge((int) $member['bad_login_date']));
         $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
@@ -153,8 +153,8 @@ if (noSubmit('editsubmit')) {
         $sessfails = $lang['textnone'];
         $sessfaildate = $lang['textnone'];
     } else {
-        $sessfaildate = gmdate($dateformat, $member['bad_session_date'] + ($SETTINGS['addtime'] * 3600) + ($timeoffset * 3600));
-        $sessfailtime = gmdate($timecode, $member['bad_session_date'] + ($timeoffset * 3600) + ($SETTINGS['addtime'] * 3600));
+        $sessfaildate = gmdate($dateformat, core()->timeKludge((int) $member['bad_session_date']));
+        $sessfailtime = gmdate($timecode, core()->timeKludge((int) $member['bad_session_date']));
         $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 

@@ -294,7 +294,7 @@ class BootupLoader
             )) {
                 $thetime = (int) $this->vars->self['lastvisit'];
             }
-            $lastlocal = intval($thetime + ($this->vars->self['timeoffset'] * 3600) + ($this->vars->settings['addtime'] * 3600));
+            $lastlocal = $this->core->timeKludge($thetime);
             $lastdate = gmdate($this->vars->dateformat, $lastlocal);
             $lasttime = gmdate($this->vars->timecode, $lastlocal);
             $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
