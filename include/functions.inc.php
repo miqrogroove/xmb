@@ -1091,7 +1091,7 @@ class Core
         $footer_options = explode('-', $this->vars->settings['footer_options']);
 
         if (X_ADMIN && in_array('serverload', $footer_options)) {
-            $template->load = ServerLoad();
+            $template->load = $this->ServerLoad();
             if (!empty($template->load)) {
                 $footerstuff['load'] = $template->process('footer_load.php');
             } else {
@@ -1681,12 +1681,16 @@ class Core
     }
 
     /**
+     * Generates the forum quick jump HTML.
+     *
      * @since 1.9.8
      */
-    public function forumJump()
+    public function forumJump(): string
     {
+        $full_url = $this->vars->full_url;
+        
         // Initialize $forumselect
-        $forumselect = array();
+        $forumselect = [];
         $checkid = max(getInt('fid', 'r'), getInt('gid', 'r'));
 
         $forumselect[] = "<select onchange=\"if (this.options[this.selectedIndex].value) {window.location=(''+this.options[this.selectedIndex].value)}\">";
@@ -1701,11 +1705,11 @@ class Core
 
         foreach($permitted['forum']['0'] as $forum) {
             $dropselc1 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
-            $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
                 foreach($permitted['sub'][$forum['fid']] as $sub) {
                     $dropselc2 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
-                    $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                 }
             }
         }
@@ -1714,14 +1718,14 @@ class Core
             if (isset($permitted['forum'][$group['fid']])) {
                 $dropselc3 = ($checkid == $group['fid']) ? $this->vars::selHTML : '';
                 $forumselect[] = '<option value=""></option>';
-                $forumselect[] = '<option value="index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
+                $forumselect[] = '<option value="' . $full_url . 'index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
                 foreach($permitted['forum'][$group['fid']] as $forum) {
                     $dropselc4 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
-                    $forumselect[] = '<option value="forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
                         foreach($permitted['sub'][$forum['fid']] as $sub) {
                             $dropselc5 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
-                            $forumselect[] = '<option value="forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                         }
                     }
                 }

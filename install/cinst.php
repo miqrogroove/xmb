@@ -296,7 +296,7 @@ $db->query("INSERT INTO ".X_PREFIX."settings
 ('subject_in_title', 'on'),
 ('theme', '1'),
 ('tickercode', 'html'),
-('tickercontents', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"{$full_url}cp.php?action=settings\">settings</a> first.'),
+('tickercontents', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"{$full_url}admin/settings.php\">settings</a> first.'),
 ('tickerdelay', '4000'),
 ('tickerstatus', 'on'),
 ('timeformat', '12'),

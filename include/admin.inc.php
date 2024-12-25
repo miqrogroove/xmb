@@ -22,41 +22,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 declare(strict_types=1);
 
 namespace XMB;
 
 use XMB\Session\Manager as SessionMgr;
-
-use function XMB\Services\core;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
-
-/* Assert Additional Security */
-
-if (X_SADMIN) {
-    $x_error = '';
-
-    //@todo translation needed
-    if (file_exists(ROOT.'install/') && !@rmdir(ROOT.'install/')) {
-        $x_error = 'The installation files ("./install/") have been found on the server, but could not be removed automatically. Please remove them as soon as possible.';
-    }
-    if (file_exists(ROOT.'Upgrade/') && !@rmdir(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') && !@rmdir(ROOT.'upgrade/')) {
-        $x_error = 'The upgrade tool ("./upgrade/") has been found on the server, but could not be removed automatically. Please remove it as soon as possible.';
-    }
-    if (file_exists(ROOT.'upgrade.php')) {
-        $x_error = 'The upgrade tool ("./upgrade.php") has been found on the server. Please remove it as soon as possible.';
-    }
-
-    if (strlen($x_error) > 0) {
-        header('HTTP/1.0 500 Internal Server Error');
-        loadtemplates('error');
-        error($x_error);
-    }
-    unset($x_error);
-}
-
 
 /**
  * Provides generic business logic for admin activities
@@ -65,7 +35,7 @@ if (X_SADMIN) {
  */
 class admin
 {
-    public function __construct(private SessionMgr $session)
+    public function __construct(private Core $core, private SessionMgr $session, private SQL $sql, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -215,250 +185,258 @@ class admin
 
         return $nameokay;
     }
-}
 
-/**
- * The admin panel template
- *
- * @since 1.9.1
- */
-function displayAdminPanel()
-{
-    // moved to templates/admin_panel.php
-}
-
-/**
- * Provides HTML attributes for use with printsetting1().
- *
- * @since 1.9.8
- */
-function settingHTML(string $setting, string &$on, string &$off)
-{
-    $on = $off = '';
-    switch(vars()->settings[$setting]) {
-        case 'on':
-            $on = vars()::selHTML;
-            break;
-        default:
-            $off = vars()::selHTML;
-            break;
-    }
-}
-
-/**
- * On/Off drop down control.
- *
- * @since 1.5.0
- */
-function printsetting1($setname, $varname, $check1, $check2)
-{
-    global $lang, $THEME;
-
-    ?>
-    <tr class="tablerow">
-    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>">
-    <select name="<?php echo $varname?>">
-    <option value="on" <?php echo $check1?>><?php echo $lang['texton']?></option>
-    <option value="off" <?php echo $check2?>><?php echo $lang['textoff']?></option>
-    </select>
-    </td>
-    </tr>
-    <?php
-}
-
-/**
- * Single line text control.
- *
- * @since 1.5.0
- */
-function printsetting2($setname, $varname, $value, $size)
-{
-    global $THEME;
-
-    ?>
-    <tr class="tablerow">
-    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>"><input type="text" size="<?php echo $size?>" value="<?php echo $value?>" name="<?php echo $varname?>" /></td>
-    </tr>
-    <?php
-}
-
-/**
- * Drop down list or multi-select control.
- *
- * @since 1.9.1
- */
-function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi = true)
-{
-    global $THEME, $selHTML;
-
-    foreach($varnames as $key=>$val) {
-        if (isset($checked[$key]) && $checked[$key] !== true) {
-            $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
-        } else {
-            $optionlist[] = '<option value="'.$values[$key].'" '.$selHTML.'>'.$varnames[$key].'</option>';
+    /**
+     * Provides HTML attributes for use with printsetting1().
+     *
+     * @since 1.9.8
+     */
+    public function settingHTML(string $setting, string &$on, string &$off)
+    {
+        $on = $off = '';
+        switch($this->vars->settings[$setting]) {
+            case 'on':
+                $on = $this->vars::selHTML;
+                break;
+            default:
+                $off = $this->vars::selHTML;
+                break;
         }
     }
-    $optionlist = implode("\n", $optionlist);
-    ?>
-    <tr class="tablerow">
-    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $setname?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>"><select <?php echo ($multi ? 'multiple="multiple"' : '')?> name="<?php echo $boxname?><?php echo ($multi ? '[]' : '')?>"><?php echo $optionlist?></select></td>
-    </tr>
-    <?php
-}
 
-/**
- * Multi-line text control.
- *
- * @since 1.9.4
- */
-function printsetting4($settingDesc, $name, $value, $rows = 5, $cols = 50)
-{
-    global $THEME;
+    /**
+     * Single line text control.
+     *
+     * @since 1.5.0
+     */
+    public function printsetting2($setname, $varname, $value, $size)
+    {
+        $template = new Template($this->vars);
+        $template->addRefs();
 
-    ?>
-    <tr class="tablerow">
-    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>"><textarea rows="<?php echo $rows; ?>" name="<?php echo $name; ?>" cols="<?php echo $cols; ?>">
-<?php // Linefeed required here - Do not edit!
-    echo $value;
-    ?></textarea></td>
-    </tr>
-    <?php
-}
+        $template->setname = $setname;
+        $template->varname = $varname;
+        $template->value = $value;
+        $template->size = $size;
 
-/**
- * Table row with plain text or raw HTML instead of a specific input control.
- *
- * @since 1.9.11
- */
-function printsetting5($settingDesc, $errorMsg)
-{
-    global $THEME;
-
-    ?>
-    <tr class="tablerow">
-    <td bgcolor="<?php echo $THEME['altbg1']?>" valign="top"><?php echo $settingDesc; ?></td>
-    <td bgcolor="<?php echo $THEME['altbg2']?>"><?php echo $errorMsg; ?></td>
-    </tr>
-    <?php
-}
-
-/**
- * Take string input and save it to settings.
- *
- * @since 1.9.12
- * @param string $dbname     The name of the setting as saved in the database.
- * @param string $postname   The HTML input name.
- * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
- */
-function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
-{
-    $value = core()->postedVar($postname, '', $htmlencode, false);
-    input_custom_setting($dbname, $value);
-}
-
-/**
- * Take integer input and save it to settings.
- *
- * @since 1.9.12
- * @param string $dbname The name of the setting as saved in the database.
- * @param string $postname The HTML input name.
- */
-function input_int_setting(string $dbname, string $postname)
-{
-    $value = (string) formInt($postname);
-    input_custom_setting($dbname, $value);
-}
-
-/**
- * Take on/off input and save it to settings.
- *
- * @since 1.9.12
- * @param string $dbname The name of the setting as saved in the database.
- * @param string $postname The HTML input name.
- */
-function input_onoff_setting(string $dbname, string $postname)
-{
-    $value = formOnOff($postname);
-    input_custom_setting($dbname, $value);
-}
-
-/**
- * Take a string variable and save it to settings.
- *
- * @since 1.9.12
- * @param string $dbname The name of the setting as saved in the database.
- * @param string $value
- */
-function input_custom_setting(string $dbname, string $value)
-{
-    if (! isset(vars()->settings[$dbname])) {
-        sql()->addSetting($dbname, $value);
-    } else if vars()->settings[$dbname] !== $value) {
-        sql()->updateSetting($dbname, $value);
+        $template->process('admin_printsetting2.php', echo: true);
     }
-}
 
-function readFileAsINI($filename)
-{
-    $lines = file($filename);
-    foreach($lines as $line_num => $line) {
-        $temp = explode("=",$line);
-        if ($temp[0] != 'dummy') {
-            $key = trim($temp[0]);
-            $val = trim($temp[1]);
-            $thefile[$key] = $val;
-        }
-    }
-    return $thefile;
-}
+    /**
+     * Drop down list or multi-select control.
+     *
+     * @since 1.9.1
+     */
+    public function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi = true)
+    {
+        $template = new Template($this->vars);
+        $template->addRefs();
 
-/**
- * Output an HTML table body representing the results of a database query.
- *
- * @since 1.9.1
- */
-function dump_query($resource, $header = true)
-{
-    global $altbg2, $altbg1, $db, $cattext;
-    if (!$db->error()) {
-        $count = $db->num_fields($resource);
-        if ($header) {
-            ?>
-            <tr class="category" bgcolor="<?php echo $altbg2?>" align="center">
-            <?php
-            for($i=0;$i<$count;$i++) {
-                echo '<td align="left">';
-                echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
-                echo '</td>';
+        $template->setname = $setname;
+        $template->boxname = $boxname;
+        $template->multi = $multi;
+
+        foreach($varnames as $key=>$val) {
+            if (isset($checked[$key]) && $checked[$key] !== true) {
+                $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
+            } else {
+                $optionlist[] = '<option value="'.$values[$key].'" '.$this->vars::selHTML.'>'.$varnames[$key].'</option>';
             }
-            echo '</tr>';
+        }
+        $template->optionlist = implode("\n", $optionlist);
+
+        $template->process('admin_printsetting3.php', echo: true);
+    }
+
+    /**
+     * Multi-line text control.
+     *
+     * @since 1.9.4
+     */
+    public function printsetting4($settingDesc, $name, $value, $rows = 5, $cols = 50)
+    {
+        $template = new Template($this->vars);
+        $template->addRefs();
+
+        $template->settingDesc = $settingDesc;
+        $template->name = $name;
+        $template->value = $value;
+        $template->rows = $rows;
+        $template->cols = $cols;
+
+        $template->process('admin_printsetting4.php', echo: true);
+    }
+
+    /**
+     * Table row with plain text or raw HTML instead of a specific input control.
+     *
+     * @since 1.9.11
+     */
+    public function printsetting5($settingDesc, $errorMsg)
+    {
+        $template = new Template($this->vars);
+        $template->addRefs();
+
+        $template->settingDesc = $settingDesc;
+        $template->errorMsg = $errorMsg;
+
+        $template->process('admin_printsetting5.php', echo: true);
+    }
+
+    /**
+     * Improved On/Off drop down control.
+     *
+     * @since 1.10.00
+     * @param string $description The human-readable setting description.
+     * @param string $htmlName The HTML name attribute.
+     * @param string $xmbName The XMB settings array key.
+     */
+    public function printsetting6(string $description, string $htmlName, string $xmbName)
+    {
+        $template = new Template($this->vars);
+        $template->addRefs();
+
+        $template->check1 = '';
+        $template->check2 = '';
+        $template->description = $description;
+        $template->htmlName = $htmlName;
+
+        switch($this->vars->settings[$xmbName]) {
+            case 'on':
+                $template->check1 = $this->vars::selHTML;
+                break;
+            default:
+                $template->check2 = $this->vars::selHTML;
+                break;
         }
 
-        while($a = $db->fetch_array($resource, $db::SQL_NUM)) {
-            ?>
-            <tr bgcolor="<?php echo $altbg1?>" class="ctrtablerow">
-            <?php
-            for($i=0;$i<$count;$i++) {
-                echo '<td align="left">';
+        $template->process('admin_printsetting6.php', echo: true);
+    }
 
-                if (null === $a[$i]) {
-                    echo '<em>NULL</em>';
-                } elseif (trim($a[$i]) == '') {
-                    echo '&nbsp;';
-                } else {
-                    echo nl2br(cdataOut($a[$i]));
+    /**
+     * Take string input and save it to settings.
+     *
+     * @since 1.9.12
+     * @param string $dbname     The name of the setting as saved in the database.
+     * @param string $postname   The HTML input name.
+     * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
+     */
+    public function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
+    {
+        $value = $this->core->postedVar($postname, '', $htmlencode, false);
+        $this->input_custom_setting($dbname, $value);
+    }
+
+    /**
+     * Take integer input and save it to settings.
+     *
+     * @since 1.9.12
+     * @param string $dbname The name of the setting as saved in the database.
+     * @param string $postname The HTML input name.
+     */
+    public function input_int_setting(string $dbname, string $postname)
+    {
+        $value = (string) formInt($postname);
+        $this->input_custom_setting($dbname, $value);
+    }
+
+    /**
+     * Take on/off input and save it to settings.
+     *
+     * @since 1.9.12
+     * @param string $dbname The name of the setting as saved in the database.
+     * @param string $postname The HTML input name.
+     */
+    public function input_onoff_setting(string $dbname, string $postname)
+    {
+        $value = formOnOff($postname);
+        $this->input_custom_setting($dbname, $value);
+    }
+
+    /**
+     * Take a string variable and save it to settings.
+     *
+     * @since 1.9.12
+     * @param string $dbname The name of the setting as saved in the database.
+     * @param string $value
+     */
+    public function input_custom_setting(string $dbname, string $value)
+    {
+        if (! isset($this->vars->settings[$dbname])) {
+            $this->sql->addSetting($dbname, $value);
+        } elseif ($this->vars->settings[$dbname] !== $value) {
+            $this->sql->updateSetting($dbname, $value);
+        }
+    }
+
+    /**
+     * Read a theme / template file into an array
+     *
+     * Takes a theme or template and imports the contents into an array
+     *
+     * Function taken from a phpBB hack with permission
+     *
+     * @since 1.5
+     * @param string $filename File to read, should be a sanitized name
+     * @return array An array of (key,value) tuples
+     */
+    public function readFileAsINI(string $filename): array
+    {
+        $thefile = [];
+        $lines = file($filename);
+        foreach($lines as $line_num => $line) {
+            $temp = explode("=", $line);
+            if ($temp[0] != 'dummy') {
+                $key = trim($temp[0]);
+                $val = trim($temp[1]);
+                $thefile[$key] = $val;
+            }
+        }
+        return $thefile;
+    }
+
+    /**
+     * Output an HTML table body representing the results of a database query.
+     *
+     * @since 1.9.1
+     */
+    public function dump_query($resource, $header = true)
+    {
+        global $altbg2, $altbg1, $db, $cattext;
+        if (!$db->error()) {
+            $count = $db->num_fields($resource);
+            if ($header) {
+                ?>
+                <tr class="category" bgcolor="<?= $THEME['altbg2'] ?>" align="center">
+                <?php
+                for($i=0;$i<$count;$i++) {
+                    echo '<td align="left">';
+                    echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
+                    echo '</td>';
                 }
-                echo '</td>';
+                echo '</tr>';
             }
-            echo '</tr>';
+
+            while($a = $db->fetch_array($resource, $db::SQL_NUM)) {
+                ?>
+                <tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
+                <?php
+                for($i=0;$i<$count;$i++) {
+                    echo '<td align="left">';
+
+                    if (null === $a[$i]) {
+                        echo '<em>NULL</em>';
+                    } elseif (trim($a[$i]) == '') {
+                        echo '&nbsp;';
+                    } else {
+                        echo nl2br(cdataOut($a[$i]));
+                    }
+                    echo '</td>';
+                }
+                echo '</tr>';
+            }
+        } else {
+            error($db->error());
         }
-    } else {
-        error($db->error());
     }
 }
-
-return;

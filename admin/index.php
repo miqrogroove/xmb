@@ -48,10 +48,33 @@ if (!X_ADMIN) {
     exit();
 }
 
-$panel = $template->process('admin_table.php') . $template->process('admin_panel.php');
+/* Assert Additional Security */
 
-$close = '</table></td></tr></table>';
+if (X_SADMIN) {
+    $x_error = '';
+
+    if (file_exists(ROOT.'install/') && !@rmdir(ROOT.'install/')) {
+        $x_error = $lang['admin_found_install'];
+    }
+    if (file_exists(ROOT.'Upgrade/') && !@rmdir(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') && !@rmdir(ROOT.'upgrade/')) {
+        $x_error = $lang['admin_found_updir'];
+    }
+    if (file_exists(ROOT.'upgrade.php')) {
+        $x_error = $lang['admin_found_upfile'];
+    }
+
+    if (strlen($x_error) > 0) {
+        header('HTTP/1.0 500 Internal Server Error');
+        $core->error($x_error);
+    }
+    unset($x_error);
+}
+
+$table = $template->process('admin_table.php');
+$panel = $template->process('admin_panel.php');
+$endTable = $template->process('admin_table_end.php');
+
 $template->footerstuff = $core->end_time();
 $footer = $template->process('footer.php');
 
-echo $header, $panel, $close, $footer;
+echo $header, $table, $panel, $endTable, $footer;

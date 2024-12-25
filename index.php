@@ -284,6 +284,13 @@ if ($gid == 0) {
 
 $fquery = $core->getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
+if ($SETTINGS['catsonly'] == 'on' && count($fquery) == 0) {
+    // The admin has chosen to show categories only, but no existing categories are turned on.  Let's avoid this.
+    $sql->updateSetting('catsonly', 'off');
+    $SETTINGS['catsonly'] = 'off';
+    $fquery = $core->getIndexForums($forums, $cat, catsonly: false);
+}
+
 $body->indexBarTop = '';
 $indexBar = $forumlist = $spacer = '';
 $forumarray = [];
@@ -320,7 +327,6 @@ if ($SETTINGS['showsubforums'] == 'on') {
 
 $lastcat = '0';
 foreach($fquery as $thing) {
-
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = $core->forum($thing, "index_forum", $index_subforums);
     } else {
@@ -347,7 +353,6 @@ foreach($fquery as $thing) {
     if (!empty($cforum)) {
         $forumlist .= $cforum;
     }
-
 }
 
 $forumarray[] = $forumlist;

@@ -286,7 +286,7 @@ class BootupLoader
             $url = $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($this->vars->xmbuser);
             $profile = "<a href='$url'>" . $this->vars->xmbuser . '</a>';
 
-            $this->template->notify = $this->vars->lang['loggedin'] . $profile . '<br />[' . $loginout . ' - ' . $u2ulink . '' . $memcp . '' . $cplink . ']';
+            $this->template->notify = $this->vars->lang['loggedin'] . " {$profile}<br />[{$loginout} - {$u2ulink}{$memcp}{$cplink}]";
 
             // Update lastvisit in the header shown
             if ((int) $this->vars->self['lastvisit'] < $thetime || (
@@ -342,37 +342,38 @@ class BootupLoader
     public function createNavbarLinks()
     {
         $links = [];
-        $imgdir = $this->vars->full_url . $this->vars->theme['imgdir'];
+        $full_url = $this->vars->full_url;
+        $imgdir = $full_url . $this->vars->theme['imgdir'];
 
         // Search-link
         $searchlink = $this->core->makeSearchLink();
 
         // Faq-link
         if ($this->vars->settings['faqstatus'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_faq.gif" alt="" border="0" /> <a href="faq.php"><font class="navtd">' . $this->vars->lang['textfaq'] . '</font></a>';
+            $links[] = '<img src="' . $imgdir . '/top_faq.gif" alt="" border="0" /> <a href="' . $full_url . 'faq.php"><font class="navtd">' . $this->vars->lang['textfaq'] . '</font></a>';
         }
 
         // Memberlist-link
         if ($this->vars->settings['memliststatus'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_memberslist.gif" alt="" border="0" /> <a href="misc.php?action=list"><font class="navtd">' . $this->vars->lang['textmemberlist'] . '</font></a>';
+            $links[] = '<img src="' . $imgdir . '/top_memberslist.gif" alt="" border="0" /> <a href="' . $full_url . 'misc.php?action=list"><font class="navtd">' . $this->vars->lang['textmemberlist'] . '</font></a>';
         }
 
         // Today's posts-link
         if ($this->vars->settings['todaysposts'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_todaysposts.gif" alt="" border="0" /> <a href="today.php"><font class="navtd">' . $this->vars->lang['navtodaysposts'] . '</font></a>';
+            $links[] = '<img src="' . $imgdir . '/top_todaysposts.gif" alt="" border="0" /> <a href="' . $full_url . 'today.php"><font class="navtd">' . $this->vars->lang['navtodaysposts'] . '</font></a>';
         }
 
         // Stats-link
         if ($this->vars->settings['stats'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_stats.gif" alt="" border="0" /> <a href="stats.php"><font class="navtd">' . $this->vars->lang['navstats'] . '</font></a>';
+            $links[] = '<img src="' . $imgdir . '/top_stats.gif" alt="" border="0" /> <a href="' . $full_url . 'stats.php"><font class="navtd">' . $this->vars->lang['navstats'] . '</font></a>';
         }
 
         // 'Forum Rules'-link
         if ($this->vars->settings['bbrules'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_bbrules.gif" alt="" border="0" /> <a href="faq.php?page=forumrules"><font class="navtd">' . $this->vars->lang['textbbrules'] . '</font></a>';
+            $links[] = '<img src="' . $imgdir . '/top_bbrules.gif" alt="" border="0" /> <a href="' . $full_url . 'faq.php?page=forumrules"><font class="navtd">' . $this->vars->lang['textbbrules'] . '</font></a>';
         }
 
-        $this->template->links = implode(' &nbsp; ', $links);
+        $this->template->links = implode(" &nbsp;\n", $links);
     }
 
     public function makePlugLinks()

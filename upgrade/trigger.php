@@ -107,7 +107,7 @@ xmb_upgrade();
 if ($trigger_old_schema < 5) {
     show_finished('<b>Done! :D</b><br />Now <a href="../misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />');
 } else {
-    show_finished('<b>Done! :D</b><br />Now <a href="../cp.php?action=settings#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
+    show_finished('<b>Done! :D</b><br />Now <a href="../admin/settings.php#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
 }
 echo "\nDone.</body></html>";
 

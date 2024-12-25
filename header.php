@@ -95,10 +95,12 @@ require ROOT.'include/UploadStatus.php';
 require ROOT.'include/Variables.php';
 
 // Implementations
+require ROOT.'include/admin.inc.php';
 require ROOT.'include/attach.inc.php';
 require ROOT.'include/BBCode.php';
 require ROOT.'include/Bootup.php';
 require ROOT.'include/BootupLoader.php';
+require ROOT.'include/captcha.inc.php';
 require ROOT.'include/debug.inc.php';
 require ROOT.'include/format.php';
 require ROOT.'include/Forums.php';

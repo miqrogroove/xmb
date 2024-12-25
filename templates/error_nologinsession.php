@@ -1,4 +1,4 @@
-<form method="post" action="misc.php?action=login">
+<form method="post" action="<?= $full_url ?>misc.php?action=login">
 <input type="hidden" name="token" value="" />
 <input type="hidden" name="hide" value="2" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
