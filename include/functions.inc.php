@@ -1202,7 +1202,7 @@ class Core
     ): string {
         $template = $this->template;
 
-        $template->message = &$msg;
+        $template->message = $msg;
 
         if ($isError) {
             $name = 'error';
@@ -1211,7 +1211,7 @@ class Core
         }
 
         if ($showheader) {
-            nav($this->vars->lang[$name]);
+            $this->nav($this->vars->lang[$name]);
         }
 
         if (is_string($redirect)) {

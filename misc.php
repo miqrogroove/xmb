@@ -85,7 +85,7 @@ switch($action) {
                 $misc = $template->process('misc_login.php');
             }
         } else {
-            switch(session()->getStatus()) {
+            switch($session->getStatus()) {
                 case 'good':
                     // Set $invisible to true, false, or null.
                     $invisible = formInt('hide');
@@ -124,10 +124,10 @@ switch($action) {
     case 'logout':
         if ('logged-out' == $session->getStatus()) {
             $gone = $session->getMember();
-            $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='{$gone['username']}'");
-            redirect($full_url, 0);
+            $query = $db->query("DELETE FROM " . $vars->tablepre . "whosonline WHERE username='{$gone['username']}'");
+            $core->redirect($vars->full_url, 0);
         } else {
-            message($lang['notloggedin']);
+            $core->message($lang['notloggedin']);
         }
         break;
 
@@ -142,7 +142,7 @@ switch($action) {
             $newurl = str_replace('&action=search', '', $newurl);
             $newurl = str_replace('/misc', '/search', $newurl);
         }
-        $newurl = substr($full_url, 0, -strlen($cookiepath)).$newurl;
+        $newurl = substr($vars->full_url, 0, -strlen($cookiepath)).$newurl;
         header('HTTP/1.0 301 Moved Permanently');
         header('Location: '.$newurl);
         exit;
@@ -166,7 +166,7 @@ switch($action) {
                 $core->error($lang['badinfo']);
             }
             $email = postedVar('email');
-            $query = $db->query("SELECT uid, username, email, pwdate, langfile, status FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
+            $query = $db->query("SELECT uid, username, email, pwdate, langfile, status FROM " . $vars->tablepre . "members WHERE username='$username' AND email='$email'");
             if ($db->num_rows($query) != 1) {
                 $core->error($lang['badinfo']);
             }
@@ -176,14 +176,14 @@ switch($action) {
                 $core->error($lang['bannedmessage']);
             }
 
-            $time = vars()->onlinetime - 86400;
+            $time = $vars->onlinetime - 86400;
             if ((int) $member['pwdate'] > $time) {
                 $core->error($lang['lostpw_in24hrs']);
             }
             
-            sql()->setLostPasswordDate($member['uid'], time());
+            $sql->setLostPasswordDate($member['uid'], time());
             $token = \XMB\Token\create('Lost Password', $member['username'], X_NONCE_MAX_AGE, true);
-            $link = "{$full_url}lost.php?a=$token";
+            $link = $vars->full_url . "lost.php?a=$token";
 
             $lang2 = loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
             $translate = $lang2[$member['langfile']];
@@ -194,9 +194,9 @@ switch($action) {
             $search  = [ '$name', '$link' ];
             $replace = [  $name,   $link  ];
             $body = str_replace($search, $replace, $lang['lostpw_body_eval']);
-            xmb_mail($emailaddy, $subject, $body, $translate['charset']);
+            $core->xmb_mail($emailaddy, $subject, $body, $translate['charset']);
 
-            message($lang['emailpw']);
+            $core->message($lang['emailpw']);
         }
         break;
 
@@ -212,7 +212,7 @@ switch($action) {
             exit();
         }
 
-        $count = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."whosonline"), 0);
+        $count = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "whosonline"), 0);
         $mpage = multipage($count, $tpp, 'misc.php?action=online');
         $multipage =& $mpage['html'];
         if (strlen($mpage['html']) != 0) {
@@ -230,10 +230,10 @@ switch($action) {
 
         // UNION Syntax Reminder: "Use of ORDER BY for individual SELECT statements implies nothing about the order in which the rows appear."
         $sql = "SELECT username, 1 AS sort_col, MAX(ip) AS ip, MAX(`time`) as `time`, MAX(location) AS location, MAX(invisible) AS invisible "
-             . "FROM ".X_PREFIX."whosonline $where GROUP BY username, sort_col "
+             . "FROM " . $vars->tablepre . "whosonline $where GROUP BY username, sort_col "
              . "UNION ALL "
              . "SELECT username, 2 AS sort_col, ip, `time`, location, invisible "
-             . "FROM ".X_PREFIX."whosonline WHERE username = 'xguest123' "
+             . "FROM " . $vars->tablepre . "whosonline WHERE username = 'xguest123' "
              . "ORDER BY sort_col, username, `time` DESC "
              . "LIMIT {$mpage['start']}, $tpp";
         $query = $db->query($sql);
@@ -241,7 +241,7 @@ switch($action) {
         $onlineusers = '';
         while($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
-            vars()->onlinetime = gmdate ($timecode, core()->timeKludge((int) $online['time']));
+            $vars->onlinetime = gmdate ($timecode, $core->timeKludge((int) $online['time']));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80);
@@ -289,11 +289,11 @@ switch($action) {
             exit();
         }
 
-        $datecut = vars()->onlinetime - (3600 * 24);
+        $datecut = $vars->onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
         } else {
-            $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
+            $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
         }
 
         $todaymembersnum = 0;
@@ -430,7 +430,7 @@ switch($action) {
             $where[] = "status != 'Banned' ";
         }
         $q = implode(' AND ', $where);
-        $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."members WHERE $q"), 0);
+        $num = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "members WHERE $q"), 0);
         $canonical = 'misc.php?action=list';
         $baseurl = $canonical.$params;
         $mpage = multipage($num, $memberperpage, $baseurl, $canonical);
@@ -443,14 +443,14 @@ switch($action) {
 
         /* Generate Output */
 
-        $querymem = $db->query("SELECT * FROM ".X_PREFIX."members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
+        $querymem = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
 
         $members = $oldst = '';
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
             while($member = $db->fetch_array($querymem)) {
-                $member['regdate'] = gmdate($dateformat, core()->timeKludge((int) $member['regdate']));
+                $member['regdate'] = gmdate($dateformat, $core->timeKludge((int) $member['regdate']));
 
                 if (X_MEMBER && $member['email'] != '' && $member['showemail'] == 'yes') {
                     eval('$email = "'.template('misc_mlist_row_email').'";');

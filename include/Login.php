@@ -68,7 +68,7 @@ class Login
 
         // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
         $this->core->put_cookie('xmblvb', $vars->self['lastvisit'], (time() + $vars::ONLINE_TIMER)); // lvb == last visit
-        $vars->lastvisit = $vars->self['lastvisit']; // Used in forumdisplay and a few other spots.
+        $vars->lastvisit = (int) $vars->self['lastvisit']; // Used in forumdisplay and a few other spots.
     }
 
     /**
