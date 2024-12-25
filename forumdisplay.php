@@ -273,9 +273,9 @@ while($thread = $db->fetch_array($querytop)) {
     }
 
     if ('1' === $thread['topped']) {
-        $topimage = '<img src="' . $vars->theme['admdir'] . '/untop.gif" alt="' . $lang['textuntopthread'] . '" border="0" />';
+        $template->topimage = '<img src="' . $vars->theme['admdir'] . '/untop.gif" alt="' . $lang['textuntopthread'] . '" border="0" />';
     } else {
-        $topimage = '<img src="' . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
+        $template->topimage = '<img src="' . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
     }
 
     $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
@@ -363,7 +363,7 @@ while($thread = $db->fetch_array($querytop)) {
 
     $template->prefix = $prefix;
 
-    $template->threadlist .= $template->process('forumdisplay_thread.php');
+    $template->threadlist .= $template->process($forumdisplay_thread . '.php');
 }
 $db->free_result($querytop);
 
@@ -418,9 +418,9 @@ if (strlen($template->mpage) != 0) {
 
 if ($status1 == 'Moderator') {
     if (X_ADMIN) {
-        $fadminlink = '<a href="cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
+        $template->fadminlink = '<a href="cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
     } else {
-        $fadminlink = '';
+        $template->fadminlink = '';
     }
     $forumdisplay = $template->process('forumdisplay_admin.php');
 } else {

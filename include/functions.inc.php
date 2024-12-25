@@ -1272,10 +1272,8 @@ class Core
      *
      * @since 1.9.1
      */
-    function put_cookie($name, $value=false, $expire=0, $path=null, $domain=null, $secure=false)
+    function put_cookie(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, bool $secure = false)
     {
-        global $cookiepath, $cookiedomain, $cookiesecure;
-
         // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
         if (headers_sent()) {
             trigger_error('Attempted use of put_cookie() after headers already sent.', E_USER_WARNING);
@@ -1283,25 +1281,21 @@ class Core
         }
 
         // Default arguments were poorly chosen, so let's try to fill them in now.
-        if (is_null($path)) $path = $cookiepath;
-        if (is_null($domain)) $domain = $cookiedomain;
-        if (!$secure) $secure = $cookiesecure;
+        if (is_null($path)) $path = $this->vars->cookiepath;
+        if (is_null($domain)) $domain = $this->vars->cookiedomain;
+        if (!$secure) $secure = $this->vars->cookiesecure;
         $httponly = true;
         $samesite = 'Lax';
 
-        if (version_compare(PHP_VERSION, '7.3.0', '<')) {
-            return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
-        } else {
-            $options = [
-                'expires' => $expire,
-                'path' => $path,
-                'domain' => $domain,
-                'secure' => $secure,
-                'httponly' => $httponly,
-                'samesite' => $samesite,
-            ];
-            return setcookie($name, $value, $options);
-        }
+        $options = [
+            'expires' => $expire,
+            'path' => $path,
+            'domain' => $domain,
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite,
+        ];
+        return setcookie($name, $value, $options);
     }
 
     /**
@@ -1406,7 +1400,7 @@ class Core
      * Although this was somewhat standardized in older versions, the code had been duplicated for every display in the system.
      *
      * @since 1.10.00
-     *//
+     */
     public function timeKludge(int $timestamp): int
     {
         $userHours = (float) $this->vars->timeoffset;

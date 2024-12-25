@@ -7,7 +7,7 @@
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center" bgcolor="<?= $THEME['bordercolor'] ?>">
 <tr>
 <td>
-<form method="post" name="geatneet" action="topicadmin.php?fid=<?= $forum['fid'] ?>">
+<form method="post" name="geatneet" action="topicadmin.php?fid=<?= $fid ?>">
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" class="tablelinks">
 <?= $multipage ?>
