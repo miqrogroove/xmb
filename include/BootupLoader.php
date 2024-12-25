@@ -245,9 +245,9 @@ class BootupLoader
         }
         $querystring = preg_replace('/[^\x20-\x7e]/', '', $querystring);
         if ($this->vars->url == $this->vars->cookiepath) {
-            $this->template->baseelement = '<base href="' . $this->vars->full_url . '" />';
+            $this->template->baseelement = '<base href="' . $this->vars->full_url . '" />' . "\n";
         } else {
-            $this->template->baseelement = '<base href="' . $this->vars->full_url . basename($_SERVER['SCRIPT_NAME']) . attrOut($querystring) . '" />';
+            $this->template->baseelement = '<base href="' . $this->vars->full_url . basename($_SERVER['SCRIPT_NAME']) . attrOut($querystring) . '" />' . "\n";
         }
     }
     
@@ -269,7 +269,7 @@ class BootupLoader
         // login/logout links
         if (X_MEMBER) {
             if (X_ADMIN) {
-                $url = $this->vars->full_url . 'cp.php';
+                $url = $this->vars->full_url . 'admin/';
                 $cplink = " - <a href='$url'>" . $this->vars->lang['textcp'] . '</a>';
             } else {
                 $cplink = '';

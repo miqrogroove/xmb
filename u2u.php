@@ -192,6 +192,7 @@ switch($action) {
             $u2ufolders = postedVar('u2ufolders', 'javascript', TRUE, FALSE, TRUE);
             u2u_folderSubmit($u2ufolders, $folders);
         } else {
+            $template->hU2ufolders = $vars->self->u2ufolders;
             eval('$leftpane = "'.template('u2u_folders').'";');
         }
         break;

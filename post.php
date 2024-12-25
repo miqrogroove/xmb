@@ -71,6 +71,7 @@ if (X_GUEST) {
     }
     $loggedin = '';
 } else {
+    $template->hUsername = $vars->self['username'];
     eval('$loggedin = "'.template('post_loggedin').'";');
 }
 

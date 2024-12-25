@@ -280,6 +280,7 @@ if ($action == 'profile') {
         if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod']) || X_STAFF) {
             eval('$optional = "'.template('memcp_profile_optional').'";');
         }
+        $template->hUsername = $vars->self['username'];
         if (X_STAFF) {
             $template = template_secure('memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP);
         } else {
@@ -841,6 +842,8 @@ if ($action == 'profile') {
     if ($favnum == 0) {
         eval('$favs = "'.template('memcp_home_favs_none').'";');
     }
+    $template->hUsername = $vars->self['username'];
+    $template->hStatus = $vars->self['status'];
     eval('$mempage = "'.template('memcp_home').'";');
 }
 

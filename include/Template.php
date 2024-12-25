@@ -125,8 +125,8 @@ class Template
      */
     public function addRefs()
     {
+        $this->data['full_url'] = &$this->vars->full_url;
         $this->data['lang'] = &$this->vars->lang;
-        $this->data['self'] = &$this->vars->self;
         $this->data['SETTINGS'] = &$this->vars->settings;
         $this->data['THEME'] = &$this->vars->theme;
     }
@@ -148,7 +148,7 @@ class Template
         
         if ($this->vars->comment_output) echo "<!--Begin Template: $filename -->\n";
 
-        include "./templates/$filename";
+        include ROOT . "templates/$filename";
 
         if ($this->vars->comment_output) echo "\n<!-- End Template: $filename -->";
 

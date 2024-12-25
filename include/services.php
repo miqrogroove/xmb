@@ -39,6 +39,7 @@ use XMB\{
     SQL,
     Template,
     Theme\Manager as ThemeMgr,
+    Token,
     Variables,
 };
 
@@ -230,6 +231,22 @@ function theme(?ThemeMgr $theme = null): ThemeMgr
     static $cache;
     
     if ($theme !== null) $cache = $theme;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared token service.
+ *
+ * @since 1.10.00
+ * @param Token $token Required on first call, otherwise optional. Acts as the setter.
+ * @return Token
+ */
+function token(?Token $token = null): Token
+{
+    static $cache;
+    
+    if ($token !== null) $cache = $token;
     
     return $cache;
 }

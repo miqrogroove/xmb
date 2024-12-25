@@ -576,6 +576,7 @@ function u2u_ignore()
         $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
         u2u_msg($lang['ignoreupdate'], $full_url.'u2u.php?action=ignore');
     } else {
+        $template->hIgnoreu2u = $self['ignoreu2u'];
         eval('$leftpane = "'.template('u2u_ignore').'";');
     }
 

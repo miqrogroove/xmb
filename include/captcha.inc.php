@@ -73,7 +73,7 @@ class Captcha
     private array $aFonts;
     private int $iWidth;
     private int $iHeight;
-    private int $iNumChars;
+    private int $iNumChars = 0;
     private int $iNumDots;
     private int $iNumLines;
     private int $iSpacing;
@@ -93,20 +93,20 @@ class Captcha
     function __construct(private Core $core, private Observer $observer, private Variables $vars)
     {
         // get parameters
-        $this->SetNumChars($this->vars->settings['captcha_code_length']);
-        $this->SetNumDots($this->vars->settings['captcha_image_dots']);
-        $this->SetNumLines($this->vars->settings['captcha_image_lines']);
+        $this->SetWidth((int) $this->vars->settings['captcha_image_width']);
+        $this->SetHeight((int) $this->vars->settings['captcha_image_height']);
+        $this->SetNumChars((int) $this->vars->settings['captcha_code_length']);
+        $this->SetNumDots((int) $this->vars->settings['captcha_image_dots']);
+        $this->SetNumLines((int) $this->vars->settings['captcha_image_lines']);
         $this->DisplayShadow($this->vars->settings['captcha_code_shadow'] == 'on' ? true : false);
         $this->SetCharSet($this->vars->settings['captcha_code_charset']);
         $this->SetFonts($this->vars->settings['captcha_image_fonts']);
         $this->CaseInsensitive($this->vars->settings['captcha_code_casesensitive'] == 'on' ? false : true);
         $this->SetBackgroundImages($this->vars->settings['captcha_image_bg']);
-        $this->SetMinFontSize($this->vars->settings['captcha_image_minfont']);
-        $this->SetMaxFontSize($this->vars->settings['captcha_image_maxfont']);
+        $this->SetMinFontSize((int) $this->vars->settings['captcha_image_minfont']);
+        $this->SetMaxFontSize((int) $this->vars->settings['captcha_image_maxfont']);
         $this->UseColor($this->vars->settings['captcha_image_color'] == 'on' ? true : false);
         $this->SetFileType($this->vars->settings['captcha_image_type']);
-        $this->SetWidth($this->vars->settings['captcha_image_width']);
-        $this->SetHeight($this->vars->settings['captcha_image_height']);
         // Initialize XMB Members
         $this->bPoison = false;
         $this->CheckCompatibility();
@@ -114,7 +114,9 @@ class Captcha
 
     function CalculateSpacing()
     {
-        $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
+        if ($this->iNumChars > 0) {
+            $this->iSpacing = (int)($this->iWidth / $this->iNumChars);
+        }
     }
 
     function SetWidth($iWidth)
@@ -480,7 +482,7 @@ class Captcha
     private function SetFonts($vFonts)
     {
         // override any pre-defined file path
-        putenv('GDFONTPATH='.realpath('.'));
+        putenv('GDFONTPATH=' . realpath(ROOT));
 
         // check for input type
         if (is_array($vFonts)) {
@@ -495,26 +497,26 @@ class Captcha
         }
 
         // initialise array
-        $this->aFonts = array();
+        $this->aFonts = [];
 
         // loop through items
         foreach($aFonts as $sCurrentItem) {
-            if (is_dir($sCurrentItem)) {
-                $dir = opendir($sCurrentItem);
+            if (is_dir(ROOT . $sCurrentItem)) {
+                $dir = opendir(ROOT . $sCurrentItem);
                 while($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
-                        $this->aFonts[] = $sCurrentItem . '/' . $file;
+                        $this->aFonts[] = ROOT . $sCurrentItem . '/' . $file;
                     }
                 }
             } else {
-                if (is_file($sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
+                if (is_file(ROOT . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
                     $this->aFonts[] = $sCurrentItem;
-                } else if (is_file($sCurrentItem . '.ttf')) {
-                    $this->aFonts[] = $sCurrentItem . '.ttf';
-                } else if (is_file('./fonts/' . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
-                    $this->aFonts[] = './fonts/' .$sCurrentItem;
-                } else if (is_file('./fonts/' .$sCurrentItem . '.ttf')) {
-                    $this->aFonts[] = './fonts/' . $sCurrentItem . '.ttf';
+                } else if (is_file(ROOT . $sCurrentItem . '.ttf')) {
+                    $this->aFonts[] = ROOT . $sCurrentItem . '.ttf';
+                } else if (is_file(ROOT . 'fonts/' . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
+                    $this->aFonts[] = ROOT . 'fonts/' . $sCurrentItem;
+                } else if (is_file(ROOT . 'fonts/' . $sCurrentItem . '.ttf')) {
+                    $this->aFonts[] = ROOT . 'fonts/' . $sCurrentItem . '.ttf';
                 }
             }
         }
@@ -539,28 +541,28 @@ class Captcha
 
         // loop through items
         foreach($aBackgroundImages as $sCurrentItem) {
-            if (is_dir($sCurrentItem)) {
-                $dir = opendir($sCurrentItem);
+            if (is_dir(ROOT . $sCurrentItem)) {
+                $dir = opendir(ROOT . $sCurrentItem);
                 while($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
-                        $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {
-                        $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.jpg')) {
-                        $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.jpeg')) {
-                        $this->aBackgroundImages[] = $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     }
                 }
-            } else {
-                if (is_file($sCurrentItem) && false !== strpos($sCurrentItem, '.png')) {
-                    $this->aBackgroundImages[] = $sCurrentItem;
-                } else if (is_file($sCurrentItem) && false !== strpos($sCurrentItem, '.gif')) {
-                    $this->aBackgroundImages[] = $sCurrentItem;
-                } else if (is_file($sCurrentItem) && false !== strpos($sCurrentItem, '.jpg')) {
-                    $this->aBackgroundImages[] = $sCurrentItem;
-                } else if (is_file($sCurrentItem) && false !== strpos($sCurrentItem, '.jpeg')) {
-                    $this->aBackgroundImages[] = $sCurrentItem;
+            } elseif (is_file(ROOT . $sCurrentItem)) {
+                if (false !== strpos($sCurrentItem, '.png')) {
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
+                } elseif (false !== strpos($sCurrentItem, '.gif')) {
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
+                } elseif (false !== strpos($sCurrentItem, '.jpg')) {
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
+                } elseif (false !== strpos($sCurrentItem, '.jpeg')) {
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
                 }
             }
         }
@@ -602,18 +604,13 @@ class Captcha
     private function CheckCompatibility()
     {
         // check for required gd functions
-        if ($this->bCompatible === false) {
-            $this->bPoison = true;
-            return false;
-        } else if (!function_exists('imagecreate')
-                || !function_exists("image$this->sFileType")
-                || !function_exists('imagecreatetruecolor')
-                || !function_exists('imageftbbox')
-                || !function_exists('imagefttext')) {
-            $this->bCompatible = false;
-            $this->bPoison = true;
-            return false;
-        } else if (empty($this->aFonts)) {
+        if (!function_exists('imagecreate')
+            || !function_exists("image$this->sFileType")
+            || !function_exists('imagecreatetruecolor')
+            || !function_exists('imageftbbox')
+            || !function_exists('imagefttext')
+            || empty($this->aFonts)
+        ) {
             $this->bCompatible = false;
             $this->bPoison = true;
             return false;

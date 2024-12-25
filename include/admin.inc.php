@@ -22,10 +22,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+declare(strict_types=1);
+
+namespace XMB;
+
 use XMB\Session\Manager as SessionMgr;
 
 use function XMB\Services\core;
 use function XMB\Services\sql;
+use function XMB\Services\vars;
 
 /* Assert Additional Security */
 
@@ -218,101 +224,7 @@ class admin
  */
 function displayAdminPanel()
 {
-    global $lang, $THEME;
-
-    ?>
-    <table cellspacing="0" cellpadding="0" border="0" width="<?php echo $THEME['tablewidth']?>" align="center">
-    <tr>
-    <td bgcolor="<?php echo $THEME['bordercolor']?>">
-    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
-    <tr class="category">
-    <td align="center"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textcp']?></font></strong></td>
-    </tr>
-    <tr bgcolor="<?php echo $THEME['altbg1']?>" class="ctrtablerow">
-    <td>
-    <br />
-    <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
-    <tr>
-    <td bgcolor="<?php echo $THEME['bordercolor']?>">
-    <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $THEME['tablespace']?>" width="100%">
-    <tr class="ctrcategory">
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['general']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textforums']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textmembers']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['look_feel']?></font></strong></td>
-    </tr>
-    <tr>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp2.php?action=attachments"><?php echo $lang['textattachman']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=censor"><?php echo $lang['textcensors']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=newsletter"><?php echo $lang['textnewsletter']?></a><br />
-    &raquo;&nbsp;<a href="cp.php?action=search"><?php echo $lang['cpsearch']?></a><br />
-    &raquo;&nbsp;<a href="cp.php?action=settings"><?php echo $lang['textsettings']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp.php?action=forum"><?php echo $lang['textforums']?></a><br />
-    &raquo;&nbsp;<a href="cp.php?action=mods"><?php echo $lang['textmods']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=prune"><?php echo $lang['textprune']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp.php?action=ipban"><?php echo $lang['textipban']?></a><br />
-    &raquo;&nbsp;<a href="cp.php?action=members"><?php echo $lang['textmembers']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=ranks"><?php echo $lang['textuserranks']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=restrictions"><?php echo $lang['cprestricted']?></a><br />
-    &raquo;&nbsp;<a href="cp.php?action=rename"><?php echo $lang['admin_rename_txt']?></a><br />
-    &raquo;&nbsp;<a href="quarantine.php"><?php echo $lang['moderation_meta_name']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp2.php?action=smilies"><?php echo $lang['smilies']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=templates"><?php echo $lang['templates']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=themes"><?php echo $lang['themes']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=lang"><?php echo $lang['translations']?></a><br />
-    </td>
-    </tr>
-    <tr class="ctrcategory">
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['logs']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['tools']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['mysql_tools']?></font></strong></td>
-    <td valign="top" width="20%"><strong><font color="<?php echo $THEME['cattext']?>"><?php echo $lang['textfaqextra']?></font></strong></td>
-    </tr>
-    <tr>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp2.php?action=modlog"><?php echo $lang['textmodlogs']?></a><br />
-    &raquo;&nbsp;<a href="cp2.php?action=cplog"><?php echo $lang['textcplogs']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=logsdump"><?php echo $lang['textlogsdump']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="tools.php?action=fixftotals"><?php echo $lang['textfixposts']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixlastposts&amp;scope=forumsonly"><?php echo $lang['textfixlastposts'].' - '.$lang['textforums']; ?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixlastposts"><?php echo $lang['textfixlastposts'].' - '.$lang['threads']; ?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixmposts"><?php echo $lang['textfixmemposts']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixttotals"><?php echo $lang['textfixthread']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixorphanedthreads"><?php echo $lang['textfixothreads']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixorphanedattachments"><?php echo $lang['textfixoattachments']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixorphanedpolls"><?php echo $lang['textfixopolls']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=fixorphanedposts"><?php echo $lang['textfixoposts']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=updatemoods"><?php echo $lang['textfixmoods']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    &raquo;&nbsp;<a href="cp.php?action=upgrade"><?php echo $lang['raw_mysql']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=analyzetables"><?php echo $lang['analyze']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=checktables"><?php echo $lang['textcheck']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=optimizetables"><?php echo $lang['optimize']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=repairtables"><?php echo $lang['repair']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=u2udump"><?php echo $lang['u2udump']?></a><br />
-    &raquo;&nbsp;<a href="tools.php?action=whosonlinedump"><?php echo $lang['cpwodump']?></a><br />
-    </td>
-    <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?php echo $THEME['altbg2']?>">
-    </td>
-    </tr>
-    </table>
-    </td>
-    </tr>
-    </table>
-    <br />
-    </td>
-    </tr>
-    <?php
+    // moved to templates/admin_panel.php
 }
 
 /**
@@ -320,17 +232,15 @@ function displayAdminPanel()
  *
  * @since 1.9.8
  */
-function settingHTML($setting, &$on, &$off)
+function settingHTML(string $setting, string &$on, string &$off)
 {
-    global $SETTINGS, $selHTML;
-
     $on = $off = '';
-    switch($SETTINGS[$setting]) {
+    switch(vars()->settings[$setting]) {
         case 'on':
-            $on = $selHTML;
+            $on = vars()::selHTML;
             break;
         default:
-            $off = $selHTML;
+            $off = vars()::selHTML;
             break;
     }
 }
@@ -485,11 +395,9 @@ function input_onoff_setting(string $dbname, string $postname)
  */
 function input_custom_setting(string $dbname, string $value)
 {
-    global $SETTINGS;
-
-    if (! isset($SETTINGS[$dbname])) {
+    if (! isset(vars()->settings[$dbname])) {
         sql()->addSetting($dbname, $value);
-    } else if ($SETTINGS[$dbname] !== $value) {
+    } else if vars()->settings[$dbname] !== $value) {
         sql()->updateSetting($dbname, $value);
     }
 }

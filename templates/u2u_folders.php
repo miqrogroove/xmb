@@ -11,7 +11,7 @@
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['foldermsg'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="5" cols="30" name="u2ufolders">
-<?= $self['u2ufolders'] ?></textarea></td>
+<?= $hU2ufolders ?></textarea></td>
 </tr>
 <tr>
 <td class="ctrtablerow" colspan="2" bgcolor="<?= $THEME['altbg2'] ?>"><input type="submit" name="folderssubmit" class="submit" value="<?= $lang['textsubmitchanges'] ?>" /></td>

@@ -5,7 +5,7 @@
 <!-- Build: <?= $versionbuild ?> -->
 <!-- <?= $versioncompany ?> -->
 <head>
-<?= $baseelement ?><?= $canonical_link ?>
+<?= $canonical_link ?>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $versionlong ?></title>
@@ -37,7 +37,7 @@
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td class="navtd"><font class="navtd"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></font></td>
-<td align="right"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><font class="navtd"><?= $lang['backto'] ?> <img src="<?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></font></a></td>
+<td align="right"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><font class="navtd"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></font></a></td>
 </tr>
 </table>
 </td>
@@ -50,9 +50,9 @@
 <tr>
 <td><table width="100%" cellspacing="0" cellpadding="<?= $THEME['tablespace'] ?>" align="center">
 <tr>
-<td class="nav"> <a href="./"><?= $SETTINGS['bbname'] ?></a> <?= $navigation ?></td>
+<td class="nav"> <a href="<?= $full_url ?>"><?= $SETTINGS['bbname'] ?></a> <?= $navigation ?></td>
 <td align="right"><?= $quickjump ?></td>
-<td align="right" width="1"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $THEME['imgdir'] ?>/arrow_dw.gif" border="0" alt="<?= $lang['gotobottom'] ?>" /></a></td>
+<td align="right" width="1"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/arrow_dw.gif" border="0" alt="<?= $lang['gotobottom'] ?>" /></a></td>
 </tr>
 </table>
 </td>

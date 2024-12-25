@@ -10,7 +10,7 @@
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['ignoremsg'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="5" cols="30" name="ignorelist">
-<?= $self['ignoreu2u'] ?></textarea></td>
+<?= $hIgnoreu2u ?></textarea></td>
 </tr>
 <tr>
 <td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" name="ignoresubmit" class="submit" value="<?= $lang['textsubmitchanges'] ?>" /></td>

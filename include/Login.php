@@ -88,10 +88,11 @@ class Login
 
         $state = $this->session->getStatus();
 
-        //Usernames are historically html encoded in the XMB database, as well as in cookies.
-        //$xmbuser is often used as a raw value in queries and should be sql escaped.
-        //$self['username'] is a good alternative for future template use.
-        //$xmbpw was historically abused and will no longer contain a value.
+        // Usernames are historically HTML encoded in the XMB database, as well as in cookies.
+        // $xmbuser is often used as a raw value in queries and should be sql escaped.
+        // $self['username'] had been a good alternative for template/HTML use when it was a global variable.
+        // Now the best practice is to keep the $self array isolated and use a template alias of the $self['username'] value for output.
+        // $xmbpw was historically abused and will no longer contain a value.
 
         if ('good' == $state || 'already-logged-in' == $state) {
             // 'good' means normal login or resumed session.

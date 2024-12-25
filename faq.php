@@ -41,7 +41,7 @@ if ($vars->settings['faqstatus'] == 'off' && $page != 'forumrules') {
     header('HTTP/1.0 403 Forbidden');
     $header = $template->process('header.php');
     $featureoff = $template->process('misc_feature_notavailable.php');
-    $core->end_time();
+    $template->footerstuff = $core->end_time();
     $footer = $template->process('footer.php');
     echo $header, $featureoff, $footer;
     exit();

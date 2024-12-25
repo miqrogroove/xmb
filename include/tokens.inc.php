@@ -24,64 +24,66 @@
 
 declare(strict_types=1);
 
-namespace XMB\Token;
+namespace XMB;
 
-use function XMB\Services\sql;
-
-/**
- * Generate a nonce for the current user.
- *
- * Offers user uniqueness and better purpose matching.
- * Replaces \nonce_create() for everything other than the captcha system.
- *
- * @since 1.9.12
- * @param string $action The known value or purpose, such as what the nonce may be used for.  Verbose string between 5 and 32 chars required.
- * @param string $object Detailed ID of the specific item that may be used.  Empty string allowed, e.g. for object creation.
- * @param int    $ttl    Validity time in seconds.
- * @param bool   $anonymous Optional. Must be true if intentionally setting a token for a guest user.  Useful for lost passwords.
- * @return string
- */
-function create(string $action, string $object, int $ttl, bool $anonymous = false): string
+class Token
 {
-    global $self;
-
-    if ('' == $self['username'] && ! $anonymous) throw new LogicException('Username missing');
-
-    if (strlen($action) > 32 || strlen($action) < 5 || strlen($object) > 32) throw new InvalidArgumentException('String length out of limit');
-
-    $token = bin2hex(random_bytes(16));
-    $expires = time() + $ttl;
-
-    $success = sql()->addToken($token, $self['username'], $action, $object, $expires);
-
-    if (! $success) {
-        // Retry once.
-        $token = bin2hex(random_bytes(16));
-        $success = sql()->addToken($token, $self['username'], $action, $object, $expires);
+    public function __construct(private SQL $sql, private Variables $vars)
+    {
+        // Property promotion
     }
 
-    if (! $success) throw new RuntimeException('XMB was unable to save a new session token');
+    /**
+     * Generate a nonce for the current user.
+     *
+     * Offers user uniqueness and better purpose matching.
+     * Replaces \nonce_create() for everything other than the captcha system.
+     *
+     * @since 1.9.12
+     * @param string $action The known value or purpose, such as what the nonce may be used for.  Verbose string between 5 and 32 chars required.
+     * @param string $object Detailed ID of the specific item that may be used.  Empty string allowed, e.g. for object creation.
+     * @param int    $ttl    Validity time in seconds.
+     * @param bool   $anonymous Optional. Must be true if intentionally setting a token for a guest user.  Useful for lost passwords.
+     * @return string
+     */
+    function create(string $action, string $object, int $ttl, bool $anonymous = false): string
+    {
+        if ('' == $this->vars->self['username'] && ! $anonymous) throw new LogicException('Username missing');
 
-    return $token;
-}
+        if (strlen($action) > 32 || strlen($action) < 5 || strlen($object) > 32) throw new InvalidArgumentException('String length out of limit');
 
-/**
- * Test a nonce for the current user.
- *
- * Offers user uniqueness and better purpose matching.
- * Replaces \nonce_use() for everything other than the captcha system.
- *
- * @since 1.9.12
- * @param string $token  The user input.
- * @param string $action The same value used in create().
- * @param string $object The same value used in create().
- * @return bool True only if the user provided a unique nonce for the action/object pair.
- */
-function consume(string $token, string $action, string $object): bool
-{
-    global $self;
+        $token = bin2hex(random_bytes(16));
+        $expires = time() + $ttl;
 
-    sql()->deleteTokensByDate(time());
+        $success = $this->sql->addToken($token, $this->vars->self['username'], $action, $object, $expires);
 
-    return sql()->deleteToken($token, $self['username'], $action, $object);
+        if (! $success) {
+            // Retry once.
+            $token = bin2hex(random_bytes(16));
+            $success = $this->sql->addToken($token, $this->vars->self['username'], $action, $object, $expires);
+        }
+
+        if (! $success) throw new RuntimeException('XMB was unable to save a new session token');
+
+        return $token;
+    }
+
+    /**
+     * Test a nonce for the current user.
+     *
+     * Offers user uniqueness and better purpose matching.
+     * Replaces \nonce_use() for everything other than the captcha system.
+     *
+     * @since 1.9.12
+     * @param string $token  The user input.
+     * @param string $action The same value used in create().
+     * @param string $object The same value used in create().
+     * @return bool True only if the user provided a unique nonce for the action/object pair.
+     */
+    function consume(string $token, string $action, string $object): bool
+    {
+        $this->sql->deleteTokensByDate(time());
+
+        return $this->sql->deleteToken($token, $this->vars->self['username'], $action, $object);
+    }
 }

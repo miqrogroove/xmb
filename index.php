@@ -144,6 +144,7 @@ $body->welcome = '';
 $body->whosonline = '';
 if ($gid == 0) {
     if (X_MEMBER) {
+        $template->hUsername = $vars->self['username'];
         $body->welcome = $template->process('index_welcome_member.php');
     } elseif ($core->coppa_check()) {
         $body->welcome = $template->process('index_welcome_guest.php');

@@ -188,6 +188,8 @@ if (count($tids) > 1) {
     unset($csv);
 }
 
+$template->hUsername = $vars->self['username'];
+
 switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {

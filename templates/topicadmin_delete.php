@@ -8,7 +8,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['loggedinuser'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $self['username'] ?> <?= $lang['textminilogout'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $hUsername ?> <?= $lang['textminilogout'] ?></td>
 </tr>
 <tr class="ctrtablerow">
 <td colspan="2" bgcolor="<?= $THEME['altbg2'] ?>"><input type="hidden" name="fid" value="<?= $fid ?>" /><input type="hidden" name="tid" value="<?= $tid ?>" /><input type="submit" class="submit" name="deletesubmit" value="<?= $lang['textdeletethread'] ?>" /></td>

@@ -9,7 +9,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $self['username'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $hUsername ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemail'] ?></td>

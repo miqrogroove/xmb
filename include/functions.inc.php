@@ -46,6 +46,7 @@ class Core
         private Forums $forums,
         private SQL $sql,
         private Template $template,
+        private Token $token,
         private Variables $vars,
     ) {
         // Property promotion
@@ -79,7 +80,7 @@ class Core
         return $retval;
     }
 
-    function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+    function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): array
     {
         $arrayItems = getRawInput($varname, $sourcearray);
 
@@ -90,7 +91,7 @@ class Core
             } else {
                 $arrayItems = [$arrayItems];
             }
-        } elseif (is_null($retval)) {
+        } elseif (is_null($arrayItems)) {
             $arrayItems = [];
         }
 
@@ -326,12 +327,12 @@ class Core
      * @param int    $ttl    Validity time in seconds.
      * @return string
      */
-    function template_secure(string $name, string $action, string $id, int $ttl)
+    function template_secure(string $name, string $action, string $id, int $ttl): string
     {
-        $token = \XMB\Token\create($action, $id, $ttl);
+        $token = $this->token->create($action, $id, $ttl);
         $placeholder = '<input type="hidden" name="token" value="" />';
         $replace = "<input type='hidden' name='token' value='$token' />";
-        return str_replace(addslashes($placeholder), $replace, template($name));
+        return str_replace($placeholder, $replace, $this->template->process($name));
     }
 
     /**
@@ -340,21 +341,14 @@ class Core
      * @since 1.9.11.11
      * @param string $action The action for which the token is valid.
      * @param string $id     The object for which the token is valid.
-     * @param int    $expire Deprecated.
      * @param bool   $error_header Display header template on errors?
      */
-    function request_secure(string $action, string $id, int $expire = 0, bool $error_header = false)
+    function request_secure(string $action, string $id, bool $error_header = false)
     {
-        global $lang;
-
-        if (0 != $expire) {
-            trigger_error('The $expire parameter of request_secure() does not work in this version of XMB.', E_USER_DEPRECATED);
-        }
-
         $token = getPhpInput('token');
 
-        if (! \XMB\Token\consume($token, $action, $id)) {
-            error($this->vars->lang['bad_token'], $error_header);
+        if (! $this->token->consume($token, $action, $id)) {
+            $this->error($this->vars->lang['bad_token'], $error_header);
         }
     }
 
@@ -1876,7 +1870,7 @@ class Core
     /**
      * @since 1.9.11
      */
-    function createLangFileSelect($currentLangFile)
+    public function createLangFileSelect($currentLangFile)
     {
         $db = $this->db;
 
@@ -1928,14 +1922,13 @@ class Core
      */
     public function setCanonicalLink($relURI)
     {
-        global $canonical_link, $cookiepath, $url;
-
-        $testurl = $cookiepath;
+        $testurl = $this->vars->cookiepath;
         if ($relURI != './') {
             $testurl .= str_replace('&amp;', '&', $relURI);
         }
-        if ($url !== $testurl) {
-            $canonical_link = '<link rel="canonical" href="'.$relURI.'" />';
+        if ($this->vars->url !== $testurl) {
+            $relURI = $this->vars->full_url . $relURI;
+            $this->template->canonical_link = "<link rel='canonical' href='$relURI' />\n";
         }
     }
 
@@ -2092,6 +2085,9 @@ class Core
      */
     function timezone_control(string $offset): string
     {
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
+
         $total = 37;
         
         $sel = [];
@@ -2215,8 +2211,9 @@ class Core
             $sel[14] = $this->vars::selHTML;
         }
 
-        eval('$control = "'.template('timezone_control').'";');
-        return $control;
+        $template->sel = $sel;
+
+        return $template->process('timezone_control.php');
     }
 
     /**

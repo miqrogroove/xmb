@@ -155,6 +155,7 @@ debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
 forums(new \XMB\Forums(sql()));
+token(new \XMB\Token(sql(), vars()));
 
 theme(new \XMB\Theme\Manager(forums(), sql(), template(), vars()));
 
@@ -162,7 +163,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), vars()));
 
 unset($boot);
 
