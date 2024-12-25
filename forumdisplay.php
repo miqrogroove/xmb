@@ -51,7 +51,7 @@ if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') |
 $perms = $core->checkForumPermissions($forum);
 if (! $perms[X_PERMS_VIEW]) {
     if (X_GUEST) {
-        $core->redirect("{$full_url}misc.php?action=login", 0);
+        $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
         exit;
     } else {
         $core->error($lang['privforummsg']);
@@ -89,7 +89,7 @@ if ($forum['type'] == 'sub') {
 $core->nav(fnameOut($forum['name']));
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- ' . fnameOut($forum['name']);
+    $template->threadSubject = fnameOut($forum['name']) . ' - ';
 }
 
 // Search-link

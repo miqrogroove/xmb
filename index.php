@@ -68,7 +68,7 @@ if (onSubmit('gid')) {
     $core->setCanonicalLink("index.php?gid=$gid");
     $core->nav(fnameOut($cat['name']));
     if ($SETTINGS['subject_in_title'] == 'on') {
-        $template->threadSubject = '- '.fnameOut($cat['name']);
+        $template->threadSubject = fnameOut($cat['name']) . ' - ';
     }
 } else {
     $gid = 0;

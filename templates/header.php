@@ -8,7 +8,7 @@
 <?= $baseelement ?><?= $canonical_link ?>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
-<title><?= $SETTINGS['bbname'] ?> <?= $threadSubject ?> - <?= $versionlong ?></title>
+<title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $versionlong ?></title>
 <?= $css ?>
 <script language="JavaScript" type="text/javascript" src="./js/header.js?v=2"></script>
 </head>

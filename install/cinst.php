@@ -293,7 +293,7 @@ $db->query("INSERT INTO ".X_PREFIX."settings
 ('space_cats', 'off'),
 ('spellcheck', 'off'),
 ('stats', 'on'),
-('subject_in_title', 'off'),
+('subject_in_title', 'on'),
 ('theme', '1'),
 ('tickercode', 'html'),
 ('tickercontents', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"{$full_url}cp.php?action=settings\">settings</a> first.'),

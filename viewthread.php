@@ -256,7 +256,7 @@ nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
 nav($thread['subject']);
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.$thread['subject'];
+    $threadSubject = $thread['subject'] . ' - ';
 }
 
 // Search-link

@@ -111,7 +111,7 @@ if ($tid > 0) {
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.rawHTMLsubject(stripslashes($forum['subject']));
+    $threadSubject = rawHTMLsubject(stripslashes($forum['subject'])) . ' - ';
 }
 
 // Search-link

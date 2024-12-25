@@ -163,7 +163,7 @@ if ($kill) {
 }
 
 if ($SETTINGS['subject_in_title'] == 'on') {
-    $threadSubject = '- '.$threadname;
+    $threadSubject = $threadname . ' - ';
 }
 
 // Search-link

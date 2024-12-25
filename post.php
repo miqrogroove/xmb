@@ -429,7 +429,7 @@ switch($action) {
         nav($lang['textreply']);
 
         if ($SETTINGS['subject_in_title'] === 'on') {
-            $threadSubject = '- ' . $threadname;
+            $threadSubject = $threadname . ' - ';
         }
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
@@ -735,7 +735,7 @@ switch($action) {
 
             if (isset($previewpost)) {
                 if ($SETTINGS['subject_in_title'] === 'on' && $subject !== '') {
-                    $threadSubject = '- ' . $subject;
+                    $threadSubject = $subject . ' - ';
                 }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
@@ -834,7 +834,7 @@ switch($action) {
             nav($lang['textpostnew']);
         }
 
-        $threadSubject = '- ' . $lang['textpostnew'];
+        $threadSubject = $lang['textpostnew'] . ' - ';
 
         $pollanswers = postedVar('pollanswers', '', TRUE, FALSE);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -1142,7 +1142,7 @@ switch($action) {
 
             if (isset($previewpost)) {
                 if ($SETTINGS['subject_in_title'] === 'on' && $subject !== '') {
-                    $threadSubject = '- ' . $subject;
+                    $threadSubject = $subject . ' - ';
                 }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src=\"$smdir/$posticon\" />";
@@ -1215,7 +1215,7 @@ switch($action) {
         nav($lang['texteditpost']);
 
         if ($SETTINGS['subject_in_title'] === 'on') {
-            $threadSubject = '- ' . $threadname;
+            $threadSubject = $threadname . ' - ';
         }
 
         $editvalid = TRUE; // This new flag will indicate a message was submitted and successful.
@@ -1384,7 +1384,7 @@ switch($action) {
             }
 
             if ($SETTINGS['subject_in_title'] === 'on' && $postinfo['subject'] !== '') {
-                $threadSubject = '- ' . $postinfo['subject'];
+                $threadSubject = $postinfo['subject'] . ' - ';
             }
 
             // Fill $attachment
