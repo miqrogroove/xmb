@@ -11,7 +11,7 @@
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>"><table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr class="header">
-<td colspan="6" class="category"><font color="<?= $THEME['cattext'] ?>"><?= $lang['textbriefsummary'] ?> <?= $self['username'] ?> - [<?= $self['status']] ?></font></td>
+<td colspan="6" class="category"><font color="<?= $THEME['cattext'] ?>"><?= $lang['textbriefsummary'] ?> <?= $self['username'] ?> - [<?= $self['status'] ?>]</font></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textusername'] ?></td>
