@@ -137,27 +137,27 @@ class Manager
         if (false === strpos($this->vars->theme['bgcolor'], '.')) {
             $this->vars->theme['bgcode'] = 'background-color: ' . $this->vars->theme['bgcolor'] . ';';
         } else {
-            $this->vars->theme['bgcode'] = 'background-image: url(' . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ');';
+            $this->vars->theme['bgcode'] = 'background-image: url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ');';
         }
 
         if (false === strpos($this->vars->theme['catcolor'], '.')) {
             $this->vars->theme['catbgcode'] = "bgcolor='" . $this->vars->theme['catcolor'] . "'";
-            $this->vars->theme['catcss'] = "background-color: " . $this->vars->theme['catcolor'] . ";";
+            $this->vars->theme['catcss'] = "background-color: " . $this->vars->theme['catcolor'] . ";\n";
         } else {
             $this->vars->theme['catbgcode'] = "style='background-image: url(" . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ")'";
-            $this->vars->theme['catcss'] = "background-image: url(" . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ");";
+            $this->vars->theme['catcss'] = "background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ");\n";
         }
 
         if (false === strpos($this->vars->theme['top'], '.')) {
             $this->vars->theme['topbgcode'] = "bgcolor='" . $this->vars->theme['top'] . "'";
         } else {
-            $this->vars->theme['topbgcode'] = "style='background-image: url(" . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['top'] . ")'";
+            $this->vars->theme['topbgcode'] = "style='background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['top'] . ")'";
         }
 
         null_string($this->vars->theme['boardimg']);
         $l = parse_url($this->vars->theme['boardimg']);
-        if (!isset($l['scheme'])) {
-            $this->vars->theme['boardimg'] = $this->vars->theme['imgdir'].'/'.$this->vars->theme['boardimg'];
+        if (! isset($l['scheme'])) {
+            $this->vars->theme['boardimg'] = $this->vars->full_url . $this->vars->theme['imgdir'].'/'.$this->vars->theme['boardimg'];
         }
         $this->vars->theme['logo'] = "<a href='./'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->vars->settings['bbname'] . "' border='0' /></a>";
 

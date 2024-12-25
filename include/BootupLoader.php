@@ -269,35 +269,45 @@ class BootupLoader
         // login/logout links
         if (X_MEMBER) {
             if (X_ADMIN) {
-                $cplink = ' - <a href="cp.php">' . $this->vars->lang['textcp'] . '</a>';
+                $url = $this->vars->full_url . 'cp.php';
+                $cplink = " - <a href='$url'>" . $this->vars->lang['textcp'] . '</a>';
             } else {
                 $cplink = '';
             }
-            $loginout = '<a href="misc.php?action=logout">' . $this->vars->lang['textlogout'] . '</a>';
-            $memcp = '<a href="memcp.php">' . $this->vars->lang['textusercp'] . '</a>';
-            $u2ulink = '<a href="u2u.php" onclick="Popup(this.href, \'Window\', 700, 450); return false;">' . $this->vars->lang['banu2u'] . '</a> - ';
-            $this->template->notify = $this->vars->lang['loggedin']
-                    . ' <a href="member.php?action=viewpro&amp;member=' . recodeOut($this->vars->xmbuser) . '">' . $this->vars->xmbuser . '</a><br />['
-                    . $loginout . ' - ' . $u2ulink . '' . $memcp . '' . $cplink . ']';
+            $url = $this->vars->full_url . 'misc.php?action=logout';
+            $loginout = "<a href='$url'>" . $this->vars->lang['textlogout'] . '</a>';
+
+            $url = $this->vars->full_url . 'memcp.php';
+            $memcp = "<a href='$url'>" . $this->vars->lang['textusercp'] . '</a>';
+
+            $url = $this->vars->full_url . 'u2u.php';
+            $u2ulink = '<a href="' . $url . '" onclick="Popup(this.href, \'Window\', 700, 450); return false;">' . $this->vars->lang['banu2u'] . '</a> - ';
+
+            $url = $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($this->vars->xmbuser);
+            $profile = "<a href='$url'>" . $this->vars->xmbuser . '</a>';
+
+            $this->template->notify = $this->vars->lang['loggedin'] . $profile . '<br />[' . $loginout . ' - ' . $u2ulink . '' . $memcp . '' . $cplink . ']';
 
             // Update lastvisit in the header shown
             if ((int) $this->vars->self['lastvisit'] < $thetime || (
                 (int) $this->vars->self['lastvisit'] > $thetime + $this->vars::ONLINE_TIMER && (int) $this->vars->self['lastvisit'] < $onlinetime - $this->vars::ONLINE_TIMER
             )) {
-                $thetime = $this->vars->self['lastvisit'];
+                $thetime = (int) $this->vars->self['lastvisit'];
             }
-            $lastlocal = $thetime + ($this->vars->self['timeoffset'] * 3600) + ($this->vars->settings['addtime'] * 3600);
-            $lastdate = gmdate($dateformat, $lastlocal);
-            $lasttime = gmdate($timecode, $lastlocal);
+            $lastlocal = intval($thetime + ($this->vars->self['timeoffset'] * 3600) + ($this->vars->settings['addtime'] * 3600));
+            $lastdate = gmdate($this->vars->dateformat, $lastlocal);
+            $lasttime = gmdate($this->vars->timecode, $lastlocal);
             $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
         } else {
             // Checks for the possibility to register
             if ($this->vars->settings['regstatus'] == 'on') {
-                $this->template->reglink = '- <a href="member.php?action=reg">' . $this->vars->lang['textregister'] . '</a>';
+                $url = $this->vars->full_url . 'member.php?action=reg';
+                $this->template->reglink = "- <a href='$url'>" . $this->vars->lang['textregister'] . '</a>';
             } else {
                 $this->template->reglink = '';
             }
-            $loginout = '<a href="misc.php?action=login">' . $this->vars->lang['textlogin'] . '</a>';
+            $url = $this->vars->full_url . 'misc.php?action=login';
+            $loginout = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
             $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . ' ' . $this->template->reglink . ']';
             $this->template->lastvisittext = '';
         }
@@ -332,7 +342,7 @@ class BootupLoader
     public function createNavbarLinks()
     {
         $links = [];
-        $imgdir = $this->vars->theme['imgdir'];
+        $imgdir = $this->vars->full_url . $this->vars->theme['imgdir'];
 
         // Search-link
         $searchlink = $this->core->makeSearchLink();

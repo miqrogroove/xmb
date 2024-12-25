@@ -1,1 +1,1 @@
-[<?= $lang['timemsg'] ?>: <strong><?= $totaltime ?></strong> <?= $lang['textseconds']] ?>
+[<?= $lang['timemsg'] ?>: <strong><?= $totaltime ?></strong> <?= $lang['textseconds'] ?>]

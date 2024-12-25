@@ -126,6 +126,7 @@ class Template
     public function addRefs()
     {
         $this->data['lang'] = &$this->vars->lang;
+        $this->data['self'] = &$this->vars->self;
         $this->data['SETTINGS'] = &$this->vars->settings;
         $this->data['THEME'] = &$this->vars->theme;
     }

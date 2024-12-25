@@ -34,7 +34,6 @@ use function XMB\formYesNo;
 use function XMB\getPhpInput;
 use function XMB\postedVar;
 
-
 /**
  * Session Data objects are used to pass results between functions.
  *
@@ -300,7 +299,7 @@ class Manager
             // Check for errors
             if ('good' == $data->status) {
                 // We have authentication, now check authorization.
-                $this->status = loginAuthorization($data->member, $this->serror);
+                $this->status = $this->core->loginAuthorization($data->member, $this->serror);
                 if ('good' != $this->status) {
                     $data->status = 'bad';
                 }

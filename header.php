@@ -162,7 +162,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), forums(), sql(), template(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), vars()));
 
 unset($boot);
 

@@ -22,73 +22,53 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\session;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+declare(strict_types=1);
 
-define('X_SCRIPT', 'misc.php');
+namespace XMB;
 
-require 'header.php';
+require './header.php';
 
-loadtemplates(
-'functions_smilieinsert',
-'functions_smilieinsert_smilie',
-'misc_feature_not_while_loggedin',
-'misc_feature_notavailable',
-'misc_login_incorrectdetails',
-'misc_login',
-'misc_lostpw',
-'misc_mlist',
-'misc_mlist_admin',
-'misc_mlist_multipage',
-'misc_mlist_results_none',
-'misc_mlist_row',
-'misc_mlist_row_email',
-'misc_mlist_row_site',
-'misc_mlist_separator',
-'misc_online',
-'misc_online_admin',
-'misc_online_multipage',
-'misc_online_multipage_admin',
-'misc_online_row',
-'misc_online_row_admin',
-'misc_online_today',
-'misc_smilies',
-'popup_footer',
-'popup_header'
-);
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$login = \XMB\Services\login();
+$session = \XMB\Services\session();
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
+$lang = &$vars->lang;
+$SETTINGS = &$vars->settings;
 
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+$action = getPhpInput('action', 'g');
 switch($action) {
     case 'login':
-        nav($lang['textlogin']);
+        $core->nav($lang['textlogin']);
         break;
     case 'logout':
-        nav($lang['textlogout']);
+        $core->nav($lang['textlogout']);
         break;
     case 'search':
         break;
     case 'lostpw':
-        nav($lang['textlostpw']);
+        $core->nav($lang['textlostpw']);
         break;
     case 'online':
-        nav($lang['whosonline']);
+        $core->nav($lang['whosonline']);
         break;
     case 'list':
-        nav($lang['textmemberlist']);
+        $core->nav($lang['textmemberlist']);
         break;
     case 'onlinetoday':
-        nav($lang['whosonlinetoday']);
+        $core->nav($lang['whosonlinetoday']);
         break;
     case 'captchaimage':
-        nav($lang['textregister']);
+        $core->nav($lang['textregister']);
         break;
     case 'smilies':
-        nav($lang['smilies']);
+        $core->nav($lang['smilies']);
         break;
     default:
         header('HTTP/1.0 404 Not Found');
-        error($lang['textnoaction']);
+        $core->error($lang['textnoaction']);
         break;
 }
 
@@ -96,13 +76,13 @@ $misc = $multipage = $nextlink = '';
 
 switch($action) {
     case 'login':
-        if (! coppa_check()) {
-            message($lang['coppa_fail']);
+        if (! $core->coppa_check()) {
+            $core->message($lang['coppa_fail']);
         } elseif (noSubmit('loginsubmit')) {
             if (X_MEMBER) {
-                eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
+                $misc = $template->process('misc_feature_not_while_loggedin.php');
             } else {
-                eval('$misc = "'.template('misc_login').'";');
+                $misc = $template->process('misc_login.php');
             }
         } else {
             switch(session()->getStatus()) {
@@ -115,36 +95,35 @@ switch($action) {
                         $invisible = ($invisible == 1);
                     }
                     
-                    login()->loginUser($invisible);
-                    redirect($full_url, 0);
+                    $login->loginUser($invisible);
+                    $core->redirect($vars->full_url, 0);
                     break;
                 case 'login-client-disabled':
-                    error($lang['cookies_disabled']);
+                    $core->error($lang['cookies_disabled']);
                     break;
                 case 'already-logged-in':
-                    eval('$misc = "'.template('misc_feature_not_while_loggedin').'";');
+                    $misc = $template->process('misc_feature_not_while_loggedin.php');
                     break;
                 case 'ip-banned':
                 case 'member-banned':
-                    error($lang['bannedmessage']);
+                    $core->error($lang['bannedmessage']);
                     break;
                 case 'password-locked':
-                    error($lang['login_lockout']);
+                    $core->error($lang['login_lockout']);
                     break;
                 case 'login-no-input':
                 case 'bad-password':
                 case 'bad-username':
                 default:
-                    eval('$misc = "'.template('misc_login_incorrectdetails').'";');
-                    eval('$misc .= "'.template('misc_login').'";');
+                    $misc = $template->process('misc_login_incorrectdetails.php') . $template->process('misc_login.php');
                     break;
             }
         }
         break;
 
     case 'logout':
-        if ('logged-out' == session()->getStatus()) {
-            $gone = session()->getMember();
+        if ('logged-out' == $session->getStatus()) {
+            $gone = $session->getMember();
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='{$gone['username']}'");
             redirect($full_url, 0);
         } else {
@@ -184,22 +163,22 @@ switch($action) {
         } else {
             $username = postedVar('username');
             if (strlen($username) < 3) {
-                error($lang['badinfo']);
+                $core->error($lang['badinfo']);
             }
             $email = postedVar('email');
             $query = $db->query("SELECT uid, username, email, pwdate, langfile, status FROM ".X_PREFIX."members WHERE username='$username' AND email='$email'");
             if ($db->num_rows($query) != 1) {
-                error($lang['badinfo']);
+                $core->error($lang['badinfo']);
             }
             $member = $db->fetch_array($query);
             $db->free_result($query);
             if ($member['status'] == 'Banned') {
-                error($lang['bannedmessage']);
+                $core->error($lang['bannedmessage']);
             }
 
             $time = vars()->onlinetime - 86400;
             if ((int) $member['pwdate'] > $time) {
-                error($lang['lostpw_in24hrs']);
+                $core->error($lang['lostpw_in24hrs']);
             }
             
             sql()->setLostPasswordDate($member['uid'], time());
@@ -543,11 +522,11 @@ switch($action) {
         break;
 
     default:
-        error($lang['textnoaction']);
+        $core->error($lang['textnoaction']);
         break;
 }
 
-eval('$header = "'.template('header').'";');
-end_time();
-eval('$footer = "'.template('footer').'";');
+$header = $template->process('header.php');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $misc, $footer;

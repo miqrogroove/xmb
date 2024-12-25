@@ -42,6 +42,7 @@ class Core
         private Attach $attach,
         private BBCode $bbcode,
         private DBStuff $db,
+        private Debug $debug,
         private Forums $forums,
         private SQL $sql,
         private Template $template,
@@ -710,8 +711,8 @@ class Core
 
             $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
-            $lastpostdate = gmdate($this->vars->dateformat, $lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600));
-            $lastposttime = gmdate($this->vars->timecode, $lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600));
+            $lastpostdate = gmdate($this->vars->dateformat, intval($lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600)));
+            $lastposttime = gmdate($this->vars->timecode, intval($lastpost[0] + ($this->vars->timeoffset * 3600) + ($this->vars->settings['addtime'] * 3600)));
             $template->lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
             $template->lastpostrow = $template->process($templateName.'_lastpost.php');
         } else {
@@ -1128,8 +1129,8 @@ class Core
             $footerstuff['totaltime'] = '';
         }
 
-        if (X_SADMIN && $this->vars->settings->debug) {
-            $footerstuff['querydump'] = printAllQueries();
+        if (X_SADMIN && $this->vars->debug) {
+            $footerstuff['querydump'] = $this->debug->printAllQueries();
         } else {
             $footerstuff['querydump'] = '';
         }
@@ -1420,11 +1421,11 @@ class Core
         if ((($pos = strpos($altFormat, 'F')) !== false && $f = true) || ($pos2 = strpos($altFormat, 'M')) !== false) {
             $startStr = substr($altFormat, 0, $pos);
             $endStr = substr($altFormat, $pos+1);
-            $month = gmdate('m', $timestamp + ($timeoffset*3600)+(($altOffset+$SETTINGS['addtime'])*3600));
+            $month = gmdate('m', intval($timestamp + ($timeoffset*3600)+(($altOffset+$SETTINGS['addtime'])*3600)));
             $textM = month2text($month);
             return printGmDate($timestamp, $startStr, $altOffset).substr($textM,0, ($f ? strlen($textM) : 3)).printGmDate($timestamp, $endStr, $altOffset);
         } else {
-            return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
+            return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
         }
     }
 
@@ -1442,9 +1443,9 @@ class Core
         }
 
         if ($altFormat !== null) {
-            return gmdate($altFormat, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
+            return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
         } else {
-            return gmdate($timecode, $timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600));
+            return gmdate($timecode, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
         }
     }
 

@@ -213,13 +213,13 @@ if ($gid == 0) {
             if ('1' === $online['invisible']) {
                 $pre .= '<strike>';
                 $suff = '</strike>'.$suff;
-                if (!X_ADMIN && $online['username'] !== $xmbuser) {
+                if (!X_ADMIN && $online['username'] !== $vars->xmbuser) {
                     $num++;
                     continue;
                 }
             }
 
-            if ($online['username'] === $xmbuser && '1' === $online['invisible']) {
+            if ($online['username'] === $vars->xmbuser && '1' === $online['invisible']) {
                 $show_inv_key = true;
             }
 

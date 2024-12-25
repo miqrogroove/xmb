@@ -40,7 +40,7 @@ class Debug
             $querytimes = $this->db->getQueryTimes();
             $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
             foreach($this->db->getQueryList() as $key => $val) {
-                $val = mysql_syn_highlight(cdataOut($val));
+                $val = $this->mysql_syn_highlight(cdataOut($val));
                 $stuff[] = '<tr><td><strong>'.++$key.'.</strong></td><td>'.number_format($querytimes[$key-1], 8).'</td><td>'.$val.'</td></tr>';
             }
             $stuff[] = '</table>';
