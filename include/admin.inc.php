@@ -35,7 +35,7 @@ use XMB\Session\Manager as SessionMgr;
  */
 class admin
 {
-    public function __construct(private Core $core, private SessionMgr $session, private SQL $sql, private Template $template, private Variables $vars)
+    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -400,24 +400,26 @@ class admin
      *
      * @since 1.9.1
      */
-    public function dump_query($resource, $header = true)
+    public function dump_query($resource, $header = true): string
     {
-        global $altbg2, $altbg1, $db, $cattext;
-        if (!$db->error()) {
-            $count = $db->num_fields($resource);
+        $THEME = &$this->vars->theme;
+
+        if (! $this->db->error()) {
+            ob_start();
+            $count = $this->db->num_fields($resource);
             if ($header) {
                 ?>
                 <tr class="category" bgcolor="<?= $THEME['altbg2'] ?>" align="center">
                 <?php
                 for($i=0;$i<$count;$i++) {
                     echo '<td align="left">';
-                    echo '<strong><font color='.$cattext.'>'.$db->field_name($resource, $i).'</font></strong>';
+                    echo '<strong><font color=' . $THEME['cattext'] . '>' . $this->db->field_name($resource, $i) . '</font></strong>';
                     echo '</td>';
                 }
                 echo '</tr>';
             }
 
-            while($a = $db->fetch_array($resource, $db::SQL_NUM)) {
+            while($a = $this->db->fetch_array($resource, $this->db::SQL_NUM)) {
                 ?>
                 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
                 <?php
@@ -435,8 +437,12 @@ class admin
                 }
                 echo '</tr>';
             }
+            return ob_get_clean();
         } else {
-            error($db->error());
+            $error = '<tr bgcolor="' . $THEME['altbg1'] . '" class="ctrtablerow"><td align="left">';
+            $error .= $this->core->error($this->db->error(), showheader: false, return_as_string: true, showfooter: false, die: false);
+            $error .= '</td></tr>';
+            return $error;
         }
     }
 }

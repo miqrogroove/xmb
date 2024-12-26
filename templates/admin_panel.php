@@ -64,7 +64,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=updatemoods"><?= $lang['textfixmoods'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
-&raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=upgrade"><?= $lang['raw_mysql'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/sql.php"><?= $lang['raw_mysql'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=analyzetables"><?= $lang['analyze'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=checktables"><?= $lang['textcheck'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=optimizetables"><?= $lang['optimize'] ?></a><br />

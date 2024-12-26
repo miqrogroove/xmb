@@ -38,6 +38,10 @@ header('X-Robots-Tag: noindex');
 $core->nav($vars->lang['textcp']);
 $core->setCanonicalLink('admin/');
 
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['textcp'] . ' - ';
+}
+
 $header = $template->process('header.php');
 
 if (!X_ADMIN) {

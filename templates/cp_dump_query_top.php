@@ -1,3 +1,6 @@
+<tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
+<td>
+<br />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
  <tr>
   <td bgcolor="<?= $THEME['bordercolor'] ?>">

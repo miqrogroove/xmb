@@ -48,6 +48,10 @@ $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>'
 $core->nav($lang['textsettings']);
 $core->setCanonicalLink('admin/settings.php');
 
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['textsettings'] . ' - ';
+}
+
 $header = $template->process('header.php');
 
 if (!X_ADMIN) {
@@ -63,7 +67,7 @@ $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $session, $sql, $template, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
 
 if (
     noSubmit('settingsubmit1')
