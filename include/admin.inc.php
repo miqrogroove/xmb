@@ -50,7 +50,8 @@ class admin
      */
     public function rename_user(string $userfrom, string $userto): string
     {
-        global $db, $lang, $self;
+        $db = $this->db;
+        $lang = &$this->vars->lang;
 
         if (strlen($userto) < 3 || strlen($userto) > 32) {
             return $lang['username_length_invalid'];
@@ -61,11 +62,11 @@ class admin
         $dblikeuserfrom = $db->like_escape($userfrom);
         $dbregexuserfrom = $db->regexp_escape($userfrom);
 
-        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$dbuserfrom'");
+        $query = $db->query("SELECT username FROM " . $this->vars->tablepre . "members WHERE username='$dbuserfrom'");
         $cUsrFrm = $db->num_rows($query);
         $db->free_result($query);
 
-        $query = $db->query("SELECT username FROM ".X_PREFIX."members WHERE username='$dbuserto'");
+        $query = $db->query("SELECT username FROM " . $this->vars->tablepre . "members WHERE username='$dbuserto'");
         $cUsrTo = $db->num_rows($query);
         $db->free_result($query);
 
@@ -80,69 +81,69 @@ class admin
         $this->session->logoutAll($userfrom);
 
         @set_time_limit(180);
-        $db->query("UPDATE ".X_PREFIX."members SET username='$dbuserto' WHERE username='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."buddys SET username='$dbuserto' WHERE username='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."buddys SET buddyname='$dbuserto' WHERE buddyname='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."favorites SET username='$dbuserto' WHERE username='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."forums SET moderator='$dbuserto' WHERE moderator='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."logs SET username='$dbuserto' WHERE username='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."posts SET author='$dbuserto' WHERE author='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."threads SET author='$dbuserto' WHERE author='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET msgto='$dbuserto' WHERE msgto='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET msgfrom='$dbuserto' WHERE msgfrom='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."u2u SET owner='$dbuserto' WHERE owner='$dbuserfrom'");
-        $db->query("UPDATE ".X_PREFIX."whosonline SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "members SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "buddys SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "buddys SET buddyname='$dbuserto' WHERE buddyname='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "favorites SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "forums SET moderator='$dbuserto' WHERE moderator='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "logs SET username='$dbuserto' WHERE username='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "posts SET author='$dbuserto' WHERE author='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "threads SET author='$dbuserto' WHERE author='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET msgto='$dbuserto' WHERE msgto='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET msgfrom='$dbuserto' WHERE msgfrom='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET owner='$dbuserto' WHERE owner='$dbuserfrom'");
+        $db->query("UPDATE " . $this->vars->tablepre . "whosonline SET username='$dbuserto' WHERE username='$dbuserfrom'");
 
-        $query = $db->query("SELECT ignoreu2u, uid FROM ".X_PREFIX."members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
+        $query = $db->query("SELECT ignoreu2u, uid FROM " . $this->vars->tablepre . "members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($usr = $db->fetch_array($query)) {
             $db->escape_fast($usr['ignoreu2u']);
             $parts = explode(',', $usr['ignoreu2u']);
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(',', $parts);
-            $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='$parts' WHERE uid={$usr['uid']}");
+            $db->query("UPDATE " . $this->vars->tablepre . "members SET ignoreu2u='$parts' WHERE uid={$usr['uid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT moderator, fid FROM ".X_PREFIX."forums WHERE (moderator REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
+        $query = $db->query("SELECT moderator, fid FROM " . $this->vars->tablepre . "forums WHERE (moderator REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
             $db->escape_fast($list['moderator']);
             $parts = explode(',', $list['moderator']);
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE ".X_PREFIX."forums SET moderator='$parts' WHERE fid={$list['fid']}");
+            $db->query("UPDATE " . $this->vars->tablepre . "forums SET moderator='$parts' WHERE fid={$list['fid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT userlist, fid FROM ".X_PREFIX."forums WHERE (userlist REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
+        $query = $db->query("SELECT userlist, fid FROM " . $this->vars->tablepre . "forums WHERE (userlist REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
         while($list = $db->fetch_array($query)) {
             $db->escape_fast($list['userlist']);
             $parts = array_unique(array_map('trim', explode(',', $list['userlist'])));
             $index = array_search($dbuserfrom, $parts);
             $parts[$index] = $dbuserto;
             $parts = implode(', ', $parts);
-            $db->query("UPDATE ".X_PREFIX."forums SET userlist='$parts' WHERE fid={$list['fid']}");
+            $db->query("UPDATE " . $this->vars->tablepre . "forums SET userlist='$parts' WHERE fid={$list['fid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT fid, lastpost FROM ".X_PREFIX."forums WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
+        $query = $db->query("SELECT fid, lastpost FROM " . $this->vars->tablepre . "forums WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
             $db->escape_fast($result['lastpost']);
             $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $result['lastpost']);
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
+            $db->query("UPDATE " . $this->vars->tablepre . "forums SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
         }
         $db->free_result($query);
 
-        $query = $db->query("SELECT tid, lastpost FROM ".X_PREFIX."threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
+        $query = $db->query("SELECT tid, lastpost FROM " . $this->vars->tablepre . "threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
         while($result = $db->fetch_array($query)) {
             $db->escape_fast($result['lastpost']);
             $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $result['lastpost']);
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
+            $db->query("UPDATE " . $this->vars->tablepre . "threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
         }
         $db->free_result($query);
 
-        return (($self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
+        return (($this->vars->self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
     }
 
     /**
@@ -156,7 +157,7 @@ class admin
      */
     private function check_restricted(string $userto): bool
     {
-        global $db;
+        $db = $this->db;
 
         $nameokay = true;
 
@@ -164,7 +165,7 @@ class admin
             return false;
         }
 
-        $query = $db->query("SELECT * FROM ".X_PREFIX."restricted");
+        $query = $db->query("SELECT * FROM " . $this->vars->tablepre . "restricted");
         while($restriction = $db->fetch_array($query)) {
             if ('0' === $restriction['case_sensitivity']) {
                 $t_username = strtolower($userto);
