@@ -59,28 +59,6 @@ define('X_PERMS_REPLY', 42);
 define('X_PERMS_VIEW', 43); //View is now = Rawview || Userlist
 define('X_PERMS_USERLIST', 44);
 define('X_PERMS_PASSWORD', 45);
-// status string to bit field assignments
-$status_enum = array(
-'Super Administrator' => 1,
-'Administrator'       => 2,
-'Super Moderator'     => 4,
-'Moderator'           => 8,
-'Member'              => 16,
-'Guest'               => 32,
-''                    => 32,
-'Reserved-Future-Use' => 64,
-'Banned'              => (1 << 30)
-); //$status['Banned'] == 2^30
-// status bit to $lang key assignments
-$status_translate = array(
-1         => 'superadmin',
-2         => 'textadmin',
-4         => 'textsupermod',
-8         => 'textmod',
-16        => 'textmem',
-32        => 'textguest1',
-(1 << 30) => 'textbanned'
-);
 
 
 /* Load Common Files. None of them should produce any output. */

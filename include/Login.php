@@ -80,8 +80,6 @@ class Login
      */
     function elevateUser(bool $force_inv = false)
     {
-        global $status_enum;
-        
         $vars = $this->vars;
 
         $maxurl = 150; //Schema constant.
@@ -139,17 +137,17 @@ class Login
         }
 
         // Enumerate status
-        if (isset($status_enum[$vars->self['status']])) {
-            $int_status = $status_enum[$vars->self['status']];
+        if (isset($this->vars->status_enum[$vars->self['status']])) {
+            $int_status = $this->vars->status_enum[$vars->self['status']];
         } else {
-            $int_status = $status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
+            $int_status = $this->vars->status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
         }
 
         if (!defined('X_STAFF')) {
             define('X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
-            define('X_ADMIN', ($int_status <= $status_enum['Administrator']));
-            define('X_SMOD', ($int_status <= $status_enum['Super Moderator']));
-            define('X_MOD', ($int_status <= $status_enum['Moderator']));
+            define('X_ADMIN', ($int_status <= $this->vars->status_enum['Administrator']));
+            define('X_SMOD', ($int_status <= $this->vars->status_enum['Super Moderator']));
+            define('X_MOD', ($int_status <= $this->vars->status_enum['Moderator']));
             define('X_STAFF', X_MOD);
         }
 

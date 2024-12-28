@@ -611,7 +611,7 @@ if ($action == '') {
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$status_translate[$status_enum[$sr]]],
+                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];

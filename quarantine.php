@@ -201,7 +201,7 @@ case 'viewuser':
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$status_translate[$status_enum[$sr]]],
+                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
@@ -407,7 +407,7 @@ case 'viewuser':
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$status_translate[$status_enum[$sr]]],
+                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
@@ -700,7 +700,7 @@ case 'approveall':
                                  . "INNER JOIN ".X_PREFIX."members m USING (username) "
                                  . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
             while($subs = $db->fetch_array($subquery)) {
-                if ($viewperm < $status_enum[$subs['status']]) {
+                if ($viewperm < vars()->status_enum[$subs['status']]) {
                     continue;
                 }
 
@@ -885,7 +885,7 @@ case 'approvereply':
                          . "INNER JOIN ".X_PREFIX."members m USING (username) "
                          . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
     while($subs = $db->fetch_array($subquery)) {
-        if ($viewperm < $status_enum[$subs['status']]) {
+        if ($viewperm < vars()->status_enum[$subs['status']]) {
             continue;
         }
 

@@ -621,7 +621,7 @@ switch($action) {
                                      . "INNER JOIN ".X_PREFIX."members m USING (username) "
                                      . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
                 while($subs = $db->fetch_array($subquery)) {
-                    if ($viewperm < $status_enum[$subs['status']]) {
+                    if ($viewperm < vars()->status_enum[$subs['status']]) {
                         continue;
                     }
 
@@ -820,7 +820,7 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == $status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == vars()->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
@@ -1199,7 +1199,7 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == $status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == vars()->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 

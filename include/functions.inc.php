@@ -1759,12 +1759,10 @@ class Core
      */
     function checkForumPermissions($forum, ?string $user_status_in = null)
     {
-        global $status_enum;
-
         if (is_string($user_status_in)) {
-            $user_status = $status_enum[$user_status_in];
+            $user_status = $this->vars->status_enum[$user_status_in];
         } else {
-            $user_status = $status_enum[$this->vars->self['status']];
+            $user_status = $this->vars->status_enum[$this->vars->self['status']];
         }
 
         // 1. Initialize $ret with zero permissions

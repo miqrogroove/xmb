@@ -28,10 +28,34 @@ namespace XMB;
 
 class Variables
 {
-    const int ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
-    
-    const string cheHTML = 'checked="checked"';
-    const string selHTML = 'selected="selected"';
+    public const int ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
+
+    public const string cheHTML = 'checked="checked"';
+    public const string selHTML = 'selected="selected"';
+
+    // status string to bit field assignments
+    public array $status_enum = [
+        'Super Administrator' => 1,
+        'Administrator'       => 2,
+        'Super Moderator'     => 4,
+        'Moderator'           => 8,
+        'Member'              => 16,
+        'Guest'               => 32,
+        ''                    => 32,
+        'Reserved-Future-Use' => 64,
+        'Banned'              => (1 << 30),
+    ]; //$status['Banned'] == 2^30
+
+    // status bit to $lang key assignments
+    public array $status_translate = [
+        1         => 'superadmin',
+        2         => 'textadmin',
+        4         => 'textsupermod',
+        8         => 'textmod',
+        16        => 'textmem',
+        32        => 'textguest1',
+        (1 << 30) => 'textbanned',
+    ];
 
     public array $lang = [];
     public array $mailer = [];

@@ -20,7 +20,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/settings.php"><?= $lang['textsettings'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
-&raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=forum"><?= $lang['textforums'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/forums.php"><?= $lang['textforums'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=mods"><?= $lang['textmods'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=prune"><?= $lang['textprune'] ?></a><br />
 </td>

@@ -189,7 +189,7 @@ if (
 
     $body = $template->process('admin_settings.php');
 } else {
-    $core->request_secure('Control Panel/settings', 'global');
+    $core->request_secure('Control Panel/settings', 'global', error_header: true);
 
     $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
     $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
