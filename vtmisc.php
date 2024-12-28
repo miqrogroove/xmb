@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\forums;
 use function XMB\Services\sql;
 
 define('X_SCRIPT', 'vtmisc.php');
@@ -84,7 +85,7 @@ if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -92,14 +93,14 @@ if ($forum['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = getForum($fup['fup']);
+        $fupup = forums()->getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 }

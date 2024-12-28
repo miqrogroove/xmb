@@ -23,6 +23,8 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\core;
+use function XMB\Services\forums;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
@@ -69,7 +71,7 @@ if (count($tids) == 1) {
     $threadname = '';
 }
 
-$forums = getForum($fid);
+$forums = forums()->getForum($fid);
 
 if (false === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
@@ -86,7 +88,7 @@ if (!$perms[X_PERMS_VIEW]) {
 
 $fup = array();
 if ($forums['type'] == 'sub') {
-    $fup = getForum($forums['fup']);
+    $fup = forums()->getForum($forums['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -94,13 +96,13 @@ if ($forums['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = getForum($fup['fup']);
+        $fupup = forums()->getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 } else if ((int) $forums['fup'] > 0) { // 'forum' in a 'group'
-    $fup = getForum($forums['fup']);
+    $fup = forums()->getForum($forums['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
@@ -308,9 +310,9 @@ switch($action) {
         } else {
             request_secure('Thread Admin Options/Move', (string) min($tids));
             $moveto = formInt('moveto');
-            $type = postedVar('type');
+            $type = core()->postedVar('type');
 
-            $movetorow = getForum($moveto);
+            $movetorow = forums()->getForum($moveto);
             if ($movetorow === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
@@ -822,7 +824,7 @@ switch($action) {
 
             $newfid = getRequestInt('newfid');
 
-            $otherforum = getForum($newfid);
+            $otherforum = forums()->getForum($newfid);
             if ($otherforum === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
@@ -900,7 +902,7 @@ eval('echo "'.template('footer').'";');
 function statuscheck($fid) {
     global $self;
 
-    $forum = getForum($fid);
+    $forum = forums()->getForum($fid);
     if ($forum === FALSE) {
         return FALSE;
     }

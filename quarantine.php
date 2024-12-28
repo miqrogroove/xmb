@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\forums;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
@@ -85,7 +86,7 @@ case 'viewuser':
         echo "<h2>{$lang['moderation_new_member']}: {$member['username']}</h2>\n";
     } else {
         $fid = getInt('fid');
-        $forum = getForum($fid);
+        $forum = forums()->getForum($fid);
         if (false === $forum) {
             error($lang['textnoforum'], false, '', '</td></tr></table></td></tr></table>');
         }
@@ -124,7 +125,7 @@ case 'viewuser':
         while($thread = $db->fetch_array($result)){
             $tid = $thread['tid'];
             $fid = $thread['fid'];
-            $forum = getForum($fid);
+            $forum = forums()->getForum($fid);
             $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvethread&amp;tid=$tid' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
@@ -349,7 +350,7 @@ case 'viewuser':
         while($post = $db->fetch_array($result)){
             $tid = $post['tid'];
             $fid = $post['fid'];
-            $forum = getForum($fid);
+            $forum = forums()->getForum($fid);
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvereply&amp;pid={$post['pid']}' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletereply&amp;pid={$post['pid']}' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
@@ -612,7 +613,7 @@ case 'approveall':
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
         while($thread = $db->fetch_array($result)) {
             $thatime++;
-            $forum = getForum($thread['fid']);
+            $forum = forums()->getForum($thread['fid']);
             $db->query(
                 "INSERT INTO ".X_PREFIX."threads " .
                 "      (fid, subject, icon,           lastpost, views, replies, author, closed, topped, pollopts) " .
@@ -664,7 +665,7 @@ case 'approveall':
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE author='$member' ORDER BY dateline ASC");
         while($post = $db->fetch_array($result)) {
             $thatime++;
-            $forum = getForum($post['fid']);
+            $forum = forums()->getForum($post['fid']);
             $db->query(
                 "INSERT INTO ".X_PREFIX."posts " .
                 "      (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
@@ -778,7 +779,7 @@ case 'approvethread':
     $thread = $db->fetch_array($result);
     $db->free_result($result);
 
-    $forum = getForum($thread['fid']);
+    $forum = forums()->getForum($thread['fid']);
     $member = $db->escape($thread['author']);
     $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}");
     $post = $db->fetch_array($result);
@@ -848,7 +849,7 @@ case 'approvereply':
     $post = $db->fetch_array($result);
     $db->free_result($result);
 
-    $forum = getForum($post['fid']);
+    $forum = forums()->getForum($post['fid']);
     $member = $db->escape($post['author']);
     $db->query(
         "INSERT INTO ".X_PREFIX."posts " .
@@ -1004,7 +1005,7 @@ default:
         echo "<table>\n<tr><th>{$lang['textforum']}</th><th>{$lang['memposts']}</th></tr>\n";
         while($row = $db->fetch_array($result)) {
             $fid = $row['fid'];
-            $forum = getForum($fid);
+            $forum = forums()->getForum($fid);
             $fname = fnameOut($forum['name']);
             $count = $row['postnum'];
             echo "<tr><td><a href='?action=viewforum&amp;fid=$fid'>$fname</a></td><td>$count</td></tr>\n";

@@ -1,10 +1,10 @@
 <tr bgcolor="<?= $THEME['altbg2'] ?>">
 <td align="center">
-<form method="post" action="admin/forums.php&amp;fdetails=<?= $fdetails ?>">
+<form method="post" action="<?= $full_url ?>admin/forums.php&amp;fdetails=<?= $fdetails ?>">
 <input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
-<td bgcolor="<?= $THEME['$bordercolor'] ?>">
+<td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
 <td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textforumopts'] ?></strong></font></td>

@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\forums;
 use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
@@ -831,7 +832,7 @@ switch($action) {
         if ($found) {
             $row = $db->fetch_array($query);
             $posts = $row['posts'];
-            $forum = getForum($row['fid']);
+            $forum = forums()->getForum($row['fid']);
             $topforum = "<a href='./forumdisplay.php?fid={$forum['fid']}'>".fnameOut($forum['name'])."</a> ($posts {$lang['memposts']}) [".round(($posts/$memberinfo['postnum'])*100, 1)."% {$lang['textoftotposts']}]";
         } else {
             $topforum = $lang['textnopostsyet'];

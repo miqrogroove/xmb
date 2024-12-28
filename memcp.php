@@ -22,6 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\core;
+use function XMB\Services\forums;
 use function XMB\Services\session;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
@@ -502,13 +504,13 @@ if ($action == 'profile') {
             error($lang['privforummsg']);
         }
         $row = $db->fetch_array($query);
-        $forum = getForum($row['fid']);
+        $forum = forums()->getForum($row['fid']);
         $perms = checkForumPermissions($forum);
         if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
             error($lang['privforummsg']);
         }
         if ($forum['type'] == 'sub') {
-            $perms = checkForumPermissions(getForum($forum['fup']));
+            $perms = core()->checkForumPermissions(forums()->getForum($forum['fup']));
             if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
                 error($lang['privforummsg']);
             }
@@ -540,7 +542,7 @@ if ($action == 'profile') {
                  ORDER BY t.lastpost DESC"
             );
             while($fav = $db->fetch_array($query)) {
-                $forum = getForum($fav['fid']);
+                $forum = forums()->getForum($fav['fid']);
                 $forum['name'] = fnameOut($forum['name']);
 
                 $lastpost = explode('|', $fav['lastpost']);
@@ -620,7 +622,7 @@ if ($action == 'profile') {
         $subnum = 0;
         $subscriptions = '';
         while($fav = $db->fetch_array($query)) {
-            $forum = getForum($fav['fid']);
+            $forum = forums()->getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -813,7 +815,7 @@ if ($action == 'profile') {
         );
         $favnum = $db->num_rows($query2);
         while($fav = $db->fetch_array($query2)) {
-            $forum = getForum($fav['fid']);
+            $forum = forums()->getForum($fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);

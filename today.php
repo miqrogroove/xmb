@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\forums;
 use function XMB\Services\vars;
 
 require 'header.php';
@@ -125,7 +126,7 @@ if ($threadcount == 0) {
     $today_row = array();
     while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
-        $forum = getForum($thread['fid']);
+        $forum = forums()->getForum($thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 
         if ($thread['author'] == 'Anonymous') {

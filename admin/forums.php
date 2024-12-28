@@ -54,6 +54,7 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
+$body = '';
 $fdetails = getInt('fdetails');
 $template->fdetails = $fdetails;
 if (noSubmit('forumsubmit') && !$fdetails) {
@@ -159,7 +160,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
                 // Loop through subforums of grouped forums.
                 if (array_key_exists($forum['fid'], $subs)) {
-                    foreach($subs[$forum['fid']] as $forum) {
+                    foreach($subs[$forum['fid']] as $subforum) {
                         if ($subforum['status'] == 'on') {
                             $template->off = '';
                             $template->on = $vars::selHTML;
@@ -199,25 +200,25 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     $template->themelist = implode("\n", $themelist);
 
     if ($forum['allowsmilies'] == "yes") {
-        $template->checked3 = $cheHTML;
+        $template->checked3 = $vars::cheHTML;
     } else {
         $template->checked3 = '';
     }
 
     if ($forum['allowbbcode'] == "yes") {
-        $template->checked4 = $cheHTML;
+        $template->checked4 = $vars::cheHTML;
     } else {
         $template->checked4 = '';
     }
 
     if ($forum['allowimgcode'] == "yes") {
-        $template->checked5 = $cheHTML;
+        $template->checked5 = $vars::cheHTML;
     } else {
         $template->checked5 = '';
     }
 
     if ($forum['attachstatus'] == "on") {
-        $template->checked6 = $cheHTML;
+        $template->checked6 = $vars::cheHTML;
     } else {
         $template->checked6 = '';
     }
@@ -266,13 +267,15 @@ if (noSubmit('forumsubmit') && !$fdetails) {
                 $dsuccess = true;
             }
             if (!$dsuccess) {
-                $body = message(
+                $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>';
+                $body .= $core->message(
                     $lang['deleteaborted'] . '<br />' . $lang['forumnotempty'],
                     showheader: false,
                     die: false,
                     return_as_string: true,
                     showfooter: false,
                 );
+                $body .= '</td></tr>';
             }
         }
 
@@ -316,13 +319,15 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         if ($delete == (int) $group['fid']) {
             $query = $db->query("SELECT fid FROM " . $vars->tablepre . "forums WHERE type = 'forum' AND fup = $delete");
             if ($db->num_rows($query) > 0) {
-                $body = message(
+                $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>';
+                $body .= $core->message(
                     $lang['deleteaborted'] . '<br />' . $lang['forumnotempty'],
                     showheader: false,
                     die: false,
                     return_as_string: true,
                     showfooter: false,
                 );
+                $body .= '</td></tr>';
             } else {
                 $db->query("DELETE FROM " . $vars->tablepre . "forums WHERE type = 'group' AND fid = $delete");
             }
@@ -331,9 +336,9 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
 
-    $newgname = addslashes(htmlspecialchars(postedVar('newgname', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
-    $newfname = addslashes(htmlspecialchars(postedVar('newfname', 'javascript', htmlencode: false), ENT_COMPAT));
-    $newsubname = addslashes(htmlspecialchars(postedVar('newsubname', 'javascript', htmlencode: false), ENT_COMPAT));
+    $newgname = addslashes(htmlspecialchars($core->postedVar('newgname', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+    $newfname = addslashes(htmlspecialchars($core->postedVar('newfname', 'javascript', htmlencode: false), ENT_COMPAT));
+    $newsubname = addslashes(htmlspecialchars($core->postedVar('newsubname', 'javascript', htmlencode: false), ENT_COMPAT));
     $newgorder = formInt('newgorder');
     $newforder = formInt('newforder');
     $newsuborder = formInt('newsuborder');
@@ -354,7 +359,9 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     if ($newsubname !== $lang['textnewsubf'] && $newsubname != '') {
         $db->query("INSERT INTO " . $vars->tablepre . "forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textforumupdate'] . '</td></tr>';
+
+    $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
+    $body .= '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
 } else {
     $core->request_secure('Control Panel/Forums', (string) $fdetails, error_header: true);
 
@@ -418,15 +425,22 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
 
     if ($success) {
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textforumupdate'] . '</td></tr>';
+        if ($delete) {
+            $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
+        } else {
+            $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php?fdetails=' . $fdetails . '">' . $lang['textforumslink'] . '</a>';
+        }
+        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
     } else {
-        $body = message(
+        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>';
+        $body .= $core->message(
             $lang['deleteaborted'] . '<br />' . $lang['forumnotempty'],
             showheader: false,
             die: false,
             return_as_string: true,
             showfooter: false,
         );
+        $body .= '</td></tr>';
     }
 }
 

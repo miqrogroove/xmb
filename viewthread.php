@@ -24,6 +24,7 @@
 
 use function XMB\Services\attach;
 use function XMB\Services\core;
+use function XMB\Services\forums;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
@@ -207,7 +208,7 @@ if (false === strpos($oldtopics, "|$lastPid|")) {
 }
 
 $fid = $thread['fid'];
-$forum = getForum($fid);
+$forum = forums()->getForum($fid);
 
 if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
@@ -228,7 +229,7 @@ if (!$perms[X_PERMS_VIEW]) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -241,14 +242,14 @@ if ($forum['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = getForum($fup['fup']);
+        $fupup = forums()->getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 }

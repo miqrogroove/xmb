@@ -62,7 +62,7 @@ if (! $perms[X_PERMS_VIEW]) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = $core->getForum((int) $forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = $core->checkForumPermissions($fup);
     if (! $fupPerms[X_PERMS_VIEW]) {
@@ -75,14 +75,14 @@ if ($forum['type'] == 'sub') {
     } else if (! $fupPerms[X_PERMS_PASSWORD]) {
         $core->handlePasswordDialog((int) $fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = $core->getForum((int) $fup['fup']);
+        $fupup = $forums->getForum((int) $fup['fup']);
         $core->nav('<a href="index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
         unset($fupup);
     }
     $core->nav('<a href="forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = $core->getForum((int) $forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     $core->nav('<a href="index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 }
@@ -127,7 +127,7 @@ if ($forum['type'] == 'forum') {
     $permitted = $core->permittedForums('forum', 'array');
     foreach($permitted as $sub) {
         if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
-            $template->forumlist .= forum($sub, 'forumdisplay_subforum', index_subforums: []);
+            $template->forumlist .= $core->forum($sub, 'forumdisplay_subforum', index_subforums: []);
         }
     }
     if ($template->forumlist != '') {
@@ -244,9 +244,9 @@ $querytop = $db->query(
 
 if ($db->num_rows($querytop) == 0) {
     if ($status1 == 'Moderator') {
-        $threadlist = $template->process('forumdisplay_nothreads_admin');
+        $threadlist = $template->process('forumdisplay_nothreads_admin.php');
     } else {
-        $threadlist = $template->process('forumdisplay_nothreads');
+        $threadlist = $template->process('forumdisplay_nothreads.php');
     }
 } elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $vars->self['postnum'] > 0) {
     while($thread = $db->fetch_array($querytop)) {

@@ -238,26 +238,14 @@ class Core
      */
     function loadLang(string $devname = "English"): bool
     {
-        $db = $this->db;
+        $lang = [];
 
-        $db->escape_fast($devname);
-
-        // Query The Translation Database
-        $sql = 'SELECT k.langkey, t.cdata '
-             . 'FROM ' . $this->vars->tablepre . 'lang_keys AS k '
-             . 'LEFT JOIN ' . $this->vars->tablepre . 'lang_text AS t USING (phraseid) '
-             . 'INNER JOIN ' . $this->vars->tablepre . 'lang_base AS b USING (langid) '
-             . "WHERE b.devname = '$devname'";
-        $result = $db->query($sql);
+        include ROOT . "lang/$devname.lang.php";
 
         // Load the $lang array.
-        if ($db->num_rows($result) > 0) {
+        if (count($lang) > 0) {
             $this->vars->langfile = $devname;
-            $this->vars->lang = array();
-            while($row = $db->fetch_array($result)) {
-                $this->vars->lang[$row['langkey']] = $row['cdata'];
-            }
-            $db->free_result($result);
+            $this->vars->lang = &$lang;
             $this->vars->charset = $this->vars->lang['charset'];
             return true;
         } else {

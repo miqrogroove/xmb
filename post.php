@@ -25,6 +25,8 @@
 use XMB\UploadStatus;
 
 use function XMB\Services\attach;
+use function XMB\Services\core;
+use function XMB\Services\forums;
 use function XMB\Services\sql;
 use function XMB\Services\vars;
 
@@ -108,7 +110,7 @@ if ($action == 'edit') {
     $fid = (int) $forum['fid'];
 } else if ($action == 'newthread') {
     $fid = getRequestInt('fid');
-    $forum = getForum($fid);
+    $forum = forums()->getForum($fid);
     if ($forum === FALSE) {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnoforum']);
@@ -206,7 +208,7 @@ if ($action == 'newthread') {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -219,13 +221,13 @@ if ($forum['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = getForum($fup['fup']);
+        $fupup = forums()->getForum($fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = getForum($forum['fup']);
+    $fup = forums()->getForum($forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
@@ -680,7 +682,7 @@ switch($action) {
                 $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM ".X_PREFIX."posts p WHERE p.pid=$repquote");
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
-                $quoteperms = checkForumPermissions(getForum($thaquote['fid']));
+                $quoteperms = core()->checkForumPermissions(forums()->getForum($thaquote['fid']));
                 if ($quoteperms[X_PERMS_VIEW] && $quoteperms[X_PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
                     $quoteblock = rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
@@ -1518,7 +1520,7 @@ function postLinkBBcode(&$message) {
     $pids = implode(', ', $items);
     $query = $db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) WHERE pid IN ($pids)");
     while($row = $db->fetch_array($query)) {
-        $perms = checkForumPermissions(getForum($row['fid']));
+        $perms = core()->checkForumPermissions(forums()->getForum($row['fid']));
         if ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD]) {
             if ($row['subject'] != '') {
                 $subject = stripslashes($row['subject']);

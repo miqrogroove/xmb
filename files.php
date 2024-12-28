@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use function XMB\Services\forums;
 use function XMB\Services\observer;
 use function XMB\Services\sql;
 
@@ -119,7 +120,7 @@ if (empty($file)) {
 }
 
 if ($pid > 0 || $file['fid'] != '') {
-    $forum = getForum($file['fid']);
+    $forum = forums()->getForum($file['fid']);
 
     if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
         fileError();
@@ -140,7 +141,7 @@ if ($pid > 0 || $file['fid'] != '') {
 
     $fup = array();
     if ($forum['type'] == 'sub') {
-        $fup = getForum($forum['fup']);
+        $fup = forums()->getForum($forum['fup']);
         // prevent access to subforum when upper forum can't be viewed.
         $fupPerms = checkForumPermissions($fup);
         if (!$fupPerms[X_PERMS_VIEW]) {

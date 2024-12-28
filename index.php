@@ -30,6 +30,7 @@ require './header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$forumcache = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
@@ -43,7 +44,7 @@ if (onSubmit('gid')) {
     $SETTINGS['tickerstatus'] = 'off';
     $SETTINGS['whosonlinestatus'] = 'off';
     $SETTINGS['index_stats'] = 'off';
-    $cat = $core->getForum($gid);
+    $cat = $forumcache->getForum($gid);
 
     if ($cat === false) {
         header('HTTP/1.0 404 Not Found');
@@ -344,7 +345,8 @@ foreach($fquery as $thing) {
         }
         $lastcat = $thing['cat_fid'];
         $thing['cat_name'] = fnameOut($thing['cat_name']);
-        eval('$forumlist .= "'.template('index_category').'";');
+        $template->thing = $thing;
+        $forumlist .= $template->process('index_category.php');
         if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
             $forumlist .= $indexBar;
         }

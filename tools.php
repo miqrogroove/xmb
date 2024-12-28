@@ -23,6 +23,7 @@
  */
 
 use function XMB\Services\attach;
+use function XMB\Services\forums;
 
 define('X_SCRIPT', 'tools.php');
 
@@ -291,7 +292,7 @@ switch($action) {
             echo '</form>';
         } else {
             $export_fid = formInt('export_fid');
-            $export_forum = getForum($export_fid);
+            $export_forum = forums()->getForum($export_fid);
             if ($export_forum['type'] != 'forum' && $export_forum['type'] != 'sub') {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
@@ -352,7 +353,7 @@ switch($action) {
 
             updatethreadcount($export_tid);
             updateforumcount($export_fid);
-            $forum = getForum($export_fid);
+            $forum = forums()->getForum($export_fid);
             if ($forum['type'] == 'sub') {
                 updateforumcount($forum['fup']);
             }

@@ -24,5 +24,5 @@ foreach($groups as $moveforum) { //Groups and grouped forum options.
 }
 ?>
 </select>
-<a href="admin/forums.php?fdetails=<?= $subforum['fid'] ?>"><?= $lang['textmoreopts'] ?></a></td>
+<a href="<?= $full_url ?>admin/forums.php?fdetails=<?= $subforum['fid'] ?>"><?= $lang['textmoreopts'] ?></a></td>
 </tr>

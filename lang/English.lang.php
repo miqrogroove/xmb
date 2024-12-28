@@ -908,6 +908,7 @@ $lang['textforum'] = "Forum:";
 $lang['textforumname'] = "Forum Name:";
 $lang['textforumopts'] = "Forum Options:";
 $lang['textforums'] = "Forums";
+$lang['textforumslink'] = "Return to Forums administration.";
 $lang['textforumupdate'] = "Forums updated successfully!";
 $lang['textforward'] = "Forward";
 $lang['textforwardu2utoemail'] = "Send to my e-mail";
