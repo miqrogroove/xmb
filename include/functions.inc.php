@@ -726,7 +726,7 @@ class Core
             if ('' !== $forum['description']) {
                 $forum['moderator'] = '<br />' . $forum['moderator'];
             }
-            $template->forum['moderator'] = $forum['moderator'];
+            $template->forum = $forum;
         }
 
         $subforums = [];
