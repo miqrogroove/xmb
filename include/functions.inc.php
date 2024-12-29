@@ -1838,16 +1838,16 @@ class Core
      */
     function handlePasswordDialog(int $fid)
     {
+        $this->template->url = $this->vars->url;
         $pwinput = getPhpInput('pw');
+        $forum = $this->forums->getForum($fid);
 
-        $forum = $forums->getForum($fid);
         if (strlen($pwinput) != 0 && $forum !== null) {
             if ($pwinput === $forum['password']) {
                 $this->put_cookie('fidpw' . $fid, $forum['password'], time() + (86400*30));
                 $newurl = preg_replace('/[^\x20-\x7e]/', '', $this->vars->url);
                 $this->redirect($this->vars->full_url . substr($newurl, strlen($this->vars->cookiepath)), timeout: 0);
             } else {
-                $this->template->url = $this->vars->url;
                 $pwform = $this->template->process('forumdisplay_password.php');
                 $this->error($this->vars->lang['invalidforumpw'], append: $pwform);
             }

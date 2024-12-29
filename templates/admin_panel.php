@@ -21,12 +21,12 @@
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/forums.php"><?= $lang['textforums'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=mods"><?= $lang['textmods'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/moderators.php"><?= $lang['textmods'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=prune"><?= $lang['textprune'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=ipban"><?= $lang['textipban'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=members"><?= $lang['textmembers'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/members.php"><?= $lang['textmembers'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=ranks"><?= $lang['textuserranks'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=restrictions"><?= $lang['cprestricted'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/rename.php"><?= $lang['admin_rename_txt'] ?></a><br />

@@ -56,6 +56,7 @@ $table = $template->process('admin_table.php');
 
 $body = '';
 $fdetails = getInt('fdetails');
+$delete = getInt('delete', 'p');
 $template->fdetails = $fdetails;
 if (noSubmit('forumsubmit') && !$fdetails) {
     $groups = [];
@@ -425,11 +426,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
 
     if ($success) {
-        if ($delete) {
-            $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
-        } else {
-            $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php?fdetails=' . $fdetails . '">' . $lang['textforumslink'] . '</a>';
-        }
+        $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
     } else {
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>';

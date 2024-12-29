@@ -1518,6 +1518,8 @@ class SQL
     /**
      * Retrieve the list of forums.
      *
+     * Note the XMB class Forums service is used to cache this list and should be used instead of SQL in most situations.
+     *
      * @since 1.10.00
      * @return array of associative table rows.
     */
@@ -1540,6 +1542,18 @@ class SQL
         $this->db->free_result($result);
 
         return $forums;
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function setForumMods(int $fid, string $mods)
+    {
+        $this->db->escape_fast($mods);
+
+        $this->db->query("UPDATE " . $this->tablepre . "forums SET mod = $mods, WHERE fid = $fid");
     }
 
     /**

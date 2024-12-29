@@ -1,6 +1,6 @@
 <tr bgcolor="<?= $THEME['altbg2'] ?>">
 <td align="center">
-<form method="post" action="<?= $full_url ?>admin/forums.php&amp;fdetails=<?= $fdetails ?>">
+<form method="post" action="<?= $full_url ?>admin/forums.php?fdetails=<?= $fdetails ?>">
 <input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>
