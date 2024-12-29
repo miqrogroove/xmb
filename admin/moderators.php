@@ -55,6 +55,8 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('modsubmit')) {
+    $template->token = $token->create('Control Panel/Moderators', 'mass-edit', X_NONCE_FORM_EXP);
+
     $body = $template->process('admin_moderators_start.php');
 
     $oldfid = '0';
@@ -62,7 +64,7 @@ if (noSubmit('modsubmit')) {
     while($forum = $db->fetch_array($query)) {
         if ($oldfid !== $forum['cat_fid']) {
             $oldfid = $forum['cat_fid'];
-            $template->catName = fnameOut($forum['cat_name'])
+            $template->catName = fnameOut($forum['cat_name']);
             $body .= $template->process('admin_moderators_cat.php');
         }
         $template->name = fnameOut($forum['name']);
@@ -80,13 +82,14 @@ if (noSubmit('modsubmit')) {
     }
     $body .= $template->process('admin_moderators_end.php');
 } else {
+    $core->request_secure('Control Panel/Moderators', 'mass-edit', error_header: true);
     $mod = $core->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
         foreach($mod as $fid => $mods) {
             $sql->setForumMods($fid, $mods);
         }
     }
-    echo '<tr bgcolor="' . $THEME['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');

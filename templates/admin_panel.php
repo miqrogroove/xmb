@@ -25,7 +25,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=prune"><?= $lang['textprune'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
-&raquo;&nbsp;<a href="<?= $full_url ?>cp.php?action=ipban"><?= $lang['textipban'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/ipban.php"><?= $lang['textipban'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/members.php"><?= $lang['textmembers'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=ranks"><?= $lang['textuserranks'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=restrictions"><?= $lang['cprestricted'] ?></a><br />

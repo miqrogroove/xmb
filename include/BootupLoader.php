@@ -42,7 +42,7 @@ class BootupLoader
     {
         // This is normally the first query on the connection, so do not panic unless query logging is enabled.
         $panic = $this->vars->debug && $this->vars->log_mysql_errors;
-        $squery = $this->db->query("SELECT * FROM ".X_PREFIX."settings", $panic);
+        $squery = $this->db->query("SELECT * FROM " . $this->vars->tablepre . "settings", $panic);
 
         // Assume XMB is not installed if first query fails.
         if (false === $squery) {
@@ -146,11 +146,11 @@ class BootupLoader
 
         // Check if the client is ip-banned
         if ($this->vars->settings['ip_banning'] === 'on') {
-            $ips = explode(".", $onlineip);
+            $ips = explode(".", $this->vars->onlineip);
             if (count($ips) === 4) {
-                $query = $db->query("SELECT id FROM ".X_PREFIX."banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
-                $result = $db->num_rows($query);
-                $db->free_result($query);
+                $query = $this->db->query("SELECT id FROM " . $this->vars->tablepre . "banned WHERE ((ip1='$ips[0]' OR ip1='-1') AND (ip2='$ips[1]' OR ip2='-1') AND (ip3='$ips[2]' OR ip3='-1') AND (ip4='$ips[3]' OR ip4='-1')) AND NOT (ip1='-1' AND ip2='-1' AND ip3='-1' AND ip4='-1')");
+                $result = $this->db->num_rows($query);
+                $this->db->free_result($query);
                 if ($result > 0) {
                     // Block all non-admins
                     $serror = 'ip';

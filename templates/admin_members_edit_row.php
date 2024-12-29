@@ -1,4 +1,4 @@
-<tr bgcolor="<?= THEME['altbg2'] ?>" class="tablerow">
+<tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td align="center"><input type="checkbox" name="delete<?= $member['uid'] ?>" onclick="addUserDel(<?= $member['uid'] ?>, '<?= $member['username'] ?>', this)" value="<?= $member['uid'] ?>"<?= $disabledelete; ?> /></td>
 <td><a href="<?= $full_url ?>member.php?action=viewpro&amp;member=<?= $userLink ?>"><?= $member['username'] ?></a>
 <?php if (X_SADMIN) { ?>
@@ -16,7 +16,7 @@
 <option value="Member" <?= $memselect ?>><?= $lang['textmem'] ?></option>
 <option value="Banned" <?= $banselect ?>><?= $lang['textbanned'] ?></option>
 </select></td>
-<td><input type="text" size="16" name="cusstatus<?= $member['uid'] ?>" value="<?= statusAttr ?>" /></td>
+<td><input type="text" size="16" name="cusstatus<?= $member['uid'] ?>" value="<?= $statusAttr ?>" /></td>
 <td><select name="banstatus<?= $member['uid'] ?>">
 <option value="" <?= $noban ?>><?= $lang['noban'] ?></option>
 <option value="u2u" <?= $u2uban ?>><?= $lang['banu2u'] ?></option>

@@ -1553,7 +1553,7 @@ class SQL
     {
         $this->db->escape_fast($mods);
 
-        $this->db->query("UPDATE " . $this->tablepre . "forums SET mod = $mods, WHERE fid = $fid");
+        $this->db->query("UPDATE " . $this->tablepre . "forums SET moderator = '$mods' WHERE fid = $fid");
     }
 
     /**

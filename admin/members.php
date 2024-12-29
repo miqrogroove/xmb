@@ -105,7 +105,7 @@ if (noSubmit('membersubmit')) {
         while($member = $db->fetch_array($query)) {
             $template->member = $member;
             $template->userLink = recodeOut($member['username']);
-            $tempalte->statusAttr = attrOut($member['customstatus']);
+            $template->statusAttr = attrOut($member['customstatus']);
             $template->sadminselect = '';
             $template->adminselect = '';
             $template->smodselect = '';
@@ -177,7 +177,7 @@ if (noSubmit('membersubmit')) {
         $body .= $template->process('admin_members_edit_end.php');
     }
 } else if (onSubmit('membersubmit')) {
-    $core->request_secure('Control Panel/Members', 'mass-edit');
+    $core->request_secure('Control Panel/Members', 'mass-edit', error_header: true);
     $query = $db->query("SELECT uid, username, password, status FROM " . $vars->tablepre . "members $where");
 
     // Guarantee this request will not remove all Super Administrators.
@@ -236,7 +236,7 @@ if (noSubmit('membersubmit')) {
             }
         }
     }
-    $body = '<tr bgcolor="' . $THEME['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmembersupdate'] . '</td></tr>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmembersupdate'] . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');
