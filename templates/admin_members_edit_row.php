@@ -4,7 +4,7 @@
 <?php if (X_SADMIN) { ?>
 <br /><a href="<?= $full_url ?>editprofile.php?user=<?= $userLink ?>"><strong><?= $lang['admin_edituseraccount'] ?></strong></a>
 <?php } ?>
-<br /><a href="<?= $full_url ?>cp.php?action=deleteposts&amp;member=<?= $userLink ?>"><strong><?= $lang['cp_deleteposts'] ?></strong></a><?= $pending ?>
+<br /><a href="<?= $full_url ?>admin/members-prune.php?member=<?= $userLink ?>"><strong><?= $lang['cp_deleteposts'] ?></strong></a><?= $pending ?>
 </td>
 <td><input type="text" size="12" name="pw<?= $member['uid'] ?>"></td>
 <td><input type="text" size="3" name="postnum<?= $member['uid'] ?>" value="<?= $member['postnum'] ?>"></td>

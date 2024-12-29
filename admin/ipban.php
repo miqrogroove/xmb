@@ -29,10 +29,8 @@ namespace XMB;
 define('ROOT', '../');
 require ROOT . 'header.php';
 
-$attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
-$session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
