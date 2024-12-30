@@ -22,8 +22,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\attach;
-use function XMB\Services\forums;
+$attach = \XMB\Services\attach();
+$core = \XMB\Services\core();
+$forumcache = \XMB\Services\forums();
 
 define('X_SCRIPT', 'tools.php');
 
@@ -31,22 +32,11 @@ require 'header.php';
 require ROOT.'include/admin.inc.php';
 require ROOT.'include/schema.inc.php';
 
-loadtemplates(
-'cp_dump_query_bottom',
-'cp_dump_query_top',
-'error_nologinsession'
-);
+$core->assertAdminOnly();
 
 nav('<a href="cp.php">'.$lang['textcp'].'</a>');
 eval('echo ("'.template('header').'");');
 echo '<script language="JavaScript" type="text/javascript" src="./js/admin.js"></script>';
-
-if (!X_ADMIN) {
-    eval('echo "'.template('error_nologinsession').'";');
-    end_time();
-    eval('echo "'.template('footer').'";');
-    exit();
-}
 
 $auditaction = $_SERVER['REQUEST_URI'];
 $aapos = strpos($auditaction, "?");
@@ -55,8 +45,6 @@ if ($aapos !== false) {
 }
 $auditaction = "$onlineip|#|$auditaction";
 audit($self['username'], $auditaction);
-
-displayAdminPanel();
 
 $action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
 
@@ -147,8 +135,8 @@ switch($action) {
             $q = $db->query($sql);
 
             // Structure results to accommodate a nested loop strategy.
-            $forums_array = array();
-            $subs_array = array();
+            $forums_array = [];
+            $subs_array = [];
             while ($row = $db->fetch_array($q)) {
                 if ($row['type'] == 'forum') {
                     $forums_array[] = $row;
@@ -161,7 +149,7 @@ switch($action) {
 
             // Loop through all forums
             foreach($forums_array as $loner) {
-                $lastpost = array();
+                $lastpost = [];
 
                 // Loop through all sub-forums
                 foreach($subs_array as $sub) {
@@ -292,7 +280,7 @@ switch($action) {
             echo '</form>';
         } else {
             $export_fid = formInt('export_fid');
-            $export_forum = forums()->getForum($export_fid);
+            $export_forum = $forumcache->getForum($export_fid);
             if ($export_forum['type'] != 'forum' && $export_forum['type'] != 'sub') {
                 error($lang['export_fid_not_there'], false, '</table></table><br />');
             }
@@ -353,7 +341,7 @@ switch($action) {
 
             updatethreadcount($export_tid);
             updateforumcount($export_fid);
-            $forum = forums()->getForum($export_fid);
+            $forum = $forumcache->getForum($export_fid);
             if ($forum['type'] == 'sub') {
                 updateforumcount($forum['fup']);
             }
@@ -370,7 +358,7 @@ switch($action) {
             echo '<input type="submit" name="orphattachsubmit" value="'.$lang['o_attach_submit'].'" /></td></tr>';
             echo '</form>';
         } else {
-            $i = attach()->deleteOrphans();
+            $i = $attach->deleteOrphans();
 
             echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>';
             echo $i.$lang['o_attachments_found'].'</td></tr>';
@@ -390,7 +378,7 @@ switch($action) {
                           . "WHERE t.tid IS NULL");
             $i = $db->num_rows($q);
             if ($i > 0) {
-                $tids = array();
+                $tids = [];
                 while($row = $db->fetch_array($q)) {
                     $tids[] = $row['topic_id'];
                 }
