@@ -107,7 +107,7 @@ function url_to_text($url)
         } else {
             $location = $lang['onlinememcp'];
         }
-    } else if (false !== strpos($url, '/cp.php') || false !== strpos($url, '/cp2.php')) {
+    } else if (false !== strpos($url, '/admin/') || false !== strpos($url, '/cp2.php')) {
         $location = $lang['onlinecp'];
         if (!X_ADMIN) {
             $url = 'index.php';

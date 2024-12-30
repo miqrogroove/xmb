@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace XMB;
 
 /**
- * Provides most of the procedural logic formerly in header.php.
+ * Provides some of the procedural logic formerly in header.php.
  *
  * @since 1.10.00
  */
@@ -429,6 +429,13 @@ class BootupLoader
                     ob_start('ob_gzhandler');
                 }
             }
+        }
+    }
+    
+    public function adminFirewall()
+    {
+        if (strtolower(substr($this->vars->url, 0, 6)) == '/admin') {
+            $this->core->assertAdminOnly();
         }
     }
 }

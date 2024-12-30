@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace XMB;
 
 /**
- * Provides most of the procedural logic formerly in header.php.
+ * Provides some of the procedural logic formerly in header.php.
  *
  * @since 1.10.00
  */
@@ -175,7 +175,7 @@ class Bootup
                 header('HTTP/1.0 404 Not Found');
                 exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
             } else {
-                $fixed_url = $full_url.substr($fixed_url, strlen($cookiepath));
+                $fixed_url = $this->vars->full_url . substr($fixed_url, strlen($cookiepath));
                 header('HTTP/1.0 301 Moved Permanently');
                 header("Location: $fixed_url");
                 exit('XMB detected an invalid URL');

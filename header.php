@@ -153,7 +153,7 @@ unset($boot);
 $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 
 $loader->loadSettings();
-$loader->setHeaders(core());
+$loader->setHeaders();
 
 if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
     $xmbuser = core()->postedVar(
@@ -203,6 +203,11 @@ if ((X_ADMIN || vars()->settings['bbstatus'] == 'on') && (X_MEMBER || vars()->se
 /* Perform HTTP Connection Maintenance */
 
 $loader->startCompression();
+
+
+/* Extra Security */
+
+$loader->adminFirewall();
 
 unset($loader);
 
