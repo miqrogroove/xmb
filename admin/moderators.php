@@ -47,6 +47,8 @@ if ($vars->settings['subject_in_title'] == 'on') {
     $template->threadSubject = $vars->lang['textmods'] . ' - ';
 }
 
+$core->assertAdminOnly();
+
 $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
 $core->audit($vars->self['username'], $auditaction);
 

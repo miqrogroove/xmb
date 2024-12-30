@@ -52,15 +52,9 @@ if ($vars->settings['subject_in_title'] == 'on') {
     $template->threadSubject = $vars->lang['textsettings'] . ' - ';
 }
 
-$header = $template->process('header.php');
+$core->assertAdminOnly();
 
-if (!X_ADMIN) {
-    $noLogin = $template->process('error_nologinsession.php');
-    $template->footerstuff = $core->end_time();
-    $footer = $template->process('footer.php');
-    echo $header, $noLogin, $footer;
-    exit();
-}
+$header = $template->process('header.php');
 
 $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
 $core->audit($vars->self['username'], $auditaction);

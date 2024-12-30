@@ -2212,9 +2212,24 @@ class Core
      * @since 1.9.12
      * @return bool When false the website must not collect any information from the guest.
      */
-    function coppa_check(): bool 
+    public function coppa_check(): bool 
     {
         $privacy = getPhpInput('privacy', 'c');
         return 'xmb' != $privacy;
+    }
+    
+    /**
+     * Checks permissions for pages restricted to administrators.
+     *
+     * @since 1.10.00
+     */
+    public function assertAdminOnly()
+    {
+        if (X_GUEST) {
+            $this->redirect($this->vars->full_url . 'misc.php?action=login', timeout: 0);
+        } elseif (! X_ADMIN) {
+            header('HTTP/1.0 403 Forbidden');
+            $this->message($this->vars->lang['u2uadmin_noperm']);
+        }
     }
 }
