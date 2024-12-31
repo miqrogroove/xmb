@@ -36,6 +36,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -80,7 +81,7 @@ if (
 
     $template->token = $token->create('Control Panel/settings', 'global', X_NONCE_FORM_EXP);
 
-    $template->langfileselect = $core->createLangFileSelect($SETTINGS['langfile']);
+    $template->langfileselect = $tran->createLangFileSelect($SETTINGS['langfile']);
 
     $themelist = array();
     $themelist[] = '<select name="themenew">';

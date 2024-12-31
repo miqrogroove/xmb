@@ -91,6 +91,7 @@ require ROOT.'include/sql.inc.php';
 require ROOT.'include/Template.php';
 require ROOT.'include/ThemeManager.php';
 require ROOT.'include/tokens.inc.php';
+require ROOT.'include/translation.inc.php';
 require ROOT.'include/validate.inc.php';
 
 
@@ -100,6 +101,8 @@ vars(new \XMB\Variables());
 
 observer(new \XMB\Observer(vars()));
 template(new \XMB\Template(vars()));
+translation(new \XMB\Translation(vars()));
+
 template()->init();
 
 $boot = new \XMB\Bootup(observer(), template(), vars());
@@ -143,7 +146,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), translation(), vars()));
 
 unset($boot);
 
@@ -171,7 +174,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 $params = $loader->prepareSession();
 session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql()));
-login(new \XMB\Login(core(), db(), session(), sql(), vars()));
+login(new \XMB\Login(core(), db(), session(), sql(), translation(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);
 

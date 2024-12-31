@@ -57,7 +57,7 @@ class Manager
                 $tid = 0;
                 $fid = 0;
             } else {
-                $fid = $forum['fid'];
+                $fid = (int) $forum['fid'];
                 $forumtheme = (int) $forum['theme'];
             }
         } else if ($fid > 0) {

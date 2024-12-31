@@ -37,7 +37,7 @@ use XMB\Session\Manager as SessionMgr;
  */
 class Login
 {
-    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Variables $vars)
+    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Translation $tran, private Variables $vars)
     {
         // Property promotion.
     }
@@ -107,14 +107,13 @@ class Login
         if (! defined('XMB_UPGRADE')) {
             $success = false;
             if (!empty($vars->self['langfile'])) {
-                $success = $this->core->loadLang($vars->self['langfile']);
+                $success = $this->tran->loadLang($vars->self['langfile']);
             }
             if (!$success) {
-                $success = $this->core->loadLang($vars->settings['langfile']);
+                $success = $this->tran->loadLang($vars->settings['langfile']);
             }
             if (!$success) {
-                require_once(ROOT.'include/translation.inc.php');
-                langPanic();
+                $this->tran->langPanic();
             }
         }
 

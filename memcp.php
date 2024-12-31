@@ -22,11 +22,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\core;
-use function XMB\Services\forums;
-use function XMB\Services\session;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$core = \XMB\Services\core();
+$forums = \XMB\Services\forums();
+$session = \XMB\Services\session();
+$sql = \XMB\Services\sql();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'memcp.php');
 
@@ -177,7 +178,7 @@ if ($action == 'profile') {
             $invchecked = $cheHTML;
         }
 
-        $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
+        $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime);
         $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
         $timezones = timezone_control($member['timeoffset']);
@@ -211,7 +212,7 @@ if ($action == 'profile') {
         $themelist = implode("\n", $themelist);
         $db->free_result($query);
 
-        $langfileselect = createLangFileSelect($member['langfile']);
+        $langfileselect = $tran->createLangFileSelect($member['langfile']);
 
         $day = intval(substr($member['bday'], 8, 2));
         $month = intval(substr($member['bday'], 5, 2));
@@ -297,7 +298,7 @@ if ($action == 'profile') {
             if (empty($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
-            $member = sql()->getMemberByName($self['username']);
+            $member = $sql->getMemberByName($self['username']);
             if ($member['password'] !== md5($_POST['oldpassword'])) {
                 error($lang['textpwincorrect']);
             }
@@ -315,7 +316,7 @@ if ($action == 'profile') {
 
             // Force logout and delete cookies.
             $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$xmbuser'");
-            session()->logoutAll();
+            $session->logoutAll();
         } else {
             $pwtxt = '';
         }
@@ -504,13 +505,13 @@ if ($action == 'profile') {
             error($lang['privforummsg']);
         }
         $row = $db->fetch_array($query);
-        $forum = forums()->getForum($row['fid']);
+        $forum = $forums->getForum((int) $row['fid']);
         $perms = checkForumPermissions($forum);
         if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
             error($lang['privforummsg']);
         }
         if ($forum['type'] == 'sub') {
-            $perms = core()->checkForumPermissions(forums()->getForum($forum['fup']));
+            $perms = $core->checkForumPermissions($forums->getForum((int) $forum['fup']));
             if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
                 error($lang['privforummsg']);
             }
@@ -542,7 +543,7 @@ if ($action == 'profile') {
                  ORDER BY t.lastpost DESC"
             );
             while($fav = $db->fetch_array($query)) {
-                $forum = forums()->getForum($fav['fid']);
+                $forum = $forums->getForum((int) $fav['fid']);
                 $forum['name'] = fnameOut($forum['name']);
 
                 $lastpost = explode('|', $fav['lastpost']);
@@ -553,8 +554,8 @@ if ($action == 'profile') {
                     $lastpostname = $lang['textanonymous'];
                 }
 
-                $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
-                $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
+                $lastreplydate = gmdate($dateformat, $core->timeKludge((int) $lastpost[0]));
+                $lastreplytime = gmdate($timecode, $core->timeKludge((int) $lastpost[0]));
                 $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
                 $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -622,7 +623,7 @@ if ($action == 'profile') {
         $subnum = 0;
         $subscriptions = '';
         while($fav = $db->fetch_array($query)) {
-            $forum = forums()->getForum($fav['fid']);
+            $forum = $forums->getForum((int) $fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -633,8 +634,8 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
-            $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
+            $lastreplydate = gmdate($dateformat, $core->timeKludge((int) $lastpost[0]));
+            $lastreplytime = gmdate($timecode, $core->timeKludge((int) $lastpost[0]));
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -693,7 +694,7 @@ if ($action == 'profile') {
         if (! empty($ids)) {
             // This page only handles the default session mechanism for now.
             $lists = [\XMB\Session\FormsAndCookies::class => $ids];
-            session()->logoutByLists($lists);
+            $session->logoutByLists($lists);
         }
     }
 
@@ -702,7 +703,7 @@ if ($action == 'profile') {
     $current = '';
     $other = '';
 
-    $lists = session()->getSessionLists();
+    $lists = $session->getSessionLists();
     foreach ($lists as $name => $list) {
         if ($name != \XMB\Session\FormsAndCookies::class) {
             // This page only handles the default session mechanism for now.
@@ -710,7 +711,7 @@ if ($action == 'profile') {
         }
         foreach ($list as $device) {
             $did = $device['token'];
-            $time = core()->timeKludge((int) $device['login_date']);
+            $time = $core->timeKludge((int) $device['login_date']);
             $dlogin = gmdate($dateformat, $time).' '.$lang['textat'].' '.gmdate($timecode, $time);
             $dagent = parse_user_agent($device['agent']);
             if ($device['current']) {
@@ -739,7 +740,7 @@ if ($action == 'profile') {
     $buddys['online'] = '';
     while($buddy = $db->fetch_array($q)) {
         $recodename = recodeOut($buddy['buddyname']);
-        if (vars()->onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
+        if ($vars->onlinetime - (int)$buddy['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $buddy['invisible']) {
                 if (!X_ADMIN) {
                     eval('$buddys["offline"] .= "'.template('buddylist_buddy_offline').'";');
@@ -778,8 +779,8 @@ if ($action == 'profile') {
     $u2unum = $db->num_rows($u2uquery);
     $messages = '';
     while($message = $db->fetch_array($u2uquery)) {
-        $postdate = gmdate($dateformat, core()->timeKludge((int) $message['dateline']));
-        $posttime = gmdate($timecode, core()->timeKludge((int) $message['dateline']));
+        $postdate = gmdate($dateformat, $core->timeKludge((int) $message['dateline']));
+        $posttime = gmdate($timecode, $core->timeKludge((int) $message['dateline']));
         $senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
         $message['subject'] = rawHTMLsubject(stripslashes($message['subject']));
@@ -815,7 +816,7 @@ if ($action == 'profile') {
         );
         $favnum = $db->num_rows($query2);
         while($fav = $db->fetch_array($query2)) {
-            $forum = forums()->getForum($fav['fid']);
+            $forum = $forums->getForum((int) $fav['fid']);
             $forum['name'] = fnameOut($forum['name']);
 
             $lastpost = explode('|', $fav['lastpost']);
@@ -826,8 +827,8 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
-            $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
+            $lastreplydate = gmdate($dateformat, $core->timeKludge((int) $lastpost[0]));
+            $lastreplytime = gmdate($timecode, $core->timeKludge((int) $lastpost[0]));
             $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
 

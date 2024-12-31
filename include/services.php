@@ -40,6 +40,7 @@ use XMB\{
     Template,
     Theme\Manager as ThemeMgr,
     Token,
+    Translation,
     Variables,
 };
 
@@ -247,6 +248,22 @@ function token(?Token $token = null): Token
     static $cache;
     
     if ($token !== null) $cache = $token;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared translation service.
+ *
+ * @since 1.10.00
+ * @param Translation $translation Required on first call, otherwise optional. Acts as the setter.
+ * @return Translation
+ */
+function translation(?Translation $translation = null): Translation
+{
+    static $cache;
+    
+    if ($translation !== null) $cache = $translation;
     
     return $cache;
 }

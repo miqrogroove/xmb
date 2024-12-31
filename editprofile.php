@@ -22,9 +22,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\session;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$session = \XMB\Services\session();
+$sql = \XMB\Services\sql();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'editprofile.php');
 
@@ -51,7 +52,7 @@ if (!X_SADMIN) {
 }
 
 $rawuser = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
-$member = sql()->getMemberByName($rawuser);
+$member = $sql->getMemberByName($rawuser);
 
 if (empty($member)) {
     error($lang['nomember']);
@@ -165,7 +166,7 @@ if (noSubmit('editsubmit')) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
-    $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
+    $currdate = gmdate($timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
     $themelist = array();
@@ -183,7 +184,7 @@ if (noSubmit('editsubmit')) {
     $themelist = implode("\n", $themelist);
     $db->free_result($query);
 
-    $langfileselect = createLangFileSelect($member['langfile']);
+    $langfileselect = $tran->createLangFileSelect($member['langfile']);
 
     $day = intval(substr($member['bday'], 8, 2));
     $month = intval(substr($member['bday'], 5, 2));
@@ -389,12 +390,12 @@ if (noSubmit('editsubmit')) {
 
         // Force logout and delete cookies.
         $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
-        session()->logoutAll($rawuser);
+        $session->logoutAll($rawuser);
     }
 
     $unlock = formYesNo('unlock');
     if ('yes' == $unlock) {
-        sql()->unlockMember($rawuser);
+        $sql->unlockMember($rawuser);
     }
 
     message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);

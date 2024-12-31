@@ -324,7 +324,7 @@ switch($action) {
                 error($lang['export_tid_not_there'], false, '</table></table><br />');
             }
             $row = $db->fetch_array($query);
-            $export_fid = $row['fid'];
+            $export_fid = (int) $row['fid'];
             $db->free_result($query);
 
             // Fix Invalid FIDs

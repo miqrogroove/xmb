@@ -24,11 +24,12 @@
 
 use XMB\UploadStatus;
 
-use function XMB\Services\attach;
-use function XMB\Services\core;
-use function XMB\Services\forums;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$attachSvc = \XMB\Services\attach();
+$core = \XMB\Services\core();
+$forums = \XMB\Services\forums();
+$sql = \XMB\Services\sql();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'post.php');
 
@@ -110,7 +111,7 @@ if ($action == 'edit') {
     $fid = (int) $forum['fid'];
 } else if ($action == 'newthread') {
     $fid = getRequestInt('fid');
-    $forum = forums()->getForum($fid);
+    $forum = $forums->getForum($fid);
     if ($forum === FALSE) {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnoforum']);
@@ -208,7 +209,7 @@ if ($action == 'newthread') {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = forums()->getForum($forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -221,13 +222,13 @@ if ($forum['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = forums()->getForum($fup['fup']);
+        $fupup = $forums->getForum((int) $fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = forums()->getForum($forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forum['name']).'</a>');
@@ -249,7 +250,7 @@ if (X_STAFF || 'off' == $SETTINGS['quarantine_new_users']) {
             $quarantine = false;
         } else {
             // Member has not posted before and will be flagged for quarantine starting now.
-            sql()->startMemberQuarantine((int) $self['uid']);
+            $sql->startMemberQuarantine((int) $self['uid']);
         }
     } else {
         // Guests have no immunity.
@@ -259,7 +260,7 @@ if (X_STAFF || 'off' == $SETTINGS['quarantine_new_users']) {
 if (!ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 } elseif ($forum['attachstatus'] == 'on') {
-    $maxsize = attach()->getSizeFormatted(min(phpShorthandValue('upload_max_filesize'), (int) $SETTINGS['maxattachsize']));
+    $maxsize = $attachSvc->getSizeFormatted(min(phpShorthandValue('upload_max_filesize'), (int) $SETTINGS['maxattachsize']));
     $attachlimits = " {$lang['attachmaxsize']} $maxsize.  {$lang['attachmaxdims']} {$SETTINGS['max_image_size']}.";
 }
 
@@ -440,15 +441,15 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = attach()->uploadedFile('attach'.$i, 0, $quarantine);
+                    $result = $attachSvc->uploadedFile('attach'.$i, 0, $quarantine);
                     if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
                         $errors .= softerror(uploadErrorMsg($result->status));
                         $replyvalid = false;
                     }
                 }
             }
-            $aid_list = sql()->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
-            $status = attach()->doEdits($deletes, $aid_list, 0, $quarantine);
+            $aid_list = $sql->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
+            $status = $attachSvc->doEdits($deletes, $aid_list, 0, $quarantine);
             if ($status !== UploadStatus::Success) {
                 $errors .= softerror(uploadErrorMsg($status));
                 $replyvalid = false;
@@ -457,7 +458,7 @@ switch($action) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $status = attach()->remoteImages(0, $messageinput, $quarantine);
+                $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
                 if ($status !== UploadStatus::Success) {
                     $errors .= softerror(uploadErrorMsg($status));
                     $replyvalid = false;
@@ -519,7 +520,7 @@ switch($action) {
         if ($replyvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = vars()->onlinetime - $floodctrl;
+                $rightnow = $vars->onlinetime - $floodctrl;
                 if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
                     $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
                     $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
@@ -530,7 +531,7 @@ switch($action) {
         }
 
         if ($replyvalid) {
-            $thatime = vars()->onlinetime;
+            $thatime = $vars->onlinetime;
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
             }
@@ -561,7 +562,7 @@ switch($action) {
             $values = [
                 'fid' => (int) $fid,
                 'tid' => (int) $tid,
-                'dateline' => vars()->onlinetime,
+                'dateline' => $vars->onlinetime,
                 'author' => $username,
                 'message' => $dbmessage,
                 'subject' => $dbsubject,
@@ -572,7 +573,7 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = sql()->addPost($values, $quarantine);
+            $pid = $sql->addPost($values, $quarantine);
 
             $moderator = (modcheck($username, $forum['moderator']) == 'Moderator');
             if ($moderator && $closetopic == 'yes') {
@@ -591,8 +592,8 @@ switch($action) {
                 unset($where);
 
                 if (X_MEMBER) {
-                    sql()->raisePostCount($username, vars()->onlinetime);
-                    $expire = vars()->onlinetime + X_ONLINE_TIMER;
+                    $sql->raisePostCount($username, $vars->onlinetime);
+                    $expire = $vars->onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
@@ -606,7 +607,7 @@ switch($action) {
                 $posts = $db->result($query,0);
                 $db->free_result($query);
 
-                $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
+                $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
                 $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
 
                 $query = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
@@ -623,7 +624,7 @@ switch($action) {
                                      . "INNER JOIN ".X_PREFIX."members m USING (username) "
                                      . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
                 while($subs = $db->fetch_array($subquery)) {
-                    if ($viewperm < vars()->status_enum[$subs['status']]) {
+                    if ($viewperm < $vars->status_enum[$subs['status']]) {
                         continue;
                     }
 
@@ -646,25 +647,25 @@ switch($action) {
             }
 
             if ('yes' == $emailnotify) {
-                sql()->addFavoriteIfMissing((int) $tid, $username, 'subscription');
+                $sql->addFavoriteIfMissing((int) $tid, $username, 'subscription');
             }
 
             if ($forum['attachstatus'] == 'on') {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            attach()->uploadedFile('attach'.$i, $pid, $quarantine);
+                            $attachSvc->uploadedFile('attach'.$i, $pid, $quarantine);
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        attach()->remoteImages($pid, $messageinput, $quarantine);
+                        $attachSvc->remoteImages($pid, $messageinput, $quarantine);
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            sql()->savePostBody($pid, $newdbmessage, $quarantine);
+                            $sql->savePostBody($pid, $newdbmessage, $quarantine);
                         }
                     }
                 } elseif (X_MEMBER) {
-                    sql()->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
+                    $sql->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
                 }
             }
 
@@ -682,7 +683,7 @@ switch($action) {
                 $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM ".X_PREFIX."posts p WHERE p.pid=$repquote");
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
-                $quoteperms = core()->checkForumPermissions(forums()->getForum($thaquote['fid']));
+                $quoteperms = $core->checkForumPermissions($forums->getForum((int) $thaquote['fid']));
                 if ($quoteperms[X_PERMS_VIEW] && $quoteperms[X_PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
                     $quoteblock = rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
@@ -700,7 +701,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = sql()->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
+                $orphans = $sql->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
                 $counter = 0;
                 foreach ($orphans as $postinfo) {
                     $files[] = $postinfo;
@@ -726,7 +727,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . $attachSvc->getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset($orphans);
@@ -745,7 +746,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = core()->timeKludge(vars()->onlinetime);
+                $currtime = $core->timeKludge($vars->onlinetime);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -790,7 +791,7 @@ switch($action) {
                 $closeoption = '';
             }
 
-            $replynum = sql()->countPosts(false, $tid);
+            $replynum = $sql->countPosts(false, $tid);
             if ($replynum >= $ppp) {
                 $threadlink = 'viewthread.php?fid='.$fid.'&tid='.$tid;
                 $trevltmsg = str_replace('$threadlink', $threadlink, $lang['evaltrevlt']);
@@ -799,7 +800,7 @@ switch($action) {
                 $thisbg = $altbg1;
                 $query = $db->query("SELECT * FROM ".X_PREFIX."posts WHERE tid='$tid' ORDER BY dateline DESC");
                 while($post = $db->fetch_array($query)) {
-                    $currtime = core()->timeKludge((int) $post['dateline']);
+                    $currtime = $core->timeKludge((int) $post['dateline']);
                     $date = gmdate($dateformat, $currtime);
                     $time = gmdate($timecode, $currtime);
                     $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -822,7 +823,7 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == vars()->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
@@ -845,15 +846,15 @@ switch($action) {
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
             for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                 if (isset($_FILES['attach'.$i])) {
-                    $result = attach()->uploadedFile('attach'.$i, 0, $quarantine);
+                    $result = $attachSvc->uploadedFile('attach'.$i, 0, $quarantine);
                     if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
                         $errors .= softerror(uploadErrorMsg($result->status));
                         $topicvalid = false;
                     }
                 }
             }
-            $aid_list = sql()->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
-            $status = attach()->doEdits($deletes, $aid_list, 0, $quarantine);
+            $aid_list = $sql->getOrphanedAttachmentIDs((int) $self['uid'], $quarantine);
+            $status = $attachSvc->doEdits($deletes, $aid_list, 0, $quarantine);
             if ($status !== UploadStatus::Success) {
                 $errors .= softerror(uploadErrorMsg($status));
                 $topicvalid = false;
@@ -862,7 +863,7 @@ switch($action) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $status = attach()->remoteImages(0, $messageinput, $quarantine);
+                $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
                 if ($status !== UploadStatus::Success) {
                     $errors .= softerror(uploadErrorMsg($status));
                     $topicvalid = false;
@@ -914,7 +915,7 @@ switch($action) {
         if ($topicvalid) {
             if ($forum['lastpost'] != '') {
                 $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = vars()->onlinetime - $floodctrl;
+                $rightnow = $vars->onlinetime - $floodctrl;
                 if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
                     $errors .= softerror($lang['floodprotect']);
                     $topicvalid = FALSE;
@@ -942,7 +943,7 @@ switch($action) {
         }
 
         if ($topicvalid) {
-            $thatime = vars()->onlinetime;
+            $thatime = $vars->onlinetime;
 
             if ($bBBcodeOnForThisPost) {
                 postLinkBBcode($messageinput);
@@ -1001,7 +1002,7 @@ switch($action) {
                 'pollopts' => $dbpollopts,
             ];
 
-            $tid = sql()->addThread($values, $quarantine);
+            $tid = $sql->addThread($values, $quarantine);
 
             if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                 $useip = '';
@@ -1012,7 +1013,7 @@ switch($action) {
             $values = [
                 'fid' => (int) $fid,
                 'tid' => $tid,
-                'dateline' => vars()->onlinetime,
+                'dateline' => $vars->onlinetime,
                 'author' => $username,
                 'message' => $dbmessage,
                 'subject' => $dbsubject,
@@ -1023,10 +1024,10 @@ switch($action) {
                 'smileyoff' => $smileyoff,
             ];
 
-            $pid = sql()->addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
+            $pid = $sql->addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
 
             $lastpost .= "|$pid";
-            sql()->setThreadLastpost($tid, $lastpost, $quarantine);
+            $sql->setThreadLastpost($tid, $lastpost, $quarantine);
 
             if (! $quarantine) {
                 $where = "WHERE fid=$fid";
@@ -1040,7 +1041,7 @@ switch($action) {
             if ($poll == 'yes') {
                 // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
                 $dbsubject = addslashes($subjectinput);
-                $vote_id = sql()->addVoteDesc($tid, $quarantine);
+                $vote_id = $sql->addVoteDesc($tid, $quarantine);
                 
                 // Create poll options.  This is the part we care about.
                 $options = [];
@@ -1052,17 +1053,17 @@ switch($action) {
                         'vote_option_text' => $p,
                     ];
                 }
-                sql()->addVoteOptions($options, $quarantine);
+                $sql->addVoteOptions($options, $quarantine);
             }
 
             if (X_MEMBER) {
                 if ($emailnotify == 'yes') {
-                    sql()->addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
+                    $sql->addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
                 }
 
                 if (! $quarantine) {
-                    sql()->raisePostCount($username, vars()->onlinetime);
-                    $expire = vars()->onlinetime + X_ONLINE_TIMER;
+                    $sql->raisePostCount($username, $vars->onlinetime);
+                    $expire = $vars->onlinetime + X_ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
@@ -1076,25 +1077,25 @@ switch($action) {
                 if ($attachSkipped) {
                     for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                         if (isset($_FILES['attach'.$i])) {
-                            attach()->uploadedFile('attach'.$i, $pid, $quarantine);
+                            $attachSvc->uploadedFile('attach'.$i, $pid, $quarantine);
                         }
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        attach()->remoteImages($pid, $messageinput, $quarantine);
+                        $attachSvc->remoteImages($pid, $messageinput, $quarantine);
                         $newdbmessage = addslashes($messageinput);
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            sql()->savePostBody($pid, $newdbmessage, $quarantine);
+                            $sql->savePostBody($pid, $newdbmessage, $quarantine);
                         }
                     }
                 } elseif (X_MEMBER) {
-                    sql()->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
+                    $sql->claimOrphanedAttachments($pid, (int) $self['uid'], $quarantine);
                 }
             }
 
             if ($quarantine) {
                 message($lang['moderation_hold']);
             } else {
-                $posts = sql()->countPosts(false, $tid);
+                $posts = $sql->countPosts(false, $tid);
 
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
@@ -1107,7 +1108,7 @@ switch($action) {
             $files = array();
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $attachfile = '';
-                $orphans = sql()->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
+                $orphans = $sql->getOrphanedAttachments($quarantine, uid: (int) $self['uid']);
                 $counter = 0;
                 foreach ($orphans as $postinfo) {
                     $files[] = $postinfo;
@@ -1133,7 +1134,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . $attachSvc->getSizeFormatted($maxtotal);
                     eval('$attachfile .= "'.template("post_attachmentbox").'";');
                 }
                 unset($orphans);
@@ -1152,7 +1153,7 @@ switch($action) {
                 } else {
                     $thread['icon'] = '';
                 }
-                $currtime = core()->timeKludge(vars()->onlinetime);
+                $currtime = $core->timeKludge($vars->onlinetime);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -1201,7 +1202,7 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == vars()->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
@@ -1239,7 +1240,7 @@ switch($action) {
             if ($forum['attachstatus'] == 'on') {
                 for ($i=1; $i<=$SETTINGS['filesperpost']; $i++) {
                     if (isset($_FILES['attach'.$i])) {
-                        $result = attach()->uploadedFile('attach'.$i, $pid);
+                        $result = $attachSvc->uploadedFile('attach'.$i, $pid);
                         if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
                             $errors .= softerror(uploadErrorMsg($result->status));
                             $editvalid = false;
@@ -1247,8 +1248,8 @@ switch($action) {
                     }
                 }
                 $children = false;
-                $aid_list = sql()->getAttachmentIDsByPost($pid, $children);
-                $status = attach()->doEdits($deletes, $aid_list, $pid);
+                $aid_list = $sql->getAttachmentIDsByPost($pid, $children);
+                $status = $attachSvc->doEdits($deletes, $aid_list, $pid);
                 if ($status !== UploadStatus::Success) {
                     $errors .= softerror(uploadErrorMsg($status));
                     $editvalid = false;
@@ -1258,7 +1259,7 @@ switch($action) {
                 }
                 $temp = '';
                 if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                    $status = attach()->remoteImages($pid, $messageinput);
+                    $status = $attachSvc->remoteImages($pid, $messageinput);
                     if ($status !== UploadStatus::Success) {
                         $errors .= softerror(uploadErrorMsg($status));
                         $editvalid = false;
@@ -1334,10 +1335,10 @@ switch($action) {
                 if ($orig['author'] != 'Anonymous') {
                     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
                 }
-                attach()->deleteByPost($pid);
+                $attachSvc->deleteByPost($pid);
 
                 if ((int) $isfirstpost['pid'] == $pid) {
-                    $numrows = sql()->countPosts(false, $tid);
+                    $numrows = $sql->countPosts(false, $tid);
 
                     if ($numrows == 0) {
                         $threaddelete = 'yes';
@@ -1364,7 +1365,7 @@ switch($action) {
             }
 
             if ($threaddelete == 'no') {
-                $posts = sql()->countPosts(false, $tid, '', (int) $orig['dateline']);
+                $posts = $sql->countPosts(false, $tid, '', (int) $orig['dateline']);
                 $topicpages = quickpage($posts, $ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 message($lang['editpostmsg'], TRUE, '', '', $full_url."viewthread.php?tid={$tid}{$topicpages}#pid{$pid}", true, false, true);
@@ -1402,7 +1403,7 @@ switch($action) {
                     $postinfo['downloads'] = $attach['downloads'];
                     $postinfo['filename'] = attrOut($attach['filename']);
                     $postinfo['filesize'] = number_format($attach['filesize'], 0, '.', ',');
-                    $postinfo['url'] = attach()->getURL((int) $attach['aid'], $pid, $attach['filename']);
+                    $postinfo['url'] = $attachSvc->getURL((int) $attach['aid'], $pid, $attach['filename']);
                     eval('$attachment .= "'.template('post_edit_attachment').'";');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$attach['aid']}[/file]";
@@ -1423,7 +1424,7 @@ switch($action) {
                     $max_dos_size = phpShorthandValue('post_max_size');
                     $max_xmb_size = (int) $SETTINGS['filesperpost'] * (int) $SETTINGS['maxattachsize'];
                     $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
-                    $lang['attachmaxtotal'] .= ' ' . attach()->getSizeFormatted($maxtotal);
+                    $lang['attachmaxtotal'] .= ' ' . $attachSvc->getSizeFormatted($maxtotal);
                     eval('$attachment .= "'.template("post_attachmentbox").'";');
                 }
                 $db->free_result($query);
@@ -1438,7 +1439,7 @@ switch($action) {
                 if ($postinfo['icon'] !== '') {
                     $thread['icon'] = "<img src=\"$smdir/{$postinfo['icon']}\" />";
                 }
-                $currtime = core()->timeKludge((int) $postinfo['dateline']);
+                $currtime = $core->timeKludge((int) $postinfo['dateline']);
                 $date = gmdate($dateformat, $currtime);
                 $time = gmdate($timecode, $currtime);
                 $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
@@ -1520,7 +1521,7 @@ function postLinkBBcode(&$message) {
     $pids = implode(', ', $items);
     $query = $db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) WHERE pid IN ($pids)");
     while($row = $db->fetch_array($query)) {
-        $perms = core()->checkForumPermissions(forums()->getForum($row['fid']));
+        $perms = $core->checkForumPermissions($forums->getForum((int) $row['fid']));
         if ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD]) {
             if ($row['subject'] != '') {
                 $subject = stripslashes($row['subject']);

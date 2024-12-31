@@ -22,333 +22,199 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * Adds a new $lang value to the current translation and also adds a new key if not found.
- *
- * In other words, setNewLangValue('stats1', 'Statistics'); is equivalent to importing $lang['stats1'] = 'Statistics';
- *
- * @param string $langkey New translation key name.
- * @param string $cdata New value and it must be db-escaped!
- * @return bool TRUE on success, FALSE if no translation has been loaded.
- */
-function setNewLangValue(string $langkey, string $cdata): bool
+declare(strict_types=1);
+
+namespace XMB;
+
+use InvalidArgumentException;
+use RuntimeException;
+
+class Translation
 {
-    global $db, $langfile;
+    private array $dirCache = [];
+    private array $langCache = [];
 
-    $db->escape_fast($langkey);
-
-    $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE langkey='$langkey'");
-    if ($db->num_rows($result) == 0) {
-        $newkey = TRUE;
-        $db->query("INSERT INTO ".X_PREFIX."lang_keys SET langkey='$langkey'");
-        $phraseid = $db->insert_id();
-    } else {
-        $newkey = FALSE;
-        $row = $db->fetch_array($result);
-        $db->free_result($result);
-        $phraseid = $row['phraseid'];
+    public function __construct(private Variables $vars) {
+        // Property promotion
     }
 
-    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
-    if ($db->num_rows($result) == 0) {
-        return FALSE;
-    }
-    $row = $db->fetch_array($result);
-    $db->free_result($result);
-    $langid = $row['langid'];
+    /**
+     * Uses the specified translation file to populate the $lang and $langfile variables.
+     *
+     * @since 1.9.11
+     * @param string $devname Name specified by XMB for internal use (usually written in English).
+     * @return bool
+     */
+    public function loadLang(string $devname = "English"): bool
+    {
+        $lang = [];
 
-    if (!$newkey) {
-        $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
-    }
-    $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
+        include ROOT . "lang/$devname.lang.php";
 
-    return TRUE;
-}
-
-/**
- * Sets a $lang value in the current translation for an existing key.
- *
- * @param int $phraseid is the primary key value of the lang_keys table.
- * @param string $cdata is the new value and it must be db-escaped!
- * @return bool TRUE on success.
- */
-function setLangValue(int $phraseid, string $cdata): bool
-{
-    global $db, $langfile;
-
-    $phraseid = intval($phraseid);
-
-    $result = $db->query("SELECT phraseid FROM ".X_PREFIX."lang_keys WHERE phraseid=$phraseid");
-    if ($db->num_rows($result) == 0) {
-        return FALSE;
-    }
-    $db->free_result($result);
-    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
-    if ($db->num_rows($result) == 0) {
-        return FALSE;
-    }
-    $row = $db->fetch_array($result);
-    $db->free_result($result);
-    $langid = $row['langid'];
-
-    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid AND phraseid=$phraseid");
-    $db->query("INSERT INTO ".X_PREFIX."lang_text SET langid=$langid, phraseid=$phraseid, cdata='$cdata'");
-
-    return TRUE;
-}
-
-/**
- * Adds an array of new $lang values to the specified translation.
- *
- * @param array $lang Read-Only Variable. Associative array of new key/value pairs.  Values should be raw cdata.
- * @param string $langfile Read-Only Variable. Devname of the translation to add to.
- * @return bool TRUE on success, FALSE if the devname does not exist.
- */
-function setManyLangValues(array &$lang, string &$langfile): bool
-{
-    global $db;
-
-    // Ensure devname is present in the database.
-    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$langfile'");
-    if ($db->num_rows($result) == 0) {
-        return FALSE;
-    }
-    $row = $db->fetch_array($result);
-    $db->free_result($result);
-    $langid = $row['langid'];
-
-    // Ensure all new keys are present in the database.
-    $newkeys = array_keys($lang);
-    $oldkeys = array();
-    $phraseids = array();
-    $result = $db->query("SELECT langkey FROM ".X_PREFIX."lang_keys");
-    while ($row = $db->fetch_array($result)) {
-        $oldkeys[] = $row['langkey'];
-    }
-    $db->free_result($result);
-    $newkeys = array_diff($newkeys, $oldkeys);
-    if (count($newkeys) > 0) {
-        $sql = implode("'), ('", $newkeys);
-        $sql = "INSERT INTO ".X_PREFIX."lang_keys (langkey) VALUES ('$sql')";
-        $db->query($sql);
-    }
-
-    // Query Key IDs
-    $result = $db->query("SELECT * FROM ".X_PREFIX."lang_keys");
-    while ($row = $db->fetch_array($result)) {
-        $phraseids[$row['langkey']] = $row['phraseid'];
-    }
-    $db->free_result($result);
-
-    // Save the new values
-    $flag = FALSE;
-    $sql = '';
-    foreach($lang as $key=>$value) {
-        $phraseid = $phraseids[$key];
-        $db->escape_fast($value);
-        if ($flag) {
-            $sql .= ", ($langid, $phraseid, '$value')";
+        // Load the $lang array.
+        if (count($lang) > 0) {
+            $this->vars->langfile = $devname;
+            $this->vars->lang = &$lang;
+            $this->vars->charset = $this->vars->lang['charset'];
+            return true;
         } else {
-            $sql .= "($langid, $phraseid, '$value')";
-            $flag = TRUE;
+            return false;
         }
     }
-    $query = $db->query("REPLACE ".X_PREFIX."lang_text (langid, phraseid, cdata) VALUES $sql");
 
-    $db->query('OPTIMIZE TABLE '.X_PREFIX.'lang_text');
+    /**
+     * Uses the set of translation files to retrieve specific phrases in all available languages.
+     *
+     * Needs to accommodate usage inside of loops.  Strings specified by $langkeys will be cached.
+     * This will NOT cache entire files.
+     *
+     * @since 1.9.11
+     * @param array $langkeys Array of strings, used as the $lang array key.
+     * @return array Associative indexes lang_base.devname and lang_keys.langkey.
+     */
+    public function loadPhrases(array $langkeys = []): array
+    {
+        // Guarantee inclusion of the 'charset' and 'language' keys, which tend to be useful internally.
+        $langkeys = array_unique(array_merge($langkeys, ['charset', 'language']));
 
-    return TRUE;
-}
+        // First, cache the file list.
+        if (count($this->dirCache) == 0) {
+            $languages = scandir(ROOT . 'lang/');
 
-/**
- * Handles all logic necessary to install an XMB translation file.
- *
- * @param string $upload Read/Write Variable. Must contain the entire translation file.
- * @return bool TRUE on success.
- */
-function installNewTranslation(string &$upload): bool
-{
-    global $db, $SETTINGS;
-
-    // Perform sanity checks
-    $upload = str_replace(array('<'.'?php', '?'.'>'), array('', ''), $upload);
-    if (!eval('return true; '.$upload)) {
-        if ($SETTINGS['bbstatus'] == 'off') { // Possible upgrade in progress
-            header('HTTP/1.0 503 Service Unavailable');
-            header('Retry-After: 3600');
-        } else {
-            header('HTTP/1.0 500 Internal Server Error');
-        }
-        exit('XMB failed to parse the translation file.  Valid PHP syntax is required.');
-    }
-
-    // Parse the uploaded code
-    $devname = '';
-    $newlang = array();
-    $find = "$devname = '";
-    $curpos = strpos($upload, $find);
-    $tmppos = strpos($upload, "';", $curpos);
-    if ($curpos === FALSE || $tmppos === FALSE) {
-        error($lang['langimportfail'], FALSE);
-    }
-    $curpos += strlen($find);
-    $devname = substr($upload, $curpos, $tmppos - $curpos);
-
-    // Match $lang['*'] = "*";
-    preg_match_all("@\\\$lang\\['([_\\w]+)'] = (['\"]{1})(.*?)\\2;\\r?\\n@", $upload, $matches, PREG_SET_ORDER);
-
-    // Load unparsed strings into $newlang array.
-    foreach($matches as $match) {
-        // Parse this string
-        $key = $match[1];
-        $quoting = $match[2];
-        $phrase = $match[3];
-        $curpos = 0;
-        while(($curpos = strpos($phrase, "\\", $curpos)) !== FALSE) {
-            switch ($phrase[$curpos + 1]) {
-            case "\\":
-                $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                break;
-            case "'":
-                if ($quoting == "'") {
-                    $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
+            if (false === $languages) {
+                $msg = 'Unable to read the /lang/ directory.  ';
+                if ($this->vars->debug) {
+                    $msg .= 'See error log for details.';
+                } else {
+                    $msg .= 'Enable debug mode in XMB conf.php for details.';
                 }
-                break;
-            case '"':
-                if ($quoting == '"') {
-                    $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                }
-                break;
-            case '$':
-                if ($quoting == '"') {
-                    $phrase = substr($phrase, 0, $curpos).substr($phrase, $curpos + 1);
-                }
-                break;
-            case 'n':
-                if ($quoting == '"') {
-                    $phrase = substr($phrase, 0, $curpos)."\n".substr($phrase, $curpos + 2);
-                }
-                break;
-            default:
-                break;
+                throw new RuntimeException($msg);
             }
-            $curpos++;
+
+            $this->dirCache = $languages;
         }
-        // Save parsed string.
-        $newlang[$key] = $phrase;
+
+        // Second, cache the needed parts of each file.
+        foreach ($this->dirCache as $filename) {
+            if (substr($filename, -9) != '.lang.php') continue;
+
+            $devname = substr($filename, 0, -9);
+
+            $alreadyCached = true;
+            foreach ($langkeys as $key) {
+                if (! isset($this->langCache[$devname][$key])) {
+                    $alreadyCached = false;
+                    break;
+                }
+            }
+
+            if ($alreadyCached) continue;
+
+            $lang = [];
+            include ROOT . "lang/$filename";
+
+            foreach ($langkeys as $key) {
+                $this->langCache[$devname][$key] = $lang[$key];
+            }
+        }
+
+        // Lastly, return the file parts cache.
+        return $this->langCache;
     }
 
-    // Ensure $devname is present in the database.
-    $result = $db->query("SELECT langid FROM ".X_PREFIX."lang_base WHERE devname='$devname'");
-    if ($db->num_rows($result) == 0) {
-        $db->query("INSERT INTO ".X_PREFIX."lang_base SET devname='$devname'");
-        $langid = $db->insert_id();
-    } else {
-        $row = $db->fetch_array($result);
-        $langid = $row['langid'];
-    }
-    $db->free_result($result);
+    /**
+     * Adds an array of new $lang values to the specified translation.
+     *
+     * @since 1.9.11
+     * @param array $lang Associative array of new key/value pairs.  Values should be raw cdata.
+     * @param string $langfile Devname of the translation to add to.
+     * @return bool Returns true on success, false if the $langfile does not exist.
+     */
+    public function setManyLangValues(array $lang, string $langfile): bool
+    {
+        if (count($lang) == 0) throw new InvalidArgumentException('The lang array argument must not be empty.');
+        if ($langfile === '') throw new InvalidArgumentException('The langfile string argument must not be empty.');
 
-    // Install the new translation
-    $db->query("DELETE FROM ".X_PREFIX."lang_text WHERE langid=$langid");
-    setManyLangValues($newlang, $devname);
+        // Get the current file
+        $filepath = ROOT . "lang/$langfile.lang.php";
+        if (! is_readable($filepath)) return false;
+        if (! is_writable($filepath)) throw new RuntimeException("Wrong file permissions for the $langfile translation.");
+        $text = file_get_contents($filepath);
+        
+        // Ensure the file has a newline ending.
+        if (substr($text, -1) !== "\n") $text .= "\n";
 
-    // Cleanup unused keys.
-    $oldids = array();
-    $sql = ("SELECT k.phraseid "
-          . "FROM ".X_PREFIX."lang_keys AS k "
-          . "LEFT JOIN ".X_PREFIX."lang_text USING (phraseid) "
-          . "GROUP BY k.phraseid "
-          . "HAVING COUNT(langid) = 0");
-    $result = $db->query($sql);
-    while($row = $db->fetch_array($result)) {
-        $oldids[] = $row['phraseid'];
-    }
-    if (count($oldids) > 0) {
-        $oldids = implode(", ", $oldids);
-        $db->query("DELETE FROM ".X_PREFIX."lang_keys WHERE phraseid IN ($oldids)");
-    }
-
-    return TRUE;
-}
-
-/**
- * Creates a PHP file of a single translation.
- *
- * String literals are always expressed in double quotes because the original quoting was not saved during installation.
- *
- * @param int $langid Primary key value of the lang_base table.
- * @param string $devname Write-Only Variable. Returns the lang_base.devname value.
- * @return string|bool Entire file on success, FALSE otherwise.
- */
-function exportTranslation(int $langid, string &$devname)
-{
-    global $db;
-
-    $langid = intval($langid);
-
-    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE langid=$langid");
-    if ($db->num_rows($result) == 0) {
-        return FALSE;
-    }
-    $row = $db->fetch_array($result);
-    $db->free_result($result);
-    $devname = $row['devname'];
-
-    $query = "SELECT k.langkey, t.cdata "
-           . "FROM ".X_PREFIX."lang_keys AS k "
-           . "LEFT JOIN ".X_PREFIX."lang_text AS t USING (phraseid) "
-           . "WHERE t.langid=$langid "
-           . "GROUP BY k.langkey ORDER BY k.langkey";
-    $query = $db->query($query);
-    $contents = '';
-    $meta = '';
-    while($row = $db->fetch_array($query)) {
-        if (in_array($row['langkey'], array('charset','iso639','language'))) {
-            $meta .= "\$lang['{$row['langkey']}'] = '{$row['cdata']}';\r\n";
-        } else {
-            $value = $row['cdata'];
+        // Add data from $lang
+        foreach ($lang as $key => $value) {
+            if ($langfile === $this->vars->langfile) {
+                $this->vars->lang[$key] = $value;
+            }
+            $pos = strpos($file, "\$lang['$key'] =");
+            if ($pos !== false) {
+                // Need to delete the old value.
+                $end = strpos($file, "\n", $pos);
+                $text = substr($file, 0, $pos) . substr($file, $end + 1);
+            }
             $value = str_replace("\\", "\\\\", $value);
             $value = str_replace('"', '\"', $value);
             $value = str_replace('$', '\$', $value);
             $value = str_replace("\n", '\n', $value);
-            $contents .= "\$lang['{$row['langkey']}'] = \"$value\";\r\n";
+            $text .= "\$lang['$key'] = \"$value\";\n";
         }
-    }
-    $contents = "\$devname = '$devname';\r\n".$meta.$contents;
-
-    return $contents;
-}
-
-/**
- * Handles any unexpected configuration that prevented the translation database from loading.
- */
-function langPanic()
-{
-    global $SETTINGS;
-
-    if (defined('XMB_UPGRADE')) {
+        
+        // Save data
+        file_put_contents($filepath, $text);
+        unset($this->langCache[$langfile . '.lang.php']);
         return true;
     }
-    if (!loadLang()) {
+
+    /**
+     * Handles any unexpected configuration that prevented the translation from loading.
+     *
+     * @since 1.9.11
+     */
+    public function langPanic()
+    {
+        if (defined('XMB_UPGRADE')) {
+            return true;
+        }
+        if ($this->loadLang()) {
+            return true;
+        }
         if (file_exists(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') || file_exists(ROOT.'upgrade.php')) {
             header('HTTP/1.0 503 Service Unavailable');
             header('Retry-After: 3600');
-            exit('We\'re sorry, a website upgrade is in progress at the moment.  Please try again in a few minutes.');
+            exit("We're sorry, a website upgrade is in progress at the moment.  Please try again in a few minutes.");
         }
-        if (file_exists(ROOT.'lang/English.lang.php')) {
-            $upload = file_get_contents(ROOT.'lang/English.lang.php');
-            installNewTranslation($upload);
-            if (loadLang()) {
-                return TRUE;
-            }
-        }
-        if ($SETTINGS['bbstatus'] == 'off') { // Possible upgrade in progress
+        if ($this->vars->settings['bbstatus'] == 'off') { // Possible upgrade in progress
             header('HTTP/1.0 503 Service Unavailable');
             header('Retry-After: 3600');
         } else {
             header('HTTP/1.0 500 Internal Server Error');
         }
-        exit ('Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.');
+        echo 'Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.';
+        throw new RuntimeException('The English.lang.php file is missing or unreadable.');
+    }
+
+    /**
+     * Generate an HTML select element containing all available languages.
+     *
+     * @since 1.9.11
+     * @param string $currentLangFile The devname currently in use by the subject (system/self/member/etc).
+     * @return string
+     */
+    public function createLangFileSelect(string $currentLangFile): string
+    {
+        $phrases = $this->loadPhrases();
+
+        $lfs = [];
+        foreach ($phrases as $devname => $row) {
+            if ($devname === $currentLangFile) {
+                $lfs[] = "<option value='$devname' selected='selected'>{$row['language']}</option>";
+            } else {
+                $lfs[] = "<option value='$devname'>{$row['language']}</option>";
+            }
+        }
+        return '<select name="langfilenew">' . implode("\n", $lfs) . '</select>';
     }
 }

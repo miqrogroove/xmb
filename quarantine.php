@@ -22,15 +22,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\attach;
-use function XMB\Services\forums;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$attachSvc = \XMB\Services\attach();
+$forums = \XMB\Services\forums();
+$sql = \XMB\Services\sql();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'quarantine.php');
 require 'header.php';
 
-$onlinetime = vars()->onlinetime;
+$onlinetime = $vars->onlinetime;
 
 nav("<a href='quarantine.php'>{$lang['moderation_meta_name']}</a>");
 
@@ -78,7 +79,7 @@ case 'viewuser':
     if ('viewuser' == $action) {
         $user = postedVar('u', '', true, false, false, 'g');
         $dbuser = $db->escape($user);
-        $member = sql()->getMemberByName($user);
+        $member = $sql->getMemberByName($user);
         if (empty($member)) {
             error($lang['nomember'], false, '', '</td></tr></table></td></tr></table>');
         }
@@ -86,7 +87,7 @@ case 'viewuser':
         echo "<h2>{$lang['moderation_new_member']}: {$member['username']}</h2>\n";
     } else {
         $fid = getInt('fid');
-        $forum = forums()->getForum($fid);
+        $forum = $forums->getForum($fid);
         if (false === $forum) {
             error($lang['textnoforum'], false, '', '</td></tr></table></td></tr></table>');
         }
@@ -98,7 +99,7 @@ case 'viewuser':
 
     $specialrank = array();
     $rankposts = array();
-    $queryranks = sql()->getRanks();
+    $queryranks = $sql->getRanks();
     foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
@@ -123,9 +124,9 @@ case 'viewuser':
     if ($threadcount > 0) {
         echo "<h3>{$lang['moderation_new_threads']}</h3>\n";
         while($thread = $db->fetch_array($result)){
-            $tid = $thread['tid'];
-            $fid = $thread['fid'];
-            $forum = forums()->getForum($fid);
+            $tid = (int) $thread['tid'];
+            $fid = (int) $thread['fid'];
+            $forum = $forums->getForum($fid);
             $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvethread&amp;tid=$tid' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
@@ -136,7 +137,7 @@ case 'viewuser':
             $vote_id = $voted = 0;
 
             if ('1' === $thread['pollopts']) {
-                $vote_id = sql()->getPollId($tid, true);
+                $vote_id = $sql->getPollId($tid, true);
             }
 
             if ($vote_id > 0) {
@@ -202,7 +203,7 @@ case 'viewuser':
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
+                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
@@ -300,7 +301,7 @@ case 'viewuser':
             $smileyoff = $post['smileyoff'];
             $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
-                $queryattach = sql()->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
+                $queryattach = $sql->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
             }
             if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
@@ -348,9 +349,9 @@ case 'viewuser':
         echo "<h3>{$lang['moderation_new_replies']}</h3>\n";
         $lasttid = '0';
         while($post = $db->fetch_array($result)){
-            $tid = $post['tid'];
-            $fid = $post['fid'];
-            $forum = forums()->getForum($fid);
+            $tid = (int) $post['tid'];
+            $fid = (int) $post['fid'];
+            $forum = $forums->getForum($fid);
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvereply&amp;pid={$post['pid']}' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletereply&amp;pid={$post['pid']}' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
@@ -408,7 +409,7 @@ case 'viewuser':
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
+                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
@@ -506,7 +507,7 @@ case 'viewuser':
             $smileyoff = $post['smileyoff'];
             $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
             if ($forum['attachstatus'] == 'on') {
-                $queryattach = sql()->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
+                $queryattach = $sql->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
             }
             if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
                 $files = array();
@@ -608,12 +609,12 @@ case 'approveall':
     request_secure("Quarantine Panel/approveall", $rawmember);
 
     if (onSubmit('yessubmit')) {
-        $count = sql()->countPosts($quarantine, 0, $rawmember);
+        $count = $sql->countPosts($quarantine, 0, $rawmember);
         $thatime = $onlinetime - $count;
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
         while($thread = $db->fetch_array($result)) {
             $thatime++;
-            $forum = forums()->getForum($thread['fid']);
+            $forum = $forums->getForum((int) $thread['fid']);
             $db->query(
                 "INSERT INTO ".X_PREFIX."threads " .
                 "      (fid, subject, icon,           lastpost, views, replies, author, closed, topped, pollopts) " .
@@ -637,9 +638,9 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            attach()->approve($oldpid, $newpid);
+            $attachSvc->approve($oldpid, $newpid);
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = sql()->getPollId($thread['tid'], true);
+                $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
                     $newpoll = $db->insert_id();
@@ -665,7 +666,7 @@ case 'approveall':
         $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE author='$member' ORDER BY dateline ASC");
         while($post = $db->fetch_array($result)) {
             $thatime++;
-            $forum = forums()->getForum($post['fid']);
+            $forum = $forums->getForum((int) $post['fid']);
             $db->query(
                 "INSERT INTO ".X_PREFIX."posts " .
                 "      (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
@@ -681,7 +682,7 @@ case 'approveall':
             $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
             $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-            attach()->approve((int) $post['pid'], $newpid);
+            $attachSvc->approve((int) $post['pid'], $newpid);
             $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
 
             $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
@@ -693,7 +694,7 @@ case 'approveall':
             $posts = $db->result($query,0);
             $db->free_result($query);
 
-            $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
+            $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
             $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
@@ -701,7 +702,7 @@ case 'approveall':
                                  . "INNER JOIN ".X_PREFIX."members m USING (username) "
                                  . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
             while($subs = $db->fetch_array($subquery)) {
-                if ($viewperm < vars()->status_enum[$subs['status']]) {
+                if ($viewperm < $vars->status_enum[$subs['status']]) {
                     continue;
                 }
 
@@ -723,7 +724,7 @@ case 'approveall':
             $db->free_result($subquery);
         }
         $db->free_result($result);
-        sql()->endMemberQuarantine($rawmember);
+        $sql->endMemberQuarantine($rawmember);
         moderate_cleanup($member);
         echo $lang['moderation_approved'];
     } else {
@@ -743,7 +744,7 @@ case 'deleteban':
             $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
             $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = sql()->getPollId($thread['tid'], true);
+                $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
                     $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
@@ -779,7 +780,7 @@ case 'approvethread':
     $thread = $db->fetch_array($result);
     $db->free_result($result);
 
-    $forum = forums()->getForum($thread['fid']);
+    $forum = $forums->getForum((int) $thread['fid']);
     $member = $db->escape($thread['author']);
     $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}");
     $post = $db->fetch_array($result);
@@ -807,9 +808,9 @@ case 'approvethread':
     $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-    attach()->approve($oldpid, $newpid);
+    $attachSvc->approve($oldpid, $newpid);
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = sql()->getPollId($thread['tid'], true);
+        $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $db->query(
                 "INSERT INTO ".X_PREFIX."vote_desc " .
@@ -849,7 +850,7 @@ case 'approvereply':
     $post = $db->fetch_array($result);
     $db->free_result($result);
 
-    $forum = forums()->getForum($post['fid']);
+    $forum = $forums->getForum((int) $post['fid']);
     $member = $db->escape($post['author']);
     $db->query(
         "INSERT INTO ".X_PREFIX."posts " .
@@ -866,7 +867,7 @@ case 'approvereply':
     $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
     $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
-    attach()->approve((int) $post['pid'], $newpid);
+    $attachSvc->approve((int) $post['pid'], $newpid);
     $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
 
     $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
@@ -878,7 +879,7 @@ case 'approvereply':
     $posts = $db->result($query,0);
     $db->free_result($query);
 
-    $lang2 = loadPhrases(array('charset','textsubsubject','textsubbody'));
+    $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
     $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
     $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
     $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
@@ -886,7 +887,7 @@ case 'approvereply':
                          . "INNER JOIN ".X_PREFIX."members m USING (username) "
                          . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
     while($subs = $db->fetch_array($subquery)) {
-        if ($viewperm < vars()->status_enum[$subs['status']]) {
+        if ($viewperm < $vars->status_enum[$subs['status']]) {
             continue;
         }
 
@@ -925,7 +926,7 @@ case 'deletethread':
     $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
     $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = sql()->getPollId($thread['tid'], true);
+        $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
             $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
@@ -1004,8 +1005,8 @@ default:
     } else {
         echo "<table>\n<tr><th>{$lang['textforum']}</th><th>{$lang['memposts']}</th></tr>\n";
         while($row = $db->fetch_array($result)) {
-            $fid = $row['fid'];
-            $forum = forums()->getForum($fid);
+            $fid = (int) $row['fid'];
+            $forum = $forums->getForum($fid);
             $fname = fnameOut($forum['name']);
             $count = $row['postnum'];
             echo "<tr><td><a href='?action=viewforum&amp;fid=$fid'>$fname</a></td><td>$count</td></tr>\n";

@@ -22,8 +22,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\core;
-use function XMB\Services\vars;
+$core = \XMB\Services\core();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('U2U_FOLDER_COL_SIZE', 32);
 
@@ -42,7 +43,7 @@ function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $
 {
     global $db;
 
-    $onlinetime = vars()->onlinetime;
+    $onlinetime = $vars->onlinetime;
 
     $db->query("INSERT INTO ".X_PREFIX."u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
 }
@@ -94,7 +95,7 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid = 0)
             }
 
             if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
-                $lang2 = loadPhrases(array('charset','textnewu2uemail','textnewu2ubody'));
+                $lang2 = $tran->loadPhrases(['charset', 'textnewu2uemail', 'textnewu2ubody']);
                 $translate = $lang2[$rcpt['langfile']];
                 $u2uurl = $full_url.'u2u.php';
                 $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
@@ -140,7 +141,7 @@ function u2u_send($u2uid, string $msgto, string $subject, string $message): stri
 
     $leftpane = '';
     $del = ($del == 'yes') ? 'yes' : 'no';
-    $username = core()->postedVar(
+    $username = $core->postedVar(
         varname: 'username',
         word: 'javascript',
         dbescape: false,
@@ -276,7 +277,7 @@ function u2u_view($u2uid, $folders)
             }
         }
 
-        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $adjTime = $core->timeKludge((int) $u2u['dateline']);
         $u2udate = gmdate($dateformat, $adjTime);
         $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
@@ -335,7 +336,7 @@ function u2u_print($u2uid, $eMail = false)
     $db->free_result($query);
 
     if ($u2u) {
-        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $adjTime = $core->timeKludge((int) $u2u['dateline']);
         $u2udate = gmdate($dateformat, $adjTime);
         $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
@@ -571,7 +572,7 @@ function u2u_ignore()
 
     $leftpane = '';
     if (onSubmit('ignoresubmit')) {
-        $ignorelist = core()->postedVar('ignorelist');
+        $ignorelist = $core->postedVar('ignorelist');
         $self['ignoreu2u'] = $ignorelist;
         $db->query("UPDATE ".X_PREFIX."members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
         u2u_msg($lang['ignoreupdate'], $full_url.'u2u.php?action=ignore');
@@ -633,7 +634,7 @@ function u2u_display($folder, $folders)
 
         if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
-            if (vars()->onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
+            if ($vars->onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
                 if ('1' === $u2u['invisible']) {
                     if (!X_ADMIN) {
                         $online = $lang['textoffline'];
@@ -658,7 +659,7 @@ function u2u_display($folder, $folders)
             $u2usent = $lang['textu2unotsent'];
         }
 
-        $adjTime = core()->timeKludge((int) $u2u['dateline']);
+        $adjTime = $core->timeKludge((int) $u2u['dateline']);
         $u2udate = gmdate($dateformat, $adjTime);
         $u2utime = gmdate($timecode, $adjTime);
         $u2udateline = "$u2udate $lang[textat] $u2utime";

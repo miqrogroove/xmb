@@ -84,7 +84,7 @@ if (onSubmit('nosubmit')) {
         $csv = implode(',', $dirty);
         $countquery = $db->query("SELECT fid FROM " . $this->vars->tablepre . "threads WHERE tid IN ($csv) GROUP BY fid");
         while($thread = $db->fetch_array($countquery)) {
-            $fids[] = $thread['fid'];
+            $fids[] = (int) $thread['fid'];
         }
         $db->free_result($countquery);
     }
@@ -128,7 +128,7 @@ if (onSubmit('nosubmit')) {
     foreach ($fids as $fid) {
         $forum = $forumcache->getForum($fid);
         if ('sub' == $forum['type']) {
-            $fups[] = $forum['fup'];
+            $fups[] = (int) $forum['fup'];
         }
     }
     $fids = array_unique(array_merge($fids, $fups));

@@ -22,11 +22,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\attach;
-use function XMB\Services\core;
-use function XMB\Services\forums;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$attach = \XMB\Services\attach();
+$core = \XMB\Services\core();
+$forumCache = \XMB\Services\forums();
+$sql = \XMB\Services\sql();
+$vars = \XMB\Services\vars();
 
 require 'header.php';
 
@@ -35,7 +35,7 @@ if (X_GUEST) {
     exit;
 }
 
-$onlinetime = vars()->onlinetime;
+$onlinetime = $vars->onlinetime;
 
 $tids = array_unique(postedArray('tid', 'int', '', FALSE, FALSE, FALSE, 'r'));
 $fid = getInt('fid', 'p');
@@ -66,12 +66,12 @@ if (count($tids) == 1) {
     $thread = $db->fetch_array($query);
     $db->free_result($query);
     $threadname = rawHTMLsubject(stripslashes($thread['subject']));
-    $fid = (int)$thread['fid'];
+    $fid = (int) $thread['fid'];
 } else {
     $threadname = '';
 }
 
-$forums = forums()->getForum($fid);
+$forums = $forumCache->getForum($fid);
 
 if (false === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
@@ -88,7 +88,7 @@ if (!$perms[X_PERMS_VIEW]) {
 
 $fup = array();
 if ($forums['type'] == 'sub') {
-    $fup = forums()->getForum($forums['fup']);
+    $fup = $forumCache->getForum((int) $forums['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -96,13 +96,13 @@ if ($forums['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = forums()->getForum($fup['fup']);
+        $fupup = $forumCache->getForum((int) $fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 } else if ((int) $forums['fup'] > 0) { // 'forum' in a 'group'
-    $fup = forums()->getForum($forums['fup']);
+    $fup = $forumCache->getForum((int) $forums['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
 }
 nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
@@ -209,7 +209,7 @@ switch($action) {
                 }
                 $db->free_result($query);
 
-                attach()->deleteByThread($tid);  // Must delete attachments before posts!
+                $attach->deleteByThread($tid);  // Must delete attachments before posts!
                 $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid");
                 $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid=$tid");
 
@@ -310,9 +310,9 @@ switch($action) {
         } else {
             request_secure('Thread Admin Options/Move', (string) min($tids));
             $moveto = formInt('moveto');
-            $type = core()->postedVar('type');
+            $type = $core->postedVar('type');
 
-            $movetorow = forums()->getForum($moveto);
+            $movetorow = $forumCache->getForum($moveto);
             if ($movetorow === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
@@ -418,7 +418,7 @@ switch($action) {
         break;
 
     case 'getip':
-        $useip = sql()->getIPFromPost($pid);
+        $useip = $sql->getIPFromPost($pid);
         if ($useip === '') {
             $address = $lang['textnone'];
             $name = $lang['textnone'];
@@ -527,7 +527,7 @@ switch($action) {
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-{$result['pidcount']} WHERE username='{$result['author']}'");
                     }
 
-                    attach()->emptyThread($tid, $pid);  // Must delete attachments before posts!
+                    $attach->emptyThread($tid, $pid);  // Must delete attachments before posts!
                     $db->query("DELETE FROM ".X_PREFIX."posts WHERE tid=$tid AND pid!=$pid");
 
                     updatethreadcount($tid); //Also updates lastpost
@@ -765,7 +765,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        attach()->deleteByPost($move);
+                        $attach->deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -783,7 +783,7 @@ switch($action) {
                         $db->escape_fast($post['author']);
                         $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum-1 WHERE username='{$post['author']}'");
                         $db->query("DELETE FROM ".X_PREFIX."posts WHERE pid=$move");
-                        attach()->deleteByPost($move);
+                        $attach->deleteByPost($move);
                         $db->query("UPDATE ".X_PREFIX."threads SET replies=replies-1 WHERE tid=$tid");
                     }
                 }
@@ -824,7 +824,7 @@ switch($action) {
 
             $newfid = getRequestInt('newfid');
 
-            $otherforum = forums()->getForum($newfid);
+            $otherforum = $forumCache->getForum($newfid);
             if ($otherforum === FALSE) {
                 error($lang['textnoforum'], FALSE);
             }
@@ -873,7 +873,7 @@ switch($action) {
                     $db->query("INSERT INTO ".X_PREFIX."posts ($columns) VALUES ($values)");
                     $newpid = $db->insert_id();
 
-                    attach()->copyByPost((int) $oldPid, $newpid);
+                    $attach->copyByPost((int) $oldPid, $newpid);
                 }
 
                 $query = $db->query("SELECT author, COUNT(*) AS pidcount FROM ".X_PREFIX."posts WHERE tid=$tid GROUP BY author");

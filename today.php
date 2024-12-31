@@ -126,7 +126,7 @@ if ($threadcount == 0) {
     $today_row = array();
     while($thread = $db->fetch_array($query)) {
         $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
-        $forum = forums()->getForum($thread['fid']);
+        $forum = forums()->getForum((int) $thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 
         if ($thread['author'] == 'Anonymous') {

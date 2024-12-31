@@ -34,6 +34,8 @@ $login = \XMB\Services\login();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
+$token = \XMB\Services\token();
+$tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -182,10 +184,10 @@ switch($action) {
             }
             
             $sql->setLostPasswordDate($member['uid'], time());
-            $token = \XMB\Token\create('Lost Password', $member['username'], X_NONCE_MAX_AGE, true);
-            $link = $vars->full_url . "lost.php?a=$token";
+            $newtoken = $token->create('Lost Password', $member['username'], X_NONCE_MAX_AGE, true);
+            $link = $vars->full_url . "lost.php?a=$newtoken";
 
-            $lang2 = loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
+            $lang2 = $tran->loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
             $translate = $lang2[$member['langfile']];
             $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);

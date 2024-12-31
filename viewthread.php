@@ -22,11 +22,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\attach;
-use function XMB\Services\core;
-use function XMB\Services\forums;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$attachSvc = \XMB\Services\attach();
+$core = \XMB\Services\core();
+$forums = \XMB\Services\forums();
+$sqlSvc = \XMB\Services\sql();
+$vars = XMB\Services\vars();
 
 define('X_SCRIPT', 'viewthread.php');
 
@@ -48,13 +48,13 @@ if ($goto == 'lastpost') {
             $post = $db->fetch_array($query);
             $tid = $post['tid'];
 
-            $posts = sql()->countPosts($quarantine, $tid, '', (int) $post['dateline']);
+            $posts = $sqlSvc->countPosts($quarantine, $tid, '', (int) $post['dateline']);
         } else {
             header('HTTP/1.0 404 Not Found');
             error($lang['textnothread']);
         }
     } else if ($tid > 0) {
-        $posts = sql()->countPosts($quarantine, $tid);
+        $posts = $sqlSvc->countPosts($quarantine, $tid);
 
         if ($posts == 0) {
             header('HTTP/1.0 404 Not Found');
@@ -95,7 +95,7 @@ if ($goto == 'lastpost') {
             error($lang['textnothread']);
         }
 
-        $posts = sql()->countPosts($quarantine, $tid);
+        $posts = $sqlSvc->countPosts($quarantine, $tid);
     } else {
         header('HTTP/1.0 404 Not Found');
         error($lang['textnothread']);
@@ -112,7 +112,7 @@ if ($goto == 'lastpost') {
     $tidtest = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid = $pid");
     if ($db->num_rows($tidtest) == 1) {
         $post = $db->fetch_array($tidtest);
-        $posts = sql()->countPosts($quarantine, $tid, '', (int) $post['dateline']);
+        $posts = $sqlSvc->countPosts($quarantine, $tid, '', (int) $post['dateline']);
         $page = quickpage($posts, $ppp);
         if ($page == 1) {
             $page = '';
@@ -197,7 +197,7 @@ if (strpos($thread['closed'], '|') !== false) {
 $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
 
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
-$expire = vars()->onlinetime + X_ONLINE_TIMER;
+$expire = $vars->onlinetime + X_ONLINE_TIMER;
 if (false === strpos($oldtopics, "|$lastPid|")) {
     if (empty($oldtopics)) {
         $oldtopics = "|$lastPid|";
@@ -207,8 +207,8 @@ if (false === strpos($oldtopics, "|$lastPid|")) {
     put_cookie('oldtopics', $oldtopics, $expire);
 }
 
-$fid = $thread['fid'];
-$forum = forums()->getForum($fid);
+$fid = (int) $thread['fid'];
+$forum = $forums->getForum($fid);
 
 if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
@@ -229,7 +229,7 @@ if (!$perms[X_PERMS_VIEW]) {
 
 $fup = array();
 if ($forum['type'] == 'sub') {
-    $fup = forums()->getForum($forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
     if (!$fupPerms[X_PERMS_VIEW]) {
@@ -242,14 +242,14 @@ if ($forum['type'] == 'sub') {
     } else if (!$fupPerms[X_PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
-        $fupup = forums()->getForum($fup['fup']);
+        $fupup = $forums->getForum((int) $fup['fup']);
         nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
         unset($fupup);
     }
     nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = forums()->getForum($forum['fup']);
+    $fup = $forums->getForum((int) $forum['fup']);
     nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
     unset($fup);
 }
@@ -307,7 +307,7 @@ if ($action == '') {
                 }
             }
 
-            if ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes' && core()->isAnySmilieInstalled()) {
+            if ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes' && $core->isAnySmilieInstalled()) {
                 eval('$quickbbcode = "'.template('functions_bbcode_quickreply').'";');
 
                 $smilies = '<div align="center"><hr /><table border="0"><tr>';
@@ -359,7 +359,7 @@ if ($action == '') {
 
     $specialrank = array();
     $rankposts = array();
-    $queryranks = sql()->getRanks();
+    $queryranks = $sqlSvc->getRanks();
     foreach($queryranks as $query) {
         $query['posts'] = (int) $query['posts'];
         if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
@@ -377,7 +377,7 @@ if ($action == '') {
     $vote_id = $voted = 0;
 
     if ('1' === $thread['pollopts']) {
-        $vote_id = sql()->getPollId($tid);
+        $vote_id = $sqlSvc->getPollId($tid);
     }
 
     if ($vote_id > 0) {
@@ -446,7 +446,7 @@ if ($action == '') {
 
     if (X_MEMBER && 'yes' == $self['waiting_for_mod']) {
         $quarantine = true;
-        $result = sql()->countPosts($quarantine, $tid, $self['username']);
+        $result = $sqlSvc->countPosts($quarantine, $tid, $self['username']);
         if ($result > 0) {
             if (1 == $result) {
                 $msg = $lang['moderation_replies_single'];
@@ -473,7 +473,7 @@ if ($action == '') {
         $startdate = $row['dateline'];
         $startpid = $row['pid'];
         if ($rowcount <= $ppp) {
-            $enddate = vars()->onlinetime;
+            $enddate = $vars->onlinetime;
         } else {
             $db->data_seek($query1, $rowcount - 1);
             $row = $db->fetch_array($query1);
@@ -527,7 +527,7 @@ if ($action == '') {
         null_string($post['avatar']);
         $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
 
-        if (vars()->onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
+        if ($vars->onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
             if ('1' === $post['invisible']) {
                 if (!X_ADMIN) {
                     $onlinenow = $lang['memberisoff'];
@@ -541,8 +541,8 @@ if ($action == '') {
             $onlinenow = $lang['memberisoff'];
         }
 
-        $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
-        $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
+        $date = gmdate($dateformat, $core->timeKludge((int) $post['dateline']));
+        $time = gmdate($timecode, $core->timeKludge((int) $post['dateline']));
 
         $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
@@ -612,7 +612,7 @@ if ($action == '') {
                 $sr = $post['status'];
                 $rank = [
                     'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[vars()->status_translate[vars()->status_enum[$sr]]],
+                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
                     'stars' => $specialrank[$sr]['stars'],
                     'avatarrank' => $specialrank[$sr]['avatarrank'],
                 ];
@@ -660,7 +660,7 @@ if ($action == '') {
                 $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
             }
 
-            $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
+            $tharegdate = gmdate($dateformat, $core->timeKludge((int) $post['regdate']));
 
             $avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
@@ -814,7 +814,7 @@ if ($action == '') {
     // Redirect to new URL
     $file = $db->fetch_array($query);
     $db->free_result($query);
-    $url = attach()->getURL((int) $file['aid'], $pid, $file['filename'], false);
+    $url = $attachSvc->getURL((int) $file['aid'], $pid, $file['filename'], false);
     header('HTTP/1.0 301 Moved Permanently');
     header('Location: '.$url);
 } else if ($action == 'printable') {
@@ -864,8 +864,8 @@ if ($action == '') {
     $counter = 0;
     $posts = '';
     while($post = $db->fetch_array($querypost)) {
-        $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
-        $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
+        $date = gmdate($dateformat, $core->timeKludge((int) $post['dateline']));
+        $time = gmdate($timecode, $core->timeKludge((int) $post['dateline']));
         $poston = "$date $lang[textat] $time";
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];

@@ -47,6 +47,7 @@ class Core
         private SQL $sql,
         private Template $template,
         private Token $token,
+        private Translation $tran,
         private Variables $vars,
     ) {
         // Property promotion
@@ -198,7 +199,7 @@ class Core
             $count = $this->sql->raiseLoginCounter($member['username']);
             if ($count == $guess_limit) {
                 // Email the Super Administrators about this.
-                $lang2 = loadPhrases(array('charset','security_subject','login_audit_mail'));
+                $lang2 = $this->tran->loadPhrases(['charset', 'security_subject', 'login_audit_mail']);
 
                 $mailquery = $this->sql->getSuperEmails();
                 foreach ($mailquery as $admin) {
@@ -206,7 +207,7 @@ class Core
                     $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                     $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
                     $body = "{$translate['login_audit_mail']}\n\n$name";
-                    xmb_mail($adminemail, $translate['security_subject'], $body, $translate['charset']);
+                    $this->xmb_mail($adminemail, $translate['security_subject'], $body, $translate['charset']);
                 }
             }
         }
@@ -226,64 +227,6 @@ class Core
             $this->sql->resetSessionCounter($member['username'], time());
         } else {
             $count = $this->sql->raiseSessionCounter($member['username']);
-        }
-    }
-
-    /**
-     * Uses the new translation database to populate the old $lang and $langfile variables.
-     *
-     * @since 1.9.11
-     * @param string $devname Name specified by XMB for internal use (usually written in English).
-     * @return bool
-     */
-    function loadLang(string $devname = "English"): bool
-    {
-        $lang = [];
-
-        include ROOT . "lang/$devname.lang.php";
-
-        // Load the $lang array.
-        if (count($lang) > 0) {
-            $this->vars->langfile = $devname;
-            $this->vars->lang = &$lang;
-            $this->vars->charset = $this->vars->lang['charset'];
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Uses the new translation database to retrieve a single phrase in all available languages.
-     *
-     * @since 1.9.11
-     * @param array $langkeys Of strings, used as the $lang array key.
-     * @return array Associative indexes lang_base.devname and lang_keys.langkey.
-     */
-    function loadPhrases($langkeys)
-    {
-        $db = $this->db;
-
-        $csv = "'".implode("', '", $langkeys)."'";
-
-        // Query The Translation Database
-        $sql = 'SELECT b.devname, t.cdata, k.langkey '
-             . 'FROM ' . $this->vars->tablepre . 'lang_base AS b'
-             . ' LEFT JOIN ' . $this->vars->tablepre . 'lang_text AS t USING (langid)'
-             . ' INNER JOIN ' . $this->vars->tablepre . 'lang_keys AS k USING (phraseid)'
-             . "WHERE k.langkey IN ($csv)";
-        $result = $db->query($sql);
-
-        // Load the $lang array.
-        if ($db->num_rows($result) > 0) {
-            $phrases = array();
-            while($row = $db->fetch_array($result)) {
-                $phrases[$row['devname']][$row['langkey']] = $row['cdata'];
-            }
-            $db->free_result($result);
-            return $phrases;
-        } else {
-            return FALSE;
         }
     }
 
@@ -1377,7 +1320,7 @@ class Core
     }
 
     /**
-     * Takes a UTC(?) timestamp and uses the weird XMB logic to convert it to a 'local' timestamp.
+     * Takes a system timestamp and uses the weird XMB logic to convert it to a 'local' timestamp.
      *
      * Although this was somewhat standardized in older versions, the code had been duplicated for every display in the system.
      *
@@ -1386,12 +1329,26 @@ class Core
     public function timeKludge(int $timestamp): int
     {
         $userHours = (float) $this->vars->timeoffset;
-        $extraHours = (float) $this->vars->settings['addtime'];
 
         $userOffset = (int) ($userHours * 3600);
+
+        return $this->standardTime($timestamp) + $userOffset;
+    }
+
+    /**
+     * Takes a system timestamp and uses the weird XMB logic to convert it to a UTC(?) timestamp.
+     *
+     * Although this was somewhat standardized in older versions, the code had been duplicated for every display in the system.
+     *
+     * @since 1.10.00
+     */
+    public function standardTime(int $timestamp): int
+    {
+        $extraHours = (float) $this->vars->settings['addtime'];
+
         $extraOffset = (int) ($extraHours * 3600);
 
-        return $timestamp + $userOffset + $extraOffset;
+        return $timestamp + $extraOffset;
     }
 
     /**
@@ -1855,31 +1812,6 @@ class Core
             $pwform = $this->template->process('forumdisplay_password.php');
             $this->error($this->vars->lang['forumpwinfo'], append: $pwform);
         }
-    }
-
-    /**
-     * @since 1.9.11
-     */
-    public function createLangFileSelect($currentLangFile)
-    {
-        $db = $this->db;
-
-        $lfs = array();
-
-        $query = $db->query("SELECT b.devname, t.cdata "
-                          . "FROM " . $this->vars->tablepre . "lang_base AS b "
-                          . "LEFT JOIN " . $this->vars->tablepre . "lang_text AS t USING (langid) "
-                          . "INNER JOIN " . $this->vars->tablepre . "lang_keys AS k USING (phraseid) "
-                          . "WHERE k.langkey='language' "
-                          . "ORDER BY t.cdata ASC");
-        while ($row = $db->fetch_array($query)) {
-            if ($row['devname'] === $currentLangFile) {
-                $lfs[] = '<option value="'.$row['devname'].'" selected="selected">'.$row['cdata'].'</option>';
-            } else {
-                $lfs[] = '<option value="'.$row['devname'].'">'.$row['cdata'].'</option>';
-            }
-        }
-        return '<select name="langfilenew">'.implode("\n", $lfs).'</select>';
     }
 
     /**

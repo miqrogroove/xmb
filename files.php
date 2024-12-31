@@ -22,9 +22,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\forums;
-use function XMB\Services\observer;
-use function XMB\Services\sql;
+$forums = \XMB\Services\forums();
+$observer = \XMB\Services\observer();
+$sql = \XMB\Services\sql();
 
 define('X_SCRIPT', 'files.php');
 
@@ -108,19 +108,19 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid
 if ($filename == '') {
     if ($pid == 0 && !X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
-        $file = sql()->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
+        $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
     } else {
-        $file = sql()->getAttachmentAndFID($aid, $quarantine, $pid);
+        $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid);
     }
 } else {
-    $file = sql()->getAttachmentAndFID($aid, $quarantine, 0, $filename);
+    $file = $sql->getAttachmentAndFID($aid, $quarantine, 0, $filename);
 }
 if (empty($file)) {
     fileError();
 }
 
 if ($pid > 0 || $file['fid'] != '') {
-    $forum = forums()->getForum($file['fid']);
+    $forum = $forums->getForum((int) $file['fid']);
 
     if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
         fileError();
@@ -141,7 +141,7 @@ if ($pid > 0 || $file['fid'] != '') {
 
     $fup = array();
     if ($forum['type'] == 'sub') {
-        $fup = forums()->getForum($forum['fup']);
+        $fup = $forums->getForum((int) $forum['fup']);
         // prevent access to subforum when upper forum can't be viewed.
         $fupPerms = checkForumPermissions($fup);
         if (!$fupPerms[X_PERMS_VIEW]) {
@@ -181,7 +181,7 @@ if ($size != (int) $file['filesize']) {
 }
 
 // Verify output stream is empty
-observer()->assertEmptyOutputStream('files.php');
+$observer->assertEmptyOutputStream('files.php');
 
 // Do not issue any errors below this line
 
@@ -198,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_SERVER['HTTP_IF_MODIFIED_SINC
 }
 
 // Increment hit counter
-sql()->raiseDownloadCounter($aid, $quarantine);
+$sql->raiseDownloadCounter($aid, $quarantine);
 
 // Set response headers
 if ($file['img_size'] == '') {

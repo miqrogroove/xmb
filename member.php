@@ -22,10 +22,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\forums;
-use function XMB\Services\session;
-use function XMB\Services\sql;
-use function XMB\Services\vars;
+$core = \XMB\Services\core();
+$forums = \XMB\Services\forums();
+$session = \XMB\Services\session();
+$sql = \XMB\Services\sql();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'member.php');
 
@@ -241,7 +243,7 @@ switch($action) {
                     }
 
                     if ($SETTINGS['ipreg'] != 'off') {
-                        $time = vars()->onlinetime - 86400;
+                        $time = $vars->onlinetime - 86400;
                         $query = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE regip='$onlineip' AND regdate >= $time");
                         if ($db->num_rows($query) >= 1) {
                             error($lang['reg_today']);
@@ -348,7 +350,7 @@ switch($action) {
                         $self['langfile'] = $SETTINGS['langfile'];
                     }
 
-                    $count1 = sql()->countMembers();
+                    $count1 = $sql->countMembers();
                     $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
                     $self['timeoffset'] = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
@@ -382,7 +384,7 @@ switch($action) {
                     }
 
                     $self['password'] = md5($self['password']);
-                    $self['regdate'] = vars()->onlinetime;
+                    $self['regdate'] = $vars->onlinetime;
                     if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                         $self['regip'] = '';
                     } else {
@@ -437,7 +439,7 @@ switch($action) {
                             closedir($dirHandle);
                             unset($rawavatar);
                             if ($filefound) {
-                                $self['avatar'] = postedVar('newavatar', 'javascript', true, false, true);
+                                $self['avatar'] = $core->postedVar('newavatar', 'javascript', true, false, true);
                             } else {
                                 $self['avatar'] = '';
                             }
@@ -446,20 +448,28 @@ switch($action) {
                         }
                     }
 
-                    sql()->addMember($self);
+                    $sql->addMember($self);
 
-                    $lang2 = loadPhrases(array('charset','textnewmember','textnewmember2','textyourpw','textyourpwis','textusername','textpassword'));
+                    $lang2 = $tran->loadPhrases([
+                        'charset',
+                        'textnewmember',
+                        'textnewmember2',
+                        'textyourpw',
+                        'textyourpwis',
+                        'textusername',
+                        'textpassword',
+                    ]);
 
                     if ($SETTINGS['notifyonreg'] != 'off') {
-                        $mailquery = sql()->getSuperEmails();
+                        $mailquery = $sql->getSuperEmails();
                         foreach ($mailquery as $admin) {
                             $translate = $lang2[$admin['langfile']];
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
-                                $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".vars()->onlinetime."', 'no', 'yes')");
+                                $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$vars->onlinetime."', 'no', 'yes')");
                             } else {
                                 $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
                                 $body = "{$translate['textnewmember2']}\n\n$full_url";
-                                xmb_mail($adminemail, $translate['textnewmember'], $body, $translate['charset']);
+                                $core->xmb_mail($adminemail, $translate['textnewmember'], $body, $translate['charset']);
                             }
                         }
                     }
@@ -472,7 +482,7 @@ switch($action) {
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
                         xmb_mail($rawemail, $subject, $body, $translate['charset']);
                     } else {
-                        session()->newUser($self);
+                        $session->newUser($self);
                     }
 
                     $self['password'] = '';
@@ -506,12 +516,12 @@ switch($action) {
 
             if (2 == $stepout) {
                 if ((int) $SETTINGS['pruneusers'] > 0) {
-                    $prunebefore = vars()->onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
+                    $prunebefore = $vars->onlinetime - (60 * 60 * 24 * $SETTINGS['pruneusers']);
                     $db->query("DELETE FROM ".X_PREFIX."members WHERE lastvisit=0 AND regdate < $prunebefore AND status='Member'");
                 }
 
                 if ((int) $SETTINGS['maxdayreg'] > 0) {
-                    $time = vars()->onlinetime - 86400; // subtract 24 hours
+                    $time = $vars->onlinetime - 86400; // subtract 24 hours
                     $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE regdate > $time");
                     if ((int) $db->result($query, 0) > (int) $SETTINGS['maxdayreg']) {
                         error($lang['max_regs']);
@@ -550,7 +560,7 @@ switch($action) {
                 $captcharegcheck = '';
                 $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
 
-                $currdate = gmdate($timecode, vars()->onlinetime + ($SETTINGS['addtime'] * 3600));
+                $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
                 $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
                 $themelist = array();
@@ -564,7 +574,7 @@ switch($action) {
                 $themelist = implode("\n", $themelist);
                 $db->free_result($query);
 
-                $langfileselect = createLangFileSelect($langfile);
+                $langfileselect = $tran->createLangFileSelect($langfile);
 
                 $dayselect = array();
                 $dayselect[] = '<select name="day">';
@@ -647,7 +657,7 @@ switch($action) {
             error($lang['nomember']);
         }
 
-        $memberinfo = sql()->getMemberByName($member);
+        $memberinfo = $sql->getMemberByName($member);
 
         if (empty($memberinfo) || ('on' == $SETTINGS['hide_banned'] && 'Banned' == $memberinfo['status'] && ! X_ADMIN)) {
             header('HTTP/1.0 404 Not Found');
@@ -702,7 +712,7 @@ switch($action) {
             $memberlinks = " <small>(<a href='u2u.php?action=send&amp;username=$encodeuser' onclick='Popup(this.href, \"Window\", 700, 450); return false;'>{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href='buddy.php?action=add&amp;buddys=$encodeuser' onclick='Popup(this.href, \"Window\", 450, 400); return false;'>{$lang['addtobuddies']}</a>)</small>";
         }
 
-        $daysreg = (vars()->onlinetime - (int) $memberinfo['regdate']) / (24*3600);
+        $daysreg = ($vars->onlinetime - (int) $memberinfo['regdate']) / (24*3600);
         if ($daysreg > 1) {
             $ppd = $memberinfo['postnum'] / $daysreg;
             $ppd = round($ppd, 2);
@@ -814,7 +824,7 @@ switch($action) {
         }
 
         // Forum most active in
-        $fids = permittedForums();
+        $fids = $core->permittedForums();
         if (strlen($fids) > 0) {
             $query = $db->query(
                 "SELECT fid, COUNT(*) AS posts
@@ -832,7 +842,7 @@ switch($action) {
         if ($found) {
             $row = $db->fetch_array($query);
             $posts = $row['posts'];
-            $forum = forums()->getForum($row['fid']);
+            $forum = $forums->getForum((int) $row['fid']);
             $topforum = "<a href='./forumdisplay.php?fid={$forum['fid']}'>".fnameOut($forum['name'])."</a> ($posts {$lang['memposts']}) [".round(($posts/$memberinfo['postnum'])*100, 1)."% {$lang['textoftotposts']}]";
         } else {
             $topforum = $lang['textnopostsyet'];
