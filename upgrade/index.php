@@ -25,12 +25,9 @@
 header('X-Frame-Options: deny');
 
 // Script constants
-define('IN_CODE', true);
 define('X_SCRIPT', 'upgrade.php');
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
-
-require ROOT.'include/version.php';
 
 // Check configuration
 if (ini_get('display_errors')) {
