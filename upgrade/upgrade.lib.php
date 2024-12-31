@@ -1999,7 +1999,7 @@ function upgrade_schema_to_v9() {
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2019,7 +2019,7 @@ function upgrade_schema_to_v9() {
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2039,7 +2039,7 @@ function upgrade_schema_to_v9() {
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2068,7 +2068,7 @@ function upgrade_schema_to_v9() {
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2088,12 +2088,12 @@ function upgrade_schema_to_v9() {
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
 
-    show_progress('Releasing the lock on the $table table');
+    show_progress("Releasing the lock on the $table table");
     upgrade_query('UNLOCK TABLES');
 
     show_progress('Resetting the schema version number');
