@@ -1,1 +1,0 @@
-<a href="aim:goim?screenname=<?= $post['aim'] ?>&amp;message=Hi+<?= $post['aim'] ?>.+Are+you+there+I+got+your+aim+name+from+a+message+board." title="<?= $lang['textaim'] ?>"><img src="<?= $THEME['imgdir'] ?>/aim.gif" alt="" border="0" /></a>

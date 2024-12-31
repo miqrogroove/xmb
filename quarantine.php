@@ -286,10 +286,6 @@ case 'viewuser':
                 $profilelink = $lang['textanonymous'];
             }
             $site = '';
-            $icq = '';
-            $msn = '';
-            $aim = '';
-            $yahoo = '';
             $profile = '';
             $search = '';
             $u2u = '';
@@ -492,10 +488,6 @@ case 'viewuser':
                 $profilelink = $lang['textanonymous'];
             }
             $site = '';
-            $icq = '';
-            $msn = '';
-            $aim = '';
-            $yahoo = '';
             $profile = '';
             $search = '';
             $u2u = '';

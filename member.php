@@ -393,10 +393,6 @@ switch($action) {
 
                     if ('on' == $SETTINGS['regoptional']) {
                         $self['location'] = postedVar('location', 'javascript', true, false, true);
-                        $self['icq'] = abs(formInt('icq'));
-                        $self['yahoo'] = postedVar('yahoo', 'javascript', true, false, true);
-                        $self['aim'] = postedVar('aim', 'javascript', true, false, true);
-                        $self['msn'] = postedVar('msn', 'javascript', true, false, true);
                         $self['site'] = postedVar('site', 'javascript', true, false, true);
                         $self['bio'] = postedVar('bio', 'javascript', true, false, true);
                         $self['mood'] = postedVar('mood', 'javascript', true, false, true);
@@ -809,13 +805,6 @@ switch($action) {
         }
 
         $memberinfo['location'] = rawHTMLsubject($memberinfo['location']);
-        $memberinfo['aim'] = censor($memberinfo['aim']);
-        $memberinfo['aimrecode'] = recodeOut($memberinfo['aim']);
-        $memberinfo['icq'] = ($memberinfo['icq'] > 0) ? $memberinfo['icq'] : '';
-        $memberinfo['yahoo'] = censor($memberinfo['yahoo']);
-        $memberinfo['yahoorecode'] = recodeOut($memberinfo['yahoo']);
-        $memberinfo['msn'] = censor($memberinfo['msn']);
-        $memberinfo['msnrecode'] = recodeOut($memberinfo['msn']);
 
         if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
             $memberinfo['bday'] = $lang['textnone'];

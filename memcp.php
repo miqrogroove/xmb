@@ -274,7 +274,6 @@ if ($action == 'profile') {
             closedir($dir1);
         }
 
-        $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
         $member['bio'] = rawHTMLsubject($member['bio']);
         $member['location'] = rawHTMLsubject($member['location']);
         $member['mood'] = rawHTMLsubject($member['mood']);
@@ -462,10 +461,6 @@ if ($action == 'profile') {
 
         if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $self['postnum'] > 0 && 'no' == $self['waiting_for_mod']) || X_STAFF) {
             $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-            $icq = abs(formInt('newicq'));
-            $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
-            $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
-            $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
             $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
             $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
             $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
@@ -473,19 +468,15 @@ if ($action == 'profile') {
         } else {
             $avatar = '';
             $location = '';
-            $icq = '';
-            $yahoo = '';
-            $aim = '';
-            $msn = '';
             $site = '';
             $bio = '';
             $mood = '';
             $sig = '';
         }
 
-        $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', aim='$aim', location='$location', bio='$bio', sig='$sig', showemail='$showemail',
-        timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew',
-        newsletter='$newsletter', timeformat='$timeformatnew', msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u',
+        $db->query("UPDATE ".X_PREFIX."members SET $pwtxt email='$email', site='$site', location='$location', bio='$bio', sig='$sig', showemail='$showemail',
+        timeoffset='$timeoffset1', avatar='$avatar', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew',
+        newsletter='$newsletter', timeformat='$timeformatnew', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u',
         emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$xmbuser'");
 
         message($lang['usercpeditpromsg'], TRUE, '', '', $full_url.'memcp.php', true, false, true);

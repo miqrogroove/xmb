@@ -262,7 +262,6 @@ if (noSubmit('editsubmit')) {
 
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
-    $member['icq'] = ($member['icq'] > 0) ? $member['icq'] : '';
     $member['bio'] = decimalEntityDecode($member['bio']);
     $member['location'] = decimalEntityDecode($member['location']);
     $member['mood'] = decimalEntityDecode($member['mood']);
@@ -321,11 +320,6 @@ if (noSubmit('editsubmit')) {
     if ($year >= 100 && $year <= 1899) $year = 0;
     $bday = iso8601_date($year, $month, $day);
     $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-    $icq = postedVar('newicq', '', FALSE, FALSE);
-    $icq = ($icq && is_numeric($icq) && $icq > 0) ? $icq : 0;
-    $yahoo = postedVar('newyahoo', 'javascript', TRUE, TRUE, TRUE);
-    $aim = postedVar('newaim', 'javascript', TRUE, TRUE, TRUE);
-    $msn = postedVar('newmsn', 'javascript', TRUE, TRUE, TRUE);
     $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
     $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
     $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
@@ -377,10 +371,10 @@ if (noSubmit('editsubmit')) {
         $avatar = '';
     }
 
-    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site', aim='$aim',
-    location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', icq='$icq', avatar='$avatar', yahoo='$yahoo',
+    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site',
+    location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', avatar='$avatar',
     theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew',
-    msn='$msn', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
+    dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
     useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
 
     $newpassword = $_POST['newpassword'];

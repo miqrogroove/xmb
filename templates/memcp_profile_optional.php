@@ -6,22 +6,6 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newsite" size="25" value="<?= $member['site'] ?>" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textaim'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newaim" size="25" value="<?= $member['aim'] ?>" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texticq'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newicq" size="25" value="<?= $member['icq'] ?>" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textyahoo'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newyahoo" size="25" value="<?= $member['yahoo'] ?>" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textmsn'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newmsn" size="25" value="<?= $member['msn'] ?>"/></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textlocation'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newlocation" size="25" value="<?= $member['location'] ?>" /></td>
 </tr>

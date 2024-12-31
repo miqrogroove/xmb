@@ -316,3 +316,24 @@ function isValidFilename(string $filename): bool
 {
     return (bool) preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));
 }
+
+/**
+ * Take a raw string and convert it to a PHP string literal.
+ *
+ * Useful for sanitizing PHP file modifications.  Binary safe.
+ *
+ * @since 1.9.12.06
+ * @param string $value
+ * @param string $style Optional.  Use 'double' for double-quoted output and to escape linefeeds.
+ * @return string The PHP string literal version of the input.
+ */
+function input_to_literal(string $value, string $style = 'single'): string
+{
+    if ($style == 'single') {
+        $value = str_replace(["\\", "'"], ["\\\\", "\\'"], $value);
+        return "'$value'";
+    } else {
+        $value = str_replace(['\\', '"', '$', "\n", "\r"], ['\\\\', '\\"', '\\$', '\\n', '\\r'], $value);
+        return '"' . $value . '"';
+    }
+}

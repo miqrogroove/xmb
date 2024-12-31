@@ -42,22 +42,6 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><a href="<?= $site ?>" onclick="window.open(this.href); return false;"><?= $site ?></a></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textaim'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="aim:goim?screenname=<?= $memberinfo['aimrecode'] ?>&amp;message=Hi+<?= $memberinfo['aimrecode'] ?>.+Are+you+there+I+got+your+aim+name+from+a+message+board."><?= $memberinfo['aim'] ?></a></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['texticq'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="icq:message?uin=<?= $memberinfo['icq'] ?>" onclick="window.open(this.href); return false;"><?= $memberinfo['icq'] ?></a></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textyahoo'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="ymsgr:sendim?<?= $memberinfo['yahoorecode'] ?>" onclick="window.open(this.href); return false;"><?= $memberinfo['yahoo'] ?></a></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textmsn'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="msnim:chat?<?= $memberinfo['msnrecode'] ?>" onclick="window.open(this.href); return false;"><?= $memberinfo['msn'] ?></a></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textlocation'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $memberinfo['location'] ?></td>
 </tr>

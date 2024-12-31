@@ -51,7 +51,7 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 <td class="smalltxt">
-<?= $profile ?><?= $email ?><?= $site ?><?= $search ?><?= $u2u ?><?= $aim ?><?= $icq ?><?= $msn ?><?= $yahoo ?>
+<?= $profile ?><?= $email ?><?= $site ?><?= $search ?><?= $u2u ?>
 </td>
 <td align="right"><?= $ip ?></td>
 </tr>

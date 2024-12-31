@@ -2009,7 +2009,7 @@ function upgrade_schema_to_v9()
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2029,7 +2029,7 @@ function upgrade_schema_to_v9()
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2049,7 +2049,7 @@ function upgrade_schema_to_v9()
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2078,7 +2078,7 @@ function upgrade_schema_to_v9()
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
@@ -2098,16 +2098,76 @@ function upgrade_schema_to_v9()
     }
 
     if (count($sql) > 0) {
-        show_progress('Modifying columns in the $table table');
+        show_progress("Modifying columns in the $table table");
         $sql = 'ALTER TABLE '.X_PREFIX.$table.' '.implode(', ', $sql);
         upgrade_query($sql);
     }
 
-    show_progress('Releasing the lock on the $table table');
+    show_progress("Releasing the lock on the $table table");
     upgrade_query('UNLOCK TABLES');
 
     show_progress('Resetting the schema version number');
     upgrade_query("UPDATE ".X_PREFIX."settings SET value = '9' WHERE name = 'schema_version'");
+}
+
+/**
+ * Performs all tasks needed to raise the database schema_version number to 10.
+ *
+ * @since 1.10.00
+ */
+function upgrade_schema_to_v10()
+{
+    global $db;
+
+    show_progress('Dropping obsolete tables');
+    xmb_schema_table('drop', 'lang_base');
+    xmb_schema_table('drop', 'lang_keys');
+    xmb_schema_table('drop', 'lang_text');
+    xmb_schema_table('drop', 'templates');
+
+    $table = 'members';
+
+    show_progress("Requesting to lock the $table table");
+    upgrade_query('LOCK TABLES '.X_PREFIX.$table." WRITE");
+    show_progress("Gathering schema information from the $table table");
+
+    $sql = [];
+    $columns = [
+        'aim',
+        'icq',
+        'msn',
+        'yahoo',
+    ];
+    foreach($columns as $colname) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 1) {
+            $sql[] = 'DROP COLUMN '.$colname;
+        }
+        $db->free_result($query);
+    }
+
+    $columns = [
+        'password2' => "varchar(255) NOT NULL DEFAULT ''",
+    ];
+    foreach($columns as $colname => $coltype) {
+        $query = upgrade_query('DESCRIBE '.X_PREFIX.$table.' '.$colname);
+        if ($db->num_rows($query) == 0) {
+            $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+        }
+        $db->free_result($query);
+    }
+
+    if (count($sql) > 0) {
+        show_progress("Adding/Deleting columns in the $table table");
+        $sql = 'ALTER TABLE '.X_PREFIX.$table.' ' . implode(', ', $sql);
+        upgrade_query($sql);
+    }
+
+    show_progress("Releasing the lock on the $table table");
+    upgrade_query('UNLOCK TABLES');
+
+    show_progress('Resetting the schema version number');
+    upgrade_query("UPDATE ".X_PREFIX."settings SET value = '10' WHERE name = 'schema_version'");
 }
 
 /**

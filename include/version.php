@@ -24,8 +24,8 @@
 
 define('X_VERSION', '1.10.00');
 define('X_VERSION_EXT', '1.10.00-alpha');
-define('X_VERSION_DATE', '20241217');
-define('MYSQL_MIN_VER', '4.1.7');
+define('X_VERSION_DATE', '20241231');
+define('MYSQL_MIN_VER', '5.5.8');
 define('PHP_MIN_VER', '8.2.0');
 define('COPY_YEAR', '2001-2024');
 

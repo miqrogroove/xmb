@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('XMB_SCHEMA_VER', 9);
+define('XMB_SCHEMA_VER', 10);
 
 /**
  * Executes logic necessary to install or uninstall one of the XMB tables.
@@ -31,7 +31,7 @@ define('XMB_SCHEMA_VER', 9);
  * @param string $action Must be 'drop', 'create', or 'overwrite'.
  * @param string $name The name of the XMB table, with no prefix.
  */
-function xmb_schema_table($action, $name)
+function xmb_schema_table(string $action, string $name)
 {
     global $db;
 
@@ -254,32 +254,6 @@ function xmb_schema_create(string $name): string
           KEY `vote_id` (`vote_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
-    case 'lang_base':
-        $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `langid` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-          `devname` VARCHAR( 20 ) NOT NULL ,
-          UNIQUE ( `devname` )
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of Installed Languages'";
-        break;
-    case 'lang_keys':
-        $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `phraseid` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-          `langkey` VARCHAR( 30 ) NOT NULL ,
-          UNIQUE ( `langkey` )
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of Translation Variables'";
-        break;
-    case 'lang_text':
-        $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `langid` TINYINT UNSIGNED NOT NULL ,
-          `phraseid` SMALLINT UNSIGNED NOT NULL ,
-          `cdata` BLOB NOT NULL ,
-          PRIMARY KEY `langid` ( `langid` , `phraseid` ) ,
-          INDEX ( `phraseid` )
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Translation Table'";
-        break;
     case 'logs':
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
@@ -305,16 +279,13 @@ function xmb_schema_create(string $name): string
           `postnum` MEDIUMINT NOT NULL DEFAULT 0,
           `email` varchar(60) NOT NULL DEFAULT '',
           `site` varchar(75) NOT NULL DEFAULT '',
-          `aim` varchar(40) NOT NULL DEFAULT '',
           `status` varchar(35) NOT NULL DEFAULT '',
           `location` varchar(50) NOT NULL DEFAULT '',
           `bio` text NOT NULL,
           `sig` text NOT NULL,
           `showemail` varchar(15) NOT NULL DEFAULT '',
           `timeoffset` DECIMAL(4,2) NOT NULL DEFAULT 0,
-          `icq` varchar(30) NOT NULL DEFAULT '',
           `avatar` varchar(120) DEFAULT NULL,
-          `yahoo` varchar(40) NOT NULL DEFAULT '',
           `customstatus` varchar(250) NOT NULL DEFAULT '',
           `theme` smallint NOT NULL DEFAULT 0,
           `bday` varchar(10) NOT NULL DEFAULT '0000-00-00',
@@ -324,7 +295,6 @@ function xmb_schema_create(string $name): string
           `newsletter` char(3) NOT NULL DEFAULT '',
           `regip` varchar(39) NOT NULL DEFAULT '',
           `timeformat` int NOT NULL DEFAULT 0,
-          `msn` varchar(40) NOT NULL DEFAULT '',
           `ban` varchar(15) NOT NULL DEFAULT '0',
           `dateformat` varchar(10) NOT NULL DEFAULT '',
           `ignoreu2u` text NOT NULL,
@@ -343,6 +313,7 @@ function xmb_schema_create(string $name): string
           `bad_session_count` int unsigned NOT NULL DEFAULT 0,
           `sub_each_post` varchar(3) NOT NULL DEFAULT 'no',
           `waiting_for_mod` varchar(3) NOT NULL DEFAULT 'no',
+          `password2` varchar(255) NOT NULL DEFAULT '',
           PRIMARY KEY  (`uid`),
           UNIQUE KEY `userunique` (`username`),
           KEY `status` (`status`),
@@ -414,7 +385,7 @@ function xmb_schema_create(string $name): string
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'settings':
-        // Note support for VARCHAR types longer than 255 is not available prior to MySQL v5.1.
+        // Note support for VARCHAR types longer than 255 is not available prior to MySQL v5.0.3.
         $sql =
         "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
           `name` varchar(32) NOT NULL,
@@ -430,16 +401,6 @@ function xmb_schema_create(string $name): string
           `url` varchar(40) NOT NULL DEFAULT '',
           `id` smallint NOT NULL auto_increment,
           PRIMARY KEY  (`id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
-        break;
-    case 'templates':
-        $sql =
-        "CREATE TABLE IF NOT EXISTS ".X_PREFIX.$name." (
-          `id` smallint NOT NULL auto_increment,
-          `name` varchar(32) NOT NULL DEFAULT '',
-          `template` text NOT NULL,
-          PRIMARY KEY  (`id`),
-          KEY `name` (`name`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1";
         break;
     case 'themes':

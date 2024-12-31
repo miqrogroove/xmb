@@ -353,25 +353,6 @@ $db->query(
 );
 show_result(X_INST_OK);
 
-show_act("Inserting data into ".X_PREFIX."templates");
-$templates = explode("|#*XMB TEMPLATE FILE*#|", file_get_contents(ROOT.'templates.xmb'));
-$values = array();
-foreach($templates as $val) {
-    $template = explode("|#*XMB TEMPLATE*#|", $val);
-    $template[1] = isset($template[1]) ? addslashes(ltrim($template[1])) : '';
-    $db->escape_fast($template[0]);
-    $db->escape_fast($template[1]);
-    $values[] = "('{$template[0]}', '{$template[1]}')";
-}
-unset($templates);
-if (count($values) > 0) {
-    $values = implode(', ', $values);
-    $db->query("INSERT INTO ".X_PREFIX."templates (name, template) VALUES $values");
-}
-unset($values);
-$db->query("DELETE FROM ".X_PREFIX."templates WHERE name=''");
-show_result(X_INST_OK);
-
 show_act("Inserting data into ".X_PREFIX."themes");
 $db->query("INSERT INTO ".X_PREFIX."themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                    ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
@@ -430,11 +411,6 @@ show_act("Creating Super Administrator Account");
 ]);
 show_result(X_INST_OK);
 
-show_act("Inserting data into translation tables");
-$upload = file_get_contents(ROOT.'lang/English.lang.php');
-installNewTranslation($upload);
-show_result(X_INST_OK);
-
 // Debug mode is enabled by default during install. Need to turn it off so the new forums will look normal.
 if (DEBUG) {
     show_act("Deactivating debug mode");
@@ -465,5 +441,3 @@ if (file_exists('./install')) {
 } else {
     show_result(X_INST_OK);
 }
-
-return;

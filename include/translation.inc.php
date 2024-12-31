@@ -155,11 +155,8 @@ class Translation
                 $end = strpos($file, "\n", $pos);
                 $text = substr($file, 0, $pos) . substr($file, $end + 1);
             }
-            $value = str_replace("\\", "\\\\", $value);
-            $value = str_replace('"', '\"', $value);
-            $value = str_replace('$', '\$', $value);
-            $value = str_replace("\n", '\n', $value);
-            $text .= "\$lang['$key'] = \"$value\";\n";
+            $string = input_to_literal($value, style: 'double');
+            $text .= "\$lang['$key'] = $string;\n";
         }
         
         // Save data

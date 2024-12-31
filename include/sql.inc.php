@@ -186,17 +186,17 @@ class SQL
         if (! isset($values['waiting_for_mod'])) $values['waiting_for_mod'] = 'no';
 
         // Required values:
-        $req = [ 'username', 'password', 'email', 'status', 'regip', 'regdate' ];
+        $req = ['username', 'password', 'email', 'status', 'regip', 'regdate'];
 
         // Types:
-        $ints = [ 'regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
-        'bad_login_count', 'bad_session_date', 'bad_session_count' ];
+        $ints = ['regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
+        'bad_login_count', 'bad_session_date', 'bad_session_count'];
 
-        $numerics = [ 'timeoffset' ];
+        $numerics = ['timeoffset'];
 
-        $strings = [ 'username', 'password', 'email', 'site', 'aim', 'status', 'location', 'bio', 'sig', 'showemail', 'icq', 'avatar',
-        'yahoo', 'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'msn', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
-        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod' ];
+        $strings = ['username', 'password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
+        'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
+        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod'];
 
         $sql = [];
 

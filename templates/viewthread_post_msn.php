@@ -1,1 +1,0 @@
-<a href="msnim:chat?<?= $post['msn'] ?>" onclick="window.open(this.href); return false;" title="<?= $lang['altmsnyes'] ?>"><img src="<?= $THEME['imgdir'] ?>/msn.gif" border="0" alt="<?= $lang['altmsnyes'] ?>" /></a>

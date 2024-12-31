@@ -145,10 +145,6 @@ loadtemplates(
 'viewthread_post',
 'viewthread_post_email',
 'viewthread_post_site',
-'viewthread_post_icq',
-'viewthread_post_aim',
-'viewthread_post_msn',
-'viewthread_post_yahoo',
 'viewthread_post_search',
 'viewthread_post_profile',
 'viewthread_post_u2u',
@@ -569,29 +565,6 @@ if ($action == '') {
             $encodename = recodeOut($post['author']);
             $profilelink = "<a href=\"./member.php?action=viewpro&amp;member=$encodename\">{$post['author']}</a>";
 
-            $icq = '';
-            if ($post['icq'] != '' && (int) $post['icq'] > 0) {
-                eval('$icq = "'.template('viewthread_post_icq').'";');
-            }
-
-            $aim = '';
-            if ($post['aim'] != '') {
-                $post['aim'] = recodeOut($post['aim']);
-                eval('$aim = "'.template('viewthread_post_aim').'";');
-            }
-
-            $msn = '';
-            if ($post['msn'] != '') {
-                $post['msn'] = recodeOut($post['msn']);
-                eval('$msn = "'.template('viewthread_post_msn').'";');
-            }
-
-            $yahoo = '';
-            if ($post['yahoo'] != '') {
-                $post['yahoo'] = recodeOut($post['yahoo']);
-                eval('$yahoo = "'.template('viewthread_post_yahoo').'";');
-            }
-
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
                 $search = '';
             } else {
@@ -692,10 +665,6 @@ if ($action == '') {
             $tharegdate = 'N/A';
             $email = '';
             $site = '';
-            $icq = '';
-            $msn = '';
-            $aim = '';
-            $yahoo = '';
             $profile = '';
             $search = '';
             $u2u = '';

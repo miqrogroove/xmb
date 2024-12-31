@@ -23,12 +23,10 @@
  */
 
 // Script Parameters
-$req['dirs'] = array('db', 'fonts', 'images', 'include', 'js', 'lang');
+$req['dirs'] = array('admin', 'db', 'fonts', 'images', 'include', 'js', 'lang', 'templates');
 $req['files'] = array(
     'buddy.php',
     'config.php',
-    'cp.php',
-    'cp2.php',
     'css.php',
     'db/mysqli.php',
     'editprofile.php',
@@ -42,7 +40,6 @@ $req['files'] = array(
     'include/captcha.inc.php',
     'include/debug.inc.php',
     'include/functions.inc.php',
-    'include/global.inc.php',
     'include/online.inc.php',
     'include/schema.inc.php',
     'include/sessions.inc.php',
@@ -66,13 +63,12 @@ $req['files'] = array(
     'post.php',
     'search.php',
     'stats.php',
-    'templates.xmb',
     'today.php',
     'tools.php',
     'topicadmin.php',
     'u2u.php',
     'viewthread.php',
-    'vtmisc.php'
+    'vtmisc.php',
 );
 
 // Script Constants
@@ -133,22 +129,6 @@ function show_result($type)
         break;
     }
     echo "</span>\n";
-}
-
-/**
- * Take a posted variable and convert it to a PHP string literal.
- *
- * Useful for sanitizing config.php modifications.
- *
- * @since 1.9.12.06
- * @param string $name The name of the posted variable.
- * @return string The PHP string literal version of the input.
- */
-function input_to_literal(string $name): string
-{
-    $ret = $_POST[$name];
-    $ret = str_replace(["\\", "'"], ["\\\\", "\\'"], $ret);
-    return "'$ret'";
 }
 
 /**
@@ -374,17 +354,17 @@ www.xmbforum2.com
                 "'MAILER_PORT'",
             ];
             $replace = [
-                input_to_literal('db_name'),
-                input_to_literal('db_user'),
-                input_to_literal('db_pw'),
-                input_to_literal('db_host'),
-                input_to_literal('table_pre'),
-                input_to_literal('fullurl'),
-                input_to_literal('MAILER_TYPE'),
-                input_to_literal('MAILER_USER'),
-                input_to_literal('MAILER_PASS'),
-                input_to_literal('MAILER_HOST'),
-                input_to_literal('MAILER_PORT'),
+                input_to_literal(getPhpInput('db_name')),
+                input_to_literal(getPhpInput('db_user')),
+                input_to_literal(getPhpInput('db_pw')),
+                input_to_literal(getPhpInput('db_host')),
+                input_to_literal(getPhpInput('table_pre')),
+                input_to_literal(getPhpInput('fullurl')),
+                input_to_literal(getPhpInput('MAILER_TYPE')),
+                input_to_literal(getPhpInput('MAILER_USER')),
+                input_to_literal(getPhpInput('MAILER_PASS')),
+                input_to_literal(getPhpInput('MAILER_HOST')),
+                input_to_literal(getPhpInput('MAILER_PORT')),
             ];
             foreach ($find as $phrase) {
                 if (strpos($configuration, $phrase) === false) {

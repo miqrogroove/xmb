@@ -6,22 +6,6 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="site" size="25" value="" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textaim'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="aim" size="25" value="" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texticq'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="icq" size="25" value="" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textyahoo'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="yahoo" size="25" value="" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textmsn'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="msn" size="25" value="" /></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textlocation'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="location" size="25" value="" /></td>
 </tr>
