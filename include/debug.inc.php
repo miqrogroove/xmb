@@ -26,6 +26,11 @@ declare(strict_types=1);
 
 namespace XMB;
 
+/**
+ * Query printing logic, used only in debug mode.
+ *
+ * @since 1.10.00
+ */
 class Debug
 {
     public function __construct(private DBStuff $db)
@@ -33,6 +38,11 @@ class Debug
         // Property promotion.
     }
     
+    /**
+     * Converts the DB query history to an HTML table.
+     *
+     * @since 1.9.11
+     */
     public function printAllQueries(): string
     {
         $stuff = array();
@@ -48,43 +58,48 @@ class Debug
         return implode("\n", $stuff);
     }
 
-    private function mysql_syn_highlight($query)
+    /**
+     * Tags MySQL keywords.
+     *
+     * @since 1.9.1
+     */
+    private function mysql_syn_highlight(string $query)
     {
-        $find = array();
-        $replace = array();
+        $find = [
+            'SELECT',
+            'UPDATE ',
+            'DELETE',
+            'INSERT INTO ',
+            'INSERT IGNORE INTO ',
+            ' DUPLICATE KEY ',
+            ' WHERE ',
+            ' ON ',
+            ' FROM ',
+            ' GROUP BY ',
+            'ORDER BY ',
+            ' LEFT JOIN ',
+            ' RIGHT JOIN ',
+            ' INNER JOIN ',
+            ' IN ',
+            ' SET ',
+            ' AS ',
+            '(',
+            ')',
+            ' ASC',
+            ' DESC',
+            ' AND ',
+            ' OR ',
+            ' NOT',
+            ' USING',
+            ' VALUES ',
+            ' UNION ALL ',
+        ];
 
-        $find[] = 'SELECT';
-        $find[] = 'UPDATE ';
-        $find[] = 'DELETE';
-        $find[] = 'INSERT INTO ';
-        $find[] = 'INSERT IGNORE INTO ';
-        $find[] = ' DUPLICATE KEY ';
-        $find[] = ' WHERE ';
-        $find[] = ' ON ';
-        $find[] = ' FROM ';
-        $find[] = ' GROUP BY ';
-        $find[] = 'ORDER BY ';
-        $find[] = ' LEFT JOIN ';
-        $find[] = ' RIGHT JOIN ';
-        $find[] = ' INNER JOIN ';
-        $find[] = ' IN ';
-        $find[] = ' SET ';
-        $find[] = ' AS ';
-        $find[] = '(';
-        $find[] = ')';
-        $find[] = ' ASC';
-        $find[] = ' DESC';
-        $find[] = ' AND ';
-        $find[] = ' OR ';
-        $find[] = ' NOT';
-        $find[] = ' USING';
-        $find[] = ' VALUES ';
-        $find[] = ' UNION ALL ';
-
-        foreach($find as $key=>$val) {
-            $replace[$key] = '</em><strong>'.$val.'</strong><em>';
+        $replace = [];
+        foreach($find as $key => $val) {
+            $replace[$key] = "</em><strong>$val</strong><em>";
         }
 
-        return '<em>'.str_replace($find, $replace, $query).'</em>';
+        return '<em>' . str_replace($find, $replace, $query) . '</em>';
     }
 }

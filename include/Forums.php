@@ -85,4 +85,26 @@ class Forums
             return null;
         }
     }
+
+    /**
+     * Creates an array of the child forums.
+     *
+     * @since 1.10.00
+     * @param int $fid
+     * @return array
+     */
+    public function getChildForums(int $fid): array
+    {
+        if (! $this->forumCacheStatus) $this->initForumCache();
+
+        $children = [];
+
+        foreach($this->forumcache as $forum) {
+            if ((int) $forum['fup'] == $fid && $forum['type'] == 'sub') {
+                $children[] = $forum;
+            }
+        }
+
+        return $children;
+    }
 }

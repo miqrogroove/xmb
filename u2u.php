@@ -73,7 +73,7 @@ if ($folder == '') {
 $tofolder = postedVar('tofolder', '', TRUE, FALSE, TRUE);
 
 $folderlist = '';
-$folders = '';
+$folders = ''; // This variable gets set globally by u2u_folderList().  Don't ask.  Needs improvement.
 $farray = array();
 if ($folder != '' && ($action == '' || $action == 'mod' || $action == 'view')) {
     //$folder = checkInput($folder, true);

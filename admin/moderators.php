@@ -31,6 +31,7 @@ require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
@@ -74,8 +75,8 @@ if (noSubmit('modsubmit')) {
         $template->moderator = $forum['moderator'];
         $body .= $template->process('admin_moderators_forum.php');
 
-        $querys = $db->query("SELECT name, fid, moderator FROM " . $vars->tablepre . "forums WHERE fup='".$forum['fid']."' AND type='sub'");
-        while($sub = $db->fetch_array($querys)) {
+        $children = $forums->getChildForums((int) $forum['fid']);
+        foreach ($children as $sub) {
             $template->name = fnameOut($sub['name']);
             $template->fid = $sub['fid'];
             $template->moderator = $sub['moderator'];
@@ -88,7 +89,7 @@ if (noSubmit('modsubmit')) {
     $mod = $core->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
         foreach($mod as $fid => $mods) {
-            $sql->setForumMods($fid, $mods);
+            $sql->setForumMods((int) $fid, $mods);
         }
     }
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';

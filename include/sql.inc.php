@@ -1443,7 +1443,7 @@ class SQL
      * @param int $time The session start timestamp.
      * @param bool $quarantine Was this record in a private table for later review?
      * @return int Poll ID number or zero if not found.
-    */
+     */
     public function getPollId(int $tid, bool $quarantine = false): int
     {
         $table = $quarantine ? $this->tablepre . 'hold_vote_desc' : $this->tablepre . 'vote_desc';
@@ -1466,7 +1466,7 @@ class SQL
      * @since 1.9.12.05
      * @param bool $noStaff Optional. When true, none of the staff ranks will be included.
      * @return array of associative table rows.
-    */
+     */
     public function getRanks(bool $noStaff = false): array
     {
         if ($noStaff) {
@@ -1486,6 +1486,27 @@ class SQL
         $this->db->free_result($result);
 
         return $ranks;
+    }
+
+    /**
+     * Create or update a rank record.
+     *
+     * @since 1.9.12.08
+     */
+    function saveRank(string $title, int $posts, int $stars, bool $allowavatars, string $avatarrank, ?int $id = null)
+    {
+        $this->db->escape_fast($title);
+        $this->db->escape_fast($avatarrank);
+        $yesno = $allowavatars ? 'yes' : 'no';
+
+        if (is_null($id)) {
+            $verb = 'INSERT INTO ';
+            $where = '';
+        } else {
+            $verb = 'UPDATE ';
+            $where = "WHERE id = $id";
+        }
+        $this->db->query($verb . $this->tablepre . "ranks SET title = '$title', posts = $posts, stars = $stars, allowavatars = '$yesno', avatarrank = '$avatarrank' $where");
     }
 
     /**
@@ -1562,7 +1583,7 @@ class SQL
     /**
      * SQL command
      *
-     * @since 1.10.00
+     * @since 1.9.12.08
      */
     public function setForumMods(int $fid, string $mods)
     {
