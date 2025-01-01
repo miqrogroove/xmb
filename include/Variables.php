@@ -84,6 +84,7 @@ class Variables
     public string $timecode = '';
     public string $timeoffset = '';
     public string $url = '';
+    public string $versiongeneral = '';
     public string $versionshort = '';
     public string $xmbuser = '';
 

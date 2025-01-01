@@ -53,13 +53,13 @@ if (X_SADMIN) {
     $x_error = '';
 
     if (file_exists(ROOT.'install/') && !@rmdir(ROOT.'install/')) {
-        $x_error = $lang['admin_found_install'];
+        $x_error = $vars->lang['admin_found_install'];
     }
     if (file_exists(ROOT.'Upgrade/') && !@rmdir(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') && !@rmdir(ROOT.'upgrade/')) {
-        $x_error = $lang['admin_found_updir'];
+        $x_error = $vars->lang['admin_found_updir'];
     }
     if (file_exists(ROOT.'upgrade.php')) {
-        $x_error = $lang['admin_found_upfile'];
+        $x_error = $vars->lang['admin_found_upfile'];
     }
 
     if (strlen($x_error) > 0) {

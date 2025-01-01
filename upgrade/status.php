@@ -22,12 +22,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 header('Expires: 0');
 header('X-Frame-Options: sameorigin');
 
-define('LOG_FILE', './upgrade.log');
+$logfile = './upgrade.log';
 
-$log = file_get_contents(LOG_FILE);
+$log = file_get_contents($logfile);
 $check = substr($log, -14);
 $done = '<!-- done. -->' == $check;
 $error = '<!-- error -->' == $check;

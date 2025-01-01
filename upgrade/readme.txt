@@ -1,9 +1,9 @@
-XMB 1.8 through 1.9.11 Upgrade Utility for XMB 1.9.12
+XMB 1.8 through 1.9.11 Upgrade Utility for XMB 1.10.00
 
 
 Instructions
 
-1. Log in to your board as a Super Administrator.
+1. Log in to your board as a Super Administrator. (Before changing anything!)
 
 2. Disable your forums using the Board Status setting.
 
@@ -15,7 +15,7 @@ Instructions
 
 5. Copy your config.php settings into the new file.
 
-6. Upload the XMB 1.9.12 files.  Do not upload the install folder (delete it if necessary).
+6. Upload the XMB 1.10.00 files.  Do not upload the install folder (delete it if necessary).
 
 7. Upload the upgrade directory to your board's root directory.
 

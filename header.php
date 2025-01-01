@@ -88,6 +88,7 @@ require ROOT.'include/Observer.php';
 require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
 require ROOT.'include/sql.inc.php';
+require ROOT.'include/SettingsLoader.php';
 require ROOT.'include/Template.php';
 require ROOT.'include/ThemeManager.php';
 require ROOT.'include/tokens.inc.php';
@@ -105,7 +106,7 @@ translation(new \XMB\Translation(vars()));
 
 template()->init();
 
-$boot = new \XMB\Bootup(observer(), template(), vars());
+$boot = new \XMB\Bootup(template(), vars());
 
 observer()->testSuperGlobals();
 observer()->assertEmptyOutputStream('the db/* and include/* files');
@@ -120,10 +121,12 @@ unset($mtime);
 /* Load the Configuration Created by Install */
 
 $boot->loadConfig();
+observer()->assertEmptyOutputStream('config.php');
 $boot->setBrowser();
 $boot->setIP();
 $boot->setURL();
 $boot->setVersion();
+observer()->assertEmptyOutputStream('version.php');
 
 if (! vars()->debug) {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
@@ -134,7 +137,12 @@ if (! vars()->debug) {
 
 db($boot->connectDB());
 
+unset($boot);
+
+(new \XMB\SettingsLoader(db(), vars()))->readToVars();
+
 debug(new \XMB\Debug(db()));
+
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
 forums(new \XMB\Forums(sql()));
@@ -148,14 +156,11 @@ attach(new \XMB\Attach(bbcode(), db(), sql()));
 
 core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), translation(), vars()));
 
-unset($boot);
-
 
 /* Start 2nd Phase of Bootup */
 
 $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 
-$loader->loadSettings();
 $loader->setHeaders();
 
 if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {

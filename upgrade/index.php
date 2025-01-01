@@ -22,14 +22,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
+use Exception;
+use RuntimeException;
+
 header('X-Frame-Options: deny');
 
 // Script constants
 define('XMB_UPGRADE', true);
 define('ROOT', '../');
 define('LOG_FILE', './upgrade.log');
-
-require ROOT.'include/version.php';
 
 // Check configuration
 if (ini_get('display_errors')) {
@@ -40,16 +45,19 @@ if (ini_get('display_errors')) {
 }
 
 // Check location
-if (!(is_file(ROOT.'header.php') && is_dir(ROOT.'include'))) {
-    echo 'Could not find XMB!<br />'
-        .'Please make sure the upgrade folder is in the same folder as index.php and header.php.<br />';
+if (! is_readable(ROOT . 'header.php')) {
+    echo 'Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.<br />';
     throw new Exception('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.');
 }
 
 // Authenticate Browser
-require(ROOT.'header.php');
+require(ROOT . 'header.php');
+
+$db = \XMB\Services\db();
+$vars = \XMB\Services\vars();
+
 echo "<html><head><title>XMB Upgrade Script</title><body>Database Connection Established<br />\n";
-if (DEBUG) {
+if ($vars->debug) {
     echo 'Debug Mode Enabled.';
 	if ($forced_display_off) {
 		ini_set('display_errors', '1');
@@ -85,9 +93,9 @@ if (false === $result) {
 // Ready to Upgrade
 if (! isset($_GET['step']) || '1' === $_GET['step']) {
 ?>
-<h1><?=$versiongeneral;?> Upgrade Script</h1>
+<h1><?= $vars->versiongeneral ?> Upgrade Script</h1>
 
-<p>This script is compatible with XMB versions 1.8 and greater, including <?=$versiongeneral;?> Betas.
+<p>This script is compatible with XMB versions 1.8 and greater, including <?= $vars->versiongeneral ?> Betas.
 
 <p>This script is NOT compatible with older versions.
 
@@ -97,7 +105,7 @@ if (! isset($_GET['step']) || '1' === $_GET['step']) {
 <li>BACKUP YOUR DATABASE - This script cannot be undone!
 <li>Confirm your forum database account is granted ALTER, CREATE, INDEX, and LOCK privileges.
 <li>Copy your config.php settings into the new file.
-<li>Upload the XMB 1.9.12 files.  Do not upload the install folder (delete it if necessary).
+<li>Upload the <?= $vars->versiongeneral ?> files.  Do not upload the install folder (delete it if necessary).
 <li>Upload the upgrade directory to your board's root directory.
 <li>Run this script by hitting the upgrade URL, for example:  https://www.example.com/forum/upgrade/
 <li>When the upgrade finishes successfully, delete the upgrade directory.
@@ -113,7 +121,7 @@ if (! isset($_GET['step']) || '1' === $_GET['step']) {
 } else if ('2' === $_GET['step']) {
 
     ?>
-    <h1><?=$versiongeneral;?> Upgrade Script</h1>
+    <h1><?=$vars->versiongeneral ?> Upgrade Script</h1>
     <h2>Status Information</h2>
     <?php
 

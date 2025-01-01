@@ -33,7 +33,7 @@ namespace XMB;
  */
 class Bootup
 {
-    public function __construct(private Observer $observer, private Template $template, private Variables $vars)
+    public function __construct(private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -41,7 +41,6 @@ class Bootup
     public function loadConfig()
     {
         require ROOT.'config.php';
-        $this->observer->assertEmptyOutputStream('config.php');
         
         if ($ipcheck === 'on') $ipcheck = true;
         
@@ -92,7 +91,6 @@ class Bootup
     public function setVersion()
     {
         require ROOT.'include/version.php';
-        $this->observer->assertEmptyOutputStream('version.php');
 
         $this->template->copyright = $copyright;
         $this->template->versioncompany = $versioncompany;
@@ -110,6 +108,7 @@ class Bootup
         $this->template->versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
         $this->template->versionbuild = $versionbuild;
         $this->vars->versionshort = $versionshort;
+        $this->vars->versiongeneral = $versiongeneral;
 
         if ($this->vars->debug) {
             $this->template->versionlong .= ' (Debug Mode)';
