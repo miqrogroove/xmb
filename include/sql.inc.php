@@ -842,6 +842,21 @@ class SQL
     }
 
     /**
+     * Reset signatures on a member's posts.
+     *
+     * @since 1.10.00
+     * @param bool $usesig
+     * @param string username
+     */
+    public function setPostSigsByAuthor(bool $usesig, string $username)
+    {
+        $this->db->escape_fast($username);
+        $yesno = $usesig ? 'yes' : 'no';
+
+        $db->query("UPDATE " . $this->tablepre . "posts SET usesig = '$yesno' WHERE author = '$username'");
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12

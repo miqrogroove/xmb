@@ -402,18 +402,6 @@ if ($action == 'profile') {
             }
         }
 
-        if ($SETTINGS['resetsigs'] == 'on') {
-            if (strlen(trim($self['sig'])) == 0) {
-                if (strlen($sig) > 0) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='yes' WHERE author='$xmbuser'");
-                }
-            } else {
-                if (strlen(trim($sig)) == 0) {
-                    $db->query("UPDATE ".X_PREFIX."posts SET usesig='no' WHERE author='$xmbuser'");
-                }
-            }
-        }
-
         if ($SETTINGS['avastatus'] == 'on') {
             $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
             $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
@@ -465,6 +453,16 @@ if ($action == 'profile') {
             $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
             $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
             $sig = postedVar('newsig', 'javascript', TRUE, TRUE, TRUE);
+
+            if ($SETTINGS['resetsigs'] == 'on') {
+                if (strlen(trim($self['sig'])) == 0) {
+                    if (strlen(trim($sig)) > 0) {
+                        $sql->setPostSigsByAuthor(true, $self['username']);
+                    }
+                } elseif (strlen(trim($sig)) == 0) {
+                    $sql->setPostSigsByAuthor(false, $self['username']);
+                }
+            }
         } else {
             $avatar = '';
             $location = '';
