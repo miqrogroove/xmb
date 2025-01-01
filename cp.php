@@ -1412,10 +1412,10 @@ if ($action == "mods") {
         </tr>
         <?php
     } else {
-        $mod = postedArray('mod');
+        $mod = postedArray('mod', 'string', '', true, false);
         if (is_array($mod)) {
             foreach($mod as $fid=>$mods) {
-                $db->query("UPDATE ".X_PREFIX."forums SET moderator='$mods' WHERE fid='$fid'");
+                \XMB\SQL\setForumModerator((int) $fid, $mods);
             }
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';

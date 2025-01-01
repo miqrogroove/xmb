@@ -734,6 +734,19 @@ function setForumCounts(int $fid, int $postcount, int $threadcount, string $last
 /**
  * SQL command
  *
+ * @since 1.9.12.08
+ */
+function setForumModerator(int $fid, string $mods) {
+    global $db;
+
+    $db->escape_fast($mods);
+
+    $db->query("UPDATE ".X_PREFIX."forums SET moderator = '$mods' WHERE fid = $fid");
+}
+
+/**
+ * SQL command
+ *
  * @since 1.9.12
  */
 function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int {
@@ -1479,7 +1492,7 @@ function addWhosonline(string $address, string $username, int $time, string $url
  * @param int $time The session start timestamp.
  * @param bool $quarantine Was this record in a private table for later review?
  * @return int Poll ID number or zero if not found.
-*/
+ */
 function getPollId(int $tid, bool $quarantine = false): int {
     global $db;
 
@@ -1502,7 +1515,7 @@ function getPollId(int $tid, bool $quarantine = false): int {
  *
  * @since 1.9.12.05
  * @return array of associative table rows.
-*/
+ */
 function getRanks(): array {
     global $db;
 
@@ -1517,6 +1530,28 @@ function getRanks(): array {
     $db->free_result($result);
 
     return $ranks;
+}
+
+/**
+ * Create or update a rank record.
+ *
+ * @since 1.9.12.08
+ */
+function saveRank(string $title, int $posts, int $stars, bool $allowavatars, string $avatarrank, ?int $id = null) {
+    global $db;
+
+    $db->escape_fast($title);
+    $db->escape_fast($avatarrank);
+    $yesno = $allowavatars ? 'yes' : 'no';
+
+    if (is_null($id)) {
+        $verb = 'INSERT INTO ';
+        $where = '';
+    } else {
+        $verb = 'UPDATE ';
+        $where = "WHERE id = $id";
+    }
+    $db->query($verb . X_PREFIX . "ranks SET title = '$title', posts = $posts, stars = $stars, allowavatars = '$yesno', avatarrank = '$avatarrank' $where");
 }
 
 /**

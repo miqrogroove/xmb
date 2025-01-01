@@ -1391,16 +1391,16 @@ if ($action == "ranks") {
         request_secure( 'Control Panel/User Ranks', 'mass-edit' );
         $id = postedArray('id', 'int');
         $delete = postedArray('delete', 'int');
-        $title = postedArray('title', 'string', '', FALSE);
+        $title = postedArray('title', 'string', '', FALSE, FALSE);
         $posts = postedArray('posts', 'int');
         $stars = postedArray('stars', 'int');
         $allowavatars = postedArray('allowavatars', 'yesno');
-        $avaurl = postedArray('avaurl', 'string', 'javascript', TRUE, TRUE, TRUE);
-        $newtitle = postedVar('newtitle', '', FALSE);
+        $avaurl = postedArray('avaurl', 'string', 'javascript', TRUE, FALSE, TRUE);
+        $newtitle = postedVar('newtitle', '', FALSE, FALSE);
         $newposts = formInt('newposts');
         $newstars = formInt('newstars');
         $newallowavatars = formYesNo('newallowavatars');
-        $newavaurl = postedVar('newavaurl', 'javascript', TRUE, TRUE, TRUE);
+        $newavaurl = postedVar('newavaurl', 'javascript', TRUE, FALSE, TRUE);
 
         // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
         $ranks = \XMB\SQL\getRanks();
@@ -1424,11 +1424,11 @@ if ($action == "ranks") {
         foreach ($id as $key => $val) {
             if (isset($delete[$key])) continue;
 
-            $db->query("UPDATE ".X_PREFIX."ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
+            \XMB\SQL\saveRank($title[$key], $posts[$key], $stars[$key], $allowavatars[$key] == 'yes', $avaurl[$key], (int) $key);
         }
 
         if ($newtitle) {
-            $db->query("INSERT INTO ".X_PREFIX."ranks (title, posts, stars, allowavatars, avatarrank) VALUES ('$newtitle', '$newposts', '$newstars', '$newallowavatars', '$newavaurl')");
+            \XMB\SQL\saveRank($newtitle, $newposts, $newstars, $newallowavatars == 'yes', $newavaurl);
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['rankingsupdate'].'</td></tr>';
     }
