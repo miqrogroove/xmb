@@ -1415,7 +1415,7 @@ if ($action == "mods") {
         $mod = postedArray('mod', 'string', '', true, false);
         if (is_array($mod)) {
             foreach($mod as $fid=>$mods) {
-                \XMB\SQL\setForumModerator((int) $fid, $mods);
+                \XMB\SQL\setForumMods((int) $fid, $mods);
             }
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['textmodupdate'].'</td></tr>';

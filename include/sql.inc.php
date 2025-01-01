@@ -736,7 +736,7 @@ function setForumCounts(int $fid, int $postcount, int $threadcount, string $last
  *
  * @since 1.9.12.08
  */
-function setForumModerator(int $fid, string $mods) {
+function setForumMods(int $fid, string $mods) {
     global $db;
 
     $db->escape_fast($mods);
