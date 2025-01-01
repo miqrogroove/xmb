@@ -1659,7 +1659,36 @@ class SQL
     }
 
     /**
-     * Fetch the first theme in the themes table.
+     * Set the name of a theme.
+     *
+     * @since 1.9.12.08
+     * @param int $id
+     * @param string $name
+     */
+    public function setThemeName(int $id, string $name)
+    {
+        $this->db->escape_fast($name);
+        $this->db->query("UPDATE " . $this->tablepre . "themes SET `name` = '$name' WHERE themeid = $id");
+    }
+
+    /**
+     * Delete IP Banning records by a list of IDs.
+     *
+     * @since 1.9.12.08
+     * @param array $ids
+     */
+    public function deleteIPBansByList(array $ids)
+    {
+        if (empty($ids)) return;
+
+        $ids = array_map('intval', $ids);
+        $ids = implode(',', $ids);
+
+        $this->db->query("DELETE FROM " . $this->tablepre . "banned WHERE id IN ($ids)");
+    }
+
+    /**
+     * Count the unread U2U messages for a member.
      *
      * @since 1.10.00
      * @param string $username

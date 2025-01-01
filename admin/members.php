@@ -55,6 +55,8 @@ $core->audit($vars->self['username'], $auditaction);
 
 $header = $template->process('header.php');
 
+$header .= '<script src="' . $vars->full_url . 'js/admin.js"></script>';
+
 $table = $template->process('admin_table.php');
 
 $members = getPhpInput('members', 'g');

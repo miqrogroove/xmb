@@ -742,7 +742,7 @@ class FormsAndCookies implements Mechanism
         }
 
         if ((int) $oldsession['expire'] > time() + self::SESSION_LIFE_SHORT) {
-            $expires = $oldsession['expire'];
+            $expires = (int) $oldsession['expire'];
         } else {
             $expires = 0;
         }
@@ -760,7 +760,7 @@ class FormsAndCookies implements Mechanism
     private function recover(array $newsession)
     {
         if ((int) $newsession['expire'] > time() + self::SESSION_LIFE_SHORT) {
-            $expires = $newsession['expire'];
+            $expires = (int) $newsession['expire'];
         } else {
             $expires = 0;
         }

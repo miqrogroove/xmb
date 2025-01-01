@@ -111,14 +111,10 @@ if ($vars->settings['ip_banning'] == 'on') {
             $dels = [];
             foreach($delete as $id => $del) {
                 if ($del == 1) {
-                    $dels[] = $id;
+                    $dels[] = (int) $id;
                 }
             }
-
-            if (count($dels) > 0) {
-                $dels = implode(',', $dels);
-                $db->query("DELETE FROM " . $vars->tablepre . "banned WHERE id IN ($dels)");
-            }
+            $sql->deleteIPBansByList($dels);
         }
         $self['status'] = $lang['textipupdate'];
 
