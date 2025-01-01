@@ -1560,4 +1560,35 @@ function getIPFromPost(int $pid): string {
     return $addr;
 }
 
+/**
+ * Set the name of a theme.
+ *
+ * @since 1.9.12.08
+ * @param int $id
+ * @param string $name
+ */
+function setThemeName(int $id, string $name) {
+    global $db;
+
+    $db->escape_fast($name);
+    $db->query("UPDATE ".X_PREFIX."themes SET `name` = '$name' WHERE themeid = $id");
+}
+
+/**
+ * Delete IP Banning records by a list of IDs.
+ *
+ * @since 1.9.12.08
+ * @param array $ids
+ */
+function deleteIPBansByList(array $ids) {
+    global $db;
+
+    if (empty($ids)) return;
+
+    $ids = array_map('intval', $ids);
+    $ids = implode(',', $ids);
+
+    $db->query("DELETE FROM ".X_PREFIX."banned WHERE id IN ($ids)");
+}
+
 return;

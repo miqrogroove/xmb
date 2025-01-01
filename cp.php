@@ -1745,7 +1745,7 @@ if ($action == "ipban") {
                 if ($result) {
                     $warning = $lang['ipwarning'];
                 }
-                $db->free_result($result);
+                $db->free_result($query);
             }
             ?>
             <tr bgcolor="<?php echo $altbg2?>">
@@ -1786,11 +1786,7 @@ if ($action == "ipban") {
                         $dels[] = $id;
                     }
                 }
-
-                if (count($dels) > 0) {
-                    $dels = implode(',', $dels);
-                    $db->query("DELETE FROM ".X_PREFIX."banned WHERE id IN ($dels)");
-                }
+                \XMB\SQL\deleteIPBansByList($dels);
             }
             $self['status'] = $lang['textipupdate'];
 

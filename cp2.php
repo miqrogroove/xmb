@@ -727,7 +727,7 @@ if ($action == 'themes') {
         }
 
         foreach($theme_name as $themeid=>$name) {
-            $db->query("UPDATE ".X_PREFIX."themes SET name='$name' WHERE themeid='$themeid'");
+            \XMB\SQL\setThemeName((int) $themeid, $name);
         }
         echo '<tr bgcolor="'.$altbg2.'" class="ctrtablerow"><td>'.$lang['themeupdate'].'</td></tr>';
     }
