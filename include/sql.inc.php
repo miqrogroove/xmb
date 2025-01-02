@@ -1537,14 +1537,14 @@ function getRanks(): array {
  *
  * @since 1.9.12.08
  */
-function saveRank(string $title, int $posts, int $stars, bool $allowavatars, string $avatarrank, ?int $id = null) {
+function saveRank(string $title, int $posts, int $stars, bool $allowavatars, string $avatarrank, int $id = -1) {
     global $db;
 
     $db->escape_fast($title);
     $db->escape_fast($avatarrank);
     $yesno = $allowavatars ? 'yes' : 'no';
 
-    if (is_null($id)) {
+    if ($id < 0) {
         $verb = 'INSERT INTO ';
         $where = '';
     } else {
