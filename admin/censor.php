@@ -29,10 +29,8 @@ namespace XMB;
 define('ROOT', '../');
 require ROOT . 'header.php';
 
-$attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
-$session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
@@ -40,7 +38,6 @@ $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
-header('X-XSS-Protection: 0'); // Disables HTML input errors in Chrome.
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($lang['textcensors']);

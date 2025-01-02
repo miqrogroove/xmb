@@ -1510,6 +1510,22 @@ class SQL
     }
 
     /**
+     * Delete user rank records by a list of IDs.
+     *
+     * @since 1.10.00
+     * @param array $ids
+     */
+    public function deleteRanksByList(array $ids)
+    {
+        if (empty($ids)) return;
+
+        $ids = array_map('intval', $ids);
+        $ids = implode(',', $ids);
+
+        $this->db->query("DELETE FROM " . $this->tablepre . "ranks WHERE id IN ($ids)");
+    }
+
+    /**
      * Retrieve the list of smilies.
      *
      * @since 1.10.00

@@ -27,7 +27,7 @@
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/ipban.php"><?= $lang['textipban'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/members.php"><?= $lang['textmembers'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=ranks"><?= $lang['textuserranks'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/ranks.php"><?= $lang['textuserranks'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/restrictions.php"><?= $lang['cprestricted'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/rename.php"><?= $lang['admin_rename_txt'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>quarantine.php"><?= $lang['moderation_meta_name'] ?></a><br />
