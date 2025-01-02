@@ -33,10 +33,8 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>quarantine.php"><?= $lang['moderation_meta_name'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=smilies"><?= $lang['smilies'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=templates"><?= $lang['templates'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/smilies.php"><?= $lang['smilies'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/themes.php"><?= $lang['themes'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=lang"><?= $lang['translations'] ?></a><br />
 </td>
 </tr>
 <tr class="ctrcategory">
