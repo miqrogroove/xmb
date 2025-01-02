@@ -250,6 +250,7 @@ $lang['copythread'] = "Copy Thread";
 $lang['copythreadmsg'] = "This thread has been copied. Redirecting you to the original forum.";
 $lang['copythreadto'] = "Copy thread to";
 $lang['cprestricted'] = "Restriction Manager";
+$lang['cprestrictedlink'] = "Return to the Restriction Manager";
 $lang['cpsearch'] = "Search";
 $lang['cpwodump'] = "Clear Whos Online";
 $lang['cp_deleteposts'] = "Delete Posts";

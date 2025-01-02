@@ -160,7 +160,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
     }
 
     foreach($theme_delete as $themeid) {
-        if ($themeid != $vars->settings['theme']) {
+        if ($themeid != (int) $vars->settings['theme']) {
             $db->query("UPDATE " . $vars->tablepre . "members SET theme = 0 WHERE theme = $themeid");
             $db->query("UPDATE " . $vars->tablepre . "forums SET theme = 0 WHERE theme = $themeid");
             $db->query("DELETE FROM " . $vars->tablepre . "themes WHERE themeid = $themeid");

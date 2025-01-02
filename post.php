@@ -385,7 +385,7 @@ if ($SETTINGS['spellcheck'] == 'on') {
                 eval('$suggestions = "'.template('spelling_suggestion_no').'";');
             }
         } else {
-            $old_words = postedArray('old_words', 'string', '', TRUE, FALSE);
+            $old_words = postedArray('old_words', dbescape: false);
             foreach($old_words as $word) {
                 $replacement = postedVar('replace_'.$word, '', TRUE, FALSE);
                 $messageinput = str_replace($word, $replacement, $messageinput);

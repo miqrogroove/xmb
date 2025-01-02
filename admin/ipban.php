@@ -111,7 +111,7 @@ if ($vars->settings['ip_banning'] == 'on') {
             $dels = [];
             foreach($delete as $id => $del) {
                 if ($del == 1) {
-                    $dels[] = (int) $id;
+                    $dels[] = $id;
                 }
             }
             $sql->deleteIPBansByList($dels);

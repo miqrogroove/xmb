@@ -37,7 +37,7 @@ if (X_GUEST) {
 
 $onlinetime = $vars->onlinetime;
 
-$tids = array_unique(postedArray('tid', 'int', '', FALSE, FALSE, FALSE, 'r'));
+$tids = array_unique(postedArray('tid', 'int', source: 'r'));
 $fid = getInt('fid', 'p');
 if ($fid == 0) {
     $fid = getInt('fid');

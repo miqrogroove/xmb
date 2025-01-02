@@ -62,43 +62,44 @@ class Core
     {
         $retval = getPhpInput($varname, $sourcearray);
 
-        if ($word != '') {
-            $retval = str_ireplace($word, "_".$word, $retval);
-        }
-
-        if ($htmlencode) {
-            if ($quoteencode) {
-                $retval = htmlspecialchars($retval, ENT_QUOTES);
-            } else {
-                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
-            }
-        }
-
-        if ($dbescape) {
-            $this->db->escape_fast($retval);
-        }
-
-        return $retval;
+        return $this->sanitizeString($retval, $word, $htmlencode, $dbescape, $quoteencode);
     }
 
-    function postedArray(string $varname, string $type = 'string', string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): array
-    {
-        $arrayItems = getRawInput($varname, $sourcearray);
+    function postedArray(
+        string $varname,
+        string $valueType = 'string',
+        string $keyType = 'int',
+        string $word = '',
+        bool $htmlencode = true,
+        bool $dbescape = true,
+        bool $quoteencode = false,
+        string $source = 'p',
+    ): array {
+        $input = getRawInput($varname, $source);
 
         // Convert a single or comma delimited list to an array
-        if (is_string($arrayItems)) {
-            if (strpos($arrayItems, ',') !== false) {
-                $arrayItems = explode(',', $arrayItems);
+        if (is_string($input)) {
+            if (strpos($input, ',') !== false) {
+                $input = explode(',', $input);
             } else {
-                $arrayItems = [$arrayItems];
+                $input = [$input];
             }
-        } elseif (is_null($arrayItems)) {
-            $arrayItems = [];
+        } elseif (is_null($input)) {
+            $input = [];
+        }
+        
+        $keys = array_keys($input);
+        if ($keyType == 'int') {
+            array_map('intval', $keys);
+        } else {
+            foreach($keys as &$key) {
+                $key = str_replace("\x00", '', $key);
+                $key = $this->sanitizeString($key, $word, $htmlencode, $dbescape, $quoteencode);
+            }
         }
 
-        foreach($arrayItems as $item => $theObject) {
-            $theObject = &$arrayItems[$item];
-            switch($type) {
+        foreach($input as &$theObject) {
+            switch($valueType) {
                 case 'onoff':
                     if (strtolower($theObject) !== 'on') {
                         $theObject = 'off';
@@ -117,31 +118,43 @@ class Core
                 default:
                     if (is_string($theObject)) {
                         $theObject = str_replace("\x00", '', $theObject);
-
-                        if ($word != '') {
-                            $theObject = str_ireplace($word, "_".$word, $theObject);
-                        }
-
-                        if ($htmlencode) {
-                            if ($quoteencode) {
-                                $theObject = htmlspecialchars($theObject, ENT_QUOTES);
-                            } else {
-                                $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
-                            }
-                        }
-
-                        if ($dbescape) {
-                            $this->db->escape_fast($theObject);
-                        }
+                        $theObject = $this->sanitizeString($theObject, $word, $htmlencode, $dbescape, $quoteencode);
                     } else {
                         $theObject = '';
                     }
                     break;
             }
-            unset($theObject);
         }
 
-       return $arrayItems;
+        return array_combine($keys, $input);
+    }
+
+    /**
+     * Reuseable function for sanitizing user input.
+     *
+     * @since 1.10.00
+     */
+    private function sanitizeString(string $input, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false): string
+    {
+        $retval = $input;
+
+        if ($word != '') {
+            $retval = str_ireplace($word, "_".$word, $retval);
+        }
+
+        if ($htmlencode) {
+            if ($quoteencode) {
+                $retval = htmlspecialchars($retval, ENT_QUOTES);
+            } else {
+                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
+            }
+        }
+
+        if ($dbescape) {
+            $this->db->escape_fast($retval);
+        }
+
+        return $retval;
     }
 
     /**

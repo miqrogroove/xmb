@@ -50,7 +50,7 @@ function buddy_add($buddys)
         $buddys = array_slice($buddys, 0, 10);
     }
 
-    foreach($buddys as $key=>$buddy) {
+    foreach($buddys as $buddy) {
         if (empty($buddy) || (strlen(trim($buddy)) == 0)) {
             blistmsg($lang['nobuddyselected'], '', true);
         } else {
@@ -99,7 +99,7 @@ function buddy_delete($delete)
     global $db, $lang, $xmbuser, $oToken, $full_url;
     global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
 
-    foreach($delete as $key=>$buddy) {
+    foreach($delete as $buddy) {
         $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
     }
 

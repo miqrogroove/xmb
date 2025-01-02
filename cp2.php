@@ -1117,21 +1117,21 @@ if ($action == "smilies") {
         <?php
     } else {
         $smdelete = postedArray('smdelete', 'int');
-        $smcode = postedArray('smcode', 'string', 'javascript', TRUE, TRUE, TRUE);
-        $smurl = postedArray('smurl', 'string', 'javascript', TRUE, TRUE, TRUE);
+        $smcode = postedArray('smcode', word: 'javascript', quoteencode: true);
+        $smurl = postedArray('smurl', word: 'javascript', quoteencode: true);
 
         $newcode = postedVar('newcode');
         $newurl1 = postedVar('newurl1');
         $autoinsertsmilies = formInt('autoinsertsmilies');
 
         $pidelete = postedArray('pidelete', 'int');
-        $piurl = postedArray('piurl', 'string', 'javascript', TRUE, TRUE, TRUE);
+        $piurl = postedArray('piurl', word: 'javascript', quoteencode: true);
 
         $newurl2 = postedVar('newurl2');
         $autoinsertposticons = formInt('autoinsertposticons');
 
         if ($smcode) {
-            foreach($smcode as $key=>$val) {
+            foreach($smcode as $val) {
                 if (count(array_keys($smcode, $val)) > 1) {
                     error($lang['smilieexists'], false, '</td></tr></table></td></tr></table><br />');
                 }
@@ -1140,16 +1140,16 @@ if ($action == "smilies") {
 
         $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='smiley'");
         while($smilie = $db->fetch_array($querysmilie)) {
-            $id = $smilie['id'];
+            $id = (int) $smilie['id'];
             if (isset($smdelete[$id]) && $smdelete[$id] == 1) {
                 $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$id'");
                 continue;
             }
-            $query = $db->query("UPDATE ".X_PREFIX."smilies SET code='$smcode[$id]', url='$smurl[$id]' WHERE id='$smilie[id]' AND type='smiley'");
+            $query = $db->query("UPDATE ".X_PREFIX."smilies SET code = '$smcode[$id]', url = '$smurl[$id]' WHERE id = $id AND type = 'smiley'");
         }
 
         if ($piurl) {
-            foreach($piurl as $key=>$val) {
+            foreach($piurl as $val) {
                 if (count(array_keys($piurl, $val)) > 1) {
                     error($lang['piconexists'], false, '</td></tr></table></td></tr></table><br />');
                 }
@@ -1158,7 +1158,7 @@ if ($action == "smilies") {
 
         $querysmilie = $db->query("SELECT id FROM ".X_PREFIX."smilies WHERE type='picon'");
         while($picon = $db->fetch_array($querysmilie)) {
-            $id = $picon['id'];
+            $id = (int) $picon['id'];
             if (isset($pidelete[$id]) && $pidelete[$id] == 1) {
                 $query = $db->query("DELETE FROM ".X_PREFIX."smilies WHERE id='$picon[id]'");
                 continue;
@@ -1393,16 +1393,16 @@ if ($action == "ranks") {
         request_secure('Control Panel/User Ranks', 'mass-edit');
         $id = postedArray('id', 'int');
         $delete = postedArray('delete', 'int');
-        $title = postedArray('title', 'string', '', FALSE);
+        $title = postedArray('title', htmlencode: false);
         $posts = postedArray('posts', 'int');
         $stars = postedArray('stars', 'int');
         $allowavatars = postedArray('allowavatars', 'yesno');
-        $avaurl = postedArray('avaurl', 'string', 'javascript', TRUE, TRUE, TRUE);
+        $avaurl = postedArray('avaurl', word: 'javascript', quoteencode: true);
         $newtitle = postedVar('newtitle', '', FALSE);
         $newposts = formInt('newposts');
         $newstars = formInt('newstars');
         $newallowavatars = formYesNo('newallowavatars');
-        $newavaurl = postedVar('newavaurl', 'javascript', TRUE, TRUE, TRUE);
+        $newavaurl = postedVar('newavaurl', word: 'javascript', quoteencode: true);
 
         // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
         $ranks = sql()->getRanks();
@@ -1426,7 +1426,7 @@ if ($action == "ranks") {
         foreach ($id as $key => $val) {
             if (isset($delete[$key])) continue;
 
-            $db->query("UPDATE ".X_PREFIX."ranks SET title='$title[$key]', posts='$posts[$key]', stars='$stars[$key]', allowavatars='$allowavatars[$key]', avatarrank='$avaurl[$key]' WHERE id='$key'");
+            $sql->saveRank($title[$key], $posts[$key], $stars[$key], $allowavatars[$key] == 'yes', $avaurl[$key], $key);
         }
 
         if ($newtitle) {

@@ -88,7 +88,11 @@ if (!isset($searchsubmit) && !isset($page)) {
     $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
     $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
     $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
-    $srchfid = postedArray('f', 'int', '', FALSE, FALSE, FALSE, 'g');
+    $srchfid = postedArray(
+        varname: 'f',
+        valueType: 'int',
+        source: 'g',
+    );
     $srchfield = postedVar('srchfield', '', FALSE, FALSE, FALSE, 'g');
     $page = getInt('page');
     $srchfrom = getInt('srchfrom');

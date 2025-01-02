@@ -89,7 +89,7 @@ if (noSubmit('modsubmit')) {
     $mod = $core->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
         foreach($mod as $fid => $mods) {
-            $sql->setForumMods((int) $fid, $mods);
+            $sql->setForumMods($fid, $mods);
         }
     }
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';
