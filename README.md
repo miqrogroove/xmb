@@ -6,7 +6,7 @@ Branch 1.9.12 is the latest stable version.
 
 The Master branch is currently unstable.  It is a future version under development.
 
-Visit [xmbforum2.com](xmbforum2.com) for more resources.
+Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
 ## Getting Started
 
