@@ -5,7 +5,7 @@
  * XMB 1.10.00-alpha
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2024, The XMB Group
+ * Copyright (c) 2001-2025, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -24,10 +24,10 @@
 
 define('X_VERSION', '1.10.00');
 define('X_VERSION_EXT', '1.10.00-alpha');
-define('X_VERSION_DATE', '20241231');
+define('X_VERSION_DATE', '20250102');
 define('MYSQL_MIN_VER', '5.5.8');
 define('PHP_MIN_VER', '8.2.0');
-define('COPY_YEAR', '2001-2024');
+define('COPY_YEAR', '2001-2025');
 
 $versioncompany = 'The XMB Group';
 $versionshort = X_VERSION;
