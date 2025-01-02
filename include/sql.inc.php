@@ -1538,7 +1538,7 @@ class SQL
     */
     public function getCensors(): array
     {
-        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "words");
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "words ORDER BY id");
 
         $words = [];
         while($row = $this->db->fetch_array($result)) {
