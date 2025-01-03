@@ -15,7 +15,7 @@
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=attachments"><?= $lang['textattachman'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/censor.php"><?= $lang['textcensors'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=newsletter"><?= $lang['textnewsletter'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/newsletter.php"><?= $lang['textnewsletter'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/search.php"><?= $lang['cpsearch'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/settings.php"><?= $lang['textsettings'] ?></a><br />
 </td>
