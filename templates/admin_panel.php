@@ -22,7 +22,7 @@
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/forums.php"><?= $lang['textforums'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/moderators.php"><?= $lang['textmods'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=prune"><?= $lang['textprune'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/prune.php"><?= $lang['textprune'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/ipban.php"><?= $lang['textipban'] ?></a><br />
