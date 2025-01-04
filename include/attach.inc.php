@@ -31,7 +31,7 @@ use RuntimeException;
 
 class Attach
 {
-    public function __construct(private BBCode $bbcode, private DBStuff $db, private SQL $sql)
+    public function __construct(private BBCode $bbcode, private DBStuff $db, private SQL $sql, private Variables $vars)
     {
         // Property promotion.
     }
@@ -53,8 +53,6 @@ class Attach
      */
     public function uploadedFile(string $varname, int $pid = 0, bool $quarantine = false): UploadResult
     {
-        global $self, $SETTINGS;
-
         $usedb = true;
         if (! $quarantine) {
             $path = $this->getFullPathFromSubdir('');
@@ -75,22 +73,22 @@ class Attach
         }
 
         // Sanity checks
-        if ($pid == 0 && intval($self['uid']) <= 0) {
+        if ($pid == 0 && intval($this->vars->self['uid']) <= 0) {
             return new UploadResult(UploadStatus::GenericError);
         }
 
         // Check maximum attachments per post
         if ($pid == 0) {
-            $count = $this->sql->countOrphanedAttachments((int) $self['uid'], $quarantine);
+            $count = $this->sql->countOrphanedAttachments((int) $this->vars->self['uid'], $quarantine);
         } else {
             $count = $this->sql->countAttachmentsByPost($pid, $quarantine);
         }
-        if ($count >= (int) $SETTINGS['filesperpost']) {
+        if ($count >= (int) $this->vars->settings['filesperpost']) {
             return new UploadResult(UploadStatus::CountExceeded);
         }
 
         // Check minimum file size for disk storage
-        if ($result->filesize < (int) $SETTINGS['files_min_disk_size'] && !$usedb) {
+        if ($result->filesize < (int) $this->vars->settings['files_min_disk_size'] && !$usedb) {
             $usedb = true;
             $result = $this->getUpload($varname, $usedb);
         }
@@ -115,8 +113,6 @@ class Attach
      */
     private function remoteFile(string $url, int $pid = 0, bool $quarantine = false): UploadResult
     {
-        global $self, $SETTINGS;
-
         $usedb = true;
         $path = '';
         if (! $quarantine) {
@@ -163,17 +159,17 @@ class Attach
             $filename = array_pop($filename);
         }
 
-        if ($pid == 0 && intval($self['uid']) <= 0) {
+        if ($pid == 0 && intval($this->vars->self['uid']) <= 0) {
             return new UploadResult(UploadStatus::GenericError);
         }
 
         // Check maximum attachments per post
         if ($pid == 0) {
-            $count = $this->sql->countOrphanedAttachments((int) $self['uid'], $quarantine);
+            $count = $this->sql->countOrphanedAttachments((int) $this->vars->self['uid'], $quarantine);
         } else {
             $count = $this->sql->countAttachmentsByPost($pid, $quarantine);
         }
-        if ($count >= (int) $SETTINGS['filesperpost']) {
+        if ($count >= (int) $this->vars->settings['filesperpost']) {
             return new UploadResult(UploadStatus::CountExceeded);
         }
 
@@ -188,7 +184,7 @@ class Attach
         }
 
         $filesize = strlen($file);
-        if ($filesize > (int) $SETTINGS['maxattachsize']) {
+        if ($filesize > (int) $this->vars->settings['maxattachsize']) {
             return new UploadResult(UploadStatus::SizeExceeded);
         }
 
@@ -232,7 +228,7 @@ class Attach
 
         // Check minimum file size for disk storage
         if (!$usedb) {
-            if ($filesize < (int) $SETTINGS['files_min_disk_size']) {
+            if ($filesize < (int) $this->vars->settings['files_min_disk_size']) {
                 $usedb = true;
             } else {
                 $file = '';
@@ -258,8 +254,6 @@ class Attach
 
     private function genericFile(int $pid, bool $usedb, string &$filepath, bool $quarantine, UploadResult $result): UploadResult
     {
-        global $self, $SETTINGS;
-
         // Check if we can store image metadata
         $extension = strtolower(get_extension($result->filename));
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
@@ -276,7 +270,7 @@ class Attach
             $sqlsize = (string) $imgSize;
 
             $maxImgSize = new CartesianSize();
-            if ($maxImgSize->fromString($SETTINGS['max_image_size'])) {
+            if ($maxImgSize->fromString($this->vars->settings['max_image_size'])) {
                 if ($imgSize->isBiggerThan($maxImgSize)) {
                     return new UploadResult(UploadStatus::DimsExceeded);
                 }
@@ -350,7 +344,7 @@ class Attach
             'filetype' => $result->filetype,
             'filesize' => (string) $result->filesize,
             'attachment' => &$result->binaryFile,
-            'uid' => (int) $self['uid'],
+            'uid' => (int) $this->vars->self['uid'],
             'img_size' => $sqlsize,
             'subdir' => $subdir,
         ];
@@ -393,7 +387,7 @@ class Attach
     public function doEdits(&$deletes, array $aid_list, int $pid = 0, bool $quarantine = false): UploadStatus
     {
         $return = UploadStatus::Success;
-        $deletes = array();
+        $deletes = [];
         if (! isset($_POST['attachment'])) {
             return $return;
         }
@@ -456,10 +450,10 @@ class Attach
         if (! X_STAFF) throw new LogicException("Unprivileged access to function");
 
         // Find all primary attachments for $frompid
-        $query = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid=0");
+        $query = $db->query("SELECT aid, subdir FROM " . $this->vars->tablepre . "attachments WHERE pid=$frompid AND parentid=0");
         while($attach = $db->fetch_array($query)) {
-            $db->query("INSERT INTO ".X_PREFIX."attachments (pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
-                     . "SELECT {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM ".X_PREFIX."attachments WHERE aid={$attach['aid']}");
+            $db->query("INSERT INTO " . $this->vars->tablepre . "attachments (pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
+                     . "SELECT {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM " . $this->vars->tablepre . "attachments WHERE aid={$attach['aid']}");
             if ($db->affected_rows() == 1) {
                 $aid = (string) $db->insert_id();
                 if ($attach['subdir'] != '') {
@@ -468,20 +462,20 @@ class Attach
             }
 
             // Update any [file] object references in the new copy of the post messsage.
-            $message = $db->query("SELECT message FROM ".X_PREFIX."posts WHERE pid=$topid");
+            $message = $db->query("SELECT message FROM " . $this->vars->tablepre . "posts WHERE pid=$topid");
             if ($message = $db->fetch_array($message)) {
                 $newmessage = str_replace("[file]{$attach['aid']}[/file]", "[file]{$aid}[/file]", $message['message']);
                 if ($newmessage !== $message['message']) {
                     $db->escape_fast($newmessage);
-                    $db->query("UPDATE ".X_PREFIX."posts SET message='$newmessage' WHERE pid=$topid");
+                    $db->query("UPDATE " . $this->vars->tablepre . "posts SET message='$newmessage' WHERE pid=$topid");
                 }
             }
 
             // Find all children of this attachment and copy them too.
-            $childquery = $db->query("SELECT aid, subdir FROM ".X_PREFIX."attachments WHERE pid=$frompid AND parentid={$attach['aid']}");
+            $childquery = $db->query("SELECT aid, subdir FROM " . $this->vars->tablepre . "attachments WHERE pid=$frompid AND parentid={$attach['aid']}");
             while($childattach = $db->fetch_array($childquery)) {
-                $db->query("INSERT INTO ".X_PREFIX."attachments (parentid, pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
-                         . "SELECT {$aid}, {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM ".X_PREFIX."attachments WHERE aid={$childattach['aid']}");
+                $db->query("INSERT INTO " . $this->vars->tablepre . "attachments (parentid, pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
+                         . "SELECT {$aid}, {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM " . $this->vars->tablepre . "attachments WHERE aid={$childattach['aid']}");
                 if ($db->affected_rows() == 1) {
                     $childaid = (string) $db->insert_id();
                     if ($childattach['subdir'] != '') {
@@ -508,7 +502,7 @@ class Attach
 
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
-        $query = $db->query("SELECT aid, filesize, subdir FROM ".X_PREFIX."attachments WHERE aid=$aid AND pid=$pid");
+        $query = $db->query("SELECT aid, filesize, subdir FROM " . $this->vars->tablepre . "attachments WHERE aid=$aid AND pid=$pid");
         if ($db->num_rows($query) != 1) {
             return false;
         }
@@ -522,7 +516,7 @@ class Attach
         }
         $attachment = file_get_contents($path);
         $db->escape_fast($attachment);
-        $db->query("UPDATE ".X_PREFIX."attachments SET subdir='', attachment='$attachment' WHERE aid=$aid AND pid=$pid");
+        $db->query("UPDATE " . $this->vars->tablepre . "attachments SET subdir='', attachment='$attachment' WHERE aid=$aid AND pid=$pid");
         if ($db->affected_rows() !== 1) {
             return false;
         }
@@ -537,7 +531,7 @@ class Attach
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
         $query = $db->query("SELECT a.*, UNIX_TIMESTAMP(a.updatetime) AS updatestamp, p.dateline "
-                          . "FROM ".X_PREFIX."attachments AS a LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
+                          . "FROM " . $this->vars->tablepre . "attachments AS a LEFT JOIN " . $this->vars->tablepre . "posts AS p USING (pid) "
                           . "WHERE a.aid=$aid AND a.pid=$pid");
         if ($db->num_rows($query) != 1) {
             return false;
@@ -561,7 +555,7 @@ class Attach
             return false;
         }
         fclose($file);
-        $db->query("UPDATE ".X_PREFIX."attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
+        $db->query("UPDATE " . $this->vars->tablepre . "attachments SET subdir='$subdir', attachment='' WHERE aid=$aid AND pid=$pid");
         return true;
     }
 
@@ -576,8 +570,6 @@ class Attach
      */
     public function approve(int $oldpid, int $newpid)
     {
-        global $db, $SETTINGS;
-
         $aidmap = [];
 
         $path = $this->getFullPathFromSubdir('');
@@ -605,7 +597,7 @@ class Attach
             $oldaid = (int) $attach['aid'];
             $newaid = $this->sql->approveAttachment($oldaid, $newpid, $newparentid);
             $aidmap[$oldaid] = $newaid;
-            if ((int) $attach['filesize'] >= (int) $SETTINGS['files_min_disk_size'] && ! $usedb) {
+            if ((int) $attach['filesize'] >= (int) $this->vars->settings['files_min_disk_size'] && ! $usedb) {
                 $this->moveToDisk($newaid, $newpid);
             }
         }
@@ -613,8 +605,8 @@ class Attach
         $this->sql->deleteAttachmentsByID(array_keys($aidmap), $quarantine);
 
         $postbody = $this->sql->getPostBody($newpid);
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
         $search[] = "[file]";
         $replace[] = "[oldfile]";
         $search[] = "[/file]";
@@ -689,9 +681,9 @@ class Attach
 
         if (! X_ADMIN) throw new LogicException("Unprivileged access to function");
 
-        $q = $db->query("SELECT a.aid FROM ".X_PREFIX."attachments AS a "
-                      . "LEFT JOIN ".X_PREFIX."posts AS p USING (pid) "
-                      . "LEFT JOIN ".X_PREFIX."attachments AS b ON a.parentid=b.aid "
+        $q = $db->query("SELECT a.aid FROM " . $this->vars->tablepre . "attachments AS a "
+                      . "LEFT JOIN " . $this->vars->tablepre . "posts AS p USING (pid) "
+                      . "LEFT JOIN " . $this->vars->tablepre . "attachments AS b ON a.parentid=b.aid "
                       . "WHERE ((a.uid=0 OR a.pid > 0) AND p.pid IS NULL) OR (a.parentid > 0 AND b.aid IS NULL)");
 
         $aid_list = [];
@@ -742,8 +734,6 @@ class Attach
      */
     public function getUpload($varname, $loadfile = true): UploadResult
     {
-        global $SETTINGS;
-
         /* Perform Sanity Checks */
 
         if (isset($_FILES[$varname])) {
@@ -799,7 +789,7 @@ class Attach
         }
 
         $filesize = intval(filesize($file['tmp_name'])); // fix bad filesizes (PHP Bug #45124, etc)
-        if ($filesize > (int) $SETTINGS['maxattachsize']) {
+        if ($filesize > (int) $this->vars->settings['maxattachsize']) {
             unlink($file['tmp_name']);
             return new UploadResult(UploadStatus::SizeExceeded);
         }
@@ -825,18 +815,16 @@ class Attach
 
     public function getURL(int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false): string
     {
-        global $full_url, $SETTINGS;
-
-        if ($SETTINGS['files_virtual_url'] == '') {
-            $virtual_path = $full_url;
+        if ($this->vars->settings['files_virtual_url'] == '') {
+            $virtual_path = $this->vars->full_url;
         } else {
-            $virtual_path = $SETTINGS['files_virtual_url'];
+            $virtual_path = $this->vars->settings['files_virtual_url'];
         }
 
         if ($quarantine) {
             $format = 99;
         } else {
-            $format = (int) $SETTINGS['file_url_format'];
+            $format = (int) $this->vars->settings['file_url_format'];
         }
 
         switch($format) {
@@ -892,13 +880,12 @@ class Attach
      */
     private function getNewSubdir(string $date = '')
     {
-        global $SETTINGS;
         if ('' == $date) {
             $timestamp = time();
         } else {
             $timestamp = (int) $date;
         }
-        if (1 == (int) $SETTINGS['files_subdir_format']) {
+        if (1 == (int) $this->vars->settings['files_subdir_format']) {
             $format = 'Y/m';
         } else {
             $format = 'Y/m/d';
@@ -920,9 +907,7 @@ class Attach
      */
     public function getFullPathFromSubdir(string $subdir, bool $mkdir = false): string
     {
-        global $SETTINGS;
-
-        $path = $SETTINGS['files_storage_path'];
+        $path = $this->vars->settings['files_storage_path'];
         if ('' == $path) {
             return $path;
         }
@@ -990,11 +975,9 @@ class Attach
      */
     private function createThumbnail(string $filename, string $filepath, int $filesize, CartesianSize $imgSize, bool $quarantine = false, int $aid = 0, int $pid = 0, string $subdir = ''): bool
     {
-        global $self, $SETTINGS;
-
         // Determine if a thumbnail is needed.
         $thumbSize = new CartesianSize();
-        if (! $thumbSize->fromString($SETTINGS['max_thumb_size'])) {
+        if (! $thumbSize->fromString($this->vars->settings['max_thumb_size'])) {
             // This setting is invalid.
             return false;
         }
@@ -1029,7 +1012,7 @@ class Attach
         if ($aid != 0) {
 
             // Check minimum file size for disk storage
-            if ($filesize < (int) $SETTINGS['files_min_disk_size']) {
+            if ($filesize < (int) $this->vars->settings['files_min_disk_size']) {
                 $subdir = '';
             }
 
@@ -1047,7 +1030,7 @@ class Attach
                 'filetype' => $filetype,
                 'filesize' => (string) $filesize,
                 'attachment' => &$file,
-                'uid' => (int) $self['uid'],
+                'uid' => (int) $this->vars->self['uid'],
                 'parentid' => $aid,
                 'img_size' => $sqlsize,
                 'subdir' => $subdir,
@@ -1075,8 +1058,6 @@ class Attach
      */
     private function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool $load_if_smaller = FALSE, bool $enlarge_if_smaller = FALSE)
     {
-        global $SETTINGS;
-
         // Check if GD is available
         if (!function_exists('imagecreatetruecolor')) {
             return false;
@@ -1092,7 +1073,7 @@ class Attach
         $imgSize->fromArray($result);
 
         $maxImgSize = new CartesianSize();
-        if ($maxImgSize->fromString($SETTINGS['max_image_size'])) {
+        if ($maxImgSize->fromString($this->vars->settings['max_image_size'])) {
             if ($imgSize->isBiggerThan($maxImgSize)) {
                 return false;
             }
@@ -1166,8 +1147,6 @@ class Attach
 
     public function regenerateThumbnail(int $aid, int $pid, bool $quarantine = false): UploadStatus
     {
-        global $SETTINGS;
-
         // Write attachment to disk
         $attach = $this->sql->getAttachment($aid, $quarantine);
         if (empty($attach)) {
@@ -1224,7 +1203,7 @@ class Attach
         $sqlsize = (string) $imgSize;
 
         $maxImgSize = new CartesianSize();
-        if ($maxImgSize->fromString($SETTINGS['max_image_size'])) {
+        if ($maxImgSize->fromString($this->vars->settings['max_image_size'])) {
             if ($imgSize->isBiggerThan($maxImgSize)) {
                 if ($attach['subdir'] == '') {
                     unlink($path);
@@ -1274,15 +1253,15 @@ class Attach
 
         // Remove the code block contents from $message.
         $messagearray = $this->bbcode->parseCodeBlocks($message);
-        $message = array();
+        $message = [];
         for($i = 0; $i < count($messagearray); $i += 2) {
             $message[$i] = $messagearray[$i];
         }
         $message = implode("<!-- code -->", $message);
 
         // Extract img codes
-        $results = array();
-        $items = array();
+        $results = [];
+        $items = [];
         $pattern = '/\[img(=([0-9]*?){1}x([0-9]*?))?\](' . get_img_regexp() . ')\[\/img\]/i';
         preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
         foreach($results as $result) {

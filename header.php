@@ -152,7 +152,7 @@ theme(new \XMB\Theme\Manager(forums(), sql(), template(), vars()));
 
 bbcode(new \XMB\BBCode(theme(), vars()));
 
-attach(new \XMB\Attach(bbcode(), db(), sql()));
+attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
 
 core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), translation(), vars()));
 
