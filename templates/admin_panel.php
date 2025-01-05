@@ -46,7 +46,7 @@
 <tr>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/modlog.php"><?= $lang['textmodlogs'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>cp2.php?action=cplog"><?= $lang['textcplogs'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/log.php"><?= $lang['textcplogs'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=logsdump"><?= $lang['textlogsdump'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
