@@ -432,6 +432,7 @@ $lang['login_lockout'] = "Your password is temporarily locked due to too many gu
 $lang['login_trusted'] = "Trust This Device - Stay logged in";
 $lang['logs'] = 'Logs';
 $lang['logsdump_confirm'] = 'Are you sure you want to empty the logs?';
+$lang['logs_none'] = 'No logs present';
 $lang['look_feel'] = 'Look &amp; Feel';
 $lang['lostpw_bad_token'] = "The password reset link that you used is expired.  You may request a new reset after 24 hours.";
 $lang['lostpw_body_eval'] = "Hello \$name,\n\nA password reset request was received for your lost login details.  To set a new password, you must follow the link below.\n\n\$link\n\nThis link will expire after one use, or 24 hours, whichever is first.";
