@@ -695,6 +695,32 @@ class SQL
     }
 
     /**
+     * Update all forum stats using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function fixAllForumCounts()
+    {
+        // Update the subforums
+        $this->db->query("UPDATE " . $this->tablepre . "forums AS f
+            LEFT JOIN (SELECT fid, COUNT(*) AS tcount FROM " . $this->tablepre . "threads GROUP BY fid) AS query2 ON f.fid=query2.fid
+            LEFT JOIN (SELECT fid, COUNT(*) AS pcount FROM " . $this->tablepre . "posts GROUP BY fid) AS query3 ON f.fid=query3.fid
+            SET f.threads = IFNULL(query2.tcount, 0), f.posts = IFNULL(query3.pcount, 0)
+            WHERE f.type = 'sub'
+        ");
+
+        // Update the primary forums
+        $this->db->query("UPDATE " . $this->tablepre . "forums AS f
+            LEFT JOIN (SELECT fup, SUM(threads) AS tcount, SUM(posts) AS pcount FROM " . $this->tablepre . "forums GROUP BY fup) AS query2 ON f.fid=query2.fup
+            LEFT JOIN (SELECT fid, COUNT(*) AS tcount FROM " . $this->tablepre . "threads GROUP BY fid) AS query3 ON f.fid=query3.fid
+            LEFT JOIN (SELECT fid, COUNT(*) AS pcount FROM " . $this->tablepre . "posts GROUP BY fid) AS query4 ON f.fid=query4.fid
+            SET f.threads = IFNULL(query2.tcount, 0) + IFNULL(query3.tcount, 0),
+                f.posts   = IFNULL(query2.pcount, 0) + IFNULL(query4.pcount, 0)
+            WHERE f.type = 'forum'
+        ");
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12
@@ -754,17 +780,17 @@ class SQL
         $tid_field = $qthread ? 'newtid' : 'tid';
 
         $this->db->query("INSERT INTO $table SET
-        fid = {$values['fid']},
-        $tid_field = {$values['tid']},
-        dateline = {$values['dateline']},
-        author = '{$values['author']}',
-        message = '{$values['message']}',
-        subject = '{$values['subject']}',
-        icon = '{$values['icon']}',
-        usesig = '{$values['usesig']}',
-        useip = '{$values['useip']}',
-        bbcodeoff = '{$values['bbcodeoff']}',
-        smileyoff = '{$values['smileyoff']}'
+            fid = {$values['fid']},
+            $tid_field = {$values['tid']},
+            dateline = {$values['dateline']},
+            author = '{$values['author']}',
+            message = '{$values['message']}',
+            subject = '{$values['subject']}',
+            icon = '{$values['icon']}',
+            usesig = '{$values['usesig']}',
+            useip = '{$values['useip']}',
+            bbcodeoff = '{$values['bbcodeoff']}',
+            smileyoff = '{$values['smileyoff']}'
         ");
 
         return $this->db->insert_id();
@@ -1624,6 +1650,16 @@ class SQL
         $this->db->escape_fast($user);
 
         $this->db->query("INSERT INTO " . $this->tablepre . "logs (tid, username, action, fid, date) VALUES ($tid, '$user', '$action', $fid, $timestamp)");
+    }
+
+    /**
+     * Delete all records from the admin panel log.
+     *
+     * @since 1.10.00
+     */
+    public function clearAdminLog()
+    {
+        $this->db->query("DELETE FROM " . $this->tablepre . "logs WHERE fid = 0");
     }
 
     /**

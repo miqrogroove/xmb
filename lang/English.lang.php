@@ -354,6 +354,7 @@ $lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height
 $lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
 $lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
 $lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
+$lang['fixposts_confirm'] = 'This tool will refresh the total threads and posts in every forum.  Do you want to do this now?';
 $lang['floodprotect'] = "You are not allowed to post this frequently.  Flood protection is triggered when more than one post is submitted in an unexpected manner.  Check if your post is already saved or try again in a few moments.";
 $lang['floodprotect_u2u'] = "You are not allowed to send messages this frequently.  Flood protection is triggered when more than one message is submitted in an unexpected manner.  Check if your message is already saved or try again in a few moments.";
 $lang['fnasorry'] = "Sorry, this feature is currently not available...";

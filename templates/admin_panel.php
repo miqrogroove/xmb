@@ -29,7 +29,9 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/members.php"><?= $lang['textmembers'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/ranks.php"><?= $lang['textuserranks'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/restrictions.php"><?= $lang['cprestricted'] ?></a><br />
+<?php if (X_SADMIN) { ?>
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/rename.php"><?= $lang['admin_rename_txt'] ?></a><br />
+<?php } ?>
 &raquo;&nbsp;<a href="<?= $full_url ?>quarantine.php"><?= $lang['moderation_meta_name'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
@@ -47,10 +49,12 @@
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/modlog.php"><?= $lang['textmodlogs'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/log.php"><?= $lang['textcplogs'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=logsdump"><?= $lang['textlogsdump'] ?></a><br />
+<?php if (X_SADMIN) { ?>
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/logsdump.php"><?= $lang['textlogsdump'] ?></a><br />
+<?php } ?>
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixftotals"><?= $lang['textfixposts'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/fixftotals.php"><?= $lang['textfixposts'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts&amp;scope=forumsonly"><?= $lang['textfixlastposts'].' - '.$lang['textforums']; ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts"><?= $lang['textfixlastposts'].' - '.$lang['threads']; ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixmposts"><?= $lang['textfixmemposts'] ?></a><br />
@@ -59,10 +63,11 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedattachments"><?= $lang['textfixoattachments'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedpolls"><?= $lang['textfixopolls'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedposts"><?= $lang['textfixoposts'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=updatemoods"><?= $lang['textfixmoods'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
+<?php if (X_SADMIN) { ?>
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/sql.php"><?= $lang['raw_mysql'] ?></a><br />
+<?php } ?>
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=analyzetables"><?= $lang['analyze'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=checktables"><?= $lang['textcheck'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=optimizetables"><?= $lang['optimize'] ?></a><br />
