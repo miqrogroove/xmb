@@ -38,8 +38,8 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
-$relpath = 'admin/logsdump.php';
-$title = $lang['textlogsdump'];
+$relpath = 'admin/fixmposts.php';
+$title = $lang['textfixmemposts'];
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($title);
@@ -49,26 +49,24 @@ if ($vars->settings['subject_in_title'] == 'on') {
     $template->threadSubject = "$title - ";
 }
 
-if (! X_SADMIN) {
-    $core->error($lang['superadminonly']);
-}
+$core->assertAdminOnly();
 
 $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Clear CP Logs', '');
+    $core->request_secure('Control Panel/Fix Member Posts', '');
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Clear CP Logs', '');
-    $sql->clearAdminLog();
+    $core->request_secure('Control Panel/Fix Member Posts', '');
+    $sql->fixAllMemberCounts();
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr></table></table>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr></table></table>';
 } else {
-    $template->token = $token->create('Control Panel/Clear CP Logs', '', X_NONCE_AYS_EXP);
-    $template->prompt = $lang['logsdump_confirm'];
+    $template->token = $token->create('Control Panel/Fix Member Posts', '', X_NONCE_AYS_EXP);
+    $template->prompt = $lang['fixmemposts_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');
 }

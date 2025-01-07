@@ -38,12 +38,15 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
+$relpath = 'admin/fixftotals.php';
+$title = $lang['textfixposts'];
+
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
-$core->nav($lang['textfixposts']);
-$core->setCanonicalLink('admin/fixftotals.php');
+$core->nav($title);
+$core->setCanonicalLink($relpath);
 
 if ($vars->settings['subject_in_title'] == 'on') {
-    $template->threadSubject = $vars->lang['textfixposts'] . ' - ';
+    $template->threadSubject = "$title - ";
 }
 
 $core->assertAdminOnly();
@@ -64,7 +67,7 @@ if (onSubmit('nosubmit')) {
 } else {
     $template->token = $token->create('Control Panel/Fix Forum Totals', '', X_NONCE_AYS_EXP);
     $template->prompt = $lang['fixposts_confirm'];
-    $template->formURL = $vars->full_url . 'admin/fixftotals.php';
+    $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');
 }
 

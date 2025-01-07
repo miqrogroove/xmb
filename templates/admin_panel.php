@@ -55,10 +55,10 @@
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixftotals.php"><?= $lang['textfixposts'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts&amp;scope=forumsonly"><?= $lang['textfixlastposts'].' - '.$lang['textforums']; ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts"><?= $lang['textfixlastposts'].' - '.$lang['threads']; ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixmposts"><?= $lang['textfixmemposts'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixttotals"><?= $lang['textfixthread'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts&amp;scope=forumsonly"><?= $lang['textfixlastpostf'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/fixttotals.php"><?= $lang['textfixthread'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts"><?= $lang['textfixlastpostt'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/fixmposts.php"><?= $lang['textfixmemposts'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedthreads"><?= $lang['textfixothreads'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedattachments"><?= $lang['textfixoattachments'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedpolls"><?= $lang['textfixopolls'] ?></a><br />

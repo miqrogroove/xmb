@@ -461,6 +461,19 @@ class SQL
     }
 
     /**
+     * Update all members using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function fixAllMemberCounts()
+    {
+        $this->db->query("UPDATE " . $this->tablepre . "members AS m
+            LEFT JOIN (SELECT author, COUNT(*) as pcount FROM " . $this->tablepre . "posts GROUP BY author) AS query2 ON m.username = query2.author
+            SET m.postnum = IFNULL(query2.pcount, 0)
+        ");
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12
@@ -751,6 +764,19 @@ class SQL
         $this->db->free_result($query);
 
         return $result;
+    }
+
+    /**
+     * Update all thread stats using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function fixAllThreadCounts()
+    {
+        $this->db->query("UPDATE " . $this->tablepre . "threads AS t
+            INNER JOIN (SELECT tid, COUNT(*) as pcount FROM " . $this->tablepre . "posts GROUP BY tid) AS query2 USING (tid)
+            SET t.replies = query2.pcount - 1
+        ");
     }
 
     /**
