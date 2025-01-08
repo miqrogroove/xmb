@@ -62,7 +62,7 @@ if (noSubmit('pruneSubmit')) {
     $template->forumselect = $core->forumList('pruneFromList', true, false);
     $body = $template->process('admin_prune.php');
 } else {
-    $core->request_secure('Control Panel/Prune', '');
+    $core->request_secure('Control Panel/Prune', '', error_header: true);
     $pruneByDate = $core->postedArray('pruneByDate');
     $pruneByPosts = $core->postedArray('pruneByPosts');
     $pruneFrom = $core->postedVar('pruneFrom', '', false, false);

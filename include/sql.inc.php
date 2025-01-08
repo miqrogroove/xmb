@@ -740,7 +740,7 @@ class SQL
     }
 
     /**
-     * Gather pid and date from the latest or bumped thread in each forum using as few queries as possible.
+     * Gather pid and date from the latest or bumped post in each forum using as few queries as possible.
      *
      * @since 1.10.00
      */
@@ -791,6 +791,45 @@ class SQL
         $this->db->free_result($q);
 
         return $data;
+    }
+
+    /**
+     * Refresh the date, author, and pid "lastpost" stats for every thread using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function fixLastPostForAllThreads()
+    {
+        $this->db->query('UPDATE ' . $this->tablepre . 'threads AS t
+            LEFT JOIN ' . $this->tablepre . 'posts AS p ON t.tid = p.tid
+            INNER JOIN (
+                SELECT p2.tid, MAX(pid) AS lastpid
+                FROM ' . $this->tablepre . 'posts AS p2
+                INNER JOIN (
+                    SELECT tid, MAX(dateline) AS lastdate
+                    FROM ' . $this->tablepre . 'posts
+                    GROUP BY tid
+                ) AS query3 ON p2.tid = query3.tid AND p2.dateline = query3.lastdate
+                GROUP BY p2.tid
+            ) AS query2 ON p.pid = query2.lastpid
+            LEFT JOIN ( /* Self-join order is critical with no unique key available */
+                SELECT log2.tid, log2.date, log2.username
+                FROM ' . $this->tablepre . 'logs AS log2
+                INNER JOIN (
+                    SELECT tid, MAX(`date`) AS lastdate
+                    FROM ' . $this->tablepre . 'logs
+                    WHERE `action` = "bump"
+                    GROUP BY tid
+                ) AS query4 ON log2.tid = query4.tid AND log2.date = query4.lastdate
+            ) AS log ON t.tid = log.tid
+            SET t.lastpost = IF (p.pid IS NULL,
+                "",
+                IF (log.date IS NOT NULL AND log.date > p.dateline,
+                    CONCAT (log.date, "|", log.username, "|", p.pid),
+                    CONCAT (p.dateline, "|", p.author, "|", p.pid)
+                )
+            )
+        ');
     }
 
     /**

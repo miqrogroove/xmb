@@ -30,21 +30,16 @@ define('ROOT', '../');
 require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
-$schema = new \XMB\Schema($db, $vars);
-
 header('X-Robots-Tag: noindex');
 
-$relpath = 'admin/analyzetables.php';
-$title = $lang['analyze'];
+$relpath = 'admin/fixtlastposts.php';
+$title = $lang['textfixlastpostt'];
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($title);
@@ -61,30 +56,17 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Analyze Tables', '', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Threads', error_header: true);
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Analyze Tables', '', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Threads', error_header: true);
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-
-    set_time_limit(180);
-    $template->command = '';
-    $template->numfields = 4;
-
-    $body = $template->process('cp_dump_query_top.php');
-
-    $start = true;
-    $tables = $schema->xmb_schema_list();
-    foreach($tables as $val) {
-        $body .= $admin->dump_query($db->query('ANALYZE TABLE `' . $vars->tablepre . $val.'`'), header: $start);
-        if ($start) $start = false;
-    }
-
-    $body .= $template->process('cp_dump_query_bottom.php');
+    $sql->fixLastPostForAllThreads();
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr></table></table>';
 } else {
-    $template->token = $token->create('Control Panel/Analyze Tables', '', X_NONCE_AYS_EXP);
-    $template->prompt = $lang['analyze_confirm'];
+    $template->token = $token->create('Control Panel/Fix Last Posts', 'Threads', X_NONCE_AYS_EXP);
+    $template->prompt = $lang['fixtlastposts_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');
 }

@@ -206,7 +206,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
 }
 
 if ($action == '' && onSubmit('attachsubmit')) {
-    $core->request_secure('Control Panel/Attachments', 'mass-edit');
+    $core->request_secure('Control Panel/Attachments', 'mass-edit', error_header: true);
     $filelist = [];
     foreach($_POST as $postedname => $rawvalue) {
         if (substr($postedname, 0, 8) == 'filename' && is_numeric($fileaid = substr($postedname, 8))) {
@@ -239,7 +239,7 @@ if ($action == "delete") {
         </form></td></tr>
         <?php
     } elseif ($lang['textyes'] === $yessubmit) {
-        $core->request_secure('Control Panel/Attachments/Delete', (string) $aid);
+        $core->request_secure('Control Panel/Attachments/Delete', (string) $aid, error_header: true);
         $attach->deleteByID($aid);
         $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>{$lang['attach_delete_done']}</td></tr>";
     }

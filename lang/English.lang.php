@@ -360,6 +360,7 @@ $lang['fixflastposts_confirm'] = 'This tool will refresh the the last post stats
 $lang['fixmemposts_confirm'] = 'This tool will refresh the post count for every member.  Do you want to do this now?';
 $lang['fixposts_confirm'] = 'This tool will refresh the total threads and posts in every forum.  Do you want to do this now?';
 $lang['fixthreads_confirm'] = 'This tool will refresh the total posts in every thread.  Do you want to do this now?';
+$lang['fixtlastposts_confirm'] = 'This tool will refresh the the last post stats for every thread.  Do you want to do this now?';
 $lang['floodprotect'] = "You are not allowed to post this frequently.  Flood protection is triggered when more than one post is submitted in an unexpected manner.  Check if your post is already saved or try again in a few moments.";
 $lang['floodprotect_u2u'] = "You are not allowed to send messages this frequently.  Flood protection is triggered when more than one message is submitted in an unexpected manner.  Check if your message is already saved or try again in a few moments.";
 $lang['fnasorry'] = "Sorry, this feature is currently not available...";

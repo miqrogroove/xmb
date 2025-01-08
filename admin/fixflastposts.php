@@ -56,20 +56,20 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Forums');
+    $core->request_secure('Control Panel/Fix Last Posts', 'Forums', error_header: true);
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Forums');
+    $core->request_secure('Control Panel/Fix Last Posts', 'Forums', error_header: true);
 
     // Update all forums using as few queries as possible
     $data = $sql->getLatestPostForAllForums();
 
     // Loop through all forums
-    foreach($data['forums'] as $loner) {
+    foreach ($data['forums'] as $loner) {
         $lastpost = [];
 
         // Loop through all sub-forums
-        foreach($data['subs'] as $sub) {
+        foreach ($data['subs'] as $sub) {
             if ($sub['fup'] === $loner['fid']) {
                 if ($sub['pid'] !== null) {
                     if ($sub['date'] !== null) {
@@ -104,7 +104,7 @@ if (onSubmit('nosubmit')) {
         } else {
             $top = 0;
             $mkey = -1;
-            foreach($lastpost as $key => $v) {
+            foreach ($lastpost as $key => $v) {
                 if ((int) $v['dateline'] > (int) $top) {
                     $mkey = $key;
                     $top = $v['dateline'];

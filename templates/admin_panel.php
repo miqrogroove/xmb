@@ -57,7 +57,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixftotals.php"><?= $lang['textfixposts'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixflastposts.php"><?= $lang['textfixlastpostf'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixttotals.php"><?= $lang['textfixthread'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixlastposts"><?= $lang['textfixlastpostt'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/fixtlastposts.php"><?= $lang['textfixlastpostt'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixmposts.php"><?= $lang['textfixmemposts'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedthreads"><?= $lang['textfixothreads'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedattachments"><?= $lang['textfixoattachments'] ?></a><br />

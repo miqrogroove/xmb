@@ -63,10 +63,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Repair Tables', '');
+    $core->request_secure('Control Panel/Repair Tables', '', error_header: true);
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Repair Tables', '');
+    $core->request_secure('Control Panel/Repair Tables', '', error_header: true);
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
 

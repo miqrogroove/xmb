@@ -58,10 +58,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Clear CP Logs', '');
+    $core->request_secure('Control Panel/Clear CP Logs', '', error_header: true);
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Clear CP Logs', '');
+    $core->request_secure('Control Panel/Clear CP Logs', '', error_header: true);
     $sql->clearAdminLog();
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);

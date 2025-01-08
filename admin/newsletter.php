@@ -59,7 +59,7 @@ if (noSubmit('newslettersubmit')) {
     $template->token = $token->create('Control Panel/Newsletter', 'send', X_NONCE_FORM_EXP);
     $body = $template->process('admin_newsletter.php');
 } else {
-    $core->request_secure('Control Panel/Newsletter', 'send');
+    $core->request_secure('Control Panel/Newsletter', 'send', error_header: true);
     @set_time_limit(0);
     $newssubject = $core->postedVar('newssubject');
     $newsmessage = $core->postedVar('newsmessage');
