@@ -85,6 +85,7 @@ require ROOT.'include/Forums.php';
 require ROOT.'include/functions.inc.php';
 require ROOT.'include/Login.php';
 require ROOT.'include/Observer.php';
+require ROOT.'include/schema.inc.php';
 require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
 require ROOT.'include/sql.inc.php';

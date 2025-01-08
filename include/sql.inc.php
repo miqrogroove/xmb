@@ -663,11 +663,11 @@ class SQL
      */
     public function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false)
     {
-        $sqllast = $this->db->escape($lastpost);
+        $this->db->escape_fast($lastpost);
 
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
-        $this->db->query("UPDATE $table SET lastpost = '$sqllast' WHERE tid = $tid");
+        $this->db->query("UPDATE $table SET lastpost = '$lastpost' WHERE tid = $tid");
     }
 
     /**
@@ -678,11 +678,12 @@ class SQL
     public function findLaspostByForum(int $fid): string
     {
         $query = $this->db->query("SELECT t.lastpost
-        FROM " . $this->tablepre . "forums AS f
-        LEFT JOIN " . $this->tablepre . "threads AS t USING (fid)
-        WHERE f.fid = $fid OR f.fup = $fid
-        ORDER BY t.lastpost DESC
-        LIMIT 1");
+            FROM " . $this->tablepre . "forums AS f
+            LEFT JOIN " . $this->tablepre . "threads AS t USING (fid)
+            WHERE f.fid = $fid OR f.fup = $fid
+            ORDER BY t.lastpost DESC
+            LIMIT 1
+        ");
 
         if ($this->db->num_rows($query) === 0) {
             $result = ''; // Forum not found.

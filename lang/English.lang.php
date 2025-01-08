@@ -233,6 +233,7 @@ $lang['cb_normalmode'] = "Normal";
 $lang['censorupdate'] = "Censored words updated successfully!";
 $lang['checkall'] = "Check All";
 $lang['checkspelling'] = "Check Spelling";
+$lang['checktables_confirm'] = 'This tool will check the health of all tables and update the table satistics.  Do you want to do this now?';
 $lang['closedmsg'] = "Sorry, this topic is closed. No new replies are accepted.";
 $lang['closemsgques'] = "Close topic on reply?";
 $lang['closethreadmsg'] = "Thank you, the topic has been closed/ opened. You are now being forwarded back to the thread list.";

@@ -69,7 +69,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/sql.php"><?= $lang['raw_mysql'] ?></a><br />
 <?php } ?>
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=analyzetables"><?= $lang['analyze'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=checktables"><?= $lang['textcheck'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/checktables.php"><?= $lang['textcheck'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=optimizetables"><?= $lang['optimize'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=repairtables"><?= $lang['repair'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=u2udump"><?= $lang['u2udump'] ?></a><br />
