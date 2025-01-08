@@ -943,7 +943,7 @@ class Core
 
         $lastpost = $this->sql->findLaspostByForum($fid);
         
-        $this->sql->setForumCounts($fid, $postcount, $threadcount, $lastpost);
+        $this->sql->setForumCounts($fid, $lastpost, $postcount, $threadcount);
     }
 
     /**

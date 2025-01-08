@@ -641,16 +641,16 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
         $this->db->query("INSERT INTO $table SET
-        fid = {$values['fid']},
-        views = {$values['views']},
-        replies = {$values['replies']},
-        topped = {$values['topped']},
-        pollopts = {$values['pollopts']},
-        subject = '{$values['subject']}',
-        icon = '{$values['icon']}',
-        lastpost = '{$values['lastpost']}',
-        author = '{$values['author']}',
-        closed = '{$values['closed']}'
+            fid = {$values['fid']},
+            views = {$values['views']},
+            replies = {$values['replies']},
+            topped = {$values['topped']},
+            pollopts = {$values['pollopts']},
+            subject = '{$values['subject']}',
+            icon = '{$values['icon']}',
+            lastpost = '{$values['lastpost']}',
+            author = '{$values['author']}',
+            closed = '{$values['closed']}'
         ");
 
         return $this->db->insert_id();
@@ -701,11 +701,16 @@ class SQL
      *
      * @since 1.9.12.06
      */
-    public function setForumCounts(int $fid, int $postcount, int $threadcount, string $lastpost)
+    public function setForumCounts(int $fid, string $lastpost, ?int $postcount = null, ?int $threadcount = null)
     {
         $this->db->escape_fast($lastpost);
 
-        $this->db->query("UPDATE " . $this->tablepre . "forums SET posts = $postcount, threads = $threadcount, lastpost = '$lastpost' WHERE fid = $fid");
+        $counts = '';
+
+        if (! is_null($postcount)) $counts .= "posts = $postcount, ";
+        if (! is_null($threadcount)) $counts .= "threads = $threadcount, ";
+
+        $this->db->query("UPDATE " . $this->tablepre . "forums SET $counts lastpost = '$lastpost' WHERE fid = $fid");
     }
 
     /**
@@ -732,6 +737,60 @@ class SQL
                 f.posts   = IFNULL(query2.pcount, 0) + IFNULL(query4.pcount, 0)
             WHERE f.type = 'forum'
         ");
+    }
+
+    /**
+     * Gather pid and date from the latest or bumped thread in each forum using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function getLatestPostForAllForums(): array
+    {
+        $sql = 'SELECT f.fid, f.fup, f.type, f.lastpost, p.author, p.dateline, p.pid, log.username, log.date '
+             . 'FROM ' . $this->tablepre . 'forums AS f '
+             . 'LEFT JOIN ( '
+             . '    SELECT pid, p3.fid, author, dateline FROM ' . $this->tablepre . 'posts AS p3 '
+             . '    INNER JOIN ( '
+             . '        SELECT p2.fid, MAX(pid) AS lastpid '
+             . '        FROM ' . $this->tablepre . 'posts AS p2 '
+             . '        INNER JOIN ( '
+             . '            SELECT fid, MAX(dateline) AS lastdate '
+             . '            FROM ' . $this->tablepre . 'posts '
+             . '            GROUP BY fid '
+             . '        ) AS query3 ON p2.fid=query3.fid AND p2.dateline=query3.lastdate '
+             . '        GROUP BY p2.fid '
+             . '    ) AS query2 ON p3.pid=query2.lastpid '
+             . ') AS p ON f.fid=p.fid '
+             . 'LEFT JOIN ( /* Self-join order is critical with no unique key available */ '
+             . '    SELECT log2.fid, log2.date, log2.username '
+             . '    FROM ' . $this->tablepre . 'logs AS log2 '
+             . '    INNER JOIN ( '
+             . '        SELECT fid, MAX(`date`) AS lastdate '
+             . '        FROM ' . $this->tablepre . 'logs '
+             . '        WHERE `action` = "bump" '
+             . '        GROUP BY fid '
+             . '    ) AS query4 ON log2.fid=query4.fid AND log2.date=query4.lastdate '
+             . ') AS log ON f.fid=log.fid '
+             . 'WHERE f.type="forum" OR f.type="sub"';
+
+        $q = $this->db->query($sql);
+
+        // Structure results to accommodate a nested loop strategy.
+        $data = [
+            'forums' => [],
+            'subs' => [],
+        ];
+        while ($row = $this->db->fetch_array($q)) {
+            if ($row['type'] == 'forum') {
+                $data['forums'][] = $row;
+            } else {
+                $data['subs'][] = $row;
+            }
+        }
+
+        $this->db->free_result($q);
+
+        return $data;
     }
 
     /**

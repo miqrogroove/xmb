@@ -26,6 +26,10 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use InvalidArgumentException;
+use LogicException;
+use RuntimeException;
+
 class Token
 {
     public function __construct(private SQL $sql, private Variables $vars)

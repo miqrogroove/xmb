@@ -356,6 +356,7 @@ $lang['fileuploaderror5'] = 'The image you uploaded exceeds our width and height
 $lang['fileuploaderror6'] = 'Sorry, the file you uploaded exceeds our size limit.';
 $lang['fileuploaderror7'] = 'XMB Error: Could not find a temporary directory for remote attachments.';
 $lang['fileuploaderror8'] = 'Sorry, there was a problem attaching one of your files or images to this message.';
+$lang['fixflastposts_confirm'] = 'This tool will refresh the the last post stats for every forum.  Do you want to do this now?';
 $lang['fixmemposts_confirm'] = 'This tool will refresh the post count for every member.  Do you want to do this now?';
 $lang['fixposts_confirm'] = 'This tool will refresh the total threads and posts in every forum.  Do you want to do this now?';
 $lang['fixthreads_confirm'] = 'This tool will refresh the total posts in every thread.  Do you want to do this now?';
