@@ -30,6 +30,7 @@ define('ROOT', '../');
 require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
+$forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
@@ -38,8 +39,8 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
-$relpath = 'admin/fixftotals.php';
-$title = $lang['textfixposts'];
+$relpath = 'admin/fixtorphans.php';
+$title = $lang['textfixothreads'];
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($title);
@@ -51,24 +52,30 @@ if ($vars->settings['subject_in_title'] == 'on') {
 
 $core->assertAdminOnly();
 
+$auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+$core->audit($vars->self['username'], $auditaction);
+
 $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Fix Forum Totals', '', error_header: true);
-    $core->redirect($vars->full_url . 'admin/', timeout: 0);
-} elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Fix Forum Totals', '', error_header: true);
-    $sql->fixAllForumCounts();
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
-    $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_forumtotal'].'</td></tr>';
-} else {
-    $template->token = $token->create('Control Panel/Fix Forum Totals', '', X_NONCE_AYS_EXP);
-    $template->prompt = $lang['fixposts_confirm'];
+if (noSubmit('orphsubmit')) {
+    $template->token = $token->create('Control Panel/Fix Orphans', 'Threads', X_NONCE_FORM_EXP);
     $template->formURL = $vars->full_url . $relpath;
-    $body = $template->process('admin_ays.php');
+    $template->select = $core->forumList('export_fid', allowall: false);
+    $body = $template->process('admin_fixtorphans.php');
+} else {
+    $core->request_secure('Control Panel/Fix Orphans', 'Threads', error_header: true);
+
+    $export_fid = formInt('export_fid');
+    $export_forum = $forums->getForum($export_fid);
+    if ($export_forum['type'] != 'forum' && $export_forum['type'] != 'sub') {
+        $core->error($lang['export_fid_not_there']);
+    }
+
+    $sql->fixOrphanedThreads($export_fid);
+
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['tool_completed'] . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');

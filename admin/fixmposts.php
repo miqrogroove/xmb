@@ -63,7 +63,7 @@ if (onSubmit('nosubmit')) {
     $sql->fixAllMemberCounts();
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr></table></table>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr>';
 } else {
     $template->token = $token->create('Control Panel/Fix Member Posts', '', X_NONCE_AYS_EXP);
     $template->prompt = $lang['fixmemposts_confirm'];

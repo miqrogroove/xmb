@@ -833,6 +833,21 @@ class SQL
     }
 
     /**
+     * Change the fid for every thread having an invalid fid, using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function fixOrphanedThreads(int $newFid)
+    {
+        $this->db->query('UPDATE ' . $this->tablepre . 'threads AS t
+            LEFT JOIN ' . $this->tablepre . 'forums AS f USING (fid)
+            LEFT JOIN ' . $this->tablepre . 'posts AS p USING (tid)
+            SET t.fid = ' . $newFid . ', p.fid = ' . $newFid . '
+            WHERE f.fid IS NULL
+        ');
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12

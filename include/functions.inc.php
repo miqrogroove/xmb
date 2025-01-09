@@ -1583,9 +1583,15 @@ class Core
     }
 
     /**
+     * Generates the forum select HTML for things like search input.
+     *
      * @since 1.9.8
+     * @param string $selectname The HTML name attribute value.
+     * @param bool $multiple Should the element render as a multi-select control?
+     * @param bool $allowall Should an "All" forums choice be offered?
+     * @param int $currentfid Context-sensitive forum ID.
      */
-    function forumList($selectname='srchfid', $multiple=false, $allowall=true, $currentfid=0)
+    public function forumList(string $selectname='srchfid', bool $multiple = false, bool $allowall = true, int $currentfid = 0)
     {
         $lang = &$this->vars->lang;
 

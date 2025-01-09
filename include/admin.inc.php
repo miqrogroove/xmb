@@ -405,7 +405,15 @@ class admin
     {
         $THEME = &$this->vars->theme;
 
-        if (! $this->db->error()) {
+        if ($this->db->error()) {
+            $error = '<tr bgcolor="' . $THEME['altbg1'] . '" class="ctrtablerow"><td align="left">';
+            $error .= $this->core->error($this->db->error(), showheader: false, return_as_string: true, showfooter: false, die: false);
+            $error .= '</td></tr>';
+            return $error;
+        } elseif ($resource === true) {
+            // Success with no result.
+            return '';
+        } else {
             ob_start();
             $count = $this->db->num_fields($resource);
             if ($header) {
@@ -439,11 +447,6 @@ class admin
                 echo '</tr>';
             }
             return ob_get_clean();
-        } else {
-            $error = '<tr bgcolor="' . $THEME['altbg1'] . '" class="ctrtablerow"><td align="left">';
-            $error .= $this->core->error($this->db->error(), showheader: false, return_as_string: true, showfooter: false, die: false);
-            $error .= '</td></tr>';
-            return $error;
         }
     }
 }

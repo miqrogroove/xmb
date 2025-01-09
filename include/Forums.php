@@ -87,10 +87,10 @@ class Forums
     }
 
     /**
-     * Creates an array of the child forums.
+     * Creates an array of the active child forums.
      *
      * @since 1.10.00
-     * @param int $fid
+     * @param int $fid The parent forum ID.
      * @return array
      */
     public function getChildForums(int $fid): array

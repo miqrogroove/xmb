@@ -38,8 +38,8 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
-$relpath = 'admin/fixflastposts.php';
 $title = $lang['textfixlastpostf'];
+$relpath = 'admin/fixflastposts.php';
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($title);
@@ -119,7 +119,7 @@ if (onSubmit('nosubmit')) {
 
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr></table></table>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr>';
 } else {
     $template->token = $token->create('Control Panel/Fix Last Posts', 'Forums', X_NONCE_AYS_EXP);
     $template->prompt = $lang['fixflastposts_confirm'];
