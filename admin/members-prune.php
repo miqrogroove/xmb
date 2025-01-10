@@ -109,11 +109,7 @@ if (onSubmit('nosubmit')) {
         $movedids = implode("', '", $movedids);
         $db->query("DELETE FROM " . $this->vars->tablepre . "threads WHERE tid IN ($csv) OR closed IN ('$movedids')");
         $db->query("DELETE FROM " . $this->vars->tablepre . "favorites WHERE tid IN ($csv)");
-        $db->query("DELETE FROM d, r, v "
-                 . "USING " . $this->vars->tablepre . "vote_desc AS d "
-                 . "LEFT JOIN " . $this->vars->tablepre . "vote_results AS r ON r.vote_id = d.vote_id "
-                 . "LEFT JOIN " . $this->vars->tablepre . "vote_voters AS v  ON v.vote_id = d.vote_id "
-                 . "WHERE d.topic_id IN ($csv)");
+        $sql->deleteVotesByTID($tids);
     }
 
     // Update Thread Stats

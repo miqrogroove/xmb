@@ -634,16 +634,14 @@ case 'approveall':
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
-                    $db->query("INSERT INTO ".X_PREFIX."vote_desc SET topic_id = $newtid");
-                    $newpoll = $db->insert_id();
+                    $newpoll = $sql->addVoteDesc($newtid);
                     $db->query(
                         "INSERT INTO ".X_PREFIX."vote_results " .
                         "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
                         "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
                         "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
                     );
-                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                    $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
             }
             $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
@@ -738,8 +736,7 @@ case 'deleteban':
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
-                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-                    $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+                    $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
             }
             $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
@@ -804,21 +801,14 @@ case 'approvethread':
     if (intval($thread['pollopts']) != 0) {
         $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
-            $db->query(
-                "INSERT INTO ".X_PREFIX."vote_desc " .
-                "      (topic_id) " .
-                "SELECT  $newtid " .
-                "FROM ".X_PREFIX."hold_vote_desc WHERE topic_id = {$thread['tid']}"
-            );
-            $newpoll = $db->insert_id();
+            $newpoll = $sql->addVoteDesc($newtid);
             $db->query(
                 "INSERT INTO ".X_PREFIX."vote_results " .
                 "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
                 "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
                 "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
             );
-            $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-            $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+            $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }
     }
     $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
@@ -920,8 +910,7 @@ case 'deletethread':
     if (intval($thread['pollopts']) != 0) {
         $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
-            $db->query("DELETE FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll");
-            $db->query("DELETE FROM ".X_PREFIX."hold_vote_desc WHERE vote_id = $oldpoll");
+            $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }
     }
     $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");

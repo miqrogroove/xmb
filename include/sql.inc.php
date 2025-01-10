@@ -351,10 +351,7 @@ class SQL
     {
         $query = $this->db->query("SELECT username, email, langfile FROM " . $this->tablepre . "members WHERE status = 'Super Administrator'");
 
-        $result = [];
-        while ($admin = $this->db->fetch_array($query)) {
-            $result[] = $admin;
-        }
+        $result = $this->db->fetch_all($query);
         $this->db->free_result($query);
 
         return $result;
@@ -1212,19 +1209,19 @@ class SQL
      */
     public function getOrphanedAttachments(bool $quarantine, int $pid = 0, ?int $uid = null): array
     {
-        $result = [];
-
         $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
         
         $where = is_int($uid) ? "a.uid = $uid AND" : '';
 
-        $query = $this->db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
-        thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
-        FROM $table AS a LEFT JOIN $table AS thumbs ON a.aid=thumbs.parentid WHERE $where a.pid = $pid AND a.parentid = 0");
+        $query = $this->db->query("
+            SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
+                thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
+            FROM $table AS a
+            LEFT JOIN $table AS thumbs ON a.aid=thumbs.parentid
+            WHERE $where a.pid = $pid AND a.parentid = 0
+        ");
 
-        while ($row = $this->db->fetch_array($query)) {
-            $result[] = $row;
-        }
+        $result = $this->db->fetch_all($query);
         $this->db->free_result($query);
 
         return $result;
@@ -1272,14 +1269,11 @@ class SQL
      */
     public function getAttachmentParents(int $pid, bool $quarantine = false): array
     {
-        $results = [];
-
         $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
 
         $query = $this->db->query("SELECT aid, filesize, parentid FROM $table WHERE pid = $pid ORDER BY parentid");
-        while($row = $this->db->fetch_array($query)) {
-            $results[] = $row;
-        }
+
+        $results = $this->db->fetch_all($query);
         $this->db->free_result($query);
 
         return $results;
@@ -1601,6 +1595,35 @@ class SQL
     }
 
     /**
+     * Remove a poll (or multiple polls) and all of its records.
+     *
+     * @since 1.10.00
+     * @param array $tids Array of thread ID numbers.
+     * @param bool $quarantine Delete this record from the private review tables?
+     */
+    public function deleteVotesByTID(array $tids, bool $quarantine = false)
+    {
+        $tids = array_map('intval', $tids);
+        $tids = implode(',', $tids);
+
+        $tabled = $this->tablepre . ($quarantine ? 'hold_vote_desc' : 'vote_desc');
+        $tabler = $this->tablepre . ($quarantine ? 'hold_vote_results' : 'vote_results');
+        $tablev = $this->tablepre . 'vote_voters';
+
+        $deletes = $quarantine ? 'd, r' : 'd, r, v';
+
+        $extraJoin = $quarantine ? '' : "LEFT JOIN $tablev AS v ON v.vote_id = d.vote_id";
+
+        $this->db->query("
+            DELETE $deletes
+            FROM $tabled AS d
+            LEFT JOIN $tabler AS r ON r.vote_id = d.vote_id
+            $extraJoin
+            WHERE d.topic_id IN ($tids)
+        ");
+    }
+
+    /**
      * Remove a user's guest record and any other stale records.
      *
      * @since 1.9.12.04
@@ -1680,12 +1703,7 @@ class SQL
 
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "ranks $where ORDER BY stars");
 
-        $ranks = [];
-        while($row = $this->db->fetch_array($result)) {
-            $ranks[] =& $row;
-            unset($row);
-        }
-
+        $ranks = $this->db->fetch_all($result);
         $this->db->free_result($result);
 
         return $ranks;
@@ -1738,12 +1756,7 @@ class SQL
     {
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "smilies WHERE type = 'smiley'");
 
-        $smilies = [];
-        while($row = $this->db->fetch_array($result)) {
-            $smilies[] = &$row;
-            unset($row);
-        }
-
+        $smilies = $this->db->fetch_all($result);
         $this->db->free_result($result);
 
         return $smilies;
@@ -1759,12 +1772,7 @@ class SQL
     {
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "words ORDER BY id");
 
-        $words = [];
-        while($row = $this->db->fetch_array($result)) {
-            $words[] = &$row;
-            unset($row);
-        }
-
+        $words = $this->db->fetch_all($result);
         $this->db->free_result($result);
 
         return $words;
@@ -1776,7 +1784,7 @@ class SQL
      * Note the XMB class Forums service is used to cache this list and should be used instead of SQL in most situations.
      *
      * @since 1.10.00
-     * @return array of associative table rows.
+     * @return array of associative table rows.  The top level is keyed by fid values.
     */
     public function getForums(bool $activeOnly = true): array
     {
@@ -1788,13 +1796,14 @@ class SQL
         
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "forums $where ORDER BY displayorder ASC");
 
-        $forums = [];
-        while($row = $this->db->fetch_array($result)) {
-            $forums[(int) $row['fid']] = &$row;
-            unset($row);
-        }
-
+        // Fetch all records from the result.
+        $forums = $this->db->fetch_all($result);
         $this->db->free_result($result);
+
+        // Re-key the forums array by the fid numbers.
+        $keys = array_column($forums, 'fid');
+        $keys = array_map('intval', $keys);
+        $forums = array_combine($keys, $forums);
 
         return $forums;
     }

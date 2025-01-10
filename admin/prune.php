@@ -166,17 +166,11 @@ if (noSubmit('pruneSubmit')) {
             set_time_limit(30); // Potentially expensive operations coming up.
             $attach->deleteByThreads($tids); // Must delete attachments before posts!
             set_time_limit(30);
+            $sql->deleteVotesByTID($tids);
+            set_time_limit(30);
             $tids = implode(',', $tids);
             $db->query("DELETE FROM " . $vars->tablepre . "posts WHERE tid IN ($tids)");
             $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE tid IN ($tids)");
-            set_time_limit(30);
-
-            $db->query("DELETE FROM d, r, v "
-                     . "USING " . $vars->tablepre . "vote_desc AS d "
-                     . "LEFT JOIN " . $vars->tablepre . "vote_results AS r ON r.vote_id = d.vote_id "
-                     . "LEFT JOIN " . $vars->tablepre . "vote_voters AS v  ON v.vote_id = d.vote_id "
-                     . "WHERE d.topic_id IN ($tids)");
-
             $db->query("DELETE FROM " . $vars->tablepre . "threads WHERE tid IN ($tids)");
 
             // Update Forum Stats

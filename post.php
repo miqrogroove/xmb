@@ -1338,17 +1338,13 @@ switch($action) {
                 $attachSvc->deleteByPost($pid);
 
                 if ((int) $isfirstpost['pid'] == $pid) {
-                    $numrows = $sql->countPosts(false, $tid);
+                    $numrows = $sql->countPosts(quarantine: false, $tid);
 
                     if ($numrows == 0) {
                         $threaddelete = 'yes';
                         $db->query("DELETE FROM ".X_PREFIX."favorites WHERE tid='$tid'");
 
-                        $db->query("DELETE FROM d, r, v "
-                                 . "USING ".X_PREFIX."vote_desc AS d "
-                                 . "LEFT JOIN ".X_PREFIX."vote_results AS r ON r.vote_id = d.vote_id "
-                                 . "LEFT JOIN ".X_PREFIX."vote_voters AS v  ON v.vote_id = d.vote_id "
-                                 . "WHERE d.topic_id = $tid");
+                        $sql->deleteVotesByTID([$tid]);
 
                         $db->query("DELETE FROM ".X_PREFIX."threads WHERE tid=$tid OR closed='moved|$tid'");
                     } else {

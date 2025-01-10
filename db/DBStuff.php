@@ -122,6 +122,17 @@ interface DBStuff
     public function fetch_array($result, int $type = self::SQL_ASSOC): ?array;
 
     /**
+     * Fetch an array representing all rows of a result.
+     *
+     * The 2nd-level array type used within the list of rows can be associative, numeric, or both.
+     *
+     * @param mysqli_result $result
+     * @param int $type The type of indexing to add to the array: SQL_ASSOC, SQL_NUM, or SQL_BOTH
+     * @return array Returns an array representing a list of row arrays.
+     */
+    public function fetch_all($result, int $type = self::SQL_ASSOC): array;
+
+    /**
      * Get the name of the specified field from a result set.
      */
     public function field_name($result, int $field): string;

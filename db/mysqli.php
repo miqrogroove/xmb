@@ -284,6 +284,25 @@ class MySQLiDatabase implements DBStuff
     }
 
     /**
+     * Fetch an array representing all rows of a result.
+     *
+     * The 2nd-level array type used within the list of rows can be associative, numeric, or both.
+     *
+     * @since 1.10.00
+     * @param mysqli_result $result
+     * @param int $type The type of indexing to add to the array: SQL_ASSOC, SQL_NUM, or SQL_BOTH
+     * @return array Returns an array representing a list of row arrays.
+     */
+    public function fetch_all($result, int $type = self::SQL_ASSOC): array
+    {
+        try {
+            return $result->fetch_all($type);
+        } catch (mysqli_sql_exception $e) {
+            $this->panic($e);
+        }
+    }
+
+    /**
      * Get the name of the specified field from a result set.
      *
      * @since 1.9.1
