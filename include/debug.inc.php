@@ -71,6 +71,7 @@ class Debug
             'DELETE',
             'INSERT INTO ',
             'INSERT IGNORE INTO ',
+            'TRUNCATE ',
             ' DUPLICATE KEY ',
             ' WHERE ',
             ' ON ',
