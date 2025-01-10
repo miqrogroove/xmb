@@ -62,7 +62,7 @@
 &raquo;&nbsp;<a href="<?= $full_url ?>admin/fixtorphans.php"><?= $lang['textfixothreads'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedattachments"><?= $lang['textfixoattachments'] ?></a><br />
 &raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedpolls"><?= $lang['textfixopolls'] ?></a><br />
-&raquo;&nbsp;<a href="<?= $full_url ?>tools.php?action=fixorphanedposts"><?= $lang['textfixoposts'] ?></a><br />
+&raquo;&nbsp;<a href="<?= $full_url ?>admin/fixporphans.php"><?= $lang['textfixoposts'] ?></a><br />
 </td>
 <td class="tablerow" align="left" valign="top" width="20%" bgcolor="<?= $THEME['altbg2'] ?>">
 <?php if (X_SADMIN) { ?>

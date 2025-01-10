@@ -928,22 +928,18 @@ class Core
 
     /**
      * @since 1.5
+     * @param int $fid
+     * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
      */
-    function updateforumcount(int $fid)
+    function updateforumcount(int $fid, ?int $oldThreadCount = null)
     {
         $db = $this->db;
 
-        $query = $db->query("SELECT COUNT(*) FROM " . $this->vars->tablepre . "forums AS f INNER JOIN " . $this->vars->tablepre . "posts USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
-        $postcount = (int) $db->result($query, 0);
-        $db->free_result($query);
+        $counts = $this->sql->getForumCounts($fid);
 
-        $query = $db->query("SELECT COUNT(*) FROM " . $this->vars->tablepre . "forums AS f INNER JOIN " . $this->vars->tablepre . "threads USING(fid) WHERE f.fid=$fid OR f.fup=$fid");
-        $threadcount = (int) $db->result($query, 0);
-        $db->free_result($query);
+        $lastpost = $this->sql->findLastpostByForum($fid);
 
-        $lastpost = $this->sql->findLaspostByForum($fid);
-        
-        $this->sql->setForumCounts($fid, $lastpost, $postcount, $threadcount);
+        $this->sql->setForumCounts($fid, $lastpost, $counts['posts'], $counts['threads'], $oldThreadCount);
     }
 
     /**
@@ -1937,7 +1933,7 @@ class Core
              WHERE imagehash='$nonce' AND dateline >= $time AND LENGTH(imagestring) = $key_length"
         );
         if ($db->num_rows($result) === 1) {
-            return $db->result($result, 0);
+            return $db->result($result);
         }
         return '';
     }

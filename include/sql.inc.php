@@ -279,7 +279,7 @@ class SQL
     public function countMembers(): int
     {
         $query = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "members");
-        $result = (int) $this->db->result($query, 0);
+        $result = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $result;
@@ -371,7 +371,7 @@ class SQL
         $sqluser = $this->db->escape($username);
 
         $query = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "members WHERE username = '$sqluser' AND password = '$sqlpass' AND status = 'Super Administrator'");
-        $count = (int) $this->db->result($query, 0);
+        $count = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $count == 1;
@@ -673,9 +673,11 @@ class SQL
     /**
      * Find the most recent lastpost value among all threads in the given forum.
      *
-     * @since 1.9.12.06
+     * @since 1.9.12.06 Previously named findLaspostByForum
+     * @since 1.10.00
+     * @param int $fid
      */
-    public function findLaspostByForum(int $fid): string
+    public function findLastpostByForum(int $fid): string
     {
         $query = $this->db->query("SELECT t.lastpost
             FROM " . $this->tablepre . "forums AS f
@@ -688,7 +690,7 @@ class SQL
         if ($this->db->num_rows($query) === 0) {
             $result = ''; // Forum not found.
         } else {
-            $result = $this->db->result($query, 0);
+            $result = $this->db->result($query);
             if (null === $result) $result = ''; // Forum is empty.
         }
         $this->db->free_result($query);
@@ -697,20 +699,53 @@ class SQL
     }
 
     /**
+     * Check the thread and post totals of a forum using as few queries as possible.
+     *
+     * @since 1.10.00
+     */
+    public function getForumCounts(int $fid): array
+    {
+        $query = $this->db->query("
+            SELECT COUNT(*) FROM " . $this->tablepre . "forums AS f
+            INNER JOIN " . $this->tablepre . "posts USING(fid)
+            WHERE f.fid = $fid OR f.fup = $fid
+            UNION ALL
+            SELECT COUNT(*) FROM " . $this->tablepre . "forums AS f
+            INNER JOIN " . $this->tablepre . "threads USING(fid)
+            WHERE f.fid = $fid OR f.fup = $fid
+        ");
+        
+        $results = [
+            'posts' => (int) $this->db->result($query, 0),
+            'threads' => (int) $this->db->result($query, 1),
+        ];
+        $this->db->free_result($query);
+
+        return $results;
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12.06
+     * @param int $fid
+     * @param string $lastpost
+     * @param int $postcount Optional.
+     * @param int $threadcount Optional.
+     * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
      */
-    public function setForumCounts(int $fid, string $lastpost, ?int $postcount = null, ?int $threadcount = null)
+    public function setForumCounts(int $fid, string $lastpost, ?int $postcount = null, ?int $threadcount = null, ?int $oldThreadCount = null)
     {
         $this->db->escape_fast($lastpost);
 
         $counts = '';
+        $where = "WHERE fid = $fid";
 
         if (! is_null($postcount)) $counts .= "posts = $postcount, ";
         if (! is_null($threadcount)) $counts .= "threads = $threadcount, ";
+        if (! is_null($oldThreadCount)) $where .= " AND threads = $oldThreadCount";
 
-        $this->db->query("UPDATE " . $this->tablepre . "forums SET $counts lastpost = '$lastpost' WHERE fid = $fid");
+        $this->db->query("UPDATE " . $this->tablepre . "forums SET $counts lastpost = '$lastpost' $where");
     }
 
     /**
@@ -837,7 +872,7 @@ class SQL
      *
      * @since 1.10.00
      */
-    public function fixOrphanedThreads(int $newFid)
+    public function fixOrphanedThreads(int $newFid): int
     {
         $this->db->query('UPDATE ' . $this->tablepre . 'threads AS t
             LEFT JOIN ' . $this->tablepre . 'forums AS f USING (fid)
@@ -845,6 +880,8 @@ class SQL
             SET t.fid = ' . $newFid . ', p.fid = ' . $newFid . '
             WHERE f.fid IS NULL
         ');
+        
+        return $this->db->affected_rows();
     }
 
     /**
@@ -874,7 +911,7 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE fid = $fid $author");
-        $result = (int) $this->db->result($query, 0);
+        $result = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $result;
@@ -961,7 +998,7 @@ class SQL
 
         $query = $this->db->query("SELECT message FROM $table WHERE pid = $pid");
         if ($this->db->num_rows($query) == 1) {
-            $result = $this->db->result($query, 0);
+            $result = $this->db->result($query);
         } else {
             $result = '';
         }
@@ -1001,7 +1038,7 @@ class SQL
         }
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table $where");
-        $result = (int) $this->db->result($query, 0);
+        $result = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $result;
@@ -1019,7 +1056,7 @@ class SQL
         $this->db->escape_fast($username);
         $yesno = $usesig ? 'yes' : 'no';
 
-        $db->query("UPDATE " . $this->tablepre . "posts SET usesig = '$yesno' WHERE author = '$username'");
+        $this->db->query("UPDATE " . $this->tablepre . "posts SET usesig = '$yesno' WHERE author = '$username'");
     }
 
     /**
@@ -1035,7 +1072,7 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_favorites' : $this->tablepre . 'favorites';
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE tid = $tid AND username = '$sqluser' AND type = '$sqltype'");
-        if (0 == (int) $this->db->result($query, 0)) {
+        if (0 == (int) $this->db->result($query)) {
             $this->db->query("INSERT INTO $table SET tid = $tid, username = '$sqluser', type = '$sqltype'");
         }
         $this->db->free_result($query);
@@ -1270,7 +1307,7 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE pid = 0 AND parentid = 0 AND uid = $uid");
-        $count = (int) $this->db->result($query, 0);
+        $count = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $count;
@@ -1286,7 +1323,7 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE pid = $pid AND parentid = 0");
-        $count = (int) $this->db->result($query, 0);
+        $count = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $count;
@@ -1302,7 +1339,7 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
 
         $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE parentid = $aid AND filename LIKE '%-thumb.jpg'");
-        $count = (int) $this->db->result($query, 0);
+        $count = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $count;
@@ -1619,7 +1656,7 @@ class SQL
         if ($this->db->num_rows($query) === 0) {
             $id = 0;
         } else {
-            $id = (int) $this->db->result($query, 0);
+            $id = (int) $this->db->result($query);
         }
         $this->db->free_result($query);
 
@@ -1816,7 +1853,7 @@ class SQL
         if ($this->db->num_rows($query) === 0) {
             $addr = ''; // Post not found.
         } else {
-            $addr = $this->db->result($query, 0);
+            $addr = $this->db->result($query);
         }
         $this->db->free_result($query);
 
@@ -1928,7 +1965,7 @@ class SQL
 
         $query = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "u2u WHERE owner = '$username' AND folder = 'Inbox' AND readstatus = 'no'");
 
-        $result = (int) $this->db->result($query, 0);
+        $result = (int) $this->db->result($query);
         $this->db->free_result($query);
 
         return $result;

@@ -194,12 +194,12 @@ interface DBStuff
     /**
      * Retrieves the contents of one cell from a MySQL result set.
      *
-     * @param mixed    $result
-     * @param int      $row   The row number from the result that's being retrieved.
-     * @param mixed    $field The name or offset of the field being retrieved.
-     * @return string
+     * @param mixed $result
+     * @param int $row Optional. The zero-based row number from the result that's being retrieved.
+     * @param int $field Optional. The zero-based offset of the field being retrieved.
+     * @return ?string
      */
-    public function result($result, int $row, $field = 0): string;
+    public function result($result, int $row = 0, int $field = 0): ?string;
 
     /**
      * Retrieves the row count from a query result.

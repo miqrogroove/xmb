@@ -92,7 +92,7 @@ class Debug
             ' NOT',
             ' USING',
             ' VALUES ',
-            ' UNION ALL ',
+            ' UNION ALL',
         ];
 
         $replace = [];

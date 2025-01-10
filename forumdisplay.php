@@ -99,8 +99,8 @@ $threadcount = $sql->countThreadsByForum($fid);
 
 // Perform automatic maintenance
 if ($forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount) {
-    // Note there is a potential race between the values being compared above in a non-transaction database.  This feature needs to be reviewed for performance.
-    $core->updateforumcount($fid);
+    // Also verify the value that we expect to overwrite.
+    $core->updateforumcount($fid, oldThreadCount: (int) $forum['threads']);
 }
 
 $mpage = $core->multipage($threadcount, $vars->tpp, "forumdisplay.php?fid=$fid");

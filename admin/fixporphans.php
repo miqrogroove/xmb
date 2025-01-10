@@ -30,8 +30,8 @@ define('ROOT', '../');
 require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
+$db = \XMB\Services\db();
 $forums = \XMB\Services\forums();
-$sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
 $vars = \XMB\Services\vars();
@@ -39,8 +39,8 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
-$relpath = 'admin/fixtorphans.php';
-$title = $lang['textfixothreads'];
+$relpath = 'admin/fixporphans.php';
+$title = $lang['textfixoposts'];
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
 $core->nav($title);
@@ -60,29 +60,53 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('orphsubmit')) {
-    $template->token = $token->create('Control Panel/Fix Orphans', 'Threads', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Fix Orphans', 'Posts', X_NONCE_FORM_EXP);
     $template->formURL = $vars->full_url . $relpath;
-    $template->select = $core->forumList('export_fid', allowall: false);
-    $body = $template->process('admin_fixtorphans.php');
+    $body = $template->process('admin_fixporphans.php');
 } else {
-    $core->request_secure('Control Panel/Fix Orphans', 'Threads', error_header: true);
+    $core->request_secure('Control Panel/Fix Orphans', 'Posts', error_header: true);
 
-    $export_fid = formInt('export_fid');
+    $export_tid = formInt('export_tid');
+
+    $query = $db->query("SELECT fid FROM " . $vars->tablepre . "threads WHERE tid = $export_tid");
+    if ($db->num_rows($query) != 1) {
+        $core->error($lang['export_tid_not_there']);
+    }
+    $export_fid = (int) $db->result($query);
+    $db->free_result($query);
+
     $export_forum = $forums->getForum($export_fid);
     if (is_null($export_forum) || $export_forum['type'] != 'forum' && $export_forum['type'] != 'sub') {
         $core->error($lang['export_fid_not_there']);
     }
 
-    $i = $sql->fixOrphanedThreads($export_fid);
+    // Fix Invalid FIDs
+    $db->query("
+        UPDATE " . $vars->tablepre . "posts AS p
+        INNER JOIN " . $vars->tablepre . "threads AS t USING (tid) 
+        SET p.fid = t.fid
+        WHERE p.fid != t.fid
+    ");
+    $i = $db->affected_rows();
+
+    // Fix Invalid TIDs
+    $db->query("
+        UPDATE " . $vars->tablepre . "posts AS p
+        LEFT JOIN " . $vars->tablepre . "threads AS t USING (tid)
+        SET p.fid = $export_fid, p.tid = $export_tid
+        WHERE t.tid IS NULL
+    ");
+    $i += $db->affected_rows();
 
     if ($i > 0) {
+        $core->updatethreadcount($export_tid);
         $core->updateforumcount($export_fid);
         if ($export_forum['type'] == 'sub') {
             $core->updateforumcount((int) $export_forum['fup']);
         }
     }
 
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_threads_found'] . '</td></tr>';
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_posts_found'] . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');
