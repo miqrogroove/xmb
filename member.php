@@ -25,6 +25,7 @@
 $core = \XMB\Services\core();
 $forums = \XMB\Services\forums();
 $session = \XMB\Services\session();
+$smile = \XMB\Services\smile();
 $sql = \XMB\Services\sql();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
@@ -759,7 +760,7 @@ switch($action) {
 
         if ($memberinfo['customstatus'] != '') {
             $showtitle = $rank['title'];
-            $customstatus = '<br />'.censor($memberinfo['customstatus']);
+            $customstatus = '<br />' . $smile->censor($memberinfo['customstatus']);
         } else {
             $showtitle = $rank['title'];
             $customstatus = '';

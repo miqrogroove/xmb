@@ -88,6 +88,7 @@ require ROOT.'include/Observer.php';
 require ROOT.'include/schema.inc.php';
 require ROOT.'include/services.php';
 require ROOT.'include/sessions.inc.php';
+require ROOT.'include/SmileAndCensor.php';
 require ROOT.'include/sql.inc.php';
 require ROOT.'include/SettingsLoader.php';
 require ROOT.'include/Template.php';
@@ -147,6 +148,7 @@ debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 
 forums(new \XMB\Forums(sql()));
+smile(new \XMB\SmileAndCensor(sql()));
 token(new \XMB\Token(sql(), vars()));
 
 theme(new \XMB\Theme\Manager(forums(), sql(), template(), vars()));
@@ -155,7 +157,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), sql(), template(), token(), translation(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), smile(), sql(), template(), token(), translation(), vars()));
 
 
 /* Start 2nd Phase of Bootup */

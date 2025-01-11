@@ -30,20 +30,13 @@ use InvalidArgumentException;
 
 class Core
 {
-    private bool $smilieCacheStatus = false;
-
-    private array $censorcache = [];
-    private array $smiliecache = [];
-
-    private int $smiliesnum = 0;
-    private int $wordsnum = 0;
-
     public function __construct(
         private Attach $attach,
         private BBCode $bbcode,
         private DBStuff $db,
         private Debug $debug,
         private Forums $forums,
+        private SmileAndCensor $smile,
         private SQL $sql,
         private Template $template,
         private Token $token,
@@ -176,7 +169,7 @@ class Core
         } else if ($member['status'] == 'Banned') {
             return 'member-banned';
         } else if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
-            auditBadLogin($member);
+            $this->auditBadLogin($member);
             if ($member['status'] != 'Super Administrator') {
                 return 'password-locked';
             } else if ((int) $member['bad_login_count'] >= $admin_limit) {
@@ -252,7 +245,7 @@ class Core
      * @param    $add        (optional, false) additional navigation element if string or clear navigation if null.
      * @param    $raquo      (optional, true) prepends &raquo; to the string if true, doesn't if false. Defaults to true.
      */
-    function nav(?string $add = null, bool $raquo = true)
+    public function nav(?string $add = null, bool $raquo = true)
     {
         if (is_null($add)) {
             $this->template->navigation = '';
@@ -264,6 +257,10 @@ class Core
     /**
      * Get a template with the token filled in.
      *
+     * DEPRECATED by XMB 1.10.00
+     *
+     * TODO: This method should be removed prior to beta testing.  The new Template system makes this awkward and unnecessary.
+     *
      * @since 1.9.11.11
      * @param string $name   The template name.
      * @param string $action The action for which the token is valid.
@@ -273,6 +270,7 @@ class Core
      */
     function template_secure(string $name, string $action, string $id, int $ttl): string
     {
+        trigger_error('Function template_secure() is deprecated in this version of XMB', E_USER_DEPRECATED);
         $token = $this->token->create($action, $id, $ttl);
         $placeholder = '<input type="hidden" name="token" value="" />';
         $replace = "<input type='hidden' name='token' value='$token' />";
@@ -296,95 +294,19 @@ class Core
         }
     }
 
-    /**
-    * censor() - censors text
-    *
-    * Takes text and uses predefined censors on them. Includes option to ignore whitespaces
-    *
-    * @since 1.9.1
-    * @param    $txt    string, the text to apply the censors to
-    * @return   string, the censored version of the input string
-    */
-    function censor(string $txt): string
-    {
-        global $censorcache;
-
-        $ignorespaces = true;
-        if (is_array($censorcache)) {
-            if (count($censorcache) > 0) {
-                $prevfind = '';
-                foreach($censorcache as $find=>$replace) {
-                    if ($ignorespaces === true) {
-                        $txt = str_ireplace($find, $replace, $txt);
-                    } else {
-                        if ($prevfind == '') {
-                            $prevfind = $find;
-                        }
-                        $txt = preg_replace("#(^|[^a-z])(".preg_quote($find)."|".preg_quote($prevfind).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
-                        $prevfind = $find;
-                    }
-                }
-                if ($ignorespaces !== true) {
-                    $txt = preg_replace("#(^|[^a-z])(".preg_quote($find).")($|[^a-z])#si", '\1'.$replace.'\3', $txt);
-                }
-            }
-        }
-
-        return $txt;
-    }
-
-    /**
-     * @since 1.9.1
-     */
-    function smile(&$txt)
-    {
-        global $smiliesnum, $smiliecache, $THEME;
-
-        if (! $this->smilieCacheStatus) $this->smcwcache();
-
-        if (0 == $smiliesnum) {
-            return true;
-        }
-
-        // Parse the input for HTML tags
-        $pattern = "/(<[^>]*+>)/";
-        $parts = preg_split($pattern, $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-
-        // Loop through the parts and avoid the HTML tags
-        foreach ($parts as &$part) {
-            if (substr($part, 0, 1) == '<') {
-                continue;
-            }
-            
-            foreach ($smiliecache as $code => $url) {
-                // Most $part values won't contain any smilies, so optimize by writing new strings only when necessary.
-                if (false === strpos($part, $code)) {
-                    continue;
-                }
-                $altcode = attrOut($code);
-                $part = str_replace($code, "<img src='./{$THEME['smdir']}/$url' style='border:none' alt='$altcode' />", $part);
-            }
-        }
-        
-        // Put the parts back together
-        $txt = implode("", $parts);
-        
-        return true;
-    }
-
     public function rawHTMLmessage(string $rawstring, string $allowhtml='no'): string
     {
         if ($allowhtml == 'yes') {
-            return $this->censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
+            return $this->smile->censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
         } else {
-            return $this->censor(decimalEntityDecode($rawstring));
+            return $this->smile->censor(decimalEntityDecode($rawstring));
         }
     }
 
     //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
     public function rawHTMLsubject(string $rawstring): string
     {
-        return $this->censor(decimalEntityDecode($rawstring));
+        return $this->smile->censor(decimalEntityDecode($rawstring));
     }
 
     /**
@@ -421,7 +343,8 @@ class Core
             $message = $this->rawHTMLmessage($message, $allowhtml);
             $this->bbcode->process($message, $allowimgcode, $allowurlcode);
             if ($smiliesallow) {
-                smile($message);
+                $smileURL = $this->vars->full_url . $this->vars->theme['smdir'] . '/';
+                $this->smile->smile($message, $smileURL);
             }
             $message = nl2br($message);
 
@@ -429,7 +352,7 @@ class Core
             if (count($messagearray) > 1) {
                 $message = explode("<!-- code -->", $message);
                 for($i = 0; $i < count($message) - 1; $i++) {
-                    $message[$i] .= censor($messagearray[$i*2+1]);
+                    $message[$i] .= $this->smile->censor($messagearray[$i*2+1]);
                 }
                 $message = implode("", $message);
             }
@@ -442,7 +365,8 @@ class Core
         } else {
             $message = $this->rawHTMLmessage($message, $allowhtml);
             if ($smiliesallow) {
-                smile($message);
+                $smileURL = $this->vars->full_url . $this->vars->theme['smdir'] . '/';
+                $this->smile->smile($message, $smileURL);
             }
             $message = nl2br($message);
             if ('yes' == $wrap) {
@@ -461,7 +385,7 @@ class Core
      * @since 1.9.11.12
      * @param string $input Read/Write Variable
      */
-    function xmb_wordwrap(&$input)
+    private function xmb_wordwrap(&$input)
     {
         $br = trim(nl2br("\n"));
         $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $input);
@@ -863,67 +787,61 @@ class Core
     }
 
     /**
+     * Generates the HTML to display a smilie picker.
+     *
      * @since 1.5.0
      */
-    function smilieinsert($type='normal')
+    public function smilieinsert(string $type = 'normal'): string
     {
-        global $SETTINGS, $THEME, $smiliesnum, $smiliecache;
-        
-        if (! $this->smilieCacheStatus) $this->smcwcache();
-
-        $db = $this->db;
-
+        $SETTINGS = &$this->vars->settings;
         $counter = 0;
-        $sms = array();
-        $smilies = '';
-        $smilieinsert = '';
-
-        if ($type == 'normal') {
-            $smcols = intval($SETTINGS['smcols']);
-            $smtotal = intval($SETTINGS['smtotal']);
-        } elseif ($type == 'quick') {
+        $smilie = [];
+        $sms = [];
+        $smcols = intval($SETTINGS['smcols']);
+        $smtotal = intval($SETTINGS['smtotal']);
+        if ($type == 'quick') {
             $smcols = 4;
             $smtotal = 16;
         } elseif ($type == 'full') {
-            $smcols = intval($SETTINGS['smcols']);
             $smtotal = 0;
         }
+        $enabled = $this->smile->isAnySmilieInstalled() && $SETTINGS['smileyinsert'] == 'on' && $smcols > 0;
 
-        if ($SETTINGS['smileyinsert'] == 'on' && $smcols > 0 && $smiliesnum > 0) {
-            foreach($smiliecache as $key=>$val) {
-                $smilie['code'] = $key;
-                $smilie['url'] = $val;
-                eval('$sms[] = "'.template('functions_smilieinsert_smilie').'";');
-                if ($smtotal > 0) {
-                    $counter++;
-                    if ($counter >= $smtotal) {
-                        break;
-                    }
-                }
-            }
+        if (! $enabled) return '';
+        
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
 
-            $smilies = '<tr>';
-            for($i=0;$i<count($sms);$i++) {
-                $smilies .= $sms[$i];
-                if (($i+1)%$smcols == 0) {
-                    $smilies .= '</tr>';
-                    if (($i+1) < count($sms)) {
-                        $smilies .= '<tr>';
-                    }
-                }
+        foreach ($this->smile->smilieCache() as $smilie['code'] => $smilie['url']) {
+            $template->smilie = $smilie;
+            $sms[] = $template->process('functions_smilieinsert_smilie');
+            if ($smtotal > 0) {
+                if (++$counter >= $smtotal) break;
             }
-
-            if (count($sms)%$smcols > 0) {
-                $left = $smcols-(count($sms)%$smcols);
-                for($i=0;$i<$left;$i++) {
-                    $smilies .= '<td />';
-                }
-                $smilies .= '</tr>';
-            }
-            eval('$smilieinsert = "'.template('functions_smilieinsert').'";');
         }
 
-        return $smilieinsert;
+        $smilies = '<tr>';
+        for ($i = 0; $i < count($sms); $i++) {
+            $smilies .= $sms[$i];
+            if (($i + 1) % $smcols == 0) {
+                $smilies .= '</tr>';
+                if (($i + 1) < count($sms)) {
+                    $smilies .= '<tr>';
+                }
+            }
+        }
+
+        if (count($sms) % $smcols > 0) {
+            $left = $smcols - (count($sms) % $smcols);
+            for ($i = 0; $i < $left; $i++) {
+                $smilies .= '<td />';
+            }
+            $smilies .= '</tr>';
+        }
+        
+        $template->smilies = $smilies;
+
+        return $template->process('functions_smilieinsert');
     }
 
     /**
@@ -970,45 +888,6 @@ class Core
         $db->escape_fast($lastpost);
 
         $db->query("UPDATE " . $this->vars->tablepre . "threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
-    }
-
-    /**
-     * Smilies and censor cache.
-     *
-     * @since 1.5.0
-     */
-    private function smcwcache()
-    {
-        if ($this->smilieCacheStatus) return;
-
-        $smilies = $sql->getSmilies();
-        $this->smiliesnum = count($smilies);
-
-        foreach ($smilies as $smilie) {
-            $this->smiliecache[$smilie['code']] = $smilie['url'];
-        }
-
-        $censors = $sql->getCensors();
-        $this->wordsnum = count($censors);
-
-        foreach ($censors as $censor) {
-            $this->censorcache[$censor['find']] = $censor['replace1'];
-        }
-
-        $this->smilieCacheStatus = true;
-    }
-
-    /**
-     * Check if the smilie list has anything.
-     *
-     * @since 1.10.00
-     * @return bool
-     */
-    public function isAnySmilieInstalled(): bool
-    {
-        if (! $this->smilieCacheStatus) $this->smcwcache();
-        
-        return $this->smiliesnum > 0;
     }
 
     /**

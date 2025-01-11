@@ -37,8 +37,13 @@ class socket_SMTP
         }
     }
 
-    function connect($host, $port, $username='', $password='')
-    {
+    function connect(
+        $host,
+        $port,
+        $username='',
+        #[\SensitiveParameter]
+        $password='',
+    ) {
         $authAvailable = false;
         $loginAvailable = false;
 

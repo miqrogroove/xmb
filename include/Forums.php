@@ -29,11 +29,13 @@ namespace XMB;
 /**
  * Forums table caching and retrieval.
  *
+ * Lazy loading will occur when calling any of the non-constructor methods.
+ *
  * @since 1.10.00
  */
 class Forums
 {
-    private bool $forumCacheStatus = false;
+    private bool $cacheStatus = false;
 
     private array $forumcache = [];
 
@@ -47,11 +49,11 @@ class Forums
      *
      * @since 1.10.00
      */
-    private function initForumCache()
+    private function initCache()
     {
-        if (! $this->forumCacheStatus) {
+        if (! $this->cacheStatus) {
             $this->forumcache = $this->sql->getForums();
-            $this->forumCacheStatus = true;
+            $this->cacheStatus = true;
         }
     }
 
@@ -63,7 +65,7 @@ class Forums
      */
     public function forumCache()
     {
-        if (! $this->forumCacheStatus) $this->initForumCache();
+        if (! $this->cacheStatus) $this->initCache();
 
         return $this->forumcache;
     }
@@ -77,7 +79,7 @@ class Forums
      */
     public function getForum(int $fid): ?array
     {
-        if (! $this->forumCacheStatus) $this->initForumCache();
+        if (! $this->cacheStatus) $this->initCache();
 
         if (isset($this->forumcache[$fid])) {
             return $this->forumcache[$fid];
@@ -95,7 +97,7 @@ class Forums
      */
     public function getChildForums(int $fid): array
     {
-        if (! $this->forumCacheStatus) $this->initForumCache();
+        if (! $this->cacheStatus) $this->initCache();
 
         $children = [];
 

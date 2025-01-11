@@ -32,6 +32,7 @@ $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $login = \XMB\Services\login();
 $session = \XMB\Services\session();
+$smile = \XMB\Services\smile();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
@@ -468,7 +469,7 @@ switch($action) {
                 }
 
                 if ($member['location'] != '') {
-                    $member['location'] = censor($member['location']);
+                    $member['location'] = $smile->censor($member['location']);
                 } else {
                     $member['location'] = '';
                 }

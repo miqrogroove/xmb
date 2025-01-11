@@ -22,7 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\vars;
+$smile = \XMB\Services\smile();
+$vars = \XMB\Services\vars();
 
 require 'header.php';
 
@@ -101,7 +102,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
     if (!X_STAFF) {
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        if ($srchtxt !== censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
+        if ($srchtxt !== $smile->censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
             error($lang['searchinvalid']);
         }
         $url_check = Array('%3c', '<', ':/');
@@ -151,12 +152,12 @@ if (!isset($searchsubmit) && !isset($page)) {
          . "WHERE f.fid IN($forums)";
 
     if ($srchfrom <= 0) {
-        $srchfrom = vars()->onlinetime;
+        $srchfrom = $vars->onlinetime;
         $srchfromold = 0;
     } else {
         $srchfromold = $srchfrom;
     }
-    $srchfrom = vars()->onlinetime - $srchfrom;
+    $srchfrom = $vars->onlinetime - $srchfrom;
 
     $ext = array();
     if (!empty($srchtxt)) {

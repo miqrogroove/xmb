@@ -83,8 +83,15 @@ class MySQLiDatabase implements DBStuff
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
      * @return bool  Whether or not the database was found after connecting.
      */
-    public function connect(string $dbhost, string $dbuser, string $dbpw, string $dbname, bool $pconnect = false, bool $force_db = false): bool
-    {
+    public function connect(
+        string $dbhost,
+        string $dbuser,
+        #[\SensitiveParameter]
+        string $dbpw,
+        string $dbname,
+        bool $pconnect = false,
+        bool $force_db = false,
+    ): bool {
         // Verify compatiblity.
         if (!$this->isInstalled()) {
             header('HTTP/1.0 500 Internal Server Error');

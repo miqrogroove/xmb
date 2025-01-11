@@ -36,6 +36,7 @@ use XMB\{
     Login,
     Observer,
     Session\Manager as SessionMgr,
+    SmileAndCensor,
     SQL,
     Template,
     Theme\Manager as ThemeMgr,
@@ -184,6 +185,22 @@ function session(?SessionMgr $session = null): SessionMgr
     static $cache;
     
     if ($session !== null) $cache = $session;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared smilie and censor service.
+ *
+ * @since 1.10.00
+ * @param SmileAndCensor $smile Required on first call, otherwise optional. Acts as the setter.
+ * @return SmileAndCensor
+ */
+function smile(?SmileAndCensor $smile = null): SmileAndCensor
+{
+    static $cache;
+    
+    if ($smile !== null) $cache = $smile;
     
     return $cache;
 }

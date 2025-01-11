@@ -22,11 +22,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\forums;
-
 function url_to_text($url)
 {
-    global $db, $lang, $self, $xmbuser, $SETTINGS;
+    $db = \XMB\Services\db();
+    $forums = \XMB\Services\forums();
+    $smile = \XMB\Services\smile();
+    $vars = \XMB\Services\vars();
+
+    global $lang, $self, $xmbuser, $SETTINGS;
     static $fname, $tsub;
     static $restrict = '';
 
@@ -85,7 +88,7 @@ function url_to_text($url)
             if (isset($fname[$fid])) {
                 $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
             } else {
-                $locate = forums()->getForum($fid);
+                $locate = $forums->getForum($fid);
                 if (false !== $locate) {
                     $perms = checkForumPermissions($locate);
                     if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
@@ -123,7 +126,7 @@ function url_to_text($url)
         if (false !== strpos($url, 'gid=')) {
             $temp = explode('?', $url);
             $gid = (int) str_replace('gid=', '', $temp[1]);
-            $cat = forums()->getForum($gid);
+            $cat = $forums->getForum($gid);
             if ($cat === FALSE) {
                 $location = $lang['onlinecatunknown'];
             } elseif ($cat['type'] != 'group') {
@@ -152,7 +155,8 @@ function url_to_text($url)
                         $member = str_replace('member=', '', $argument);
                         $member = rawurldecode(str_replace('+', ' ', $member));
                         $member = preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $member);
-                        $member = cdataOut(censor($member));
+                        // TODO: This needs to be validated or removed rather than censored.
+                        $member = cdataOut($smile->censor($member));
                         eval('$location = "'.$lang['onlineviewpro'].'";');
                         break;
                     }
