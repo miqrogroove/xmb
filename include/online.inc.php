@@ -91,7 +91,7 @@ function url_to_text($url)
                 $locate = $forums->getForum($fid);
                 if (false !== $locate) {
                     $perms = checkForumPermissions($locate);
-                    if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[X_PERMS_VIEW]) {
+                    if ($SETTINGS['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[$vars::PERMS_VIEW]) {
                         $fname[$fid] = fnameOut($locate['name']);
                         $location = "{$lang['onlineforumdisplay']} {$fname[$fid]}";
                     }

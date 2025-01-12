@@ -72,14 +72,14 @@ $req['files'] = array(
 );
 
 // Script Constants
-define('ROOT', '../');
+define('XMB_ROOT', '../');
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
 define('X_INST_SKIP', 3);
 define('IN_CODE', true);
 
-require ROOT.'include/version.php';
+require XMB_ROOT.'include/version.php';
 
 function error($head, $msg, $die = true)
 {
@@ -165,8 +165,8 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
     // Force upgrade to mysqli
     if ('mysql' === $database) $database = 'mysqli';
 
-    if (!is_readable(ROOT."db/{$database}.php")) return;
-    require_once ROOT."db/{$database}.php";
+    if (!is_readable(XMB_ROOT."db/{$database}.php")) return;
+    require_once XMB_ROOT."db/{$database}.php";
 
     $db = new dbstuff;
     $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
@@ -206,9 +206,9 @@ if (isset($_REQUEST['step']) && $_REQUEST['step'] < 7 && $_REQUEST['step'] != 4)
 // Check the status of the config.php file, if any
 $config_success = true;
 $config_error = '';
-if (is_readable(ROOT.'config.php')) {
+if (is_readable(XMB_ROOT.'config.php')) {
     try {
-        include ROOT.'config.php';
+        include XMB_ROOT.'config.php';
     } catch (Throwable $e) {
         $config_success = false;
         $config_error = $e->getMessage();
@@ -316,7 +316,7 @@ XMB <?php echo X_VERSION; ?>  License (Updated November 2007)
 www.xmbforum2.com
 ----------------------------------------------
 
-<?php readfile(ROOT.'License.txt'); ?>
+<?php readfile(XMB_ROOT.'License.txt'); ?>
 
             </textarea>
             <form action="index.php?step=4" method="post">
@@ -333,8 +333,8 @@ www.xmbforum2.com
         switch($vSubStep) {
         case 'create':
             // Open config.php
-            if (is_readable(ROOT.'config.php')) {
-                $configuration = file_get_contents(ROOT.'config.php');
+            if (is_readable(XMB_ROOT.'config.php')) {
+                $configuration = file_get_contents(XMB_ROOT.'config.php');
             } else {
                 $configuration = '';
             }
@@ -468,7 +468,7 @@ www.xmbforum2.com
                 <p>
 <?php
                     // Open a new file
-                    $handle = @fopen(ROOT.'config.php', "w");
+                    $handle = @fopen(XMB_ROOT.'config.php', "w");
                     if (!$handle) {
                         error('Invalid Permissions', 'XMB cannot create your configuration file on the server as it does not have enough permissions to do so.  If you would like to try again, CHMOD the "config.php" file to <i>666</i> or select a different method', true);
                     }
@@ -681,7 +681,7 @@ www.xmbforum2.com
             }
         }
 
-        require ROOT.'include/Bootup.php';
+        require XMB_ROOT.'include/Bootup.php';
         $boot = new \XMB\Bootup();
         $array = parse_url($full_url);
         if (!isset($array['path'])) {
@@ -786,7 +786,7 @@ www.xmbforum2.com
         // let's check if all files we need actually exist.
         show_act('Checking Directory Structure');
         foreach($req['dirs'] as $dir) {
-            if (!file_exists(ROOT.$dir)) {
+            if (!file_exists(XMB_ROOT.$dir)) {
                 if ($dir == 'images') {
                     show_result(X_INST_WARN);
                     error('Missing Directory', 'XMB could not locate the <i>/images</i> directory. Although this directory, and its contents are not vital to the functioning of XMB, we do recommend you upload it, so you can enjoy the full look and feel of each theme.', false);
@@ -803,7 +803,7 @@ www.xmbforum2.com
 
         show_act('Checking Required Files');
         foreach($req['files'] as $file) {
-            if (!file_exists(ROOT.$file)) {
+            if (!file_exists(XMB_ROOT.$file)) {
                 show_result(X_INST_ERR);
                 error('Missing File', 'XMB could not locate the file <i>/'.$file.'</i>, this file is required for XMB to work properly. Please upload this file and restart installation.', true);
             }
@@ -820,13 +820,13 @@ www.xmbforum2.com
         // Force upgrade to mysqli
         if ('mysql' === $database) $database = 'mysqli';
 
-        if (!file_exists(ROOT."db/{$database}.php")) {
+        if (!file_exists(XMB_ROOT."db/{$database}.php")) {
             show_result(X_INST_ERR);
             error('Database connection', 'XMB could not locate the <i>/db/'.$database.'.php</i> file, you have configured xmb to use this database-type. For it to work you will need to upload the file, or change the config.php file to reflect a different choice.', true);
         }
         show_result(X_INST_OK);
         
-        require_once ROOT."db/{$database}.php";
+        require_once XMB_ROOT."db/{$database}.php";
 
         $db = new dbstuff;
         

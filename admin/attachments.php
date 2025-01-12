@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
@@ -69,7 +69,7 @@ if ($action == '' && noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
 }
 
 if ($action == '' && onSubmit('searchsubmit')) {
-    $template->token = $token->create('Control Panel/Attachments', 'mass-edit', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Attachments', 'mass-edit', $vars::NONCE_FORM_EXP);
     $dblikefilename = $db->like_escape($core->postedVar('filename', '', FALSE, FALSE));
     $author = $core->postedVar('author');
     $forumprune = $core->postedVar('forumprune');
@@ -229,7 +229,7 @@ if ($action == '' && onSubmit('attachsubmit')) {
 if ($action == "delete") {
     $aid = getInt('aid');
     if (noSubmit('yessubmit')) {
-        $template->token = $token->create('Control Panel/Attachments/Delete', (string) $aid, X_NONCE_AYS_EXP);
+        $template->token = $token->create('Control Panel/Attachments/Delete', (string) $aid, $vars::NONCE_AYS_EXP);
         ?>
         <tr bgcolor="<?= $altbg2; ?>" class="ctrtablerow"><td><?= $lang['attach_delete_ays']; ?><br />
         <form action="<?= $full_url ?>admin/attachments.php?action=delete&amp;aid=<?= $aid; ?>" method="post">

@@ -68,7 +68,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     $captchasearchcheck = '';
     if (X_GUEST) {
         if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
-            require ROOT.'include/captcha.inc.php';
+            require XMB_ROOT.'include/captcha.inc.php';
             $Captcha = new Captcha();
             if ($Captcha->bCompatible !== false) {
                 $imghash = $Captcha->GenerateCode();
@@ -124,7 +124,7 @@ if (!isset($searchsubmit) && !isset($page)) {
             if ($page > 1) {
                 error($lang['searchguesterror']);
             }
-            require ROOT.'include/captcha.inc.php';
+            require XMB_ROOT.'include/captcha.inc.php';
             $Captcha = new Captcha();
             if ($Captcha->bCompatible !== false) {
                 $imgcode = postedVar('imgcode', '', FALSE, FALSE, FALSE, 'g');

@@ -32,7 +32,7 @@ header('X-Frame-Options: sameorigin');
 
 //Script constants
 define('XMB_UPGRADE', true);
-define('ROOT', '../');
+define('XMB_ROOT', '../');
 
 $logfile = './upgrade.log';
 
@@ -55,13 +55,13 @@ require './LoggedOutput.php';
 
 $show = new \XMB\LoggedOutput($logfile);
 
-if (! is_readable(ROOT . 'header.php')) {
+if (! is_readable(XMB_ROOT . 'header.php')) {
     $show->error('Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.');
     throw new Exception('Attempted upgrade by ' . $_SERVER['REMOTE_ADDR'] . ' from wrong location.');
 }
 
 //Authenticate Browser
-require ROOT . 'header.php';
+require XMB_ROOT . 'header.php';
 
 $db = \XMB\Services\db();
 $vars = \XMB\Services\vars();
@@ -95,15 +95,15 @@ if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
 
 $show->progress('Confirming the upgrade files are present');
 
-if (is_dir(ROOT . 'install') || is_dir(ROOT . 'Install')) {
+if (is_dir(XMB_ROOT . 'install') || is_dir(XMB_ROOT . 'Install')) {
 	$show->error('Wrong files present!<br />Please delete any folders named "install".');
 	throw new Exception('Admin attempted upgrade while non-upgrade files were present.');
 }
-if (!is_file(ROOT.'lang/English.lang.php')) {
+if (!is_file(XMB_ROOT.'lang/English.lang.php')) {
 	$show->error('Files missing!<br />Please make sure to upload the lang/English.lang.php file.');
 	throw new Exception('Admin attempted upgrade with English.lang.php missing.');
 }
-if (!is_file(ROOT.'include/schema.inc.php')) {
+if (!is_file(XMB_ROOT.'include/schema.inc.php')) {
 	$show->error('Files missing!<br />Please make sure to upload the include/schema.inc.php file.');
 	throw new Exception('Admin attempted upgrade with schema.lang.php missing.');
 }
@@ -114,7 +114,7 @@ if (!is_file('./upgrade.lib.php')) {
 
 $trigger_old_schema = (int) $vars->settings['schema_version'];
 
-require ROOT . 'include/schema.inc.php';
+require XMB_ROOT . 'include/schema.inc.php';
 require './upgrade.lib.php';
 
 $schema = new \XMB\Schema($db, $vars);

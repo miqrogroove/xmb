@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
@@ -58,7 +58,7 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('pruneSubmit')) {
-    $template->token = $token->create('Control Panel/Prune', '', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Prune', '', $vars::NONCE_FORM_EXP);
     $template->forumselect = $core->forumList('pruneFromList', true, false);
     $body = $template->process('admin_prune.php');
 } else {

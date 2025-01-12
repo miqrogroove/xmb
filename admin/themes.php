@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -82,7 +82,7 @@ $single_int = getInt('single');
 $newtheme = $core->postedVar('newtheme');
 
 if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
-    $template->themenonce = $token->create('Control Panel/Themes', 'mass-edit', X_NONCE_FORM_EXP);
+    $template->themenonce = $token->create('Control Panel/Themes', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_themes_start.php');
 
     $themeMem = [0 => 0];
@@ -175,7 +175,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
 }
 
 if ($single_int > 0) {
-    $template->token = $token->create('Control Panel/Themes', (string) $single_int, X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Themes', (string) $single_int, $vars::NONCE_FORM_EXP);
     $template->single_int = $single_int;
 
     $query = $db->query("SELECT * FROM " . $vars->tablepre . "themes WHERE themeid = $single_int");
@@ -184,7 +184,7 @@ if ($single_int > 0) {
 
     $body = $template->process('admin_themes_single.php');
 } else if ($single_str == "anewtheme1") {
-    $template->token = $token->create('Control Panel/Themes', 'New Theme', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Themes', 'New Theme', $vars::NONCE_FORM_EXP);
 
     $body = $template->process('admin_themes_new.php');
 } else if ($single_str == "submit" && !$newtheme) {

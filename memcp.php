@@ -262,9 +262,9 @@ if ($action == 'profile') {
 
         if ($SETTINGS['avastatus'] == 'list')  {
             $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-            $dir1 = opendir(ROOT.'images/avatars');
+            $dir1 = opendir(XMB_ROOT.'images/avatars');
             while($avFile = readdir($dir1)) {
-                if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                     $avatars .= '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
                 }
             }
@@ -284,7 +284,7 @@ if ($action == 'profile') {
         }
         $template->hUsername = $vars->self['username'];
         if (X_STAFF) {
-            $template = template_secure('memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], X_NONCE_FORM_EXP);
+            $template = template_secure('memcp_profile', 'User Control Panel/Edit Profile', $self['uid'], $vars::NONCE_FORM_EXP);
         } else {
             $template = template('memcp_profile');
         }
@@ -394,7 +394,7 @@ if ($action == 'profile') {
                 error($lang['emailrestricted']);
             }
 
-            require ROOT.'include/validate-email.inc.php';
+            require XMB_ROOT.'include/validate-email.inc.php';
             $test = new EmailAddressValidator();
             $rawemail = postedVar('newemail', '', FALSE, FALSE);
             if (false === $test->check_email_address($rawemail)) {
@@ -427,11 +427,11 @@ if ($action == 'profile') {
             unset($rawavatar);
         } elseif ($SETTINGS['avastatus'] == 'list') {
             $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-            $dirHandle = opendir(ROOT.'images/avatars');
+            $dirHandle = opendir(XMB_ROOT.'images/avatars');
             $filefound = FALSE;
             while($avFile = readdir($dirHandle)) {
                 if ($rawavatar == './images/avatars/'.$avFile) {
-                    if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                    if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                         $filefound = TRUE;
                     }
                 }
@@ -496,12 +496,12 @@ if ($action == 'profile') {
         $row = $db->fetch_array($query);
         $forum = $forums->getForum((int) $row['fid']);
         $perms = checkForumPermissions($forum);
-        if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+        if (!($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
             error($lang['privforummsg']);
         }
         if ($forum['type'] == 'sub') {
             $perms = $core->checkForumPermissions($forums->getForum((int) $forum['fup']));
-            if (!($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+            if (!($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
                 error($lang['privforummsg']);
             }
         }

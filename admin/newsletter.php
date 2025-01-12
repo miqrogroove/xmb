@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -56,7 +56,7 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('newslettersubmit')) {
-    $template->token = $token->create('Control Panel/Newsletter', 'send', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Newsletter', 'send', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_newsletter.php');
 } else {
     $core->request_secure('Control Panel/Newsletter', 'send', error_header: true);

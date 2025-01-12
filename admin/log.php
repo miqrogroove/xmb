@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();

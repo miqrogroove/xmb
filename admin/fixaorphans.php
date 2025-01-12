@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
@@ -67,7 +67,7 @@ if (onSubmit('nosubmit')) {
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_attachments_found'] . '</td></tr>';
 } else {
-    $template->token = $token->create('Control Panel/Fix Orphans', 'Attachments', X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Fix Orphans', 'Attachments', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['o_attachments_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');

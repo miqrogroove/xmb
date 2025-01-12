@@ -171,20 +171,20 @@ if ($poll != 'yes') {
 
 // check permissions on this forum (and top forum if it's a sub?)
 $perms = checkForumPermissions($forum);
-if (!$perms[X_PERMS_VIEW]) {
+if (!$perms[$vars::PERMS_VIEW]) {
     if (X_GUEST) {
         redirect("{$full_url}misc.php?action=login", 0);
         exit;
     } else {
         error($lang['privforummsg']);
     }
-} else if (!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[$vars::PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
 // check posting permissions specifically
 if ($action == 'newthread') {
-    if (($poll == '' && !$perms[X_PERMS_THREAD]) || ($poll == 'yes' && !$perms[X_PERMS_POLL])) {
+    if (($poll == '' && !$perms[$vars::PERMS_THREAD]) || ($poll == 'yes' && !$perms[$vars::PERMS_POLL])) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
@@ -193,7 +193,7 @@ if ($action == 'newthread') {
         }
     }
 } else if ($action == 'reply') {
-    if (!$perms[X_PERMS_REPLY]) {
+    if (!$perms[$vars::PERMS_REPLY]) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
@@ -212,14 +212,14 @@ if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    if (!$fupPerms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
         } else {
             error($lang['privforummsg']);
         }
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
         error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);
@@ -289,7 +289,7 @@ if ($action != 'edit') {
     $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
 
     if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-        require ROOT.'include/captcha.inc.php';
+        require XMB_ROOT.'include/captcha.inc.php';
     }
 }
 
@@ -363,7 +363,7 @@ if ($SETTINGS['spellcheck'] == 'on') {
     $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
     if ($sc) {
         if (isset($language) && !isset($updates_submit)) {
-            require ROOT.'include/spelling.inc.php';
+            require XMB_ROOT.'include/spelling.inc.php';
             $spelling = new spelling($language);
             $problems = $spelling->check_text(postedVar('message', '', FALSE, FALSE));  //Use raw value so we're not checking entity names.
             if (count($problems) > 0) {
@@ -608,7 +608,7 @@ switch($action) {
                 $db->free_result($query);
 
                 $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-                $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+                $viewperm = getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
 
                 $query = $db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
                 if ($db->num_rows($query) > 0) {
@@ -684,7 +684,7 @@ switch($action) {
                 $thaquote = $db->fetch_array($query);
                 $db->free_result($query);
                 $quoteperms = $core->checkForumPermissions($forums->getForum((int) $thaquote['fid']));
-                if ($quoteperms[X_PERMS_VIEW] && $quoteperms[X_PERMS_PASSWORD]) {
+                if ($quoteperms[$vars::PERMS_VIEW] && $quoteperms[$vars::PERMS_PASSWORD]) {
                     $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
                     $quoteblock = rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
                     if ($bBBcodeOnForThisPost) {
@@ -823,7 +823,7 @@ switch($action) {
                 $db->free_result($query);
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWREPLY) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, $vars::PERMS_RAWREPLY) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
@@ -1202,7 +1202,7 @@ switch($action) {
                 $spelling_submit2 = '';
             }
 
-            if (getOneForumPerm($forum, X_PERMS_RAWTHREAD) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
+            if (getOneForumPerm($forum, $vars::PERMS_RAWTHREAD) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $loggedin = '';
             }
 
@@ -1518,7 +1518,7 @@ function postLinkBBcode(&$message) {
     $query = $db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM ".X_PREFIX."posts AS p LEFT JOIN ".X_PREFIX."threads AS t USING (tid) WHERE pid IN ($pids)");
     while($row = $db->fetch_array($query)) {
         $perms = $core->checkForumPermissions($forums->getForum((int) $row['fid']));
-        if ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD]) {
+        if ($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD]) {
             if ($row['subject'] != '') {
                 $subject = stripslashes($row['subject']);
             } else {

@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -80,7 +80,7 @@ if (onSubmit('nosubmit')) {
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_polls_found'] . '</td></tr>';
 } else {
-    $template->token = $token->create('Control Panel/Fix Orphans', 'Polls', X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Fix Orphans', 'Polls', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['o_polls_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');

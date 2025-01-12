@@ -25,7 +25,7 @@
 define('X_SCRIPT', 'u2u.php');
 
 require 'header.php';
-require ROOT.'include/u2u.inc.php';
+require XMB_ROOT.'include/u2u.inc.php';
 
 header('X-Robots-Tag: noindex');
 

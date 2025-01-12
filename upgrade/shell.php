@@ -29,22 +29,22 @@ exit('This file is provided to illustrate customized XMB upgrade techniques.');
 ignore_user_abort(true);
 
 // Script constants.
-define('ROOT', '../'); // Location of XMB files relative to this script.
+define('XMB_ROOT', '../'); // Location of XMB files relative to this script.
 
 // Emulate logic needed from XMB's header.php file.
 error_reporting(-1);
 
 // Interfaces and base dependencies go first.
-require ROOT.'db/DBStuff.php';
-require ROOT.'include/Variables.php';
+require XMB_ROOT.'db/DBStuff.php';
+require XMB_ROOT.'include/Variables.php';
 require './UpgradeOutput.php';
 
 // Implementations
-require ROOT.'include/Bootup.php';
-require ROOT.'include/format.php';
-require ROOT.'include/schema.inc.php';
-require ROOT.'include/SettingsLoader.php';
-require ROOT.'include/Template.php';
+require XMB_ROOT.'include/Bootup.php';
+require XMB_ROOT.'include/format.php';
+require XMB_ROOT.'include/schema.inc.php';
+require XMB_ROOT.'include/SettingsLoader.php';
+require XMB_ROOT.'include/Template.php';
 require './upgrade.lib.php';
 
 $vars = new \XMB\Variables();
@@ -64,7 +64,7 @@ $db = $boot->connectDB();
 
 unset($boot);
 
-define('X_NONCE_KEY_LEN', 12);
+define('$vars::NONCE_KEY_LEN', 12);
 
 (new \XMB\SettingsLoader(db(), vars()))->readToVars();
 

@@ -77,9 +77,9 @@ if (($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] !
 
 // check permissions on this forum
 $perms = checkForumPermissions($forum);
-if (!($perms[X_PERMS_VIEW] || $perms[X_PERMS_USERLIST])) {
+if (!($perms[$vars::PERMS_VIEW] || $perms[$vars::PERMS_USERLIST])) {
     error($lang['privforummsg']);
-} else if (!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[$vars::PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
@@ -88,9 +88,9 @@ if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    if (!$fupPerms[$vars::PERMS_VIEW]) {
         error($lang['privforummsg']);
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);

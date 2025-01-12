@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -94,7 +94,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         $i++;
     }
 
-    $template->token = $token->create('Control Panel/Forums', 'mass-edit', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Forums', 'mass-edit', $vars::NONCE_FORM_EXP);
 
     $body = $template->process('admin_forums_list_start.php');
 
@@ -181,7 +181,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
     $body .= $template->process('admin_forums_list_end.php');
 } else if ($fdetails && noSubmit('forumsubmit')) {
-    $template->token = $token->create('Control Panel/Forums', (string) $fdetails, X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Forums', (string) $fdetails, $vars::NONCE_FORM_EXP);
 
     $queryg = $db->query("SELECT * FROM " . $vars->tablepre . "forums WHERE fid='$fdetails'");
     $forum = $db->fetch_array($queryg);
@@ -243,6 +243,10 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             } else {
                 $template->disabled = '';
             }
+            $template->rawPoll = $vars::PERMS_RAWPOLL;
+            $template->rawThread = $vars::PERMS_RAWTHREAD;
+            $template->rawReply = $vars::PERMS_RAWREPLY;
+            $template->rawView = $vars::PERMS_RAWVIEW;
             $body .= $template->process('admin_forums_detail_perms.php');
         }
     }

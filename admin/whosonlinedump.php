@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -67,7 +67,7 @@ if (onSubmit('nosubmit')) {
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['tool_completed'].' - '.$lang['tool_whosonline'] . '</td></tr>';
 } else {
-    $template->token = $token->create('Control Panel/Clear Whos Online', '', X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Clear Whos Online', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['whoodump_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');

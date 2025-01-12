@@ -94,7 +94,7 @@ case 'viewuser':
 
         echo "<h2>" . fnameOut($forum['name']) . "</h2>\n";
         
-        $token = \XMB\Token\create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', X_NONCE_AYS_EXP);
+        $token = \XMB\Token\create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', $vars::NONCE_AYS_EXP);
     }
 
     $specialrank = array();
@@ -588,7 +588,7 @@ case 'modays':
     ?>
     <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
     <form action="quarantine.php?action=<?php echo $act; ?>" method="post">
-      <input type="hidden" name="token" value="<?php echo \XMB\Token\create("Quarantine Panel/$act", $member, X_NONCE_AYS_EXP); ?>" />
+      <input type="hidden" name="token" value="<?php echo \XMB\Token\create("Quarantine Panel/$act", $member, $vars::NONCE_AYS_EXP); ?>" />
       <input type="hidden" name="u" value="<?php echo $member; ?>" />
       <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
       <input type="submit" name="nosubmit" value="<?php echo $lang['textno']; ?>" />
@@ -685,7 +685,7 @@ case 'approveall':
             $db->free_result($query);
 
             $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-            $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+            $viewperm = getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
             $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                                  . "FROM ".X_PREFIX."favorites f "
@@ -862,7 +862,7 @@ case 'approvereply':
     $db->free_result($query);
 
     $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-    $viewperm = getOneForumPerm($forum, X_PERMS_RAWVIEW);
+    $viewperm = getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
     $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
     $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                          . "FROM ".X_PREFIX."favorites f "

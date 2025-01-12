@@ -248,9 +248,9 @@ if (noSubmit('editsubmit')) {
 
     if ($SETTINGS['avastatus'] == 'list')  {
         $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-        $dir1 = opendir(ROOT.'images/avatars');
+        $dir1 = opendir(XMB_ROOT.'images/avatars');
         while($avFile = readdir($dir1)) {
-            if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+            if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                 $avatars .= '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
             }
         }
@@ -269,7 +269,7 @@ if (noSubmit('editsubmit')) {
 
     $userrecode = recodeOut($member['username']);
 
-    $template = template_secure('admintool_editprofile', 'Edit User Account', $member['uid'], X_NONCE_FORM_EXP);
+    $template = template_secure('admintool_editprofile', 'Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
     eval('$editpage = "'.$template.'";');
 } else {
     request_secure('Edit User Account', $member['uid']);
@@ -351,11 +351,11 @@ if (noSubmit('editsubmit')) {
         unset($rawavatar);
     } elseif ($SETTINGS['avastatus'] == 'list') {
         $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-        $dirHandle = opendir(ROOT.'images/avatars');
+        $dirHandle = opendir(XMB_ROOT.'images/avatars');
         $filefound = FALSE;
         while($avFile = readdir($dirHandle)) {
             if ($rawavatar == './images/avatars/'.$avFile) {
-                if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                     $filefound = TRUE;
                 }
             }

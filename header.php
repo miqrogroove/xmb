@@ -32,33 +32,9 @@ if ('header.php' === basename($_SERVER['SCRIPT_NAME'])) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
-if (!defined('ROOT')) define('ROOT', './');
 error_reporting(-1); // Report all errors until config.php loads successfully.
-
-
-/* Global Constants and Initialized Values */
-
 $mtime = explode(" ", microtime());
-
-define('X_NONCE_AYS_EXP', 300); // Yes/no prompt expiration, in seconds.
-define('X_NONCE_FORM_EXP', 3600); // Form expiration, in seconds.
-define('X_NONCE_MAX_AGE', 86400); // CAPTCHA expiration, in seconds.
-define('X_NONCE_KEY_LEN', 12); // Size of captchaimages.imagestring.
-define('X_REDIRECT_HEADER', 1);
-define('X_REDIRECT_JS', 2);
-// permissions constants
-define('X_PERMS_COUNT', 4); //Number of raw bit sets stored in postperm setting.
-// indexes used in permissions arrays
-define('X_PERMS_RAWPOLL', 0);
-define('X_PERMS_RAWTHREAD', 1);
-define('X_PERMS_RAWREPLY', 2);
-define('X_PERMS_RAWVIEW', 3);
-define('X_PERMS_POLL', 40);
-define('X_PERMS_THREAD', 41);
-define('X_PERMS_REPLY', 42);
-define('X_PERMS_VIEW', 43); //View is now = Rawview || Userlist
-define('X_PERMS_USERLIST', 44);
-define('X_PERMS_PASSWORD', 45);
+if (! defined('XMB_ROOT')) define('XMB_ROOT', './');
 
 
 /* Load Common Files. None of them should produce any output. */
@@ -66,36 +42,36 @@ define('X_PERMS_PASSWORD', 45);
 ob_start();
 
 // Interfaces and base dependencies go first.
-require ROOT.'db/DBStuff.php';
-require ROOT.'include/CartesianSize.php';
-require ROOT.'include/UploadResult.php';
-require ROOT.'include/UploadStatus.php';
-require ROOT.'include/Variables.php';
+require XMB_ROOT . 'db/DBStuff.php';
+require XMB_ROOT . 'include/CartesianSize.php';
+require XMB_ROOT . 'include/UploadResult.php';
+require XMB_ROOT . 'include/UploadStatus.php';
+require XMB_ROOT . 'include/Variables.php';
 
 // Implementations
-require ROOT.'include/admin.inc.php';
-require ROOT.'include/attach.inc.php';
-require ROOT.'include/BBCode.php';
-require ROOT.'include/Bootup.php';
-require ROOT.'include/BootupLoader.php';
-require ROOT.'include/captcha.inc.php';
-require ROOT.'include/debug.inc.php';
-require ROOT.'include/format.php';
-require ROOT.'include/Forums.php';
-require ROOT.'include/functions.inc.php';
-require ROOT.'include/Login.php';
-require ROOT.'include/Observer.php';
-require ROOT.'include/schema.inc.php';
-require ROOT.'include/services.php';
-require ROOT.'include/sessions.inc.php';
-require ROOT.'include/SmileAndCensor.php';
-require ROOT.'include/sql.inc.php';
-require ROOT.'include/SettingsLoader.php';
-require ROOT.'include/Template.php';
-require ROOT.'include/ThemeManager.php';
-require ROOT.'include/tokens.inc.php';
-require ROOT.'include/translation.inc.php';
-require ROOT.'include/validate.inc.php';
+require XMB_ROOT . 'include/admin.inc.php';
+require XMB_ROOT . 'include/attach.inc.php';
+require XMB_ROOT . 'include/BBCode.php';
+require XMB_ROOT . 'include/Bootup.php';
+require XMB_ROOT . 'include/BootupLoader.php';
+require XMB_ROOT . 'include/captcha.inc.php';
+require XMB_ROOT . 'include/debug.inc.php';
+require XMB_ROOT . 'include/format.php';
+require XMB_ROOT . 'include/Forums.php';
+require XMB_ROOT . 'include/functions.inc.php';
+require XMB_ROOT . 'include/Login.php';
+require XMB_ROOT . 'include/Observer.php';
+require XMB_ROOT . 'include/schema.inc.php';
+require XMB_ROOT . 'include/services.php';
+require XMB_ROOT . 'include/sessions.inc.php';
+require XMB_ROOT . 'include/SmileAndCensor.php';
+require XMB_ROOT . 'include/sql.inc.php';
+require XMB_ROOT . 'include/SettingsLoader.php';
+require XMB_ROOT . 'include/Template.php';
+require XMB_ROOT . 'include/ThemeManager.php';
+require XMB_ROOT . 'include/tokens.inc.php';
+require XMB_ROOT . 'include/translation.inc.php';
+require XMB_ROOT . 'include/validate.inc.php';
 
 
 /* Create base services */

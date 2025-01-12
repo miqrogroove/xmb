@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $template = \XMB\Services\template();
@@ -52,13 +52,13 @@ $header = $template->process('header.php');
 if (X_SADMIN) {
     $x_error = '';
 
-    if (file_exists(ROOT.'install/') && !@rmdir(ROOT.'install/')) {
+    if (file_exists(XMB_ROOT.'install/') && !@rmdir(XMB_ROOT.'install/')) {
         $x_error = $vars->lang['admin_found_install'];
     }
-    if (file_exists(ROOT.'Upgrade/') && !@rmdir(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') && !@rmdir(ROOT.'upgrade/')) {
+    if (file_exists(XMB_ROOT.'Upgrade/') && !@rmdir(XMB_ROOT.'Upgrade/') || file_exists(XMB_ROOT.'upgrade/') && !@rmdir(XMB_ROOT.'upgrade/')) {
         $x_error = $vars->lang['admin_found_updir'];
     }
-    if (file_exists(ROOT.'upgrade.php')) {
+    if (file_exists(XMB_ROOT.'upgrade.php')) {
         $x_error = $vars->lang['admin_found_upfile'];
     }
 

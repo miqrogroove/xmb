@@ -119,7 +119,7 @@ class Manager
         }
 
         // additional CSS to load?
-        if (file_exists(ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
+        if (file_exists(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
             $this->template->css .= "\n<link rel='stylesheet' type='text/css' href='"
                 . $this->vars->full_url . $this->vars->theme['imgdir']
                 . "/theme.css' />";

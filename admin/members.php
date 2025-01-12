@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -100,7 +100,7 @@ if (noSubmit('membersubmit')) {
     if (!$members) {
         $body = $template->process('admin_members_search.php');
     } else if ($members == "search") {
-        $template->token = $token->create('Control Panel/Members', 'mass-edit', X_NONCE_FORM_EXP);
+        $template->token = $token->create('Control Panel/Members', 'mass-edit', $vars::NONCE_FORM_EXP);
 
         $body = $template->process('admin_members_edit_start.php');
 

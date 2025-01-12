@@ -49,7 +49,7 @@ class Translation
     {
         $lang = [];
 
-        include ROOT . "lang/$devname.lang.php";
+        include XMB_ROOT . "lang/$devname.lang.php";
 
         // Load the $lang array.
         if (count($lang) > 0) {
@@ -79,7 +79,7 @@ class Translation
 
         // First, cache the file list.
         if (count($this->dirCache) == 0) {
-            $languages = scandir(ROOT . 'lang/');
+            $languages = scandir(XMB_ROOT . 'lang/');
 
             if (false === $languages) {
                 $msg = 'Unable to read the /lang/ directory.  ';
@@ -111,7 +111,7 @@ class Translation
             if ($alreadyCached) continue;
 
             $lang = [];
-            include ROOT . "lang/$filename";
+            include XMB_ROOT . "lang/$filename";
 
             foreach ($langkeys as $key) {
                 $this->langCache[$devname][$key] = $lang[$key];
@@ -136,7 +136,7 @@ class Translation
         if ($langfile === '') throw new InvalidArgumentException('The langfile string argument must not be empty.');
 
         // Get the current file
-        $filepath = ROOT . "lang/$langfile.lang.php";
+        $filepath = XMB_ROOT . "lang/$langfile.lang.php";
         if (! is_readable($filepath)) return false;
         if (! is_writable($filepath)) throw new RuntimeException("Wrong file permissions for the $langfile translation.");
         $text = file_get_contents($filepath);
@@ -178,7 +178,7 @@ class Translation
         if ($this->loadLang()) {
             return true;
         }
-        if (file_exists(ROOT.'Upgrade/') || file_exists(ROOT.'upgrade/') || file_exists(ROOT.'upgrade.php')) {
+        if (file_exists(XMB_ROOT.'Upgrade/') || file_exists(XMB_ROOT.'upgrade/') || file_exists(XMB_ROOT.'upgrade.php')) {
             header('HTTP/1.0 503 Service Unavailable');
             header('Retry-After: 3600');
             exit("We're sorry, a website upgrade is in progress at the moment.  Please try again in a few minutes.");

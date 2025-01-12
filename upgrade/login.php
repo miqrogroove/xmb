@@ -26,10 +26,10 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
+define('XMB_ROOT', '../');
 define('XMB_UPGRADE', true);
 
-require ROOT.'header.php';
+require XMB_ROOT.'header.php';
 
 $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();

@@ -185,7 +185,7 @@ switch($action) {
             }
             
             $sql->setLostPasswordDate($member['uid'], time());
-            $newtoken = $token->create('Lost Password', $member['username'], X_NONCE_MAX_AGE, true);
+            $newtoken = $token->create('Lost Password', $member['username'], $vars::NONCE_MAX_AGE, true);
             $link = $vars->full_url . "lost.php?a=$newtoken";
 
             $lang2 = $tran->loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
@@ -204,7 +204,7 @@ switch($action) {
         break;
 
     case 'online':
-        require ROOT.'include/online.inc.php';
+        require XMB_ROOT.'include/online.inc.php';
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
@@ -514,7 +514,7 @@ switch($action) {
             eval('echo "'.template('footer').'";');
             exit();
         }
-        require ROOT.'include/captcha.inc.php';
+        require XMB_ROOT.'include/captcha.inc.php';
         header('X-Robots-Tag: noindex');
         $oPhpCaptcha = new Captcha();
         $imagehash = postedVar('imagehash', '', FALSE, TRUE, FALSE, 'g');

@@ -25,6 +25,7 @@
 $forums = \XMB\Services\forums();
 $observer = \XMB\Services\observer();
 $sql = \XMB\Services\sql();
+$vars = \XMB\Services\vars();
 
 define('X_SCRIPT', 'files.php');
 
@@ -128,14 +129,14 @@ if ($pid > 0 || $file['fid'] != '') {
 
     // Check attachment permissions
     $perms = checkForumPermissions($forum);
-    if (!$perms[X_PERMS_VIEW]) {
+    if (!$perms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
         } else {
             error($lang['privforummsg']);
         }
-    } else if (!$perms[X_PERMS_PASSWORD]) {
+    } else if (!$perms[$vars::PERMS_PASSWORD]) {
         handlePasswordDialog($forum['fid']);
     }
 
@@ -144,14 +145,14 @@ if ($pid > 0 || $file['fid'] != '') {
         $fup = $forums->getForum((int) $forum['fup']);
         // prevent access to subforum when upper forum can't be viewed.
         $fupPerms = checkForumPermissions($fup);
-        if (!$fupPerms[X_PERMS_VIEW]) {
+        if (!$fupPerms[$vars::PERMS_VIEW]) {
             if (X_GUEST) {
                 redirect("{$full_url}misc.php?action=login", 0);
                 exit;
             } else {
                 error($lang['privforummsg']);
             }
-        } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+        } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
             handlePasswordDialog($fup['fid']);
         }
         unset($fup);

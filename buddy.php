@@ -25,7 +25,7 @@
 define('X_SCRIPT', 'buddy.php');
 
 require 'header.php';
-require ROOT.'include/buddy.inc.php';
+require XMB_ROOT.'include/buddy.inc.php';
 
 header('X-Robots-Tag: noindex');
 

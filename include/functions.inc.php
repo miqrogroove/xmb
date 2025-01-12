@@ -954,21 +954,17 @@ class Core
     /**
      * @since 1.9.1
      */
-    function redirect(string $path, int $timeout = 2, $type = X_REDIRECT_HEADER)
+    function redirect(string $path, int $timeout = 2)
     {
         if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
             throw new InvalidArgumentException('Tried to redirect to potentially insecure url.');
         }
 
-        if (headers_sent() || $type == X_REDIRECT_JS) {
-            ?>
-            <script language="javascript" type="text/javascript">
-            function redirect() {
-                window.location.replace("<?= $path ?>");
-            }
-            setTimeout("redirect();", <?= $timeout * 1000 ?>);
-            </script>
-            <?php
+        if (headers_sent()) {
+            $template = new \XMB\Template($this->vars);
+            $template->path = $path;
+            $template->timeout = $timeout * 1000;
+            $template->process('functions_redirect.php', echo: true);
         } else {
             if ($timeout == 0) {
                 header('HTTP/1.0 302 Found');
@@ -1147,7 +1143,7 @@ class Core
         $subject = str_replace(array("\r", "\n"), array('', ''), $subject);
 
         if ($mailer['type'] == 'socket_SMTP') {
-            require_once(ROOT.'include/smtp.inc.php');
+            require_once(XMB_ROOT.'include/smtp.inc.php');
 
             if (!isset($handlers['socket_SMTP'])) {
                 if (DEBUG) {
@@ -1356,12 +1352,12 @@ class Core
         foreach ($forumcache as $forum) {
             $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
-                if ($forum['type'] == 'group' || ($perms[X_PERMS_VIEW] && $perms[X_PERMS_PASSWORD])) {
+                if ($forum['type'] == 'group' || ($perms[$this->vars::PERMS_VIEW] && $perms[$this->vars::PERMS_PASSWORD])) {
                     $permitted[] = $forum;
                     $fids[$forum['type']][] = $forum['fid'];
                 }
             } elseif ($mode == 'forum') {
-                if ($this->vars->settings['hideprivate'] == 'off' || $forum['type'] == 'group' || $perms[X_PERMS_VIEW]) {
+                if ($this->vars->settings['hideprivate'] == 'off' || $forum['type'] == 'group' || $perms[$this->vars::PERMS_VIEW]) {
                     $permitted[] = $forum;
                     $fids[$forum['type']][] = $forum['fid'];
                 }
@@ -1605,13 +1601,13 @@ class Core
         }
 
         // 1. Initialize $ret with zero permissions
-        $ret = array_fill(0, X_PERMS_COUNT, false);
-        $ret[X_PERMS_POLL] = false;
-        $ret[X_PERMS_THREAD] = false;
-        $ret[X_PERMS_REPLY] = false;
-        $ret[X_PERMS_VIEW] = false;
-        $ret[X_PERMS_USERLIST] = false;
-        $ret[X_PERMS_PASSWORD] = false;
+        $ret = array_fill(0, $this->vars::PERMS_COUNT, false);
+        $ret[$this->vars::PERMS_POLL] = false;
+        $ret[$this->vars::PERMS_THREAD] = false;
+        $ret[$this->vars::PERMS_REPLY] = false;
+        $ret[$this->vars::PERMS_VIEW] = false;
+        $ret[$this->vars::PERMS_USERLIST] = false;
+        $ret[$this->vars::PERMS_PASSWORD] = false;
 
         // 2. Check Forum Postperm
         $pp = explode(',', $forum['postperm']);
@@ -1626,14 +1622,14 @@ class Core
             $userlist = $forum['userlist'];
 
             if ($this->modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
-                $ret[X_PERMS_USERLIST] = true;
-                $ret[X_PERMS_VIEW] = true;
+                $ret[$this->vars::PERMS_USERLIST] = true;
+                $ret[$this->vars::PERMS_VIEW] = true;
             } elseif (!X_GUEST) {
                 $users = explode(',', $userlist);
                 foreach($users as $user) {
                     if (strtolower(trim($user)) === strtolower($this->vars->self['username'])) {
-                        $ret[X_PERMS_USERLIST] = true;
-                        $ret[X_PERMS_VIEW] = true;
+                        $ret[$this->vars::PERMS_USERLIST] = true;
+                        $ret[$this->vars::PERMS_VIEW] = true;
                         break;
                     }
                 }
@@ -1644,15 +1640,15 @@ class Core
         $coppa = $this->coppa_check();
 
         // 5. Set Effective Permissions
-        $ret[X_PERMS_POLL]   = $ret[X_PERMS_RAWPOLL]   && $coppa;
-        $ret[X_PERMS_THREAD] = $ret[X_PERMS_RAWTHREAD] && $coppa;
-        $ret[X_PERMS_REPLY]  = $ret[X_PERMS_RAWREPLY]  && $coppa;
-        $ret[X_PERMS_VIEW]   = $ret[X_PERMS_RAWVIEW] || $ret[X_PERMS_USERLIST];
+        $ret[$this->vars::PERMS_POLL]   = $ret[$this->vars::PERMS_RAWPOLL]   && $coppa;
+        $ret[$this->vars::PERMS_THREAD] = $ret[$this->vars::PERMS_RAWTHREAD] && $coppa;
+        $ret[$this->vars::PERMS_REPLY]  = $ret[$this->vars::PERMS_RAWREPLY]  && $coppa;
+        $ret[$this->vars::PERMS_VIEW]   = $ret[$this->vars::PERMS_RAWVIEW] || $ret[$this->vars::PERMS_USERLIST];
 
         // 6. Check Forum Password
         $pwinput = getPhpInput('fidpw' . $forum['fid'], 'c');
         if ($forum['password'] == '' || $pwinput === $forum['password']) {
-            $ret[X_PERMS_PASSWORD] = true;
+            $ret[$this->vars::PERMS_PASSWORD] = true;
         }
 
         return $ret;
@@ -1780,7 +1776,7 @@ class Core
         
         $db = $this->db;
 
-        $key = substr($key, 0, X_NONCE_KEY_LEN);
+        $key = substr($key, 0, $this->vars::NONCE_KEY_LEN);
         $db->escape_fast($key);
         $nonce = bin2hex(random_bytes(16));
         $time = time();
@@ -1802,10 +1798,10 @@ class Core
         $db = $this->db;
 
         $key_length = (int) $key_length;
-        if ($key_length >= X_NONCE_KEY_LEN) return '';  //Since the schema is so constrained, keep all the 12-byte keys secure.
+        if ($key_length >= $this->vars::NONCE_KEY_LEN) return '';  //Since the schema is so constrained, keep all the 12-byte keys secure.
 
         $db->escape_fast($nonce);
-        $time = time() - X_NONCE_MAX_AGE;
+        $time = time() - $this->vars::NONCE_MAX_AGE;
         $result = $db->query(
             "SELECT imagestring
              FROM " . $this->vars->tablepre . "captchaimages
@@ -1830,12 +1826,12 @@ class Core
     {
         $db = $this->db;
 
-        $key = substr($key, 0, X_NONCE_KEY_LEN);
+        $key = substr($key, 0, $this->vars::NONCE_KEY_LEN);
         $db->escape_fast($key);
         $db->escape_fast($nonce);
-        $time = time() - X_NONCE_MAX_AGE;
+        $time = time() - $this->vars::NONCE_MAX_AGE;
         $sql_expire = "dateline < $time";
-        if ($expire > 0 && $expire < X_NONCE_MAX_AGE) {
+        if ($expire > 0 && $expire < $this->vars::NONCE_MAX_AGE) {
             $time = time() - $expire;
             $sql_expire .= " OR imagestring='$key' AND dateline < $time";
         }

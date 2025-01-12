@@ -49,14 +49,14 @@ if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') |
 }
 
 $perms = $core->checkForumPermissions($forum);
-if (! $perms[X_PERMS_VIEW]) {
+if (! $perms[$vars::PERMS_VIEW]) {
     if (X_GUEST) {
         $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
         exit;
     } else {
         $core->error($lang['privforummsg']);
     }
-} else if (! $perms[X_PERMS_PASSWORD]) {
+} else if (! $perms[$vars::PERMS_PASSWORD]) {
     $core->handlePasswordDialog($fid);
 }
 
@@ -65,14 +65,14 @@ if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = $core->checkForumPermissions($fup);
-    if (! $fupPerms[X_PERMS_VIEW]) {
+    if (! $fupPerms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
             $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
             exit;
         } else {
             $core->error($lang['privforummsg']);
         }
-    } else if (! $fupPerms[X_PERMS_PASSWORD]) {
+    } else if (! $fupPerms[$vars::PERMS_PASSWORD]) {
         $core->handlePasswordDialog((int) $fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);
@@ -109,13 +109,13 @@ $header = $template->process('header.php');
 
 $template->fid = $fid;
 
-if ($perms[X_PERMS_POLL]) {
+if ($perms[$vars::PERMS_POLL]) {
     $template->newpolllink = $template->process('forumdisplay_newpoll.php');
 } else {
     $template->newpolllink = '';
 }
 
-if ($perms[X_PERMS_THREAD]) {
+if ($perms[$vars::PERMS_THREAD]) {
     $template->newtopiclink = $template->process('forumdisplay_newtopic.php');
 } else {
     $template->newtopiclink = '';

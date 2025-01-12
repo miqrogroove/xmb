@@ -80,9 +80,9 @@ if (false === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub'
 
 // Check for authorization to be here in the first place
 $perms = checkForumPermissions($forums);
-if (!$perms[X_PERMS_VIEW]) {
+if (!$perms[$vars::PERMS_VIEW]) {
     error($lang['privforummsg']);
-} else if (!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[$vars::PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
@@ -91,9 +91,9 @@ if ($forums['type'] == 'sub') {
     $fup = $forumCache->getForum((int) $forums['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    if (!$fupPerms[$vars::PERMS_VIEW]) {
         error($lang['privforummsg']);
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forumCache->getForum((int) $fup['fup']);
@@ -196,7 +196,7 @@ switch($action) {
     case 'delete':
         if (noSubmit('deletesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_delete', 'Thread Admin Options/Delete', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_delete', 'Thread Admin Options/Delete', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Delete', (string) min($tids));
@@ -242,7 +242,7 @@ switch($action) {
             } else if ($closed == '') {
                 $lang['textclosethread'] = $lang['textclosethread'];
             }
-            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/OpenOrClose', (string) $tid, X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/OpenOrClose', (string) $tid, $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/OpenOrClose', (string) $tid);
@@ -262,7 +262,7 @@ switch($action) {
     case 'f_close':
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Close', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Close', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Close', (string) min($tids));
@@ -281,7 +281,7 @@ switch($action) {
         if (noSubmit('closesubmit')) {
             $tid = implode(',', $tids);
             $lang['textclosethread'] = $lang['textopenthread'];
-            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Open', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_openclose', 'Thread Admin Options/Open', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Open', (string) min($tids));
@@ -300,7 +300,7 @@ switch($action) {
         if (noSubmit('movesubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('moveto', false, false, $fid);
-            $template = template_secure('topicadmin_move', 'Thread Admin Options/Move', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_move', 'Thread Admin Options/Move', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Move', (string) min($tids));
@@ -385,7 +385,7 @@ switch($action) {
                 $lang['texttopthread'] = $lang['texttopthread'].' / '.$lang['textuntopthread'];
             }
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_topuntop', 'Thread Admin Options/Top', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_topuntop', 'Thread Admin Options/Top', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Top', (string) min($tids));
@@ -424,7 +424,7 @@ switch($action) {
 
         ?>
         <form method="post" action="cp.php?action=ipban">
-        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', X_NONCE_AYS_EXP); ?>" />
+        <input type="hidden" name="token" value="<?php echo \XMB\Token\create('Control Panel/IP Banning', 'mass-edit', $vars::NONCE_AYS_EXP); ?>" />
         <table cellspacing="0" cellpadding="0" border="0" width="60%" align="center">
         <tr><td bgcolor="<?php echo $bordercolor?>">
         <table border="0" cellspacing="<?php echo $THEME['borderwidth']?>" cellpadding="<?php echo $tablespace?>" width="100%">
@@ -479,7 +479,7 @@ switch($action) {
     case 'bump':
         if (noSubmit('bumpsubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_bump', 'Thread Admin Options/Bump', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_bump', 'Thread Admin Options/Bump', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Bump', (string) min($tids));
@@ -508,7 +508,7 @@ switch($action) {
     case 'empty':
         if (noSubmit('emptysubmit')) {
             $tid = implode(',', $tids);
-            $template = template_secure('topicadmin_empty', 'Thread Admin Options/Empty', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_empty', 'Thread Admin Options/Empty', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Empty', (string) min($tids));
@@ -562,7 +562,7 @@ switch($action) {
                 eval('$posts .= "'.template('topicadmin_split_row').'";');
             }
             $db->free_result($query);
-            $template = template_secure('topicadmin_split', 'Thread Admin Options/Split', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_split', 'Thread Admin Options/Split', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Split', (string) min($tids));
@@ -616,7 +616,7 @@ switch($action) {
     case 'merge':
         $tid = $tids[0];
         if (noSubmit('mergesubmit')) {
-            $template = template_secure('topicadmin_merge', 'Thread Admin Options/Merge', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_merge', 'Thread Admin Options/Merge', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Merge', (string) min($tids));
@@ -733,7 +733,7 @@ switch($action) {
                 }
                 $db->free_result($query);
             }
-            $template = template_secure('topicadmin_threadprune', 'Thread Admin Options/Prune', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_threadprune', 'Thread Admin Options/Prune', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Prune', (string) min($tids));
@@ -805,7 +805,7 @@ switch($action) {
         if (noSubmit('copysubmit')) {
             $tid = implode(',', $tids);
             $forumselect = forumList('newfid', false, false);
-            $template = template_secure('topicadmin_copy', 'Thread Admin Options/Copy', (string) min($tids), X_NONCE_AYS_EXP);
+            $template = template_secure('topicadmin_copy', 'Thread Admin Options/Copy', (string) min($tids), $vars::NONCE_AYS_EXP);
             eval('echo "'.$template.'";');
         } else {
             request_secure('Thread Admin Options/Copy', (string) min($tids));

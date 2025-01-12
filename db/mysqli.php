@@ -367,7 +367,7 @@ class MySQLiDatabase implements DBStuff
         }
 
     	if ($this->debug && (!defined('X_SADMIN') || X_SADMIN)) {
-            require_once(ROOT.'include/validate.inc.php');
+            require_once(XMB_ROOT.'include/validate.inc.php');
 
             // MySQL error text may contain sensitive file path info.
             if (defined('X_SADMIN')) {

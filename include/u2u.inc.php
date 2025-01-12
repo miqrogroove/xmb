@@ -349,8 +349,8 @@ function u2u_print($u2uid, $eMail = false)
         if ($eMail) {
             // Make an HTML-formatted email containing the U2U body.
             eval('$css = "'.template('css').'";');
-            if (file_exists(ROOT.$THEME['imgdir'].'/theme.css')) {
-                $extra = file_get_contents(ROOT.$THEME['imgdir'].'/theme.css');
+            if (file_exists(XMB_ROOT.$THEME['imgdir'].'/theme.css')) {
+                $extra = file_get_contents(XMB_ROOT.$THEME['imgdir'].'/theme.css');
                 if (false !== $extra) {
                     $css .= $extra;
                 }

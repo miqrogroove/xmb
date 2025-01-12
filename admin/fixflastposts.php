@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();
@@ -121,7 +121,7 @@ if (onSubmit('nosubmit')) {
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_lastpost'].'</td></tr>';
 } else {
-    $template->token = $token->create('Control Panel/Fix Last Posts', 'Forums', X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Fix Last Posts', 'Forums', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['fixflastposts_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');

@@ -33,7 +33,7 @@ header('X-Frame-Options: deny');
 
 // Script constants
 define('XMB_UPGRADE', true);
-define('ROOT', '../');
+define('XMB_ROOT', '../');
 define('LOG_FILE', './upgrade.log');
 
 // Check configuration
@@ -45,13 +45,13 @@ if (ini_get('display_errors')) {
 }
 
 // Check location
-if (! is_readable(ROOT . 'header.php')) {
+if (! is_readable(XMB_ROOT . 'header.php')) {
     echo 'Could not find XMB!<br />Please make sure the upgrade folder is in the same folder as index.php and header.php.<br />';
     throw new Exception('Attempted upgrade by '.$_SERVER['REMOTE_ADDR'].' from wrong location.');
 }
 
 // Authenticate Browser
-require(ROOT . 'header.php');
+require(XMB_ROOT . 'header.php');
 
 $db = \XMB\Services\db();
 $vars = \XMB\Services\vars();

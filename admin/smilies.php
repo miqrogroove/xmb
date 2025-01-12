@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -57,7 +57,7 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('smiliesubmit')) {
-    $template->token = $token->create('Control Panel/Smilies', 'mass-edit', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Smilies', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_smilies_start.php');
 
     $query = $db->query("SELECT code, id, url FROM " . $vars->tablepre . "smilies WHERE type='smiley'");

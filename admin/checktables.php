@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -83,7 +83,7 @@ if (onSubmit('nosubmit')) {
 
     $body .= $template->process('cp_dump_query_bottom.php');
 } else {
-    $template->token = $token->create('Control Panel/Check Tables', '', X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Check Tables', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['checktables_confirm'];
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_ays.php');

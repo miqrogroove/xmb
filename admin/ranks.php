@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();
@@ -56,7 +56,7 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (noSubmit('rankssubmit')) {
-    $template->token = $token->create('Control Panel/User Ranks', 'mass-edit', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/User Ranks', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_ranks_start.php');
 
     $default_found = false;

@@ -40,7 +40,7 @@ class Bootup
 
     public function loadConfig()
     {
-        require ROOT.'config.php';
+        require XMB_ROOT.'config.php';
         
         if ($ipcheck === 'on') $ipcheck = true;
         
@@ -80,7 +80,7 @@ class Bootup
         foreach($config_array as $key => $value) {
             if ($this->vars->$key === $value) {
                 header('HTTP/1.0 500 Internal Server Error');
-                if (file_exists(ROOT.'install/')) {
+                if (file_exists(XMB_ROOT.'install/')) {
                     exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
                 }
                 exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
@@ -90,7 +90,7 @@ class Bootup
 
     public function setVersion()
     {
-        require ROOT.'include/version.php';
+        require XMB_ROOT.'include/version.php';
 
         $this->template->copyright = $copyright;
         $this->template->versioncompany = $versioncompany;
@@ -272,7 +272,7 @@ class Bootup
             $this->vars->database = 'mysqli';
         }
 
-        require ROOT . 'db/' . $this->vars->database . '.php';
+        require XMB_ROOT . 'db/' . $this->vars->database . '.php';
 
         switch ($this->vars->database) {
             default:

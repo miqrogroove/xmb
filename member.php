@@ -128,7 +128,7 @@ switch($action) {
                     if ('on' == $SETTINGS['google_captcha']) {
                         // Check Google's results
                         $response = postedVar('g-recaptcha-response', '', false, false);
-                        $ssl_lib = ROOT.'trust.pem';
+                        $ssl_lib = XMB_ROOT.'trust.pem';
                         $installed = time() < 2097705600; // Expires 2036-06-21 and won't be used until updated.
                         $curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
                         $agent = $versionshort == '' ? 'XMB' : "XMB/$versionshort";
@@ -182,7 +182,7 @@ switch($action) {
                         }
                     } elseif ('on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status']) {
                         // Check XMB's results
-                        require ROOT.'include/captcha.inc.php';
+                        require XMB_ROOT.'include/captcha.inc.php';
                         $Captcha = new Captcha();
                         if (! $Captcha->bCompatible) throw new RuntimeException('XMB captcha is enabled but not working.');
                         $imghash = postedVar('imghash', '', FALSE, TRUE);
@@ -333,7 +333,7 @@ switch($action) {
                         error($lang['emailrestricted']);
                     }
 
-                    require ROOT.'include/validate-email.inc.php';
+                    require XMB_ROOT.'include/validate-email.inc.php';
                     $test = new EmailAddressValidator();
                     $rawemail = postedVar('email', '', FALSE, FALSE);
                     if (false === $test->check_email_address($rawemail)) {
@@ -424,11 +424,11 @@ switch($action) {
                             unset($rawavatar);
                         } elseif ($SETTINGS['avastatus'] == 'list') {
                             $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-                            $dirHandle = opendir(ROOT.'images/avatars');
+                            $dirHandle = opendir(XMB_ROOT.'images/avatars');
                             $filefound = FALSE;
                             while($avFile = readdir($dirHandle)) {
                                 if ($rawavatar == './images/avatars/'.$avFile) {
-                                    if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                                    if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                                         $filefound = TRUE;
                                     }
                                 }
@@ -500,7 +500,7 @@ switch($action) {
                     if ('on' == $SETTINGS['captcha_code_casesensitive']) {
                         $casesense = "<p>{$lang['captchacaseon']}</p>";
                     }
-                    require_once ROOT.'include/captcha.inc.php';
+                    require_once XMB_ROOT.'include/captcha.inc.php';
                     $Captcha = new Captcha();
                     if (! $Captcha->bCompatible) throw new RuntimeException('XMB captcha is enabled but not working.');
                     $imghash = $Captcha->GenerateCode();
@@ -532,7 +532,7 @@ switch($action) {
                     for ($i = 1; $i <= 120; $i++) {
                         $optionlist .= "<option value='$i'>$i</option>\n";
                     }
-                    $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_AYS_EXP, true);
+                    $token = \XMB\Token\create('Registration', (string) $stepout, $vars::NONCE_AYS_EXP, true);
                     eval('$memberpage = "'.template('member_coppa').'";');
                 } else {
                     // Skip COPPA
@@ -543,7 +543,7 @@ switch($action) {
             if (3 == $stepout) {
                 if ('on' == $SETTINGS['bbrules']) {
                     // Display the rules form
-                    $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
+                    $token = \XMB\Token\create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, true);
                     $SETTINGS['bbrulestxt'] = nl2br($SETTINGS['bbrulestxt']);
                     eval('$memberpage = "'.template('member_reg_rules').'";');
                 } else {
@@ -555,7 +555,7 @@ switch($action) {
             if (4 == $stepout) {
                 // Display new user form
                 $captcharegcheck = '';
-                $token = \XMB\Token\create('Registration', (string) $stepout, X_NONCE_FORM_EXP, true);
+                $token = \XMB\Token\create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, true);
 
                 $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
                 $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
@@ -611,9 +611,9 @@ switch($action) {
                 } else if ($SETTINGS['avastatus'] == 'list') {
                     $avatars = array();
                     $avatars[] = '<option value=""/>'.$lang['textnone'].'</option>';
-                    $dirHandle = opendir(ROOT.'images/avatars');
+                    $dirHandle = opendir(XMB_ROOT.'images/avatars');
                     while($avFile = readdir($dirHandle)) {
-                        if (is_file(ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                        if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                             $avatars[] = '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
                         }
                     }

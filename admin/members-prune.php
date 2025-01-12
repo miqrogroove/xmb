@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
@@ -62,7 +62,7 @@ $member = $core->postedVar('member', dbescape: false, sourcearray: 'g');
 if (onSubmit('nosubmit')) {
     $core->redirect($vars->full_url . 'admin/members.php', timeout: 0);
 } elseif (noSubmit('yessubmit')) {
-    $template->token = $token->create('Control Panel/Members/Del Posts', $member, X_NONCE_AYS_EXP);
+    $template->token = $token->create('Control Panel/Members/Del Posts', $member, $vars::NONCE_AYS_EXP);
     $template->memberLink = recodeOut($member);
     $body = $template->process('admin_members_prune_ays.php');
 } else {

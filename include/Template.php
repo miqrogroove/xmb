@@ -148,7 +148,7 @@ class Template
         
         if ($this->vars->comment_output) echo "<!--Begin Template: $filename -->\n";
 
-        include ROOT . "templates/$filename";
+        include XMB_ROOT . "templates/$filename";
 
         if ($this->vars->comment_output) echo "\n<!-- End Template: $filename -->";
 

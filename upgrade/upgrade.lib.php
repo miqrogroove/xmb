@@ -99,7 +99,7 @@ class Upgrade
         $this->show->progress('Checking for new themes');
         if ((int) $SETTINGS['schema_version'] < 3) {
             $query = $this->upgrade_query("SELECT themeid FROM " . $this->vars->tablepre . "themes WHERE name='XMB Davis'");
-            if ($this->db->num_rows($query) == 0 && is_dir(ROOT.'images/davis')) {
+            if ($this->db->num_rows($query) == 0 && is_dir(XMB_ROOT.'images/davis')) {
                 $this->show->progress('Adding Davis as the new default theme');
                 $this->upgrade_query("INSERT INTO " . $this->vars->tablepre . "themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                                      ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
@@ -2289,7 +2289,7 @@ class Upgrade
         $cachedLanguages = array();
         $lang = array();
 
-        require ROOT.'lang/English.lang.php';
+        require XMB_ROOT.'lang/English.lang.php';
         $baselang = $lang;
         $cachedLanguages['English'] = $lang;
 
@@ -2306,24 +2306,24 @@ class Upgrade
             $lang = array();
 
             if (!isset($cachedLanguages[$m['langfile']])) {
-                if (!file_exists(ROOT.'lang/'.$m['langfile'].'.lang.php')) {
+                if (!file_exists(XMB_ROOT.'lang/'.$m['langfile'].'.lang.php')) {
                     // Re-try in case the old file was named english.lang.php instead of English.lang.php for some reason.
                     $test = $m['langfile'];
                     $test[0] = strtoupper($test[0]);
                     if (isset($cachedLanguages[$test])) {
                         $m['langfile'] = $test;
-                    } elseif (file_exists(ROOT.'lang/'.$test.'.lang.php')) {
+                    } elseif (file_exists(XMB_ROOT.'lang/'.$test.'.lang.php')) {
                         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "members SET langfile='$test' WHERE langfile = '{$m['langfile']}'");
                         $m['langfile'] = $test;
                     } else {
-                        $this->show->error('A needed file is missing for date translation: '.ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
+                        $this->show->error('A needed file is missing for date translation: '.XMB_ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
                         throw new Exception('fixBirthdays() stopped the upgrade because language "'.$m['langfile'].'" was missing.');
                     }
                 }
                 if (!isset($cachedLanguages[$m['langfile']])) {
                     $old_error_level = error_reporting();
                     error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR);
-                    require ROOT.'lang/'.$m['langfile'].'.lang.php';
+                    require XMB_ROOT.'lang/'.$m['langfile'].'.lang.php';
                     error_reporting($old_error_level);
                     $cachedLanguages[$m['langfile']] = $lang;
                 }

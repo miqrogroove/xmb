@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
@@ -104,7 +104,7 @@ if (onSubmit('upgradesubmit')) {
     }
     $body .= $template->process('admin_sql_close.php');
 } else {
-    $template->token = $token->create('Control Panel/Insert Raw SQL', '', X_NONCE_FORM_EXP);
+    $template->token = $token->create('Control Panel/Insert Raw SQL', '', $vars::NONCE_FORM_EXP);
 
     $body = $template->process('admin_sql_form.php');
 }

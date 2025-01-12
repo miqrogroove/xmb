@@ -1093,8 +1093,8 @@ class Attach
         case IMAGETYPE_BMP:
             // See our website for drop-in BMP support.
             if (!class_exists('phpthumb_bmp')) {
-                if (is_file(ROOT.'include/phpthumb-bmp.php')) {
-                    require_once(ROOT.'include/phpthumb-bmp.php');
+                if (is_file(XMB_ROOT.'include/phpthumb-bmp.php')) {
+                    require_once(XMB_ROOT.'include/phpthumb-bmp.php');
                 }
             }
             if (class_exists('phpthumb_bmp')) {

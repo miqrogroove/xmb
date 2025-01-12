@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('ROOT', '../');
-require ROOT . 'header.php';
+define('XMB_ROOT', '../');
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -58,7 +58,7 @@ $table = $template->process('admin_table.php');
 
 if ($vars->settings['ip_banning'] == 'on') {
     if (noSubmit('ipbansubmit') && noSubmit('ipbandisable')) {
-        $template->token = $token->create('Control Panel/IP Banning', 'mass-edit', X_NONCE_FORM_EXP);
+        $template->token = $token->create('Control Panel/IP Banning', 'mass-edit', $vars::NONCE_FORM_EXP);
         
         $body = $template->process('admin_ipban_start.php');
 
@@ -151,7 +151,7 @@ if ($vars->settings['ip_banning'] == 'on') {
     }
 } else {
     if (noSubmit('ipbanenable')) {
-        $template->token = $token->create('Control Panel/IP Banning', 'enable', X_NONCE_AYS_EXP);
+        $template->token = $token->create('Control Panel/IP Banning', 'enable', $vars::NONCE_AYS_EXP);
 
         $body = $template->process('admin_ipban_enable.php');
     } else {

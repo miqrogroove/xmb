@@ -212,14 +212,14 @@ if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') |
 }
 
 $perms = checkForumPermissions($forum);
-if (!$perms[X_PERMS_VIEW]) {
+if (!$perms[$vars::PERMS_VIEW]) {
     if (X_GUEST) {
         redirect("{$full_url}misc.php?action=login", 0);
         exit;
     } else {
         error($lang['privforummsg']);
     }
-} else if (!$perms[X_PERMS_PASSWORD]) {
+} else if (!$perms[$vars::PERMS_PASSWORD]) {
     handlePasswordDialog($fid);
 }
 
@@ -228,14 +228,14 @@ if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
     $fupPerms = checkForumPermissions($fup);
-    if (!$fupPerms[X_PERMS_VIEW]) {
+    if (!$fupPerms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
             redirect("{$full_url}misc.php?action=login", 0);
             exit;
         } else {
             error($lang['privforummsg']);
         }
-    } else if (!$fupPerms[X_PERMS_PASSWORD]) {
+    } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
         handlePasswordDialog($fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);
@@ -280,7 +280,7 @@ if ($action == '') {
 
     eval('$header = "'.template('header').'";');
 
-    if ($perms[X_PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
+    if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
         eval('$replylink = "'.template('viewthread_reply').'";');
         if ($SETTINGS['quickreply_status'] == 'on') {
             if (X_MEMBER) {
@@ -292,7 +292,7 @@ if ($action == '') {
             }
             $captchapostcheck = '';
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                require ROOT.'include/captcha.inc.php';
+                require XMB_ROOT.'include/captcha.inc.php';
                 $Captcha = new Captcha();
                 if ($Captcha->bCompatible !== false) {
                     $imghash = $Captcha->GenerateCode();
@@ -339,13 +339,13 @@ if ($action == '') {
         $memcplink = " | <a href=\"memcp.php?action=subscriptions&amp;subadd=$tid\">{$lang['textsubscribe']}</a> | <a href=\"memcp.php?action=favorites&amp;favadd=$tid\">{$lang['textaddfav']}</a>";
     }
 
-    if ($perms[X_PERMS_THREAD]) {
+    if ($perms[$vars::PERMS_THREAD]) {
         eval('$newtopiclink = "'.template('viewthread_newtopic').'";');
     } else {
         $newtopiclink = '';
     }
 
-    if ($perms[X_PERMS_POLL]) {
+    if ($perms[$vars::PERMS_POLL]) {
         eval('$newpolllink = "'.template('viewthread_newpoll').'";');
     } else {
         $newpolllink = '';
@@ -680,7 +680,7 @@ if ($action == '') {
         }
 
         $repquote = '';
-        if ($perms[X_PERMS_REPLY] && ($thread['closed'] != 'yes' || X_SADMIN)) {
+        if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] != 'yes' || X_SADMIN)) {
             eval('$repquote = "'.template('viewthread_post_repquote').'";');
         }
 
