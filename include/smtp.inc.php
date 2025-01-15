@@ -22,14 +22,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 class socket_SMTP
 {
-    function __construct($debug=false, $dbFile='')
+    public $connection = null;
+
+    private $debugStream;
+
+    private bool $debug = false;
+
+    public function __construct($debug = false, $dbFile = '')
     {
-        $this->connection   = null;
         if ($debug) {
             $this->debugStream = @fopen($dbFile, 'a+');
-            if ($this->debugStream !== FALSE) {
+            if ($this->debugStream !== false) {
                 $l = 'SMTP loaded ('.gmdate('r', time()).')'."\n";
                 fwrite($this->debugStream, $l, strlen($l));
                 $this->debug = true;
@@ -37,7 +46,7 @@ class socket_SMTP
         }
     }
 
-    function connect(
+    public function connect(
         $host,
         $port,
         $username='',
@@ -93,13 +102,13 @@ class socket_SMTP
         return true;
     }
 
-    function send($cmd)
+    private function send($cmd)
     {
         $this->doDebug('[C] '.$cmd);
         fwrite($this->connection, $cmd."\r\n");
     }
 
-    function get()
+    private function get()
     {
         $lines = '';
         while(($line = fgets($this->connection, 515)) !== false) {
@@ -114,7 +123,7 @@ class socket_SMTP
         return $lines;
     }
 
-    function isOk($ret)
+    private function isOk($ret)
     {
         if ($this->fetchReturnCode($ret) == 250) {
             return true;
@@ -123,18 +132,18 @@ class socket_SMTP
         }
     }
 
-    function fetchReturnCode($ret)
+    private function fetchReturnCode($ret)
     {
         list ($r) = explode(' ', $ret);
         return (int) $r;
     }
 
-    function safeData($data)
+    private function safeData($data)
     {
         return str_replace(array("\n.", "\r."), array("\n..", "\r.."), $data);
     }
 
-    function sendMessage($from, $to, $message, $headers)
+    public function sendMessage($from, $to, $message, $headers)
     {
         $headers = $this->safeData($headers);
         $message = $this->safeData($message);
@@ -168,7 +177,7 @@ class socket_SMTP
         return true;
     }
 
-    function disconnect()
+    public function disconnect()
     {
         if ($this->connection !== null) {
             $this->doDebug('Disconnecting from server');
@@ -183,9 +192,9 @@ class socket_SMTP
         }
     }
 
-    function doDebug($msg)
+    private function doDebug($msg)
     {
-        if (isset($this->debug) && $this->debug === true) {
+        if ($this->debug) {
             $msg = rtrim($msg)."\n";
             fwrite($this->debugStream, $msg, strlen($msg));
         }

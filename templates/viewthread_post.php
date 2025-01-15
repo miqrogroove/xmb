@@ -7,7 +7,7 @@
 <?= $stars ?>
 <br />
 <div align="center">
-<?= $rank['avatar'] ?>
+<?= $rankAvatar ?>
 </div>
 <hr />
 <div align="center">
@@ -30,7 +30,7 @@
 <td valign="top" class="tablerow" style="height: 30px; width: 82%;">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-<td class="smalltxt" valign="top"><?= $post['icon'] ?> <a href="viewthread.php?tid=<?= $post['tid'] ?>&amp;goto=search&amp;pid=<?= $post['pid'] ?>" title="<?= $linktitle ?>" rel="nofollow"><?= $poston ?></a></td>
+<td class="smalltxt" valign="top"><?= $post['icon'] ?> <a href="<?= $full_url ?>viewthread.php?tid=<?= $post['tid'] ?>&amp;goto=search&amp;pid=<?= $post['pid'] ?>" title="<?= $linktitle ?>" rel="nofollow"><?= $poston ?></a></td>
 <td class="smalltxt" align="right" valign="top"><?= $edit ?><?= $repquote ?><?= $reportlink ?></td>
 </tr>
 </table>

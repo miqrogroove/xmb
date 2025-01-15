@@ -1,1 +1,1 @@
-<a href="vtmisc.php?action=report&amp;fid=<?= $fid ?>&amp;tid=<?= $tid ?>&amp;pid=<?= $post['pid'] ?>" title="<?= $lang['altreportpost'] ?>"><img src="<?= $THEME['imgdir'] ?>/report.gif" border="0" alt="<?= $lang['altreportpost'] ?>" /></a>
+<a href="<?= $full_url ?>vtmisc.php?action=report&amp;fid=<?= $fid ?>&amp;tid=<?= $tid ?>&amp;pid=<?= $post['pid'] ?>" title="<?= $lang['altreportpost'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/report.gif" border="0" alt="<?= $lang['altreportpost'] ?>" /></a>

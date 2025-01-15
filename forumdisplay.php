@@ -43,7 +43,7 @@ $fid = getInt('fid');
 
 $forum = $forums->getForum($fid);
 
-if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     $core->error($lang['textnoforum']);
 }

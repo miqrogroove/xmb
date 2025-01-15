@@ -1,5 +1,5 @@
 <a name="admintools"></a>
-<form action="topicadmin.php?tid=<?= $tid ?>&amp;fid=<?= $fid ?>" method="get">
+<form action="<?= $full_url?>topicadmin.php?tid=<?= $tid ?>&amp;fid=<?= $fid ?>" method="get">
 <input type="hidden" name="token" value="" />
 <span class="mediumtxt"><strong><?= $lang['textadminoptions'] ?></strong>
 <br />

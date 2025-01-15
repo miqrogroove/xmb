@@ -549,6 +549,7 @@ $lang['nothingfound'] = 'No misspelled words found';
 $lang['notifyonreg'] = 'Notify (Super-)Administrator on new registrations';
 $lang['notloggedin'] = "Not logged in";
 $lang['notpermitted'] = "You are not permitted to perform this operation.";
+$lang['not_applicable_abbr'] = "N/A";
 $lang['nou2umsg'] = "You currently do not have any U2U Messages in your inbox.";
 $lang['no_buddies'] = "There are no addresses in your address book";
 $lang['no_poll'] = "This is not a poll!";

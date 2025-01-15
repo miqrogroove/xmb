@@ -314,9 +314,28 @@ class Core
      *
      * @since 1.0
      * @param string $message For PHP 8.1 compatibility, null input is no longer allowed.
+     * @param string $smileyoff
+     * @param string $bbcodeoff
+     * @param string $allowsmilies
+     * @param string $allowhtml Obsolete.  Must be 'no'.
+     * @param string $allowbbcode
+     * @param string $allowimgcode
+     * @param bool $ignorespaces Obsolete.
+     * @param string $ismood
+     * @param string $wrap
      */
-    function postify(string $message, $smileyoff='no', $bbcodeoff='no', $allowsmilies='yes', $allowhtml='no', $allowbbcode='yes', $allowimgcode='yes', $ignorespaces=false, $ismood="no", $wrap="yes")
-    {
+    function postify(
+        string $message,
+        string $smileyoff = 'no',
+        string $bbcodeoff = 'no',
+        string $allowsmilies = 'yes',
+        string $allowhtml = 'no',
+        string $allowbbcode = 'yes',
+        string $allowimgcode = 'yes',
+        bool $ignorespaces = false,
+        string $ismood = "no",
+        string $wrap = "yes",
+    ): string {
         if ('no' !== $allowhtml) {
             throw new LogicException('The allowhtml parameter only accepts a value of "no" in this version of XMB.');
         }
@@ -358,7 +377,7 @@ class Core
             }
 
             if ('yes' == $wrap) {
-                xmb_wordwrap($message);
+                $this->xmb_wordwrap($message);
             } else {
                 $message = str_replace(array('<!-- nobr -->', '<!-- /nobr -->'), array('', ''), $message);
             }
@@ -370,7 +389,7 @@ class Core
             }
             $message = nl2br($message);
             if ('yes' == $wrap) {
-                xmb_wordwrap($message);
+                $this->xmb_wordwrap($message);
             }
         }
 
@@ -413,45 +432,45 @@ class Core
      * @param bool   $bBBcodeOnForThisPost
      * @param bool   $quarantine Are these files in a private table for later review?
      */
-    function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false)
+    public function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false)
     {
-        global $lang, $SETTINGS;
-
         $count = 0;
         $separator = '';
         $htmlencode = true;
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
         foreach($files as $attach) {
-            $post = array();
+            $post = [];
             $post['filename'] = attrOut($attach['filename']);
             $post['filetype'] = attrOut($attach['filetype']);
             $post['fileurl'] = $this->attach->getURL((int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine);
-            $attachsize = $this->attach->getSizeFormatted($attach['filesize']);
+            $template->attachsize = $this->attach->getSizeFormatted($attach['filesize']);
 
             $post['filedims'] = '';
             $output = '';
             $prefix = '';
             $extension = strtolower(get_extension($post['filename']));
-            $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
-            if ($SETTINGS['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
+            $img_extensions = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp'];
+            if ($this->vars->settings['attachimgpost'] == 'on' && in_array($extension, $img_extensions)) {
                 if ((int) $attach['thumbid'] > 0) {
                     $post['thumburl'] = $this->attach->getURL((int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine);
                     $result = explode('x', $attach['thumbsize']);
-                    $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
-                    eval('$output = "'.template('viewthread_post_attachmentthumb').'";');
+                    $post['filedims'] = 'width="' . $result[0] . 'px" height="' . $result[1] . 'px"';
+                    $template->post = $post;
+                    $output = $template->process('viewthread_post_attachmentthumb.php');
                 } else {
                     if ($attach['img_size'] != '') {
                         $result = explode('x', $attach['img_size']);
                         $post['filedims'] = 'width="'.$result[0].'px" height="'.$result[1].'px"';
                     }
-                    eval('$output = "'.template('viewthread_post_attachmentimage').'";');
+                    $template->post = $post;
+                    $output = $template->process('viewthread_post_attachmentimage.php');
                 }
                 $separator = '';
             } else {
-                $downloadcount = $attach['downloads'];
-                if ($downloadcount == '') {
-                    $downloadcount = 0;
-                }
-                eval('$output = "'.template('viewthread_post_attachment').'";');
+                $template->downloadcount = (int) $attach['downloads'];
+                $template->post = $post;
+                $output = $template->process('viewthread_post_attachment.php');
                 if ($separator == '') {
                     $prefix = "<br /><br />";
                 }
@@ -646,18 +665,18 @@ class Core
      * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
      * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
      */
-    function multipage(int $num, int $perpage, string $baseurl, $canonical = true): array
+    public function multipage(int $num, int $perpage, string $baseurl, bool $canonical = true): array
     {
         // Initialize
-        $return = array();
+        $return = [];
         $page = getInt('page');
         $max_page = $this->quickpage(intval($num), intval($perpage));
-        if ($canonical === true) $canonical =& $baseurl;
+        if ($canonical === true) $canonical = &$baseurl;
 
         // Calculate the LIMIT start number for queries
         if ($page > 1 && $page <= $max_page) {
             $return['start'] = ($page-1) * $perpage;
-            if ($canonical !== false) $this->setCanonicalLink($canonical.((strpos($baseurl, '?') !== false) ? '&amp;' : '?').'page='.$page);
+            if ($canonical !== false) $this->setCanonicalLink($canonical . ((strpos($baseurl, '?') !== false) ? '&amp;' : '?') . 'page=' . $page);
         } elseif ($page == 0 && !isset($_GET['page'])) {
             $return['start'] = 0;
             $page = 1;
@@ -667,7 +686,7 @@ class Core
             $newurl = str_replace('&page=1', '', $newurl);
             $newurl = substr($this->vars->full_url, 0, -strlen($this->vars->cookiepath)).$newurl;
             header('HTTP/1.0 301 Moved Permanently');
-            header('Location: '.$newurl);
+            header("Location: $newurl");
             exit;
         } else {
             header('HTTP/1.0 404 Not Found');
@@ -781,7 +800,14 @@ class Core
         return $multipage;
     }
 
-    function quickpage($things, $thingsperpage)
+    /**
+     * Determine how many pages exist in a paged set of records.
+     *
+     * @param int $things Total record count.
+     * @param int $thingsperpage How many records per page.
+     * @return int Total pages.
+     */
+    public function quickpage(int $things, int $thingsperpage): int
     {
         return ((($things > 0) && ($thingsperpage > 0) && ($things > $thingsperpage)) ? ceil($things / $thingsperpage) : 1);
     }
@@ -814,7 +840,7 @@ class Core
 
         foreach ($this->smile->smilieCache() as $smilie['code'] => $smilie['url']) {
             $template->smilie = $smilie;
-            $sms[] = $template->process('functions_smilieinsert_smilie');
+            $sms[] = $template->process('functions_smilieinsert_smilie.php');
             if ($smtotal > 0) {
                 if (++$counter >= $smtotal) break;
             }
@@ -841,7 +867,7 @@ class Core
         
         $template->smilies = $smilies;
 
-        return $template->process('functions_smilieinsert');
+        return $template->process('functions_smilieinsert.php');
     }
 
     /**
@@ -849,7 +875,7 @@ class Core
      * @param int $fid
      * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
      */
-    function updateforumcount(int $fid, ?int $oldThreadCount = null)
+    public function updateforumcount(int $fid, ?int $oldThreadCount = null)
     {
         $db = $this->db;
 
@@ -862,22 +888,22 @@ class Core
 
     /**
      * @since 1.5
+     * @param int $tid
      */
-    function updatethreadcount($tid)
+    public function updatethreadcount(int $tid, ?int $oldReplyCount = null)
     {
         $db = $this->db;
-        $tid = (int) $tid;
         $quarantine = false;
 
         $replycount = $this->sql->countPosts($quarantine, $tid);
 
-        if ($replycount === 0) return; // Sanity check: Nothing left to do.
+        if ($replycount === 0) return; // Sanity check: There are no posts in this thraed.
 
         $replycount--;
-        $query = $db->query("SELECT dateline, author, pid FROM " . $this->vars->tablepre . "posts WHERE tid='$tid' ORDER BY dateline DESC, pid DESC LIMIT 1");
+        $query = $db->query("SELECT dateline, author, pid FROM " . $this->vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC, pid DESC LIMIT 1");
         $lp = $db->fetch_array($query);
         $db->free_result($query);
-        $query = $db->query("SELECT date, username FROM " . $this->vars->tablepre . "logs WHERE tid='$tid' AND action='bump' ORDER BY date DESC LIMIT 1");
+        $query = $db->query("SELECT date, username FROM " . $this->vars->tablepre . "logs WHERE tid = $tid AND action = 'bump' ORDER BY date DESC LIMIT 1");
         if ($db->num_rows($query) == 1) {
             $lb = $db->fetch_array($query);
             $lp['dateline'] = $lb['date'];
@@ -887,7 +913,11 @@ class Core
         $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
         $db->escape_fast($lastpost);
 
-        $db->query("UPDATE " . $this->vars->tablepre . "threads SET replies='$replycount', lastpost='$lastpost' WHERE tid='$tid'");
+        $where = "WHERE tid = $tid";
+
+        if (! is_null($oldReplyCount)) $where .= " AND replies = $oldReplyCount";
+
+        $db->query("UPDATE " . $this->vars->tablepre . "threads SET replies = $replycount, lastpost = '$lastpost' $where");
     }
 
     /**
@@ -1143,23 +1173,23 @@ class Core
         $subject = str_replace(array("\r", "\n"), array('', ''), $subject);
 
         if ($mailer['type'] == 'socket_SMTP') {
-            require_once(XMB_ROOT.'include/smtp.inc.php');
+            require_once(XMB_ROOT . 'include/smtp.inc.php');
 
-            if (!isset($handlers['socket_SMTP'])) {
-                if (DEBUG) {
+            if (! isset($handlers['socket_SMTP'])) {
+                if ($this->vars->debug) {
                     $mail = new socket_SMTP(true, './smtp-log.txt');
                 } else {
                     $mail = new socket_SMTP;
                 }
-                $handlers['socket_SMTP'] = &$mail;
-                if (!$mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
-                    return FALSE;
+                $handlers['socket_SMTP'] = $mail;
+                if (! $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
+                    return false;
                 }
-                register_shutdown_function(array(&$mail, 'disconnect'));
+                register_shutdown_function(array($mail, 'disconnect'));
             } else {
-                $mail = &$handlers['socket_SMTP'];
-                if (FALSE === $mail->connection) {
-                    return FALSE;
+                $mail = $handlers['socket_SMTP'];
+                if (false === $mail->connection) {
+                    return false;
                 }
             }
 

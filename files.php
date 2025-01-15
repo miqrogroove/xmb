@@ -22,16 +22,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
+require './header.php';
+
+$core = \XMB\Services\core();
 $forums = \XMB\Services\forums();
 $observer = \XMB\Services\observer();
 $sql = \XMB\Services\sql();
 $vars = \XMB\Services\vars();
-
-define('X_SCRIPT', 'files.php');
-
-require 'header.php';
-
-loadtemplates('');
+$lang = &$vars->lang;
 
 $aid = 0;
 $pid = 0;
@@ -39,8 +41,8 @@ $filename = '';
 
 // Moderation of new users
 $quarantine = false;
-$format = (int) $SETTINGS['file_url_format'];
-if ('off' == $SETTINGS['quarantine_new_users'] && ! X_SMOD) {
+$format = (int) $vars->settings['file_url_format'];
+if ('off' == $vars->settings['quarantine_new_users'] && ! X_SMOD) {
     // Access to quarantined files is restricted when that system is not in use.
 } elseif (getInt('newaid') > 0) {
     // Otherwise, the newaid variable indicates a request to read attachments for preview or moderation.
@@ -102,7 +104,8 @@ default:
 
 // Sanity Checks
 if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid'])) {
-    fileError();
+    header('HTTP/1.0 404 Not Found');
+    $core->error($lang['textnothread']);
 }
 
 // Retrieve attachment metadata
@@ -117,43 +120,45 @@ if ($filename == '') {
     $file = $sql->getAttachmentAndFID($aid, $quarantine, 0, $filename);
 }
 if (empty($file)) {
-    fileError();
+    header('HTTP/1.0 404 Not Found');
+    $core->error($lang['textnothread']);
 }
 
 if ($pid > 0 || $file['fid'] != '') {
     $forum = $forums->getForum((int) $file['fid']);
 
     if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
-        fileError();
+        header('HTTP/1.0 404 Not Found');
+        $core->error($lang['textnothread']);
     }
 
     // Check attachment permissions
-    $perms = checkForumPermissions($forum);
-    if (!$perms[$vars::PERMS_VIEW]) {
+    $perms = $core->checkForumPermissions($forum);
+    if (! $perms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
-            redirect("{$full_url}misc.php?action=login", 0);
+            $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
             exit;
         } else {
-            error($lang['privforummsg']);
+            $core->error($lang['privforummsg']);
         }
-    } else if (!$perms[$vars::PERMS_PASSWORD]) {
-        handlePasswordDialog($forum['fid']);
+    } else if (! $perms[$vars::PERMS_PASSWORD]) {
+        $core->handlePasswordDialog($forum['fid']);
     }
 
     $fup = array();
     if ($forum['type'] == 'sub') {
         $fup = $forums->getForum((int) $forum['fup']);
         // prevent access to subforum when upper forum can't be viewed.
-        $fupPerms = checkForumPermissions($fup);
-        if (!$fupPerms[$vars::PERMS_VIEW]) {
+        $fupPerms = $core->checkForumPermissions($fup);
+        if (! $fupPerms[$vars::PERMS_VIEW]) {
             if (X_GUEST) {
-                redirect("{$full_url}misc.php?action=login", 0);
+                $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
                 exit;
             } else {
-                error($lang['privforummsg']);
+                $core->error($lang['privforummsg']);
             }
-        } else if (!$fupPerms[$vars::PERMS_PASSWORD]) {
-            handlePasswordDialog($fup['fid']);
+        } else if (! $fupPerms[$vars::PERMS_PASSWORD]) {
+            $core->handlePasswordDialog($fup['fid']);
         }
         unset($fup);
     }
@@ -165,20 +170,20 @@ $size = 0;
 if ($file['subdir'] == '') {
     $size = strlen($file['attachment']);
 } else {
-    $path = $SETTINGS['files_storage_path'];
+    $path = $vars->settings['files_storage_path'];
     if (substr($path, -1) != '/') {
         $path .= '/';
     }
     $path = $path.$file['subdir'].'/'.$file['aid'];
     if (!is_file($path)) {
         header('HTTP/1.0 500 Internal Server Error');
-        error($lang['filecorrupt']);
+        $core->error($lang['filecorrupt']);
     }
     $size = intval(filesize($path));
 }
 if ($size != (int) $file['filesize']) {
     header('HTTP/1.0 500 Internal Server Error');
-    error($lang['filecorrupt']);
+    $core->error($lang['filecorrupt']);
 }
 
 // Verify output stream is empty
@@ -216,19 +221,12 @@ header("Content-length: $size");
 header("Content-Disposition: {$dispositionType}; filename=\"{$file['filename']}\"");
 header("Content-Description: XMB Attachment");
 header("Cache-Control: public, max-age=604800");
-header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
-header("Last-Modified: ".gmdate('D, d M Y H:i:s', $file['updatestamp'])." GMT");
+header("Expires: " . gmdate('D, d M Y H:i:s', time() + 604800) . " GMT");
+header("Last-Modified: " . gmdate('D, d M Y H:i:s', (int) $file['updatestamp']) . " GMT");
 
 // Send the response entity
 if ($file['subdir'] == '') {
     echo $file['attachment'];
 } else {
     readfile($path);
-}
-exit();
-
-function fileError() {
-    global $lang;
-    header('HTTP/1.0 404 Not Found');
-    error($lang['textnothread']);
 }
