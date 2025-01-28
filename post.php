@@ -208,7 +208,7 @@ if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
 }
-$core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fid . '">'.fnameOut($forum['name']) . '</a>');
+$core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fid . '">' . fnameOut($forum['name']) . '</a>');
 
 // Search-link
 $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
@@ -573,7 +573,7 @@ switch($action) {
 
                 // Send subscription notifications
                 $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $pid AND tid='$tid'");
-                $posts = $db->result($query,0);
+                $posts = (int) $db->result($query);
                 $db->free_result($query);
 
                 $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
@@ -581,7 +581,7 @@ switch($action) {
 
                 $query = $db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
                 if ($db->num_rows($query) > 0) {
-                    $date = $db->result($query, 0);
+                    $date = $db->result($query);
                 } else {
                     // Replying to a thread that has zero posts.
                     $date = '0';
@@ -1025,7 +1025,7 @@ switch($action) {
 
                 if (! $quarantine) {
                     $sql->raisePostCount($username, $vars->onlinetime);
-                    $expire = $vars->onlinetime + X_ONLINE_TIMER;
+                    $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
                     } else {
@@ -1057,9 +1057,9 @@ switch($action) {
             if ($quarantine) {
                 $core->message($lang['moderation_hold']);
             } else {
-                $posts = $sql->countPosts(false, $tid);
+                $posts = $sql->countPosts(tid: $tid);
 
-                $topicpages = quickpage($posts, $vars->ppp);
+                $topicpages = $core->quickpage($posts, $vars->ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $core->message($lang['postmsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");
             }
@@ -1315,7 +1315,7 @@ switch($action) {
             }
 
             if ($threaddelete == 'no') {
-                $posts = $sql->countPosts(false, $tid, '', (int) $orig['dateline']);
+                $posts = $sql->countPosts(tid: $tid, before: (int) $orig['dateline']);
                 $topicpages = $core->quickpage($posts, $vars->ppp);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $core->message($lang['editpostmsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");

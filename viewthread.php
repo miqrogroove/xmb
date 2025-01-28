@@ -348,7 +348,7 @@ if ($action == '') {
 
     $db->query("UPDATE " . $vars->tablepre . "threads SET views = views + 1 WHERE tid = $tid");
 
-    $pollhtml = '';
+    $subTemplate->pollhtml = '';
     $template->poll = '';
     $vote_id = $voted = 0;
 
@@ -369,7 +369,7 @@ if ($action == '') {
         $viewresults = (isset($viewresults) && $viewresults == 'yes') ? 'yes' : '';
         if ($voted >= 1 || $thread['closed'] == 'yes' || X_GUEST || $viewresults) {
             if ($viewresults) {
-                $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid'><font color='$cattext'>{$lang['backtovote']}</font></a>]";
+                $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid'><font color='" . $vars->theme['cattext'] . "'>{$lang['backtovote']}</font></a>]";
             } else {
                 $subTemplate->results = '';
             }
@@ -406,11 +406,11 @@ if ($action == '') {
                     $subTemplate->percentage = '0%';
                 }
                 $subTemplate->array = $array;
-                $pollhtml .= $subTemplate->process('viewthread_poll_options_view.php');
+                $subTemplate->pollhtml .= $subTemplate->process('viewthread_poll_options_view.php');
             }
             $subTemplate->buttoncode = '';
         } else {
-            $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid&amp;viewresults=yes'><font color='$cattext'>{$lang['viewresults']}</font></a>]";
+            $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid&amp;viewresults=yes'><font color='" . $vars->theme['cattext'] . "'>{$lang['viewresults']}</font></a>]";
             $query = $db->query("SELECT vote_option_id, vote_option_text FROM " . $vars->tablepre . "vote_results WHERE vote_id = $vote_id");
             while($result = $db->fetch_array($query)) {
                 $poll = [];
@@ -423,11 +423,12 @@ if ($action == '') {
                     ismood: 'yes',
                 );
                 $subTemplate->poll = $poll;
-                $pollhtml .= $subTemplate->process('viewthread_poll_options.php');
+                $subTemplate->pollhtml .= $subTemplate->process('viewthread_poll_options.php');
             }
             $db->free_result($query);
             $subTemplate->buttoncode = $subTemplate->process('viewthread_poll_submitbutton.php');
         }
+        $subTemplate->thread = $thread;
         $template->poll = $subTemplate->process('viewthread_poll.php');
     }
 
