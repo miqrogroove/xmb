@@ -39,13 +39,12 @@
 <?= $attachfile ?>
 <?= $captchapostcheck ?>
 <tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" />&nbsp;<?= $spelling_submit1 ?> &nbsp;<?= $spelling_submit2 ?></td>
+<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" /></td>
 </tr>
 </table>
 </td>
 </tr>
 </table>
-<?= $suggestions ?>
 </form>
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">

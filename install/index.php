@@ -44,7 +44,6 @@ $req['files'] = array(
     'include/schema.inc.php',
     'include/sessions.inc.php',
     'include/smtp.inc.php',
-    'include/spelling.inc.php',
     'include/sql.inc.php',
     'include/tokens.inc.php',
     'include/translation.inc.php',

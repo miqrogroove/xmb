@@ -2118,6 +2118,9 @@ class Upgrade
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '10' WHERE name = 'schema_version'");
     }
 
+// TODO: Schema 11
+//  - Delete 'spellcheck' record from settings table.
+
     /**
      * Recalculates the value of every field in the forums.postperm column.
      *

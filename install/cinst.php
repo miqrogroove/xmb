@@ -291,7 +291,6 @@ $db->query("INSERT INTO ".X_PREFIX."settings
 ('smileyinsert', 'on'),
 ('smtotal', '16'),
 ('space_cats', 'off'),
-('spellcheck', 'off'),
 ('stats', 'on'),
 ('subject_in_title', 'on'),
 ('theme', '1'),

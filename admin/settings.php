@@ -120,13 +120,6 @@ if (
             break;
     }
 
-    if (defined('PSPELL_FAST')) {
-        $template->spell_off_reason = '';
-    } else {
-        $template->spell_off_reason = $lang['pspell_needed'];
-        $SETTINGS['spellcheck'] = 'off';
-    }
-
     $notifycheck = [
         0 => false,
         1 => false,
@@ -186,7 +179,6 @@ if (
 } else {
     $core->request_secure('Control Panel/settings', 'global', error_header: true);
 
-    $spellchecknew = ($_POST['spellchecknew'] == 'on' && defined('PSPELL_FAST')) ? 'on' : 'off';
     $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
     $avastatusnew = $core->postedVar('avastatusnew');
     if ($avastatusnew != 'on' && $avastatusnew != 'list') {
@@ -307,7 +299,6 @@ if (
     $admin->input_onoff_setting('smileyinsert', 'smileyinsertnew');
     $admin->input_int_setting('smtotal', 'smtotalnew');
     $admin->input_onoff_setting('space_cats', 'space_catsnew');
-    $admin->input_custom_setting('spellcheck', $spellchecknew);
     $admin->input_onoff_setting('stats', 'statsstatusnew');
     $admin->input_onoff_setting('subject_in_title', 'subjectInTitleNew');
     $admin->input_int_setting('theme', 'themenew');

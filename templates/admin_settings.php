@@ -77,7 +77,6 @@ $admin->printsetting6($lang['textfaqstatus'], 'faqstatusnew', 'faqstatus');
 $admin->printsetting6($lang['texttodaystatus'], 'todaystatusnew', 'todaysposts');
 $admin->printsetting6($lang['textstatsstatus'], 'statsstatusnew', 'stats');
 $admin->printsetting6($lang['textmemliststatus'], 'memliststatusnew', 'memliststatus');
-$admin->printsetting6($lang['spell_checker'] . $spell_off_reason, 'spellchecknew', 'spellcheck');
 $admin->printsetting6($lang['coppastatus'], 'coppanew', 'coppa');
 $admin->printsetting6($lang['reportpoststatus'], 'reportpostnew', 'reportpost');
 ?>

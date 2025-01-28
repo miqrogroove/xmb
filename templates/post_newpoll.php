@@ -45,11 +45,10 @@
 <?= $attachfile ?>
 <?= $captchapostcheck ?>
 <tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="<?= $lang['textpostnew'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" />&nbsp;<?= $spelling_submit1 ?> &nbsp;<?= $spelling_submit2 ?></td>
+<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="topicsubmit" value="<?= $lang['textpostnew'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" /></td>
 </tr>
 </table>
 </td>
 </tr>
 </table>
-<?= $suggestions ?>
 </form>

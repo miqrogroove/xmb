@@ -53,7 +53,6 @@
 <option value="Maroon" style="color:maroon;">Maroon</option>
 <option value="LimeGreen" style="color:limegreen;">LimeGreen</option>
 </select>
-<?= $spelling_lang ?>
 <br />
 <a href="javascript:bold()" accesskey="b" title="<?= $lang['cb_insert_bold'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_bold.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_bold'] ?>" /></a>
 <a href="javascript:italicize()" accesskey="i" title="<?= $lang['cb_insert_italics'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_italicize.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_italics'] ?>" /></a>

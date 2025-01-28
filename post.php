@@ -127,8 +127,6 @@ if ($tid > 0) {
 $template->attachfile = '';
 $template->captchapostcheck = '';
 $template->preview = '';
-$template->spelling_submit1 = '';
-$template->spelling_submit2 = '';
 $template->suggestions = '';
 
 $errors = '';
@@ -295,17 +293,10 @@ $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'ye
 $bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes');
 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $smileyoff == 'no');
 
-$subaction = getPhpInput('subaction');
-$sc = $subaction == 'spellcheck' && (onSubmit('spellchecksubmit') || onSubmit('updates_submit'));
-
-if ((onSubmit('previewpost') || $sc) && $usesig == 'yes') {
-    $template->usesigcheck = $vars::cheHTML;
-} elseif (onSubmit('previewpost') || $sc) {
-    $template->usesigcheck = '';
-} elseif ($vars->self['sig'] != '') {
-    $template->usesigcheck = $vars::cheHTML;
+if (onSubmit('previewpost')) {
+    $template->usesigcheck = $usesig == 'yes' ? $vars::cheHTML : '';
 } else {
-    $template->usesigcheck = '';
+    $template->usesigcheck = $vars->self['sig'] != '' ? $vars::cheHTML : '';
 }
 
 $topcheck = '';
@@ -328,44 +319,6 @@ $messageinput = $core->postedVar('message', dbescape: false);  //postify() was r
 $subjectinput = $core->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(["\r", "\n"], ['', ''], $subjectinput);
-
-if ($SETTINGS['spellcheck'] == 'on') {
-    $template->spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
-    $subTemplate->spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
-    if ($sc) {
-        if (onSubmit('language') && noSubmit('updates_submit')) {
-            require XMB_ROOT.'include/spelling.inc.php';
-            $spelling = new spelling($language);
-            $problems = $spelling->check_text(getPhpInput('message'));  //Use raw value so we're not checking entity names.
-            if (count($problems) > 0) {
-                $suggest = [];
-                foreach ($problems as $raworig => $new) {
-                    $orig = cdataOut($raworig);
-                    $mistake = [];
-                    foreach ($new as $rawsuggestion) {
-                        $suggestion = attrOut($rawsuggestion);
-                        eval('$mistake[] = "'.template('spelling_suggestion_new').'";');
-                    }
-                    $mistake = implode("\n", $mistake);
-                    eval('$suggest[] = "'.template('spelling_suggestion_row').'";');
-                }
-                $suggestions = implode("\n", $suggest);
-                eval('$suggestions = "'.template('spelling_suggestion').'";');
-                $template->spelling_submit2 = '<input type="submit" class="submit" name="updates_submit" value="'.$lang['replace'].'" />';
-            } else {
-                eval('$suggestions = "'.template('spelling_suggestion_no').'";');
-            }
-        } else {
-            $old_words = postedArray('old_words', dbescape: false);
-            foreach($old_words as $word) {
-                $replacement = postedVar('replace_'.$word, '', TRUE, FALSE);
-                $messageinput = str_replace($word, $replacement, $messageinput);
-            }
-        }
-    }
-} else {
-    $subTemplate->spelling_lang = '';
-}
 
 $template->bbcodeinsert = '';
 $template->bbcodescript = '';
@@ -1150,10 +1103,6 @@ switch($action) {
                 $template->closeoption = '';
             }
 
-            if (noSubmit('spelling_submit2')) {
-                $template->spelling_submit2 = '';
-            }
-
             // TODO: Why is this here?
             if ($core->getOneForumPerm($forum, $vars::PERMS_RAWTHREAD) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
                 $template->loggedin = '';
@@ -1326,7 +1275,7 @@ switch($action) {
 
         if (! $editvalid) {
             // Fill $postinfo
-            if (onSubmit('editsubmit') || onSubmit('previewpost') || $sc) {
+            if (onSubmit('editsubmit') || onSubmit('previewpost')) {
                 // For post_edit template.
                 $postinfo = [
                     'usesig' => $usesig,

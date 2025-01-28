@@ -40,13 +40,12 @@
 </tr>
 <?= $attachment ?>
 <tr>
-<td colspan="2" class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><input type="submit" class="submit" name="editsubmit" value="<?= $lang['texteditpost'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" />&nbsp;<?= $spelling_submit1 ?> &nbsp;<?= $spelling_submit2 ?></td>
+<td colspan="2" class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><input type="submit" class="submit" name="editsubmit" value="<?= $lang['texteditpost'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" /></td>
 </tr>
 </table>
 </td>
 </tr>
 </table>
-<?= $suggestions ?>
 <input type="hidden" name="fid" value="<?= $fid ?>" />
 <input type="hidden" name="tid" value="<?= $tid ?>" />
 <input type="hidden" name="pid" value="<?= $pid ?>" />
